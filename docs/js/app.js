@@ -94,6 +94,10 @@
   }
 
   /* ---------- Kopfzeile ---------- */
+  function playerName() {
+    var d = S.profiles(), x = d.list.filter(function (y) { return y.id === d.active; })[0];
+    return x ? x.name : "";
+  }
   function renderHeader() {
     var st = S.state, r = S.rankOf(st.xp);
     $("#hAvatar").textContent = st.profile.avatar;
@@ -122,7 +126,7 @@
     var st = S.state, p = S.pools(), stt = S.stats(), r = S.rankOf(st.xp);
     var goalSec = st.settings.goalMin * 60, pct = Math.min(100, Math.round(st.daily.sec * 100 / goalSec));
     var toNext = r.next ? (r.next.xp - st.xp) : 0;
-    var greet = st.profile.name ? "Hallo " + esc(st.profile.name) : "Willkommen zurück";
+    var pn = playerName(), greet = pn && !/^Spieler \d+$/.test(pn) ? "Hallo " + esc(pn) : "Willkommen zurück";
     var hour = new Date().getHours();
     var biz = st.settings.track === "business";
     var tip = pct >= 100 ? "Tagesziel geschafft. Alles Weitere ist Bonus."
@@ -419,8 +423,7 @@
       '<button class="btn ghost" data-act="voicetest" style="margin-top:10px">🔊 Stimme testen</button>' +
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Herzen benutzen<br><span class="small muted">Aus = Üben ohne Abbruch</span></span>' +
       '<input type="checkbox" id="setHearts" ' + (st.settings.hearts ? "checked" : "") + ' style="width:auto"></label>' +
-      '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Name</span>' +
-      '<input id="setName" value="' + esc(st.profile.name) + '" placeholder="optional" style="width:auto;max-width:180px"></label>' +
+      '<p class="small muted" style="margin:10px 0 0">Gelernt wird als <b>' + esc(playerName()) + '</b>. Den Namen änderst du oben unter „Spieler“.</p>' +
       '</section>';
 
     html += '<section class="card"><div class="eyebrow">Eigene Vokabelliste importieren</div>' +
@@ -461,7 +464,6 @@
     $("#setNew").onchange = function () { st.settings.newPerDay = +this.value; S.save(true); };
     $("#setAudio").onchange = function () { st.settings.audio = this.checked; S.save(true); };
     $("#setHearts").onchange = function () { st.settings.hearts = this.checked; if (this.checked === false) st.hearts = 5; S.save(true); renderHeader(); };
-    $("#setName").onchange = function () { st.profile.name = this.value.slice(0, 20); S.save(true); };
     $("#csvFile").onchange = function () {
       var f = this.files && this.files[0]; if (!f) return;
       var fr = new FileReader();
@@ -1018,6 +1020,12 @@
   };
 
   S.load();
+  /* früher frei eingetragener Name wird zum Spielernamen */
+  (function () {
+    var d = S.profiles(), nm = S.state.profile.name;
+    if (nm && /^Spieler \d+$/.test(playerName())) S.renameProfile(d.active, nm);
+    if (nm) { S.state.profile.name = ""; S.save(true); }
+  })();
   render();
   pickPlayer();
   S.keepStorage(function () { if (tab === "parent") render(); });
