@@ -21,7 +21,7 @@ ohne Server, ohne Konto, ohne Datenübertragung — der Lernstand liegt im
 - **Arena** mit vier Zeitmodi: Match-Rausch, Blitzrunde, Letztes Herz,
   Fehlerjagd
 - **Spaced Repetition** nach SM-2 mit eigener Fehlerkartei
-- Eltern-/Lehrerbereich mit Statistik, CSV-Import eigener Listen und
+- Setup-Bereich mit Statistik, CSV-Import eigener Listen und
   Export des Lernstands
 - Installierbar als App, funktioniert offline
 
@@ -63,7 +63,7 @@ Privates Projekt, keine Lizenz vergeben.
 ## Bedienung
 
 ### Zwei Lernbereiche
-Oben in „Einheiten" (und in „Eltern") lässt sich zwischen Schule und Business
+Oben in „Einheiten" (und in „Setup") lässt sich zwischen Schule und Business
 umschalten. Beide führen getrennte Wortschätze, Sätze, Fehlerkarteien und
 Statistiken; XP, Münzen, Streak und Abzeichen sind gemeinsam. Business hat
 fünf Stufen, die einzeln zuschaltbar sind: Basis, Aufbau, Profi, Smalltalk
@@ -84,18 +84,23 @@ Ein Fehlgriff zählt voll.
 Über die Sprachausgabe des Browsers (Web Speech API), bevorzugt eine
 britische Stimme. Lautsprecher gibt es auf der Wortkarte, in Auswahl- und
 Rechtschreibaufgaben, nach jeder Antwort am Wort und am Beispielsatz, nach
-jedem gebauten Satz und in jeder Zeile der Wortliste. Unter Eltern →
+jedem gebauten Satz und in jeder Zeile der Wortliste. Unter Setup →
 Einstellungen lässt sich das abschalten und mit „Stimme testen" prüfen.
 Auf iPhone und iPad muss der Ton einmal per Tippen freigegeben werden.
 
 ### Eigene Vokabeln
-Eltern → eigene Liste einfügen oder Datei laden:
+Setup → eigene Liste einfügen oder Datei laden:
 `englisch;deutsch;beispielsatz` — Semikolon, Komma oder Tabulator, eine
 Kopfzeile wird erkannt. Eigene Listen sind in beiden Bereichen aktiv.
 
 ### Lernstand
-Liegt im `localStorage`, also pro Gerät und Browser getrennt. Umzug:
-Eltern → „Lernstand kopieren", auf dem anderen Gerät → „Lernstand
+Liegt im `localStorage`, also pro Gerät und Browser getrennt. Gespeichert
+wird nach jeder Antwort und beim Schließen oder Verlassen der App; dazu
+kommt eine Sicherungskopie alle fünf Minuten sowie eine Kopie vor
+Zurücksetzen, Einspielen und Wiederherstellen (Setup → Automatische
+Sicherung). Ist der Hauptstand beschädigt, lädt die App die Kopie von
+selbst. Der Browser wird zudem um dauerhaften Speicher gebeten. Umzug:
+Setup → „Lernstand kopieren", auf dem anderen Gerät → „Lernstand
 einspielen".
 
 ## Veröffentlichen

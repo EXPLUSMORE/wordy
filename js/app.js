@@ -434,6 +434,17 @@
           '<button class="chip" data-act="delcustom" data-id="' + esc(u.id) + '">entfernen</button></div>';
       }).join("") + '</div>' : "") + '</section>';
 
+    var bi = S.backupInfo(), pers = S.isPersisted();
+    function ago(t) { var m = Math.round((Date.now() - t) / 60000); return m < 1 ? "gerade eben" : m < 60 ? "vor " + m + " Min." : m < 1440 ? "vor " + Math.round(m / 60) + " Std." : "vor " + Math.round(m / 1440) + " Tg."; }
+    html += '<section class="card"><div class="eyebrow">Automatische Sicherung</div>' +
+      '<p class="small muted" style="margin:6px 0 10px">Der Lernstand wird nach jeder Antwort und beim Schließen der App auf diesem Gerät gespeichert. Zusätzlich entsteht regelmäßig eine Sicherungskopie.' +
+      (pers === true ? ' Der Browser hält den Speicher dauerhaft vor.' : pers === false ? ' Der Browser kann den Speicher bei Platzmangel räumen – sichere den Lernstand gelegentlich unten.' : '') + '</p>' +
+      (bi.restored ? '<p class="small" style="margin:0 0 10px;color:var(--bad)">Der Lernstand war beschädigt und wurde aus der Sicherung wiederhergestellt.</p>' : '') +
+      '<div class="row wrap" style="gap:8px">' +
+      (bi.auto ? '<button class="btn ghost" data-act="restore" data-slot="auto">Sicherung von ' + ago(bi.auto) + ' laden</button>' : '<span class="small muted">Noch keine Sicherungskopie.</span>') +
+      (bi.pre ? '<button class="btn ghost" data-act="restore" data-slot="pre">Stand vor letzter Änderung (' + ago(bi.pre) + ') laden</button>' : '') +
+      '</div></section>';
+
     html += '<section class="card"><div class="eyebrow">Sichern &amp; übertragen</div>' +
       '<p class="small muted" style="margin:6px 0 10px">Der Lernstand liegt nur in diesem Browser. Zum Umziehen auf ein anderes Gerät hier kopieren und dort einfügen.</p>' +
       '<div class="row wrap" style="gap:8px"><button class="btn ghost" data-act="exp" data-kind="json">Lernstand kopieren</button>' +
@@ -970,6 +981,13 @@
       if (ri.error) return toast(ri.error);
       toast("Lernstand eingespielt."); renderHeader(); render();
     }
+    else if (a === "restore") {
+      if (confirm("Den aktuellen Stand durch diese Sicherung ersetzen? Der aktuelle Stand bleibt als „vor letzter Änderung“ erhalten.")) {
+        var rr = S.restoreBackup(act.getAttribute("data-slot"));
+        if (rr.error) return toast(rr.error);
+        toast("Sicherung geladen."); renderHeader(); render();
+      }
+    }
     else if (a === "reset") {
       if (confirm("Wirklich den gesamten Fortschritt löschen? Eigene Wortlisten bleiben erhalten.")) {
         S.resetProgress(); toast("Fortschritt zurückgesetzt."); renderHeader(); render();
@@ -1002,5 +1020,6 @@
   S.load();
   render();
   pickPlayer();
+  S.keepStorage(function () { if (tab === "parent") render(); });
   setInterval(function () { if (sessionEl.hidden) { S.regenHearts(); renderHeader(); } }, 30000);
 })(window);

@@ -126,7 +126,7 @@
   function deleteProfile(id) {
     var d = profiles(); if (d.list.length < 2) return false;
     d.list = d.list.filter(function (x) { return x.id !== id; });
-    try { global.localStorage.removeItem(keyFor(id)); } catch (e) {}
+    try { ['', '.auto', '.pre'].forEach(function (x) { global.localStorage.removeItem(keyFor(id) + x); }); } catch (e) {}
     if (d.active === id) d.active = d.list[0].id;
     saveProfiles(d); return true;
   }
@@ -136,17 +136,61 @@
   function load() {
     var raw = null;
     try { raw = global.localStorage.getItem(keyFor(profiles().active)); } catch (e) { raw = null; }
-    if (raw) { try { var p = JSON.parse(raw); if (p && p.v === 2) state = Object.assign(freshState(), p); } catch (e) {} }
+    var ok = false;
+    if (raw) { try { var p = JSON.parse(raw); if (p && p.v === 2) { state = Object.assign(freshState(), p); ok = true; } } catch (e) {} }
+    if (!ok && readBackup("auto")) { state = Object.assign(freshState(), readBackup("auto").s); restored = true; }
     buildCatalogue(state);
     rollDay();
     regenHearts();
     return state;
   }
-  var saveTimer = null;
+  var saveTimer = null, lastBak = 0, restored = false;
+  var BAK_EVERY = 5 * 60 * 1000;
+  /* Sicherungskopien liegen neben dem Hauptstand: "auto" wird alle paar Minuten
+     erneuert, "pre" entsteht vor Zurücksetzen, Einspielen und Wiederherstellen. */
+  function bakKey(slot) { return keyFor(profiles().active) + "." + slot; }
+  function writeBackup(slot, json) {
+    try { global.localStorage.setItem(bakKey(slot), JSON.stringify({ t: Date.now(), s: JSON.parse(json) })); } catch (e) {}
+  }
+  function readBackup(slot) {
+    try {
+      var b = JSON.parse(global.localStorage.getItem(bakKey(slot)));
+      return b && b.s && b.s.v === 2 ? b : null;
+    } catch (e) { return null; }
+  }
+  function backupInfo() {
+    var a = readBackup("auto"), p = readBackup("pre");
+    return { auto: a ? a.t : null, pre: p ? p.t : null, restored: restored };
+  }
+  function restoreBackup(slot) {
+    var b = readBackup(slot); if (!b) return { error: "Keine Sicherung vorhanden." };
+    writeBackup("pre", JSON.stringify(state));
+    state = Object.assign(freshState(), b.s); buildCatalogue(state); rollDay(); save(true);
+    return { ok: true };
+  }
   function save(now) {
     if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
     if (!now) { saveTimer = setTimeout(function () { save(true); }, 400); return; }
-    try { global.localStorage.setItem(keyFor(profiles().active), JSON.stringify(state)); } catch (e) {}
+    try {
+      var json = JSON.stringify(state);
+      global.localStorage.setItem(keyFor(profiles().active), json);
+      if (Date.now() - lastBak > BAK_EVERY) { lastBak = Date.now(); writeBackup("auto", json); }
+    } catch (e) {}
+  }
+  /* Beim Schließen, Wechseln der App oder Sperren des Handys sofort speichern. */
+  function flush() { if (state && state.v === 2) save(true); }
+  try {
+    global.addEventListener("pagehide", flush);
+    global.document.addEventListener("visibilitychange", function () { if (global.document.hidden) flush(); });
+  } catch (e) {}
+  /* Dauerhaften Speicher anfordern, damit der Browser den Lernstand bei Platzmangel nicht räumt. */
+  var persisted = null;
+  function keepStorage(cb) {
+    try {
+      if (!global.navigator.storage || !global.navigator.storage.persist) { if (cb) cb(null); return; }
+      global.navigator.storage.persisted().then(function (p) { return p || global.navigator.storage.persist(); })
+        .then(function (p) { persisted = !!p; if (cb) cb(persisted); }, function () { if (cb) cb(null); });
+    } catch (e) { if (cb) cb(null); }
   }
 
   /* ---------- Tageswechsel, Streak, Herzen ---------- */
@@ -462,6 +506,7 @@
     try {
       var p = JSON.parse(text);
       if (!p || p.v !== 2) return { error: "Das ist kein gültiger Lernstand." };
+      writeBackup("pre", JSON.stringify(state));
       state = Object.assign(freshState(), p); buildCatalogue(state); rollDay(); save(true);
       return { ok: true };
     } catch (e) { return { error: "Die Datei konnte nicht gelesen werden." }; }
@@ -475,7 +520,7 @@
     });
     return rows.join("\n");
   }
-  function resetProgress() { var keep = state.custom, st = state.settings; state = freshState(); state.custom = keep; state.settings = st; buildCatalogue(state); rollDay(); save(true); }
+  function resetProgress() { writeBackup("pre", JSON.stringify(state)); var keep = state.custom, st = state.settings; state = freshState(); state.custom = keep; state.settings = st; buildCatalogue(state); rollDay(); save(true); }
   function setTrack(t) { state.settings.track = t; state.settings.units = []; save(true); }
 
   /* ---------- Shop ---------- */
@@ -503,6 +548,7 @@
     rankOf: rankOf, addXp: addXp, addCoins: addCoins, finishSession: finishSession,
     stats: stats, today: today, shuffle: shuffle, regenHearts: regenHearts, heartsIn: heartsIn,
     rollDay: rollDay, parseCsv: parseCsv, removeCustom: removeCustom,
+    backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
     resetProgress: resetProgress, buy: buy
