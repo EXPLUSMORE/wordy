@@ -236,11 +236,12 @@
         return '<button class="chip" data-act="klasse" data-k="' + esc(k) + '" aria-pressed="' + (sel.indexOf(k) >= 0) + '">' + esc(groupLabel(k)) + '</button>';
       }).join("") +
       '</div><p class="small muted" style="margin:10px 0 0">' + (biz
-        ? "Basis deckt Büroalltag, Telefon, E-Mail und Geschäftsreise ab. Aufbau geht in Vertrieb, Marketing, Markt, Finanzen und Verhandlung. Profi behandelt Führung, Strategie, Recht, Steuern, IT-Sicherheit und Nachhaltigkeit. Smalltalk ist alles, was zwischen den Terminen gesprochen wird, Redewendungen sind die 180 Wendungen, die man nicht Wort für Wort übersetzen kann."
-        : "Gewählte Jahrgänge kommen im Training vor. Einzelne Einheiten kannst du unten gezielt üben.") + '</p></section>';
+        ? "Basis deckt Büroalltag, Telefon, E-Mail und Geschäftsreise ab. Aufbau geht in Vertrieb, Marketing, Markt, Finanzen und Verhandlung. Profi behandelt Führung, Strategie, Recht, Steuern, IT-Sicherheit und Nachhaltigkeit. Smalltalk ist alles, was zwischen den Terminen gesprochen wird, Redewendungen sind die 180 Wendungen, die man nicht Wort für Wort übersetzen kann. Unten erscheinen nur die gewählten Stufen."
+        : "Gewählte Jahrgänge kommen im Training vor und erscheinen unten. Einzelne Einheiten kannst du dort gezielt üben.") + '</p></section>';
 
     var byGroup = {}, order = [];
     stt.perUnit.forEach(function (u) {
+      if (u.track !== "eigen" && sel.indexOf(u.k) < 0) return;   // nur die gewählten Stufen bzw. Jahrgänge
       var key = String(u.k);
       if (!byGroup[key]) { byGroup[key] = []; order.push(key); }
       byGroup[key].push(u);

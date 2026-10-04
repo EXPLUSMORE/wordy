@@ -276,8 +276,9 @@
 
   /* ---------- Auswahl & Sessionplanung ---------- */
   function groupsOf() {
-    var s = state.settings;
-    return s.track === "business" ? (s.bizGroups || []) : (s.klassen || []);
+    var s = state.settings, biz = s.track === "business", key = biz ? "bizGroups" : "klassen";
+    if (!Array.isArray(s[key]) || !s[key].length) s[key] = biz ? ["Basis"] : [6];   // immer mindestens eine Auswahl
+    return s[key];
   }
   function activeWords() {
     var s = state.settings, sel = groupsOf();
