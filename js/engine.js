@@ -103,11 +103,39 @@
       totals: { items: 0, correct: 0, sec: 0, sentOk: 0 }
     };
   }
+  /* ---------- Spieler (Profile): jeder Spieler hat einen eigenen Speicherplatz ---------- */
+  var PKEY = "wordy.profiles";
+  function keyFor(id) { return id === "p1" ? KEY : KEY + "." + id; }
+  function profiles() {
+    var d = null;
+    try { d = JSON.parse(global.localStorage.getItem(PKEY)); } catch (e) {}
+    if (!d || !d.list || !d.list.length) d = { active: "p1", list: [{ id: "p1", name: "Spieler 1" }] };
+    if (!d.list.some(function (x) { return x.id === d.active; })) d.active = d.list[0].id;
+    return d;
+  }
+  function saveProfiles(d) { try { global.localStorage.setItem(PKEY, JSON.stringify(d)); } catch (e) {} }
+  function addProfile(name) {
+    var d = profiles(), id = "p" + Date.now().toString(36);
+    d.list.push({ id: id, name: (name || "").trim().slice(0, 20) || "Spieler " + (d.list.length + 1) });
+    d.active = id; saveProfiles(d); return id;
+  }
+  function switchProfile(id) { var d = profiles(); if (d.list.some(function (x) { return x.id === id; })) { d.active = id; saveProfiles(d); } }
+  function renameProfile(id, name) {
+    var d = profiles(); d.list.forEach(function (x) { if (x.id === id) x.name = (name || "").trim().slice(0, 20) || x.name; }); saveProfiles(d);
+  }
+  function deleteProfile(id) {
+    var d = profiles(); if (d.list.length < 2) return false;
+    d.list = d.list.filter(function (x) { return x.id !== id; });
+    try { global.localStorage.removeItem(keyFor(id)); } catch (e) {}
+    if (d.active === id) d.active = d.list[0].id;
+    saveProfiles(d); return true;
+  }
+
   var state = freshState();
 
   function load() {
     var raw = null;
-    try { raw = global.localStorage.getItem(KEY); } catch (e) { raw = null; }
+    try { raw = global.localStorage.getItem(keyFor(profiles().active)); } catch (e) { raw = null; }
     if (raw) { try { var p = JSON.parse(raw); if (p && p.v === 2) state = Object.assign(freshState(), p); } catch (e) {} }
     buildCatalogue(state);
     rollDay();
@@ -118,7 +146,7 @@
   function save(now) {
     if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
     if (!now) { saveTimer = setTimeout(function () { save(true); }, 400); return; }
-    try { global.localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+    try { global.localStorage.setItem(keyFor(profiles().active), JSON.stringify(state)); } catch (e) {}
   }
 
   /* ---------- Tageswechsel, Streak, Herzen ---------- */
@@ -475,6 +503,7 @@
     rankOf: rankOf, addXp: addXp, addCoins: addCoins, finishSession: finishSession,
     stats: stats, today: today, shuffle: shuffle, regenHearts: regenHearts, heartsIn: heartsIn,
     rollDay: rollDay, parseCsv: parseCsv, removeCustom: removeCustom,
+    profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
     resetProgress: resetProgress, buy: buy
   };

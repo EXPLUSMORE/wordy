@@ -97,6 +97,8 @@
   function renderHeader() {
     var st = S.state, r = S.rankOf(st.xp);
     $("#hAvatar").textContent = st.profile.avatar;
+    var pd = S.profiles(); var pn = pd.list.filter(function (x) { return x.id === pd.active; })[0];
+    $("#hAvatar").title = pn ? pn.name : "";
     $("#hRank").textContent = r.rank.n;
     $("#hXp").textContent = st.xp;
     $("#hCoins").textContent = st.coins;
@@ -339,10 +341,42 @@
   }
 
   /* ================= ELTERN / LEHRER ================= */
+  function playersCard() {
+    var d = S.profiles();
+    var h = '<section class="card"><div class="eyebrow">Spieler</div>' +
+      '<p class="small muted" style="margin:8px 0 10px">Jeder Spieler hat einen eigenen Lernstand auf diesem Gerät. Andere sehen deinen Fortschritt nicht.</p><div class="stack" style="gap:8px">';
+    d.list.forEach(function (x) {
+      var on = x.id === d.active;
+      h += '<div class="row wrap" style="gap:8px;align-items:center"><b style="flex:1">' + (on ? "● " : "") + esc(x.name) + '</b>' +
+        (on ? '<button class="btn ghost" data-act="pren" data-id="' + x.id + '">Umbenennen</button>' : '<button class="btn" data-act="pswitch" data-id="' + x.id + '">Wechseln</button>') +
+        (d.list.length > 1 ? '<button class="btn ghost" data-act="pdel" data-id="' + x.id + '">Löschen</button>' : '') + '</div>';
+    });
+    return h + '</div><div class="row wrap" style="margin-top:12px;gap:8px"><input id="newPlayer" placeholder="Name des neuen Spielers" style="flex:1;min-width:140px">' +
+      '<button class="btn" data-act="padd">Spieler anlegen</button></div></section>';
+  }
+  function pickPlayer() {
+    var d = S.profiles();
+    if (d.list.length < 2) return;
+    try { if (global.sessionStorage.getItem("wordy.picked")) return; } catch (e) {}
+    var ov = document.createElement("div");
+    ov.style.cssText = "position:fixed;inset:0;z-index:80;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:16px";
+    var h = '<div class="card" style="max-width:380px;width:100%"><div class="eyebrow">Wer lernt heute?</div><div class="stack" style="margin-top:12px;gap:10px">';
+    d.list.forEach(function (x) { h += '<button class="btn" data-pick="' + x.id + '" style="font-size:1.1rem">' + esc(x.name) + '</button>'; });
+    ov.innerHTML = h + '</div></div>';
+    ov.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-pick]"); if (!b) return;
+      S.switchProfile(b.getAttribute("data-pick"));
+      try { global.sessionStorage.setItem("wordy.picked", "1"); } catch (er) {}
+      global.location.reload();
+    });
+    document.body.appendChild(ov);
+  }
+
   function viewParent() {
     var st = S.state, s = S.stats();
     var html = '<div class="stack">';
     html += installCard();
+    html += playersCard();
     html += '<section class="card"><div class="eyebrow">Lernbereich</div>' + trackSwitch() +
       '<p class="small muted" style="margin:12px 0 0">Schule und Business haben getrennte Wortschätze, Sätze und Statistiken. Der Fortschritt bleibt in beiden Bereichen erhalten.</p></section>';
 
@@ -894,6 +928,26 @@
       var it = S.SHOP.filter(function (x) { return x.id === act.getAttribute("data-id"); })[0];
       if (it) { if (it.kind === "avatar") st.profile.avatar = it.val; else st.profile.theme = it.val; S.save(true); renderHeader(); render(); }
     }
+    else if (a === "padd") {
+      var nm = $("#newPlayer").value; S.addProfile(nm);
+      try { global.sessionStorage.setItem("wordy.picked", "1"); } catch (er) {}
+      global.location.reload();
+    }
+    else if (a === "pswitch") {
+      S.switchProfile(act.getAttribute("data-id"));
+      try { global.sessionStorage.setItem("wordy.picked", "1"); } catch (er) {}
+      global.location.reload();
+    }
+    else if (a === "pren") {
+      var nn = prompt("Neuer Name:"); if (nn) { S.renameProfile(act.getAttribute("data-id"), nn); render(); }
+    }
+    else if (a === "pdel") {
+      if (confirm("Diesen Spieler samt Lernstand wirklich löschen?")) {
+        S.deleteProfile(act.getAttribute("data-id"));
+        try { global.sessionStorage.removeItem("wordy.picked"); } catch (er) {}
+        global.location.reload();
+      }
+    }
     else if (a === "csvimport") {
       var res = S.parseCsv($("#csvText").value, $("#csvTitle").value.trim() || "Eigene Liste");
       if (res.error) return toast(res.error);
@@ -947,5 +1001,6 @@
 
   S.load();
   render();
+  pickPlayer();
   setInterval(function () { if (sessionEl.hidden) { S.regenHearts(); renderHeader(); } }, 30000);
 })(window);
