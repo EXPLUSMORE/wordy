@@ -59,3 +59,48 @@ Satz: `[track, gruppe, "englischer Satz", "deutsche Fassung", "Regel"]`
 ## Lizenz
 
 Privates Projekt, keine Lizenz vergeben.
+
+## Bedienung
+
+### Zwei Lernbereiche
+Oben in „Einheiten" (und in „Eltern") lässt sich zwischen Schule und Business
+umschalten. Beide führen getrennte Wortschätze, Sätze, Fehlerkarteien und
+Statistiken; XP, Münzen, Streak und Abzeichen sind gemeinsam. Business hat
+fünf Stufen, die einzeln zuschaltbar sind: Basis, Aufbau, Profi, Smalltalk
+und Redewendungen.
+
+### Lernlogik
+SM-2-ähnliches Spaced-Repetition-Verfahren. Jedes Wort hat einen eigenen
+Leichtigkeitsfaktor; richtige Antworten vergrößern den Wiederholungsabstand,
+Fehler setzen ihn zurück und legen das Wort in die Fehlerkartei, die bei
+gemischten Runden ein Viertel der Aufgaben stellt. Stufen: Neu → Angefangen
+→ Geübt → Sitzt → Gemeistert (ab drei Wochen Abstand).
+
+Ein Treffer in der Arena zählt als sichere, aber flache Wiederholung — er
+schiebt das Wort eine Stufe weiter, ersetzt aber nicht das ruhige Training.
+Ein Fehlgriff zählt voll.
+
+### Aussprache
+Über die Sprachausgabe des Browsers (Web Speech API), bevorzugt eine
+britische Stimme. Lautsprecher gibt es auf der Wortkarte, in Auswahl- und
+Rechtschreibaufgaben, nach jeder Antwort am Wort und am Beispielsatz, nach
+jedem gebauten Satz und in jeder Zeile der Wortliste. Unter Eltern →
+Einstellungen lässt sich das abschalten und mit „Stimme testen" prüfen.
+Auf iPhone und iPad muss der Ton einmal per Tippen freigegeben werden.
+
+### Eigene Vokabeln
+Eltern → eigene Liste einfügen oder Datei laden:
+`englisch;deutsch;beispielsatz` — Semikolon, Komma oder Tabulator, eine
+Kopfzeile wird erkannt. Eigene Listen sind in beiden Bereichen aktiv.
+
+### Lernstand
+Liegt im `localStorage`, also pro Gerät und Browser getrennt. Umzug:
+Eltern → „Lernstand kopieren", auf dem anderen Gerät → „Lernstand
+einspielen".
+
+## Veröffentlichen
+
+GitHub Pages liefert den Ordner `docs/` aus. Nach `node build.js` committen
+und pushen, mehr ist nicht nötig — der Service Worker bekommt bei jeder
+Inhaltsänderung automatisch eine neue Cache-Version und ersetzt die alte
+beim nächsten Start.
