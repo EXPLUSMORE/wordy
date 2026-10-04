@@ -94,13 +94,28 @@
   }
 
   /* ---------- Kopfzeile ---------- */
+  /* Avatare sind Emojis oder, mit "svg:"-Präfix, eigene Zeichnungen */
+  var AVATAR_SVG = {
+    pummel: '<svg viewBox="0 0 64 64" width="1.25em" height="1.25em" style="display:block" aria-hidden="true">' +
+      '<ellipse cx="22" cy="58" rx="7" ry="4" fill="#F7A8CF"/><ellipse cx="42" cy="58" rx="7" ry="4" fill="#F7A8CF"/>' +
+      '<circle cx="16" cy="21" r="7" fill="#FFC9E3"/><circle cx="48" cy="21" r="7" fill="#FFC9E3"/>' +
+      '<circle cx="16" cy="22" r="3.5" fill="#FF9CC6"/><circle cx="48" cy="22" r="3.5" fill="#FF9CC6"/>' +
+      '<ellipse cx="32" cy="39" rx="25" ry="20" fill="#FFC9E3"/>' +
+      '<path d="M32 2l-6 19h12z" fill="#FFD34D" stroke="#E0A800" stroke-width="1.5" stroke-linejoin="round"/>' +
+      '<circle cx="22" cy="23" r="5" fill="#8ED8F8"/><circle cx="32" cy="21" r="5" fill="#B9F0B4"/><circle cx="42" cy="23" r="5" fill="#C9A7F5"/>' +
+      '<circle cx="23" cy="37" r="3.6" fill="#3B2A4A"/><circle cx="41" cy="37" r="3.6" fill="#3B2A4A"/>' +
+      '<circle cx="24.2" cy="35.8" r="1.2" fill="#fff"/><circle cx="42.2" cy="35.8" r="1.2" fill="#fff"/>' +
+      '<ellipse cx="15" cy="44" rx="4.5" ry="3" fill="#FF8FB8" opacity=".8"/><ellipse cx="49" cy="44" rx="4.5" ry="3" fill="#FF8FB8" opacity=".8"/>' +
+      '<path d="M27 46q5 5 10 0" fill="none" stroke="#3B2A4A" stroke-width="2" stroke-linecap="round"/></svg>'
+  };
+  function avatarHtml(v) { return /^svg:/.test(v) ? (AVATAR_SVG[v.slice(4)] || "🦄") : esc(v); }
   function playerName() {
     var d = S.profiles(), x = d.list.filter(function (y) { return y.id === d.active; })[0];
     return x ? x.name : "";
   }
   function renderHeader() {
     var st = S.state, r = S.rankOf(st.xp);
-    $("#hAvatar").textContent = st.profile.avatar;
+    $("#hAvatar").innerHTML = avatarHtml(st.profile.avatar);
     var pd = S.profiles(); var pn = pd.list.filter(function (x) { return x.id === pd.active; })[0];
     $("#hAvatar").title = pn ? pn.name : "";
     $("#hRank").textContent = r.rank.n;
@@ -295,7 +310,7 @@
       '<div class="kpi"><b class="tnum">' + s.acc + '%</b><span>richtig</span></div>' +
       '<div class="kpi"><b class="tnum">' + s.days + '</b><span>Lerntage</span></div>' +
       '</div>' +
-      '<div class="row" style="margin-top:14px;gap:12px"><div class="avatar">' + esc(st.profile.avatar) + '</div>' +
+      '<div class="row" style="margin-top:14px;gap:12px"><div class="avatar">' + avatarHtml(st.profile.avatar) + '</div>' +
       '<div style="flex:1 1 auto"><div class="row"><b>' + esc(r.rank.n) + '</b><span class="spacer"></span>' +
       '<span class="small muted tnum">' + st.xp + (r.next ? " / " + r.next.xp : "") + ' XP</span></div>' +
       '<div class="bar" style="margin-top:6px"><i style="width:' + (r.span ? Math.round(r.into * 100 / r.span) : 100) + '%"></i></div></div></div></section>';
@@ -336,7 +351,7 @@
       S.SHOP.map(function (it) {
         var owned = st.profile.owned.indexOf(it.id) >= 0;
         var active = it.kind === "avatar" ? st.profile.avatar === it.val : st.profile.theme === it.val;
-        return '<div class="shopitem"><span style="font-size:20px;width:26px;text-align:center">' + (it.kind === "avatar" ? esc(it.val) : "🎨") + '</span>' +
+        return '<div class="shopitem"><span style="font-size:20px;width:26px;text-align:center">' + (it.kind === "avatar" ? avatarHtml(it.val) : "🎨") + '</span>' +
           '<span style="flex:1 1 auto"><b class="small">' + esc(it.label) + '</b><br><span class="small muted">' + (it.kind === "avatar" ? "Avatar" : "Farbwelt") + '</span></span>' +
           (owned ? '<button class="chip" data-act="equip" data-id="' + esc(it.id) + '" aria-pressed="' + active + '">' + (active ? "aktiv" : "auswählen") + '</button>'
                  : '<button class="btn soft" data-act="buy" data-id="' + esc(it.id) + '">🪙 ' + it.cost + '</button>') + '</div>';
