@@ -98,8 +98,28 @@ ${head}
 ${body}
 <script>
 if ('serviceWorker' in navigator) {
+  var hadController = !!navigator.serviceWorker.controller, bannerShown = false;
+  function updateBanner() {
+    if (bannerShown) return; bannerShown = true;
+    var b = document.createElement('div');
+    b.setAttribute('role', 'status');
+    b.style.cssText = 'position:fixed;left:12px;right:12px;max-width:560px;margin:0 auto;bottom:78px;z-index:90;display:flex;gap:10px;align-items:center;' +
+      'padding:12px 14px;border-radius:14px;background:var(--ink);color:var(--paper);box-shadow:0 8px 24px rgba(0,0,0,.3);font:inherit';
+    b.innerHTML = '<span style="flex:1">Neue Version verfügbar.</span>' +
+      '<button style="font:inherit;font-weight:600;border:0;border-radius:10px;padding:8px 14px;background:var(--accent);color:var(--accent-ink);cursor:pointer">Neu laden</button>' +
+      '<button aria-label="Später" style="font:inherit;border:0;background:none;color:inherit;opacity:.7;cursor:pointer;padding:4px 6px">✕</button>';
+    b.firstChild.nextSibling.onclick = function () { location.reload(); };
+    b.lastChild.onclick = function () { b.remove(); };
+    document.body.appendChild(b);
+  }
+  /* Eine neue Version übernimmt sofort; die offene Seite läuft aber noch mit dem alten Code. */
+  navigator.serviceWorker.addEventListener('controllerchange', function () { if (hadController) updateBanner(); });
   addEventListener('load', function () {
-    navigator.serviceWorker.register('sw.js').catch(function () {});
+    navigator.serviceWorker.register('sw.js').then(function (reg) {
+      var check = function () { reg.update().catch(function () {}); };
+      document.addEventListener('visibilitychange', function () { if (!document.hidden) check(); });
+      setInterval(check, 60 * 60 * 1000);
+    }).catch(function () {});
   });
 }
 </script>
