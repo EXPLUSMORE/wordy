@@ -15,12 +15,18 @@
     { n: "Gemeistert",  short: "★",    hint: "langfristig gespeichert" }
   ];
 
+  /* Ränge nach dem Vorbild von Fortnite Ranked; "Unreal Gold" ist die eigene Spitze darüber */
   var RANKS = [
-    { xp: 0,     n: "Bronze I",   t: "bronze" }, { xp: 150,  n: "Bronze II",  t: "bronze" },
-    { xp: 400,   n: "Bronze III", t: "bronze" }, { xp: 800,  n: "Silber I",   t: "silber" },
-    { xp: 1400,  n: "Silber II",  t: "silber" }, { xp: 2200, n: "Silber III", t: "silber" },
-    { xp: 3200,  n: "Gold I",     t: "gold" },   { xp: 4600, n: "Gold II",    t: "gold" },
-    { xp: 6400,  n: "Gold III",   t: "gold" },   { xp: 9000, n: "Master",     t: "master" }
+    { xp: 0,     n: "Bronze I",     t: "bronze" },   { xp: 150,   n: "Bronze II",    t: "bronze" },
+    { xp: 400,   n: "Bronze III",   t: "bronze" },   { xp: 800,   n: "Silber I",     t: "silber" },
+    { xp: 1400,  n: "Silber II",    t: "silber" },   { xp: 2200,  n: "Silber III",   t: "silber" },
+    { xp: 3200,  n: "Gold I",       t: "gold" },     { xp: 4600,  n: "Gold II",      t: "gold" },
+    { xp: 6400,  n: "Gold III",     t: "gold" },     { xp: 9000,  n: "Platin I",     t: "platin" },
+    { xp: 12000, n: "Platin II",    t: "platin" },   { xp: 15500, n: "Platin III",   t: "platin" },
+    { xp: 19500, n: "Diamant I",    t: "diamant" },  { xp: 24000, n: "Diamant II",   t: "diamant" },
+    { xp: 29000, n: "Diamant III",  t: "diamant" },  { xp: 35000, n: "Elite",        t: "elite" },
+    { xp: 42000, n: "Champion",     t: "champion" }, { xp: 50000, n: "Unreal",       t: "unreal" },
+    { xp: 60000, n: "Unreal Gold",  t: "unreal-gold" }
   ];
 
   var AVATARS = ["🦊","🐼","🦉","🐙","🦕","🐝","🦁","🐧","🦄","🐢","🦈","🐨"];
