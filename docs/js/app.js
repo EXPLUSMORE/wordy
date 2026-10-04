@@ -1,0 +1,951 @@
+/* Wordbook – Oberfläche, Übungstypen, Session-Ablauf */
+(function (global) {
+  "use strict";
+  var S = global.VT, view = document.getElementById("view"), tabs = document.getElementById("tabs"),
+      sessionEl = document.getElementById("session"), tab = "home", detailUnit = null;
+
+  /* ---------- Werkzeug ---------- */
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]; }); }
+  function $(sel, root) { return (root || document).querySelector(sel); }
+  function $$(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+  function toast(msg, ms) {
+    var t = document.createElement("div"); t.className = "toast pop"; t.textContent = msg;
+    document.body.appendChild(t); setTimeout(function () { t.remove(); }, ms || 2600);
+  }
+  function plural(n, a, b) { return n === 1 ? a : b; }
+  function fmtMin(sec) { var m = Math.round(sec / 60); return m < 1 ? "unter 1 Min" : m + " Min"; }
+
+  /* ---------- Installation ---------- */
+  var installPrompt = null;
+  global.addEventListener("beforeinstallprompt", function (e) {
+    e.preventDefault(); installPrompt = e;
+    if (tab === "parent") render();
+  });
+  global.addEventListener("appinstalled", function () { installPrompt = null; toast("Wordy ist jetzt installiert."); });
+  function isStandalone() {
+    try {
+      return global.matchMedia("(display-mode: standalone)").matches || global.navigator.standalone === true;
+    } catch (e) { return false; }
+  }
+  function isIOS() { return /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1); }
+  function installCard() {
+    if (isStandalone()) return '<section class="card"><div class="eyebrow" style="color:var(--good)">Installiert</div>' +
+      '<p class="small muted" style="margin:8px 0 0">Wordy läuft als App. Der Lernstand bleibt auf diesem Gerät gespeichert, auch offline.</p></section>';
+    if (installPrompt) return '<section class="card"><div class="eyebrow">Als App installieren</div>' +
+      '<p class="small muted" style="margin:8px 0 10px">Dann liegt Wordy als Symbol auf dem Startbildschirm, startet im Vollbild und funktioniert ohne Netz.</p>' +
+      '<button class="btn" data-act="install">Auf dem Gerät installieren</button></section>';
+    if (isIOS()) return '<section class="card"><div class="eyebrow">Als App installieren</div>' +
+      '<p class="small muted" style="margin:8px 0 0">In Safari unten auf das Teilen-Symbol tippen und „Zum Home-Bildschirm“ wählen. Danach startet Wordy im Vollbild und läuft auch ohne Netz.</p></section>';
+    return '<section class="card"><div class="eyebrow">Als App installieren</div>' +
+      '<p class="small muted" style="margin:8px 0 0">Im Browsermenü gibt es dafür „Installieren“ oder „Zum Startbildschirm hinzufügen“. Offline funktioniert Wordy, sobald es über eine Adresse geöffnet wird und nicht als lose Datei.</p></section>';
+  }
+
+  /* ---------- Aussprache ---------- */
+  var voice = null, voicesReady = false;
+  function pickVoice() {
+    if (!window.speechSynthesis) return null;
+    var v = window.speechSynthesis.getVoices() || [];
+    if (!v.length) return null;
+    voice = v.filter(function (x) { return /^en[-_]GB/i.test(x.lang); })[0] ||
+            v.filter(function (x) { return /^en/i.test(x.lang); })[0] || null;
+    voicesReady = true; return voice;
+  }
+  if (window.speechSynthesis) {
+    pickVoice();
+    window.speechSynthesis.onvoiceschanged = pickVoice;
+  }
+  function speak(text, rate) {
+    if (!S.state.settings.audio || !window.speechSynthesis) return false;
+    try {
+      window.speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(String(text).replace(/^to\s+/i, ""));
+      if (!voicesReady) pickVoice();
+      if (voice) u.voice = voice;
+      u.lang = (voice && voice.lang) || "en-GB";
+      u.rate = rate || 0.92;
+      window.speechSynthesis.speak(u);
+      return true;
+    } catch (e) { return false; }
+  }
+  function audioAvailable() { return !!(window.speechSynthesis && S.state.settings.audio); }
+
+  /* ---------- Textvergleich ---------- */
+  function norm(s) {
+    return String(s).toLowerCase().replace(/^to\s+/, "").replace(/^(a|an|the)\s+/, "")
+      .replace(/[.,!?;:'"´`]/g, "").replace(/\s+/g, " ").trim();
+  }
+  function lev(a, b) {
+    var m = a.length, n = b.length, d = [], i, j;
+    for (i = 0; i <= m; i++) d[i] = [i];
+    for (j = 0; j <= n; j++) d[0][j] = j;
+    for (i = 1; i <= m; i++) for (j = 1; j <= n; j++)
+      d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    return d[m][n];
+  }
+  function judgeTyped(input, target) {
+    var a = norm(input), alts = String(target).split(/\s*[\/,]\s*/).map(norm).filter(Boolean);
+    if (!a) return 0;
+    if (alts.indexOf(a) >= 0) return 2;
+    for (var i = 0; i < alts.length; i++) {
+      var d = lev(a, alts[i]);
+      if (d <= (alts[i].length > 6 ? 2 : 1)) return 1;
+    }
+    return 0;
+  }
+
+  /* ---------- Kopfzeile ---------- */
+  function renderHeader() {
+    var st = S.state, r = S.rankOf(st.xp);
+    $("#hAvatar").textContent = st.profile.avatar;
+    $("#hRank").textContent = r.rank.n;
+    $("#hXp").textContent = st.xp;
+    $("#hCoins").textContent = st.coins;
+    $("#hStreak").textContent = st.streak.count;
+    var hEl = $("#hHearts");
+    if (!st.settings.hearts) { hEl.textContent = "∞"; hEl.title = "Ohne Herzen"; }
+    else { S.regenHearts(); hEl.innerHTML = "<span style='color:var(--bad)'>" + "♥".repeat(st.hearts) + "</span><span style='color:var(--line)'>" + "♥".repeat(5 - st.hearts) + "</span>"; }
+    document.documentElement.setAttribute("data-accent", st.profile.theme || "paper");
+  }
+
+  function trackSwitch() {
+    var t = S.state.settings.track;
+    return '<div class="seg" role="group" aria-label="Lernbereich">' +
+      '<button data-act="track" data-t="schule" aria-pressed="' + (t === "schule") + '">🎒 Schule</button>' +
+      '<button data-act="track" data-t="business" aria-pressed="' + (t === "business") + '">💼 Business</button></div>';
+  }
+  function groupLabel(k) { return typeof k === "number" ? "Klasse " + k : k; }
+
+  /* ================= START ================= */
+  function viewHome() {
+    var st = S.state, p = S.pools(), stt = S.stats(), r = S.rankOf(st.xp);
+    var goalSec = st.settings.goalMin * 60, pct = Math.min(100, Math.round(st.daily.sec * 100 / goalSec));
+    var toNext = r.next ? (r.next.xp - st.xp) : 0;
+    var greet = st.profile.name ? "Hallo " + esc(st.profile.name) : "Willkommen zurück";
+    var hour = new Date().getHours();
+    var biz = st.settings.track === "business";
+    var tip = pct >= 100 ? "Tagesziel geschafft. Alles Weitere ist Bonus."
+      : st.daily.sec > 0 ? "Noch " + fmtMin(goalSec - st.daily.sec) + " bis zum Tagesziel."
+      : biz ? (hour < 12 ? "Fünf Minuten vor dem ersten Termin?" : "Eine kurze Runde zwischen zwei Meetings.")
+      : hour < 12 ? "Eine kurze Runde vor der Schule?" : "Fünf Minuten reichen für heute.";
+
+    var html = '<div class="stack">';
+    html += '<section class="card hero"><div class="inner"><div class="row" style="align-items:flex-start">' +
+      '<div style="flex:1 1 auto;min-width:0"><div class="eyebrow">' + esc(S.today().split("-").reverse().join(".")) +
+      ' · ' + (st.settings.track === "business" ? "Business English" : "Schule") + '</div>' +
+      '<h1>' + greet + '</h1><p class="muted small" style="margin:6px 0 0">' + esc(tip) + '</p></div>' +
+      '<div class="ring" style="--p:' + pct + '"><span class="tnum">' + pct + '%</span></div></div>' +
+      '<div class="row wrap small muted" style="margin-top:12px;gap:14px">' +
+      '<span>🔥 ' + st.streak.count + ' ' + plural(st.streak.count, "Tag", "Tage") + (st.streak.best > st.streak.count ? ' · Bestwert ' + st.streak.best : '') + '</span>' +
+      '<span>🛡️ ' + st.streak.freezes + ' Streak-Schutz</span>' +
+      (r.next ? '<span>Noch ' + toNext + ' XP bis ' + esc(r.next.n) + '</span>' : '<span>Höchster Rang erreicht</span>') +
+      '</div></div></section>';
+
+    html += '<section class="card"><div class="eyebrow">Wie viel Zeit hast du?</div>' +
+      '<div class="quick" style="margin-top:10px">' +
+      [3, 5, 10, 15].map(function (m) {
+        return '<button data-act="start" data-min="' + m + '">' + m + ' Min<small>' + Math.round(m * 60 / S.SEC_PER_ITEM) + ' Aufgaben</small></button>';
+      }).join("") + '</div>' +
+      '<button class="btn wide lg" data-act="start" data-min="' + st.settings.goalMin + '" style="margin-top:12px">Weiterlernen</button>' +
+      '<p class="small muted" style="margin:10px 0 0">' + (p.due.length ? p.due.length + ' ' + plural(p.due.length, "Wort ist", "Wörter sind") + ' zur Wiederholung dran' : "Keine Wiederholung fällig – du kannst neue Wörter kennenlernen") + '.</p>' +
+      '</section>';
+
+    if (p.box.length) {
+      html += '<section class="card"><div class="row"><div style="flex:1 1 auto"><div class="eyebrow" style="color:var(--margin)">Fehlerkartei</div>' +
+        '<h2 style="font-size:19px">' + p.box.length + ' ' + plural(p.box.length, "Wort macht", "Wörter machen") + ' noch Probleme</h2>' +
+        '<p class="small muted" style="margin:4px 0 0">Diese Wörter kommen automatisch häufiger dran.</p></div></div>' +
+        '<button class="btn soft wide" data-act="start" data-mode="box" data-min="5" style="margin-top:12px">Fehlerkartei üben</button></section>';
+    }
+
+    html += '<section class="card"><div class="eyebrow">Heutige Missionen</div><div style="margin-top:6px">' +
+      st.daily.missions.map(function (m) {
+        var pc = Math.min(100, Math.round(m.p * 100 / m.goal));
+        return '<div class="mission' + (m.done ? " done" : "") + '"><div class="tick">✓</div>' +
+          '<div class="txt"><div class="small" style="font-weight:600">' + esc(m.n) + '</div>' +
+          '<div class="bar"><i style="width:' + pc + '%"></i></div></div>' +
+          '<div class="pill">🪙 ' + m.coins + '</div></div>';
+      }).join("") + '</div></section>';
+
+    var sn = stt.sent;
+    html += '<section class="card"><div class="row"><div style="flex:1 1 auto"><div class="eyebrow">Satzbau</div>' +
+      '<h2 style="font-size:19px">' + sn.seen + ' von ' + sn.total + ' Sätzen geübt</h2>' +
+      '<p class="small muted" style="margin:4px 0 0">' + (st.settings.track === "business"
+        ? "Wendungen aus Meetings, E-Mails und Verhandlungen – in der richtigen Wortstellung."
+        : "Wortstellung, Zeiten und Satzbaumuster aus dem Unterricht.") + '</p></div></div>' +
+      '<button class="btn ghost wide" data-act="start" data-mode="sent" data-min="5" style="margin-top:12px">Nur Sätze üben</button></section>';
+
+    var mastered = stt.dist[4], nextMile = Math.ceil((mastered + 1) / 25) * 25;
+    html += '<section class="card"><div class="eyebrow">Dein Können</div>' +
+      '<div class="row" style="margin-top:8px;gap:16px"><div><div style="font-family:Newsreader,serif;font-size:30px;font-weight:600" class="tnum">' + mastered + '</div>' +
+      '<div class="small muted">Wörter sitzen langfristig</div></div>' +
+      '<div style="flex:1 1 auto"><div class="bar"><i style="width:' + Math.round(mastered * 100 / Math.max(1, nextMile)) + '%"></i></div>' +
+      '<div class="small muted" style="margin-top:6px">Noch ' + (nextMile - mastered) + ' bis zum nächsten Meilenstein (' + nextMile + ')</div></div></div>' +
+      '<div class="small muted" style="margin-top:10px">' + stt.dist[0] + ' noch nie geübt · ' + (stt.dist[1] + stt.dist[2]) + ' in Arbeit · ' + stt.dist[3] + ' sitzen gut</div>' +
+      '</section>';
+    html += '</div>';
+    view.innerHTML = html;
+  }
+
+  /* ================= ARENA ================= */
+  function viewArena() {
+    var st = S.state, p = S.pools(), few = p.all.length < 8;
+    var html = '<div class="stack">';
+    html += '<section class="card hero"><div class="inner">' +
+      '<div class="eyebrow">Arena · ' + (st.settings.track === "business" ? "Business English" : "Schule") + '</div>' +
+      '<h1 style="font-size:24px">Auf Zeit, nicht auf Ruhe</h1>' +
+      '<p class="muted small" style="margin:6px 0 0">Vier kurze Modi für schnelles Wiederholen. Alles, was du hier triffst, zählt für deinen Lernstand mit – und die Zeit läuft aufs Tagesziel.</p>' +
+      '</div></section>';
+    if (few) html += '<section class="card"><p class="small" style="margin:0">Für die Arena brauchst du mindestens acht Wörter im gewählten Bereich. Schalte unter „Einheiten“ ein weiteres Schuljahr oder eine weitere Stufe dazu.</p></section>';
+    html += '<section class="card">' + (global.ARENA ? global.ARENA.MODES : []).map(function (m) {
+      var b = global.ARENA.best(m.id);
+      return '<button class="mode" data-act="arena" data-id="' + esc(m.id) + '"' + (few ? " disabled" : "") + '>' +
+        '<span class="mi">' + esc(m.icon) + '</span>' +
+        '<span class="mt"><b>' + esc(m.name) + '</b>' +
+        '<span class="claim">' + esc(m.claim) + '</span>' +
+        '<span class="desc">' + esc(m.desc) + '</span></span>' +
+        '<span class="mr"><b class="tnum">' + (b.best || "–") + '</b><span>' + (b.plays ? "Bestwert" : esc(m.tag)) + '</span></span>' +
+        '</button>';
+    }).join("") + '</section>';
+    var plays = 0, arena = st.arena || {};
+    for (var k in arena) plays += arena[k].plays || 0;
+    html += '<section class="card"><div class="eyebrow">Wie die Arena zählt</div>' +
+      '<p class="small muted" style="margin:8px 0 0">Ein Treffer unter Zeitdruck wird als sichere, aber flache Wiederholung gewertet – er schiebt ein Wort eine Stufe weiter, ersetzt aber nicht das ruhige Training. Ein Fehlgriff landet sofort in der Fehlerkartei.</p>' +
+      (plays ? '<p class="small muted" style="margin:10px 0 0">Bisher ' + plays + ' ' + plural(plays, "Runde", "Runden") + ' gespielt.</p>' : "") +
+      '</section>';
+    html += '</div>';
+    view.innerHTML = html;
+  }
+
+  /* ================= EINHEITEN ================= */
+  function viewUnits() {
+    var st = S.state, stt = S.stats();
+    if (detailUnit) return viewUnitDetail(detailUnit);
+    var biz = st.settings.track === "business";
+    var groups = biz ? ["Basis", "Aufbau", "Profi", "Smalltalk", "Redewendungen"] : [6, 7, 8];
+    var sel = S.groupsOf();
+    var html = '<div class="stack">';
+    html += '<section class="card">' + trackSwitch() +
+      '<div class="eyebrow" style="margin-top:14px">' + (biz ? "Stufe" : "Schuljahr") + '</div>' +
+      '<div class="row wrap" style="margin-top:8px">' +
+      groups.map(function (k) {
+        return '<button class="chip" data-act="klasse" data-k="' + esc(k) + '" aria-pressed="' + (sel.indexOf(k) >= 0) + '">' + esc(groupLabel(k)) + '</button>';
+      }).join("") +
+      '</div><p class="small muted" style="margin:10px 0 0">' + (biz
+        ? "Basis deckt Büroalltag, Telefon, E-Mail und Geschäftsreise ab. Aufbau geht in Vertrieb, Marketing, Markt, Finanzen und Verhandlung. Profi behandelt Führung, Strategie, Recht, Steuern, IT-Sicherheit und Nachhaltigkeit. Smalltalk ist alles, was zwischen den Terminen gesprochen wird, Redewendungen sind die 180 Wendungen, die man nicht Wort für Wort übersetzen kann."
+        : "Gewählte Jahrgänge kommen im Training vor. Einzelne Einheiten kannst du unten gezielt üben.") + '</p></section>';
+
+    var byGroup = {}, order = [];
+    stt.perUnit.forEach(function (u) {
+      var key = String(u.k);
+      if (!byGroup[key]) { byGroup[key] = []; order.push(key); }
+      byGroup[key].push(u);
+    });
+    order.forEach(function (k) {
+      var title = k === "0" ? "Eigene Listen" : groupLabel(byGroup[k][0].k);
+      html += '<section class="card"><div class="eyebrow">' + esc(title) + '</div><div>' +
+        byGroup[k].map(function (u) {
+          var pc = Math.round(u.mastered * 100 / Math.max(1, u.total));
+          return '<button class="unit" data-act="unit" data-id="' + esc(u.id) + '">' +
+            '<span class="ic">' + esc(u.icon) + '</span><span class="t"><b>' + esc(u.title) + '</b>' +
+            '<span class="bar" style="margin-top:6px;display:block"><i style="width:' + pc + '%"></i></span></span>' +
+            '<span class="pill tnum">' + u.mastered + '/' + u.total + '</span></button>';
+        }).join("") + '</div></section>';
+    });
+    html += '</div>';
+    view.innerHTML = html;
+  }
+  function viewUnitDetail(id) {
+    var u = S.units().filter(function (x) { return x.id === id; })[0];
+    if (!u) { detailUnit = null; return viewUnits(); }
+    var mastered = 0;
+    var rows = u.words.map(function (w, i) {
+      var wid = u.id + "#" + i, lv = S.levelOf(wid), r = S.state.w[wid];
+      if (lv === 4) mastered++;
+      return '<div class="wordrow">' +
+        (audioAvailable() ? '<button class="mini-speak" data-act="say" data-text="' + esc(w[0]) + '" aria-label="' + esc(w[0]) + ' anhören">🔊</button>' : '') +
+        '<span class="en">' + esc(w[0]) + '</span><span class="de">' + esc(w[1]) + '</span>' +
+        (r && r.no ? '<span class="pill" title="Fehler">✗ ' + r.no + '</span>' : '') +
+        '<span class="pill l' + lv + '">' + esc(S.LEVELS[lv].n) + '</span></div>';
+    }).join("");
+    view.innerHTML = '<div class="stack">' +
+      '<button class="btn ghost" data-act="back" style="align-self:flex-start">← Alle Einheiten</button>' +
+      '<section class="card"><div class="eyebrow">' + (u.track === "eigen" ? "Eigene Liste" : (u.track === "business" ? "Business · " : "") + groupLabel(u.k)) + '</div>' +
+      '<h1 style="font-size:24px">' + esc(u.icon) + ' ' + esc(u.title) + '</h1>' +
+      '<p class="small muted" style="margin:6px 0 0">' + u.words.length + ' Wörter · ' + mastered + ' gemeistert</p>' +
+      '<div class="row" style="margin-top:12px;gap:8px"><button class="btn" data-act="start" data-unit="' + esc(u.id) + '">Diese Einheit üben</button>' +
+      (audioAvailable() ? '<button class="btn ghost" data-act="readall" data-id="' + esc(u.id) + '">🔊 Alle vorlesen</button>' : '') + '</div>' +
+      (audioAvailable() ? '<p class="small muted" style="margin:10px 0 0">Tippe auf 🔊 neben einem Wort, um nur dieses zu hören.</p>' : '') + '</section>' +
+      '<section class="card"><div class="eyebrow">Wortliste</div>' + rows + '</section></div>';
+  }
+
+  /* ================= FORTSCHRITT ================= */
+  function viewStats() {
+    var st = S.state, s = S.stats(), r = S.rankOf(st.xp);
+    var maxItems = Math.max.apply(null, s.d14.map(function (d) { return d.items; }).concat([1]));
+    var html = '<div class="stack">';
+    html += '<section class="card"><div class="tiles4">' +
+      '<div class="kpi"><b class="tnum">' + s.dist[4] + '</b><span>gemeistert</span></div>' +
+      '<div class="kpi"><b class="tnum">' + (s.total - s.dist[0]) + '</b><span>schon geübt</span></div>' +
+      '<div class="kpi"><b class="tnum">' + s.acc + '%</b><span>richtig</span></div>' +
+      '<div class="kpi"><b class="tnum">' + s.days + '</b><span>Lerntage</span></div>' +
+      '</div>' +
+      '<div class="row" style="margin-top:14px;gap:12px"><div class="avatar">' + esc(st.profile.avatar) + '</div>' +
+      '<div style="flex:1 1 auto"><div class="row"><b>' + esc(r.rank.n) + '</b><span class="spacer"></span>' +
+      '<span class="small muted tnum">' + st.xp + (r.next ? " / " + r.next.xp : "") + ' XP</span></div>' +
+      '<div class="bar" style="margin-top:6px"><i style="width:' + (r.span ? Math.round(r.into * 100 / r.span) : 100) + '%"></i></div></div></div></section>';
+
+    /* Kompetenzverteilung – eine Farbe, hell nach dunkel (Ordinalskala) */
+    var segs = s.dist.map(function (n, i) {
+      return n ? '<i class="lv' + i + '" style="flex:' + n + '" title="' + esc(S.LEVELS[i].n) + ': ' + n + '"></i>' : "";
+    }).join("");
+    html += '<section class="card"><div class="eyebrow">Wo stehen die ' + s.total + ' Wörter?</div>' +
+      '<div class="levelbar" style="margin-top:10px">' + segs + '</div>' +
+      '<div class="legend">' + s.dist.map(function (n, i) {
+        return '<span><i class="lv' + i + '"></i>' + esc(S.LEVELS[i].n) + ' <b class="tnum">' + n + '</b></span>';
+      }).join("") + '</div>' +
+      '<p class="small muted" style="margin:10px 0 0">„Gemeistert“ heißt: mindestens drei Wochen Abstand bis zur nächsten Wiederholung.</p></section>';
+
+    html += '<section class="card"><div class="eyebrow">Letzte 14 Tage</div>' +
+      '<div class="days" style="margin-top:12px">' + s.d14.map(function (d) {
+        var h = d.items ? Math.max(4, Math.round(d.items * 100 / maxItems)) : 3;
+        return '<div class="d" title="' + esc(d.date) + ': ' + d.items + ' Aufgaben"><i class="' + (d.items ? "" : "zero") + '" style="height:' + h + '%"></i><small>' + esc(d.label[0]) + '</small></div>';
+      }).join("") + '</div>' +
+      '<p class="small muted" style="margin:10px 0 0">' + (s.d14.some(function (d) { return d.items; }) ? 'Bester Tag: ' + maxItems + ' ' + plural(maxItems, "Aufgabe", "Aufgaben") + '.' : 'Noch keine Übungen in den letzten 14 Tagen.') + '</p></section>';
+
+    var sn2 = s.sent;
+    html += '<section class="card"><div class="eyebrow">Satzbau</div>' +
+      '<div class="row" style="margin-top:10px;gap:16px"><div><div style="font-family:Newsreader,serif;font-size:30px;font-weight:600" class="tnum">' + sn2.seen + '</div>' +
+      '<div class="small muted">von ' + sn2.total + ' Sätzen geübt</div></div>' +
+      '<div style="flex:1 1 auto"><div class="bar"><i style="width:' + Math.round(sn2.seen * 100 / Math.max(1, sn2.total)) + '%"></i></div>' +
+      '<div class="small muted" style="margin-top:6px">' + sn2.mastered + ' sitzen langfristig · ' + sn2.ok + ' richtig gebaut</div></div></div></section>';
+
+    html += '<section class="card"><div class="eyebrow">Abzeichen</div><div class="badges" style="margin-top:10px">' +
+      S.BADGES.map(function (b) {
+        var has = st.badges.indexOf(b.id) >= 0;
+        return '<div class="badge' + (has ? "" : " off") + '" title="' + esc(b.d) + '"><div class="g">' + (has ? "🏅" : "🔒") + '</div><b>' + esc(b.n) + '</b></div>';
+      }).join("") + '</div></section>';
+
+    html += '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Shop</div><span class="pill">🪙 ' + st.coins + '</span></div>' +
+      '<p class="small muted" style="margin:6px 0 10px">Münzen gibt es nur für Aussehen – nie für Lernvorteile.</p>' +
+      S.SHOP.map(function (it) {
+        var owned = st.profile.owned.indexOf(it.id) >= 0;
+        var active = it.kind === "avatar" ? st.profile.avatar === it.val : st.profile.theme === it.val;
+        return '<div class="shopitem"><span style="font-size:20px;width:26px;text-align:center">' + (it.kind === "avatar" ? esc(it.val) : "🎨") + '</span>' +
+          '<span style="flex:1 1 auto"><b class="small">' + esc(it.label) + '</b><br><span class="small muted">' + (it.kind === "avatar" ? "Avatar" : "Farbwelt") + '</span></span>' +
+          (owned ? '<button class="chip" data-act="equip" data-id="' + esc(it.id) + '" aria-pressed="' + active + '">' + (active ? "aktiv" : "auswählen") + '</button>'
+                 : '<button class="btn soft" data-act="buy" data-id="' + esc(it.id) + '">🪙 ' + it.cost + '</button>') + '</div>';
+      }).join("") + '</section>';
+    html += '</div>';
+    view.innerHTML = html;
+  }
+
+  /* ================= ELTERN / LEHRER ================= */
+  function viewParent() {
+    var st = S.state, s = S.stats();
+    var html = '<div class="stack">';
+    html += installCard();
+    html += '<section class="card"><div class="eyebrow">Lernbereich</div>' + trackSwitch() +
+      '<p class="small muted" style="margin:12px 0 0">Schule und Business haben getrennte Wortschätze, Sätze und Statistiken. Der Fortschritt bleibt in beiden Bereichen erhalten.</p></section>';
+
+    html += '<section class="card"><div class="eyebrow">Lernstand im Überblick</div>' +
+      '<div class="tiles4" style="margin-top:10px">' +
+      '<div class="kpi"><b class="tnum">' + Math.round(st.totals.sec / 60) + '</b><span>Minuten gesamt</span></div>' +
+      '<div class="kpi"><b class="tnum">' + st.totals.items + '</b><span>Aufgaben</span></div>' +
+      '<div class="kpi"><b class="tnum">' + s.acc + '%</b><span>richtig</span></div>' +
+      '<div class="kpi"><b class="tnum">' + s.boxSize + '</b><span>in der Fehlerkartei</span></div>' +
+      '<div class="kpi"><b class="tnum">' + s.sent.seen + '/' + s.sent.total + '</b><span>Sätze geübt</span></div>' +
+      '<div class="kpi"><b class="tnum">' + s.dist[4] + '</b><span>Wörter gemeistert</span></div></div></section>';
+
+    html += '<section class="card"><div class="eyebrow">Einheiten mit dem größten Rückstand</div><div style="margin-top:6px">' +
+      (s.perUnit.filter(function (u) { return u.seen > 0; })
+        .sort(function (a, b) { return (a.mastered / a.total) - (b.mastered / b.total); }).slice(0, 6)
+        .map(function (u) {
+          var pc = Math.round(u.mastered * 100 / u.total);
+          return '<div class="mission"><div class="txt"><div class="small" style="font-weight:600">' + esc(u.icon + " " + u.title) + '</div>' +
+            '<div class="bar"><i style="width:' + pc + '%"></i></div></div><span class="pill tnum">' + pc + '%</span></div>';
+        }).join("") || '<p class="small muted">Noch keine Daten – nach der ersten Übungsrunde steht hier etwas.</p>') +
+      '</div></section>';
+
+    html += '<section class="card"><div class="eyebrow">Schwierigste Wörter</div><div style="margin-top:6px">' +
+      (s.weak.length ? s.weak.slice(0, 12).map(function (x) {
+        return '<div class="wordrow"><span class="en">' + esc(x.w.en) + '</span><span class="de">' + esc(x.w.de) + '</span>' +
+          '<span class="pill">✗ ' + x.r.no + '</span><span class="pill">✓ ' + x.r.ok + '</span></div>';
+      }).join("") : '<p class="small muted">Noch keine Fehler erfasst.</p>') + '</div></section>';
+
+    html += '<section class="card"><div class="eyebrow">Einstellungen</div>' +
+      '<label class="row" style="margin-top:12px"><span style="flex:1 1 auto">Tagesziel</span>' +
+      '<select id="setGoal" style="width:auto">' + [5, 10, 15, 20, 30].map(function (m) {
+        return '<option value="' + m + '"' + (st.settings.goalMin === m ? " selected" : "") + '>' + m + ' Minuten</option>';
+      }).join("") + '</select></label>' +
+      '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Neue Wörter pro Tag</span>' +
+      '<select id="setNew" style="width:auto">' + [6, 12, 20, 30].map(function (m) {
+        return '<option value="' + m + '"' + (st.settings.newPerDay === m ? " selected" : "") + '>' + m + '</option>';
+      }).join("") + '</select></label>' +
+      '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Aussprache vorlesen<br><span class="small muted">Nutzt die englische Stimme des Geräts</span></span>' +
+      '<input type="checkbox" id="setAudio" ' + (st.settings.audio ? "checked" : "") + ' style="width:auto"></label>' +
+      '<button class="btn ghost" data-act="voicetest" style="margin-top:10px">🔊 Stimme testen</button>' +
+      '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Herzen benutzen<br><span class="small muted">Aus = Üben ohne Abbruch</span></span>' +
+      '<input type="checkbox" id="setHearts" ' + (st.settings.hearts ? "checked" : "") + ' style="width:auto"></label>' +
+      '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Name</span>' +
+      '<input id="setName" value="' + esc(st.profile.name) + '" placeholder="optional" style="width:auto;max-width:180px"></label>' +
+      '</section>';
+
+    html += '<section class="card"><div class="eyebrow">Eigene Vokabelliste importieren</div>' +
+      '<p class="small muted" style="margin:6px 0 10px">Eine Zeile pro Wort: <code>englisch;deutsch;beispielsatz</code>. Semikolon, Komma oder Tabulator funktionieren.</p>' +
+      '<input id="csvTitle" placeholder="Name der Liste, z. B. Access 7 Unit 3" style="margin-bottom:8px">' +
+      '<textarea id="csvText" rows="4" placeholder="library;die Bibliothek;I borrowed a book from the library."></textarea>' +
+      '<div class="row wrap" style="margin-top:10px;gap:8px"><button class="btn" data-act="csvimport">Liste hinzufügen</button>' +
+      '<label class="btn ghost" style="position:relative;overflow:hidden">Datei wählen<input type="file" id="csvFile" accept=".csv,.txt" style="position:absolute;inset:0;opacity:0;cursor:pointer"></label></div>' +
+      (st.custom.length ? '<div style="margin-top:12px">' + st.custom.map(function (u) {
+        return '<div class="shopitem"><span style="flex:1 1 auto"><b class="small">' + esc(u.title) + '</b><br><span class="small muted">' + u.words.length + ' Wörter</span></span>' +
+          '<button class="chip" data-act="delcustom" data-id="' + esc(u.id) + '">entfernen</button></div>';
+      }).join("") + '</div>' : "") + '</section>';
+
+    html += '<section class="card"><div class="eyebrow">Sichern &amp; übertragen</div>' +
+      '<p class="small muted" style="margin:6px 0 10px">Der Lernstand liegt nur in diesem Browser. Zum Umziehen auf ein anderes Gerät hier kopieren und dort einfügen.</p>' +
+      '<div class="row wrap" style="gap:8px"><button class="btn ghost" data-act="exp" data-kind="json">Lernstand kopieren</button>' +
+      '<button class="btn ghost" data-act="exp" data-kind="csv">Wortliste als CSV</button>' +
+      '<button class="btn ghost" data-act="impopen">Lernstand einspielen</button></div>' +
+      '<textarea id="expBox" rows="4" hidden style="margin-top:10px"></textarea>' +
+      '<div id="impWrap" hidden style="margin-top:10px"><textarea id="impBox" rows="4" placeholder="Hier den kopierten Lernstand einfügen"></textarea>' +
+      '<button class="btn" data-act="impdo" style="margin-top:8px">Einspielen</button></div>' +
+      '<hr class="sep" style="margin:14px 0"><button class="btn ghost" data-act="reset" style="color:var(--bad)">Fortschritt zurücksetzen</button></section>';
+    html += '</div>';
+    view.innerHTML = html;
+
+    $("#setGoal").onchange = function () { st.settings.goalMin = +this.value; S.save(true); renderHeader(); };
+    $("#setNew").onchange = function () { st.settings.newPerDay = +this.value; S.save(true); };
+    $("#setAudio").onchange = function () { st.settings.audio = this.checked; S.save(true); };
+    $("#setHearts").onchange = function () { st.settings.hearts = this.checked; if (this.checked === false) st.hearts = 5; S.save(true); renderHeader(); };
+    $("#setName").onchange = function () { st.profile.name = this.value.slice(0, 20); S.save(true); };
+    $("#csvFile").onchange = function () {
+      var f = this.files && this.files[0]; if (!f) return;
+      var fr = new FileReader();
+      fr.onload = function () { $("#csvText").value = String(fr.result).slice(0, 200000); if (!$("#csvTitle").value) $("#csvTitle").value = f.name.replace(/\.[^.]+$/, ""); toast("Datei gelesen – jetzt „Liste hinzufügen“."); };
+      fr.readAsText(f);
+    };
+  }
+
+  /* ================= SESSION ================= */
+  var SS = null;
+  function pickType(w) {
+    var lv = S.levelOf(w.id), c;
+    if (lv <= 1) c = ["mc_en_de", "mc_de_en", "listen", "odd"];
+    else if (lv === 2) c = ["mc_de_en", "gap", "match", "listen", "spell", "odd"];
+    else c = ["type", "spell", "gap", "match", "type"];
+    c = c.filter(function (t) { return t !== "gap" || w.gap; });
+    var plain = w.en.replace(/^to\s+/, "");
+    if (plain.length > 16) c = c.filter(function (t) { return t !== "spell"; });
+    if (plain.length > 24) c = c.filter(function (t) { return t !== "type"; });
+    if (!audioAvailable()) c = c.filter(function (t) { return t !== "listen"; });
+    if (!c.length) c = ["mc_en_de"];
+    return c[Math.floor(Math.random() * c.length)];
+  }
+  function distractors(w, key, n) {
+    var pool = S.words().filter(function (x) { return x.id !== w.id && x[key] !== w[key]; });
+    var same = pool.filter(function (x) { return x.unit === w.unit; });
+    var out = S.shuffle(same).slice(0, n);
+    if (out.length < n) out = out.concat(S.shuffle(pool).slice(0, n - out.length));
+    var seen = {}; return out.filter(function (x) { if (seen[x[key]]) return false; seen[x[key]] = 1; return true; }).slice(0, n);
+  }
+  function buildTasks(list, sentOnly) {
+    var t = [];
+    if (!sentOnly) list.forEach(function (w) {
+      if (S.levelOf(w.id) === 0 && !(S.state.w[w.id] && S.state.w[w.id].no)) {
+        t.push({ type: "intro", w: w }); t.push({ type: "mc_en_de", w: w, isNew: true });
+      } else t.push({ type: pickType(w), w: w });
+    });
+    var want = sentOnly ? Math.max(4, list.length) : Math.round(t.length / 8);
+    var sents = S.planSentences(want);
+    if (sentOnly) return sents.map(function (x) { return { type: "build", s: x }; });
+    sents.forEach(function (x, i) {
+      var pos = Math.min(t.length, Math.round((i + 1) * t.length / (sents.length + 1)) + 1);
+      t.splice(pos, 0, { type: "build", s: x });
+    });
+    return t;
+  }
+  function startSession(opts) {
+    S.rollDay(); S.regenHearts();
+    var sentOnly = opts.mode === "sent";
+    var list = sentOnly ? S.planSentences(Math.max(5, Math.round((opts.minutes || 5) * 60 / 16))) : S.planSession(opts);
+    if (!list.length) { toast(sentOnly ? "Alle Sätze dieses Bereichs sind gerade erledigt." : "Für diese Auswahl gibt es gerade nichts zu üben."); return; }
+    var tasks = buildTasks(list, sentOnly);
+    if (!tasks.length) { toast("Hier gibt es gerade nichts zu üben."); return; }
+    SS = {
+      tasks: tasks, i: 0, chain: 0, maxChain: 0, items: 0, correct: 0,
+      newSeen: 0, boxSolved: 0, mastered: 0, sentOk: 0, start: Date.now(), answered: false,
+      retry: [], mode: opts.mode || "mix", ended: false
+    };
+    sessionEl.hidden = false; document.body.style.overflow = "hidden";
+    renderTask();
+  }
+  function endSession(reason) {
+    if (!SS || SS.ended) return;
+    SS.ended = true;
+    var sec = Math.round((Date.now() - SS.start) / 1000);
+    var rw = S.finishSession({ items: SS.items, correct: SS.correct, sec: sec, maxChain: SS.maxChain, newSeen: SS.newSeen, boxSolved: SS.boxSolved, mastered: SS.mastered, sentOk: SS.sentOk });
+    var st = S.state, acc = SS.items ? Math.round(SS.correct * 100 / SS.items) : 0;
+    var head = reason === "hearts" ? "Kurze Pause" : SS.correct === SS.items && SS.items > 3 ? "Fehlerfrei!" : "Runde geschafft";
+    var msg = reason === "hearts"
+      ? "Die Herzen sind alle. Dein Fortschritt ist gespeichert – die Herzen füllen sich von selbst wieder auf."
+      : acc >= 90 ? "Das saß. Weiter so." : acc >= 70 ? "Solide Runde. Die Wackelkandidaten kommen bald wieder." : "Schwierige Wörter dabei – die landen jetzt in der Fehlerkartei und kommen häufiger dran.";
+    var html = '<div class="sbody"><div class="stack" style="padding-top:20px">' +
+      '<section class="card" style="text-align:center"><div style="font-size:40px">' + (reason === "hearts" ? "💤" : acc >= 90 ? "🌟" : "✅") + '</div>' +
+      '<h1 style="font-size:26px;margin-top:6px">' + head + '</h1><p class="muted small" style="margin:8px 0 0">' + esc(msg) + '</p>' +
+      '<div class="tiles4" style="margin-top:16px">' +
+      '<div class="kpi"><b class="tnum">' + SS.items + '</b><span>Aufgaben</span></div>' +
+      '<div class="kpi"><b class="tnum">' + acc + '%</b><span>richtig</span></div>' +
+      '<div class="kpi"><b class="tnum">' + SS.maxChain + '</b><span>beste Serie</span></div>' +
+      '<div class="kpi"><b class="tnum">' + fmtMin(sec).replace(" Min", "") + '</b><span>Minuten</span></div></div></section>';
+    if (SS.sentOk) html += '<section class="card"><div class="eyebrow">Satzbau</div><p style="margin:6px 0 0">' + SS.sentOk + ' ' + plural(SS.sentOk, "Satz", "Sätze") + ' richtig zusammengesetzt.</p></section>';
+    if (SS.mastered) html += '<section class="card"><div class="eyebrow" style="color:var(--gold)">Neu gemeistert</div><p style="margin:6px 0 0">' + SS.mastered + ' ' + plural(SS.mastered, "Wort sitzt", "Wörter sitzen") + ' jetzt langfristig.</p></section>';
+    if (rw.goalReached) html += '<section class="card"><div class="eyebrow" style="color:var(--good)">Tagesziel erreicht</div><p style="margin:6px 0 0">' + (rw.streakUp ? "Streak steht bei " + st.streak.count + " " + plural(st.streak.count, "Tag", "Tagen") + "." : "Schon erledigt heute.") + '</p></section>';
+    if (rw.missions.length) html += '<section class="card"><div class="eyebrow">Missionen erfüllt</div>' + rw.missions.map(function (m) { return '<div class="mission done"><div class="tick">✓</div><div class="txt small">' + esc(m.n) + '</div><span class="pill">🪙 ' + m.coins + '</span></div>'; }).join("") + '</section>';
+    if (rw.badges.length) html += '<section class="card"><div class="eyebrow">Neue Abzeichen</div><div class="badges" style="margin-top:8px">' + rw.badges.map(function (b) { return '<div class="badge"><div class="g">🏅</div><b>' + esc(b.n) + '</b></div>'; }).join("") + '</div></section>';
+    html += '<div class="row" style="gap:8px"><button class="btn wide" data-act="again">Noch eine Runde</button>' +
+      '<button class="btn ghost" data-act="close">Fertig</button></div></div></div>';
+    sessionEl.innerHTML = html;
+    renderHeader();
+  }
+  function closeSession() {
+    sessionEl.hidden = true; sessionEl.innerHTML = ""; SS = null;
+    document.body.style.overflow = "";
+    render();
+  }
+
+  function renderTask() {
+    if (!SS) return;
+    if (SS.i >= SS.tasks.length) {
+      if (SS.retry.length) { SS.tasks = SS.tasks.concat(SS.retry); SS.retry = []; }
+      else return endSession("done");
+    }
+    var t = SS.tasks[SS.i]; if (!t) return endSession("done");
+    SS.answered = false; SS.pick = null;
+    var st = S.state, total = SS.tasks.length, pc = Math.round(SS.i * 100 / total);
+    var hearts = st.settings.hearts ? '<span class="hearts" style="color:var(--bad)">' + "♥".repeat(st.hearts) + '</span><span class="hearts" style="color:var(--line)">' + "♥".repeat(5 - st.hearts) + '</span>' : '<span class="pill">ohne Herzen</span>';
+    var head = '<div class="shead"><button class="chip" data-act="quit">✕</button>' +
+      '<div class="bar" style="flex:1 1 auto"><i style="width:' + pc + '%"></i></div>' + hearts + '</div>';
+    sessionEl.innerHTML = head + '<div class="sbody" id="sbody"></div><div class="sfoot" id="sfoot"></div>';
+    var body = $("#sbody"), foot = $("#sfoot");
+    body.className = "sbody pop";
+    (RENDER[t.type] || RENDER.mc_en_de)(t, body, foot);
+  }
+
+  function footCheck(label, act) {
+    return '<button class="btn wide lg" data-act="' + (act || "check") + '" id="mainBtn" disabled>' + esc(label || "Prüfen") + '</button>';
+  }
+  function optionList(items, keyLabels) {
+    return '<div class="opts">' + items.map(function (o, i) {
+      return '<button class="opt" data-opt="' + i + '"><span class="k">' + (i + 1) + '</span><span>' + esc(o.label) + '</span></button>';
+    }).join("") + '</div>';
+  }
+  function speakBtn(text, big) {
+    return '<button class="speak' + (big ? " big" : "") + '" data-act="say" data-text="' + esc(text) + '" aria-label="Wort anhören">🔊</button>';
+  }
+
+  var RENDER = {
+    intro: function (t, body, foot) {
+      var w = t.w;
+      body.innerHTML = '<div class="stack" style="padding-top:8px">' +
+        '<div class="eyebrow">Neues Wort · ' + esc(w.unitTitle) + '</div>' +
+        '<div class="row" style="gap:14px;align-items:center">' + (audioAvailable() ? speakBtn(w.en, true) : "") +
+        '<div><div class="prompt">' + esc(w.en) + '</div><div class="sub" style="margin-top:4px">' + esc(w.de) + '</div></div></div>' +
+        (w.ex ? '<div class="card" style="background:var(--card-2);box-shadow:none"><div class="eyebrow">Im Satz</div><p style="margin:6px 0 0;font-family:Newsreader,serif;font-size:18px">' + esc(w.ex) + '</p></div>' : "") +
+        '</div>';
+      foot.innerHTML = '<button class="btn wide lg" data-act="next">Verstanden</button>';
+      if (audioAvailable()) setTimeout(function () { speak(w.en); }, 250);
+    },
+    mc_en_de: function (t, body, foot) {
+      var w = t.w, opts = S.shuffle(distractors(w, "de", 3).map(function (x) { return { label: x.de, ok: false }; }).concat([{ label: w.de, ok: true }]));
+      t.opts = opts;
+      body.innerHTML = '<div class="stack" style="padding-top:8px"><div class="eyebrow">Was heißt das auf Deutsch?</div>' +
+        '<div class="row" style="gap:12px">' + (audioAvailable() ? speakBtn(w.en) : "") + '<div class="prompt">' + esc(w.en) + '</div></div>' +
+        optionList(opts) + '</div>';
+      foot.innerHTML = footCheck();
+    },
+    mc_de_en: function (t, body, foot) {
+      var w = t.w, opts = S.shuffle(distractors(w, "en", 3).map(function (x) { return { label: x.en, ok: false }; }).concat([{ label: w.en, ok: true }]));
+      t.opts = opts;
+      body.innerHTML = '<div class="stack" style="padding-top:8px"><div class="eyebrow">Wie heißt das auf Englisch?</div>' +
+        '<div class="prompt de">' + esc(w.de) + '</div>' + optionList(opts) + '</div>';
+      foot.innerHTML = footCheck();
+    },
+    listen: function (t, body, foot) {
+      var w = t.w, opts = S.shuffle(distractors(w, "de", 3).map(function (x) { return { label: x.de, ok: false }; }).concat([{ label: w.de, ok: true }]));
+      t.opts = opts; t.hidden = true;
+      body.innerHTML = '<div class="stack" style="padding-top:8px"><div class="eyebrow">Hör zu – was bedeutet das Wort?</div>' +
+        '<div class="row" style="justify-content:center;padding:10px 0">' + speakBtn(w.en, true) + '</div>' +
+        '<p class="small muted" style="text-align:center;margin:0">Tippe auf den Lautsprecher, um es noch einmal zu hören.</p>' +
+        optionList(opts) + '</div>';
+      foot.innerHTML = footCheck();
+      setTimeout(function () { speak(w.en); }, 300);
+    },
+    gap: function (t, body, foot) {
+      var w = t.w, parts = w.ex.split(w.gap);
+      var opts = S.shuffle(distractors(w, "en", 3).map(function (x) { return { label: x.en.replace(/^to\s+/, ""), ok: false }; })
+        .concat([{ label: w.gap, ok: true }]));
+      t.opts = opts;
+      body.innerHTML = '<div class="stack" style="padding-top:8px"><div class="eyebrow">Welches Wort fehlt?</div>' +
+        '<p class="gapline">' + esc(parts[0]) + '<u>&nbsp;</u>' + esc(parts.slice(1).join(w.gap)) + '</p>' +
+        '<div class="sub">' + esc(w.de) + '</div>' + optionList(opts) + '</div>';
+      foot.innerHTML = footCheck();
+    },
+    odd: function (t, body, foot) {
+      var w = t.w;
+      var mates = S.words().filter(function (x) { return x.unit !== w.unit; });
+      var otherUnit = mates[Math.floor(Math.random() * mates.length)].unit;
+      var three = S.shuffle(S.words().filter(function (x) { return x.unit === otherUnit; })).slice(0, 3);
+      if (three.length < 3) return RENDER.mc_en_de(t, body, foot);
+      var opts = S.shuffle([{ label: w.en, ok: true, de: w.de }].concat(three.map(function (x) { return { label: x.en, ok: false, de: x.de }; })));
+      t.opts = opts;
+      var topic = three[0].unitTitle;
+      body.innerHTML = '<div class="stack" style="padding-top:8px"><div class="eyebrow">Was passt nicht?</div>' +
+        '<h2 style="font-size:20px">Drei Wörter gehören zum Thema „' + esc(topic) + '“.</h2>' +
+        optionList(opts) + '</div>';
+      foot.innerHTML = footCheck();
+    },
+    type: function (t, body, foot) {
+      var w = t.w;
+      body.innerHTML = '<div class="stack" style="padding-top:8px"><div class="eyebrow">Schreib das englische Wort</div>' +
+        '<div class="prompt de">' + esc(w.de) + '</div>' +
+        '<input id="typeIn" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="englisches Wort">' +
+        '<p class="small muted" style="margin:0">Kleine Tippfehler zählen halb – die Schreibweise siehst du gleich.</p></div>';
+      foot.innerHTML = footCheck();
+      var inp = $("#typeIn"), btn = $("#mainBtn");
+      inp.addEventListener("input", function () { btn.disabled = !inp.value.trim(); });
+      inp.addEventListener("keydown", function (e) { if (e.key === "Enter" && inp.value.trim()) check(); });
+      setTimeout(function () { inp.focus(); }, 60);
+    },
+    spell: function (t, body, foot) {
+      var w = t.w, target = w.en.replace(/^to\s+/, "");
+      t.target = target;
+      var letters = S.shuffle(target.split("").map(function (ch, i) { return { ch: ch, i: i }; }));
+      t.built = [];
+      body.innerHTML = '<div class="stack" style="padding-top:8px"><div class="eyebrow">Rechtschreibung</div>' +
+        '<div class="row" style="gap:12px">' + (audioAvailable() ? speakBtn(w.en) : "") + '<div class="prompt de">' + esc(w.de) + '</div></div>' +
+        '<div class="slot" id="slot" data-len="' + target.length + '"></div>' +
+        '<div class="tiles" id="tiles">' + letters.map(function (l, i) {
+          return '<button class="tile" data-tile="' + i + '" data-ch="' + esc(l.ch) + '">' + (l.ch === " " ? "␣" : esc(l.ch)) + '</button>';
+        }).join("") + '</div>' +
+        '<button class="chip" data-act="undo" style="align-self:flex-start">← Buchstabe zurück</button></div>';
+      foot.innerHTML = footCheck();
+      paintSlot(t);
+      if (audioAvailable()) setTimeout(function () { speak(w.en); }, 250);
+    },
+    build: function (t, body, foot) {
+      var x = t.s, m = x.en.match(/[.?!]$/);
+      t.punct = m ? m[0] : "";
+      var parts = x.en.replace(/[.?!]$/, "").split(/\s+/);
+      t.target = parts; t.built = []; t.usedTiles = [];
+      body.innerHTML = '<div class="stack" style="padding-top:8px"><div class="eyebrow">Satzbau</div>' +
+        '<h2 style="font-size:19px">Bring die Wörter in die richtige Reihenfolge.</h2>' +
+        '<div class="card" style="background:var(--card-2);box-shadow:none"><div class="eyebrow">Gemeint ist</div>' +
+        '<p style="margin:6px 0 0;font-family:Newsreader,serif;font-size:19px">' + esc(x.de) + '</p></div>' +
+        '<div class="slot build" id="slot"></div>' +
+        '<div class="tiles" id="tiles">' + S.shuffle(parts.slice()).map(function (wd, i) {
+          return '<button class="tile word" data-tile="' + i + '" data-ch="' + esc(wd) + '">' + esc(wd) + '</button>';
+        }).join("") + '</div>' +
+        '<button class="chip" data-act="undo" style="align-self:flex-start">← Wort zurück</button></div>';
+      foot.innerHTML = footCheck();
+      paintSlot(t, true);
+    },
+    match: function (t, body, foot) {
+      var w = t.w;
+      var mates = S.shuffle(S.words().filter(function (x) { return x.unit === w.unit && x.id !== w.id; })).slice(0, 3);
+      if (mates.length < 3) return RENDER.mc_en_de(t, body, foot);
+      var set = [w].concat(mates);
+      t.set = set; t.pairs = 0; t.errors = 0; t.sel = null;
+      body.innerHTML = '<div class="stack" style="padding-top:8px"><div class="eyebrow">Zuordnen</div>' +
+        '<h2 style="font-size:19px">Tippe erst das englische, dann das deutsche Wort.</h2>' +
+        '<div class="matchgrid" id="mg">' +
+        '<div style="display:grid;gap:9px">' + S.shuffle(set.slice()).map(function (x) { return '<button data-side="en" data-wid="' + esc(x.id) + '">' + esc(x.en) + '</button>'; }).join("") + '</div>' +
+        '<div style="display:grid;gap:9px">' + S.shuffle(set.slice()).map(function (x) { return '<button data-side="de" data-wid="' + esc(x.id) + '">' + esc(x.de) + '</button>'; }).join("") + '</div>' +
+        '</div></div>';
+      foot.innerHTML = '<div class="small muted" style="text-align:center">Noch <b id="mgLeft">4</b> Paare</div>';
+    }
+  };
+
+  function paintSlot(t, words) {
+    var el = $("#slot"); if (!el) return;
+    var rest = Math.max(0, t.target.length - t.built.length);
+    if (words || t.type === "build") {
+      el.innerHTML = '<span style="font-size:19px">' + esc(t.built.join(" ")) + '</span>' +
+        (rest ? '<span style="color:var(--ink-3);font-size:19px;letter-spacing:.1em"> ' + Array(rest + 1).join("··· ") + '</span>' : "") +
+        (t.punct ? '<span style="font-size:19px;color:var(--ink-3)">' + esc(t.punct) + '</span>' : "");
+    } else {
+      el.innerHTML = '<span>' + esc(t.built.join("")) + '</span>' +
+        '<span style="color:var(--ink-3);letter-spacing:.18em">' + "·".repeat(rest) + '</span>';
+    }
+  }
+
+  /* ---------- Antwort prüfen ---------- */
+  function applyGrade(w, g, extra) {
+    var before = S.levelOf(w.id), wasBox = S.inErrorBox(w.id);
+    var res = S.grade(w.id, g);
+    SS.items++;
+    if (g > 0) {
+      SS.correct++; SS.chain++; SS.maxChain = Math.max(SS.maxChain, SS.chain);
+      S.addXp(g === 2 ? 10 : 6);
+      if (wasBox && !S.inErrorBox(w.id)) SS.boxSolved++;
+      else if (wasBox) SS.boxSolved += 0;
+      if (res.after === 4 && before < 4) SS.mastered++;
+    } else {
+      SS.chain = 0; S.addXp(2);
+      if (S.state.settings.hearts) { S.state.hearts = Math.max(0, S.state.hearts - 1); S.state.heartTs = Date.now(); }
+    }
+    if (before === 0) SS.newSeen++;
+    S.save();
+    renderHeader();
+    return res;
+  }
+  function verdict(ok, w, res, note) {
+    var foot = $("#sfoot"); if (!foot) return;
+    var lvl = res ? S.levelOf(w.id) : 0;
+    var comp = "";
+    if (ok && res) {
+      var r = S.state.w[w.id];
+      comp = res.after > res.before && res.after === 4 ? "Dieses Wort sitzt jetzt langfristig. ★"
+        : res.after > res.before ? "Stufe erreicht: " + S.LEVELS[res.after].n + "."
+        : r.iv >= 1 ? "Kommt in " + r.iv + " " + plural(r.iv, "Tag", "Tagen") + " wieder." : "";
+    } else if (!ok) comp = "Kommt gleich noch einmal – und häufiger, bis es sitzt.";
+    foot.innerHTML = '<div class="verdict ' + (ok ? "ok" : "no") + ' pop">' + (ok ? "Richtig" : "Noch nicht") +
+      (note ? " · " + esc(note) : "") +
+      '<span class="cmp">' +
+      (audioAvailable() ? '<button class="mini-speak" data-act="say" data-text="' + esc(w.en) + '" aria-label="' + esc(w.en) + ' anhören">🔊</button>' : '') +
+      esc(w.en) + " – " + esc(w.de) + (comp ? " · " + comp : "") + '</span>' +
+      (w.ex && audioAvailable() ? '<span class="cmp"><button class="mini-speak" data-act="say" data-text="' + esc(w.ex) + '" aria-label="Beispielsatz anhören">🔊</button>' + esc(w.ex) + '</span>' : "") +
+      '</div>' +
+      '<button class="btn wide lg" data-act="next" id="mainBtn">Weiter</button>';
+    var b = $("#mainBtn"); if (b) b.focus();
+  }
+  function verdictSentence(ok, x) {
+    var foot = $("#sfoot"); if (!foot) return;
+    foot.innerHTML = '<div class="verdict ' + (ok ? "ok" : "no") + ' pop">' + (ok ? "Richtig gebaut" : "So heißt es richtig") +
+      '<span class="cmp" style="font-family:Newsreader,Georgia,serif;font-size:16px;margin-top:6px">' + esc(x.en) + '</span>' +
+      '<span class="cmp">Regel: ' + esc(x.rule) + '</span></div>' +
+      (audioAvailable() ? '<button class="btn ghost wide" data-act="say" data-text="' + esc(x.en) + '" style="margin-bottom:8px">🔊 Satz anhören</button>' : "") +
+      '<button class="btn wide lg" data-act="next" id="mainBtn">Weiter</button>';
+    if (ok) speak(x.en, 0.9);
+    var b = $("#mainBtn"); if (b) b.focus();
+  }
+  function check() {
+    if (!SS || SS.answered) return;
+    var t = SS.tasks[SS.i], w = t.w;
+    if (t.type === "type") {
+      var val = $("#typeIn").value, g = judgeTyped(val, w.en);
+      SS.answered = true;
+      var res = applyGrade(w, g);
+      if (g === 0) SS.retry.push({ type: "mc_en_de", w: w });
+      verdict(g > 0, w, res, g === 1 ? "fast – achte auf die Schreibweise" : null);
+      var inp = $("#typeIn"); if (inp) inp.disabled = true;
+      return;
+    }
+    if (t.type === "build") {
+      SS.answered = true;
+      var okB = t.built.join(" ") === t.target.join(" ");
+      S.gradeSentence(t.s.id, okB ? 2 : 0);
+      SS.items++;
+      if (okB) { SS.correct++; SS.sentOk++; SS.chain++; SS.maxChain = Math.max(SS.maxChain, SS.chain); S.addXp(14); }
+      else {
+        SS.chain = 0; S.addXp(3); SS.retry.push({ type: "build", s: t.s });
+        if (S.state.settings.hearts) { S.state.hearts = Math.max(0, S.state.hearts - 1); S.state.heartTs = Date.now(); }
+      }
+      S.save(); renderHeader();
+      verdictSentence(okB, t.s);
+      return;
+    }
+    if (t.type === "spell") {
+      var built = t.built.join(""); SS.answered = true;
+      var okS = built === t.target;
+      var resS = applyGrade(w, okS ? 2 : 0);
+      if (!okS) SS.retry.push({ type: "spell", w: w });
+      verdict(okS, w, resS);
+      return;
+    }
+    if (SS.pick == null) return;
+    SS.answered = true;
+    var ok = !!t.opts[SS.pick].ok;
+    $$(".opt").forEach(function (b, i) {
+      b.disabled = true;
+      if (t.opts[i].ok) b.classList.add("right");
+      else if (i === SS.pick) b.classList.add("wrong");
+    });
+    var res2 = applyGrade(w, ok ? 2 : 0);
+    if (!ok) SS.retry.push({ type: t.type === "odd" ? "mc_en_de" : t.type, w: w });
+    if (ok && (t.type === "listen" || t.type === "mc_en_de")) speak(w.en);
+    verdict(ok, w, res2);
+  }
+  function next() {
+    if (!SS) return;
+    if (S.state.settings.hearts && S.state.hearts <= 0) return endSession("hearts");
+    SS.i++; renderTask();
+  }
+
+  /* ---------- Ereignisse ---------- */
+  sessionEl.addEventListener("click", function (e) {
+    var t = SS && SS.tasks[SS.i];
+    var say = e.target.closest("[data-act='say']");
+    if (say) { speak(say.getAttribute("data-text")); return; }
+    var opt = e.target.closest(".opt");
+    if (opt && !SS.answered) {
+      SS.pick = +opt.getAttribute("data-opt");
+      $$(".opt").forEach(function (b) { b.setAttribute("aria-pressed", b === opt); });
+      var mb = $("#mainBtn"); if (mb) mb.disabled = false;
+      return;
+    }
+    var tile = e.target.closest(".tile");
+    if (tile && t && (t.type === "spell" || t.type === "build") && !SS.answered) {
+      tile.classList.add("used"); t.built.push(tile.getAttribute("data-ch"));
+      t.usedTiles = (t.usedTiles || []); t.usedTiles.push(tile);
+      paintSlot(t);
+      $("#mainBtn").disabled = t.built.length !== t.target.length;
+      return;
+    }
+    var mg = e.target.closest("#mg button");
+    if (mg && t && t.type === "match" && !SS.answered) return matchTap(t, mg);
+    var act = e.target.closest("[data-act]"); if (!act) return;
+    var a = act.getAttribute("data-act");
+    if (a === "check") check();
+    else if (a === "next") next();
+    else if (a === "quit") { if (SS && SS.items) endSession("quit"); else closeSession(); }
+    else if (a === "close") closeSession();
+    else if (a === "again") { closeSession(); startSession({ minutes: S.state.settings.goalMin }); }
+    else if (a === "undo" && t && (t.type === "spell" || t.type === "build") && !SS.answered) {
+      if (!t.built.length) return;
+      t.built.pop(); var el = t.usedTiles.pop(); if (el) el.classList.remove("used");
+      paintSlot(t); $("#mainBtn").disabled = true;
+    }
+  });
+  function matchTap(t, btn) {
+    var side = btn.getAttribute("data-side"), wid = btn.getAttribute("data-wid");
+    if (side === "en") {
+      $$("#mg button[data-side='en']").forEach(function (b) { b.classList.remove("sel"); });
+      btn.classList.add("sel"); t.sel = { wid: wid, el: btn };
+      if (audioAvailable()) speak(S.byId(wid).en);
+      return;
+    }
+    if (!t.sel) return;
+    var ok = t.sel.wid === wid;
+    if (ok) {
+      btn.classList.add("ok"); t.sel.el.classList.add("ok"); t.sel.el.classList.remove("sel");
+      t.pairs++; t.sel = null;
+      var left = 4 - t.pairs; var lEl = $("#mgLeft"); if (lEl) lEl.textContent = left;
+      if (t.pairs === 4) {
+        SS.answered = true;
+        var g = t.errors === 0 ? 2 : 1;
+        t.set.forEach(function (x) { if (x.id !== t.w.id) S.grade(x.id, g); });
+        var res = applyGrade(t.w, g);
+        verdict(true, t.w, res, t.errors ? t.errors + " Fehlversuch" + (t.errors > 1 ? "e" : "") : null);
+      }
+    } else {
+      t.errors++; btn.classList.add("no");
+      setTimeout(function () { btn.classList.remove("no"); }, 500);
+    }
+  }
+  document.addEventListener("keydown", function (e) {
+    if (sessionEl.hidden || !SS) return;
+    var t = SS.tasks[SS.i];
+    if (e.key === "Enter") { var b = $("#mainBtn"); if (b && !b.disabled) { e.preventDefault(); b.click(); } return; }
+    if (!SS.answered && t && t.opts && /^[1-4]$/.test(e.key)) {
+      var o = $$(".opt")[+e.key - 1]; if (o) o.click();
+    }
+  });
+
+  view.addEventListener("click", function (e) {
+    var act = e.target.closest("[data-act]"); if (!act) return;
+    var a = act.getAttribute("data-act"), st = S.state;
+    if (a === "say") { if (!speak(act.getAttribute("data-text"))) toast("Dieses Gerät hat keine Sprachausgabe bereit."); return; }
+    if (a === "install") {
+      if (!installPrompt) return toast("Dein Browser bietet die Installation gerade nicht an.");
+      installPrompt.prompt();
+      installPrompt.userChoice.then(function (r) {
+        installPrompt = null;
+        if (r && r.outcome !== "accepted") toast("Abgebrochen – du kannst es jederzeit nachholen.");
+        render();
+      });
+      return;
+    }
+    if (a === "voicetest") {
+      if (!st.settings.audio) return toast("Erst „Aussprache vorlesen“ einschalten.");
+      var okV = speak("This is the English voice of your device.", 0.9);
+      toast(okV ? (voice ? "Stimme: " + voice.name + " (" + voice.lang + ")" : "Standardstimme des Browsers wird genutzt.") : "Der Browser bietet hier keine Sprachausgabe an.");
+      return;
+    }
+    if (a === "arena") { if (global.ARENA) global.ARENA.start(act.getAttribute("data-id")); return; }
+    if (a === "start") {
+      startSession({ minutes: +(act.getAttribute("data-min") || st.settings.goalMin), mode: act.getAttribute("data-mode") || "mix", unit: act.getAttribute("data-unit") || null });
+    } else if (a === "track") {
+      var nt = act.getAttribute("data-t");
+      if (nt !== st.settings.track) { S.setTrack(nt); toast(nt === "business" ? "Business English aktiv." : "Schule aktiv."); render(); view.scrollTop = 0; }
+    } else if (a === "klasse") {
+      var raw = act.getAttribute("data-k"), k = /^\d+$/.test(raw) ? +raw : raw;
+      var arr = st.settings.track === "business" ? st.settings.bizGroups : st.settings.klassen;
+      var i = arr.indexOf(k);
+      if (i >= 0) { if (arr.length > 1) arr.splice(i, 1); }
+      else arr.push(k);
+      st.settings.units = []; S.save(true); render();
+    } else if (a === "unit") { detailUnit = act.getAttribute("data-id"); render(); }
+    else if (a === "back") { detailUnit = null; render(); }
+    else if (a === "readall") {
+      var u = S.units().filter(function (x) { return x.id === act.getAttribute("data-id"); })[0];
+      if (u) speak(u.words.map(function (w) { return w[0]; }).join(", "), 0.85);
+    }
+    else if (a === "buy") { var r = S.buy(act.getAttribute("data-id")); toast(r.error || ("Gekauft: " + r.item.label)); renderHeader(); render(); }
+    else if (a === "equip") {
+      var it = S.SHOP.filter(function (x) { return x.id === act.getAttribute("data-id"); })[0];
+      if (it) { if (it.kind === "avatar") st.profile.avatar = it.val; else st.profile.theme = it.val; S.save(true); renderHeader(); render(); }
+    }
+    else if (a === "csvimport") {
+      var res = S.parseCsv($("#csvText").value, $("#csvTitle").value.trim() || "Eigene Liste");
+      if (res.error) return toast(res.error);
+      toast(res.count + " Wörter übernommen" + (res.skipped ? " (" + res.skipped + " Zeilen übersprungen)" : ""));
+      render();
+    }
+    else if (a === "delcustom") { S.removeCustom(act.getAttribute("data-id")); toast("Liste entfernt."); render(); }
+    else if (a === "exp") {
+      var box = $("#expBox"); box.hidden = false;
+      box.value = act.getAttribute("data-kind") === "csv" ? S.exportCsv() : S.exportProgress();
+      box.select();
+      try {
+        navigator.clipboard.writeText(box.value).then(function () { toast("In die Zwischenablage kopiert."); },
+          function () { toast("Markiert – jetzt kopieren."); });
+      } catch (err) { toast("Markiert – jetzt kopieren."); }
+    }
+    else if (a === "impopen") { $("#impWrap").hidden = false; $("#impBox").focus(); }
+    else if (a === "impdo") {
+      var ri = S.importProgress($("#impBox").value);
+      if (ri.error) return toast(ri.error);
+      toast("Lernstand eingespielt."); renderHeader(); render();
+    }
+    else if (a === "reset") {
+      if (confirm("Wirklich den gesamten Fortschritt löschen? Eigene Wortlisten bleiben erhalten.")) {
+        S.resetProgress(); toast("Fortschritt zurückgesetzt."); renderHeader(); render();
+      }
+    }
+  });
+
+  tabs.addEventListener("click", function (e) {
+    var b = e.target.closest("button[data-tab]"); if (!b) return;
+    tab = b.getAttribute("data-tab"); detailUnit = null; render(); view.scrollTop = 0;
+  });
+
+  function render() {
+    S.rollDay();
+    $$("#tabs button").forEach(function (b) { b.setAttribute("aria-current", b.getAttribute("data-tab") === tab); });
+    renderHeader();
+    if (tab === "home") viewHome();
+    else if (tab === "arena") viewArena();
+    else if (tab === "units") viewUnits();
+    else if (tab === "stats") viewStats();
+    else viewParent();
+  }
+
+  global.VTUI = {
+    toast: toast,
+    refreshHeader: renderHeader,
+    afterArena: function () { render(); }
+  };
+
+  S.load();
+  render();
+  setInterval(function () { if (sessionEl.hidden) { S.regenHearts(); renderHeader(); } }, 30000);
+})(window);
