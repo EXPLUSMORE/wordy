@@ -653,7 +653,7 @@
       return '<div class="card" style="background:var(--card-2);box-shadow:none;padding:12px 14px">' +
         '<div class="row" style="gap:10px;align-items:center">' + (audioAvailable() ? '<button class="mini-speak" data-act="say" data-text="' + esc(x.en) + '" aria-label="Satz anhören">🔊</button>' : "") +
         '<div class="eyebrow" style="flex:1">' + TENSES[i].label + '</div></div>' +
-        '<p style="margin:8px 0 2px;font-family:Newsreader,serif;font-size:20px;line-height:1.35">' + sentHtml(x) + '</p>' +
+        '<p class="vsp">' + sentHtml(x) + '</p>' +
         '<p class="small muted" style="margin:0">Zeitwort' + (x.time ? ' „' + esc(x.time) + '“' : "") + ' → ' + TENSES[i].name + '</p>' +
         (withDe ? '<p class="small muted" style="margin:2px 0 0">' + esc(x.de) + '</p>' : "") + '</div>';
     }).join("");
@@ -891,7 +891,7 @@
       t.opts = opts;
       body.innerHTML = '<div class="stack" style="padding-top:8px"><div class="eyebrow">Welche Form passt? · ' + esc(v.inf) + '</div>' +
         '<div class="row" style="gap:12px;align-items:center">' + (audioAvailable() ? speakBtn(x.en.replace(new RegExp("\\b" + reEsc(x.form) + "\\b"), "blank")) : "") +
-        '<p class="gapline" style="margin:0;flex:1 1 auto">' + sentHtml(x, true) + ' <span class="small muted">(' + esc(v.inf) + ')</span></p></div>' +
+        '<p class="gapline vgap" style="margin:0;flex:1 1 auto">' + sentHtml(x, true) + ' <span class="small muted">(' + esc(v.inf) + ')</span></p></div>' +
         '<div class="sub">' + esc(x.de) + '</div>' + optionList(opts) + '</div>';
       foot.innerHTML = footCheck();
     },
