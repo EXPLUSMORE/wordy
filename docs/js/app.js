@@ -56,21 +56,23 @@
     pickVoice();
     window.speechSynthesis.onvoiceschanged = pickVoice;
   }
-  /* Browser (vor allem auf Handys) schneiden den Anfang ab, wenn die Sprachausgabe "kalt" ist oder
-     gleich nach cancel() neu startet. Deshalb: nur bei laufender Ausgabe abbrechen und dann kurz warten,
-     und nach längerer Pause zuerst eine unhörbare Silbe schicken, die den Audiokanal öffnet. */
+  /* Handy-Browser öffnen den Audiokanal erst beim Sprechen und verlieren dabei den Anfang des Satzes
+     (nur beim ersten Vorlesen nach einer Pause). Deshalb: war die Ausgabe länger still, wird zuerst eine
+     kaum hörbare Silbe gesprochen und der eigentliche Satz erst nach einem Vorlauf gestartet.
+     Die Länge des Vorlaufs ist unter Setup einstellbar (Standard 500 ms). */
   var lastSpoke = 0;
+  function speechLead() { var v = S.state.settings.speechLead; return v == null ? 500 : v; }
   function primeSpeech() {
     var synth = window.speechSynthesis; if (!synth) return;
-    var w = new SpeechSynthesisUtterance(".");
-    w.volume = 0; w.rate = 2;
+    var w = new SpeechSynthesisUtterance("Okay");
+    w.volume = 0.02; w.rate = 2;
     synth.speak(w);
   }
-  function speak(text, rate, lang) {
+  function speak(text, rate, lang, forceCold) {
     if (!S.state.settings.audio || !window.speechSynthesis) return false;
     try {
       var synth = window.speechSynthesis, now = Date.now();
-      var busy = synth.speaking || synth.pending, cold = !busy && now - lastSpoke > 8000;
+      var busy = synth.speaking || synth.pending, cold = !busy && (forceCold || now - lastSpoke > 8000);
       if (busy) synth.cancel();
       var de = lang === "de";
       var u = new SpeechSynthesisUtterance(de ? String(text) : String(text).replace(/^to\s+/i, ""));
@@ -80,8 +82,10 @@
       u.lang = (vo && vo.lang) || (de ? "de-DE" : "en-GB");
       u.rate = rate || (de ? 1 : 0.92);
       lastSpoke = now;
-      var go = function () { if (cold) primeSpeech(); synth.speak(u); };
-      if (busy) setTimeout(go, 150); else go();
+      var lead = speechLead();
+      if (busy) setTimeout(function () { synth.speak(u); }, 150);
+      else if (cold && lead > 0) { primeSpeech(); setTimeout(function () { synth.speak(u); }, lead); }
+      else synth.speak(u);
       return true;
     } catch (e) { return false; }
   }
@@ -492,6 +496,10 @@
       }).join("") + '</select></label>' +
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Aussprache vorlesen<br><span class="small muted">Nutzt die englische Stimme des Geräts</span></span>' +
       '<input type="checkbox" id="setAudio" ' + (st.settings.audio ? "checked" : "") + ' style="width:auto"></label>' +
+      '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Vorlauf beim Vorlesen<br><span class="small muted">Länger, wenn der Anfang eines Satzes fehlt. „Stimme testen“ zeigt die Wirkung.</span></span>' +
+      '<select id="setLead" style="width:auto">' + [[0, "Aus"], [500, "Kurz"], [1000, "Mittel"], [1600, "Lang"]].map(function (o) {
+        return '<option value="' + o[0] + '"' + (speechLead() === o[0] ? " selected" : "") + '>' + o[1] + '</option>';
+      }).join("") + '</select></label>' +
       '<button class="btn ghost" data-act="voicetest" style="margin-top:10px">🔊 Stimme testen</button>' +
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Herzen benutzen<br><span class="small muted">Aus = Üben ohne Abbruch</span></span>' +
       '<input type="checkbox" id="setHearts" ' + (st.settings.hearts ? "checked" : "") + ' style="width:auto"></label>' +
@@ -535,6 +543,7 @@
     $("#setGoal").onchange = function () { st.settings.goalMin = +this.value; S.save(true); renderHeader(); };
     $("#setNew").onchange = function () { st.settings.newPerDay = +this.value; S.save(true); };
     $("#setAudio").onchange = function () { st.settings.audio = this.checked; S.save(true); };
+    $("#setLead").onchange = function () { st.settings.speechLead = +this.value; S.save(true); };
     $("#setHearts").onchange = function () { st.settings.hearts = this.checked; if (this.checked === false) st.hearts = 5; S.save(true); renderHeader(); };
     $("#csvFile").onchange = function () {
       var f = this.files && this.files[0]; if (!f) return;
@@ -999,7 +1008,7 @@
     }
     if (a === "voicetest") {
       if (!st.settings.audio) return toast("Erst „Aussprache vorlesen“ einschalten.");
-      var okV = speak("This is the English voice of your device.", 0.9);
+      var okV = speak("This is the English voice of your device.", 0.9, null, true);
       toast(okV ? (voice ? "Stimme: " + voice.name + " (" + voice.lang + ")" : "Standardstimme des Browsers wird genutzt.") : "Der Browser bietet hier keine Sprachausgabe an.");
       return;
     }
