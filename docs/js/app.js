@@ -159,6 +159,35 @@
   }
   function groupLabel(k) { return typeof k === "number" ? "Klasse " + k : k; }
 
+  /* ---------- Unregelmäßige Verben: Karte, Liste ---------- */
+  function verbCard() {
+    var vs = S.verbStats(), vp = S.verbPools(), due = vp.box.length + vp.due.length;
+    return '<section class="card"><div class="row"><div style="flex:1 1 auto"><div class="eyebrow">Unregelmäßige Verben</div>' +
+      '<h2 style="font-size:19px">' + vs.seen + ' von ' + vs.total + ' geübt · ' + vs.mastered + ' sitzen</h2>' +
+      '<p class="small muted" style="margin:4px 0 0">' + (due ? due + " " + plural(due, "Verb ist", "Verben sind") + " zur Wiederholung dran. " : "") +
+      'Go – went – gone: alle Formen, die man in der Schule braucht. In normalen Runden kommen sie immer wieder zwischendurch.</p></div></div>' +
+      '<div class="row wrap" style="margin-top:12px;gap:8px"><button class="btn" data-act="start" data-mode="verbs" data-min="5">Verben üben</button>' +
+      '<button class="btn ghost" data-act="verblist">Alle Verben ansehen</button></div></section>';
+  }
+  function viewVerbList() {
+    var vs = S.verbStats(), list = S.verbs();
+    var rows = list.map(function (v) {
+      var lv = S.levelOf(v.id), r = S.state.w[v.id];
+      return '<div class="wordrow">' +
+        (audioAvailable() ? '<button class="mini-speak" data-act="say" data-text="' + esc(verbWord(v).en) + '" aria-label="' + esc(v.inf) + ' anhören">🔊</button>' : '') +
+        '<span class="en" style="flex:1 1 auto">' + esc(v.inf) + ' – ' + esc(v.past) + ' – ' + esc(v.pp) + '<br><span class="small muted">' + esc(v.de) + '</span></span>' +
+        (r && r.no ? '<span class="pill" title="Fehler">✗ ' + r.no + '</span>' : '') +
+        '<span class="pill l' + lv + '">' + esc(S.LEVELS[lv].n) + '</span></div>';
+    }).join("");
+    view.innerHTML = '<div class="stack">' +
+      '<button class="btn ghost" data-act="back" style="align-self:flex-start">← Zurück</button>' +
+      '<section class="card"><div class="eyebrow">Unregelmäßige Verben</div>' +
+      '<h1 style="font-size:24px">Verbenliste</h1>' +
+      '<p class="small muted" style="margin:6px 0 0">' + vs.total + ' Verben · ' + vs.seen + ' geübt · ' + vs.mastered + ' gemeistert. Infinitive – Simple Past – Past Participle.</p>' +
+      '<div class="row" style="margin-top:12px;gap:8px"><button class="btn" data-act="start" data-mode="verbs" data-min="5">Verben üben</button></div></section>' +
+      '<section class="card"><div class="eyebrow">Alle Verben</div>' + rows + '</section></div>';
+  }
+
   /* ================= START ================= */
   function viewHome() {
     var st = S.state, p = S.pools(), stt = S.stats(), r = S.rankOf(st.xp);
@@ -200,6 +229,7 @@
         '<button class="btn soft wide" data-act="start" data-mode="box" data-min="5" style="margin-top:12px">Fehlerkartei üben</button></section>';
     }
 
+    html += verbCard();
     html += '<section class="card"><div class="eyebrow">Heutige Missionen</div><div style="margin-top:6px">' +
       st.daily.missions.map(function (m) {
         var pc = Math.min(100, Math.round(m.p * 100 / m.goal));
@@ -262,6 +292,7 @@
   /* ================= EINHEITEN ================= */
   function viewUnits() {
     var st = S.state, stt = S.stats();
+    if (detailUnit === "__verbs") return viewVerbList();
     if (detailUnit) return viewUnitDetail(detailUnit);
     var biz = st.settings.track === "business";
     var groups = biz ? ["Basis", "Aufbau", "Profi", "Smalltalk", "Redewendungen"] : [6, 7, 8];
@@ -277,6 +308,7 @@
         ? "Basis deckt Büroalltag, Telefon, E-Mail und Geschäftsreise ab. Aufbau geht in Vertrieb, Marketing, Markt, Finanzen und Verhandlung. Profi behandelt Führung, Strategie, Recht, Steuern, IT-Sicherheit und Nachhaltigkeit. Smalltalk ist alles, was zwischen den Terminen gesprochen wird, Redewendungen sind die 180 Wendungen, die man nicht Wort für Wort übersetzen kann. Unten erscheinen nur die gewählten Stufen."
         : "Gewählte Jahrgänge kommen im Training vor und erscheinen unten. Einzelne Einheiten kannst du dort gezielt üben.") + '</p></section>';
 
+    if (!biz) html += verbCard();
     var byGroup = {}, order = [];
     stt.perUnit.forEach(function (u) {
       if (u.track !== "eigen" && sel.indexOf(u.k) < 0) return;   // nur die gewählten Stufen bzw. Jahrgänge
@@ -416,6 +448,14 @@
       '<div class="small muted">von ' + sn2.total + ' Sätzen geübt</div></div>' +
       '<div style="flex:1 1 auto"><div class="bar"><i style="width:' + Math.round(sn2.seen * 100 / Math.max(1, sn2.total)) + '%"></i></div>' +
       '<div class="small muted" style="margin-top:6px">' + sn2.mastered + ' sitzen langfristig · ' + sn2.ok + ' richtig gebaut</div></div></div></section>';
+
+    var vst = S.verbStats();
+    html += '<section class="card"><div class="eyebrow">Unregelmäßige Verben</div>' +
+      '<div class="row" style="margin-top:10px;gap:16px"><div><div style="font-family:Newsreader,serif;font-size:30px;font-weight:600" class="tnum">' + vst.seen + '</div>' +
+      '<div class="small muted">von ' + vst.total + ' Verben geübt</div></div>' +
+      '<div style="flex:1 1 auto"><div class="bar"><i style="width:' + Math.round(vst.seen * 100 / Math.max(1, vst.total)) + '%"></i></div>' +
+      '<div class="small muted" style="margin-top:6px">' + vst.mastered + ' sitzen langfristig</div></div></div>' +
+      '<button class="btn ghost" data-act="verblist" style="margin-top:10px">Verbenliste öffnen</button></section>';
 
     html += '<section class="card"><div class="eyebrow">Abzeichen</div><div class="badges" style="margin-top:10px">' +
       S.BADGES.map(function (b) {
@@ -588,6 +628,18 @@
     if (out.length < n) out = out.concat(S.shuffle(pool).slice(0, n - out.length));
     var seen = {}; return out.filter(function (x) { if (seen[x[key]]) return false; seen[x[key]] = 1; return true; }).slice(0, n);
   }
+  /* Verben laufen durch dieselben Anzeige- und Wertungsfunktionen wie Wörter; dafür ein Wort-förmiges Objekt */
+  function verbWord(v) {
+    return { id: v.id, en: v.en, de: v.de + (v.alt ? " (alle Formen: " + v.past + " · " + v.pp + ")" : ""), ex: v.ex };
+  }
+  function verbTasks(list) {
+    var out = [];
+    list.forEach(function (v) {
+      if (S.levelOf(v.id) === 0 && !(S.state.w[v.id] && S.state.w[v.id].no)) out.push({ type: "verbintro", v: v });
+      out.push({ type: "verb", v: v });
+    });
+    return out;
+  }
   function buildTasks(list, sentOnly) {
     var t = [];
     if (!sentOnly) list.forEach(function (w) {
@@ -607,9 +659,28 @@
   function startSession(opts) {
     S.rollDay(); S.regenHearts();
     var sentOnly = opts.mode === "sent";
+    if (opts.mode === "verbs") {
+      var vl = S.planVerbs(Math.max(5, Math.round((opts.minutes || 5) * 60 / 20)), { newMax: 5 });
+      if (!vl.length) { toast("Gerade sind keine Verben fällig. Schau später wieder vorbei."); return; }
+      SS = {
+        tasks: verbTasks(vl), i: 0, chain: 0, maxChain: 0, items: 0, correct: 0,
+        newSeen: 0, boxSolved: 0, mastered: 0, sentOk: 0, start: Date.now(), answered: false,
+        retry: [], mode: "verbs", ended: false
+      };
+      sessionEl.hidden = false; document.body.style.overflow = "hidden";
+      return renderTask();
+    }
     var list = sentOnly ? S.planSentences(Math.max(5, Math.round((opts.minutes || 5) * 60 / 16))) : S.planSession(opts);
     if (!list.length) { toast(sentOnly ? "Alle Sätze dieses Bereichs sind gerade erledigt." : "Für diese Auswahl gibt es gerade nichts zu üben."); return; }
     var tasks = buildTasks(list, sentOnly);
+    /* Unregelmäßige Verben: in normalen Schulrunden immer wieder eingestreut */
+    if (!sentOnly && !opts.unit && opts.mode !== "box" && opts.mode !== "new" && S.state.settings.track === "schule") {
+      var vs = S.planVerbs(Math.max(1, Math.round(tasks.length / 8)), { mix: true });
+      verbTasks(vs).forEach(function (vt, i) {
+        var pos = Math.min(tasks.length, Math.round((i + 1) * tasks.length / (vs.length + 1)) + 2);
+        tasks.splice(pos, 0, vt);
+      });
+    }
     if (!tasks.length) { toast("Hier gibt es gerade nichts zu üben."); return; }
     SS = {
       tasks: tasks, i: 0, chain: 0, maxChain: 0, items: 0, correct: 0,
@@ -748,6 +819,37 @@
         optionList(opts) + '</div>';
       foot.innerHTML = footCheck();
     },
+    verbintro: function (t, body, foot) {
+      var v = t.v, w = verbWord(v);
+      body.innerHTML = '<div class="stack" style="padding-top:8px">' +
+        '<div class="eyebrow">Neues unregelmäßiges Verb</div>' +
+        '<div class="row" style="gap:14px;align-items:center">' + (audioAvailable() ? speakBtn(w.en, true) : "") +
+        '<div><div class="prompt">' + esc(v.inf) + '</div><div class="sub" style="margin-top:4px">' + esc(v.de) + '</div></div></div>' +
+        '<div class="card" style="background:var(--card-2);box-shadow:none"><div class="eyebrow">Die drei Formen</div>' +
+        '<p style="margin:6px 0 0;font-family:Newsreader,serif;font-size:22px">' + esc(v.inf) + ' – ' + esc(v.past) + ' – ' + esc(v.pp) + '</p></div>' +
+        (v.ex ? '<div class="card" style="background:var(--card-2);box-shadow:none"><div class="eyebrow">Im Satz</div><p style="margin:6px 0 0;font-family:Newsreader,serif;font-size:18px">' + esc(v.ex) + '</p></div>' : "") +
+        '</div>';
+      foot.innerHTML = '<button class="btn wide lg" data-act="next">Verstanden</button>';
+      if (audioAvailable()) setTimeout(function () { speak(w.en); }, 250);
+    },
+    verb: function (t, body, foot) {
+      var v = t.v;
+      body.innerHTML = '<div class="stack" style="padding-top:8px"><div class="eyebrow">Unregelmäßiges Verb</div>' +
+        '<div class="row" style="gap:12px;align-items:center">' + (audioAvailable() ? speakBtn(v.inf) : "") +
+        '<div><div class="prompt">' + esc(v.inf) + '</div><div class="sub" style="margin-top:4px">' + esc(v.de) + '</div></div></div>' +
+        '<label class="small muted" for="vPast" style="margin-bottom:-6px">Simple Past</label>' +
+        '<input id="vPast" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="z. B. went">' +
+        '<label class="small muted" for="vPp" style="margin-bottom:-6px">Past Participle</label>' +
+        '<input id="vPp" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="z. B. gone">' +
+        '<p class="small muted" style="margin:0">Beides muss stimmen. Kleine Tippfehler zählen halb.</p></div>';
+      foot.innerHTML = footCheck();
+      var a = $("#vPast"), b = $("#vPp"), btn = $("#mainBtn");
+      function upd() { btn.disabled = !(a.value.trim() && b.value.trim()); }
+      a.addEventListener("input", upd); b.addEventListener("input", upd);
+      a.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); b.focus(); } });
+      b.addEventListener("keydown", function (e) { if (e.key === "Enter" && !btn.disabled) check(); });
+      setTimeout(function () { a.focus(); }, 60);
+    },
     type: function (t, body, foot) {
       var w = t.w;
       body.innerHTML = '<div class="stack" style="padding-top:8px"><div class="eyebrow">Schreib das englische Wort</div>' +
@@ -885,6 +987,18 @@
   function check() {
     if (!SS || SS.answered) return;
     var t = SS.tasks[SS.i], w = t.w;
+    if (t.type === "verb") {
+      var v = t.v, vw = verbWord(v);
+      var ga = judgeTyped($("#vPast").value, v.past), gb = judgeTyped($("#vPp").value, v.pp);
+      var gv = ga === 0 || gb === 0 ? 0 : (ga === 2 && gb === 2 ? 2 : 1);
+      SS.answered = true;
+      var rv = applyGrade(vw, gv);
+      if (gv === 0) SS.retry.push({ type: "verb", v: v });
+      verdict(gv > 0, vw, rv, gv === 1 ? "fast – achte auf die Schreibweise"
+        : gv === 0 ? "Deine Antwort: " + ($("#vPast").value.trim() || "–") + " / " + ($("#vPp").value.trim() || "–") : null);
+      $("#vPast").disabled = true; $("#vPp").disabled = true;
+      return;
+    }
     if (t.type === "type") {
       var val = $("#typeIn").value, g = judgeTyped(val, w.en);
       SS.answered = true;
@@ -1039,6 +1153,7 @@
       else arr.push(k);
       st.settings.units = []; S.save(true); render();
     } else if (a === "unit") { detailUnit = act.getAttribute("data-id"); render(); }
+    else if (a === "verblist") { detailUnit = "__verbs"; tab = "units"; render(); view.scrollTop = 0; }
     else if (a === "back") { detailUnit = null; render(); }
     else if (a === "readall") {
       var u = S.units().filter(function (x) { return x.id === act.getAttribute("data-id"); })[0];

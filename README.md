@@ -33,7 +33,9 @@ js/engine.js    Lernmotor: Speicherung, Wiederholungsplanung, Statistik, Shop-Ka
 js/cosmetics.js Zeichnungen, Effekte und Töne der Sammelobjekte
 js/app.js       Oberfläche und Aufgabentypen
 js/arena.js     Die vier Zeitmodi
-data/*.js       Vokabeln und Sätze (reine Daten, keine Logik)
+data/*.js       Vokabeln, Sätze und Verben (reine Daten, keine Logik)
+data/lernbuch.js  Vokabeln aus dem Schulbuch, seitenweise erfasst
+data/verben.js  unregelmäßige Verben (Infinitiv, Past, Participle)
 icons/          App-Symbole
 build.js        erzeugt docs/ und wordy.html
 docs/           gebaute Website, von GitHub Pages ausgeliefert
@@ -93,6 +95,20 @@ Auf iPhone und iPad muss der Ton einmal per Tippen freigegeben werden.
 Setup → eigene Liste einfügen oder Datei laden:
 `englisch;deutsch;beispielsatz` — Semikolon, Komma oder Tabulator, eine
 Kopfzeile wird erkannt. Eigene Listen sind in beiden Bereichen aktiv.
+
+### Unregelmäßige Verben
+Eigene Rubrik mit 108 Verben der Schule (`data/verben.js`), Stufe 1–3 nach
+Häufigkeit. Abgefragt werden Simple Past und Past Participle, beides muss
+stimmen; mehrere gültige Formen (learnt/learned) stehen mit `/`. Neue Verben
+bekommen erst eine Einführungskarte. Geübt wird mit „Verben üben“ (Start,
+Einheiten) oder automatisch: in normalen Schulrunden kommt etwa jede achte
+Aufgabe ein Verb, bevorzugt fällige und fehlerhafte. Die Verbenliste zeigt
+alle Verben mit Lernstufe; der Lernstand liegt im selben Speicher wie die Wörter.
+
+### Vokabeln aus dem Schulbuch
+Fotos der Heftseiten oder Kapitel schicken; die Vokabeln werden als Einheiten in
+`data/lernbuch.js` eingetragen (Titel mit Buch, Unit und Seite, Schuljahr `k`)
+und erscheinen danach unter „Einheiten“ im passenden Jahrgang.
 
 ### Shop und Sammelalbum
 Münzen gibt es nur für Aussehen. Der Shop (Fortschritt) hat sieben Reiter:

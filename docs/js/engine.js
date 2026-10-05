@@ -425,6 +425,47 @@
     return out.slice(0, n);
   }
 
+  /* ---------- Unregelmäßige Verben ----------
+     Eigene Liste (data/verben.js), aber derselbe Lernspeicher wie die Wörter: state.w["v#<n>"]. */
+  var verbs = (global.VERBS || []).map(function (v, i) {
+    var first = function (x) { return String(x).split("/")[0]; };
+    return { id: "v#" + i, inf: v[0], past: v[1], pp: v[2], de: v[3], lvl: v[4] || 1, ex: v[5] || "",
+      en: v[0] + ", " + first(v[1]) + ", " + first(v[2]), alt: /\//.test(v[1] + v[2]) };
+  });
+  function verbPools() {
+    var now = Date.now(), due = [], box = [], fresh = [], learning = [];
+    verbs.forEach(function (v) {
+      var r = state.w[v.id];
+      if (!r || !r.reps && !r.no) { fresh.push(v); return; }
+      if (inErrorBox(v.id)) { box.push(v); return; }
+      if (r.due <= now) due.push(v); else learning.push(v);
+    });
+    due.sort(function (a, b) { return state.w[a.id].due - state.w[b.id].due; });
+    learning.sort(function (a, b) { return state.w[a.id].due - state.w[b.id].due; });
+    fresh.sort(function (a, b) { return a.lvl - b.lvl; });   // häufige Verben zuerst
+    return { due: due, box: box, fresh: fresh, learning: learning, all: verbs };
+  }
+  /* n Verben für eine Übung: Fehlerkartei und Fälliges zuerst, dann höchstens newMax neue, dann der Rest.
+     opts.mix = zum Einstreuen in normale Runden: nur so viele neue, wie das Tageslimit erlaubt. */
+  function planVerbs(n, opts) {
+    opts = opts || {};
+    var p = verbPools(), out = [];
+    var newMax = opts.mix ? Math.max(0, Math.min(1, (state.settings.newVerbsPerDay || 3) - (state.daily.newVerbs || 0))) : (opts.newMax == null ? 5 : opts.newMax);
+    out = p.box.slice(0, n);
+    out = out.concat(p.due.slice(0, n - out.length));
+    var fresh = p.fresh.slice(0, Math.min(newMax, n - out.length));
+    out = out.concat(fresh);
+    if (!opts.mix && out.length < n) out = out.concat(p.learning.slice(0, n - out.length));
+    if (!opts.mix && out.length < n) out = out.concat(shuffle(p.fresh.slice(fresh.length)).slice(0, n - out.length));
+    if (fresh.length) state.daily.newVerbs = (state.daily.newVerbs || 0) + fresh.length;
+    return out;
+  }
+  function verbStats() {
+    var dist = [0, 0, 0, 0, 0];
+    verbs.forEach(function (v) { dist[levelOf(v.id)]++; });
+    return { total: verbs.length, seen: verbs.length - dist[0], mastered: dist[4], dist: dist };
+  }
+
   /* ---------- Fortschritt, Level, Belohnungen ---------- */
   function rankOf(xp) {
     var r = RANKS[0], next = null;
@@ -613,7 +654,7 @@
     srec: srec, groupsOf: groupsOf, setTrack: setTrack,
     rankOf: rankOf, addXp: addXp, addCoins: addCoins, finishSession: finishSession,
     stats: stats, today: today, shuffle: shuffle, regenHearts: regenHearts, heartsIn: heartsIn,
-    rollDay: rollDay, parseCsv: parseCsv, removeCustom: removeCustom,
+    rollDay: rollDay, verbs: function () { return verbs; }, verbPools: verbPools, planVerbs: planVerbs, verbStats: verbStats, parseCsv: parseCsv, removeCustom: removeCustom,
     backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
