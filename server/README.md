@@ -48,6 +48,10 @@ Danach nginx einrichten (`nginx.conf.example`, Zertifikat per `certbot --nginx -
 Der Server hört nur auf `127.0.0.1`, von außen erreichbar ist er ausschließlich über nginx mit HTTPS.
 **Ohne HTTPS nicht betreiben:** Die App darf nur über https senden, und das Passwort wird sonst im Klartext übertragen.
 
+## Variante: Server mit Bitnami-Apache (statt nginx)
+Läuft auf dem Rechner bereits ein Bitnami-Apache auf Port 80/443, gibt es keinen nginx. Dann übernimmt Apache die Rolle von nginx:
+`apache-bitnami.conf.example` ist die passende Vorlage (eigener virtueller Host nur für die Wordy-Subdomain). Zertifikat per Let's Encrypt im Webroot-Verfahren, ohne bestehende Seiten anzufassen.
+
 ## Sicherung
 Alles steht in `DB_FILE`. Eine konsistente Kopie, auch im laufenden Betrieb:
 ```bash
