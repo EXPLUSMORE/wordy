@@ -16,7 +16,7 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "";
 const ALLOW_ORIGIN = process.env.ALLOW_ORIGIN || "*";      // Adresse(n) der App, z. B. https://explusmore.github.io
 const TZ = process.env.TZ_DISPLAY || "Europe/Berlin";
 const TRUST_PROXY = process.env.TRUST_PROXY === "1";
-const MAX_BODY = 512 * 1024;
+const MAX_BODY = 512 * 1024, MAX_STATE = 3 * 1024 * 1024, KEEP_STATES = 30;
 const INVITE_DAYS = 7;
 const MAIL = {
   host: process.env.SMTP_HOST || "", port: +process.env.SMTP_PORT || 587, secure: process.env.SMTP_SECURE || "",
@@ -52,6 +52,8 @@ db.exec(`
     title TEXT NOT NULL, created INTEGER NOT NULL);
   CREATE TABLE IF NOT EXISTS plans (id INTEGER PRIMARY KEY, player INTEGER NOT NULL REFERENCES players(id) ON DELETE CASCADE,
     title TEXT NOT NULL, exam TEXT NOT NULL, units TEXT NOT NULL, coins INTEGER NOT NULL DEFAULT 0, created INTEGER NOT NULL);
+  CREATE TABLE IF NOT EXISTS states (player INTEGER NOT NULL REFERENCES players(id) ON DELETE CASCADE, day TEXT NOT NULL,
+    ts INTEGER NOT NULL, bytes INTEGER NOT NULL, coins INTEGER NOT NULL DEFAULT 0, words INTEGER NOT NULL DEFAULT 0, d TEXT NOT NULL, PRIMARY KEY(player, day));
   CREATE TABLE IF NOT EXISTS kv (key TEXT PRIMARY KEY, val TEXT NOT NULL);
   CREATE TABLE IF NOT EXISTS snaps (player INTEGER NOT NULL REFERENCES players(id) ON DELETE CASCADE,
     key TEXT NOT NULL, ts INTEGER NOT NULL, d TEXT NOT NULL, PRIMARY KEY(player, key));
@@ -84,6 +86,11 @@ const q = {
   plan: db.prepare("SELECT * FROM plans WHERE id = ?"),
   addPlan: db.prepare("INSERT INTO plans(player, title, exam, units, coins, created) VALUES (?, ?, ?, ?, ?, ?)"),
   delPlan: db.prepare("DELETE FROM plans WHERE id = ?"),
+  putState: db.prepare("INSERT INTO states(player, day, ts, bytes, coins, words, d) VALUES (?, ?, ?, ?, ?, ?, ?) ON CONFLICT(player, day) DO UPDATE SET ts = excluded.ts, bytes = excluded.bytes, coins = excluded.coins, words = excluded.words, d = excluded.d"),
+  latestState: db.prepare("SELECT day, ts, bytes, coins, words, d FROM states WHERE player = ? ORDER BY ts DESC LIMIT 1"),
+  stateDay: db.prepare("SELECT day, ts, bytes, coins, words, d FROM states WHERE player = ? AND day = ?"),
+  stateList: db.prepare("SELECT day, ts, bytes, coins, words FROM states WHERE player = ? ORDER BY day DESC"),
+  pruneStates: db.prepare("DELETE FROM states WHERE player = ? AND day NOT IN (SELECT day FROM states WHERE player = ? ORDER BY day DESC LIMIT ?)"),
   kvGet: db.prepare("SELECT val FROM kv WHERE key = ?"),
   kvSet: db.prepare("INSERT INTO kv(key, val) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET val = excluded.val")
 };
@@ -125,10 +132,10 @@ function send(res, code, body, headers) {
   }, headers || {}));
   res.end(isStr ? body : JSON.stringify(body));
 }
-function readJson(req) {
+function readJson(req, max) {
   return new Promise((resolve, reject) => {
     let n = 0; const parts = [];
-    req.on("data", c => { n += c.length; if (n > MAX_BODY) { reject(Object.assign(new Error("zu groß"), { status: 413 })); req.destroy(); } else parts.push(c); });
+    req.on("data", c => { n += c.length; if (n > (max || MAX_BODY)) { reject(Object.assign(new Error("zu groß"), { status: 413 })); req.destroy(); } else parts.push(c); });
     req.on("end", () => { try { resolve(parts.length ? JSON.parse(Buffer.concat(parts).toString("utf8")) : {}); } catch (e) { reject(Object.assign(new Error("Ungültiges JSON"), { status: 400 })); } });
     req.on("error", reject);
   });
@@ -141,7 +148,7 @@ function cors(req, res) {
     res.setHeader("Access-Control-Allow-Origin", ALLOW_ORIGIN === "*" ? "*" : o);
     res.setHeader("Vary", "Origin");
     res.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS");
     res.setHeader("Access-Control-Max-Age", "86400");
   }
 }
@@ -255,7 +262,7 @@ function report(pid, days) {
     metaTs: meta ? meta.ts : null,
     totals: { sec: sum(x => x.sec), items: sum(x => x.items), correct: sum(x => x.correct), neu: sum(x => x.neu), activeDays: dayList.filter(x => x.items > 0).length },
     week: { sec: last7.reduce((a, x) => a + x.sec, 0), items: last7.reduce((a, x) => a + x.items, 0), correct: last7.reduce((a, x) => a + x.correct, 0), activeDays: last7.filter(x => x.items > 0).length },
-    goals: weekGoals(pid), plans: plansOf(pid),
+    goals: weekGoals(pid), plans: plansOf(pid), backups: q.stateList.all(pid).map(stateMeta),
     events: c.n, lastEvent: c.last
   };
 }
@@ -436,6 +443,26 @@ function mailTick() {
 }
 setInterval(mailTick, 60000).unref();
 
+
+/* ---------- Vollständige Sicherung des Lernstands ---------- */
+function apiStatePut(pid, body) {
+  const st = body && body.state;
+  if (!st || st.v !== 2 || typeof st.w !== "object" || !st.w || typeof st.settings !== "object") return [400, { error: "Kein gültiger Lernstand." }];
+  const words = Object.keys(st.w).length, last = q.latestState.get(pid);
+  // Ein leerer Stand (neues Gerät, gelöschte Daten) darf eine vorhandene Sicherung nie ersetzen
+  if (words === 0 && last && last.words > 0) return [409, { error: "Auf dem Server liegt ein Lernstand mit Fortschritt. Bitte zuerst wiederherstellen." }];
+  const d = JSON.stringify(st), now = Date.now();
+  q.putState.run(pid, dayOf(now), now, Buffer.byteLength(d), Math.round(+st.coins || 0), words, d);
+  q.pruneStates.run(pid, pid, KEEP_STATES);
+  return [200, { ok: true, ts: now }];
+}
+const stateMeta = r => ({ day: r.day, ts: r.ts, bytes: r.bytes, coins: r.coins, words: r.words });
+function apiStateGet(pid, day) {
+  const r = day ? q.stateDay.get(pid, day) : q.latestState.get(pid);
+  if (!r) return [404, { error: "Keine Sicherung vorhanden." }];
+  return [200, Object.assign(stateMeta(r), { state: JSON.parse(r.d) })];
+}
+
 function adminPlayers() {
   return q.players.all().map(p => {
     const c = q.evCount.get(p.id), m = snap(p.id, "meta"), devs = q.devices.all(p.id);
@@ -475,6 +502,19 @@ const server = http.createServer(async (req, res) => {
     if (p === "/api/snapshot" && req.method === "POST") {
       const pid = playerOf(req); if (!pid) return send(res, 401, { error: "Nicht verbunden." });
       const [c, b] = apiSnapshot(pid, await readJson(req)); return send(res, c, b);
+    }
+    if (p === "/api/state" && req.method === "PUT") {
+      const pid = playerOf(req); if (!pid) return send(res, 401, { error: "Nicht verbunden." });
+      const [c, b] = apiStatePut(pid, await readJson(req, MAX_STATE)); return send(res, c, b);
+    }
+    if (p === "/api/state" && req.method === "GET") {
+      const pid = playerOf(req); if (!pid) return send(res, 401, { error: "Nicht verbunden." });
+      const day = url.searchParams.get("day"); if (day && !/^\d{4}-\d\d-\d\d$/.test(day)) return send(res, 400, { error: "Datum ungültig." });
+      const [c, b] = apiStateGet(pid, day); return send(res, c, b);
+    }
+    if (p === "/api/state/list" && req.method === "GET") {
+      const pid = playerOf(req); if (!pid) return send(res, 401, { error: "Nicht verbunden." });
+      return send(res, 200, { items: q.stateList.all(pid).map(stateMeta) });
     }
     if (p === "/api/sync" && req.method === "GET") {
       const pid = playerOf(req); if (!pid) return send(res, 401, { error: "Nicht verbunden." });
@@ -517,6 +557,14 @@ const server = http.createServer(async (req, res) => {
         if (!pl) return send(res, 404, { error: "Unbekannt." });
         if (!m[2] && req.method === "GET") return send(res, 200, { id: pid, name: pl.name });
         if (m[2] === "report" && req.method === "GET") return send(res, 200, report(pid, Math.min(90, Math.max(7, +url.searchParams.get("days") || 30))));
+        if (m[2] === "states" && req.method === "GET") return send(res, 200, q.stateList.all(pid).map(stateMeta));
+        if (m[2] === "state" && req.method === "GET") {
+          const day = url.searchParams.get("day"); if (day && !/^\d{4}-\d\d-\d\d$/.test(day)) return send(res, 400, { error: "Datum ungültig." });
+          const r = day ? q.stateDay.get(pid, day) : q.latestState.get(pid);
+          if (!r) return send(res, 404, { error: "Keine Sicherung vorhanden." });
+          res.writeHead(200, { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store", "Content-Disposition": 'attachment; filename="wordy-lernstand-' + String(pl.name).replace(/[^A-Za-z0-9_-]/g, "_") + "-" + r.day + '.json"' });
+          return res.end(r.d);
+        }
         if (m[2] === "goals" && req.method === "GET") return send(res, 200, weekGoals(pid));
         if (m[2] === "goals" && req.method === "POST") { const [c, b] = createGoal(pid, await readJson(req)); return send(res, c, b); }
         if (m[2] === "plans" && req.method === "GET") return send(res, 200, plansOf(pid));

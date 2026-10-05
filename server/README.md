@@ -74,6 +74,12 @@ Läuft auf dem Rechner bereits ein Bitnami-Apache auf Port 80/443, gibt es keine
 `apache-bitnami-http.conf.example` (vor dem Zertifikat) und `apache-bitnami-https.conf.example` (danach) sind die Vorlagen, je ein eigener virtueller Host nur für die Wordy-Subdomain. Zertifikat per Let's Encrypt im Webroot-Verfahren, ohne bestehende Seiten anzufassen.
 
 ## Sicherung
+Es gibt drei Ebenen:
+1. **Lernstand pro Spieler:** Die App schickt nach jeder Runde den kompletten Stand an den Server (`PUT /api/state`). Pro Spieler bleiben die letzten 30 Tage (`states`). Wiederherstellen in der App: beim Verbinden eines leeren Geräts oder unter Setup → Eltern-Dashboard → „Lernstand wiederherstellen“. Im Dashboard kann jeder Stand als Datei heruntergeladen werden. Ein leerer Stand ersetzt nie eine vorhandene Sicherung (Antwort 409).
+2. **Datenbankdatei:** `backup.js` (unten), täglich per Cron.
+3. **Ganzer Server:** Lightsail-Snapshots (Instanz → Snapshots → Automatische Snapshots).
+
+### Datenbankkopie
 Alles steht in `DB_FILE`. `backup.js` legt eine konsistente Kopie an (auch im laufenden Betrieb) und löscht Kopien nach 30 Tagen.
 Täglich um 3:15 Uhr per Cron, ohne das Programm `sqlite3`:
 ```bash

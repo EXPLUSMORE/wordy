@@ -98,6 +98,24 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     assert.ok(/Magnus/.test(decoded) && /Übungszeit/.test(decoded) && /Wochenziele/.test(decoded) && /Lernplan/.test(decoded), "Mail enthält Spieler, Zeit, Ziele, Lernplan");
     assert.ok(decoded.includes("https://track.wordy.explusmore.com"), "Mail enthält den Dashboard-Link");
     assert.ok(/Subject: =\?UTF-8/.test(mailGot) || /Subject: Wordy/.test(mailGot), "Betreff vorhanden");
+
+    // ---- Vollständige Sicherung des Lernstands
+    const stFull = { v: 2, coins: 77, xp: 5, settings: { klassen: ["Headlight 2"] }, w: { "H2-1a#0": { reps: 2, iv: 3 }, "H2-1a#1": { reps: 1 } }, profile: { owned: ["av:🦊"] } };
+    assert.equal((await J("/api/state", { method: "PUT", headers: T2(pr.j.token), body: JSON.stringify({ state: { v: 1 } }) })).s, 400, "ungültiger Stand");
+    assert.equal((await J("/api/state", { method: "PUT", headers: T2(pr.j.token), body: JSON.stringify({ state: stFull }) })).s, 200);
+    const empty = { v: 2, coins: 0, xp: 0, settings: {}, w: {} };
+    assert.equal((await J("/api/state", { method: "PUT", headers: T2(pr.j.token), body: JSON.stringify({ state: empty }) })).s, 409, "leerer Stand ersetzt keine Sicherung");
+    const sl = await J("/api/state/list", { headers: T2(pr.j.token) });
+    assert.equal(sl.j.items.length, 1); assert.equal(sl.j.items[0].words, 2); assert.equal(sl.j.items[0].coins, 77);
+    const sg = await J("/api/state", { headers: T2(pr.j.token) });
+    assert.equal(sg.j.state.coins, 77); assert.equal(sg.j.state.w["H2-1a#0"].iv, 3, "Stand kommt unverändert zurück");
+    assert.equal((await J("/api/state?day=2020-01-01", { headers: T2(pr.j.token) })).s, 404);
+    assert.equal((await J("/api/state")).s, 401, "Sicherung nur mit Schlüssel");
+    const dl = await fetch(base + "/api/admin/players/" + mk.j.id + "/state", { headers: { Authorization: auth } });
+    assert.equal(dl.status, 200); assert.ok(/attachment/.test(dl.headers.get("content-disposition")), "Download als Datei");
+    assert.equal((await dl.json()).coins, 77);
+    const rp2 = await J("/api/admin/players/" + mk.j.id + "/report?days=14", { headers: H });
+    assert.equal(rp2.j.backups.length, 1, "Dashboard kennt die Sicherung");
     await J("/api/admin/players/" + mk.j.id + "/revoke", { method: "POST", headers: H });
     assert.equal((await J("/api/events", { method: "POST", headers: T, body: "{}" })).s, 401, "nach Trennen gesperrt");
     console.log("Alle Prüfungen bestanden.");

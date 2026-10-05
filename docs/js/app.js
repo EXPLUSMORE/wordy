@@ -471,8 +471,11 @@
         '<p class="small muted" style="margin:0 0 10px">Die Eltern sehen, wann und was gelernt wurde: Übungszeit, richtige und falsche Antworten, Fortschritt pro Einheit und die Käufe im Shop. ' +
         (i.last ? 'Zuletzt gesendet ' + agoText(i.last) + '. ' : 'Noch nichts gesendet. ') + (i.pending ? i.pending + ' Einträge warten auf Netz.' : '') + '</p>' +
         (i.error ? '<p class="small" style="margin:0 0 10px;color:var(--bad)">' + esc(i.error) + '</p>' : '') +
+        '<p class="small muted" style="margin:0 0 10px">Dein Lernstand wird nach jeder Runde auch auf dem Server gesichert' + (i.stateAt ? ' (zuletzt ' + agoText(i.stateAt) + ')' : '') + '. Geht das Handy kaputt oder werden die Daten gelöscht, kannst du ihn hier wiederherstellen.</p>' +
+        (i.stateErr ? '<p class="small" style="margin:0 0 10px;color:var(--bad)">' + esc(i.stateErr) + '</p>' : '') +
         '<div class="row wrap" style="gap:8px"><button class="btn ghost" data-act="syncnow">Jetzt senden</button>' +
-        '<button class="btn ghost" data-act="syncoff">Verbindung trennen</button></div></section>';
+        '<button class="btn ghost" data-act="restoreopen">Lernstand wiederherstellen</button>' +
+        '<button class="btn ghost" data-act="syncoff">Verbindung trennen</button></div><div id="restoreBox" style="margin-top:10px"></div></section>';
     }
     return '<section class="card"><div class="eyebrow">Eltern-Dashboard</div>' +
       '<p class="small muted" style="margin:6px 0 10px">Optional: Verbinde dieses Gerät mit dem Wordy-Server der Eltern. Dann sehen sie deinen Lernfortschritt. Den Code bekommst du von ihnen. Ohne Verbindung läuft alles wie bisher.</p>' +
@@ -1504,8 +1507,33 @@
       var inp = $("#syncCode"), txt = inp ? inp.value : ""; act.disabled = true; act.textContent = "Verbinde …";
       window.WordySync.pair(txt).then(function (r) {
         if (r.error) { toast(r.error); act.disabled = false; act.textContent = "Verbinden"; return; }
-        toast("Verbunden. Deine Eltern sehen jetzt deinen Lernfortschritt."); render();
+        toast("Verbunden. Deine Eltern sehen jetzt deinen Lernfortschritt.");
+        if (r.backups && r.backups.length) {
+          var b0 = r.backups[0], dt = new Date(b0.ts);
+          if (confirm("Auf dem Server liegt ein gesicherter Lernstand von " + r.name + " (" + dt.toLocaleDateString("de-DE") + ", " + b0.words + " Wörter, " + b0.coins + " Münzen). Wiederherstellen?")) {
+            window.WordySync.restore(b0.day).then(function (rr) { toast(rr.error || "Lernstand wiederhergestellt."); render(); });
+            return;
+          }
+        }
+        render();
       });
+    }
+    else if (a === "restoreopen") {
+      var box = $("#restoreBox"); if (box) box.innerHTML = '<p class="small muted">Lade …</p>';
+      window.WordySync.stateList().then(function (l) {
+        if (!box) return;
+        if (!l.length) { box.innerHTML = '<p class="small muted">Auf dem Server liegt noch keine Sicherung.</p>'; return; }
+        box.innerHTML = '<label class="small muted">Sicherung wählen</label><select id="restoreDay" style="width:100%;margin:4px 0 8px">' + l.map(function (x) {
+          return '<option value="' + esc(x.day) + '">' + esc(x.day.split("-").reverse().join(".")) + ' · ' + x.words + ' Wörter · ' + x.coins + ' Münzen</option>';
+        }).join("") + '</select><button class="btn soft wide" data-act="restorego">Diese Sicherung wiederherstellen</button>' +
+          '<p class="small muted" style="margin:6px 0 0">Der jetzige Stand auf diesem Gerät wird dabei ersetzt. Eine Kopie bleibt als „vor Wiederherstellung“ erhalten.</p>';
+      });
+    }
+    else if (a === "restorego") {
+      var sel = $("#restoreDay"), dayv = sel ? sel.value : "";
+      if (!dayv || !confirm("Lernstand vom " + dayv.split("-").reverse().join(".") + " wiederherstellen? Der Stand auf diesem Gerät wird ersetzt.")) return;
+      act.disabled = true; act.textContent = "Stelle wieder her …";
+      window.WordySync.restore(dayv).then(function (r) { if (r.error) { toast(r.error); act.disabled = false; act.textContent = "Diese Sicherung wiederherstellen"; return; } toast("Lernstand wiederhergestellt."); render(); });
     }
     else if (a === "syncnow") { window.WordySync.snapshot().then(function () { return window.WordySync.flush(); }).then(function (ok) { toast(ok ? "Gesendet." : "Server gerade nicht erreichbar."); render(); }); }
     else if (a === "syncoff") { if (confirm("Verbindung zum Eltern-Dashboard trennen? Bereits gesendete Daten bleiben beim Server, es wird nichts Neues mehr gesendet.")) { window.WordySync.disconnect(); toast("Getrennt."); render(); } }

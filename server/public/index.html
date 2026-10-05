@@ -189,7 +189,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     h += "</div>";
 
     if (r.buys.length) h += '<div class="card"><h2>Käufe im Shop</h2><table>' + r.buys.map(function (b) { return "<tr><td>" + fmtDate(b.ts) + "</td><td>" + esc(b.name) + '</td><td class="n">🪙 ' + b.cost + "</td></tr>"; }).join("") + "</table></div>";
-    h += '<div class="card" id="mailCard"></div>';
+    h += '<div class="card" id="backupCard"></div><div class="card" id="mailCard"></div>';
     h += '<p class="small muted">Es werden nur Lerndaten gespeichert (Wörter, Antworten, Zeiten, Käufe). Magnus sieht in der App, dass seine Eltern den Fortschritt sehen.</p>';
     view.innerHTML = h;
 
@@ -198,7 +198,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     document.getElementById("ren").onclick = function () { var n = prompt("Neuer Name:", p.name); if (n) post("/api/admin/players/" + p.id + "/rename", { name: n }).then(function () { loadPlayers(p.id); }); };
     document.getElementById("rev").onclick = function () { if (confirm("Alle verbundenen Geräte von " + p.name + " trennen? Neu verbinden geht mit einem neuen Code.")) post("/api/admin/players/" + p.id + "/revoke").then(function () { loadPlayers(p.id); }); };
     document.getElementById("del").onclick = function () { if (confirm(p.name + " und alle gespeicherten Lerndaten endgültig löschen?")) api("/api/admin/players/" + p.id, { method: "DELETE" }).then(function () { cur = null; loadPlayers(); }); };
-    drawGoals(p, r); drawPlans(p, r); drawMail();
+    drawGoals(p, r); drawPlans(p, r); drawBackups(p, r); drawMail();
     Array.prototype.forEach.call(view.querySelectorAll("tr[data-u]"), function (tr) { tr.onclick = function () { showUnit(p, tr.getAttribute("data-u")); }; });
   }
   var catCache = {};
@@ -268,6 +268,16 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     Array.prototype.forEach.call(el.querySelectorAll("button[data-pdel]"), function (b) { b.onclick = function () { if (confirm("Lernplan löschen?")) api("/api/admin/plans/" + b.getAttribute("data-pdel"), { method: "DELETE" }).then(show); }; });
   }
 
+  function drawBackups(p, r) {
+    var el = document.getElementById("backupCard"); if (!el) return;
+    var b = r.backups || [];
+    el.innerHTML = "<h2>Lernstand-Sicherung</h2>" + (b.length
+      ? '<p style="margin:0 0 8px">Die App sichert den kompletten Lernstand (Wörter, Münzen, Shop, Einstellungen) nach jeder Runde. Die letzten ' + b.length + " Tage bleiben erhalten. Zurückspielen geht in der App unter Setup → Eltern-Dashboard → „Lernstand wiederherstellen“. Zusätzlich kannst du jeden Stand als Datei herunterladen.</p>" +
+        '<table><tr><th>Tag</th><th>Zuletzt</th><th class="n">Wörter</th><th class="n">Münzen</th><th></th></tr>' + b.slice(0, 10).map(function (x) {
+          return "<tr><td>" + x.day.split("-").reverse().join(".") + "</td><td>" + fmtDate(x.ts) + '</td><td class="n">' + x.words + '</td><td class="n">' + x.coins + '</td><td><a href="/api/admin/players/' + p.id + "/state?day=" + x.day + '" download>Herunterladen</a></td></tr>';
+        }).join("") + "</table>"
+      : '<p class="muted small" style="margin:0">Noch keine Sicherung. Sie entsteht nach der nächsten Lernrunde mit der neuen App-Version.</p>');
+  }
   function drawMail() {
     var el = document.getElementById("mailCard"); if (!el) return;
     api("/api/admin/mail").then(function (m) {

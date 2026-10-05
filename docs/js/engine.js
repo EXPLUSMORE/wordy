@@ -240,6 +240,14 @@
     state = Object.assign(freshState(), b.s); buildCatalogue(state); rollDay(); save(true);
     return { ok: true };
   }
+  /* Lernstand aus einer Sicherung (vom Server) einspielen; der bisherige Stand bleibt als "pre"-Kopie erhalten */
+  function restoreState(obj) {
+    if (!obj || obj.v !== 2 || !obj.w || !obj.settings) return { error: "Das ist kein gültiger Lernstand." };
+    writeBackup("pre", JSON.stringify(state));
+    state = Object.assign(freshState(), obj); buildCatalogue(state); rollDay(); save(true);
+    return { ok: true };
+  }
+  function isFresh() { return !Object.keys(state.w).length && !(state.totals && state.totals.items); }
   function save(now) {
     if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
     if (!now) { saveTimer = setTimeout(function () { save(true); }, 400); return; }
@@ -804,7 +812,7 @@
     rankOf: rankOf, addXp: addXp, addCoins: addCoins, finishSession: finishSession,
     stats: stats, today: today, shuffle: shuffle, regenHearts: regenHearts, heartsIn: heartsIn,
     rollDay: rollDay, verbs: function () { return verbs; }, verbPools: verbPools, planVerbs: planVerbs, verbStats: verbStats, parseCsv: parseCsv, removeCustom: removeCustom,
-    backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
+    restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
     resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, owns: owns, isActive: isActive, minXp: minXp, defaultOf: defaultOf

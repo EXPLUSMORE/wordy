@@ -15,7 +15,7 @@
   function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
 
   W.connected = function () { var c = cfg(); return !!(c && c.url && c.token); };
-  W.info = function () { var c = cfg() || {}; return { connected: W.connected(), name: c.name || "", url: c.url || "", last: c.last || 0, pending: queue().length, error: c.err || "" }; };
+  W.info = function () { var c = cfg() || {}; return { connected: W.connected(), name: c.name || "", url: c.url || "", last: c.last || 0, pending: queue().length, error: c.err || "", stateAt: c.stateAt || 0, stateErr: c.stateErr || "" }; };
 
   /* Ereignis vormerken (nur wenn verbunden) */
   W.log = function (kind, d) {
@@ -54,6 +54,7 @@
   W.snapshot = function () {
     var c = cfg(); if (!c || !c.token || !g.fetch) return Promise.resolve(false);
     var st = VT.state, words = {}, units = {}, id;
+    if (VT.isFresh()) return Promise.resolve(false);   // ein leerer Stand (neues Gerät) darf die Übersicht auf dem Server nicht überschreiben
     for (id in st.w) { var r = st.w[id]; if (r && r.reps != null) words[id] = [VT.levelOf(id), r.ok || 0, r.no || 0, r.last || 0]; }
     VT.units().forEach(function (u) { if (u.track === "schule") units[u.id] = { id: u.id, title: u.title, k: u.k, total: u.words.length }; });
     var rk = VT.rankOf(st.xp), d = st.daily || {};
@@ -145,6 +146,38 @@
     return { texts: out, sig: sig };
   }
 
+
+  /* ---------- Vollständige Sicherung des Lernstands auf dem Server ---------- */
+  var lastState = 0;
+  function api(c, method, path, body) {
+    return g.fetch(c.url + path, { method: method, headers: { "Content-Type": "application/json", Authorization: "Bearer " + c.token }, body: body ? JSON.stringify(body) : undefined });
+  }
+  W.pushState = function (force) {
+    var c = cfg(); if (!c || !c.token || !g.fetch) return Promise.resolve(false);
+    if (VT.isFresh()) return Promise.resolve(false);
+    if (!force && Date.now() - lastState < 10 * 60000) return Promise.resolve(false);
+    lastState = Date.now();
+    return api(c, "PUT", "/api/state", { state: VT.state }).then(function (r) {
+      if (r.status === 409) { setCfg({ stateErr: "Der Server hat einen Lernstand mit Fortschritt. Bitte unter Setup zuerst wiederherstellen." }); return false; }
+      if (!r.ok) throw new Error(String(r.status));
+      setCfg({ stateAt: Date.now(), stateErr: "" }); return true;
+    }).catch(function () { lastState = 0; return false; });
+  };
+  W.stateList = function () {
+    var c = cfg(); if (!c || !c.token) return Promise.resolve([]);
+    return api(c, "GET", "/api/state/list").then(function (r) { return r.ok ? r.json() : { items: [] }; }).then(function (j) { return j.items || []; }).catch(function () { return []; });
+  };
+  W.restore = function (day) {
+    var c = cfg(); if (!c || !c.token) return Promise.resolve({ error: "Nicht verbunden." });
+    return api(c, "GET", "/api/state" + (day ? "?day=" + encodeURIComponent(day) : "")).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (x) {
+        if (!x.ok) return { error: x.j && x.j.error || "Wiederherstellen hat nicht geklappt." };
+        var res = VT.restoreState(x.j.state); if (res.error) return res;
+        setCfg({ stateErr: "" }); lastState = 0;
+        return W.snapshot().then(function () { return W.pull(true); }).then(function () { return { ok: true, ts: x.j.ts, coins: x.j.coins }; });
+      }).catch(function () { return { error: "Der Server ist nicht erreichbar." }; });
+  };
+
   /* Verbinden mit dem Code der Eltern: "https://server#ABCD-EFGH" */
   W.pair = function (text) {
     var s = String(text || "").trim(), m = s.match(/^(https?:\/\/[^\s#]+?)\/?#?\s*([A-Za-z0-9]{4}-?[A-Za-z0-9]{4})$/);
@@ -156,7 +189,8 @@
         if (!x.ok) return { error: x.j && x.j.error || "Verbinden hat nicht geklappt." };
         lsSet("wordy.sync." + pid(), { url: url, token: x.j.token, name: x.j.name, last: 0 });
         W.log("hello", { v: g.WORDY_VERSION || "" });
-        return W.snapshot().then(function () { return flush(false); }).then(function () { return W.pull(true); }).then(function () { return { ok: true, name: x.j.name }; });
+        if (VT.isFresh()) return flush(false).then(function () { return W.pull(true); }).then(function () { return W.stateList(); }).then(function (l) { return { ok: true, name: x.j.name, backups: l }; });
+        return W.snapshot().then(function () { return flush(false); }).then(function () { return W.pull(true); }).then(function () { W.pushState(true); return { ok: true, name: x.j.name }; });
       }).catch(function () { return { error: "Der Server ist nicht erreichbar. Gibt es Netz, und stimmt die Adresse?" }; });
   };
   W.disconnect = function () { try { g.localStorage.removeItem("wordy.sync." + pid()); g.localStorage.removeItem("wordy.q." + pid()); g.localStorage.removeItem("wordy.cfg." + pid()); } catch (e) {} };
@@ -166,11 +200,11 @@
     if (!W.connected()) return;
     W.log("ss", d);
     W.check();
-    flush(false).then(function () { return W.snapshot(); }).then(function () { return W.pull(true); });
+    flush(false).then(function () { return W.snapshot(); }).then(function () { return W.pull(true); }).then(function () { return W.pushState(true); });
   };
   W.maybeSnapshot = function () { if (W.connected() && Date.now() - lastSnap > 10 * 60000) W.snapshot(); };
 
-  g.addEventListener("visibilitychange", function () { if (g.document.visibilityState === "hidden") flush(true); else { flush(false); W.pull(false); } });
+  g.addEventListener("visibilitychange", function () { if (g.document.visibilityState === "hidden") { flush(true); W.pushState(false); } else { flush(false); W.pull(false); } });
   g.addEventListener("online", function () { flush(false); });
   setTimeout(function () { flush(false); W.maybeSnapshot(); W.pull(true); }, 4000);
 })(window);

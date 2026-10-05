@@ -439,7 +439,7 @@ html.ar-open, html.ar-open body{overflow:hidden}
 </style>
 
 
-<script>window.WORDY_VERSION="1.7.0";window.WORDY_BUILD="7cbacd0143";</script>
+<script>window.WORDY_VERSION="1.8.0";window.WORDY_BUILD="03bb896f56";</script>
 </head>
 <body>
 <div id="app">
@@ -3305,6 +3305,14 @@ window.VERBS = [
     state = Object.assign(freshState(), b.s); buildCatalogue(state); rollDay(); save(true);
     return { ok: true };
   }
+  /* Lernstand aus einer Sicherung (vom Server) einspielen; der bisherige Stand bleibt als "pre"-Kopie erhalten */
+  function restoreState(obj) {
+    if (!obj || obj.v !== 2 || !obj.w || !obj.settings) return { error: "Das ist kein gültiger Lernstand." };
+    writeBackup("pre", JSON.stringify(state));
+    state = Object.assign(freshState(), obj); buildCatalogue(state); rollDay(); save(true);
+    return { ok: true };
+  }
+  function isFresh() { return !Object.keys(state.w).length && !(state.totals && state.totals.items); }
   function save(now) {
     if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
     if (!now) { saveTimer = setTimeout(function () { save(true); }, 400); return; }
@@ -3869,7 +3877,7 @@ window.VERBS = [
     rankOf: rankOf, addXp: addXp, addCoins: addCoins, finishSession: finishSession,
     stats: stats, today: today, shuffle: shuffle, regenHearts: regenHearts, heartsIn: heartsIn,
     rollDay: rollDay, verbs: function () { return verbs; }, verbPools: verbPools, planVerbs: planVerbs, verbStats: verbStats, parseCsv: parseCsv, removeCustom: removeCustom,
-    backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
+    restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
     resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, owns: owns, isActive: isActive, minXp: minXp, defaultOf: defaultOf
@@ -4761,8 +4769,11 @@ window.VERBS = [
         '<p class="small muted" style="margin:0 0 10px">Die Eltern sehen, wann und was gelernt wurde: Übungszeit, richtige und falsche Antworten, Fortschritt pro Einheit und die Käufe im Shop. ' +
         (i.last ? 'Zuletzt gesendet ' + agoText(i.last) + '. ' : 'Noch nichts gesendet. ') + (i.pending ? i.pending + ' Einträge warten auf Netz.' : '') + '</p>' +
         (i.error ? '<p class="small" style="margin:0 0 10px;color:var(--bad)">' + esc(i.error) + '</p>' : '') +
+        '<p class="small muted" style="margin:0 0 10px">Dein Lernstand wird nach jeder Runde auch auf dem Server gesichert' + (i.stateAt ? ' (zuletzt ' + agoText(i.stateAt) + ')' : '') + '. Geht das Handy kaputt oder werden die Daten gelöscht, kannst du ihn hier wiederherstellen.</p>' +
+        (i.stateErr ? '<p class="small" style="margin:0 0 10px;color:var(--bad)">' + esc(i.stateErr) + '</p>' : '') +
         '<div class="row wrap" style="gap:8px"><button class="btn ghost" data-act="syncnow">Jetzt senden</button>' +
-        '<button class="btn ghost" data-act="syncoff">Verbindung trennen</button></div></section>';
+        '<button class="btn ghost" data-act="restoreopen">Lernstand wiederherstellen</button>' +
+        '<button class="btn ghost" data-act="syncoff">Verbindung trennen</button></div><div id="restoreBox" style="margin-top:10px"></div></section>';
     }
     return '<section class="card"><div class="eyebrow">Eltern-Dashboard</div>' +
       '<p class="small muted" style="margin:6px 0 10px">Optional: Verbinde dieses Gerät mit dem Wordy-Server der Eltern. Dann sehen sie deinen Lernfortschritt. Den Code bekommst du von ihnen. Ohne Verbindung läuft alles wie bisher.</p>' +
@@ -5794,8 +5805,33 @@ window.VERBS = [
       var inp = $("#syncCode"), txt = inp ? inp.value : ""; act.disabled = true; act.textContent = "Verbinde …";
       window.WordySync.pair(txt).then(function (r) {
         if (r.error) { toast(r.error); act.disabled = false; act.textContent = "Verbinden"; return; }
-        toast("Verbunden. Deine Eltern sehen jetzt deinen Lernfortschritt."); render();
+        toast("Verbunden. Deine Eltern sehen jetzt deinen Lernfortschritt.");
+        if (r.backups && r.backups.length) {
+          var b0 = r.backups[0], dt = new Date(b0.ts);
+          if (confirm("Auf dem Server liegt ein gesicherter Lernstand von " + r.name + " (" + dt.toLocaleDateString("de-DE") + ", " + b0.words + " Wörter, " + b0.coins + " Münzen). Wiederherstellen?")) {
+            window.WordySync.restore(b0.day).then(function (rr) { toast(rr.error || "Lernstand wiederhergestellt."); render(); });
+            return;
+          }
+        }
+        render();
       });
+    }
+    else if (a === "restoreopen") {
+      var box = $("#restoreBox"); if (box) box.innerHTML = '<p class="small muted">Lade …</p>';
+      window.WordySync.stateList().then(function (l) {
+        if (!box) return;
+        if (!l.length) { box.innerHTML = '<p class="small muted">Auf dem Server liegt noch keine Sicherung.</p>'; return; }
+        box.innerHTML = '<label class="small muted">Sicherung wählen</label><select id="restoreDay" style="width:100%;margin:4px 0 8px">' + l.map(function (x) {
+          return '<option value="' + esc(x.day) + '">' + esc(x.day.split("-").reverse().join(".")) + ' · ' + x.words + ' Wörter · ' + x.coins + ' Münzen</option>';
+        }).join("") + '</select><button class="btn soft wide" data-act="restorego">Diese Sicherung wiederherstellen</button>' +
+          '<p class="small muted" style="margin:6px 0 0">Der jetzige Stand auf diesem Gerät wird dabei ersetzt. Eine Kopie bleibt als „vor Wiederherstellung“ erhalten.</p>';
+      });
+    }
+    else if (a === "restorego") {
+      var sel = $("#restoreDay"), dayv = sel ? sel.value : "";
+      if (!dayv || !confirm("Lernstand vom " + dayv.split("-").reverse().join(".") + " wiederherstellen? Der Stand auf diesem Gerät wird ersetzt.")) return;
+      act.disabled = true; act.textContent = "Stelle wieder her …";
+      window.WordySync.restore(dayv).then(function (r) { if (r.error) { toast(r.error); act.disabled = false; act.textContent = "Diese Sicherung wiederherstellen"; return; } toast("Lernstand wiederhergestellt."); render(); });
     }
     else if (a === "syncnow") { window.WordySync.snapshot().then(function () { return window.WordySync.flush(); }).then(function (ok) { toast(ok ? "Gesendet." : "Server gerade nicht erreichbar."); render(); }); }
     else if (a === "syncoff") { if (confirm("Verbindung zum Eltern-Dashboard trennen? Bereits gesendete Daten bleiben beim Server, es wird nichts Neues mehr gesendet.")) { window.WordySync.disconnect(); toast("Getrennt."); render(); } }
@@ -6340,7 +6376,7 @@ window.VERBS = [
   function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
 
   W.connected = function () { var c = cfg(); return !!(c && c.url && c.token); };
-  W.info = function () { var c = cfg() || {}; return { connected: W.connected(), name: c.name || "", url: c.url || "", last: c.last || 0, pending: queue().length, error: c.err || "" }; };
+  W.info = function () { var c = cfg() || {}; return { connected: W.connected(), name: c.name || "", url: c.url || "", last: c.last || 0, pending: queue().length, error: c.err || "", stateAt: c.stateAt || 0, stateErr: c.stateErr || "" }; };
 
   /* Ereignis vormerken (nur wenn verbunden) */
   W.log = function (kind, d) {
@@ -6379,6 +6415,7 @@ window.VERBS = [
   W.snapshot = function () {
     var c = cfg(); if (!c || !c.token || !g.fetch) return Promise.resolve(false);
     var st = VT.state, words = {}, units = {}, id;
+    if (VT.isFresh()) return Promise.resolve(false);   // ein leerer Stand (neues Gerät) darf die Übersicht auf dem Server nicht überschreiben
     for (id in st.w) { var r = st.w[id]; if (r && r.reps != null) words[id] = [VT.levelOf(id), r.ok || 0, r.no || 0, r.last || 0]; }
     VT.units().forEach(function (u) { if (u.track === "schule") units[u.id] = { id: u.id, title: u.title, k: u.k, total: u.words.length }; });
     var rk = VT.rankOf(st.xp), d = st.daily || {};
@@ -6470,6 +6507,38 @@ window.VERBS = [
     return { texts: out, sig: sig };
   }
 
+
+  /* ---------- Vollständige Sicherung des Lernstands auf dem Server ---------- */
+  var lastState = 0;
+  function api(c, method, path, body) {
+    return g.fetch(c.url + path, { method: method, headers: { "Content-Type": "application/json", Authorization: "Bearer " + c.token }, body: body ? JSON.stringify(body) : undefined });
+  }
+  W.pushState = function (force) {
+    var c = cfg(); if (!c || !c.token || !g.fetch) return Promise.resolve(false);
+    if (VT.isFresh()) return Promise.resolve(false);
+    if (!force && Date.now() - lastState < 10 * 60000) return Promise.resolve(false);
+    lastState = Date.now();
+    return api(c, "PUT", "/api/state", { state: VT.state }).then(function (r) {
+      if (r.status === 409) { setCfg({ stateErr: "Der Server hat einen Lernstand mit Fortschritt. Bitte unter Setup zuerst wiederherstellen." }); return false; }
+      if (!r.ok) throw new Error(String(r.status));
+      setCfg({ stateAt: Date.now(), stateErr: "" }); return true;
+    }).catch(function () { lastState = 0; return false; });
+  };
+  W.stateList = function () {
+    var c = cfg(); if (!c || !c.token) return Promise.resolve([]);
+    return api(c, "GET", "/api/state/list").then(function (r) { return r.ok ? r.json() : { items: [] }; }).then(function (j) { return j.items || []; }).catch(function () { return []; });
+  };
+  W.restore = function (day) {
+    var c = cfg(); if (!c || !c.token) return Promise.resolve({ error: "Nicht verbunden." });
+    return api(c, "GET", "/api/state" + (day ? "?day=" + encodeURIComponent(day) : "")).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (x) {
+        if (!x.ok) return { error: x.j && x.j.error || "Wiederherstellen hat nicht geklappt." };
+        var res = VT.restoreState(x.j.state); if (res.error) return res;
+        setCfg({ stateErr: "" }); lastState = 0;
+        return W.snapshot().then(function () { return W.pull(true); }).then(function () { return { ok: true, ts: x.j.ts, coins: x.j.coins }; });
+      }).catch(function () { return { error: "Der Server ist nicht erreichbar." }; });
+  };
+
   /* Verbinden mit dem Code der Eltern: "https://server#ABCD-EFGH" */
   W.pair = function (text) {
     var s = String(text || "").trim(), m = s.match(/^(https?:\/\/[^\s#]+?)\/?#?\s*([A-Za-z0-9]{4}-?[A-Za-z0-9]{4})$/);
@@ -6481,7 +6550,8 @@ window.VERBS = [
         if (!x.ok) return { error: x.j && x.j.error || "Verbinden hat nicht geklappt." };
         lsSet("wordy.sync." + pid(), { url: url, token: x.j.token, name: x.j.name, last: 0 });
         W.log("hello", { v: g.WORDY_VERSION || "" });
-        return W.snapshot().then(function () { return flush(false); }).then(function () { return W.pull(true); }).then(function () { return { ok: true, name: x.j.name }; });
+        if (VT.isFresh()) return flush(false).then(function () { return W.pull(true); }).then(function () { return W.stateList(); }).then(function (l) { return { ok: true, name: x.j.name, backups: l }; });
+        return W.snapshot().then(function () { return flush(false); }).then(function () { return W.pull(true); }).then(function () { W.pushState(true); return { ok: true, name: x.j.name }; });
       }).catch(function () { return { error: "Der Server ist nicht erreichbar. Gibt es Netz, und stimmt die Adresse?" }; });
   };
   W.disconnect = function () { try { g.localStorage.removeItem("wordy.sync." + pid()); g.localStorage.removeItem("wordy.q." + pid()); g.localStorage.removeItem("wordy.cfg." + pid()); } catch (e) {} };
@@ -6491,11 +6561,11 @@ window.VERBS = [
     if (!W.connected()) return;
     W.log("ss", d);
     W.check();
-    flush(false).then(function () { return W.snapshot(); }).then(function () { return W.pull(true); });
+    flush(false).then(function () { return W.snapshot(); }).then(function () { return W.pull(true); }).then(function () { return W.pushState(true); });
   };
   W.maybeSnapshot = function () { if (W.connected() && Date.now() - lastSnap > 10 * 60000) W.snapshot(); };
 
-  g.addEventListener("visibilitychange", function () { if (g.document.visibilityState === "hidden") flush(true); else { flush(false); W.pull(false); } });
+  g.addEventListener("visibilitychange", function () { if (g.document.visibilityState === "hidden") { flush(true); W.pushState(false); } else { flush(false); W.pull(false); } });
   g.addEventListener("online", function () { flush(false); });
   setTimeout(function () { flush(false); W.maybeSnapshot(); W.pull(true); }, 4000);
 })(window);
