@@ -429,8 +429,9 @@
      Eigene Liste (data/verben.js), aber derselbe Lernspeicher wie die Wörter: state.w["v#<n>"]. */
   var verbs = (global.VERBS || []).map(function (v, i) {
     var first = function (x) { return String(x).split("/")[0]; };
-    return { id: "v#" + i, inf: v[0], past: v[1], pp: v[2], de: v[3], lvl: v[4] || 1, ex: v[5] || "",
-      en: v[0] + ", " + first(v[1]) + ", " + first(v[2]), alt: /\//.test(v[1] + v[2]) };
+    var sents = (v[5] || []).map(function (x) { return { en: x[0], de: x[1], form: x[2], time: x[3] }; });
+    return { id: "v#" + i, inf: v[0], past: v[1], pp: v[2], de: v[3], lvl: v[4] || 1, s: sents,
+      ex: sents[1] ? sents[1].en : "", en: v[0] + ", " + first(v[1]) + ", " + first(v[2]), alt: /\//.test(v[1] + v[2]) };
   });
   function verbPools() {
     var now = Date.now(), due = [], box = [], fresh = [], learning = [];

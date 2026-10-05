@@ -173,11 +173,12 @@
     var vs = S.verbStats(), list = S.verbs();
     var rows = list.map(function (v) {
       var lv = S.levelOf(v.id), r = S.state.w[v.id];
-      return '<div class="wordrow">' +
-        (audioAvailable() ? '<button class="mini-speak" data-act="say" data-text="' + esc(verbWord(v).en) + '" aria-label="' + esc(v.inf) + ' anhören">🔊</button>' : '') +
+      return '<div class="wordrow" data-act="vtoggle" style="cursor:pointer">' +
+        (audioAvailable() ? '<button class="mini-speak" data-act="say" data-text="' + esc(v.en) + '" aria-label="' + esc(v.inf) + ' anhören">🔊</button>' : '') +
         '<span class="en" style="flex:1 1 auto">' + esc(v.inf) + ' – ' + esc(v.past) + ' – ' + esc(v.pp) + '<br><span class="small muted">' + esc(v.de) + '</span></span>' +
         (r && r.no ? '<span class="pill" title="Fehler">✗ ' + r.no + '</span>' : '') +
-        '<span class="pill l' + lv + '">' + esc(S.LEVELS[lv].n) + '</span></div>';
+        '<span class="pill l' + lv + '">' + esc(S.LEVELS[lv].n) + '</span></div>' +
+        '<div class="vsent stack" hidden style="gap:8px;padding:0 0 12px">' + verbSentCards(v, true) + '</div>';
     }).join("");
     view.innerHTML = '<div class="stack">' +
       '<button class="btn ghost" data-act="back" style="align-self:flex-start">← Zurück</button>' +
@@ -185,7 +186,7 @@
       '<h1 style="font-size:24px">Verbenliste</h1>' +
       '<p class="small muted" style="margin:6px 0 0">' + vs.total + ' Verben · ' + vs.seen + ' geübt · ' + vs.mastered + ' gemeistert. Infinitive – Simple Past – Past Participle.</p>' +
       '<div class="row" style="margin-top:12px;gap:8px"><button class="btn" data-act="start" data-mode="verbs" data-min="5">Verben üben</button></div></section>' +
-      '<section class="card"><div class="eyebrow">Alle Verben</div>' + rows + '</section></div>';
+      '<section class="card"><div class="eyebrow">Alle Verben · Tippen zeigt die Beispielsätze</div>' + rows + '</section></div>';
   }
 
   /* ================= START ================= */
@@ -628,15 +629,58 @@
     if (out.length < n) out = out.concat(S.shuffle(pool).slice(0, n - out.length));
     var seen = {}; return out.filter(function (x) { if (seen[x[key]]) return false; seen[x[key]] = 1; return true; }).slice(0, n);
   }
+  /* ---------- Unregelmäßige Verben: Sätze, Aufgaben ---------- */
+  var TENSES = [
+    { label: "Infinitiv · Gegenwart", name: "Simple Present" },
+    { label: "Simple Past · Vergangenheit", name: "Simple Past" },
+    { label: "Past Participle · Perfekt", name: "Present Perfect" }
+  ];
+  function reEsc(x) { return x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+  /* Satz mit fett markierter Verbform und unterstrichenem Zeitwort */
+  function sentHtml(x, blank) {
+    var h = esc(x.en);
+    h = h.replace(new RegExp("\\b" + reEsc(esc(x.form)) + "\\b"), blank ? '<u class="vblank">&nbsp;</u>' : "<b class=\"vform\">" + esc(x.form) + "</b>");
+    if (x.time) h = h.replace(new RegExp(reEsc(esc(x.time))), "<u class=\"vtime\">" + esc(x.time) + "</u>");
+    return h;
+  }
+  function verbSentCards(v, withDe) {
+    return v.s.map(function (x, i) {
+      return '<div class="card" style="background:var(--card-2);box-shadow:none;padding:12px 14px">' +
+        '<div class="row" style="gap:10px;align-items:center">' + (audioAvailable() ? '<button class="mini-speak" data-act="say" data-text="' + esc(x.en) + '" aria-label="Satz anhören">🔊</button>' : "") +
+        '<div class="eyebrow" style="flex:1">' + TENSES[i].label + '</div></div>' +
+        '<p style="margin:8px 0 2px;font-family:Newsreader,serif;font-size:20px;line-height:1.35">' + sentHtml(x) + '</p>' +
+        '<p class="small muted" style="margin:0">Zeitwort' + (x.time ? ' „' + esc(x.time) + '“' : "") + ' → ' + TENSES[i].name + '</p>' +
+        (withDe ? '<p class="small muted" style="margin:2px 0 0">' + esc(x.de) + '</p>' : "") + '</div>';
+    }).join("");
+  }
   /* Verben laufen durch dieselben Anzeige- und Wertungsfunktionen wie Wörter; dafür ein Wort-förmiges Objekt */
   function verbWord(v) {
-    return { id: v.id, en: v.en, de: v.de + (v.alt ? " (alle Formen: " + v.past + " · " + v.pp + ")" : ""), ex: v.ex };
+    var lines = v.s.map(function (x) {
+      return '<span class="cmp">' + (audioAvailable() ? '<button class="mini-speak" data-act="say" data-text="' + esc(x.en) + '" aria-label="Satz anhören">🔊</button>' : "") + sentHtml(x) + '</span>';
+    }).join("");
+    return { id: v.id, en: v.en, de: v.de + (v.alt ? " (alle Formen: " + v.past + " · " + v.pp + ")" : ""), ex: v.ex, exHtml: lines };
   }
+  /* Unregelmäßige Verben als Lückenaufgabe: Form wählen, die zum Zeitwort passt */
+  function regularForm(inf) {
+    if (/^(be|have|do)$/.test(inf)) return null;
+    return /e$/.test(inf) ? inf + "d" : /[^aeiou]y$/.test(inf) ? inf.slice(0, -1) + "ied" : inf + "ed";
+  }
+  function verbGapOptions(v) {
+    var seen = {}, opts = [];
+    v.s.map(function (x) { return x.form; }).concat([regularForm(v.inf)]).forEach(function (f, i) {
+      if (!f || seen[f]) return; seen[f] = 1; opts.push({ label: f, form: f, ok: false });
+    });
+    return opts;
+  }
+  function verbGapOk(v) { return verbGapOptions(v).length >= 3; }
   function verbTasks(list) {
     var out = [];
     list.forEach(function (v) {
-      if (S.levelOf(v.id) === 0 && !(S.state.w[v.id] && S.state.w[v.id].no)) out.push({ type: "verbintro", v: v });
-      out.push({ type: "verb", v: v });
+      var fresh = S.levelOf(v.id) === 0 && !(S.state.w[v.id] && S.state.w[v.id].no);
+      var gap = verbGapOk(v);
+      if (fresh) out.push({ type: "verbintro", v: v });
+      var easy = fresh || S.levelOf(v.id) <= 1 || Math.random() < 0.5;
+      out.push(gap && easy ? { type: "verbgap", v: v, idx: Math.floor(Math.random() * 3) } : { type: "verb", v: v });
     });
     return out;
   }
@@ -827,10 +871,19 @@
         '<div><div class="prompt">' + esc(v.inf) + '</div><div class="sub" style="margin-top:4px">' + esc(v.de) + '</div></div></div>' +
         '<div class="card" style="background:var(--card-2);box-shadow:none"><div class="eyebrow">Die drei Formen</div>' +
         '<p style="margin:6px 0 0;font-family:Newsreader,serif;font-size:22px">' + esc(v.inf) + ' – ' + esc(v.past) + ' – ' + esc(v.pp) + '</p></div>' +
-        (v.ex ? '<div class="card" style="background:var(--card-2);box-shadow:none"><div class="eyebrow">Im Satz</div><p style="margin:6px 0 0;font-family:Newsreader,serif;font-size:18px">' + esc(v.ex) + '</p></div>' : "") +
-        '</div>';
+        verbSentCards(v, true) + '</div>';
       foot.innerHTML = '<button class="btn wide lg" data-act="next">Verstanden</button>';
       if (audioAvailable()) setTimeout(function () { speak(w.en); }, 250);
+    },
+    verbgap: function (t, body, foot) {
+      var v = t.v, x = v.s[t.idx];
+      var opts = S.shuffle(verbGapOptions(v).map(function (o) { o.ok = o.form === x.form; return o; }));
+      t.opts = opts;
+      body.innerHTML = '<div class="stack" style="padding-top:8px"><div class="eyebrow">Welche Form passt? · ' + esc(v.inf) + '</div>' +
+        '<div class="row" style="gap:12px;align-items:center">' + (audioAvailable() ? speakBtn(x.en.replace(new RegExp("\\b" + reEsc(x.form) + "\\b"), "blank")) : "") +
+        '<p class="gapline" style="margin:0;flex:1 1 auto">' + sentHtml(x, true) + ' <span class="small muted">(' + esc(v.inf) + ')</span></p></div>' +
+        '<div class="sub">' + esc(x.de) + '</div>' + optionList(opts) + '</div>';
+      foot.innerHTML = footCheck();
     },
     verb: function (t, body, foot) {
       var v = t.v;
@@ -962,7 +1015,7 @@
       '<span class="cmp">' +
       (audioAvailable() ? '<button class="mini-speak" data-act="say" data-text="' + esc(w.en) + '" aria-label="' + esc(w.en) + ' anhören">🔊</button>' : '') +
       esc(w.en) + " – " + esc(w.de) + (comp ? " · " + comp : "") + '</span>' +
-      (w.ex && audioAvailable() ? '<span class="cmp"><button class="mini-speak" data-act="say" data-text="' + esc(w.ex) + '" aria-label="Beispielsatz anhören">🔊</button>' + esc(w.ex) + '</span>' : "") +
+      (w.exHtml ? w.exHtml : (w.ex && audioAvailable() ? '<span class="cmp"><button class="mini-speak" data-act="say" data-text="' + esc(w.ex) + '" aria-label="Beispielsatz anhören">🔊</button>' + esc(w.ex) + '</span>' : "")) +
       '</div>' +
       '<button class="btn wide lg" data-act="next" id="mainBtn">Weiter</button>';
     var b = $("#mainBtn"); if (b) b.focus();
@@ -987,6 +1040,16 @@
   function check() {
     if (!SS || SS.answered) return;
     var t = SS.tasks[SS.i], w = t.w;
+    if (t.type === "verbgap") {
+      if (SS.pick == null) return;
+      var vg = t.v, gx = vg.s[t.idx], okG = !!t.opts[SS.pick].ok, vgw = verbWord(vg);
+      SS.answered = true;
+      $$(".opt").forEach(function (b, i) { b.disabled = true; if (t.opts[i].ok) b.classList.add("right"); else if (i === SS.pick) b.classList.add("wrong"); });
+      var rg = applyGrade(vgw, okG ? 1 : 0);
+      if (!okG) SS.retry.push({ type: "verbgap", v: vg, idx: t.idx });
+      verdict(okG, vgw, rg, "Zeitwort „" + gx.time + "“ → " + TENSES[t.idx].name);
+      return;
+    }
     if (t.type === "verb") {
       var v = t.v, vw = verbWord(v);
       var ga = judgeTyped($("#vPast").value, v.past), gb = judgeTyped($("#vPp").value, v.pp);
@@ -1153,6 +1216,7 @@
       else arr.push(k);
       st.settings.units = []; S.save(true); render();
     } else if (a === "unit") { detailUnit = act.getAttribute("data-id"); render(); }
+    else if (a === "vtoggle") { var vs2 = act.nextElementSibling; if (vs2 && vs2.classList.contains("vsent")) vs2.hidden = !vs2.hidden; }
     else if (a === "verblist") { detailUnit = "__verbs"; tab = "units"; render(); view.scrollTop = 0; }
     else if (a === "back") { detailUnit = null; render(); }
     else if (a === "readall") {

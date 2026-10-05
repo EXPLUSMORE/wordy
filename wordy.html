@@ -227,6 +227,10 @@ hr.sep{border:0;border-top:1px solid var(--line);margin:4px 0}
 .matchgrid button.no{border-color:var(--bad);background:var(--bad-soft)}
 .gapline{font-family:Newsreader,Georgia,serif;font-size:24px;line-height:1.45;text-wrap:balance}
 .gapline u{text-decoration:none;border-bottom:2px solid var(--accent);padding:0 22px;color:var(--accent)}
+.vform{color:var(--accent);border-bottom:2px solid var(--accent)}
+.vtime{text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:3px}
+.gapline u.vtime{padding:0;border-bottom:0;color:inherit;text-decoration:underline}
+.gapline u.vblank{display:inline-block;min-width:60px;padding:0 6px}
 .speak{width:56px;height:56px;border-radius:50%;background:var(--accent-soft);color:var(--accent);
   display:grid;place-items:center;font-size:23px;flex:0 0 auto}
 .speak.big{width:96px;height:96px;font-size:38px}
@@ -2211,117 +2215,118 @@ window.SENTENCES = [
 window.VOCAB_UNITS = (window.VOCAB_UNITS || []).concat([
 ]);
 </script>
-<script>/* Unregelmäßige Verben der Schule: [Grundform, Simple Past, Past Participle, Deutsch, Stufe 1-3, Beispielsatz]
+<script>/* Unregelmäßige Verben der Schule: [Grundform, Simple Past, Past Participle, Deutsch, Stufe 1-3, Sätze]
+   Sätze: je drei [englisch, deutsch, Verbform im Satz, Zeitwort] für Gegenwart, Simple Past, Perfekt.
    Mehrere gültige Formen stehen mit / getrennt. */
 window.VERBS = [
-["be", "was/were", "been", "sein", 1, "I was at home all day."],
-["have", "had", "had", "haben", 1, "She had a red bike."],
-["do", "did", "done", "tun, machen", 1, "He did his homework quickly."],
-["go", "went", "gone", "gehen, fahren", 1, "We went to the cinema last night."],
-["come", "came", "come", "kommen", 1, "My cousin came to visit us."],
-["get", "got", "got", "bekommen, werden", 1, "I got a new phone for my birthday."],
-["make", "made", "made", "machen, herstellen", 1, "Mum made a big chocolate cake."],
-["take", "took", "taken", "nehmen, bringen", 1, "She took the bus to school."],
-["see", "saw", "seen", "sehen", 1, "We saw a fox in the garden."],
-["say", "said", "said", "sagen", 1, "He said hello and smiled."],
-["give", "gave", "given", "geben", 1, "My uncle gave me a book."],
-["know", "knew", "known", "wissen, kennen", 1, "I knew the answer at once."],
-["think", "thought", "thought", "denken, glauben", 1, "I thought it was a good idea."],
-["eat", "ate", "eaten", "essen", 1, "We ate pizza for dinner."],
-["drink", "drank", "drunk", "trinken", 1, "She drank a glass of milk."],
-["buy", "bought", "bought", "kaufen", 1, "He bought a ticket online."],
-["find", "found", "found", "finden", 1, "I found my keys under the sofa."],
-["run", "ran", "run", "rennen, laufen", 1, "The dog ran across the field."],
-["write", "wrote", "written", "schreiben", 1, "She wrote a letter to her friend."],
-["read", "read", "read", "lesen", 1, "I read two chapters yesterday."],
-["sit", "sat", "sat", "sitzen, sich setzen", 1, "He sat next to me in class."],
-["stand", "stood", "stood", "stehen", 1, "We stood in a long queue."],
-["speak", "spoke", "spoken", "sprechen", 1, "She spoke very quietly."],
-["tell", "told", "told", "erzählen, sagen", 1, "Dad told us a funny story."],
-["leave", "left", "left", "verlassen, abfahren", 1, "The train left at ten."],
-["meet", "met", "met", "treffen, kennenlernen", 1, "We met in front of the school."],
-["win", "won", "won", "gewinnen", 1, "Our team won the match."],
-["lose", "lost", "lost", "verlieren", 1, "I lost my pencil case."],
-["sleep", "slept", "slept", "schlafen", 1, "The baby slept all night."],
-["swim", "swam", "swum", "schwimmen", 1, "They swam in the lake."],
-["sing", "sang", "sung", "singen", 1, "She sang a song in the show."],
-["bring", "brought", "brought", "bringen, mitbringen", 1, "She brought her lunch to school."],
-["put", "put", "put", "legen, stellen, stecken", 1, "He put the keys on the table."],
-["let", "let", "let", "lassen, erlauben", 1, "Mum let me stay up late."],
-["hear", "heard", "heard", "hören", 1, "I heard a strange noise."],
-["feel", "felt", "felt", "fühlen", 1, "I felt tired after the trip."],
-["keep", "kept", "kept", "behalten, halten", 1, "She kept the letter in a box."],
-["pay", "paid", "paid", "bezahlen", 1, "She paid for the tickets."],
-["send", "sent", "sent", "schicken, senden", 1, "He sent me a message."],
-["sell", "sold", "sold", "verkaufen", 1, "They sold their old car."],
-["fall", "fell", "fallen", "fallen, stürzen", 1, "The apple fell from the tree."],
-["fly", "flew", "flown", "fliegen", 1, "We flew to London."],
-["drive", "drove", "driven", "fahren (Auto)", 1, "Dad drove us to the station."],
-["ride", "rode", "ridden", "reiten, (Rad) fahren", 1, "She rode her bike to school."],
-["wear", "wore", "worn", "tragen (Kleidung)", 1, "He wore a blue jacket."],
-["begin", "began", "begun", "anfangen, beginnen", 2, "The film began at eight."],
-["break", "broke", "broken", "brechen, kaputt machen", 2, "He broke his arm in the game."],
-["choose", "chose", "chosen", "wählen, aussuchen", 2, "I chose the red one."],
-["forget", "forgot", "forgotten", "vergessen", 2, "I forgot my umbrella."],
-["grow", "grew", "grown", "wachsen, anbauen", 2, "The tree grew very tall."],
-["hold", "held", "held", "halten", 2, "She held my hand."],
-["lead", "led", "led", "führen, leiten", 2, "The guide led us up the hill."],
-["learn", "learnt/learned", "learnt/learned", "lernen", 2, "We learnt a new song."],
-["mean", "meant", "meant", "bedeuten, meinen", 2, "I meant to call you yesterday."],
-["build", "built", "built", "bauen", 2, "They built a house by the sea."],
-["catch", "caught", "caught", "fangen, erwischen", 2, "I caught the ball with one hand."],
-["cut", "cut", "cut", "schneiden", 2, "He cut the bread into slices."],
-["draw", "drew", "drawn", "zeichnen, ziehen", 2, "She drew a picture of her dog."],
-["hide", "hid", "hidden", "verstecken", 2, "The cat hid under the bed."],
-["hit", "hit", "hit", "schlagen, treffen", 2, "The ball hit the window."],
-["hurt", "hurt", "hurt", "verletzen, wehtun", 2, "I hurt my knee."],
-["lend", "lent", "lent", "(ver)leihen", 2, "She lent me her bike."],
-["lie", "lay", "lain", "liegen", 2, "The book lay on the table."],
-["light", "lit", "lit", "anzünden, beleuchten", 3, "She lit a candle."],
-["ring", "rang", "rung", "klingeln, anrufen", 2, "The bell rang at nine."],
-["rise", "rose", "risen", "aufgehen, steigen", 2, "The sun rose at six."],
-["shake", "shook", "shaken", "schütteln, zittern", 2, "He shook his head."],
-["shine", "shone", "shone", "scheinen, leuchten", 2, "The sun shone all day."],
-["shoot", "shot", "shot", "schießen", 2, "He shot at the goal."],
-["show", "showed", "shown", "zeigen", 2, "She showed me her photos."],
-["shut", "shut", "shut", "schließen, zumachen", 2, "Please shut the door."],
-["sink", "sank", "sunk", "sinken, untergehen", 2, "The ship sank in the storm."],
-["spell", "spelt/spelled", "spelt/spelled", "buchstabieren", 2, "She spelt her name for me."],
-["spend", "spent", "spent", "ausgeben, verbringen", 2, "We spent a week in Wales."],
-["steal", "stole", "stolen", "stehlen", 2, "Someone stole my bike."],
-["stick", "stuck", "stuck", "kleben, stecken", 2, "I stuck the photo in my book."],
-["teach", "taught", "taught", "unterrichten, beibringen", 2, "Mr Brown taught us English."],
-["tear", "tore", "torn", "zerreißen", 2, "He tore the paper in half."],
-["throw", "threw", "thrown", "werfen", 2, "She threw the ball to me."],
-["understand", "understood", "understood", "verstehen", 2, "I understood everything."],
-["wake", "woke", "woken", "aufwachen, wecken", 2, "I woke up at seven."],
-["set", "set", "set", "setzen, einstellen, decken", 2, "She set the alarm for six."],
-["fight", "fought", "fought", "kämpfen, streiten", 2, "The boys fought over the ball."],
-["feed", "fed", "fed", "füttern", 2, "I fed the ducks in the park."],
-["freeze", "froze", "frozen", "frieren, gefrieren", 2, "The lake froze in winter."],
-["bite", "bit", "bitten", "beißen", 2, "The dog bit the postman."],
-["blow", "blew", "blown", "wehen, blasen", 2, "The wind blew all night."],
-["burn", "burnt/burned", "burnt/burned", "brennen, verbrennen", 2, "The toast burnt in the toaster."],
-["dream", "dreamt/dreamed", "dreamt/dreamed", "träumen", 2, "I dreamt about a dragon."],
-["smell", "smelt/smelled", "smelt/smelled", "riechen", 2, "The soup smelt delicious."],
-["spill", "spilt/spilled", "spilt/spilled", "verschütten", 3, "He spilt his juice on the floor."],
-["spread", "spread", "spread", "ausbreiten, verbreiten", 3, "She spread butter on the bread."],
-["swing", "swung", "swung", "schaukeln, schwingen", 3, "The children swung on the rope."],
-["bend", "bent", "bent", "biegen, sich beugen", 3, "He bent down to tie his shoe."],
-["bleed", "bled", "bled", "bluten", 3, "My finger bled a little."],
-["beat", "beat", "beaten", "schlagen, besiegen", 3, "Our team beat theirs by two goals."],
-["bet", "bet", "bet", "wetten", 3, "I bet him five pounds."],
-["burst", "burst", "burst", "platzen, zerplatzen", 3, "The balloon burst with a bang."],
-["deal", "dealt", "dealt", "austeilen, handeln", 3, "She dealt the cards."],
-["dig", "dug", "dug", "graben", 3, "The dog dug a hole in the garden."],
-["forgive", "forgave", "forgiven", "vergeben, verzeihen", 3, "She forgave him at once."],
-["lay", "laid", "laid", "legen", 3, "He laid the baby in the cot."],
-["lean", "leant/leaned", "leant/leaned", "sich lehnen", 3, "She leant against the wall."],
-["split", "split", "split", "spalten, teilen", 3, "They split the bill."],
-["sweep", "swept", "swept", "fegen, kehren", 3, "He swept the floor."],
-["undo", "undid", "undone", "öffnen, rückgängig machen", 3, "She undid the knot."],
-["overcome", "overcame", "overcome", "überwinden", 3, "He overcame his fear."],
-["cost", "cost", "cost", "kosten", 2, "The ticket cost ten pounds."]
+["be", "was/were", "been", "sein", 1, [["We are at school every day.", "Wir sind jeden Tag in der Schule.", "are", "every day"], ["Yesterday I was ill.", "Gestern war ich krank.", "was", "Yesterday"], ["I have never been to London.", "Ich war noch nie in London.", "been", "never"]]],
+["have", "had", "had", "haben", 1, [["We have English every Monday.", "Wir haben jeden Montag Englisch.", "have", "every Monday"], ["Last week she had a cold.", "Letzte Woche hatte sie eine Erkältung.", "had", "Last week"], ["I have already had lunch.", "Ich habe schon zu Mittag gegessen.", "had", "already"]]],
+["do", "did", "done", "tun, machen", 1, [["I do my homework every afternoon.", "Ich mache jeden Nachmittag meine Hausaufgaben.", "do", "every afternoon"], ["He did the dishes last night.", "Er hat gestern Abend abgespült.", "did", "last night"], ["We have just done our homework.", "Wir haben gerade unsere Hausaufgaben gemacht.", "done", "just"]]],
+["go", "went", "gone", "gehen, fahren", 1, [["We go to school every day.", "Wir gehen jeden Tag zur Schule.", "go", "every day"], ["Yesterday we went to the cinema.", "Gestern gingen wir ins Kino.", "went", "Yesterday"], ["We have already gone home.", "Wir sind schon nach Hause gegangen.", "gone", "already"]]],
+["come", "came", "come", "kommen", 1, [["They come to our house every Sunday.", "Sie kommen jeden Sonntag zu uns.", "come", "every Sunday"], ["Last night my cousin came to visit us.", "Gestern Abend kam mein Cousin zu Besuch.", "came", "Last night"], ["She has just come home.", "Sie ist gerade nach Hause gekommen.", "come", "just"]]],
+["get", "got", "got", "bekommen, werden", 1, [["I get a letter from my aunt every month.", "Ich bekomme jeden Monat einen Brief von meiner Tante.", "get", "every month"], ["Yesterday I got a new phone.", "Gestern habe ich ein neues Handy bekommen.", "got", "Yesterday"], ["He has already got the tickets.", "Er hat die Karten schon.", "got", "already"]]],
+["make", "made", "made", "machen, herstellen", 1, [["We make pancakes every Sunday.", "Wir machen jeden Sonntag Pfannkuchen.", "make", "every Sunday"], ["Last weekend Mum made a big cake.", "Letztes Wochenende hat Mama einen großen Kuchen gebacken.", "made", "Last weekend"], ["I have just made some tea.", "Ich habe gerade Tee gemacht.", "made", "just"]]],
+["take", "took", "taken", "nehmen, bringen", 1, [["We take the bus to school every morning.", "Wir nehmen jeden Morgen den Bus zur Schule.", "take", "every morning"], ["Yesterday she took a photo of the lake.", "Gestern hat sie ein Foto vom See gemacht.", "took", "Yesterday"], ["He has already taken his bag.", "Er hat seine Tasche schon genommen.", "taken", "already"]]],
+["see", "saw", "seen", "sehen", 1, [["I see my grandma every weekend.", "Ich sehe meine Oma jedes Wochenende.", "see", "every weekend"], ["Last night we saw a fox in the garden.", "Gestern Abend haben wir einen Fuchs im Garten gesehen.", "saw", "Last night"], ["She has never seen snow.", "Sie hat noch nie Schnee gesehen.", "seen", "never"]]],
+["say", "said", "said", "sagen", 1, [["I say hello to my teacher every morning.", "Ich sage jeden Morgen meiner Lehrerin Hallo.", "say", "every morning"], ["Yesterday he said sorry.", "Gestern sagte er Entschuldigung.", "said", "Yesterday"], ["She has just said goodbye.", "Sie hat sich gerade verabschiedet.", "said", "just"]]],
+["give", "gave", "given", "geben", 1, [["They give us homework every day.", "Sie geben uns jeden Tag Hausaufgaben.", "give", "every day"], ["Yesterday my uncle gave me a book.", "Gestern hat mir mein Onkel ein Buch geschenkt.", "gave", "Yesterday"], ["I have already given him the key.", "Ich habe ihm den Schlüssel schon gegeben.", "given", "already"]]],
+["know", "knew", "known", "wissen, kennen", 1, [["We always know the answers in English.", "Im Englischtest wissen wir immer die Antworten.", "know", "always"], ["Yesterday I knew the answer at once.", "Gestern wusste ich die Antwort sofort.", "knew", "Yesterday"], ["I have known her for two years.", "Ich kenne sie seit zwei Jahren.", "known", "for two years"]]],
+["think", "thought", "thought", "denken, glauben", 1, [["I think about my holidays every day.", "Ich denke jeden Tag an meine Ferien.", "think", "every day"], ["Last night I thought about the test.", "Gestern Abend habe ich an den Test gedacht.", "thought", "Last night"], ["We have just thought of a good idea.", "Uns ist gerade eine gute Idee eingefallen.", "thought", "just"]]],
+["eat", "ate", "eaten", "essen", 1, [["We eat breakfast together every morning.", "Wir frühstücken jeden Morgen zusammen.", "eat", "every morning"], ["Last Friday we ate pizza.", "Letzten Freitag haben wir Pizza gegessen.", "ate", "Last Friday"], ["I have already eaten, thanks.", "Ich habe schon gegessen, danke.", "eaten", "already"]]],
+["drink", "drank", "drunk", "trinken", 1, [["I drink a glass of milk every evening.", "Ich trinke jeden Abend ein Glas Milch.", "drink", "every evening"], ["Yesterday she drank too much juice.", "Gestern hat sie zu viel Saft getrunken.", "drank", "Yesterday"], ["He has just drunk all the water.", "Er hat gerade das ganze Wasser ausgetrunken.", "drunk", "just"]]],
+["buy", "bought", "bought", "kaufen", 1, [["My mum and I buy fresh bread every Saturday.", "Mama und ich kaufen jeden Samstag frisches Brot.", "buy", "every Saturday"], ["Last week I bought a new phone.", "Letzte Woche habe ich ein neues Handy gekauft.", "bought", "Last week"], ["He has already bought the tickets.", "Er hat die Karten schon gekauft.", "bought", "already"]]],
+["find", "found", "found", "finden", 1, [["We find lots of shells on the beach every summer.", "Wir finden jeden Sommer viele Muscheln am Strand.", "find", "every summer"], ["Yesterday I found my keys under the sofa.", "Gestern habe ich meine Schlüssel unter dem Sofa gefunden.", "found", "Yesterday"], ["She has just found her phone.", "Sie hat gerade ihr Handy gefunden.", "found", "just"]]],
+["run", "ran", "run", "rennen, laufen", 1, [["They run in the park every morning.", "Sie laufen jeden Morgen im Park.", "run", "every morning"], ["Yesterday the dog ran across the field.", "Gestern lief der Hund über das Feld.", "ran", "Yesterday"], ["I have just run five kilometres.", "Ich bin gerade fünf Kilometer gelaufen.", "run", "just"]]],
+["write", "wrote", "written", "schreiben", 1, [["I write in my diary every evening.", "Ich schreibe jeden Abend in mein Tagebuch.", "write", "every evening"], ["Yesterday I wrote a letter to my friend.", "Gestern habe ich meiner Freundin einen Brief geschrieben.", "wrote", "Yesterday"], ["He has just written an email.", "Er hat gerade eine E-Mail geschrieben.", "written", "just"]]],
+["read", "read", "read", "lesen", 1, [["We read a book in class every Friday.", "Wir lesen jeden Freitag ein Buch im Unterricht.", "read", "every Friday"], ["Last night I read two chapters.", "Gestern Abend habe ich zwei Kapitel gelesen.", "read", "Last night"], ["She has already read the whole book.", "Sie hat das ganze Buch schon gelesen.", "read", "already"]]],
+["sit", "sat", "sat", "sitzen, sich setzen", 1, [["We sit in a circle every Monday.", "Wir sitzen jeden Montag im Kreis.", "sit", "every Monday"], ["Yesterday he sat next to me in class.", "Gestern saß er im Unterricht neben mir.", "sat", "Yesterday"], ["We have sat here for an hour.", "Wir sitzen schon eine Stunde hier.", "sat", "for an hour"]]],
+["stand", "stood", "stood", "stehen", 1, [["I stand at the bus stop every morning.", "Ich stehe jeden Morgen an der Bushaltestelle.", "stand", "every morning"], ["Yesterday we stood in a long queue.", "Gestern standen wir in einer langen Schlange.", "stood", "Yesterday"], ["They have stood there for an hour.", "Sie stehen schon eine Stunde dort.", "stood", "for an hour"]]],
+["speak", "spoke", "spoken", "sprechen", 1, [["We speak English in class every day.", "Wir sprechen jeden Tag im Unterricht Englisch.", "speak", "every day"], ["Yesterday she spoke very quietly.", "Gestern sprach sie sehr leise.", "spoke", "Yesterday"], ["I have never spoken to him.", "Ich habe noch nie mit ihm gesprochen.", "spoken", "never"]]],
+["tell", "told", "told", "erzählen, sagen", 1, [["I tell my sister a story every night.", "Ich erzähle meiner Schwester jeden Abend eine Geschichte.", "tell", "every night"], ["Last night Dad told us a funny story.", "Gestern Abend hat uns Papa eine lustige Geschichte erzählt.", "told", "Last night"], ["She has just told me the news.", "Sie hat mir gerade die Neuigkeiten erzählt.", "told", "just"]]],
+["leave", "left", "left", "verlassen, abfahren", 1, [["We leave home at seven every morning.", "Wir gehen jeden Morgen um sieben Uhr aus dem Haus.", "leave", "every morning"], ["Yesterday the train left at ten.", "Gestern fuhr der Zug um zehn ab.", "left", "Yesterday"], ["He has just left.", "Er ist gerade gegangen.", "left", "just"]]],
+["meet", "met", "met", "treffen, kennenlernen", 1, [["We meet our friends every Saturday.", "Wir treffen jeden Samstag unsere Freunde.", "meet", "every Saturday"], ["Last week we met in front of the school.", "Letzte Woche trafen wir uns vor der Schule.", "met", "Last week"], ["I have never met her.", "Ich habe sie noch nie getroffen.", "met", "never"]]],
+["win", "won", "won", "gewinnen", 1, [["We often win at football.", "Beim Fußball gewinnen wir oft.", "win", "often"], ["Last Saturday our team won the match.", "Letzten Samstag hat unsere Mannschaft das Spiel gewonnen.", "won", "Last Saturday"], ["They have never won a cup.", "Sie haben noch nie einen Pokal gewonnen.", "won", "never"]]],
+["lose", "lost", "lost", "verlieren", 1, [["I sometimes lose my keys.", "Ich verliere manchmal meine Schlüssel.", "lose", "sometimes"], ["Yesterday I lost my pencil case.", "Gestern habe ich mein Mäppchen verloren.", "lost", "Yesterday"], ["He has just lost his bag.", "Er hat gerade seine Tasche verloren.", "lost", "just"]]],
+["sleep", "slept", "slept", "schlafen", 1, [["I sleep for eight hours every night.", "Ich schlafe jede Nacht acht Stunden.", "sleep", "every night"], ["Last night the baby slept well.", "Gestern Nacht hat das Baby gut geschlafen.", "slept", "Last night"], ["He has just slept for ten hours.", "Er hat gerade zehn Stunden geschlafen.", "slept", "just"]]],
+["swim", "swam", "swum", "schwimmen", 1, [["We swim in the lake every summer.", "Jeden Sommer schwimmen wir im See.", "swim", "every summer"], ["Yesterday they swam in the pool.", "Gestern schwammen sie im Becken.", "swam", "Yesterday"], ["I have never swum in the sea.", "Ich bin noch nie im Meer geschwommen.", "swum", "never"]]],
+["sing", "sang", "sung", "singen", 1, [["We sing in the choir every Tuesday.", "Wir singen jeden Dienstag im Chor.", "sing", "every Tuesday"], ["Last night she sang a song for us.", "Gestern Abend hat sie ein Lied für uns gesungen.", "sang", "Last night"], ["They have already sung that song.", "Sie haben das Lied schon gesungen.", "sung", "already"]]],
+["bring", "brought", "brought", "bringen, mitbringen", 1, [["I bring my lunch to school every day.", "Ich bringe jeden Tag mein Mittagessen mit in die Schule.", "bring", "every day"], ["Yesterday she brought her friend.", "Gestern hat sie ihre Freundin mitgebracht.", "brought", "Yesterday"], ["He has already brought the books.", "Er hat die Bücher schon mitgebracht.", "brought", "already"]]],
+["put", "put", "put", "legen, stellen, stecken", 1, [["I put my books in my bag every evening.", "Ich packe jeden Abend meine Bücher in die Tasche.", "put", "every evening"], ["Yesterday he put the keys on the table.", "Gestern legte er die Schlüssel auf den Tisch.", "put", "Yesterday"], ["I have just put the milk in the fridge.", "Ich habe gerade die Milch in den Kühlschrank gestellt.", "put", "just"]]],
+["let", "let", "let", "lassen, erlauben", 1, [["They let us play every Friday.", "Sie lassen uns jeden Freitag spielen.", "let", "every Friday"], ["Yesterday Mum let me stay up late.", "Gestern hat Mama mich lange aufbleiben lassen.", "let", "Yesterday"], ["She has never let me do that.", "Sie hat mich das noch nie machen lassen.", "let", "never"]]],
+["hear", "heard", "heard", "hören", 1, [["I hear the birds every morning.", "Ich höre jeden Morgen die Vögel.", "hear", "every morning"], ["Last night we heard a strange noise.", "Gestern Abend haben wir ein seltsames Geräusch gehört.", "heard", "Last night"], ["I have never heard that song.", "Ich habe das Lied noch nie gehört.", "heard", "never"]]],
+["feel", "felt", "felt", "fühlen", 1, [["I often feel tired on Mondays.", "Montags fühle ich mich oft müde.", "feel", "often"], ["Yesterday I felt ill.", "Gestern fühlte ich mich krank.", "felt", "Yesterday"], ["I have never felt so happy.", "Ich habe mich noch nie so glücklich gefühlt.", "felt", "never"]]],
+["keep", "kept", "kept", "behalten, halten", 1, [["I always keep my money in a box.", "Ich bewahre mein Geld immer in einer Dose auf.", "keep", "always"], ["Yesterday she kept the letter.", "Gestern hat sie den Brief behalten.", "kept", "Yesterday"], ["We have kept the dog for five years.", "Wir haben den Hund seit fünf Jahren.", "kept", "for five years"]]],
+["pay", "paid", "paid", "bezahlen", 1, [["We pay for lunch every Friday.", "Wir bezahlen jeden Freitag das Mittagessen.", "pay", "every Friday"], ["Yesterday she paid for the tickets.", "Gestern hat sie die Karten bezahlt.", "paid", "Yesterday"], ["I have already paid.", "Ich habe schon bezahlt.", "paid", "already"]]],
+["send", "sent", "sent", "schicken, senden", 1, [["I send a message to my friend every day.", "Ich schicke jeden Tag eine Nachricht an meinen Freund.", "send", "every day"], ["Yesterday he sent me a photo.", "Gestern hat er mir ein Foto geschickt.", "sent", "Yesterday"], ["She has just sent an email.", "Sie hat gerade eine E-Mail geschickt.", "sent", "just"]]],
+["sell", "sold", "sold", "verkaufen", 1, [["They sell fresh fruit at the market every Saturday.", "Sie verkaufen jeden Samstag frisches Obst auf dem Markt.", "sell", "every Saturday"], ["Last year we sold our old car.", "Letztes Jahr haben wir unser altes Auto verkauft.", "sold", "Last year"], ["He has already sold his bike.", "Er hat sein Fahrrad schon verkauft.", "sold", "already"]]],
+["fall", "fell", "fallen", "fallen, stürzen", 1, [["Leaves fall from the trees every autumn.", "Jeden Herbst fallen Blätter von den Bäumen.", "fall", "every autumn"], ["Yesterday the apple fell from the tree.", "Gestern fiel der Apfel vom Baum.", "fell", "Yesterday"], ["He has just fallen off his bike.", "Er ist gerade vom Fahrrad gefallen.", "fallen", "just"]]],
+["fly", "flew", "flown", "fliegen", 1, [["We fly to Spain every summer.", "Jeden Sommer fliegen wir nach Spanien.", "fly", "every summer"], ["Last year we flew to London.", "Letztes Jahr sind wir nach London geflogen.", "flew", "Last year"], ["I have never flown in a plane.", "Ich bin noch nie in einem Flugzeug geflogen.", "flown", "never"]]],
+["drive", "drove", "driven", "fahren (Auto)", 1, [["We drive to the lake every weekend.", "Wir fahren jedes Wochenende mit dem Auto zum See.", "drive", "every weekend"], ["Yesterday Dad drove us to the station.", "Gestern hat Papa uns zum Bahnhof gefahren.", "drove", "Yesterday"], ["I have never driven a car.", "Ich bin noch nie Auto gefahren.", "driven", "never"]]],
+["ride", "rode", "ridden", "reiten, (Rad) fahren", 1, [["I ride my bike to school every day.", "Ich fahre jeden Tag mit dem Rad zur Schule.", "ride", "every day"], ["Yesterday she rode her bike to the park.", "Gestern ist sie mit dem Rad zum Park gefahren.", "rode", "Yesterday"], ["He has never ridden a horse.", "Er ist noch nie auf einem Pferd geritten.", "ridden", "never"]]],
+["wear", "wore", "worn", "tragen (Kleidung)", 1, [["I wear a warm jacket every winter.", "Jeden Winter trage ich eine warme Jacke.", "wear", "every winter"], ["Yesterday he wore a blue jacket.", "Gestern trug er eine blaue Jacke.", "wore", "Yesterday"], ["She has never worn that dress.", "Sie hat das Kleid noch nie getragen.", "worn", "never"]]],
+["begin", "began", "begun", "anfangen, beginnen", 2, [["Our lessons begin at eight every day.", "Unser Unterricht beginnt jeden Tag um acht.", "begin", "every day"], ["Yesterday the film began at eight.", "Gestern begann der Film um acht.", "began", "Yesterday"], ["The lesson has just begun.", "Die Stunde hat gerade begonnen.", "begun", "just"]]],
+["break", "broke", "broken", "brechen, kaputt machen", 2, [["Plates often break when they fall.", "Teller gehen oft kaputt, wenn sie herunterfallen.", "break", "often"], ["Last week he broke his arm.", "Letzte Woche hat er sich den Arm gebrochen.", "broke", "Last week"], ["I have just broken my glasses.", "Ich habe gerade meine Brille kaputt gemacht.", "broken", "just"]]],
+["choose", "chose", "chosen", "wählen, aussuchen", 2, [["We choose our books every term.", "Wir wählen jedes Halbjahr unsere Bücher aus.", "choose", "every term"], ["Yesterday I chose the red one.", "Gestern habe ich die rote gewählt.", "chose", "Yesterday"], ["She has already chosen.", "Sie hat schon gewählt.", "chosen", "already"]]],
+["forget", "forgot", "forgotten", "vergessen", 2, [["I sometimes forget my umbrella.", "Ich vergesse manchmal meinen Regenschirm.", "forget", "sometimes"], ["Yesterday I forgot my homework.", "Gestern habe ich meine Hausaufgaben vergessen.", "forgot", "Yesterday"], ["He has already forgotten her name.", "Er hat ihren Namen schon vergessen.", "forgotten", "already"]]],
+["grow", "grew", "grown", "wachsen, anbauen", 2, [["Tomatoes grow well every summer.", "Tomaten wachsen jeden Sommer gut.", "grow", "every summer"], ["Last year the tree grew very tall.", "Letztes Jahr ist der Baum sehr hoch gewachsen.", "grew", "Last year"], ["He has grown a lot since last year.", "Er ist seit letztem Jahr stark gewachsen.", "grown", "since last year"]]],
+["hold", "held", "held", "halten", 2, [["I always hold my mum's hand when we cross the road.", "Ich halte Mamas Hand immer, wenn wir die Straße überqueren.", "hold", "always"], ["Yesterday she held my hand.", "Gestern hielt sie meine Hand.", "held", "Yesterday"], ["He has held the door open for ten minutes.", "Er hält die Tür seit zehn Minuten auf.", "held", "for ten minutes"]]],
+["lead", "led", "led", "führen, leiten", 2, [["The guides lead us up the hill every summer.", "Die Führer führen uns jeden Sommer den Berg hinauf.", "lead", "every summer"], ["Yesterday the guide led us up the hill.", "Gestern führte uns der Führer den Berg hinauf.", "led", "Yesterday"], ["She has often led the group.", "Sie hat die Gruppe oft angeführt.", "led", "often"]]],
+["learn", "learnt/learned", "learnt/learned", "lernen", 2, [["We learn new words every week.", "Wir lernen jede Woche neue Wörter.", "learn", "every week"], ["Yesterday we learnt a new song.", "Gestern haben wir ein neues Lied gelernt.", "learnt", "Yesterday"], ["I have already learnt all the verbs.", "Ich habe schon alle Verben gelernt.", "learnt", "already"]]],
+["mean", "meant", "meant", "bedeuten, meinen", 2, [["Usually these two words mean the same.", "Diese beiden Wörter bedeuten meistens dasselbe.", "mean", "Usually"], ["Yesterday I meant to call you.", "Gestern wollte ich dich anrufen.", "meant", "Yesterday"], ["I have always meant to visit Scotland.", "Ich wollte schon immer Schottland besuchen.", "meant", "always"]]],
+["build", "built", "built", "bauen", 2, [["They build sandcastles every summer.", "Sie bauen jeden Sommer Sandburgen.", "build", "every summer"], ["Last year they built a house by the sea.", "Letztes Jahr haben sie ein Haus am Meer gebaut.", "built", "Last year"], ["We have just built a snowman.", "Wir haben gerade einen Schneemann gebaut.", "built", "just"]]],
+["catch", "caught", "caught", "fangen, erwischen", 2, [["I always catch the 7.30 bus.", "Ich nehme immer den 7.30-Uhr-Bus.", "catch", "always"], ["Yesterday I caught the ball with one hand.", "Gestern habe ich den Ball mit einer Hand gefangen.", "caught", "Yesterday"], ["He has just caught a fish.", "Er hat gerade einen Fisch gefangen.", "caught", "just"]]],
+["cut", "cut", "cut", "schneiden", 2, [["We cut the bread every morning.", "Wir schneiden jeden Morgen das Brot.", "cut", "every morning"], ["Yesterday he cut his finger.", "Gestern hat er sich in den Finger geschnitten.", "cut", "Yesterday"], ["I have just cut the cake.", "Ich habe gerade den Kuchen angeschnitten.", "cut", "just"]]],
+["draw", "drew", "drawn", "zeichnen, ziehen", 2, [["I draw a picture every Friday.", "Ich male jeden Freitag ein Bild.", "draw", "every Friday"], ["Yesterday she drew a picture of her dog.", "Gestern hat sie ihren Hund gemalt.", "drew", "Yesterday"], ["We have already drawn the map.", "Wir haben die Karte schon gezeichnet.", "drawn", "already"]]],
+["hide", "hid", "hidden", "verstecken", 2, [["My cats often hide under the bed.", "Meine Katzen verstecken sich oft unter dem Bett.", "hide", "often"], ["Yesterday the cat hid under the bed.", "Gestern versteckte sich die Katze unter dem Bett.", "hid", "Yesterday"], ["I have just hidden the presents.", "Ich habe gerade die Geschenke versteckt.", "hidden", "just"]]],
+["hit", "hit", "hit", "schlagen, treffen", 2, [["They hit the ball every Sunday.", "Sie schlagen jeden Sonntag den Ball.", "hit", "every Sunday"], ["Yesterday the ball hit the window.", "Gestern traf der Ball das Fenster.", "hit", "Yesterday"], ["He has never hit anyone.", "Er hat noch nie jemanden geschlagen.", "hit", "never"]]],
+["hurt", "hurt", "hurt", "verletzen, wehtun", 2, [["These shoes always hurt my feet.", "Diese Schuhe drücken immer.", "hurt", "always"], ["Yesterday I hurt my knee.", "Gestern habe ich mir das Knie wehgetan.", "hurt", "Yesterday"], ["She has just hurt her hand.", "Sie hat sich gerade die Hand verletzt.", "hurt", "just"]]],
+["lend", "lent", "lent", "(ver)leihen", 2, [["I often lend my bike to my brother.", "Ich leihe mein Rad oft meinem Bruder.", "lend", "often"], ["Yesterday she lent me her bike.", "Gestern hat sie mir ihr Rad geliehen.", "lent", "Yesterday"], ["He has already lent me his pen.", "Er hat mir seinen Stift schon geliehen.", "lent", "already"]]],
+["lie", "lay", "lain", "liegen", 2, [["The cats lie in the sun every afternoon.", "Die Katzen liegen jeden Nachmittag in der Sonne.", "lie", "every afternoon"], ["Yesterday the book lay on the table.", "Gestern lag das Buch auf dem Tisch.", "lay", "Yesterday"], ["They have lain in the sun for an hour.", "Sie liegen schon eine Stunde in der Sonne.", "lain", "for an hour"]]],
+["light", "lit", "lit", "anzünden, beleuchten", 3, [["We light candles every December.", "Jeden Dezember zünden wir Kerzen an.", "light", "every December"], ["Last night she lit a candle.", "Gestern Abend hat sie eine Kerze angezündet.", "lit", "Last night"], ["I have just lit the fire.", "Ich habe gerade das Feuer angezündet.", "lit", "just"]]],
+["ring", "rang", "rung", "klingeln, anrufen", 2, [["The bells ring every hour.", "Die Glocken läuten jede Stunde.", "ring", "every hour"], ["This morning the bell rang at nine.", "Heute Morgen läutete die Glocke um neun.", "rang", "This morning"], ["The phone has just rung.", "Das Telefon hat gerade geklingelt.", "rung", "just"]]],
+["rise", "rose", "risen", "aufgehen, steigen", 2, [["Prices rise every year.", "Die Preise steigen jedes Jahr.", "rise", "every year"], ["Yesterday the sun rose at six.", "Gestern ging die Sonne um sechs auf.", "rose", "Yesterday"], ["Prices have already risen.", "Die Preise sind schon gestiegen.", "risen", "already"]]],
+["shake", "shook", "shaken", "schütteln, zittern", 2, [["We always shake hands when we meet.", "Wir geben uns zur Begrüßung immer die Hand.", "shake", "always"], ["Yesterday he shook his head.", "Gestern schüttelte er den Kopf.", "shook", "Yesterday"], ["I have just shaken the bottle.", "Ich habe die Flasche gerade geschüttelt.", "shaken", "just"]]],
+["shine", "shone", "shone", "scheinen, leuchten", 2, [["The stars shine every night.", "Die Sterne leuchten jede Nacht.", "shine", "every night"], ["Yesterday the sun shone all day.", "Gestern schien die Sonne den ganzen Tag.", "shone", "Yesterday"], ["The sun has shone all week.", "Die Sonne scheint schon die ganze Woche.", "shone", "all week"]]],
+["shoot", "shot", "shot", "schießen", 2, [["They shoot at the goal every Tuesday.", "Dienstags schießen sie immer aufs Tor.", "shoot", "every Tuesday"], ["Yesterday he shot at the goal.", "Gestern schoss er aufs Tor.", "shot", "Yesterday"], ["She has just shot a goal.", "Sie hat gerade ein Tor geschossen.", "shot", "just"]]],
+["show", "showed", "shown", "zeigen", 2, [["We show our homework every Monday.", "Wir zeigen jeden Montag unsere Hausaufgaben.", "show", "every Monday"], ["Yesterday she showed me her photos.", "Gestern hat sie mir ihre Fotos gezeigt.", "showed", "Yesterday"], ["He has already shown us the way.", "Er hat uns den Weg schon gezeigt.", "shown", "already"]]],
+["shut", "shut", "shut", "schließen, zumachen", 2, [["We shut the windows every night.", "Wir schließen jede Nacht die Fenster.", "shut", "every night"], ["Yesterday I shut the door.", "Gestern habe ich die Tür geschlossen.", "shut", "Yesterday"], ["She has just shut the gate.", "Sie hat gerade das Tor geschlossen.", "shut", "just"]]],
+["sink", "sank", "sunk", "sinken, untergehen", 2, [["Stones always sink in water.", "Steine sinken im Wasser immer.", "sink", "always"], ["Long ago the ship sank in a storm.", "Vor langer Zeit sank das Schiff in einem Sturm.", "sank", "Long ago"], ["The boat has already sunk.", "Das Boot ist schon gesunken.", "sunk", "already"]]],
+["spell", "spelt/spelled", "spelt/spelled", "buchstabieren", 2, [["We spell new words every week.", "Wir buchstabieren jede Woche neue Wörter.", "spell", "every week"], ["Yesterday she spelt her name for me.", "Gestern hat sie ihren Namen für mich buchstabiert.", "spelt", "Yesterday"], ["I have just spelt it wrong.", "Ich habe es gerade falsch geschrieben.", "spelt", "just"]]],
+["spend", "spent", "spent", "ausgeben, verbringen", 2, [["We spend the summer at the sea every year.", "Wir verbringen jedes Jahr den Sommer am Meer.", "spend", "every year"], ["Last year we spent a week in Wales.", "Letztes Jahr haben wir eine Woche in Wales verbracht.", "spent", "Last year"], ["I have already spent all my money.", "Ich habe schon mein ganzes Geld ausgegeben.", "spent", "already"]]],
+["steal", "stole", "stolen", "stehlen", 2, [["Foxes sometimes steal chickens.", "Füchse stehlen manchmal Hühner.", "steal", "sometimes"], ["Last night someone stole my bike.", "Letzte Nacht hat jemand mein Fahrrad gestohlen.", "stole", "Last night"], ["Somebody has just stolen my bag.", "Jemand hat gerade meine Tasche gestohlen.", "stolen", "just"]]],
+["stick", "stuck", "stuck", "kleben, stecken", 2, [["We stick photos in our book every month.", "Wir kleben jeden Monat Fotos in unser Heft.", "stick", "every month"], ["Yesterday I stuck the photo in my book.", "Gestern habe ich das Foto ins Heft geklebt.", "stuck", "Yesterday"], ["I have just stuck a stamp on the letter.", "Ich habe gerade eine Briefmarke auf den Brief geklebt.", "stuck", "just"]]],
+["teach", "taught", "taught", "unterrichten, beibringen", 2, [["Teachers teach children every day.", "Lehrer unterrichten jeden Tag Kinder.", "teach", "every day"], ["Last year Mr Brown taught us English.", "Letztes Jahr hat Mr Brown uns Englisch unterrichtet.", "taught", "Last year"], ["He has taught for ten years.", "Er unterrichtet seit zehn Jahren.", "taught", "for ten years"]]],
+["tear", "tore", "torn", "zerreißen", 2, [["Children often tear their trousers.", "Kinder zerreißen oft ihre Hosen.", "tear", "often"], ["Yesterday he tore the paper in half.", "Gestern riss er das Papier in zwei Teile.", "tore", "Yesterday"], ["I have just torn my jacket.", "Ich habe gerade meine Jacke zerrissen.", "torn", "just"]]],
+["throw", "threw", "thrown", "werfen", 2, [["We throw the ball to each other every break.", "Wir werfen uns in jeder Pause den Ball zu.", "throw", "every break"], ["Yesterday she threw the ball to me.", "Gestern warf sie mir den Ball zu.", "threw", "Yesterday"], ["He has just thrown the stick.", "Er hat gerade den Stock geworfen.", "thrown", "just"]]],
+["understand", "understood", "understood", "verstehen", 2, [["I always understand my teacher.", "Ich verstehe meine Lehrerin immer.", "understand", "always"], ["Yesterday I understood everything.", "Gestern habe ich alles verstanden.", "understood", "Yesterday"], ["I have never understood that rule.", "Ich habe diese Regel noch nie verstanden.", "understood", "never"]]],
+["wake", "woke", "woken", "aufwachen, wecken", 2, [["I wake up at seven every morning.", "Ich wache jeden Morgen um sieben Uhr auf.", "wake", "every morning"], ["Yesterday I woke up late.", "Gestern bin ich spät aufgewacht.", "woke", "Yesterday"], ["The baby has just woken up.", "Das Baby ist gerade aufgewacht.", "woken", "just"]]],
+["set", "set", "set", "setzen, einstellen, decken", 2, [["We set the table every evening.", "Wir decken jeden Abend den Tisch.", "set", "every evening"], ["Yesterday she set the alarm for six.", "Gestern hat sie den Wecker auf sechs gestellt.", "set", "Yesterday"], ["I have already set the table.", "Ich habe schon den Tisch gedeckt.", "set", "already"]]],
+["fight", "fought", "fought", "kämpfen, streiten", 2, [["The boys sometimes fight over the ball.", "Die Jungen streiten sich manchmal um den Ball.", "fight", "sometimes"], ["Yesterday they fought over the ball.", "Gestern haben sie sich um den Ball gestritten.", "fought", "Yesterday"], ["They have never fought.", "Sie haben sich noch nie gestritten.", "fought", "never"]]],
+["feed", "fed", "fed", "füttern", 2, [["We feed the ducks every Sunday.", "Wir füttern jeden Sonntag die Enten.", "feed", "every Sunday"], ["Yesterday I fed the ducks in the park.", "Gestern habe ich die Enten im Park gefüttert.", "fed", "Yesterday"], ["I have already fed the cat.", "Ich habe die Katze schon gefüttert.", "fed", "already"]]],
+["freeze", "froze", "frozen", "frieren, gefrieren", 2, [["Lakes freeze every winter.", "Seen frieren jeden Winter zu.", "freeze", "every winter"], ["Last winter the lake froze.", "Letzten Winter ist der See zugefroren.", "froze", "Last winter"], ["The pond has already frozen.", "Der Teich ist schon zugefroren.", "frozen", "already"]]],
+["bite", "bit", "bitten", "beißen", 2, [["Mosquitoes often bite me in summer.", "Im Sommer stechen mich Mücken oft.", "bite", "often"], ["Yesterday the dog bit the postman.", "Gestern biss der Hund den Briefträger.", "bit", "Yesterday"], ["A wasp has just bitten me.", "Eine Wespe hat mich gerade gestochen.", "bitten", "just"]]],
+["blow", "blew", "blown", "wehen, blasen", 2, [["Strong winds blow every autumn.", "Im Herbst wehen starke Winde.", "blow", "every autumn"], ["Last night the wind blew all night.", "Letzte Nacht wehte der Wind die ganze Nacht.", "blew", "Last night"], ["She has just blown out the candles.", "Sie hat gerade die Kerzen ausgeblasen.", "blown", "just"]]],
+["burn", "burnt/burned", "burnt/burned", "brennen, verbrennen", 2, [["Candles burn every evening in our house.", "Bei uns brennen jeden Abend Kerzen.", "burn", "every evening"], ["Yesterday the toast burnt in the toaster.", "Gestern ist der Toast im Toaster verbrannt.", "burnt", "Yesterday"], ["I have just burnt my finger.", "Ich habe mir gerade den Finger verbrannt.", "burnt", "just"]]],
+["dream", "dreamt/dreamed", "dreamt/dreamed", "träumen", 2, [["I often dream about flying.", "Ich träume oft vom Fliegen.", "dream", "often"], ["Last night I dreamt about a dragon.", "Gestern Nacht habe ich von einem Drachen geträumt.", "dreamt", "Last night"], ["I have never dreamt of that.", "Davon habe ich noch nie geträumt.", "dreamt", "never"]]],
+["smell", "smelt/smelled", "smelt/smelled", "riechen", 2, [["Roses always smell lovely.", "Rosen duften immer herrlich.", "smell", "always"], ["Yesterday the soup smelt delicious.", "Gestern roch die Suppe köstlich.", "smelt", "Yesterday"], ["I have just smelt smoke.", "Ich habe gerade Rauch gerochen.", "smelt", "just"]]],
+["spill", "spilt/spilled", "spilt/spilled", "verschütten", 3, [["Small children often spill their drinks.", "Kleine Kinder verschütten oft ihre Getränke.", "spill", "often"], ["Yesterday he spilt his juice on the floor.", "Gestern hat er seinen Saft auf den Boden verschüttet.", "spilt", "Yesterday"], ["I have just spilt my tea.", "Ich habe gerade meinen Tee verschüttet.", "spilt", "just"]]],
+["spread", "spread", "spread", "ausbreiten, verbreiten", 3, [["We spread butter on our bread every morning.", "Wir streichen jeden Morgen Butter aufs Brot.", "spread", "every morning"], ["Yesterday she spread jam on the toast.", "Gestern hat sie Marmelade auf den Toast gestrichen.", "spread", "Yesterday"], ["The news has already spread.", "Die Nachricht hat sich schon verbreitet.", "spread", "already"]]],
+["swing", "swung", "swung", "schaukeln, schwingen", 3, [["The kids swing in the park every afternoon.", "Die Kinder schaukeln jeden Nachmittag im Park.", "swing", "every afternoon"], ["Yesterday they swung on the rope.", "Gestern schaukelten sie am Seil.", "swung", "Yesterday"], ["She has just swung the door open.", "Sie hat gerade die Tür aufgestoßen.", "swung", "just"]]],
+["bend", "bent", "bent", "biegen, sich beugen", 3, [["We bend our knees every morning.", "Wir beugen jeden Morgen die Knie.", "bend", "every morning"], ["Yesterday he bent down to tie his shoe.", "Gestern bückte er sich, um seinen Schuh zu binden.", "bent", "Yesterday"], ["I have just bent the wire.", "Ich habe gerade den Draht verbogen.", "bent", "just"]]],
+["bleed", "bled", "bled", "bluten", 3, [["Cuts often bleed a lot.", "Schnittwunden bluten oft stark.", "bleed", "often"], ["Yesterday my finger bled a little.", "Gestern hat mein Finger etwas geblutet.", "bled", "Yesterday"], ["My nose has never bled.", "Meine Nase hat noch nie geblutet.", "bled", "never"]]],
+["beat", "beat", "beaten", "schlagen, besiegen", 3, [["We often beat the other class.", "Wir schlagen die andere Klasse oft.", "beat", "often"], ["Last week we beat Class 7b.", "Letzte Woche haben wir die 7b besiegt.", "beat", "Last week"], ["They have never beaten us.", "Sie haben uns noch nie besiegt.", "beaten", "never"]]],
+["bet", "bet", "bet", "wetten", 3, [["My friends and I often bet a euro on the match.", "Meine Freunde und ich wetten oft einen Euro auf das Spiel.", "bet", "often"], ["Yesterday I bet him five pounds.", "Gestern habe ich mit ihm um fünf Pfund gewettet.", "bet", "Yesterday"], ["I have never bet on anything.", "Ich habe noch nie auf etwas gewettet.", "bet", "never"]]],
+["burst", "burst", "burst", "platzen, zerplatzen", 3, [["Balloons often burst at parties.", "Luftballons platzen auf Partys oft.", "burst", "often"], ["Yesterday the balloon burst with a bang.", "Gestern platzte der Luftballon mit einem Knall.", "burst", "Yesterday"], ["The pipe has just burst.", "Das Rohr ist gerade geplatzt.", "burst", "just"]]],
+["deal", "dealt", "dealt", "austeilen, handeln", 3, [["We deal the cards every Friday.", "Wir geben jeden Freitag die Karten aus.", "deal", "every Friday"], ["Yesterday she dealt the cards.", "Gestern hat sie die Karten ausgeteilt.", "dealt", "Yesterday"], ["He has already dealt the cards.", "Er hat die Karten schon ausgeteilt.", "dealt", "already"]]],
+["dig", "dug", "dug", "graben", 3, [["The dogs often dig holes in the garden.", "Die Hunde buddeln oft Löcher im Garten.", "dig", "often"], ["Yesterday the dog dug a hole.", "Gestern hat der Hund ein Loch gegraben.", "dug", "Yesterday"], ["We have just dug a pond.", "Wir haben gerade einen Teich gegraben.", "dug", "just"]]],
+["forgive", "forgave", "forgiven", "vergeben, verzeihen", 3, [["I always forgive my little brother.", "Ich verzeihe meinem kleinen Bruder immer.", "forgive", "always"], ["Yesterday she forgave him.", "Gestern hat sie ihm verziehen.", "forgave", "Yesterday"], ["I have already forgiven her.", "Ich habe ihr schon verziehen.", "forgiven", "already"]]],
+["lay", "laid", "laid", "legen", 3, [["We lay the table every evening.", "Wir decken jeden Abend den Tisch.", "lay", "every evening"], ["Yesterday he laid the baby in the cot.", "Gestern legte er das Baby ins Bettchen.", "laid", "Yesterday"], ["I have already laid the table.", "Ich habe schon den Tisch gedeckt.", "laid", "already"]]],
+["lean", "leant/leaned", "leant/leaned", "sich lehnen", 3, [["We often lean on the fence.", "Wir lehnen uns oft an den Zaun.", "lean", "often"], ["Yesterday she leant against the wall.", "Gestern lehnte sie sich an die Wand.", "leant", "Yesterday"], ["I have just leant my bike against the tree.", "Ich habe mein Rad gerade an den Baum gelehnt.", "leant", "just"]]],
+["split", "split", "split", "spalten, teilen", 3, [["We always split the bill.", "Wir teilen die Rechnung immer.", "split", "always"], ["Last night they split the bill.", "Gestern Abend haben sie die Rechnung geteilt.", "split", "Last night"], ["We have just split the cake.", "Wir haben gerade den Kuchen geteilt.", "split", "just"]]],
+["sweep", "swept", "swept", "fegen, kehren", 3, [["I sweep the floor every Saturday.", "Ich fege jeden Samstag den Boden.", "sweep", "every Saturday"], ["Yesterday he swept the yard.", "Gestern fegte er den Hof.", "swept", "Yesterday"], ["I have just swept the kitchen.", "Ich habe gerade die Küche gefegt.", "swept", "just"]]],
+["undo", "undid", "undone", "öffnen, rückgängig machen", 3, [["I always undo my jacket when I get warm.", "Ich mache meine Jacke immer auf, wenn mir warm wird.", "undo", "always"], ["Yesterday she undid the knot.", "Gestern öffnete sie den Knoten.", "undid", "Yesterday"], ["I have just undone my seat belt.", "Ich habe gerade meinen Sicherheitsgurt gelöst.", "undone", "just"]]],
+["overcome", "overcame", "overcome", "überwinden", 3, [["Brave people often overcome their fear.", "Mutige Menschen überwinden ihre Angst oft.", "overcome", "often"], ["Last year he overcame his fear of dogs.", "Letztes Jahr hat er seine Angst vor Hunden überwunden.", "overcame", "Last year"], ["She has already overcome her fear.", "Sie hat ihre Angst schon überwunden.", "overcome", "already"]]],
+["cost", "cost", "cost", "kosten", 2, [["Tickets often cost too much.", "Eintrittskarten kosten oft zu viel.", "cost", "often"], ["Yesterday the ticket cost ten pounds.", "Gestern kostete die Karte zehn Pfund.", "cost", "Yesterday"], ["The tickets have always cost a lot.", "Die Karten haben schon immer viel gekostet.", "cost", "always"]]]
 ];
 </script>
 <script>/* Vokabeltrainer v2 – Lernmotor: Speicherung, Spaced Repetition, Fehlerkartei,
@@ -2755,8 +2760,9 @@ window.VERBS = [
      Eigene Liste (data/verben.js), aber derselbe Lernspeicher wie die Wörter: state.w["v#<n>"]. */
   var verbs = (global.VERBS || []).map(function (v, i) {
     var first = function (x) { return String(x).split("/")[0]; };
-    return { id: "v#" + i, inf: v[0], past: v[1], pp: v[2], de: v[3], lvl: v[4] || 1, ex: v[5] || "",
-      en: v[0] + ", " + first(v[1]) + ", " + first(v[2]), alt: /\//.test(v[1] + v[2]) };
+    var sents = (v[5] || []).map(function (x) { return { en: x[0], de: x[1], form: x[2], time: x[3] }; });
+    return { id: "v#" + i, inf: v[0], past: v[1], pp: v[2], de: v[3], lvl: v[4] || 1, s: sents,
+      ex: sents[1] ? sents[1].en : "", en: v[0] + ", " + first(v[1]) + ", " + first(v[2]), alt: /\//.test(v[1] + v[2]) };
   });
   function verbPools() {
     var now = Date.now(), due = [], box = [], fresh = [], learning = [];
@@ -3347,11 +3353,12 @@ window.VERBS = [
     var vs = S.verbStats(), list = S.verbs();
     var rows = list.map(function (v) {
       var lv = S.levelOf(v.id), r = S.state.w[v.id];
-      return '<div class="wordrow">' +
-        (audioAvailable() ? '<button class="mini-speak" data-act="say" data-text="' + esc(verbWord(v).en) + '" aria-label="' + esc(v.inf) + ' anhören">🔊</button>' : '') +
+      return '<div class="wordrow" data-act="vtoggle" style="cursor:pointer">' +
+        (audioAvailable() ? '<button class="mini-speak" data-act="say" data-text="' + esc(v.en) + '" aria-label="' + esc(v.inf) + ' anhören">🔊</button>' : '') +
         '<span class="en" style="flex:1 1 auto">' + esc(v.inf) + ' – ' + esc(v.past) + ' – ' + esc(v.pp) + '<br><span class="small muted">' + esc(v.de) + '</span></span>' +
         (r && r.no ? '<span class="pill" title="Fehler">✗ ' + r.no + '</span>' : '') +
-        '<span class="pill l' + lv + '">' + esc(S.LEVELS[lv].n) + '</span></div>';
+        '<span class="pill l' + lv + '">' + esc(S.LEVELS[lv].n) + '</span></div>' +
+        '<div class="vsent stack" hidden style="gap:8px;padding:0 0 12px">' + verbSentCards(v, true) + '</div>';
     }).join("");
     view.innerHTML = '<div class="stack">' +
       '<button class="btn ghost" data-act="back" style="align-self:flex-start">← Zurück</button>' +
@@ -3359,7 +3366,7 @@ window.VERBS = [
       '<h1 style="font-size:24px">Verbenliste</h1>' +
       '<p class="small muted" style="margin:6px 0 0">' + vs.total + ' Verben · ' + vs.seen + ' geübt · ' + vs.mastered + ' gemeistert. Infinitive – Simple Past – Past Participle.</p>' +
       '<div class="row" style="margin-top:12px;gap:8px"><button class="btn" data-act="start" data-mode="verbs" data-min="5">Verben üben</button></div></section>' +
-      '<section class="card"><div class="eyebrow">Alle Verben</div>' + rows + '</section></div>';
+      '<section class="card"><div class="eyebrow">Alle Verben · Tippen zeigt die Beispielsätze</div>' + rows + '</section></div>';
   }
 
   /* ================= START ================= */
@@ -3802,15 +3809,58 @@ window.VERBS = [
     if (out.length < n) out = out.concat(S.shuffle(pool).slice(0, n - out.length));
     var seen = {}; return out.filter(function (x) { if (seen[x[key]]) return false; seen[x[key]] = 1; return true; }).slice(0, n);
   }
+  /* ---------- Unregelmäßige Verben: Sätze, Aufgaben ---------- */
+  var TENSES = [
+    { label: "Infinitiv · Gegenwart", name: "Simple Present" },
+    { label: "Simple Past · Vergangenheit", name: "Simple Past" },
+    { label: "Past Participle · Perfekt", name: "Present Perfect" }
+  ];
+  function reEsc(x) { return x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+  /* Satz mit fett markierter Verbform und unterstrichenem Zeitwort */
+  function sentHtml(x, blank) {
+    var h = esc(x.en);
+    h = h.replace(new RegExp("\\b" + reEsc(esc(x.form)) + "\\b"), blank ? '<u class="vblank">&nbsp;</u>' : "<b class=\"vform\">" + esc(x.form) + "</b>");
+    if (x.time) h = h.replace(new RegExp(reEsc(esc(x.time))), "<u class=\"vtime\">" + esc(x.time) + "</u>");
+    return h;
+  }
+  function verbSentCards(v, withDe) {
+    return v.s.map(function (x, i) {
+      return '<div class="card" style="background:var(--card-2);box-shadow:none;padding:12px 14px">' +
+        '<div class="row" style="gap:10px;align-items:center">' + (audioAvailable() ? '<button class="mini-speak" data-act="say" data-text="' + esc(x.en) + '" aria-label="Satz anhören">🔊</button>' : "") +
+        '<div class="eyebrow" style="flex:1">' + TENSES[i].label + '</div></div>' +
+        '<p style="margin:8px 0 2px;font-family:Newsreader,serif;font-size:20px;line-height:1.35">' + sentHtml(x) + '</p>' +
+        '<p class="small muted" style="margin:0">Zeitwort' + (x.time ? ' „' + esc(x.time) + '“' : "") + ' → ' + TENSES[i].name + '</p>' +
+        (withDe ? '<p class="small muted" style="margin:2px 0 0">' + esc(x.de) + '</p>' : "") + '</div>';
+    }).join("");
+  }
   /* Verben laufen durch dieselben Anzeige- und Wertungsfunktionen wie Wörter; dafür ein Wort-förmiges Objekt */
   function verbWord(v) {
-    return { id: v.id, en: v.en, de: v.de + (v.alt ? " (alle Formen: " + v.past + " · " + v.pp + ")" : ""), ex: v.ex };
+    var lines = v.s.map(function (x) {
+      return '<span class="cmp">' + (audioAvailable() ? '<button class="mini-speak" data-act="say" data-text="' + esc(x.en) + '" aria-label="Satz anhören">🔊</button>' : "") + sentHtml(x) + '</span>';
+    }).join("");
+    return { id: v.id, en: v.en, de: v.de + (v.alt ? " (alle Formen: " + v.past + " · " + v.pp + ")" : ""), ex: v.ex, exHtml: lines };
   }
+  /* Unregelmäßige Verben als Lückenaufgabe: Form wählen, die zum Zeitwort passt */
+  function regularForm(inf) {
+    if (/^(be|have|do)$/.test(inf)) return null;
+    return /e$/.test(inf) ? inf + "d" : /[^aeiou]y$/.test(inf) ? inf.slice(0, -1) + "ied" : inf + "ed";
+  }
+  function verbGapOptions(v) {
+    var seen = {}, opts = [];
+    v.s.map(function (x) { return x.form; }).concat([regularForm(v.inf)]).forEach(function (f, i) {
+      if (!f || seen[f]) return; seen[f] = 1; opts.push({ label: f, form: f, ok: false });
+    });
+    return opts;
+  }
+  function verbGapOk(v) { return verbGapOptions(v).length >= 3; }
   function verbTasks(list) {
     var out = [];
     list.forEach(function (v) {
-      if (S.levelOf(v.id) === 0 && !(S.state.w[v.id] && S.state.w[v.id].no)) out.push({ type: "verbintro", v: v });
-      out.push({ type: "verb", v: v });
+      var fresh = S.levelOf(v.id) === 0 && !(S.state.w[v.id] && S.state.w[v.id].no);
+      var gap = verbGapOk(v);
+      if (fresh) out.push({ type: "verbintro", v: v });
+      var easy = fresh || S.levelOf(v.id) <= 1 || Math.random() < 0.5;
+      out.push(gap && easy ? { type: "verbgap", v: v, idx: Math.floor(Math.random() * 3) } : { type: "verb", v: v });
     });
     return out;
   }
@@ -4001,10 +4051,19 @@ window.VERBS = [
         '<div><div class="prompt">' + esc(v.inf) + '</div><div class="sub" style="margin-top:4px">' + esc(v.de) + '</div></div></div>' +
         '<div class="card" style="background:var(--card-2);box-shadow:none"><div class="eyebrow">Die drei Formen</div>' +
         '<p style="margin:6px 0 0;font-family:Newsreader,serif;font-size:22px">' + esc(v.inf) + ' – ' + esc(v.past) + ' – ' + esc(v.pp) + '</p></div>' +
-        (v.ex ? '<div class="card" style="background:var(--card-2);box-shadow:none"><div class="eyebrow">Im Satz</div><p style="margin:6px 0 0;font-family:Newsreader,serif;font-size:18px">' + esc(v.ex) + '</p></div>' : "") +
-        '</div>';
+        verbSentCards(v, true) + '</div>';
       foot.innerHTML = '<button class="btn wide lg" data-act="next">Verstanden</button>';
       if (audioAvailable()) setTimeout(function () { speak(w.en); }, 250);
+    },
+    verbgap: function (t, body, foot) {
+      var v = t.v, x = v.s[t.idx];
+      var opts = S.shuffle(verbGapOptions(v).map(function (o) { o.ok = o.form === x.form; return o; }));
+      t.opts = opts;
+      body.innerHTML = '<div class="stack" style="padding-top:8px"><div class="eyebrow">Welche Form passt? · ' + esc(v.inf) + '</div>' +
+        '<div class="row" style="gap:12px;align-items:center">' + (audioAvailable() ? speakBtn(x.en.replace(new RegExp("\\b" + reEsc(x.form) + "\\b"), "blank")) : "") +
+        '<p class="gapline" style="margin:0;flex:1 1 auto">' + sentHtml(x, true) + ' <span class="small muted">(' + esc(v.inf) + ')</span></p></div>' +
+        '<div class="sub">' + esc(x.de) + '</div>' + optionList(opts) + '</div>';
+      foot.innerHTML = footCheck();
     },
     verb: function (t, body, foot) {
       var v = t.v;
@@ -4136,7 +4195,7 @@ window.VERBS = [
       '<span class="cmp">' +
       (audioAvailable() ? '<button class="mini-speak" data-act="say" data-text="' + esc(w.en) + '" aria-label="' + esc(w.en) + ' anhören">🔊</button>' : '') +
       esc(w.en) + " – " + esc(w.de) + (comp ? " · " + comp : "") + '</span>' +
-      (w.ex && audioAvailable() ? '<span class="cmp"><button class="mini-speak" data-act="say" data-text="' + esc(w.ex) + '" aria-label="Beispielsatz anhören">🔊</button>' + esc(w.ex) + '</span>' : "") +
+      (w.exHtml ? w.exHtml : (w.ex && audioAvailable() ? '<span class="cmp"><button class="mini-speak" data-act="say" data-text="' + esc(w.ex) + '" aria-label="Beispielsatz anhören">🔊</button>' + esc(w.ex) + '</span>' : "")) +
       '</div>' +
       '<button class="btn wide lg" data-act="next" id="mainBtn">Weiter</button>';
     var b = $("#mainBtn"); if (b) b.focus();
@@ -4161,6 +4220,16 @@ window.VERBS = [
   function check() {
     if (!SS || SS.answered) return;
     var t = SS.tasks[SS.i], w = t.w;
+    if (t.type === "verbgap") {
+      if (SS.pick == null) return;
+      var vg = t.v, gx = vg.s[t.idx], okG = !!t.opts[SS.pick].ok, vgw = verbWord(vg);
+      SS.answered = true;
+      $$(".opt").forEach(function (b, i) { b.disabled = true; if (t.opts[i].ok) b.classList.add("right"); else if (i === SS.pick) b.classList.add("wrong"); });
+      var rg = applyGrade(vgw, okG ? 1 : 0);
+      if (!okG) SS.retry.push({ type: "verbgap", v: vg, idx: t.idx });
+      verdict(okG, vgw, rg, "Zeitwort „" + gx.time + "“ → " + TENSES[t.idx].name);
+      return;
+    }
     if (t.type === "verb") {
       var v = t.v, vw = verbWord(v);
       var ga = judgeTyped($("#vPast").value, v.past), gb = judgeTyped($("#vPp").value, v.pp);
@@ -4327,6 +4396,7 @@ window.VERBS = [
       else arr.push(k);
       st.settings.units = []; S.save(true); render();
     } else if (a === "unit") { detailUnit = act.getAttribute("data-id"); render(); }
+    else if (a === "vtoggle") { var vs2 = act.nextElementSibling; if (vs2 && vs2.classList.contains("vsent")) vs2.hidden = !vs2.hidden; }
     else if (a === "verblist") { detailUnit = "__verbs"; tab = "units"; render(); view.scrollTop = 0; }
     else if (a === "back") { detailUnit = null; render(); }
     else if (a === "readall") {

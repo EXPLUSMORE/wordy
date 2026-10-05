@@ -102,7 +102,11 @@ Häufigkeit. Abgefragt werden Simple Past und Past Participle, beides muss
 stimmen; mehrere gültige Formen (learnt/learned) stehen mit `/`. Neue Verben
 bekommen erst eine Einführungskarte. Geübt wird mit „Verben üben“ (Start,
 Einheiten) oder automatisch: in normalen Schulrunden kommt etwa jede achte
-Aufgabe ein Verb, bevorzugt fällige und fehlerhafte. Die Verbenliste zeigt
+Aufgabe ein Verb, bevorzugt fällige und fehlerhafte. Zu jedem Verb gibt es drei
+Beispielsätze mit Übersetzung, Zeitwort-Hinweis und Vorlesen (Gegenwart, Simple
+Past, Perfekt). Neben dem Tippen gibt es die Lückenaufgabe „Welche Form passt?“:
+ein Satz mit Zeitwort, aus drei bis vier Formen (auch der falsch regelmäßigen wie
+*goed*) wählt man die richtige. Die Verbenliste zeigt
 alle Verben mit Lernstufe; der Lernstand liegt im selben Speicher wie die Wörter.
 
 ### Vokabeln aus dem Schulbuch
