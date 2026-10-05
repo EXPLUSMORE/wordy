@@ -26,6 +26,7 @@ const MAIL = {
 };
 const GRAPH = { tenant: process.env.GRAPH_TENANT || "", clientId: process.env.GRAPH_CLIENT_ID || "", clientSecret: process.env.GRAPH_CLIENT_SECRET || "" };
 const graphOn = () => !!(GRAPH.tenant && GRAPH.clientId && GRAPH.clientSecret && MAIL.from && MAIL.to);
+const DASH_URL = (process.env.DASHBOARD_URL || "https://track.wordy.explusmore.com").replace(/\/+$/, "");
 const mailOn = () => graphOn() || !!(MAIL.host && MAIL.from && MAIL.to);
 
 if (!ADMIN_PASSWORD || ADMIN_PASSWORD.length < 10) {
@@ -407,8 +408,8 @@ function mailContent() {
   const mon = mondayOf(dayOf(Date.now()));
   return {
     subject: "Wordy: Lernwoche ab " + mon.split("-").reverse().join("."),
-    text: "Wordy Wochenzusammenfassung (Woche ab " + mon + ")\n\n" + (texts.join("\n\n") || "Noch keine Spieler angelegt.") + "\n",
-    html: '<div style="font-family:system-ui,Segoe UI,Arial,sans-serif;color:#16222B;max-width:560px"><h1 style="font-size:20px;margin:0 0 4px">📚 Wordy · Lernwoche</h1><div style="color:#666">Woche ab ' + esc(mon.split("-").reverse().join(".")) + "</div>" + (parts.join("") || "<p>Noch keine Spieler angelegt.</p>") + "</div>"
+    text: "Wordy Wochenzusammenfassung (Woche ab " + mon + ")\n\n" + (texts.join("\n\n") || "Noch keine Spieler angelegt.") + "\n\nAlle Details im Dashboard: " + DASH_URL + "\n",
+    html: '<div style="font-family:system-ui,Segoe UI,Arial,sans-serif;color:#16222B;max-width:560px"><h1 style="font-size:20px;margin:0 0 4px">📚 Wordy · Lernwoche</h1><div style="color:#666">Woche ab ' + esc(mon.split("-").reverse().join(".")) + "</div>" + (parts.join("") || "<p>Noch keine Spieler angelegt.</p>") + '<p style="margin:26px 0 0"><a href="' + esc(DASH_URL) + '" style="display:inline-block;background:#1E6273;color:#fff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:600">Zum Dashboard</a></p><p style="margin:8px 0 0;color:#666;font-size:13px"><a href="' + esc(DASH_URL) + '" style="color:#1E6273">' + esc(DASH_URL) + "</a></p></div>"
   };
 }
 async function sendWeekly() {
