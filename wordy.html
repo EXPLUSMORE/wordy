@@ -3067,11 +3067,19 @@ window.SENTENCES = [
      Die Länge des Vorlaufs ist unter Setup einstellbar (Standard 500 ms). */
   var lastSpoke = 0;
   function speechLead() { var v = S.state.settings.speechLead; return v == null ? 500 : v; }
-  function primeSpeech() {
-    var synth = window.speechSynthesis; if (!synth) return;
-    var w = new SpeechSynthesisUtterance("Okay");
-    w.volume = 0.02; w.rate = 2;
-    synth.speak(w);
+  /* Wärmt die Ausgabe mit einem echten, aber unhörbaren Wort an (Lautstärke fast 0; bei exakt 0 überspringen
+     manche Stimmen die Ausgabe). done() läuft, sobald es fertig ist oder spätestens nach maxMs. */
+  function primeSpeech(done, maxMs) {
+    var synth = window.speechSynthesis, fired = false;
+    function fin() { if (fired) return; fired = true; if (done) setTimeout(done, 40); }
+    if (!synth) return fin();
+    try {
+      var w = new SpeechSynthesisUtterance("Okay");
+      w.volume = 0.001; w.rate = 3;
+      w.onend = fin; w.onerror = fin;
+      synth.speak(w);
+      setTimeout(fin, maxMs || 500);
+    } catch (e) { fin(); }
   }
   function speak(text, rate, lang, forceCold) {
     if (!S.state.settings.audio || !window.speechSynthesis) return false;
@@ -3089,7 +3097,7 @@ window.SENTENCES = [
       lastSpoke = now;
       var lead = speechLead();
       if (busy) setTimeout(function () { synth.speak(u); }, 150);
-      else if (cold && lead > 0) { primeSpeech(); setTimeout(function () { synth.speak(u); }, lead); }
+      else if (cold && lead > 0) primeSpeech(function () { synth.speak(u); }, lead);
       else synth.speak(u);
       return true;
     } catch (e) { return false; }
@@ -3097,7 +3105,7 @@ window.SENTENCES = [
   /* Beim ersten Tippen die Sprachausgabe unhörbar anwerfen, damit schon der erste Satz vollständig kommt. */
   document.addEventListener("pointerdown", function warm() {
     document.removeEventListener("pointerdown", warm);
-    if (S.state.settings.audio && window.speechSynthesis) { try { primeSpeech(); lastSpoke = Date.now(); } catch (e) {} }
+    if (S.state.settings.audio && window.speechSynthesis) { try { primeSpeech(null, 300); lastSpoke = Date.now(); } catch (e) {} }
   }, { passive: true });
   function audioAvailable() { return !!(window.speechSynthesis && S.state.settings.audio); }
 
