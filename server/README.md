@@ -3,6 +3,12 @@
 Nimmt den Lernverlauf der Wordy-App entgegen und zeigt ihn den Eltern im Dashboard.
 Keine Abhängigkeiten: nur **Node.js ab 22.13** (eingebautes SQLite). Daten liegen in einer einzigen Datei.
 
+## Völlig eigenständig
+Der Wordy-Server teilt sich nichts mit anderen Diensten auf dem Rechner (auch nicht mit dem Admintool):
+eigener Systembenutzer `wordy`, eigener Port, eigene Datenbankdatei, eigene Zugangsdaten, eigene Subdomain, eigener systemd-Dienst.
+Er liest keine fremden Daten und stellt keine Verbindung zu anderen Diensten her. Zum Entfernen genügt:
+`systemctl disable --now wordy-server`, den Ordner `/opt/wordy` und `/var/lib/wordy` löschen, nginx-Eintrag entfernen.
+
 ## Was gespeichert wird
 Nur Lerndaten: welches Wort wann richtig oder falsch beantwortet wurde, Übungszeit pro Runde, Stand der Wörter und Einheiten,
 Münzen, Käufe im Shop. Keine Klarnamen, keine Standorte. Die App zeigt dem Kind unter Setup an, dass die Eltern den Fortschritt sehen.
@@ -17,7 +23,8 @@ Jeder Spieler (jedes Gerät, jedes Profil in der App) wird einzeln verbunden, di
 
 ## Installation auf dem Server (Beispiel Linux mit systemd und nginx)
 ```bash
-node -v        # muss v22.13 oder neuer sein
+node -v        # muss v22.13 oder neuer sein (für Wordy reicht ein eigenes Node, am System ändert sich nichts)
+ss -ltn | grep 8787   # darf nichts ausgeben, sonst in .env einen freien PORT wählen
 
 sudo useradd --system --home /opt/wordy wordy
 sudo mkdir -p /opt/wordy /var/lib/wordy && sudo chown wordy: /var/lib/wordy
