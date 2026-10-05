@@ -4024,7 +4024,7 @@ window.VERBS = [
     var st = S.state, list = S.SHOP.filter(function (x) { return x.kind === "avatar" && (set ? x.set === set : !x.set); });
     var have = list.filter(function (x) { return S.owns(x); }).length;
     return '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">' + (set ? "Fortnite-Album" : "Sammelalbum") + '</div><span class="pill tnum">' + have + ' / ' + list.length + '</span></div>' +
-      '<p class="small muted" style="margin:6px 0 10px">' + (set ? "Tiere und Kristalle aus Fortnite, selbst gezeichnet. Die Tiere gibt es ab Rang Gold II, die Kristalle ab ihrem Rang, die Unreal-Stücke erst ab Unreal. Tippe auf ein graues Feld, um es dir zu wünschen ⭐."
+      '<p class="small muted" style="margin:6px 0 10px">' + (set ? "Tiere und Kristalle aus Fortnite, selbst gezeichnet. Die Tiere gibt es ab Rang Gold II, die Kristalle ab ihrem Rang, die Unreal-Stücke erst ab Unreal. Wünschen kannst du dir etwas im Shop mit dem ⭐."
         : "Alle Figuren auf einen Blick. Tippe auf eine, die du hast, um sie zu wählen.") + '</p>' +
       '<div class="album">' + list.map(function (it) {
         var own = S.owns(it), act = S.isActive(it);
@@ -4922,8 +4922,7 @@ window.VERBS = [
     else if (a === "goshop") { tab = "stats"; render(); var shopEl = view.querySelector(".shopitem"); if (shopEl) shopEl.scrollIntoView({ block: "center" }); }
     else if (a === "albuminfo") {
       var ai = S.SHOP.filter(function (x) { return x.id === act.getAttribute("data-id"); })[0];
-      if (ai && !S.owns(ai)) { S.setWish(ai.id); }
-      if (ai) toast(S.minXp(ai) > S.state.xp ? ai.label + ": erst ab Rang " + ai.rank + " (" + ai.cost + " Münzen). ⭐ Als Wunsch gemerkt." : ai.label + ": " + ai.cost + " Münzen. ⭐ Als Wunsch gemerkt.");
+      if (ai) toast(S.minXp(ai) > S.state.xp ? ai.label + ": erst ab Rang " + ai.rank + " (" + ai.cost + " Münzen)." : ai.label + ": " + ai.cost + " Münzen.");
     }
     else if (a === "padd") {
       var nm = $("#newPlayer").value; S.addProfile(nm);

@@ -123,8 +123,8 @@ entdeckt (+8, ab fünf Wörtern), Einheit geschafft (+30, alle mindestens
 zahlt höchstens einmal pro Tag und nur, wenn es fällig war, dasselbe Wort immer
 wieder zu üben bringt also nichts. Dazu Missionen (drei pro Tag, „x
 verschiedene Wörter“ statt Aufgaben), das Tagesziel (+20) und die Arena (höchstens
-30 pro Tag). Die Startseite zeigt den **Wunsch** (⭐ im Shop oder Tippen auf ein
-gesperrtes Album-Feld) mit Fortschrittsbalken; nach jeder Runde steht da,
+30 pro Tag). Die Startseite zeigt den **Wunsch** (nur über das ⭐ im Shop; Album und
+Stickerbuch zeigen nur an) mit Fortschrittsbalken; nach jeder Runde steht da,
 wofür es Münzen gab.
 
 ### Shop und Sammelalbum
