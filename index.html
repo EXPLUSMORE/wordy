@@ -100,6 +100,8 @@ html[data-bg="space"] body{background-image:
   background-size:auto,auto,240px 240px,240px 240px,240px 240px,240px 240px,240px 240px;background-attachment:fixed}
 html[data-bg="stars"],html[data-bg="clouds"],html[data-bg="space"]{--bgdot:color-mix(in srgb,var(--accent) 65%,transparent);--bgblob:color-mix(in srgb,var(--accent) 16%,transparent);--bgstar:rgba(255,255,255,.9)}
 @media (prefers-color-scheme:light){html[data-bg="space"]{--bgstar:rgba(60,50,140,.55)}}
+html[data-bg="space"][data-theme="light"]{--bgstar:rgba(60,50,140,.55)}
+html[data-bg="space"][data-theme="dark"]{--bgstar:rgba(255,255,255,.9)}
 /* Karten lassen das Muster leicht durchscheinen */
 html[data-bg="stars"] .card,html[data-bg="clouds"] .card,html[data-bg="space"] .card{background:color-mix(in srgb,var(--card) 88%,transparent)}
 /* Shop und Sammelalbum */

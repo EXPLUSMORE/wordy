@@ -106,6 +106,8 @@ html[data-bg="space"] body{background-image:
   background-size:auto,auto,240px 240px,240px 240px,240px 240px,240px 240px,240px 240px;background-attachment:fixed}
 html[data-bg="stars"],html[data-bg="clouds"],html[data-bg="space"]{--bgdot:color-mix(in srgb,var(--accent) 65%,transparent);--bgblob:color-mix(in srgb,var(--accent) 16%,transparent);--bgstar:rgba(255,255,255,.9)}
 @media (prefers-color-scheme:light){html[data-bg="space"]{--bgstar:rgba(60,50,140,.55)}}
+html[data-bg="space"][data-theme="light"]{--bgstar:rgba(60,50,140,.55)}
+html[data-bg="space"][data-theme="dark"]{--bgstar:rgba(255,255,255,.9)}
 /* Karten lassen das Muster leicht durchscheinen */
 html[data-bg="stars"] .card,html[data-bg="clouds"] .card,html[data-bg="space"] .card{background:color-mix(in srgb,var(--card) 88%,transparent)}
 /* Shop und Sammelalbum */
@@ -2916,8 +2918,10 @@ window.SENTENCES = [
 
   /* ---------- Rahmen und Hintergründe: Aussehen steht als CSS in index.html, hier nur die Auswahl ---------- */
   function frameClass(p) { var f = (p && p.frame) || "none"; return f === "none" ? "" : "fr-" + f; }
-  function applyLook(p) {
+  /* mode: "auto" (folgt dem Gerät), "light" oder "dark" */
+  function applyLook(p, mode) {
     var root = document.documentElement;
+    if (mode === "light" || mode === "dark") root.setAttribute("data-theme", mode); else root.removeAttribute("data-theme");
     root.setAttribute("data-accent", (p && p.theme) || "paper");
     root.setAttribute("data-bg", (p && p.bg) || "none");
   }
@@ -3154,7 +3158,7 @@ window.SENTENCES = [
     var hEl = $("#hHearts");
     if (!st.settings.hearts) { hEl.textContent = "∞"; hEl.title = "Ohne Herzen"; }
     else { S.regenHearts(); hEl.innerHTML = "<span style='color:var(--bad)'>" + "♥".repeat(st.hearts) + "</span><span style='color:var(--line)'>" + "♥".repeat(5 - st.hearts) + "</span>"; }
-    global.VTC.applyLook(st.profile);
+    global.VTC.applyLook(st.profile, st.settings.themeMode);
   }
 
   function trackSwitch() {
@@ -3510,6 +3514,10 @@ window.SENTENCES = [
       }).join("") + '</select></label>' +
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Aussprache vorlesen<br><span class="small muted">Nutzt die englische Stimme des Geräts</span></span>' +
       '<input type="checkbox" id="setAudio" ' + (st.settings.audio ? "checked" : "") + ' style="width:auto"></label>' +
+      '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Erscheinungsbild<br><span class="small muted">Automatisch folgt der Einstellung des Geräts</span></span>' +
+      '<select id="setMode" style="width:auto">' + [["auto", "Automatisch"], ["light", "Hell"], ["dark", "Dunkel"]].map(function (o) {
+        return '<option value="' + o[0] + '"' + ((st.settings.themeMode || "auto") === o[0] ? " selected" : "") + '>' + o[1] + '</option>';
+      }).join("") + '</select></label>' +
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Vorlauf beim Vorlesen<br><span class="small muted">Länger, wenn der Anfang eines Satzes fehlt. „Stimme testen“ zeigt die Wirkung.</span></span>' +
       '<select id="setLead" style="width:auto">' + [[0, "Aus"], [500, "Kurz"], [1000, "Mittel"], [1600, "Lang"]].map(function (o) {
         return '<option value="' + o[0] + '"' + (speechLead() === o[0] ? " selected" : "") + '>' + o[1] + '</option>';
@@ -3557,6 +3565,7 @@ window.SENTENCES = [
     $("#setGoal").onchange = function () { st.settings.goalMin = +this.value; S.save(true); renderHeader(); };
     $("#setNew").onchange = function () { st.settings.newPerDay = +this.value; S.save(true); };
     $("#setAudio").onchange = function () { st.settings.audio = this.checked; S.save(true); };
+    $("#setMode").onchange = function () { st.settings.themeMode = this.value; S.save(true); renderHeader(); };
     $("#setLead").onchange = function () { st.settings.speechLead = +this.value; S.save(true); };
     $("#setHearts").onchange = function () { st.settings.hearts = this.checked; if (this.checked === false) st.hearts = 5; S.save(true); renderHeader(); };
     $("#csvFile").onchange = function () {

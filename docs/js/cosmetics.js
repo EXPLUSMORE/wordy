@@ -92,8 +92,10 @@
 
   /* ---------- Rahmen und Hintergründe: Aussehen steht als CSS in index.html, hier nur die Auswahl ---------- */
   function frameClass(p) { var f = (p && p.frame) || "none"; return f === "none" ? "" : "fr-" + f; }
-  function applyLook(p) {
+  /* mode: "auto" (folgt dem Gerät), "light" oder "dark" */
+  function applyLook(p, mode) {
     var root = document.documentElement;
+    if (mode === "light" || mode === "dark") root.setAttribute("data-theme", mode); else root.removeAttribute("data-theme");
     root.setAttribute("data-accent", (p && p.theme) || "paper");
     root.setAttribute("data-bg", (p && p.bg) || "none");
   }
