@@ -4,7 +4,7 @@
    Quelle: Headlight 2 (Klasse 6), Vocabulary S. 202–216 (Unit 1–3).                      */
 window.VOCAB_UNITS = (window.VOCAB_UNITS || []).concat([
 
-{k:6,id:"H2-1a",title:"Headlight 2 · Unit 1 · Together again (1)",icon:"⛰️",words:[
+{k:"Headlight 2",id:"H2-1a",title:"Headlight 2 · Unit 1 · Together again (1)",icon:"⛰️",words:[
 ["mountain","Berg",1,"We climbed a high mountain."],
 ["lake","(Binnen-)See",1,"We swim in the lake."],
 ["barbecue","Grillfest, Grillparty",2,"We have a barbecue in the garden."],
@@ -44,7 +44,7 @@ window.VOCAB_UNITS = (window.VOCAB_UNITS || []).concat([
 ["short","kurz",1,"This film is short."],
 ]},
 
-{k:6,id:"H2-1b",title:"Headlight 2 · Unit 1 · Clubs (2)",icon:"🎭",words:[
+{k:"Headlight 2",id:"H2-1b",title:"Headlight 2 · Unit 1 · Clubs (2)",icon:"🎭",words:[
 ["newsletter","Mitteilungsblatt, Informationsblatt",2,"The school newsletter is on the board."],
 ["lunchtime","Mittagszeit",1,"We have clubs at lunchtime."],
 ["cricket","Kricket (Mannschaftssportart)",2,"My uncle plays cricket."],
@@ -62,7 +62,7 @@ window.VOCAB_UNITS = (window.VOCAB_UNITS || []).concat([
 ["circle","Kreis",1,"Draw a circle."],
 ]},
 
-{k:6,id:"H2-1c",title:"Headlight 2 · Unit 1 · Focus on language & Story",icon:"📺",words:[
+{k:"Headlight 2",id:"H2-1c",title:"Headlight 2 · Unit 1 · Focus on language & Story",icon:"📺",words:[
 ["channel","Kanal",2,"I watch a TV channel."],
 ["drive","(mit dem Auto) fahren",1,"My dad can drive a car."],
 ["be/feel homesick","Heimweh haben",3,"I feel homesick at summer camp."],
@@ -106,7 +106,7 @@ window.VOCAB_UNITS = (window.VOCAB_UNITS || []).concat([
 ["shy","scheu, schüchtern",2,"My sister is shy."],
 ]},
 
-{k:6,id:"H2-2a",title:"Headlight 2 · Unit 2 · Neighbours (1)",icon:"🏘️",words:[
+{k:"Headlight 2",id:"H2-2a",title:"Headlight 2 · Unit 2 · Neighbours (1)",icon:"🏘️",words:[
 ["neighbour","Nachbar/in",2,"Our neighbour has a dog."],
 ["post office","Post(amt)",1,"The post office is on the left."],
 ["garage","Garage; (Auto-)Werkstatt",2,"The car is in the garage."],
@@ -140,7 +140,7 @@ window.VOCAB_UNITS = (window.VOCAB_UNITS || []).concat([
 ["as fast as he could","so schnell (wie) er konnte",3,"He ran as fast as he could."],
 ]},
 
-{k:6,id:"H2-2b",title:"Headlight 2 · Unit 2 · Neighbours (2)",icon:"🐕",words:[
+{k:"Headlight 2",id:"H2-2b",title:"Headlight 2 · Unit 2 · Neighbours (2)",icon:"🐕",words:[
 ["be scared (of)","Angst haben (vor)",2,"I am scared of big dogs."],
 ["We'll find him.","Wir werden ihn finden.",2,"We'll find him."],
 ["half an hour","eine halbe Stunde",2,"I wait half an hour."],
@@ -170,7 +170,7 @@ window.VOCAB_UNITS = (window.VOCAB_UNITS || []).concat([
 ["budgie","Wellensittich",2,"My budgie can talk."],
 ]},
 
-{k:6,id:"H2-2c",title:"Headlight 2 · Unit 2 · Focus on language & Story",icon:"🎃",words:[
+{k:"Headlight 2",id:"H2-2c",title:"Headlight 2 · Unit 2 · Focus on language & Story",icon:"🎃",words:[
 ["bonfire","(großes Freuden-)Feuer",2,"We sit around the bonfire."],
 ["celebrate","feiern",2,"We celebrate her birthday."],
 ["costume","Kostüm, Verkleidung",2,"I wear a costume at the party."],
@@ -219,7 +219,7 @@ window.VOCAB_UNITS = (window.VOCAB_UNITS || []).concat([
 ["danger","Gefahr",2,"There is no danger."],
 ]},
 
-{k:6,id:"H2-3a",title:"Headlight 2 · Unit 2–3 · Skills & Teen talk",icon:"🗺️",words:[
+{k:"Headlight 2",id:"H2-3a",title:"Headlight 2 · Unit 2–3 · Skills & Teen talk",icon:"🗺️",words:[
 ["do better","besser abschneiden",2,"I want to do better in tests."],
 ["penfriend","Brieffreund/in",2,"I write to my penfriend."],
 ["at least","wenigstens, zumindest",2,"I read at least ten pages."],
@@ -248,7 +248,7 @@ window.VOCAB_UNITS = (window.VOCAB_UNITS || []).concat([
 ["nobody","niemand",2,"Nobody is at home."],
 ]},
 
-{k:6,id:"H2-3b",title:"Headlight 2 · Unit 3 · Money & chores (1)",icon:"💷",words:[
+{k:"Headlight 2",id:"H2-3b",title:"Headlight 2 · Unit 3 · Money & chores (1)",icon:"💷",words:[
 ["magazine","Zeitschrift",2,"I read a magazine."],
 ["a lot (of)","viel/e; sehr",1,"I have a lot of CDs."],
 ["mean","gemein, fies; geizig",2,"Don't be mean!"],
@@ -275,7 +275,7 @@ window.VOCAB_UNITS = (window.VOCAB_UNITS || []).concat([
 ["for example","zum Beispiel",1,"I like ball games, basketball for example."],
 ]},
 
-{k:6,id:"H2-3c",title:"Headlight 2 · Unit 3 · Ice rink & Focus on language",icon:"⛸️",words:[
+{k:"Headlight 2",id:"H2-3c",title:"Headlight 2 · Unit 3 · Ice rink & Focus on language",icon:"⛸️",words:[
 ["nearly","fast",2,"It's nearly four o'clock."],
 ["still","(immer) noch; trotzdem",2,"Joe still isn't here."],
 ["ice skating","Schlittschuhlaufen",2,"I like ice skating."],
@@ -306,7 +306,7 @@ window.VOCAB_UNITS = (window.VOCAB_UNITS || []).concat([
 ["worst","der/die/das schlechteste, schlimmste",2,"This is the worst day."],
 ]},
 
-{k:6,id:"H2-3d",title:"Headlight 2 · Unit 3 · Story & Skills training",icon:"🤝",words:[
+{k:"Headlight 2",id:"H2-3d",title:"Headlight 2 · Unit 3 · Story & Skills training",icon:"🤝",words:[
 ["grow","wachsen",2,"Flowers grow in spring."],
 ["Money doesn't grow on trees.","Das Geld liegt nicht auf der Straße.",3,"Money doesn't grow on trees."],
 ["part","Teil",1,"This is the best part."],
@@ -354,7 +354,7 @@ window.VOCAB_UNITS = (window.VOCAB_UNITS || []).concat([
 ["ticket office","Kartenschalter",2,"The ticket office is open."],
 ]},
 
-{k:6,id:"H2-4a",title:"Headlight 2 · Unit 4 · Feeling good (1)",icon:"🥕",words:[
+{k:"Headlight 2",id:"H2-4a",title:"Headlight 2 · Unit 4 · Feeling good (1)",icon:"🥕",words:[
 ["the way you live","deine Lebensweise",3,"The way you live is important for your health."],
 ["how many?","wie viele?",1,"How many DVDs do you have?"],
 ["less than","weniger als",2,"I eat less than my brother."],
@@ -388,7 +388,7 @@ window.VOCAB_UNITS = (window.VOCAB_UNITS || []).concat([
 ["chance","Chance, Gelegenheit",2,"This is your chance."],
 ]},
 
-{k:6,id:"H2-4b",title:"Headlight 2 · Unit 4 · Feeling good (2)",icon:"🤒",words:[
+{k:"Headlight 2",id:"H2-4b",title:"Headlight 2 · Unit 4 · Feeling good (2)",icon:"🤒",words:[
 ["doctor","Arzt, Ärztin",1,"I go to the doctor."],
 ["the good news is that …","die gute Nachricht ist, dass …",3,"The good news is that I feel better."],
 ["dark","dunkel",1,"It's too dark in here."],
@@ -425,7 +425,7 @@ window.VOCAB_UNITS = (window.VOCAB_UNITS || []).concat([
 ["everything","alles",1,"Everything is fine."],
 ]},
 
-{k:6,id:"H2-4c",title:"Headlight 2 · Unit 4 · Story & Skills (3)",icon:"🐱",words:[
+{k:"Headlight 2",id:"H2-4c",title:"Headlight 2 · Unit 4 · Story & Skills (3)",icon:"🐱",words:[
 ["technician","Techniker/in",3,"The technician fixes the computer."],
 ["disappointed (with)","enttäuscht (von)",3,"I'm very disappointed."],
 ["kitten","Kätzchen, junge Katze",1,"The kitten is very small."],
@@ -468,6 +468,206 @@ window.VOCAB_UNITS = (window.VOCAB_UNITS || []).concat([
 ["choose","(aus)wählen",2,"Choose a film."],
 ["outdoor sport","Sport für draußen / im Freien",2,"I like outdoor sports."],
 ["embarrassed","verlegen",3,"I felt so embarrassed."],
+]},
+
+{k:"Headlight 2",id:"H2-5a",title:"Headlight 2 · Unit 5 · Dartmoor adventures (1)",icon:"🦉",words:[
+["mud","Schlamm, Matsch",1,"Oh no, look, there's mud everywhere."],
+["national park","Nationalpark",2,"We visit a national park."],
+["river","Fluss",1,"We swim in the river."],
+["stone","Stein",1,"The stone is very big."],
+["mysterious","geheimnisvoll",3,"It's a mystery: very mysterious!"],
+["autumn","Herbst",2,"In autumn the leaves are red."],
+["everywhere","überall(hin)",2,"There is mud everywhere."],
+["bite","beißen",2,"Don't feed the ponies. They bite."],
+["drive carefully","vorsichtig fahren",2,"Drive carefully!"],
+["owl","Eule",1,"The owl sleeps in the day."],
+["fox","Fuchs",1,"A fox lives in the wood."],
+["badger","Dachs",2,"A badger lives under the ground."],
+["in the old days","früher",2,"In the old days, there were no mobiles."],
+["hairy","behaart, haarig",2,"My dog is very hairy."],
+["across","(quer) über",2,"Birds can fly across the sea."],
+["smell","riechen",1,"The flowers smell nice."],
+["the weather will be good","das Wetter wird gut sein",2,"The weather will be good tomorrow."],
+["it won't rain","es wird nicht regnen",2,"It won't rain tomorrow."],
+["forecast","(Wetter-)Vorhersage",2,"The forecast says it will be sunny."],
+["foggy","nebelig",2,"It's a foggy day."],
+["fog","Nebel",1,"I can't see in the fog."],
+["take","(mit)nehmen; bringen",1,"It's raining. Take a coat!"],
+["useful","nützlich, hilfreich",2,"A map is very useful."],
+["get lost","sich verirren, sich verlaufen",2,"We got lost in the wood."],
+["curious about sth.","neugierig auf etwas",3,"My sister is curious about everything."],
+["tent","Zelt",1,"We sleep in a tent."],
+["pack","packen, einpacken",1,"I pack my bag."],
+["cream","Sahne; Creme",1,"I like cream on my cake."],
+["pyjamas","(ein) Schlafanzug",2,"Where are my pink pyjamas?"],
+["hairdryer","Föhn, Haartrockner",2,"I need a hairdryer."],
+["rucksack","Rucksack",1,"What a big rucksack!"],
+["list","Liste",1,"Write a list."],
+["maze","Irrgarten, Labyrinth",2,"We get lost in the maze."],
+["start","Anfang, Start",1,"This is the start."],
+["finish","Ziel (beim Sport)",1,"The finish is next to the lake."],
+["clear","klar, deutlich",2,"Give clear directions."],
+["if (ob)","ob",2,"I don't know if I can come."],
+["forward","vorwärts, nach vorne",2,"Take one step forward."],
+["straight on","geradeaus (weiter)",2,"Go straight on."],
+["safety","Sicherheit",2,"Safety is important."],
+["compass","Kompass",2,"We need a compass."],
+["whistle","(Triller-)Pfeife",2,"The coach has a whistle."],
+["plastic","Plastik, Kunststoff",1,"This bottle is plastic."],
+["first-aid kit","Erste-Hilfe-Set, Verbandkasten",3,"We have a first-aid kit in the bag."],
+["first aid","Erste Hilfe",2,"She knows first aid."],
+]},
+
+{k:"Headlight 2",id:"H2-5b",title:"Headlight 2 · Unit 5 · Dartmoor adventures (2)",icon:"🌦️",words:[
+["cloud","Wolke",1,"There is a big cloud in the sky."],
+["cloudy","wolkig, bewölkt",1,"It's cloudy today."],
+["spring","Frühling",1,"Flowers grow in spring."],
+["put sth. on","etwas anziehen (Kleidung); etwas aufsetzen (Hut)",2,"He puts on his hat."],
+["leave sth.","etwas zurücklassen",2,"Don't leave your bottles."],
+["litter","Abfall",2,"Don't drop litter."],
+["bin","(Müll-)Eimer",1,"Put it in the bin."],
+["pick sth. up","etwas aufheben (vom Boden)",2,"Pick them up, please."],
+["police","Polizei",1,"We have to call the police."],
+["future","Zukunft",2,"What do you want to do in the future?"],
+["married (to)","verheiratet (mit)",2,"She is married to a doctor."],
+["single","ledig, alleinstehend",2,"He is single."],
+["season","Jahreszeit",2,"Spring is my favourite season."],
+["degree","Grad",2,"It will be 14 degrees."],
+["cool","kühl",1,"It is cool today."],
+["windy","windig",1,"It's windy today."],
+["wind","Wind",1,"The wind is cold."],
+["snowy","schneebedeckt; verschneit",1,"The mountains are snowy."],
+["snow","Schnee",1,"I like snow."],
+["freezing","eisig, eiskalt",2,"It's freezing today."],
+["freeze","(ge)frieren",2,"Water freezes at zero degrees."],
+["minus","minus",1,"It's minus four degrees."],
+["bridge","Brücke",1,"We walk over the bridge."],
+["cottage","Häuschen, Hütte",2,"We stay in a cottage."],
+["stand","stehen; sich (hin)stellen",2,"Stand next to me."],
+["cross","Kreuz",1,"There is a stone cross."],
+["prize","Preis, Gewinn",2,"He won first prize."],
+["get (to)","gelangen, (hin)kommen (nach)",2,"How can we get to the cottage?"],
+["ground","(Erd-)Boden",1,"Don't sit on the ground."],
+["hound","(Jagd-)Hund",3,"The hound ran after the fox."],
+["joke","Witz, Scherz",1,"That is a good joke."],
+["round","rund",1,"The table is round."],
+["scarecrow","Vogelscheuche",2,"A scarecrow stands in the field."],
+["scream","schreien",2,"She screams loudly."],
+["shout","rufen",1,"Don't shout at me!"],
+["voice","Stimme",1,"She has a lovely voice."],
+["platform","Bahnsteig",2,"The train arrives at platform 4."],
+["passenger","Passagier/in, Fahrgast",2,"Every passenger needs a ticket."],
+["on time","pünktlich",2,"Our train arrived on time."],
+["leave","abfahren, losfahren; gehen, weggehen",2,"The train leaves at four."],
+["fire","Feuer",1,"We sit around the fire."],
+["ambulance","Krankenwagen",2,"Call an ambulance!"],
+["emergency","Notfall",2,"In an emergency call the police."],
+["emergency services","Rettungsdienste",3,"The emergency services came quickly."],
+["accident","Unfall",2,"Someone has had an accident."],
+["hurt","verletzen; wehtun",2,"My back hurts."],
+["be hurt","verletzt sein, sich verletzen",2,"He is hurt."],
+]},
+
+{k:"Headlight 2",id:"H2-6a",title:"Headlight 2 · Unit 5–6 · Skills & A journey in time (1)",icon:"⛵",words:[
+["correct","korrigieren, berichtigen",2,"Please correct the mistakes."],
+["postcard","Postkarte",1,"I write a postcard."],
+["capital letter","Großbuchstabe",2,"Names start with a capital letter."],
+["letter","Buchstabe; Brief",1,"Which letter is this?"],
+["mistake","Fehler",1,"I made a mistake."],
+["kind (of)","Art, Sorte",2,"What kind of mistakes did you make?"],
+["secret","geheim; Geheimnis",2,"It's a secret."],
+["stamp","Stempel; Briefmarke",2,"I need a stamp for the postcard."],
+["happy ending","Happy End",2,"I like stories with a happy ending."],
+["flag","Fahne, Flagge",1,"This is the British flag."],
+["journey","Reise",2,"Safe journey!"],
+["pilgrim","Pilger/in",3,"The pilgrims sailed to America."],
+["Protestant","Protestant/in; protestantisch",3,"He is a Protestant."],
+["sail","segeln; (mit dem Schiff) fahren",2,"We sail across the sea."],
+["famous","berühmt",2,"He is a famous sailor."],
+["sailor","Seemann; Matrose/Matrosin",2,"My uncle is a sailor."],
+["Catholic","Katholik/in; katholisch",3,"She is a Catholic."],
+["attack","angreifen",2,"The pirates attack the ship."],
+["ship","Schiff",1,"The ship is very big."],
+["Spanish","spanisch; Spanisch",1,"I learn Spanish."],
+["fight","kämpfen",2,"They fight with swords."],
+["against","gegen",1,"We play against Berlin."],
+["on the coast","an der Küste",2,"Our hotel is on the coast."],
+["king","König",1,"The king lives in a castle."],
+["legend","Legende, Sage",2,"This is an old legend."],
+["sword","Schwert",2,"The king has a sword."],
+["become","werden",2,"Arthur became king."],
+["magician","Zauberer, Zauberin",2,"The magician is very old."],
+["Roman","Römer/in; römisch",2,"The Romans built roads."],
+["make sth. your own","etwas in deinen Besitz bringen",3,"Make it your own!"],
+["all over the country","überall im Land, im ganzen Land",3,"There are castles all over the country."],
+["living history","Geschichte zum Anfassen",3,"We visit a living history museum."],
+["project","Projekt",1,"We do a project about castles."],
+["topic","Thema",2,"What is your topic?"],
+["historic","historisch (berühmt, denkwürdig)",3,"This is a historic place."],
+["event","Ereignis",2,"The event starts at ten."],
+["finally","schließlich, endlich",2,"We finally got home at 10.30."],
+["pirate","Pirat/in",1,"The pirate has a sword."],
+["believe (in sth.)","glauben (an etwas)",2,"Do you believe in UFOs?"],
+["league","Liga (Sport)",2,"Our team plays in a league."],
+["castle","Burg",1,"We visit a castle."],
+["come alive","lebendig werden, (wieder) aufleben",3,"History comes alive here."],
+["experience sth.","etwas erfahren, erleben",3,"You can experience history."],
+["discover","entdecken",2,"They discover a cave."],
+["daily","täglich",2,"I do my daily homework."],
+["captain","Kapitän/in",2,"The captain is on the ship."],
+["boat","Boot; Schiff",1,"We go by boat."],
+]},
+
+{k:"Headlight 2",id:"H2-6b",title:"Headlight 2 · Unit 6 · A journey in time (2)",icon:"🏰",words:[
+["I'm glad","ich bin froh",2,"I'm glad that you are here."],
+["take notes","(sich) Notizen machen",2,"Take notes in class."],
+["miss (überhören)","übersehen, überhören",3,"I missed the sign."],
+["stairs","Treppe; (Treppen-)Stufen",2,"Those stairs are dangerous."],
+["light","Licht, Lampe",1,"Turn on the light."],
+["it's smelly","es stinkt",2,"Your socks are smelly!"],
+["hall","Gang, Korridor",2,"Wait in the hall."],
+["You're joking!","Du machst wohl Witze!",2,"You're joking!"],
+["joke (Verb)","Witze machen, scherzen",2,"I'm only joking."],
+["a long time ago","vor langer Zeit",2,"A long time ago there was a king."],
+["amazing","erstaunlich",2,"The view is amazing."],
+["so far","bis jetzt, bis hierher",2,"So far my holiday has been great."],
+["Join the club.","Da bist du nicht der/die Einzige.",3,"Join the club!"],
+["whisper","flüstern",2,"He whispered a secret."],
+["explain sth. to sb.","jm. etwas erklären",3,"Please explain it to me."],
+["drummer","Trommler/in",2,"The drummer is loud."],
+["by mistake","aus Versehen",2,"I took it by mistake."],
+["What a mess!","Was für ein Durcheinander!",2,"What a mess!"],
+["sky","Himmel",1,"The sky is blue."],
+["rhyme (Nomen)","Reim",2,"This is a rhyme."],
+["rhyme (Verb)","(sich) reimen",2,"'Cat' rhymes with 'hat'."],
+["carriage","Kutsche",2,"The king rides in a carriage."],
+["horse","Pferd",1,"I like horses."],
+["switch sth. on/off","etwas einschalten/ausschalten",2,"Switch off the light."],
+["magic","Zauberei, Magie",1,"Can you do magic?"],
+["begin","anfangen, beginnen",1,"The film begins at eight."],
+["build","bauen",1,"We build a castle."],
+["step (Stufe)","Stufe",1,"These are strange steps!"],
+["bowls","Rasenbowling (Spiel)",3,"My grandpa plays bowls."],
+["destroy","zerstören, vernichten",2,"The fire destroyed the house."],
+["ruins","Ruine",2,"We visit the ruins of a castle."],
+["cave","Höhle",1,"We explore a cave."],
+["sir","mein Herr",1,"Yes, sir."],
+["transport","Fortbewegungsmittel; Beförderung",3,"We use public transport."],
+["silly","dumm, blöd, albern",2,"I felt really silly."],
+["lighthouse","Leuchtturm",2,"The lighthouse is on the island."],
+["magical","magisch; zauberhaft",2,"It's a magical place."],
+["view","(An-)Blick, (Aus-)Sicht",2,"We had a great view of the sea."],
+["statue","Statue",2,"There is a statue in the park."],
+["fat","dick, fett",1,"The cat is fat."],
+["hold","halten",1,"Can you hold my bag?"],
+["great for making friends","großartig, um Freunde zu finden",3,"The club is great for making friends."],
+["prepare (for)","vorbereiten; sich vorbereiten (auf)",2,"I prepare for the maths test."],
+["expert","Experte, Expertin",2,"She is an expert on castles."],
+["research","erforschen, untersuchen, recherchieren",3,"We research the topic."],
+["illustration","Abbildung, Illustration",3,"The book has a nice illustration."],
+["the most interesting information to me","die interessanteste Information für mich",3,"This is the most interesting information to me."],
+["island","Insel",1,"We live on an island."],
+["puppet","Puppe (Handpuppe, Marionette)",2,"The puppet can dance."],
 ]},
 
 ]);
