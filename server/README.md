@@ -5,7 +5,7 @@ Keine Abhängigkeiten: nur **Node.js ab 22.13** (eingebautes SQLite). Daten lieg
 
 ## Adressen
 - **App:** `https://wordy.explusmore.com` bleibt unverändert (GitHub Pages).
-- **Server und Dashboard:** eigene Subdomain `https://wordy-api.explusmore.com` (ein zweiter DNS-Eintrag auf den Server, die App-Adresse wird nicht berührt).
+- **Server und Dashboard:** eigene Subdomain `https://track.wordy.explusmore.com` (ein zusätzlicher DNS-Eintrag auf den Server, die App-Adresse wird nicht berührt).
   `wordy.explusmore.com` selbst darf nicht auf den Server zeigen, sonst wäre die App weg.
 
 ## Völlig eigenständig
@@ -20,7 +20,7 @@ Münzen, Käufe im Shop. Keine Klarnamen, keine Standorte. Die App zeigt dem Kin
 
 ## So funktioniert die Anmeldung
 1. Eltern öffnen das Dashboard (Adresse des Servers, Benutzername und Passwort aus `.env`).
-2. „＋ Spieler“ → Name eingeben → es erscheint ein **Code** wie `https://wordy-api.explusmore.com#AB12-CD34`.
+2. „＋ Spieler“ → Name eingeben → es erscheint ein **Code** wie `https://track.wordy.explusmore.com#AB12-CD34`.
 3. In der App: Setup → Eltern-Dashboard → Code einfügen → Verbinden. Der Code gilt 7 Tage und nur einmal.
 4. Das Gerät merkt sich danach einen geheimen Schlüssel. „Geräte trennen“ im Dashboard sperrt ihn sofort.
 
@@ -44,7 +44,7 @@ sudo cp wordy-server.service /etc/systemd/system/
 sudo systemctl daemon-reload && sudo systemctl enable --now wordy-server
 sudo systemctl status wordy-server
 ```
-Danach nginx einrichten (`nginx.conf.example`, Zertifikat per `certbot --nginx -d wordy-api.explusmore.com`).
+Danach nginx einrichten (`nginx.conf.example`, Zertifikat per `certbot --nginx -d track.wordy.explusmore.com`).
 Der Server hört nur auf `127.0.0.1`, von außen erreichbar ist er ausschließlich über nginx mit HTTPS.
 **Ohne HTTPS nicht betreiben:** Die App darf nur über https senden, und das Passwort wird sonst im Klartext übertragen.
 
