@@ -106,7 +106,8 @@ Aufgabe ein Verb, bevorzugt fällige und fehlerhafte. Zu jedem Verb gibt es drei
 Beispielsätze mit Übersetzung, Zeitwort-Hinweis und Vorlesen (Präsens, Simple
 Past, Present Perfect). Neben dem Tippen gibt es die Lückenaufgabe „Welche Form passt?“:
 ein Satz mit Zeitwort, aus drei bis vier Formen (auch der falsch regelmäßigen wie
-*goed*) wählt man die richtige. Die Verbenliste zeigt
+*goed*) wählt man die richtige. „Nur Tippen“ fragt immer beide Formen zum Schreiben ab, auch für ein einzelnes
+Verb aus der Liste. Die Verbenliste zeigt
 alle Verben mit Lernstufe; der Lernstand liegt im selben Speicher wie die Wörter.
 
 ### Vokabeln aus dem Schulbuch

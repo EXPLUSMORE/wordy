@@ -167,7 +167,9 @@
       '<p class="small muted" style="margin:4px 0 0">' + (due ? due + " " + plural(due, "Verb ist", "Verben sind") + " zur Wiederholung dran. " : "") +
       'Go – went – gone: alle Formen, die man in der Schule braucht. In normalen Runden kommen sie immer wieder zwischendurch.</p></div></div>' +
       '<div class="row wrap" style="margin-top:12px;gap:8px"><button class="btn" data-act="start" data-mode="verbs" data-min="5">Verben üben</button>' +
-      '<button class="btn ghost" data-act="verblist">Alle Verben ansehen</button></div></section>';
+      '<button class="btn soft" data-act="start" data-mode="verbs" data-vtype="1" data-min="5">Nur Tippen</button>' +
+      '<button class="btn ghost" data-act="verblist">Alle Verben ansehen</button></div>' +
+      '<p class="small muted" style="margin:8px 0 0">„Verben üben“ mischt Einführung, Lückenaufgabe und Tippen. „Nur Tippen“ fragt immer beide Formen zum Schreiben ab.</p></section>';
   }
   function viewVerbList() {
     var vs = S.verbStats(), list = S.verbs();
@@ -175,18 +177,21 @@
       var lv = S.levelOf(v.id), r = S.state.w[v.id];
       return '<div class="wordrow" data-act="vtoggle" style="cursor:pointer">' +
         (audioAvailable() ? '<button class="mini-speak" data-act="say" data-text="' + esc(v.en) + '" aria-label="' + esc(v.inf) + ' anhören">🔊</button>' : '') +
+        '<span class="vchev" aria-hidden="true">▸</span>' +
         '<span class="en" style="flex:1 1 auto">' + esc(v.inf) + ' – ' + esc(v.past) + ' – ' + esc(v.pp) + '<br><span class="small muted">' + esc(v.de) + '</span></span>' +
         (r && r.no ? '<span class="pill" title="Fehler">✗ ' + r.no + '</span>' : '') +
         '<span class="pill l' + lv + '">' + esc(S.LEVELS[lv].n) + '</span></div>' +
-        '<div class="vsent stack" hidden style="gap:8px;padding:0 0 12px">' + verbSentCards(v, true) + '</div>';
+        '<div class="vsent stack" hidden style="gap:8px;padding:0 0 12px">' + verbSentCards(v, true) +
+        '<button class="btn soft" data-act="start" data-mode="verbs" data-vtype="1" data-verb="' + esc(v.id) + '" style="align-self:flex-start">✍️ Dieses Verb tippen</button></div>';
     }).join("");
     view.innerHTML = '<div class="stack">' +
       '<button class="btn ghost" data-act="back" style="align-self:flex-start">← Zurück</button>' +
       '<section class="card"><div class="eyebrow">Unregelmäßige Verben</div>' +
       '<h1 style="font-size:24px">Verbenliste</h1>' +
       '<p class="small muted" style="margin:6px 0 0">' + vs.total + ' Verben · ' + vs.seen + ' geübt · ' + vs.mastered + ' gemeistert. Infinitiv – Simple Past (Präteritum) – Past Participle (Partizip Perfekt).</p>' +
-      '<div class="row" style="margin-top:12px;gap:8px"><button class="btn" data-act="start" data-mode="verbs" data-min="5">Verben üben</button></div></section>' +
-      '<section class="card"><div class="eyebrow">Alle Verben · Tippen zeigt die Beispielsätze</div>' + rows + '</section></div>';
+      '<div class="row wrap" style="margin-top:12px;gap:8px"><button class="btn" data-act="start" data-mode="verbs" data-min="5">Verben üben</button>' +
+      '<button class="btn soft" data-act="start" data-mode="verbs" data-vtype="1" data-min="5">Nur Tippen</button></div></section>' +
+      '<section class="card"><div class="eyebrow">Alle Verben · Zeile antippen = Beispielsätze</div>' + rows + '</section></div>';
   }
 
   /* ================= START ================= */
@@ -673,14 +678,14 @@
     return opts;
   }
   function verbGapOk(v) { return verbGapOptions(v).length >= 3; }
-  function verbTasks(list) {
+  function verbTasks(list, typeOnly) {
     var out = [];
     list.forEach(function (v) {
       var fresh = S.levelOf(v.id) === 0 && !(S.state.w[v.id] && S.state.w[v.id].no);
       var gap = verbGapOk(v);
       if (fresh) out.push({ type: "verbintro", v: v });
       var easy = fresh || S.levelOf(v.id) <= 1 || Math.random() < 0.5;
-      out.push(gap && easy ? { type: "verbgap", v: v, idx: Math.floor(Math.random() * 3) } : { type: "verb", v: v });
+      out.push(gap && easy && !typeOnly ? { type: "verbgap", v: v, idx: Math.floor(Math.random() * 3) } : { type: "verb", v: v });
     });
     return out;
   }
@@ -704,10 +709,11 @@
     S.rollDay(); S.regenHearts();
     var sentOnly = opts.mode === "sent";
     if (opts.mode === "verbs") {
-      var vl = S.planVerbs(Math.max(5, Math.round((opts.minutes || 5) * 60 / 20)), { newMax: 5 });
+      var vl = opts.verb ? S.verbs().filter(function (x) { return x.id === opts.verb; })
+        : S.planVerbs(Math.max(5, Math.round((opts.minutes || 5) * 60 / 20)), { newMax: 5 });
       if (!vl.length) { toast("Gerade sind keine Verben fällig. Schau später wieder vorbei."); return; }
       SS = {
-        tasks: verbTasks(vl), i: 0, chain: 0, maxChain: 0, items: 0, correct: 0,
+        tasks: verbTasks(vl, opts.vtype), i: 0, chain: 0, maxChain: 0, items: 0, correct: 0,
         newSeen: 0, boxSolved: 0, mastered: 0, sentOk: 0, start: Date.now(), answered: false,
         retry: [], mode: "verbs", ended: false
       };
@@ -1204,7 +1210,8 @@
     }
     if (a === "arena") { if (global.ARENA) global.ARENA.start(act.getAttribute("data-id")); return; }
     if (a === "start") {
-      startSession({ minutes: +(act.getAttribute("data-min") || st.settings.goalMin), mode: act.getAttribute("data-mode") || "mix", unit: act.getAttribute("data-unit") || null });
+      startSession({ minutes: +(act.getAttribute("data-min") || st.settings.goalMin), mode: act.getAttribute("data-mode") || "mix", unit: act.getAttribute("data-unit") || null,
+        vtype: act.getAttribute("data-vtype") === "1", verb: act.getAttribute("data-verb") || null });
     } else if (a === "track") {
       var nt = act.getAttribute("data-t");
       if (nt !== st.settings.track) { S.setTrack(nt); toast(nt === "business" ? "Business English aktiv." : "Schule aktiv."); render(); view.scrollTop = 0; }
@@ -1216,7 +1223,7 @@
       else arr.push(k);
       st.settings.units = []; S.save(true); render();
     } else if (a === "unit") { detailUnit = act.getAttribute("data-id"); render(); }
-    else if (a === "vtoggle") { var vs2 = act.nextElementSibling; if (vs2 && vs2.classList.contains("vsent")) vs2.hidden = !vs2.hidden; }
+    else if (a === "vtoggle") { var vs2 = act.nextElementSibling; if (vs2 && vs2.classList.contains("vsent")) { vs2.hidden = !vs2.hidden; var ch = act.querySelector(".vchev"); if (ch) ch.textContent = vs2.hidden ? "▸" : "▾"; } }
     else if (a === "verblist") { detailUnit = "__verbs"; tab = "units"; render(); view.scrollTop = 0; }
     else if (a === "back") { detailUnit = null; render(); }
     else if (a === "readall") {
