@@ -11,9 +11,6 @@
   --gold:#A9781F; --margin:#C2413A;
   --r:14px;
 }
-:root[data-accent="mint"]{ --accent:#2E7357; --accent-soft:#DEEFE6; }
-:root[data-accent="plum"]{ --accent:#6A3D70; --accent-soft:#EDE1EF; }
-:root[data-accent="amber"]{ --accent:#8A5A1B; --accent-soft:#F4E7D2; }
 @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
   --paper:#0E131C; --card:#161D29; --card-2:#1B2431;
   --ink:#E7EDF8; --ink-2:#A7B5CC; --ink-3:#74839B;
@@ -30,6 +27,19 @@
   --good:#63C79A; --good-soft:#152F26; --bad:#E7817B; --bad-soft:#331C1B;
   --gold:#D8A445; --margin:#E07A73;
 }
+/* Farbwelten (Shop): färben Akzent, Hintergrund und Linien; Hell- und Dunkelvariante.
+   Stehen nach den Grundfarben und sind spezifischer, damit sie auch im Dunkelmodus greifen. */
+:root[data-accent="mint"]:not([data-x]){ --paper:#E8F4EC; --card-2:#F2FAF5; --rule:#BFDCCB; --line:#D6EBDF; --accent:#2E7357; --accent-soft:#D9EEE2; }
+:root[data-accent="plum"]:not([data-x]){ --paper:#F2EAF5; --card-2:#FAF4FB; --rule:#D9C6DF; --line:#E8DCEB; --accent:#6A3D70; --accent-soft:#EBDDEE; }
+:root[data-accent="amber"]:not([data-x]){ --paper:#F6EEDF; --card-2:#FBF6EC; --rule:#E2CFAE; --line:#EDE1C8; --accent:#8A5A1B; --accent-soft:#F3E4CA; }
+@media (prefers-color-scheme:dark){
+:root[data-accent="mint"]:not([data-theme="light"]):not([data-x]){ --paper:#0C1612; --card:#13211A; --card-2:#182A21; --rule:#24392E; --line:#1E3127; --accent:#5CC59A; --accent-ink:#06140E; --accent-soft:#163025; }
+:root[data-accent="plum"]:not([data-theme="light"]):not([data-x]){ --paper:#140E17; --card:#1D1522; --card-2:#241A2A; --rule:#3A2941; --line:#2E2136; --accent:#C48BD0; --accent-ink:#1A0B1E; --accent-soft:#31203A; }
+:root[data-accent="amber"]:not([data-theme="light"]):not([data-x]){ --paper:#16110A; --card:#201910; --card-2:#282015; --rule:#41321B; --line:#332814; --accent:#E0A34A; --accent-ink:#1C1205; --accent-soft:#3A2B13; }
+}
+:root[data-theme="dark"][data-accent="mint"]:not([data-x]){ --paper:#0C1612; --card:#13211A; --card-2:#182A21; --rule:#24392E; --line:#1E3127; --accent:#5CC59A; --accent-ink:#06140E; --accent-soft:#163025; }
+:root[data-theme="dark"][data-accent="plum"]:not([data-x]){ --paper:#140E17; --card:#1D1522; --card-2:#241A2A; --rule:#3A2941; --line:#2E2136; --accent:#C48BD0; --accent-ink:#1A0B1E; --accent-soft:#31203A; }
+:root[data-theme="dark"][data-accent="amber"]:not([data-x]){ --paper:#16110A; --card:#201910; --card-2:#282015; --rule:#41321B; --line:#332814; --accent:#E0A34A; --accent-ink:#1C1205; --accent-soft:#3A2B13; }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 img{max-width:100%}
