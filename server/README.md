@@ -53,10 +53,13 @@ Läuft auf dem Rechner bereits ein Bitnami-Apache auf Port 80/443, gibt es keine
 `apache-bitnami-http.conf.example` (vor dem Zertifikat) und `apache-bitnami-https.conf.example` (danach) sind die Vorlagen, je ein eigener virtueller Host nur für die Wordy-Subdomain. Zertifikat per Let's Encrypt im Webroot-Verfahren, ohne bestehende Seiten anzufassen.
 
 ## Sicherung
-Alles steht in `DB_FILE`. Eine konsistente Kopie, auch im laufenden Betrieb:
+Alles steht in `DB_FILE`. `backup.js` legt eine konsistente Kopie an (auch im laufenden Betrieb) und löscht Kopien nach 30 Tagen.
+Täglich um 3:15 Uhr per Cron, ohne das Programm `sqlite3`:
 ```bash
-sqlite3 /var/lib/wordy/wordy.db ".backup '/var/backups/wordy-$(date +%F).db'"
+sudo mkdir -p /var/backups/wordy && sudo chown wordy: /var/backups/wordy
+echo '15 3 * * * wordy /opt/node22/bin/node /opt/wordy/server/backup.js >> /var/backups/wordy/backup.log 2>&1' | sudo tee /etc/cron.d/wordy-backup
 ```
+Von Hand testen: `sudo -u wordy /opt/node22/bin/node /opt/wordy/server/backup.js`.
 
 ## Sicherheit in Kürze
 - Dashboard und Verwaltung: HTTP-Anmeldung (Benutzer und Passwort aus `.env`), Fehlversuche werden begrenzt.
