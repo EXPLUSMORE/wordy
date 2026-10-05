@@ -602,9 +602,28 @@
     document.body.appendChild(ov);
   }
 
+  /* ---------- How-to (eingeklappt, ganz oben im Setup) ---------- */
+  function howToCard() {
+    var steps = [
+      ["🚀", "Loslegen", "Auf <b>Start</b> „Weiterlernen“ oder 3, 5, 10, 15 Minuten wählen. Wordy mischt fällige Wörter, neue Wörter, Fehlerkartei, Sätze und Verben selbst."],
+      ["📚", "Wörter aussuchen", "Unter <b>Einheiten</b> oben <b>Schule</b> oder <b>Business</b> wählen, dann Jahrgang bzw. Stufe antippen (mindestens eine bleibt an). Darunter erscheinen nur diese Einheiten. Einheit antippen: Wortliste anhören oder „Diese Einheit üben“."],
+      ["🧩", "Aufgaben", "Wortkarte, Auswahl, Hören, Lückentext, Schreiben, Zuordnen und Satzbau. Eine falsche Antwort kostet ein Herz (unter Setup abschaltbar) und kommt später wieder."],
+      ["🔁", "Fehlerkartei & Sätze", "Falsche Wörter landen in der <b>Fehlerkartei</b> (Start → „Fehlerkartei üben“). „Nur Sätze üben“ trainiert den Satzbau."],
+      ["✍️", "Unregelmäßige Verben", "<b>Start</b> oder <b>Einheiten</b> → „Verben üben“ (Einführung, Lückenaufgabe, Tippen) oder „Nur Tippen“. Die Verbenliste zeigt alle Verben mit Beispielsätzen."],
+      ["⚡", "Arena", "Vier Zeitmodi: <b>Match-Rausch</b> (Paare in 60 Sekunden), <b>Blitzrunde</b> (Zeit sammeln), <b>Letztes Herz</b> (ein Fehler beendet), <b>Fehlerjagd</b> (Kartei leeren)."],
+      ["🪙", "Münzen & Shop", "Münzen gibt es für Fortschritt, Missionen und das Tagesziel. Unter <b>Fortschritt</b> siehst du Ränge, „Münzen heute“ und den Shop. Mit dem ⭐ im Shop setzt du einen Wunsch."],
+      ["⚙️", "Setup", "Spieler anlegen und wechseln, Tagesziel und Ton einstellen, eigene Vokabeln einfügen, Lernstand sichern und übertragen."]
+    ];
+    return '<details class="how"><summary class="how-sum"><span class="chev" aria-hidden="true">▸</span><span style="flex:1 1 auto"><b>So funktioniert Wordy</b>' +
+      '<span class="small muted" style="display:block">Kurz erklärt in acht Schritten</span></span></summary>' +
+      '<ol class="how-list">' + steps.map(function (x) {
+        return '<li><span class="hi">' + x[0] + '</span><div><b>' + x[1] + '</b><div class="small muted">' + x[2] + '</div></div></li>';
+      }).join("") + '</ol></details>';
+  }
   function viewParent() {
     var st = S.state, s = S.stats();
     var html = '<div class="stack">';
+    html += howToCard();
     html += installCard();
     html += playersCard();
     html += '<section class="card"><div class="eyebrow">Lernbereich</div>' + trackSwitch() +
