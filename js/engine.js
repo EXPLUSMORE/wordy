@@ -283,20 +283,51 @@
       }
       save(true);
     }
+    fixMissions();
+  }
+  var MISSION_POOL = [
+    { id: "m20", n: "15 verschiedene Wörter üben", goal: 15, type: "items", coins: 10 },
+    { id: "m30", n: "25 verschiedene Wörter üben", goal: 25, type: "items", coins: 14 },
+    { id: "mgoal", n: "Tagesziel erreichen", goal: 1, type: "goal", coins: 15 },
+    { id: "mbox", n: "5 Fehlerkartei-Wörter richtig beantworten", goal: 5, type: "box", coins: 12 },
+    { id: "mchain", n: "10 richtige in Folge", goal: 10, type: "chain", coins: 12 },
+    { id: "mnew", n: "6 neue Wörter kennenlernen", goal: 6, type: "new", coins: 10 },
+    { id: "mmaster", n: "2 Wörter meistern", goal: 2, type: "master", coins: 18 },
+    { id: "msent", n: "4 Sätze richtig bauen", goal: 4, type: "sent", coins: 14 }
+  ];
+  /* Nur Missionen, die heute überhaupt machbar sind: leere Fehlerkartei, keine neuen Wörter mehr, keine Sätze usw. fallen heraus */
+  function missionFeasible(m) {
+    var p = pools();
+    switch (m.type) {
+      case "box": return p.box.length >= m.goal;
+      case "new":
+        var seen = state.daily && state.daily.date === today() ? (state.daily.newSeen || 0) : 0;
+        return p.fresh.length >= m.goal && Math.max(0, state.settings.newPerDay - seen) >= m.goal;
+      case "master": return p.all.filter(function (w) { return levelOf(w.id) >= 3; }).length >= m.goal;
+      case "sent": return activeSentences().length >= m.goal;
+      default: return true;
+    }
   }
   function makeMissions() {
-    var pool = [
-      { id: "m20", n: "15 verschiedene Wörter üben", goal: 15, type: "items", coins: 10 },
-      { id: "m30", n: "25 verschiedene Wörter üben", goal: 25, type: "items", coins: 14 },
-      { id: "mgoal", n: "Tagesziel erreichen", goal: 1, type: "goal", coins: 15 },
-      { id: "mbox", n: "5 Wörter aus der Fehlerkartei", goal: 5, type: "box", coins: 12 },
-      { id: "mchain", n: "10 richtige in Folge", goal: 10, type: "chain", coins: 12 },
-      { id: "mnew", n: "6 neue Wörter kennenlernen", goal: 6, type: "new", coins: 10 },
-      { id: "mmaster", n: "2 Wörter meistern", goal: 2, type: "master", coins: 18 },
-      { id: "msent", n: "4 Sätze richtig bauen", goal: 4, type: "sent", coins: 14 }
-    ];
+    var pool = MISSION_POOL.filter(missionFeasible);
+    if (pool.length < 3) pool = MISSION_POOL.filter(function (m) { return /^(items|goal|chain)$/.test(m.type); });
     var picked = shuffle(pool.slice()).slice(0, 3);
     return picked.map(function (m) { return { id: m.id, n: m.n, goal: m.goal, type: m.type, coins: m.coins, p: 0, done: false }; });
+  }
+  /* Eine schon gezogene, unerfüllbare und noch nicht begonnene Mission wird durch eine machbare ersetzt */
+  function fixMissions() {
+    var d = state.daily; if (!d || !d.missions) return;
+    var changed = false;
+    d.missions = d.missions.map(function (m) {
+      var def = MISSION_POOL.filter(function (x) { return x.id === m.id; })[0];
+      if (m.done || m.p > 0 || !def || missionFeasible(def)) return m;
+      var have = d.missions.map(function (x) { return x.id; });
+      var alt = shuffle(MISSION_POOL.filter(function (x) { return have.indexOf(x.id) < 0 && missionFeasible(x); }))[0];
+      if (!alt) return m;
+      changed = true;
+      return { id: alt.id, n: alt.n, goal: alt.goal, type: alt.type, coins: alt.coins, p: 0, done: false };
+    });
+    if (changed) save();
   }
   function regenHearts() {
     if (!state.settings.hearts) { state.hearts = 5; return; }

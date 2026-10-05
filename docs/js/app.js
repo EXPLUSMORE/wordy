@@ -1101,8 +1101,7 @@
     if (g > 0) {
       SS.correct++; SS.chain++; SS.maxChain = Math.max(SS.maxChain, SS.chain);
       S.addXp(g === 2 ? 10 : 6);
-      if (wasBox && !S.inErrorBox(w.id)) SS.boxSolved++;
-      else if (wasBox) SS.boxSolved += 0;
+      if (wasBox) SS.boxSolved++;   // zählt für die Mission "Fehlerkartei-Wörter richtig beantworten"
       if (res.after === 4 && before < 4) SS.mastered++;
     } else {
       SS.chain = 0; S.addXp(2);
