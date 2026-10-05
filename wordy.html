@@ -439,7 +439,7 @@ html.ar-open, html.ar-open body{overflow:hidden}
 </style>
 
 
-<script>window.WORDY_VERSION="1.9.1";window.WORDY_BUILD="d8b3ea3147";</script>
+<script>window.WORDY_VERSION="1.9.2";window.WORDY_BUILD="776b9fbf31";</script>
 </head>
 <body>
 <div id="app">
@@ -3191,7 +3191,12 @@ window.VERBS = [
   ];
 
   /* ---------- Hilfsfunktionen ---------- */
-  function today(d) { d = d || new Date(); return d.toISOString().slice(0, 10); }
+  /* Kalendertag in der Ortszeit des Geräts: Missionen, Tagesziel und Serie wechseln um Mitternacht, nicht um 1 oder 2 Uhr nachts */
+  function today(d) {
+    d = d || new Date();
+    var m = d.getMonth() + 1, t = d.getDate();
+    return d.getFullYear() + "-" + (m < 10 ? "0" : "") + m + "-" + (t < 10 ? "0" : "") + t;
+  }
   function dayDiff(a, b) { return Math.round((Date.parse(b + "T00:00:00Z") - Date.parse(a + "T00:00:00Z")) / 86400000); }
   function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
   function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
@@ -4529,7 +4534,7 @@ window.VERBS = [
         '<button class="btn wide" data-act="startplan" data-id="' + esc(pl.id) + '">Lernplan üben</button></section>';
     });
     if (goals.length) {
-      h += '<section class="card"><div class="eyebrow">🎯 Wochenziele von deinen Eltern</div><div style="margin-top:8px">' + goals.map(function (g) {
+      h += '<section class="card"><div class="eyebrow">🎯 Deine persönlichen Wochenziele</div><div style="margin-top:8px">' + goals.map(function (g) {
         var pr = W.progress(g), done = st.goalsDone && st.goalsDone["g" + g.id];
         return '<div style="padding:8px 0;border-top:1px solid var(--line)"><div class="row"><b class="small" style="flex:1 1 auto">' + (done ? "✅ " : "") + esc(g.title) + '</b>' +
           '<span class="pill tnum">' + Math.min(pr.cur, g.target) + ' / ' + g.target + (g.kind === "unit" ? " %" : "") + '</span></div>' +

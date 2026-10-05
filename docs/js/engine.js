@@ -126,7 +126,12 @@
   ];
 
   /* ---------- Hilfsfunktionen ---------- */
-  function today(d) { d = d || new Date(); return d.toISOString().slice(0, 10); }
+  /* Kalendertag in der Ortszeit des Geräts: Missionen, Tagesziel und Serie wechseln um Mitternacht, nicht um 1 oder 2 Uhr nachts */
+  function today(d) {
+    d = d || new Date();
+    var m = d.getMonth() + 1, t = d.getDate();
+    return d.getFullYear() + "-" + (m < 10 ? "0" : "") + m + "-" + (t < 10 ? "0" : "") + t;
+  }
   function dayDiff(a, b) { return Math.round((Date.parse(b + "T00:00:00Z") - Date.parse(a + "T00:00:00Z")) / 86400000); }
   function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
   function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }

@@ -231,7 +231,7 @@
         '<button class="btn wide" data-act="startplan" data-id="' + esc(pl.id) + '">Lernplan üben</button></section>';
     });
     if (goals.length) {
-      h += '<section class="card"><div class="eyebrow">🎯 Wochenziele von deinen Eltern</div><div style="margin-top:8px">' + goals.map(function (g) {
+      h += '<section class="card"><div class="eyebrow">🎯 Deine persönlichen Wochenziele</div><div style="margin-top:8px">' + goals.map(function (g) {
         var pr = W.progress(g), done = st.goalsDone && st.goalsDone["g" + g.id];
         return '<div style="padding:8px 0;border-top:1px solid var(--line)"><div class="row"><b class="small" style="flex:1 1 auto">' + (done ? "✅ " : "") + esc(g.title) + '</b>' +
           '<span class="pill tnum">' + Math.min(pr.cur, g.target) + ' / ' + g.target + (g.kind === "unit" ? " %" : "") + '</span></div>' +
