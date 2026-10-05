@@ -107,7 +107,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
   function viewNew(inv, name) {
     var h = '<div class="card"><h2>Neuen Spieler anlegen</h2><div class="row"><input id="nn" class="grow" maxlength="20" placeholder="Name, z. B. Magnus"><button id="mk">Anlegen</button></div>' +
       '<label class="row" style="margin-top:10px;gap:8px;font-size:14px"><input type="checkbox" id="nh"> <span>Nur sichern, nicht anzeigen <span class="muted">(zum Beispiel für dich selbst: der Lernstand wird gesichert, aber es gibt keine Zahlen, Ziele oder Mails dazu)</span></span></label>' +
-      '<p class="small muted" style="margin:10px 0 0">Es reicht ein Vorname. Danach erscheint ein Code, den du in der App unter Setup → Eltern-Dashboard einfügst.</p></div>';
+      '<p class="small muted" style="margin:10px 0 0">Es reicht ein Vorname. Danach erscheint ein Code, den du in der App unter Setup → Auto-Save / Lernfortschritt einfügst.</p></div>';
     if (inv) h = inviteCard(name, inv) + h;
     h += '<div id="hiddenList"></div>';
     view.innerHTML = h;
@@ -146,7 +146,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
   function inviteCard(name, inv) {
     return '<div class="card"><h2>Verbindungscode für ' + esc(name) + "</h2><div class=\"code\" id=\"ic\">" + esc(inviteString(inv)) + "</div>" +
       '<div class="row" style="margin-top:10px"><button id="cp">Kopieren</button></div>' +
-      '<p class="small muted" style="margin:10px 0 0">In der App: Setup → Eltern-Dashboard → Code einfügen → Verbinden. Der Code gilt ' + inv.validDays + " Tage und nur für ein Gerät.</p></div>";
+      '<p class="small muted" style="margin:10px 0 0">In der App: Setup → Auto-Save / Lernfortschritt → Code einfügen → Verbinden. Der Code gilt ' + inv.validDays + " Tage und nur für ein Gerät.</p></div>";
   }
   function showInvite(name, inv) {
     view.insertAdjacentHTML("afterbegin", inviteCard(name, inv));
@@ -302,7 +302,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     var el = document.getElementById("backupCard"); if (!el) return;
     var b = r.backups || [];
     el.innerHTML = "<h2>Lernstand-Sicherung</h2>" + (b.length
-      ? '<p style="margin:0 0 8px">Die App sichert den kompletten Lernstand (Wörter, Münzen, Shop, Einstellungen) nach jeder Runde. Die letzten ' + b.length + " Tage bleiben erhalten. Zurückspielen geht in der App unter Setup → Eltern-Dashboard → „Lernstand wiederherstellen“. Zusätzlich kannst du jeden Stand als Datei herunterladen.</p>" +
+      ? '<p style="margin:0 0 8px">Die App sichert den kompletten Lernstand (Wörter, Münzen, Shop, Einstellungen) nach jeder Runde. Die letzten ' + b.length + " Tage bleiben erhalten. Zurückspielen geht in der App unter Setup → Auto-Save / Lernfortschritt → „Lernstand wiederherstellen“. Zusätzlich kannst du jeden Stand als Datei herunterladen.</p>" +
         '<table><tr><th>Tag</th><th>Zuletzt</th><th class="n">Wörter</th><th class="n">Münzen</th><th></th></tr>' + b.slice(0, 10).map(function (x) {
           return "<tr><td>" + x.day.split("-").reverse().join(".") + "</td><td>" + fmtDate(x.ts) + '</td><td class="n">' + x.words + '</td><td class="n">' + x.coins + '</td><td><a href="/api/admin/players/' + p.id + "/state?day=" + x.day + '" download>Herunterladen</a></td></tr>';
         }).join("") + "</table>"

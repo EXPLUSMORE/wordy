@@ -1,4 +1,4 @@
-/* Sync: sendet den Lernverlauf an den Wordy-Server (Eltern-Dashboard).
+/* Sync: sendet den Lernverlauf an den Wordy-Server (Dashboard).
    Offline-zuerst: Ereignisse landen in einer Warteschlange und gehen raus, sobald es Netz gibt.
    Ohne Verbindung zum Server passiert nichts, die App arbeitet wie bisher. */
 (function (g) {
@@ -182,7 +182,7 @@
   /* Verbinden mit dem Code der Eltern: "https://server#ABCD-EFGH" */
   W.pair = function (text) {
     var s = String(text || "").trim(), m = s.match(/^(https?:\/\/[^\s#]+?)\/?#?\s*([A-Za-z0-9]{4}-?[A-Za-z0-9]{4})$/);
-    if (!m) return Promise.resolve({ error: "Bitte den ganzen Code einfügen, so wie ihn die Eltern-Seite zeigt (Adresse und Code)." });
+    if (!m) return Promise.resolve({ error: "Bitte den ganzen Code einfügen, so wie ihn das Dashboard zeigt (Adresse und Code)." });
     var url = m[1].replace(/\/+$/, "");
     return g.fetch(url + "/api/pair", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ code: m[2], device: (g.navigator && g.navigator.userAgent || "").slice(0, 70) }) })
       .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })

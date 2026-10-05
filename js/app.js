@@ -450,7 +450,7 @@
   }
 
 
-  /* ---------- Eltern-Dashboard: Verbindung zum Server ---------- */
+  /* ---------- Auto-Save / Lernfortschritt: Verbindung zum Server ---------- */
   {   // sync.js wird nach app.js geladen und ruft diese Hooks auf
     window.WordyHooks = {};
     window.WordyHooks.onChange = function () { if (tab === "home" && sessionEl.hidden) render(); };
@@ -466,7 +466,7 @@
     var W = window.WordySync; if (!W) return "";
     var i = W.info();
     if (i.connected) {
-      return '<section class="card"><div class="eyebrow">Eltern-Dashboard</div>' +
+      return '<section class="card"><div class="eyebrow">Auto-Save / Lernfortschritt</div>' +
         '<p style="margin:8px 0 4px"><b>✅ Verbunden</b> als <b>' + esc(i.name) + '</b>' + (i.hidden ? ' <span class="pill">nur Sicherung</span>' : '') + '</p>' +
         (i.hidden
           ? '<p class="small muted" style="margin:0 0 10px">Es wird nur eine Sicherung deines Lernstands auf dem Server abgelegt. Im Dashboard taucht niemand mit deinen Zahlen auf, es werden keine Antworten oder Zeiten übertragen.</p>'
@@ -479,9 +479,9 @@
         '<button class="btn ghost" data-act="restoreopen">Lernstand wiederherstellen</button>' +
         '<button class="btn ghost" data-act="syncoff">Verbindung trennen</button></div><div id="restoreBox" style="margin-top:10px"></div></section>';
     }
-    return '<section class="card"><div class="eyebrow">Eltern-Dashboard</div>' +
-      '<p class="small muted" style="margin:6px 0 10px">Optional: Verbinde dieses Gerät mit dem Wordy-Server der Eltern. Dann sehen sie deinen Lernfortschritt. Den Code bekommst du von ihnen. Ohne Verbindung läuft alles wie bisher.</p>' +
-      '<input id="syncCode" placeholder="Code der Eltern einfügen" autocomplete="off" autocapitalize="off" spellcheck="false" style="width:100%">' +
+    return '<section class="card"><div class="eyebrow">Auto-Save / Lernfortschritt</div>' +
+      '<p class="small muted" style="margin:6px 0 10px">Optional: Verbinde dieses Gerät mit dem Wordy-Server. Der Fortschritt wird gespeichert. Den Code bekommst du von deinen Eltern. Ohne Verbindung läuft alles wie bisher.</p>' +
+      '<input id="syncCode" placeholder="Code einfügen" autocomplete="off" autocapitalize="off" spellcheck="false" style="width:100%">' +
       '<button class="btn soft wide" data-act="syncpair" style="margin-top:8px">Verbinden</button></section>';
   }
 
@@ -1542,7 +1542,7 @@
       Wn.snapshot().then(function () { return Wn.flush(); }).then(function () { return Wn.pushState(true); })
         .then(function (ok) { toast(ok ? (Wn.info().hidden ? "Gesichert." : "Gesendet.") : "Server gerade nicht erreichbar oder keine Änderung zu sichern."); render(); });
     }
-    else if (a === "syncoff") { if (confirm("Verbindung zum Eltern-Dashboard trennen? Bereits gesendete Daten bleiben beim Server, es wird nichts Neues mehr gesendet.")) { window.WordySync.disconnect(); toast("Getrennt."); render(); } }
+    else if (a === "syncoff") { if (confirm("Verbindung für Auto-Save / Lernfortschritt trennen? Bereits gesendete Daten bleiben beim Server, es wird nichts Neues mehr gesendet.")) { window.WordySync.disconnect(); toast("Getrennt."); render(); } }
     else if (a === "buy") {
       var r = S.buy(act.getAttribute("data-id"));
       toast(r.error || ("Gekauft: " + r.item.label));

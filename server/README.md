@@ -45,7 +45,7 @@ Münzen, Käufe im Shop. Keine Klarnamen, keine Standorte. Die App zeigt dem Kin
 ## So funktioniert die Anmeldung
 1. Eltern öffnen das Dashboard (Adresse des Servers, Benutzername und Passwort aus `.env`).
 2. „＋ Spieler“ → Name eingeben → es erscheint ein **Code** wie `https://track.wordy.explusmore.com#AB12-CD34`.
-3. In der App: Setup → Eltern-Dashboard → Code einfügen → Verbinden. Der Code gilt 7 Tage und nur einmal.
+3. In der App: Setup → Auto-Save / Lernfortschritt → Code einfügen → Verbinden. Der Code gilt 7 Tage und nur einmal.
 4. Das Gerät merkt sich danach einen geheimen Schlüssel. „Geräte trennen“ im Dashboard sperrt ihn sofort.
 
 Jeder Spieler (jedes Gerät, jedes Profil in der App) wird einzeln verbunden, die Daten bleiben getrennt.
@@ -78,7 +78,7 @@ Läuft auf dem Rechner bereits ein Bitnami-Apache auf Port 80/443, gibt es keine
 
 ## Sicherung
 Es gibt drei Ebenen:
-1. **Lernstand pro Spieler:** Die App schickt nach jeder Runde den kompletten Stand an den Server (`PUT /api/state`). Pro Spieler bleiben die letzten 30 Tage (`states`). Wiederherstellen in der App: beim Verbinden eines leeren Geräts oder unter Setup → Eltern-Dashboard → „Lernstand wiederherstellen“. Im Dashboard kann jeder Stand als Datei heruntergeladen werden. Ein leerer Stand ersetzt nie eine vorhandene Sicherung (Antwort 409).
+1. **Lernstand pro Spieler:** Die App schickt nach jeder Runde den kompletten Stand an den Server (`PUT /api/state`). Pro Spieler bleiben die letzten 30 Tage (`states`). Wiederherstellen in der App: beim Verbinden eines leeren Geräts oder unter Setup → Auto-Save / Lernfortschritt → „Lernstand wiederherstellen“. Im Dashboard kann jeder Stand als Datei heruntergeladen werden. Ein leerer Stand ersetzt nie eine vorhandene Sicherung (Antwort 409).
 2. **Datenbankdatei:** `backup.js` (unten), täglich per Cron.
 3. **Ganzer Server:** Lightsail-Snapshots (Instanz → Snapshots → Automatische Snapshots).
 

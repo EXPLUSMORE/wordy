@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 1.9.1 – 2026-10-06
+
+- Setup: Die Karte „Eltern-Dashboard“ heißt jetzt „Auto-Save / Lernfortschritt“, der Text lautet „Der Fortschritt wird gespeichert.“
+
 ## 1.9.0 – 2026-10-06
 
 - **„Nur sichern, nicht anzeigen“:** Beim Anlegen eines Spielers im Dashboard wählbar (oder später per „Nur sichern“). Der Server speichert dann nur den Lernstand als Sicherung, keine Antworten, Zeiten oder Ziele. Der Spieler taucht weder in der Übersicht noch in der Wochenmail auf. Unter „＋ Spieler“ lassen sich Code, Download, Anzeigen und Löschen für ihn verwalten. Die App zeigt „nur Sicherung“ an.
@@ -16,7 +20,7 @@ sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder 
 ## 1.8.0 – 2026-10-06
 
 - **Lernstand-Sicherung auf dem Server:** Die App sichert nach jeder Runde den kompletten Stand (Wörter, Münzen, Shop, Einstellungen). Die letzten 30 Tage bleiben erhalten.
-- **Wiederherstellen:** Beim Verbinden eines leeren Geräts bietet die App die Sicherung an. Außerdem unter Setup → Eltern-Dashboard → „Lernstand wiederherstellen“ (Sicherung nach Tag wählbar).
+- **Wiederherstellen:** Beim Verbinden eines leeren Geräts bietet die App die Sicherung an. Außerdem unter Setup → Auto-Save / Lernfortschritt → „Lernstand wiederherstellen“ (Sicherung nach Tag wählbar).
 - **Schutz:** Ein leerer Stand (neues Gerät, gelöschte Daten) überschreibt weder die Sicherung noch die Fortschrittsübersicht im Dashboard.
 - Dashboard: Karte „Lernstand-Sicherung“ mit Download jedes Standes als Datei.
 
@@ -29,7 +33,7 @@ sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder 
 
 ## 1.6.0 – 2026-10-05
 
-- **Eltern-Dashboard (Grundlage):** Neuer Ordner `server/` mit Server (Node, SQLite) und Dashboard. Die App sendet auf Wunsch den Lernverlauf: beantwortete Aufgaben, Runden, Käufe, Stand der Wörter und Einheiten. Verbindung per Einladungscode unter Setup → Eltern-Dashboard, optional und offline-sicher.
+- **Eltern-Dashboard (Grundlage):** Neuer Ordner `server/` mit Server (Node, SQLite) und Dashboard. Die App sendet auf Wunsch den Lernverlauf: beantwortete Aufgaben, Runden, Käufe, Stand der Wörter und Einheiten. Verbindung per Einladungscode unter Setup → Auto-Save / Lernfortschritt, optional und offline-sicher.
 
 ## 1.5.0 – 2026-10-05
 
