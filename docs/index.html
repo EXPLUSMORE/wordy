@@ -436,6 +436,7 @@ html.ar-open, html.ar-open body{overflow:hidden}
 </style>
 
 
+<script>window.WORDY_BUILD="cf8d456d8f";</script>
 </head>
 <body>
 <div id="app">
@@ -496,7 +497,15 @@ if ('serviceWorker' in navigator) {
     document.body.appendChild(b);
   }
   /* Eine neue Version übernimmt sofort; die offene Seite läuft aber noch mit dem alten Code. */
-  navigator.serviceWorker.addEventListener('controllerchange', function () { if (hadController) updateBanner(); });
+  /* Ist gerade nichts im Gang (keine Runde, keine Eingabe), lädt sich die App von selbst neu; sonst erscheint der Hinweis. */
+  function idleNow() {
+    var s = document.getElementById('session'), a = document.getElementById('arena'), f = document.activeElement;
+    return (!s || s.hidden) && (!a || a.hidden) && !(f && /^(INPUT|TEXTAREA|SELECT)$/.test(f.tagName));
+  }
+  navigator.serviceWorker.addEventListener('controllerchange', function () {
+    if (!hadController) return;
+    if (idleNow()) { location.reload(); } else { updateBanner(); }
+  });
   addEventListener('load', function () {
     navigator.serviceWorker.register('sw.js').then(function (reg) {
       var check = function () { reg.update().catch(function () {}); };

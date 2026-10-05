@@ -13,11 +13,14 @@ const ICONS = ['icons/icon-192.png','icons/icon-512.png','icons/icon-maskable-51
 const APP = 'Wordy';
 const THEME = '#1E6273';
 const src = fs.readFileSync('index.html', 'utf8');
+/* Version aus dem Inhalt: ändert sich der Code, ändert sich auch diese Kennung (Setup zeigt sie, der Offline-Cache nutzt sie) */
+const stamp = require('crypto').createHash('sha1')
+  .update([...DATA, ...CODE].map(f => fs.readFileSync(f)).join('') + src).digest('hex').slice(0, 10);
 const head = src.slice(0, src.indexOf('<div id="app">'));
 const body = src.slice(src.indexOf('<div id="app">'));
 
 /* ---------- 1. Einzeldatei ---------- */
-let inline = src;
+let inline = src.replace('</head>', `<script>window.WORDY_BUILD="${stamp}";</script>\n</head>`);
 [...DATA, ...CODE].forEach(f => {
   inline = inline.replace(`<script src="${f}"></script>`, () => '<script>' + fs.readFileSync(f, 'utf8') + '</script>');
 });
@@ -49,8 +52,7 @@ fs.writeFileSync('docs/manifest.webmanifest', JSON.stringify(manifest, null, 2))
 
 const PRECACHE = ['./', 'index.html', 'manifest.webmanifest', ...DATA, ...CODE, ...ICONS];
 /* Version aus dem Inhalt: ändert sich der Code, lädt der Cache neu */
-const stamp = require('crypto').createHash('sha1')
-  .update([...DATA, ...CODE].map(f => fs.readFileSync(f)).join('') + src).digest('hex').slice(0, 10);
+
 
 fs.writeFileSync('docs/sw.js', `/* ${APP} – Offline-Cache. Automatisch erzeugt, nicht von Hand ändern. */
 const CACHE = 'wordy-${stamp}';
@@ -93,6 +95,7 @@ const siteHead = `<!doctype html>
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="${APP}">
 ${head}
+<script>window.WORDY_BUILD="${stamp}";</script>
 </head>
 <body>
 ${body}
@@ -113,7 +116,15 @@ if ('serviceWorker' in navigator) {
     document.body.appendChild(b);
   }
   /* Eine neue Version übernimmt sofort; die offene Seite läuft aber noch mit dem alten Code. */
-  navigator.serviceWorker.addEventListener('controllerchange', function () { if (hadController) updateBanner(); });
+  /* Ist gerade nichts im Gang (keine Runde, keine Eingabe), lädt sich die App von selbst neu; sonst erscheint der Hinweis. */
+  function idleNow() {
+    var s = document.getElementById('session'), a = document.getElementById('arena'), f = document.activeElement;
+    return (!s || s.hidden) && (!a || a.hidden) && !(f && /^(INPUT|TEXTAREA|SELECT)$/.test(f.tagName));
+  }
+  navigator.serviceWorker.addEventListener('controllerchange', function () {
+    if (!hadController) return;
+    if (idleNow()) { location.reload(); } else { updateBanner(); }
+  });
   addEventListener('load', function () {
     navigator.serviceWorker.register('sw.js').then(function (reg) {
       var check = function () { reg.update().catch(function () {}); };
