@@ -439,7 +439,7 @@ html.ar-open, html.ar-open body{overflow:hidden}
 </style>
 
 
-<script>window.WORDY_VERSION="1.3.0";window.WORDY_BUILD="79d6632897";</script>
+<script>window.WORDY_VERSION="1.3.1";window.WORDY_BUILD="56810112f4";</script>
 </head>
 <body>
 <div id="app">
@@ -4425,17 +4425,38 @@ window.VERBS = [
     });
     order.forEach(function (k) {
       var title = k === "0" ? "Eigene Listen" : groupLabel(byGroup[k][0].k);
-      html += '<section class="card"><div class="eyebrow">' + esc(title) + '</div><div>' +
-        byGroup[k].map(function (u) {
+      var books = [], rest = [];
+      byGroup[k].forEach(function (u) { (BOOKS.filter(function (b) { return u.id.indexOf(b.pre) === 0; })[0] ? books : rest).push(u); });
+      function unitRow(u) {
           var pc = Math.round(u.mastered * 100 / Math.max(1, u.total));
           return '<button class="unit" data-act="unit" data-id="' + esc(u.id) + '">' +
-            '<span class="ic">' + esc(u.icon) + '</span><span class="t"><b>' + esc(u.title) + '</b>' +
+            '<span class="ic">' + esc(u.icon) + '</span><span class="t"><b>' + esc(BOOKS.some(function (b) { return u.id.indexOf(b.pre) === 0; }) ? u.title.replace(/^Headlight 2 · /, "") : u.title) + '</b>' +
             '<span class="bar" style="margin-top:6px;display:block"><i style="width:' + pc + '%"></i></span></span>' +
             '<span class="pill tnum">' + u.mastered + '/' + u.total + '</span></button>';
-        }).join("") + '</div></section>';
+      }
+      html += '<section class="card"><div class="eyebrow">' + esc(title) + '</div><div>' + rest.map(unitRow).join("") + '</div>' +
+        (books.length ? bookTile(BOOKS.filter(function (b) { return books[0].id.indexOf(b.pre) === 0; })[0], books) + books.map(unitRow).join("") : "") + '</section>';
     });
     html += '</div>';
     view.innerHTML = html;
+  }
+  /* Buchkachel: selbst gezeichnetes Cover über den Einheiten eines Schulbuchs */
+  var BOOKS = [{ pre: "H2-", name: "HEADLIGHT", no: "2", sub: "Schulbuch · Klasse 6" }];
+  function bookTile(b, us) {
+    var m = 0, t = 0; us.forEach(function (u) { m += u.mastered; t += u.total; });
+    var pc = Math.round(m * 100 / Math.max(1, t));
+    var svg = '<svg viewBox="0 0 120 150" width="84" height="105" role="img" aria-label="' + b.name + ' ' + b.no + '" style="flex:none;border-radius:6px;box-shadow:0 3px 10px rgba(0,0,0,.28)">' +
+      '<rect width="120" height="150" fill="#C8202B"/><polygon points="0,150 120,60 120,150" fill="#E0323C"/>' +
+      '<polygon points="0,96 0,118 34,100" fill="#F5C518"/><rect x="0" y="0" width="7" height="150" fill="#000" opacity=".18"/>' +
+      '<rect x="10" y="9" width="46" height="11" fill="#2B2B2B"/><text x="13" y="17.5" font-family="sans-serif" font-size="7" font-weight="700" fill="#fff">ENGLISH</text>' +
+      '<text x="45" y="17.5" font-family="sans-serif" font-size="7" font-weight="900" fill="#fff">G</text>' +
+      '<text x="10" y="46" font-family="sans-serif" font-size="15" font-weight="200" fill="#fff">HEAD<tspan font-weight="900">LIGHT</tspan></text>' +
+      '<text x="108" y="92" text-anchor="end" font-family="sans-serif" font-size="46" font-weight="800" fill="#fff">' + b.no + '</text>' +
+      '<rect x="14" y="112" width="92" height="26" rx="2" fill="#fff" opacity=".92"/><text x="60" y="129" text-anchor="middle" font-family="sans-serif" font-size="9" font-weight="700" fill="#8E1520">KLASSE 6</text></svg>';
+    return '<div class="row" style="gap:14px;align-items:center;margin:14px 0 6px;padding:12px;border-radius:12px;background:var(--bg2,rgba(128,128,128,.1))">' + svg +
+      '<div style="flex:1 1 auto"><b style="font-size:18px">' + b.name + ' ' + b.no + '</b><div class="small muted">' + esc(b.sub) + '</div>' +
+      '<div class="small muted" style="margin-top:4px">' + us.length + ' Einheiten · ' + m + '/' + t + ' Wörter gemeistert</div>' +
+      '<span class="bar" style="margin-top:8px;display:block"><i style="width:' + pc + '%"></i></span></div></div>';
   }
   function viewUnitDetail(id) {
     var u = S.units().filter(function (x) { return x.id === id; })[0];
