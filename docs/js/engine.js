@@ -30,8 +30,10 @@
   ];
 
   var AVATARS = ["🦊","🐼","🦉","🐙","🦕","🐝","🦁","🐧","🦄","🐢","🦈","🐨"];
+  /* Shop: kind = avatar | frame | title | bg | fx | snd | theme. cost 0 = gehört immer dazu.
+     rank = Mindestrang (Name aus RANKS), davor ist der Eintrag gesperrt. Gezeichnet wird in cosmetics.js. */
   var SHOP = [
-    { id: "av:🦊", kind: "avatar", label: "Fuchs",    cost: 0,   val: "🦊" },   // Start-Auswahl, jederzeit wieder wählbar
+    { id: "av:🦊", kind: "avatar", label: "Fuchs",    cost: 0,   val: "🦊" },
     { id: "av:🐼", kind: "avatar", label: "Panda",    cost: 40,  val: "🐼" },
     { id: "av:🐢", kind: "avatar", label: "Schildkröte", cost: 50, val: "🐢" },
     { id: "av:🦉", kind: "avatar", label: "Eule",     cost: 60,  val: "🦉" },
@@ -39,12 +41,51 @@
     { id: "av:🦕", kind: "avatar", label: "Dino",     cost: 120, val: "🦕" },
     { id: "av:🦈", kind: "avatar", label: "Hai",      cost: 160, val: "🦈" },
     { id: "av:🦄", kind: "avatar", label: "Einhorn",  cost: 220, val: "🦄" },
-    { id: "av:pummel", kind: "avatar", label: "Pummeleinhorn", cost: 250, val: "svg:pummel" },
+    { id: "av:pbaer",    kind: "avatar", label: "Pummelbär",     cost: 150, val: "svg:pbaer" },
+    { id: "av:phase",    kind: "avatar", label: "Pummelhase",    cost: 180, val: "svg:phase" },
+    { id: "av:pkatze",   kind: "avatar", label: "Pummelkatze",   cost: 200, val: "svg:pkatze" },
+    { id: "av:pummel",   kind: "avatar", label: "Pummeleinhorn", cost: 250, val: "svg:pummel" },
+    { id: "av:pdrache",  kind: "avatar", label: "Pummeldrache",  cost: 300, val: "svg:pdrache" },
+    { id: "av:pphoenix", kind: "avatar", label: "Pummelphönix",  cost: 600,  val: "svg:pphoenix", rank: "Gold I" },
+    { id: "av:pgold",    kind: "avatar", label: "Goldpummel",    cost: 800,  val: "svg:pgold", rank: "Platin I" },
+    { id: "av:pregen",   kind: "avatar", label: "Regenbogenpummel", cost: 1200, val: "svg:pregen", rank: "Diamant I" },
+    { id: "av:pgalaxie", kind: "avatar", label: "Galaxiepummel", cost: 2000, val: "svg:pgalaxie", rank: "Elite" },
+
+    { id: "fr:none",    kind: "frame", label: "Kein Rahmen", cost: 0,   val: "none" },
+    { id: "fr:gold",    kind: "frame", label: "Goldrahmen",  cost: 120, val: "gold" },
+    { id: "fr:rainbow", kind: "frame", label: "Regenbogenrahmen", cost: 220, val: "rainbow" },
+    { id: "fr:fire",    kind: "frame", label: "Flammenrahmen", cost: 300, val: "fire" },
+
+    { id: "ti:none",    kind: "title", label: "Kein Titel",   cost: 0,   val: "" },
+    { id: "ti:wort",    kind: "title", label: "Wortjäger",    cost: 80,  val: "Wortjäger" },
+    { id: "ti:streber", kind: "title", label: "Streber",      cost: 100, val: "Streber" },
+    { id: "ti:freund",  kind: "title", label: "Pummelfreund", cost: 120, val: "Pummelfreund" },
+    { id: "ti:profi",   kind: "title", label: "Vokabelprofi", cost: 150, val: "Vokabelprofi" },
+    { id: "ti:genie",   kind: "title", label: "Sprachgenie",  cost: 300, val: "Sprachgenie" },
+    { id: "ti:champ",   kind: "title", label: "Champion der Wörter", cost: 500, val: "Champion der Wörter", rank: "Champion" },
+
+    { id: "bg:none",   kind: "bg", label: "Schlicht", cost: 0,   val: "none" },
+    { id: "bg:stars",  kind: "bg", label: "Sterne",   cost: 150, val: "stars" },
+    { id: "bg:clouds", kind: "bg", label: "Wolken",   cost: 150, val: "clouds" },
+    { id: "bg:space",  kind: "bg", label: "Weltall",  cost: 250, val: "space" },
+
+    { id: "fx:none",     kind: "fx", label: "Keine Effekte", cost: 0,   val: "none" },
+    { id: "fx:confetti", kind: "fx", label: "Konfetti",      cost: 100, val: "confetti" },
+    { id: "fx:stars",    kind: "fx", label: "Sternenregen",  cost: 150, val: "stars" },
+    { id: "fx:sparks",   kind: "fx", label: "Funken",        cost: 200, val: "sparks" },
+    { id: "fx:firework", kind: "fx", label: "Feuerwerk",     cost: 300, val: "firework" },
+
+    { id: "sn:none",  kind: "snd", label: "Stumm",     cost: 0,   val: "none" },
+    { id: "sn:bell",  kind: "snd", label: "Glöckchen", cost: 80,  val: "bell" },
+    { id: "sn:arcade", kind: "snd", label: "Arcade",   cost: 120, val: "arcade" },
+    { id: "sn:harp",  kind: "snd", label: "Harfe",     cost: 160, val: "harp" },
+
     { id: "th:paper", kind: "theme", label: "Papier", cost: 0,  val: "paper" },
     { id: "th:mint",  kind: "theme", label: "Minze",  cost: 90,  val: "mint" },
     { id: "th:plum",  kind: "theme", label: "Pflaume",cost: 90,  val: "plum" },
     { id: "th:amber", kind: "theme", label: "Amber",  cost: 140, val: "amber" }
   ];
+  var PROFILE_KEY = { avatar: "avatar", frame: "frame", title: "title", bg: "bg", fx: "fx", snd: "snd", theme: "theme" };
 
   var BADGES = [
     { id: "start",   n: "Erster Schritt",  d: "Die erste Übung abgeschlossen." },
@@ -535,13 +576,27 @@
   function setTrack(t) { state.settings.track = t; state.settings.units = []; save(true); }
 
   /* ---------- Shop ---------- */
+  function itemById(id) { return SHOP.filter(function (x) { return x.id === id; })[0]; }
+  function minXp(it) {
+    if (!it.rank) return 0;
+    var r = RANKS.filter(function (x) { return x.n === it.rank; })[0];
+    return r ? r.xp : 0;
+  }
+  function owns(it) { return it.cost === 0 || state.profile.owned.indexOf(it.id) >= 0; }
+  function isActive(it) { var v = state.profile[PROFILE_KEY[it.kind]]; return (v == null ? defaultOf(it.kind) : v) === it.val; }
+  function defaultOf(kind) { return kind === "avatar" ? "🦊" : kind === "theme" ? "paper" : kind === "title" ? "" : "none"; }
+  function equip(id) {
+    var it = itemById(id); if (!it || !owns(it)) return { error: "Das gehört dir noch nicht." };
+    state.profile[PROFILE_KEY[it.kind]] = it.val; save(true); return { ok: true, item: it };
+  }
   function buy(id) {
-    var it = SHOP.filter(function (s) { return s.id === id; })[0];
+    var it = itemById(id);
     if (!it) return { error: "Unbekannt." };
-    if (state.profile.owned.indexOf(id) >= 0) return { error: "Gehört dir schon." };
+    if (owns(it)) return { error: "Gehört dir schon." };
+    if (state.xp < minXp(it)) return { error: "Das gibt es erst ab dem Rang " + it.rank + "." };
     if (state.coins < it.cost) return { error: "Dafür fehlen noch " + (it.cost - state.coins) + " Münzen." };
     state.coins -= it.cost; state.profile.owned.push(id);
-    if (it.kind === "avatar") state.profile.avatar = it.val; else state.profile.theme = it.val;
+    state.profile[PROFILE_KEY[it.kind]] = it.val;
     save(true); return { ok: true, item: it };
   }
 
@@ -562,6 +617,6 @@
     backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
-    resetProgress: resetProgress, buy: buy
+    resetProgress: resetProgress, buy: buy, equip: equip, owns: owns, isActive: isActive, minXp: minXp, defaultOf: defaultOf
   };
 })(window);

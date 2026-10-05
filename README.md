@@ -29,7 +29,8 @@ ohne Server, ohne Konto, ohne Datenübertragung — der Lernstand liegt im
 
 ```
 index.html      Quelle: Markup und Stylesheet
-js/engine.js    Lernmotor: Speicherung, Wiederholungsplanung, Statistik
+js/engine.js    Lernmotor: Speicherung, Wiederholungsplanung, Statistik, Shop-Katalog
+js/cosmetics.js Zeichnungen, Effekte und Töne der Sammelobjekte
 js/app.js       Oberfläche und Aufgabentypen
 js/arena.js     Die vier Zeitmodi
 data/*.js       Vokabeln und Sätze (reine Daten, keine Logik)
@@ -92,6 +93,14 @@ Auf iPhone und iPad muss der Ton einmal per Tippen freigegeben werden.
 Setup → eigene Liste einfügen oder Datei laden:
 `englisch;deutsch;beispielsatz` — Semikolon, Komma oder Tabulator, eine
 Kopfzeile wird erkannt. Eigene Listen sind in beiden Bereichen aktiv.
+
+### Shop und Sammelalbum
+Münzen gibt es nur für Aussehen. Der Shop (Fortschritt) hat sieben Reiter:
+Figuren (Emojis und gezeichnete Pummelfiguren, die seltenen erst ab einem
+Mindestrang), Rahmen, Titel, Hintergründe, Effekte bei richtigen Antworten
+(Konfetti, Sternenregen, Funken, Feuerwerk am Rundenende), Töne und Farben.
+Das Sammelalbum zeigt alle Figuren, noch fehlende als Silhouette. Katalog und
+Preise stehen in `js/engine.js` (`SHOP`), das Aussehen in `js/cosmetics.js`.
 
 ### Lernstand
 Liegt im `localStorage`, also pro Gerät und Browser getrennt. Gespeichert

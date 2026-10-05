@@ -98,21 +98,8 @@
   }
 
   /* ---------- Kopfzeile ---------- */
-  /* Avatare sind Emojis oder, mit "svg:"-Präfix, eigene Zeichnungen */
-  var AVATAR_SVG = {
-    pummel: '<svg viewBox="0 0 64 64" width="1.25em" height="1.25em" style="display:block" aria-hidden="true">' +
-      '<ellipse cx="22" cy="58" rx="7" ry="4" fill="#F7A8CF"/><ellipse cx="42" cy="58" rx="7" ry="4" fill="#F7A8CF"/>' +
-      '<circle cx="16" cy="21" r="7" fill="#FFC9E3"/><circle cx="48" cy="21" r="7" fill="#FFC9E3"/>' +
-      '<circle cx="16" cy="22" r="3.5" fill="#FF9CC6"/><circle cx="48" cy="22" r="3.5" fill="#FF9CC6"/>' +
-      '<ellipse cx="32" cy="39" rx="25" ry="20" fill="#FFC9E3"/>' +
-      '<path d="M32 2l-6 19h12z" fill="#FFD34D" stroke="#E0A800" stroke-width="1.5" stroke-linejoin="round"/>' +
-      '<circle cx="22" cy="23" r="5" fill="#8ED8F8"/><circle cx="32" cy="21" r="5" fill="#B9F0B4"/><circle cx="42" cy="23" r="5" fill="#C9A7F5"/>' +
-      '<circle cx="23" cy="37" r="3.6" fill="#3B2A4A"/><circle cx="41" cy="37" r="3.6" fill="#3B2A4A"/>' +
-      '<circle cx="24.2" cy="35.8" r="1.2" fill="#fff"/><circle cx="42.2" cy="35.8" r="1.2" fill="#fff"/>' +
-      '<ellipse cx="15" cy="44" rx="4.5" ry="3" fill="#FF8FB8" opacity=".8"/><ellipse cx="49" cy="44" rx="4.5" ry="3" fill="#FF8FB8" opacity=".8"/>' +
-      '<path d="M27 46q5 5 10 0" fill="none" stroke="#3B2A4A" stroke-width="2" stroke-linecap="round"/></svg>'
-  };
-  function avatarHtml(v) { return /^svg:/.test(v) ? (AVATAR_SVG[v.slice(4)] || "🦄") : esc(v); }
+  /* Avatare sind Emojis oder, mit "svg:"-Präfix, Zeichnungen aus cosmetics.js */
+  function avatarHtml(v) { return global.VTC.avatarHtml(v, esc); }
   function playerName() {
     var d = S.profiles(), x = d.list.filter(function (y) { return y.id === d.active; })[0];
     return x ? x.name : "";
@@ -120,16 +107,17 @@
   function renderHeader() {
     var st = S.state, r = S.rankOf(st.xp);
     $("#hAvatar").innerHTML = avatarHtml(st.profile.avatar);
+    $("#hAvatar").className = ("avatar " + global.VTC.frameClass(st.profile)).trim();
     var pd = S.profiles(); var pn = pd.list.filter(function (x) { return x.id === pd.active; })[0];
     $("#hAvatar").title = pn ? pn.name : "";
-    $("#hRank").textContent = r.rank.n;
+    $("#hRank").textContent = r.rank.n + (st.profile.title ? " · " + st.profile.title : "");
     $("#hXp").textContent = st.xp;
     $("#hCoins").textContent = st.coins;
     $("#hStreak").textContent = st.streak.count;
     var hEl = $("#hHearts");
     if (!st.settings.hearts) { hEl.textContent = "∞"; hEl.title = "Ohne Herzen"; }
     else { S.regenHearts(); hEl.innerHTML = "<span style='color:var(--bad)'>" + "♥".repeat(st.hearts) + "</span><span style='color:var(--line)'>" + "♥".repeat(5 - st.hearts) + "</span>"; }
-    document.documentElement.setAttribute("data-accent", st.profile.theme || "paper");
+    global.VTC.applyLook(st.profile);
   }
 
   function trackSwitch() {
@@ -303,6 +291,60 @@
       '<section class="card"><div class="eyebrow">Wortliste</div>' + rows + '</section></div>';
   }
 
+  /* ---------- Shop und Sammelalbum ---------- */
+  var SHOP_TABS = [
+    { k: "avatar", n: "Figuren" }, { k: "frame", n: "Rahmen" }, { k: "title", n: "Titel" },
+    { k: "bg", n: "Hintergründe" }, { k: "fx", n: "Effekte" }, { k: "snd", n: "Töne" }, { k: "theme", n: "Farben" }
+  ];
+  var KIND_NAME = { avatar: "Figur", frame: "Rahmen", title: "Titel", bg: "Hintergrund", fx: "Effekt", snd: "Ton", theme: "Farbwelt" };
+  var shopTab = "avatar";
+  var THEME_DOT = { paper: "#1E6273", mint: "#2E7357", plum: "#6A3D70", amber: "#8A5A1B" };
+  function shopIcon(it) {
+    switch (it.kind) {
+      case "avatar": return avatarHtml(it.val);
+      case "theme": return '<span class="dot" style="background:' + (THEME_DOT[it.val] || "#1E6273") + '"></span>';
+      case "frame": return '<span class="avatar fr-' + it.val + '" style="width:26px;height:26px;font-size:14px">' + (it.val === "none" ? "—" : "🙂") + '</span>';
+      case "title": return "🏷️";
+      case "bg": return it.val === "stars" ? "✨" : it.val === "clouds" ? "☁️" : it.val === "space" ? "🌌" : "▫️";
+      case "fx": return it.val === "confetti" ? "🎊" : it.val === "stars" ? "⭐" : it.val === "sparks" ? "⚡" : it.val === "firework" ? "🎆" : "▫️";
+      case "snd": return it.val === "none" ? "🔇" : "🔔";
+    }
+    return "";
+  }
+  function lockNote(it) { return S.minXp(it) > S.state.xp; }
+  function albumCard() {
+    var st = S.state, list = S.SHOP.filter(function (x) { return x.kind === "avatar"; });
+    var have = list.filter(function (x) { return S.owns(x); }).length;
+    return '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Sammelalbum</div><span class="pill tnum">' + have + ' / ' + list.length + '</span></div>' +
+      '<p class="small muted" style="margin:6px 0 10px">Alle Figuren auf einen Blick. Tippe auf eine, die du hast, um sie zu wählen.</p>' +
+      '<div class="album">' + list.map(function (it) {
+        var own = S.owns(it), act = S.isActive(it);
+        var sub = own ? (act ? "aktiv" : "") : lockNote(it) ? "🔒 " + it.rank : "🪙 " + it.cost;
+        return '<button class="album-i' + (own ? "" : " off") + (act ? " on" : "") + '" ' +
+          (own ? 'data-act="equip" data-id="' + esc(it.id) + '"' : 'data-act="albuminfo" data-id="' + esc(it.id) + '"') + ' aria-label="' + esc(it.label) + '">' +
+          '<span class="art">' + avatarHtml(it.val) + '</span><small>' + esc(own ? it.label : "???") + '</small>' +
+          '<small class="sub">' + esc(sub) + '</small></button>';
+      }).join("") + '</div></section>';
+  }
+  function shopCard() {
+    var st = S.state;
+    var html = '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Shop</div><span class="pill">🪙 ' + st.coins + '</span></div>' +
+      '<p class="small muted" style="margin:6px 0 10px">Münzen gibt es nur für Aussehen – nie für Lernvorteile.</p>' +
+      '<div class="row wrap" style="gap:6px;margin-bottom:6px">' + SHOP_TABS.map(function (t) {
+        return '<button class="chip" data-act="shoptab" data-k="' + t.k + '" aria-pressed="' + (shopTab === t.k) + '">' + t.n + '</button>';
+      }).join("") + '</div>';
+    html += S.SHOP.filter(function (it) { return it.kind === shopTab; }).map(function (it) {
+      var own = S.owns(it), act = S.isActive(it), locked = !own && lockNote(it);
+      return '<div class="shopitem"><span class="si">' + shopIcon(it) + '</span>' +
+        '<span style="flex:1 1 auto"><b class="small">' + esc(it.label) + '</b><br><span class="small muted">' + KIND_NAME[it.kind] +
+        (it.rank && !own ? " · ab " + esc(it.rank) : "") + '</span></span>' +
+        (own ? '<button class="chip" data-act="equip" data-id="' + esc(it.id) + '" aria-pressed="' + act + '">' + (act ? "aktiv" : "auswählen") + '</button>'
+          : locked ? '<span class="pill" title="Erst ab Rang ' + esc(it.rank) + '">🔒 ' + esc(it.rank) + '</span>'
+          : '<button class="btn soft" data-act="buy" data-id="' + esc(it.id) + '">🪙 ' + it.cost + '</button>') + '</div>';
+    }).join("");
+    return html + '</section>';
+  }
+
   /* ================= FORTSCHRITT ================= */
   function viewStats() {
     var st = S.state, s = S.stats(), r = S.rankOf(st.xp);
@@ -314,7 +356,7 @@
       '<div class="kpi"><b class="tnum">' + s.acc + '%</b><span>richtig</span></div>' +
       '<div class="kpi"><b class="tnum">' + s.days + '</b><span>Lerntage</span></div>' +
       '</div>' +
-      '<div class="row" style="margin-top:14px;gap:12px"><div class="avatar">' + avatarHtml(st.profile.avatar) + '</div>' +
+      '<div class="row" style="margin-top:14px;gap:12px"><div class="avatar ' + global.VTC.frameClass(st.profile) + '">' + avatarHtml(st.profile.avatar) + '</div>' +
       '<div style="flex:1 1 auto"><div class="row"><b>' + esc(r.rank.n) + '</b><span class="spacer"></span>' +
       '<span class="small muted tnum">' + st.xp + (r.next ? " / " + r.next.xp : "") + ' XP</span></div>' +
       '<div class="bar" style="margin-top:6px"><i style="width:' + (r.span ? Math.round(r.into * 100 / r.span) : 100) + '%"></i></div></div></div></section>';
@@ -350,16 +392,7 @@
         return '<div class="badge' + (has ? "" : " off") + '" title="' + esc(b.d) + '"><div class="g">' + (has ? "🏅" : "🔒") + '</div><b>' + esc(b.n) + '</b></div>';
       }).join("") + '</div></section>';
 
-    html += '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Shop</div><span class="pill">🪙 ' + st.coins + '</span></div>' +
-      '<p class="small muted" style="margin:6px 0 10px">Münzen gibt es nur für Aussehen – nie für Lernvorteile.</p>' +
-      S.SHOP.map(function (it) {
-        var owned = st.profile.owned.indexOf(it.id) >= 0;
-        var active = it.kind === "avatar" ? st.profile.avatar === it.val : st.profile.theme === it.val;
-        return '<div class="shopitem"><span style="font-size:20px;width:26px;text-align:center">' + (it.kind === "avatar" ? avatarHtml(it.val) : '<span style="display:inline-block;width:22px;height:22px;border-radius:50%;background:' + ({ paper: "#1E6273", mint: "#2E7357", plum: "#6A3D70", amber: "#8A5A1B" }[it.val] || "#1E6273") + '"></span>') + '</span>' +
-          '<span style="flex:1 1 auto"><b class="small">' + esc(it.label) + '</b><br><span class="small muted">' + (it.kind === "avatar" ? "Avatar" : "Farbwelt") + '</span></span>' +
-          (owned ? '<button class="chip" data-act="equip" data-id="' + esc(it.id) + '" aria-pressed="' + active + '">' + (active ? "aktiv" : "auswählen") + '</button>'
-                 : '<button class="btn soft" data-act="buy" data-id="' + esc(it.id) + '">🪙 ' + it.cost + '</button>') + '</div>';
-      }).join("") + '</section>';
+    html += albumCard() + shopCard();
     html += '</div>';
     view.innerHTML = html;
   }
@@ -572,6 +605,7 @@
       '<button class="btn ghost" data-act="close">Fertig</button></div></div></div>';
     sessionEl.innerHTML = html;
     renderHeader();
+    if (reason !== "hearts" && acc >= 70) global.VTC.finale(S.state.profile.fx);
   }
   function closeSession() {
     sessionEl.hidden = true; sessionEl.innerHTML = ""; SS = null;
@@ -771,6 +805,7 @@
   }
   function verdict(ok, w, res, note) {
     var foot = $("#sfoot"); if (!foot) return;
+    feedback(ok);
     var lvl = res ? S.levelOf(w.id) : 0;
     var comp = "";
     if (ok && res) {
@@ -789,8 +824,15 @@
       '<button class="btn wide lg" data-act="next" id="mainBtn">Weiter</button>';
     var b = $("#mainBtn"); if (b) b.focus();
   }
+  /* Effekt und Ton der gewählten Sammelobjekte bei einer Antwort */
+  function feedback(ok) {
+    var p = S.state.profile;
+    if (S.state.settings.audio) global.VTC.sound(p.snd, ok);
+    if (ok) global.VTC.burst(p.fx, global.innerWidth / 2, global.innerHeight * .55, 16, 1);
+  }
   function verdictSentence(ok, x) {
     var foot = $("#sfoot"); if (!foot) return;
+    feedback(ok);
     foot.innerHTML = '<div class="verdict ' + (ok ? "ok" : "no") + ' pop">' + (ok ? "Richtig gebaut" : "So heißt es richtig") +
       '<span class="cmp" style="font-family:Newsreader,Georgia,serif;font-size:16px;margin-top:6px">' + esc(x.en) + '</span>' +
       '<span class="cmp">Regel: ' + esc(x.rule) + '</span></div>' +
@@ -961,10 +1003,17 @@
       var u = S.units().filter(function (x) { return x.id === act.getAttribute("data-id"); })[0];
       if (u) speak(u.words.map(function (w) { return w[0]; }).join(", "), 0.85);
     }
-    else if (a === "buy") { var r = S.buy(act.getAttribute("data-id")); toast(r.error || ("Gekauft: " + r.item.label)); renderHeader(); render(); }
-    else if (a === "equip") {
-      var it = S.SHOP.filter(function (x) { return x.id === act.getAttribute("data-id"); })[0];
-      if (it) { if (it.kind === "avatar") st.profile.avatar = it.val; else st.profile.theme = it.val; S.save(true); renderHeader(); render(); }
+    else if (a === "buy") {
+      var r = S.buy(act.getAttribute("data-id"));
+      toast(r.error || ("Gekauft: " + r.item.label));
+      if (r.ok) { var rect = act.getBoundingClientRect(); global.VTC.burst("confetti", rect.left + rect.width / 2, rect.top, 26, 1.4); }
+      renderHeader(); render();
+    }
+    else if (a === "equip") { var re = S.equip(act.getAttribute("data-id")); if (re.error) return toast(re.error); renderHeader(); render(); }
+    else if (a === "shoptab") { shopTab = act.getAttribute("data-k"); render(); }
+    else if (a === "albuminfo") {
+      var ai = S.SHOP.filter(function (x) { return x.id === act.getAttribute("data-id"); })[0];
+      if (ai) toast(S.minXp(ai) > S.state.xp ? ai.label + ": erst ab Rang " + ai.rank + " (" + ai.cost + " Münzen)." : ai.label + ": " + ai.cost + " Münzen – im Shop unter „Figuren“.");
     }
     else if (a === "padd") {
       var nm = $("#newPlayer").value; S.addProfile(nm);

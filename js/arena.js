@@ -67,6 +67,9 @@
     if (w) S.grade(w.id, 1);            // Tempo zählt als sichere, nicht als tiefe Wiederholung
     S.addXp(2);
     flash("+" + pts, run.combo >= 5 ? "combo" : "ok");
+    var pr = S.state.profile;
+    if (S.state.settings.audio) global.VTC.sound(pr.snd, true);
+    global.VTC.burst(pr.fx, global.innerWidth / 2, global.innerHeight * .5, 10, .9);
     return pts;
   }
   function miss(w) {
@@ -74,6 +77,7 @@
     if (w) S.grade(w.id, 0);
     buzz(35);
     shake();
+    if (S.state.settings.audio) global.VTC.sound(S.state.profile.snd, false);
   }
   function flash(text, kind) {
     var f = $("#arFlash"); if (!f) return;
