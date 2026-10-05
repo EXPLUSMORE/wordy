@@ -31,6 +31,7 @@
 
   var AVATARS = ["🦊","🐼","🦉","🐙","🦕","🐝","🦁","🐧","🦄","🐢","🦈","🐨"];
   var SHOP = [
+    { id: "av:🦊", kind: "avatar", label: "Fuchs",    cost: 0,   val: "🦊" },   // Start-Auswahl, jederzeit wieder wählbar
     { id: "av:🐼", kind: "avatar", label: "Panda",    cost: 40,  val: "🐼" },
     { id: "av:🐢", kind: "avatar", label: "Schildkröte", cost: 50, val: "🐢" },
     { id: "av:🦉", kind: "avatar", label: "Eule",     cost: 60,  val: "🦉" },
@@ -39,6 +40,7 @@
     { id: "av:🦈", kind: "avatar", label: "Hai",      cost: 160, val: "🦈" },
     { id: "av:🦄", kind: "avatar", label: "Einhorn",  cost: 220, val: "🦄" },
     { id: "av:pummel", kind: "avatar", label: "Pummeleinhorn", cost: 250, val: "svg:pummel" },
+    { id: "th:paper", kind: "theme", label: "Papier", cost: 0,  val: "paper" },
     { id: "th:mint",  kind: "theme", label: "Minze",  cost: 90,  val: "mint" },
     { id: "th:plum",  kind: "theme", label: "Pflaume",cost: 90,  val: "plum" },
     { id: "th:amber", kind: "theme", label: "Amber",  cost: 140, val: "amber" }

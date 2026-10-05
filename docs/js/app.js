@@ -355,7 +355,7 @@
       S.SHOP.map(function (it) {
         var owned = st.profile.owned.indexOf(it.id) >= 0;
         var active = it.kind === "avatar" ? st.profile.avatar === it.val : st.profile.theme === it.val;
-        return '<div class="shopitem"><span style="font-size:20px;width:26px;text-align:center">' + (it.kind === "avatar" ? avatarHtml(it.val) : '<span style="display:inline-block;width:22px;height:22px;border-radius:50%;background:' + ({ mint: "#2E7357", plum: "#6A3D70", amber: "#8A5A1B" }[it.val] || "#1E6273") + '"></span>') + '</span>' +
+        return '<div class="shopitem"><span style="font-size:20px;width:26px;text-align:center">' + (it.kind === "avatar" ? avatarHtml(it.val) : '<span style="display:inline-block;width:22px;height:22px;border-radius:50%;background:' + ({ paper: "#1E6273", mint: "#2E7357", plum: "#6A3D70", amber: "#8A5A1B" }[it.val] || "#1E6273") + '"></span>') + '</span>' +
           '<span style="flex:1 1 auto"><b class="small">' + esc(it.label) + '</b><br><span class="small muted">' + (it.kind === "avatar" ? "Avatar" : "Farbwelt") + '</span></span>' +
           (owned ? '<button class="chip" data-act="equip" data-id="' + esc(it.id) + '" aria-pressed="' + active + '">' + (active ? "aktiv" : "auswählen") + '</button>'
                  : '<button class="btn soft" data-act="buy" data-id="' + esc(it.id) + '">🪙 ' + it.cost + '</button>') + '</div>';
