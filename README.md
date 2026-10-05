@@ -115,6 +115,18 @@ Fotos der Heftseiten oder Kapitel schicken; die Vokabeln werden als Einheiten in
 `data/lernbuch.js` eingetragen (Titel mit Buch, Unit und Seite, Schuljahr `k`)
 und erscheinen danach unter „Einheiten“ im passenden Jahrgang.
 
+### Münzen und Missionen
+Münzen gibt es für **Fortschritt, nicht für Antworten**: neues Wort (+1), Stufe
+höher (+1, Gemeistert +4), Wort aus der Fehlerkartei gelöst (+2), neue Einheit
+entdeckt (+8, ab fünf Wörtern), Einheit geschafft (+30, alle mindestens
+„Geübt“; Verben +60), Serien-Bonus bei 3, 7, 14, 30, 60 und 100 Tagen. Jedes Wort
+zahlt höchstens einmal pro Tag und nur, wenn es fällig war, dasselbe Wort immer
+wieder zu üben bringt also nichts. Dazu Missionen (drei pro Tag, „x
+verschiedene Wörter“ statt Aufgaben), das Tagesziel (+20) und die Arena (höchstens
+30 pro Tag). Die Startseite zeigt den **Wunsch** (⭐ im Shop oder Tippen auf ein
+gesperrtes Album-Feld) mit Fortschrittsbalken; nach jeder Runde steht da,
+wofür es Münzen gab.
+
 ### Shop und Sammelalbum
 Münzen gibt es nur für Aussehen. Der Shop (Fortschritt) hat sieben Reiter:
 Figuren (Emojis und gezeichnete Pummelfiguren, die seltenen erst ab einem

@@ -159,6 +159,23 @@
   }
   function groupLabel(k) { return typeof k === "number" ? "Klasse " + k : k; }
 
+  /* ---------- Wunsch ---------- */
+  function wishCard() {
+    var st = S.state, it = S.wish();
+    if (!it) return '<section class="card"><div class="row" style="gap:12px;align-items:center"><div style="font-size:30px">⭐</div>' +
+      '<div style="flex:1 1 auto"><b>Was wünschst du dir?</b><p class="small muted" style="margin:2px 0 0">Wähle im Shop einen Wunsch, auf den du Münzen sammelst. Hier siehst du, wie weit du schon bist.</p></div></div>' +
+      '<button class="btn soft wide" data-act="goshop" style="margin-top:10px">Zum Shop</button></section>';
+    var have = Math.min(st.coins, it.cost), pc = it.cost ? Math.round(have * 100 / it.cost) : 100, left = Math.max(0, it.cost - st.coins);
+    var needXp = Math.max(0, S.minXp(it) - st.xp);
+    var icon = it.kind === "sticker" ? stickerHtml(it, 46) : it.kind === "avatar" ? '<div class="avatar" style="width:46px;height:46px;font-size:26px">' + avatarHtml(it.val) + '</div>' : shopIcon(it);
+    var line = needXp ? "Du brauchst noch " + needXp + " XP bis Rang " + esc(it.rank) + (left ? " und " + left + " 🪙." : ".")
+      : left ? "Noch " + left + " 🪙 – das schaffst du." : "Genug Münzen! Jetzt im Shop holen.";
+    return '<section class="card"><div class="eyebrow">Dein Wunsch</div><div class="row" style="gap:12px;align-items:center;margin-top:8px"><div style="width:50px;display:grid;place-items:center">' + icon + '</div>' +
+      '<div style="flex:1 1 auto;min-width:0"><b>' + esc(it.label) + '</b><div class="bar" style="margin:6px 0 4px"><i style="width:' + pc + '%"></i></div>' +
+      '<div class="small muted tnum">' + have + ' / ' + it.cost + ' 🪙 · ' + line + '</div></div></div>' +
+      '<div class="row" style="gap:8px;margin-top:10px">' + (!needXp && !left ? '<button class="btn" data-act="buy" data-id="' + esc(it.id) + '">Jetzt kaufen</button>' : "") +
+      '<button class="btn ghost" data-act="goshop">Anderen Wunsch wählen</button></div></section>';
+  }
   /* ---------- Unregelmäßige Verben: Karte, Liste ---------- */
   function verbCard() {
     var vs = S.verbStats(), vp = S.verbPools(), due = vp.box.length + vp.due.length;
@@ -235,6 +252,7 @@
         '<button class="btn soft wide" data-act="start" data-mode="box" data-min="5" style="margin-top:12px">Fehlerkartei üben</button></section>';
     }
 
+    html += wishCard();
     html += verbCard();
     html += '<section class="card"><div class="eyebrow">Heutige Missionen</div><div style="margin-top:6px">' +
       st.daily.missions.map(function (m) {
@@ -423,7 +441,7 @@
       }).join("") + '</div></section>';
   }
   function shopCard() {
-    var st = S.state;
+    var st = S.state, wishId = (S.wish() || {}).id;
     var html = '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Shop</div><span class="pill">🪙 ' + st.coins + '</span></div>' +
       '<p class="small muted" style="margin:6px 0 10px">Münzen gibt es nur für Aussehen – nie für Lernvorteile.</p>' +
       '<div class="row wrap" style="gap:6px;margin-bottom:6px">' + SHOP_TABS.map(function (t) {
@@ -435,8 +453,8 @@
         '<span style="flex:1 1 auto"><b class="small">' + esc(it.label) + '</b><br><span class="small muted">' + KIND_NAME[it.kind] +
         (it.rank && !own ? " · ab " + esc(it.rank) : "") + '</span></span>' +
         (own ? '<button class="chip" data-act="equip" data-id="' + esc(it.id) + '" aria-pressed="' + act + '">' + (act ? "aktiv" : "auswählen") + '</button>'
-          : locked ? '<span class="pill" title="Erst ab Rang ' + esc(it.rank) + '">🔒 ' + esc(it.rank) + '</span>'
-          : '<button class="btn soft" data-act="buy" data-id="' + esc(it.id) + '">🪙 ' + it.cost + '</button>') + '</div>';
+          : locked ? '<span class="pill" title="Erst ab Rang ' + esc(it.rank) + '">🔒 ' + esc(it.rank) + '</span><button class="chip" data-act="wish" data-id="' + esc(it.id) + '" aria-pressed="' + (wishId === it.id) + '" aria-label="Wunsch" style="margin-left:6px">⭐</button>'
+          : '<button class="chip" data-act="wish" data-id="' + esc(it.id) + '" aria-pressed="' + (wishId === it.id) + '" aria-label="Wunsch" style="margin-right:6px">⭐</button><button class="btn soft" data-act="buy" data-id="' + esc(it.id) + '">🪙 ' + it.cost + '</button>') + '</div>';
     }).join("");
     return html + '</section>';
   }
@@ -806,7 +824,9 @@
       (coinGain ? '<span class="pill fin-coin" style="margin-left:10px">🪙 +<b data-count="' + coinGain + '">' + coinGain + '</b></span>' : "") + '</div>' +
       '<div class="row" style="margin-top:8px"><b>' + esc(r1.rank.n) + '</b><span class="spacer"></span><span class="small muted tnum">' + st.xp + (r1.next ? " / " + r1.next.xp : "") + ' XP</span></div>' +
       '<div class="bar fin-bar" style="margin-top:6px"><i style="width:' + pct(r1) + '%"></i></div>' +
-      (rankUp ? '<div class="fin-rankup"><span>⬆️ Neuer Rang</span><b>' + esc(r1.rank.n) + '</b></div>' : "") + '</section>';
+      (rankUp ? '<div class="fin-rankup"><span>⬆️ Neuer Rang</span><b>' + esc(r1.rank.n) + '</b></div>' : "") +
+      ((rw.parts || []).length ? '<div class="fin-parts"><div class="eyebrow" style="margin:12px 0 4px">Wofür es Münzen gab</div>' +
+        rw.parts.map(function (x) { return '<div class="row small"><span style="flex:1 1 auto">' + esc(x.t) + '</span><b class="tnum">+' + x.c + ' 🪙</b></div>'; }).join("") + '</div>' : "") + '</section>';
     if (SS.sentOk) html += '<section class="card"><div class="eyebrow">Satzbau</div><p style="margin:6px 0 0">' + SS.sentOk + ' ' + plural(SS.sentOk, "Satz", "Sätze") + ' richtig zusammengesetzt.</p></section>';
     if (SS.mastered) html += '<section class="card"><div class="eyebrow" style="color:var(--gold)">Neu gemeistert</div><p style="margin:6px 0 0">' + SS.mastered + ' ' + plural(SS.mastered, "Wort sitzt", "Wörter sitzen") + ' jetzt langfristig.</p></section>';
     if (rw.goalReached) html += '<section class="card"><div class="eyebrow" style="color:var(--good)">Tagesziel erreicht</div>' + (rw.streakUp ? '<div class="fin-flame">🔥</div>' : "") + '<p style="margin:6px 0 0">' + (rw.streakUp ? "Streak steht bei " + st.streak.count + " " + plural(st.streak.count, "Tag", "Tagen") + "." : "Schon erledigt heute.") + '</p></section>';
@@ -1302,9 +1322,12 @@
       renderHeader(); render();
     }
     else if (a === "shoptab") { shopTab = act.getAttribute("data-k"); render(); }
+    else if (a === "wish") { var rw2 = S.setWish(act.getAttribute("data-id")); toast(rw2.error || (rw2.on ? "Wunsch: " + rw2.item.label : "Wunsch entfernt")); render(); }
+    else if (a === "goshop") { tab = "stats"; render(); var shopEl = view.querySelector(".shopitem"); if (shopEl) shopEl.scrollIntoView({ block: "center" }); }
     else if (a === "albuminfo") {
       var ai = S.SHOP.filter(function (x) { return x.id === act.getAttribute("data-id"); })[0];
-      if (ai) toast(S.minXp(ai) > S.state.xp ? ai.label + ": erst ab Rang " + ai.rank + " (" + ai.cost + " Münzen)." : ai.label + ": " + ai.cost + " Münzen – im Shop unter „Figuren“.");
+      if (ai && !S.owns(ai)) { S.setWish(ai.id); }
+      if (ai) toast(S.minXp(ai) > S.state.xp ? ai.label + ": erst ab Rang " + ai.rank + " (" + ai.cost + " Münzen). ⭐ Als Wunsch gemerkt." : ai.label + ": " + ai.cost + " Münzen. ⭐ Als Wunsch gemerkt.");
     }
     else if (a === "padd") {
       var nm = $("#newPlayer").value; S.addProfile(nm);

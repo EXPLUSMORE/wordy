@@ -274,8 +274,8 @@
   }
   function makeMissions() {
     var pool = [
-      { id: "m20", n: "20 Aufgaben lösen", goal: 20, type: "items", coins: 10 },
-      { id: "m30", n: "30 Aufgaben lösen", goal: 30, type: "items", coins: 14 },
+      { id: "m20", n: "15 verschiedene Wörter üben", goal: 15, type: "items", coins: 10 },
+      { id: "m30", n: "25 verschiedene Wörter üben", goal: 25, type: "items", coins: 14 },
       { id: "mgoal", n: "Tagesziel erreichen", goal: 1, type: "goal", coins: 15 },
       { id: "mbox", n: "5 Wörter aus der Fehlerkartei", goal: 5, type: "box", coins: 12 },
       { id: "mchain", n: "10 richtige in Folge", goal: 10, type: "chain", coins: 12 },
@@ -316,7 +316,9 @@
   // grade: 2 = sicher richtig, 1 = richtig mit Hilfe/langsam, 0 = falsch
   function grade(id, g) {
     var r = rec(id), before = levelOf(id);
+    var wasDue = !r.reps || r.due <= Date.now(), wasBox = inErrorBox(id);   // Münzen nur für fällige Wörter: Wiederholen ohne Abstand bringt nichts
     r.last = Date.now();
+    touchToday(id);
     if (g === 0) {
       r.no++; r.lapses++; r.chain = 0; r.reps = 0; r.iv = 0;
       r.ef = clamp(r.ef - 0.2, 1.3, 2.8);
@@ -328,8 +330,64 @@
       r.reps++;
       r.due = Date.now() + r.iv * 86400000;
     }
-    return { before: before, after: levelOf(id), rec: r };
+    var after = levelOf(id);
+    if (g > 0) awardProgress(id, before, after, wasDue, wasBox && !inErrorBox(id));
+    return { before: before, after: after, rec: r };
   }
+
+  /* ---------- Fortschrittsmünzen ----------
+     Münzen gibt es für echten Fortschritt, nicht für Antworten: ein neues Wort, eine höhere Stufe, ein gelöstes Wort
+     aus der Fehlerkartei, eine entdeckte oder abgeschlossene Einheit. Jedes Wort zahlt höchstens einmal pro Tag,
+     und nur, wenn es fällig war. Dasselbe Wort immer wieder zu üben bringt also nichts. */
+  var progressLog = { neu: 0, stufe: 0, gemeistert: 0, kartei: 0, einheit: 0, serie: 0, parts: [], n: {} };
+  var PART_TEXT = { neu: "neue Wörter", stufe: "Stufen aufgestiegen", gemeistert: "Wörter gemeistert", kartei: "aus der Fehlerkartei" };
+  function logCoins(kind, c, label) {
+    if (c <= 0) return; addCoins(c); progressLog[kind] = (progressLog[kind] || 0) + c;
+    progressLog.n = progressLog.n || {}; progressLog.n[kind] = (progressLog.n[kind] || 0) + 1;
+    if (label) progressLog.parts.push({ c: c, t: label });
+  }
+  function foldParts() {   // Einzelfortschritte zu je einer Zeile zusammenfassen
+    var out = [];
+    ["neu", "stufe", "gemeistert", "kartei"].forEach(function (k) {
+      if (progressLog[k]) out.push({ c: progressLog[k], t: (progressLog.n[k] || 0) + " " + PART_TEXT[k] });
+    });
+    return out.concat(progressLog.parts);
+  }
+  function touchToday(id) {   // verschiedene Wörter heute, für die Missionen "x verschiedene Wörter üben"
+    var d = state.daily; if (!d) return;
+    if (!d.touched) d.touched = {};
+    if (!d.touched[id]) { d.touched[id] = 1; d.distinct = (d.distinct || 0) + 1; }
+  }
+  function awardProgress(id, before, after, wasDue, boxSolved) {
+    var d = state.daily; if (!d || !wasDue) return;
+    if (!d.paid) d.paid = {};
+    if (d.paid[id]) return;
+    var c = 0, kind = null;
+    if (after > before) {
+      for (var lv = before + 1; lv <= after; lv++) c += lv === 4 ? 4 : 1;
+      kind = before === 0 ? "neu" : after === 4 ? "gemeistert" : "stufe";
+      logCoins(kind, c);
+    }
+    if (boxSolved) logCoins("kartei", 2);
+    if (c > 0 || boxSolved) d.paid[id] = 1;
+    if (after >= 1) unitBonus(id);
+  }
+  function unitIds(uid) {
+    if (uid === "verbs") return verbs.map(function (v) { return v.id; });
+    var u = units.filter(function (x) { return x.id === uid; })[0];
+    return u ? u.words.map(function (w, i) { return u.id + "#" + i; }) : [];
+  }
+  /* Entdecker-Bonus (ab 5 Wörtern einer Einheit angefangen) und Abschluss-Bonus (alle mindestens "Geübt"); je einmal pro Einheit */
+  function unitBonus(id) {
+    var uid = id.indexOf("v#") === 0 ? "verbs" : (byId[id] && byId[id].unit); if (!uid) return;
+    var u = uid === "verbs" ? { title: "Unregelmäßige Verben", track: "schule" } : units.filter(function (x) { return x.id === uid; })[0];
+    if (!u || u.track === "eigen") return;
+    var ids = unitIds(uid); if (ids.length < 8) return;
+    var ub = state.unitBonus || (state.unitBonus = {}), r = ub[uid] || (ub[uid] = {});
+    if (!r.s && ids.filter(function (x) { return levelOf(x) >= 1; }).length >= 5) { r.s = 1; logCoins("einheit", 8, "Neue Einheit entdeckt: " + u.title); }
+    if (!r.d && ids.every(function (x) { return levelOf(x) >= 2; })) { r.d = 1; logCoins("einheit", uid === "verbs" ? 60 : 30, "Einheit geschafft: " + u.title); }
+  }
+  var STREAK_BONUS = { 3: 15, 7: 40, 14: 80, 30: 200, 60: 300, 100: 500 };
   function inErrorBox(id) { var r = state.w[id]; return !!r && r.lapses > 0 && levelOf(id) < 3; }
 
   /* ---------- Auswahl & Sessionplanung ---------- */
@@ -525,7 +583,7 @@
     state.totals.items += res.items; state.totals.correct += res.correct; state.totals.sec += res.sec;
     var rewards = { coins: 0, missions: [], badges: [], goalReached: false, streakUp: false };
     rewards.missions = rewards.missions
-      .concat(bumpMission("items", res.items))
+      .concat(bumpMission("items", (function () { var dd = (d.distinct || 0) - (d.distinctBooked || 0); d.distinctBooked = d.distinct || 0; return dd; })()))
       .concat(bumpMission("box", res.boxSolved || 0))
       .concat(bumpMission("new", res.newSeen || 0))
       .concat(bumpMission("chain", res.maxChain || 0))
@@ -540,6 +598,8 @@
         state.streak.best = Math.max(state.streak.best, state.streak.count);
         rewards.streakUp = true;
         if (state.streak.count % 5 === 0) state.streak.freezes = Math.min(3, state.streak.freezes + 1);
+        var sb = STREAK_BONUS[state.streak.count];
+        if (sb) logCoins("serie", sb, state.streak.count + " Tage am Stück!");
       }
     }
     if (res.items >= 8 && res.correct === res.items) {
@@ -550,6 +610,8 @@
     }
     rewards.badges = rewards.badges.concat(checkBadges());
     rewards.missions.forEach(function (m) { rewards.coins += m.coins; });
+    rewards.parts = foldParts();
+    progressLog = { neu: 0, stufe: 0, gemeistert: 0, kartei: 0, einheit: 0, serie: 0, parts: [], n: {} };
     save(true);
     return rewards;
   }
@@ -645,6 +707,18 @@
     }
     state.profile[PROFILE_KEY[it.kind]] = it.val; save(true); return { ok: true, item: it };
   }
+  /* Wunsch: ein Shop-Eintrag, auf den gespart wird; die Startseite zeigt den Fortschritt dorthin */
+  function wish() {
+    var id = state.profile.wish, it = id ? itemById(id) : null;
+    if (it && owns(it)) { state.profile.wish = null; it = null; }
+    return it;
+  }
+  function setWish(id) {
+    var it = itemById(id); if (!it) return { error: "Unbekannt." };
+    if (owns(it)) return { error: "Gehört dir schon." };
+    var on = state.profile.wish !== id; state.profile.wish = on ? id : null; save(true);
+    return { ok: true, on: on, item: it };
+  }
   function buy(id) {
     var it = itemById(id);
     if (!it) return { error: "Unbekannt." };
@@ -674,6 +748,6 @@
     backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
-    resetProgress: resetProgress, buy: buy, equip: equip, stickers: stickers, owns: owns, isActive: isActive, minXp: minXp, defaultOf: defaultOf
+    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, stickers: stickers, owns: owns, isActive: isActive, minXp: minXp, defaultOf: defaultOf
   };
 })(window);

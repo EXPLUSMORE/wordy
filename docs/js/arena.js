@@ -309,6 +309,10 @@
     if (!S.state.arena) S.state.arena = {};
     S.state.arena[key(run.mode)] = { best: Math.max(rec.best, score), plays: rec.plays + 1 };
     var coins = Math.min(40, Math.floor(score / 40)) + (isRecord ? 10 : 0);
+    S.rollDay();
+    var left = Math.max(0, 30 - (S.state.daily.arenaCoins || 0));   // Tageslimit, damit dieselben Wörter nicht endlos Münzen bringen
+    var capped = coins > left; coins = Math.min(coins, left);
+    S.state.daily.arenaCoins = (S.state.daily.arenaCoins || 0) + coins;
     S.addCoins(coins);
     S.addXp(Math.min(60, Math.round(score / 8)));
     var rw = S.finishSession({ items: run.items, correct: run.correct, sec: sec, maxChain: run.maxCombo, newSeen: 0, boxSolved: run.cleared, mastered: 0, sentOk: 0 });
@@ -341,7 +345,7 @@
       '<div><b class="tnum">' + run.maxCombo + '</b><span>beste Serie</span></div>' +
       '<div><b class="tnum">' + Math.max(rec.best, score) + '</b><span>Bestwert</span></div>' +
       '</div>' +
-      '<p class="ar-note">' + (coins ? "🪙 " + coins + " Münzen" : "Keine Münzen diesmal") +
+      '<p class="ar-note">' + (coins ? "🪙 " + coins + " Münzen" + (capped ? " (Tageslimit der Arena erreicht)" : "") : (capped ? "Arena-Münzen für heute sind voll – lerne neue Wörter für mehr" : "Keine Münzen diesmal")) +
       (rw.goalReached ? " · Tagesziel erreicht" : "") +
       (run.cleared ? " · " + run.cleared + " aus der Fehlerkartei befreit" : "") + '</p>' +
       (fresh.length ? '<p class="ar-note" style="color:var(--ar-gold)">🏅 Neu: ' + fresh.map(function (b) { return esc(b.n); }).join(", ") + '</p>' : "") +
