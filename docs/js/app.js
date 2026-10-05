@@ -668,7 +668,9 @@
       '<div id="impWrap" hidden style="margin-top:10px"><textarea id="impBox" rows="4" placeholder="Hier den kopierten Lernstand einfügen"></textarea>' +
       '<button class="btn" data-act="impdo" style="margin-top:8px">Einspielen</button></div>' +
       '<hr class="sep" style="margin:14px 0"><button class="btn ghost" data-act="reset" style="color:var(--bad)">Fortschritt zurücksetzen</button></section>';
-    html += '<p class="small muted" style="margin:6px 0 0;text-align:center">Version ' + esc(global.WORDY_BUILD || "lokal") + '</p>';
+    html += '<div class="small muted" style="margin:10px 0 0;text-align:center;line-height:1.6"><b>Wordy · Version ' + esc(global.WORDY_VERSION || "–") + '</b>' +
+      '<br><span style="font-size:11px">Build ' + esc(global.WORDY_BUILD || "lokal") + '</span>' +
+      '<br>© ' + new Date().getFullYear() + ' Magnus, Pummel &amp; Christian</div>';
     html += '</div>';
     view.innerHTML = html;
 

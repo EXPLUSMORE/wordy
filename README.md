@@ -59,9 +59,14 @@ Lückentext und Hörsatz.
 
 Satz: `[track, gruppe, "englischer Satz", "deutsche Fassung", "Regel"]`
 
+## Version
+Die Versionsnummer (`MAJOR.MINOR.PATCH`) steht in `package.json`; Schema und Verlauf
+in `CHANGELOG.md`. Die App zeigt sie unten im Setup mit der Build-Kennung.
+
 ## Lizenz
 
 Privates Projekt, keine Lizenz vergeben.
+© Magnus, Pummel & Christian
 
 ## Bedienung
 

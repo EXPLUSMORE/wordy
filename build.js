@@ -14,13 +14,14 @@ const APP = 'Wordy';
 const THEME = '#1E6273';
 const src = fs.readFileSync('index.html', 'utf8');
 /* Version aus dem Inhalt: ändert sich der Code, ändert sich auch diese Kennung (Setup zeigt sie, der Offline-Cache nutzt sie) */
+const VERSION = JSON.parse(fs.readFileSync('package.json', 'utf8')).version;   // Versionsnummer: nur in package.json pflegen
 const stamp = require('crypto').createHash('sha1')
-  .update([...DATA, ...CODE].map(f => fs.readFileSync(f)).join('') + src).digest('hex').slice(0, 10);
+  .update([...DATA, ...CODE].map(f => fs.readFileSync(f)).join('') + src + VERSION).digest('hex').slice(0, 10);
 const head = src.slice(0, src.indexOf('<div id="app">'));
 const body = src.slice(src.indexOf('<div id="app">'));
 
 /* ---------- 1. Einzeldatei ---------- */
-let inline = src.replace('</head>', `<script>window.WORDY_BUILD="${stamp}";</script>\n</head>`);
+let inline = src.replace('</head>', `<script>window.WORDY_VERSION="${VERSION}";window.WORDY_BUILD="${stamp}";</script>\n</head>`);
 [...DATA, ...CODE].forEach(f => {
   inline = inline.replace(`<script src="${f}"></script>`, () => '<script>' + fs.readFileSync(f, 'utf8') + '</script>');
 });
@@ -95,7 +96,7 @@ const siteHead = `<!doctype html>
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="${APP}">
 ${head}
-<script>window.WORDY_BUILD="${stamp}";</script>
+<script>window.WORDY_VERSION="${VERSION}";window.WORDY_BUILD="${stamp}";</script>
 </head>
 <body>
 ${body}

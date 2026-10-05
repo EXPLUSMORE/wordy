@@ -1,4 +1,8 @@
 {
+  "name": "wordy",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Wordy – Englisch-Vokabeltrainer",
   "dependencies": {
     "playwright": "^1.63.0"
   }
