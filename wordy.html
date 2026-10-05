@@ -3974,6 +3974,10 @@ window.VERBS = [
     (RENDER[t.type] || RENDER.mc_en_de)(t, body, foot);
   }
 
+  /* Prüfen-Knopf direkt unter dem letzten Eingabefeld, damit er bei eingeblendeter Tastatur sichtbar bleibt */
+  function inlineCheck() {
+    return '<button class="btn wide lg" data-act="check" id="inlineCheck" disabled>Prüfen</button>';
+  }
   function footCheck(label, act) {
     return '<button class="btn wide lg" data-act="' + (act || "check") + '" id="mainBtn" disabled>' + esc(label || "Prüfen") + '</button>';
   }
@@ -4078,28 +4082,32 @@ window.VERBS = [
         '<div class="row" style="gap:12px;align-items:center">' + (audioAvailable() ? speakBtn(v.inf) : "") +
         '<div><div class="prompt">' + esc(v.inf) + '</div><div class="sub" style="margin-top:4px">' + esc(v.de) + '</div></div></div>' +
         '<label class="small muted" for="vPast" style="margin-bottom:-6px">Simple Past (Präteritum, 2. Form)</label>' +
-        '<input id="vPast" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="z. B. went">' +
+        '<input id="vPast" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="next" placeholder="z. B. went">' +
         '<label class="small muted" for="vPp" style="margin-bottom:-6px">Past Participle (Partizip Perfekt, 3. Form)</label>' +
-        '<input id="vPp" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="z. B. gone">' +
+        '<input id="vPp" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="z. B. gone">' +
+        inlineCheck() +
         '<p class="small muted" style="margin:0">Beides muss stimmen. Kleine Tippfehler zählen halb.</p></div>';
-      foot.innerHTML = footCheck();
-      var a = $("#vPast"), b = $("#vPp"), btn = $("#mainBtn");
+      foot.innerHTML = "";
+      var a = $("#vPast"), b = $("#vPp"), btn = $("#inlineCheck");
       function upd() { btn.disabled = !(a.value.trim() && b.value.trim()); }
       a.addEventListener("input", upd); b.addEventListener("input", upd);
       a.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); b.focus(); } });
       b.addEventListener("keydown", function (e) { if (e.key === "Enter" && !btn.disabled) check(); });
+      [a, b].forEach(function (el) { el.addEventListener("focus", function () { setTimeout(function () { btn.scrollIntoView({ block: "nearest" }); }, 300); }); });
       setTimeout(function () { a.focus(); }, 60);
     },
     type: function (t, body, foot) {
       var w = t.w;
       body.innerHTML = '<div class="stack" style="padding-top:8px"><div class="eyebrow">Schreib das englische Wort</div>' +
         '<div class="prompt de">' + esc(w.de) + '</div>' +
-        '<input id="typeIn" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="englisches Wort">' +
+        '<input id="typeIn" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="englisches Wort">' +
+        inlineCheck() +
         '<p class="small muted" style="margin:0">Kleine Tippfehler zählen halb – die Schreibweise siehst du gleich.</p></div>';
-      foot.innerHTML = footCheck();
-      var inp = $("#typeIn"), btn = $("#mainBtn");
+      foot.innerHTML = "";
+      var inp = $("#typeIn"), btn = $("#inlineCheck");
       inp.addEventListener("input", function () { btn.disabled = !inp.value.trim(); });
       inp.addEventListener("keydown", function (e) { if (e.key === "Enter" && inp.value.trim()) check(); });
+      inp.addEventListener("focus", function () { setTimeout(function () { btn.scrollIntoView({ block: "nearest" }); }, 300); });
       setTimeout(function () { inp.focus(); }, 60);
     },
     spell: function (t, body, foot) {
@@ -4227,6 +4235,7 @@ window.VERBS = [
   function check() {
     if (!SS || SS.answered) return;
     var t = SS.tasks[SS.i], w = t.w;
+    var inl = $("#inlineCheck"); if (inl) inl.remove();
     if (t.type === "verbgap") {
       if (SS.pick == null) return;
       var vg = t.v, gx = vg.s[t.idx], okG = !!t.opts[SS.pick].ok, vgw = verbWord(vg);
