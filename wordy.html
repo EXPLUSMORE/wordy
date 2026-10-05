@@ -2432,7 +2432,7 @@ window.VERBS = [
     { id: "av:pkatze",   kind: "avatar", label: "Pummelkatze",   cost: 200, val: "svg:pkatze" },
     { id: "av:pummel",   kind: "avatar", label: "Pummeleinhorn", cost: 250, val: "svg:pummel" },
     { id: "av:pdrache",  kind: "avatar", label: "Pummeldrache",  cost: 300, val: "svg:pdrache" },
-    { id: "av:clombo",    kind: "avatar", label: "Clombo",        cost: 300, val: "svg:clombo" },
+    { id: "av:clombo",    kind: "avatar", label: "Clombo",        cost: 300, val: "svg:clombo", rank: "Gold I" },
     { id: "av:pphoenix", kind: "avatar", label: "Pummelphönix",  cost: 600,  val: "svg:pphoenix", rank: "Gold I" },
     { id: "av:pgold",    kind: "avatar", label: "Goldpummel",    cost: 800,  val: "svg:pgold", rank: "Platin I" },
     { id: "av:pregen",   kind: "avatar", label: "Regenbogenpummel", cost: 1200, val: "svg:pregen", rank: "Diamant I" },
@@ -2476,7 +2476,7 @@ window.VERBS = [
   SHOP = SHOP.concat(SHOP.filter(function (a) { return a.kind === "avatar"; }).map(function (a) {
     return { id: "st:" + a.id.slice(3), kind: "sticker", label: a.label + "-Sticker", cost: a.cost ? Math.max(20, Math.round(a.cost / 20) * 10) : 0, val: a.val, rank: a.rank };
   }));
-  SHOP.forEach(function (x) { if (x.id === "st:clombo") x.cost = 400; });   // Clombo: das Lieblingsstück, teurer als die Figur selbst
+  SHOP.forEach(function (x) { if (x.id === "st:clombo") x.cost = 300; });   // Clombo als Sticker: gleicher Preis und gleicher Mindestrang wie die Figur
   var MAX_STICKERS = 3;
   var PROFILE_KEY = { avatar: "avatar", frame: "frame", title: "title", bg: "bg", fx: "fx", snd: "snd", theme: "theme" };
 
