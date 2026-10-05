@@ -136,6 +136,11 @@
   function trackOf(u) { return u.track || (u.k === 0 ? "eigen" : "schule"); }
   function buildCatalogue(state) {
     units = (global.VOCAB_UNITS || []).slice();
+    var cfg = state && state.settings;   // einmalig: Profile mit Klasse 6 bekommen das Schulbuch Headlight 2 dazu
+    if (cfg && !cfg.hl2) {
+      cfg.hl2 = 1;
+      if (Array.isArray(cfg.klassen) && cfg.klassen.indexOf(6) >= 0 && cfg.klassen.indexOf("Headlight 2") < 0) cfg.klassen.push("Headlight 2");
+    }
     if (state && state.custom) units = units.concat(state.custom);
     words = []; byId = {};
     units.forEach(function (u) {
