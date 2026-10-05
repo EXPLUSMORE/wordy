@@ -1,5 +1,5 @@
 /* Wordy – Offline-Cache. Automatisch erzeugt, nicht von Hand ändern. */
-const CACHE = 'wordy-5d641b08fa';
+const CACHE = 'wordy-96b7d0d530';
 const FILES = [
   "./",
   "index.html",

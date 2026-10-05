@@ -378,6 +378,32 @@
       '<section class="card"><div class="eyebrow">Wortliste</div>' + rows + '</section></div>';
   }
 
+  /* ---------- Ränge und XP: Übersicht ---------- */
+  function ranksCard() {
+    var st = S.state, cur = S.rankOf(st.xp);
+    var rows = S.RANKS.map(function (r, i) {
+      var reached = st.xp >= r.xp, isCur = r.n === cur.rank.n, next = S.RANKS[i + 1];
+      var unlocks = S.SHOP.filter(function (x) { return x.rank === r.n && x.kind !== "sticker"; }).map(function (x) { return x.label; });
+      var pc = isCur && next ? Math.round(cur.into * 100 / cur.span) : 0;
+      return '<div class="rank-i' + (isCur ? " cur" : reached ? "" : " off") + '"><div class="row" style="gap:10px;align-items:center">' +
+        '<span style="width:22px;text-align:center">' + (isCur ? "▶" : reached ? "✓" : "🔒") + '</span>' +
+        '<b style="flex:1 1 auto">' + esc(r.n) + '</b><span class="small muted tnum">ab ' + r.xp.toLocaleString("de-DE") + ' XP</span></div>' +
+        (isCur && next ? '<div class="bar" style="margin:6px 0 2px 32px"><i style="width:' + pc + '%"></i></div><div class="small muted" style="margin-left:32px">Noch ' +
+          (next.xp - st.xp).toLocaleString("de-DE") + ' XP bis ' + esc(next.n) + '</div>' : "") +
+        (unlocks.length ? '<div class="small muted" style="margin:3px 0 0 32px">🔓 ' + esc(unlocks.join(", ")) + ' <span title="Sticker gibt es auch">(+ Sticker)</span></div>' : "") + '</div>';
+    }).join("");
+    return '<section class="card"><div class="eyebrow">Alle Ränge</div>' +
+      '<p class="small muted" style="margin:6px 0 8px">Dein Stand: <b>' + st.xp.toLocaleString("de-DE") + ' XP</b> · ' + esc(cur.rank.n) + '. Das schaltest du mit jedem Rang im Shop frei.</p>' + rows +
+      '<div class="eyebrow" style="margin-top:14px">So bekommst du XP</div>' +
+      '<div class="small" style="margin-top:6px;line-height:1.7">' +
+      '• Richtige Antwort: <b>+10</b> (sicher) oder <b>+6</b> (mit kleinem Tippfehler)<br>' +
+      '• Falsche Antwort: <b>+2</b> (Dranbleiben zählt)<br>' +
+      '• Satz richtig gebaut: <b>+14</b>, falsch <b>+3</b><br>' +
+      '• Arena: <b>+2</b> pro Treffer, dazu am Ende bis zu <b>+60</b> nach Punkten</div>' +
+      '<div class="eyebrow" style="margin-top:14px">Stufen eines Worts</div>' +
+      '<div class="small" style="margin-top:6px;line-height:1.7">' + S.LEVELS.map(function (l) { return '• <b>' + esc(l.n) + '</b>: ' + esc(l.hint); }).join("<br>") +
+      '<br><span class="muted">Mit jeder richtigen Wiederholung wächst der Abstand zur nächsten. „Gemeistert“ heißt: mindestens drei Wochen Abstand.</span></div></section>';
+  }
   /* ---------- Shop und Sammelalbum ---------- */
   var SHOP_TABS = [
     { k: "avatar", n: "Figuren" }, { k: "sticker", n: "Sticker" }, { k: "frame", n: "Rahmen" }, { k: "title", n: "Titel" },
@@ -515,6 +541,7 @@
         return '<div class="badge' + (has ? "" : " off") + '" title="' + esc(b.d) + '"><div class="g">' + (has ? "🏅" : "🔒") + '</div><b>' + esc(b.n) + '</b></div>';
       }).join("") + '</div></section>';
 
+    html += ranksCard();
     html += albumCard() + albumCard("fn") + stickerBook() + stickerBook("fn") + shopCard();
     html += '</div>';
     view.innerHTML = html;
