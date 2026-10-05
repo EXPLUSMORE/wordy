@@ -139,6 +139,21 @@ html[data-bg="stars"] .card,html[data-bg="clouds"] .card,html[data-bg="space"] .
 .fin-flame.go{animation:finFlame .9s ease-in-out 3 .5s}
 @keyframes finFlame{0%,100%{transform:scale(1) rotate(0)}30%{transform:scale(1.35) rotate(-8deg)}60%{transform:scale(1.2) rotate(7deg)}}
 @media (prefers-reduced-motion:reduce){.fin-in,.fin-rays,.fin-av,.fin-star.on,.fin-stamp,.fin-rankup.show,.fin-flame.go{animation:none!important}.fin-rankup.show{display:block}}
+
+/* Sticker */
+.stk{position:relative;display:inline-block;width:var(--s,64px);height:var(--s,64px);transform:rotate(var(--r,0deg));filter:drop-shadow(0 3px 4px rgba(0,0,0,.35));flex:0 0 auto;vertical-align:middle}
+.stk-cut{position:absolute;inset:calc(var(--s) * .1);display:grid;place-items:center;font-size:calc(var(--s) * .6)}
+.stk-cut svg{width:calc(var(--s) * .8);height:calc(var(--s) * .8);display:block}
+.stk-holo{position:absolute;inset:calc(var(--s) * .1);-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center;-webkit-mask-size:100% 100%;mask-size:100% 100%;
+  background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.7) 46%,rgba(120,255,240,.5) 50%,rgba(255,150,230,.5) 54%,transparent 64%) -150% 0/250% 100%;
+  mix-blend-mode:screen;animation:stShine 3s ease-in-out infinite}
+@keyframes stShine{0%{background-position:150% 0}55%,100%{background-position:-60% 0}}
+.stk-row{display:inline-flex;gap:0;align-items:center}
+.stk-row .stk+.stk{margin-left:-14px}
+.stk-corner{position:absolute;right:10px;bottom:6px;z-index:2;pointer-events:none}
+.stkbook .art{min-height:62px;display:grid;place-items:center}
+.stkbook .album-i.off .art{filter:grayscale(1) brightness(.75);opacity:.5}
+@media (prefers-reduced-motion:reduce){.stk-holo{animation:none}}
 /* Shop und Sammelalbum */
 .shopitem .si{font-size:20px;width:30px;text-align:center;flex:0 0 auto;display:grid;place-items:center}
 .shopitem .si svg{width:30px;height:30px}

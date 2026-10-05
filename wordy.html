@@ -145,6 +145,21 @@ html[data-bg="stars"] .card,html[data-bg="clouds"] .card,html[data-bg="space"] .
 .fin-flame.go{animation:finFlame .9s ease-in-out 3 .5s}
 @keyframes finFlame{0%,100%{transform:scale(1) rotate(0)}30%{transform:scale(1.35) rotate(-8deg)}60%{transform:scale(1.2) rotate(7deg)}}
 @media (prefers-reduced-motion:reduce){.fin-in,.fin-rays,.fin-av,.fin-star.on,.fin-stamp,.fin-rankup.show,.fin-flame.go{animation:none!important}.fin-rankup.show{display:block}}
+
+/* Sticker */
+.stk{position:relative;display:inline-block;width:var(--s,64px);height:var(--s,64px);transform:rotate(var(--r,0deg));filter:drop-shadow(0 3px 4px rgba(0,0,0,.35));flex:0 0 auto;vertical-align:middle}
+.stk-cut{position:absolute;inset:calc(var(--s) * .1);display:grid;place-items:center;font-size:calc(var(--s) * .6)}
+.stk-cut svg{width:calc(var(--s) * .8);height:calc(var(--s) * .8);display:block}
+.stk-holo{position:absolute;inset:calc(var(--s) * .1);-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center;-webkit-mask-size:100% 100%;mask-size:100% 100%;
+  background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.7) 46%,rgba(120,255,240,.5) 50%,rgba(255,150,230,.5) 54%,transparent 64%) -150% 0/250% 100%;
+  mix-blend-mode:screen;animation:stShine 3s ease-in-out infinite}
+@keyframes stShine{0%{background-position:150% 0}55%,100%{background-position:-60% 0}}
+.stk-row{display:inline-flex;gap:0;align-items:center}
+.stk-row .stk+.stk{margin-left:-14px}
+.stk-corner{position:absolute;right:10px;bottom:6px;z-index:2;pointer-events:none}
+.stkbook .art{min-height:62px;display:grid;place-items:center}
+.stkbook .album-i.off .art{filter:grayscale(1) brightness(.75);opacity:.5}
+@media (prefers-reduced-motion:reduce){.stk-holo{animation:none}}
 /* Shop und Sammelalbum */
 .shopitem .si{font-size:20px;width:30px;text-align:center;flex:0 0 auto;display:grid;place-items:center}
 .shopitem .si svg{width:30px;height:30px}
@@ -2457,6 +2472,11 @@ window.VERBS = [
     { id: "th:plum",  kind: "theme", label: "Pflaume",cost: 90,  val: "plum" },
     { id: "th:amber", kind: "theme", label: "Amber",  cost: 140, val: "amber" }
   ];
+  /* Sticker: jede Figur gibt es zusätzlich als Aufkleber (halber Preis), die man auf Startseite und Profil klebt */
+  SHOP = SHOP.concat(SHOP.filter(function (a) { return a.kind === "avatar"; }).map(function (a) {
+    return { id: "st:" + a.id.slice(3), kind: "sticker", label: a.label + "-Sticker", cost: a.cost ? Math.max(20, Math.round(a.cost / 20) * 10) : 0, val: a.val, rank: a.rank };
+  }));
+  var MAX_STICKERS = 3;
   var PROFILE_KEY = { avatar: "avatar", frame: "frame", title: "title", bg: "bg", fx: "fx", snd: "snd", theme: "theme" };
 
   var BADGES = [
@@ -2997,10 +3017,17 @@ window.VERBS = [
     return r ? r.xp : 0;
   }
   function owns(it) { return it.cost === 0 || state.profile.owned.indexOf(it.id) >= 0; }
-  function isActive(it) { var v = state.profile[PROFILE_KEY[it.kind]]; return (v == null ? defaultOf(it.kind) : v) === it.val; }
+  function stickers() { var l = state.profile.stickers; if (!Array.isArray(l)) l = state.profile.stickers = []; return l; }
+  function isActive(it) {
+    if (it.kind === "sticker") return stickers().indexOf(it.id) >= 0; var v = state.profile[PROFILE_KEY[it.kind]]; return (v == null ? defaultOf(it.kind) : v) === it.val; }
   function defaultOf(kind) { return kind === "avatar" ? "🦊" : kind === "theme" ? "paper" : kind === "title" ? "" : "none"; }
   function equip(id) {
     var it = itemById(id); if (!it || !owns(it)) return { error: "Das gehört dir noch nicht." };
+    if (it.kind === "sticker") {            // antippen klebt auf oder löst wieder ab; höchstens drei
+      var l = stickers(), i = l.indexOf(it.id);
+      if (i >= 0) l.splice(i, 1); else { l.push(it.id); if (l.length > MAX_STICKERS) l.shift(); }
+      save(true); return { ok: true, item: it, on: i < 0 };
+    }
     state.profile[PROFILE_KEY[it.kind]] = it.val; save(true); return { ok: true, item: it };
   }
   function buy(id) {
@@ -3010,7 +3037,8 @@ window.VERBS = [
     if (state.xp < minXp(it)) return { error: "Das gibt es erst ab dem Rang " + it.rank + "." };
     if (state.coins < it.cost) return { error: "Dafür fehlen noch " + (it.cost - state.coins) + " Münzen." };
     state.coins -= it.cost; state.profile.owned.push(id);
-    state.profile[PROFILE_KEY[it.kind]] = it.val;
+    if (it.kind === "sticker") { var l = stickers(); l.push(it.id); if (l.length > MAX_STICKERS) l.shift(); }
+    else state.profile[PROFILE_KEY[it.kind]] = it.val;
     save(true); return { ok: true, item: it };
   }
 
@@ -3031,7 +3059,7 @@ window.VERBS = [
     backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
-    resetProgress: resetProgress, buy: buy, equip: equip, owns: owns, isActive: isActive, minXp: minXp, defaultOf: defaultOf
+    resetProgress: resetProgress, buy: buy, equip: equip, stickers: stickers, owns: owns, isActive: isActive, minXp: minXp, defaultOf: defaultOf
   };
 })(window);
 </script>
@@ -3292,7 +3320,37 @@ window.VERBS = [
     }
   }
 
-  global.VTC = { runFinale: runFinale, avatarHtml: avatarHtml, frameClass: frameClass, applyLook: applyLook, burst: burst, finale: finale, sound: sound, ART: ART };
+  /* ---------- Sticker: Stanzrand, Schatten, Glanz ---------- */
+  var cutDone = false, maskCache = {};
+  function ensureCutFilters() {
+    if (cutDone || !document.body) return; cutDone = true;
+    var d = document.createElement("div");
+    d.setAttribute("aria-hidden", "true"); d.style.cssText = "position:absolute;width:0;height:0;overflow:hidden";
+    var f = function (id, r) {
+      return '<filter id="' + id + '" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="' + r + '" result="d"/>' +
+        '<feGaussianBlur in="d" stdDeviation="' + (r / 6).toFixed(2) + '" result="db"/><feFlood flood-color="#fff"/><feComposite in2="db" operator="in" result="w"/>' +
+        '<feMerge><feMergeNode in="w"/><feMergeNode in="SourceGraphic"/></feMerge></filter>';
+    };
+    d.innerHTML = '<svg width="0" height="0">' + f("cutS", 2.2) + f("cutL", 5) + '</svg>';
+    document.body.appendChild(d);
+  }
+  function maskUrl(val) {   // Umriss der Figur als Maske, damit der Glanz nur auf der Figur läuft
+    if (maskCache[val]) return maskCache[val];
+    var svg = ART[val.slice(4)]; if (!svg) return "";
+    svg = svg.replace("<svg ", '<svg xmlns="http://www.w3.org/2000/svg" ').replace('width="1.25em" height="1.25em"', 'width="200" height="200"');
+    return (maskCache[val] = 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")');
+  }
+  /* size in px; shine = Glanz (nur für gezeichnete Figuren); tilt = Neigung in Grad */
+  function stickerHtml(val, size, tilt, shine, esc) {
+    ensureCutFilters();
+    var drawn = /^svg:/.test(val), big = size >= 90;
+    var inner = drawn ? (ART[val.slice(4)] || ART.pummel) : (esc ? esc(val) : String(val));
+    var holo = drawn && shine && size >= 44 ? '<span class="stk-holo" style="-webkit-mask-image:' + maskUrl(val) + ';mask-image:' + maskUrl(val) + '"></span>' : "";
+    return '<span class="stk" style="--s:' + size + 'px;--r:' + (tilt || 0) + 'deg;--f:' + (drawn ? 1 : 0.62) + '">' +
+      '<span class="stk-cut" style="filter:url(#' + (big ? "cutL" : "cutS") + ')">' + inner + '</span>' + holo + '</span>';
+  }
+
+  global.VTC = { stickerHtml: stickerHtml, runFinale: runFinale, avatarHtml: avatarHtml, frameClass: frameClass, applyLook: applyLook, burst: burst, finale: finale, sound: sound, ART: ART };
 })(window);
 </script>
 <script>/* Wordbook – Oberfläche, Übungstypen, Session-Ablauf */
@@ -3505,7 +3563,7 @@ window.VERBS = [
       : hour < 12 ? "Eine kurze Runde vor der Schule?" : "Fünf Minuten reichen für heute.";
 
     var html = '<div class="stack">';
-    html += '<section class="card hero"><div class="inner"><div class="row" style="align-items:flex-start">' +
+    html += '<section class="card hero" style="position:relative">' + (S.stickers().length ? '<div class="stk-corner">' + placedStickers(54) + '</div>' : "") + '<div class="inner"><div class="row" style="align-items:flex-start">' +
       '<div style="flex:1 1 auto;min-width:0"><div class="eyebrow">' + esc(S.today().split("-").reverse().join(".")) +
       ' · ' + (st.settings.track === "business" ? "Business English" : "Schule") + '</div>' +
       '<h1>' + greet + '</h1><p class="muted small" style="margin:6px 0 0">' + esc(tip) + '</p></div>' +
@@ -3659,15 +3717,16 @@ window.VERBS = [
 
   /* ---------- Shop und Sammelalbum ---------- */
   var SHOP_TABS = [
-    { k: "avatar", n: "Figuren" }, { k: "frame", n: "Rahmen" }, { k: "title", n: "Titel" },
+    { k: "avatar", n: "Figuren" }, { k: "sticker", n: "Sticker" }, { k: "frame", n: "Rahmen" }, { k: "title", n: "Titel" },
     { k: "bg", n: "Hintergründe" }, { k: "fx", n: "Effekte" }, { k: "snd", n: "Töne" }, { k: "theme", n: "Farben" }
   ];
-  var KIND_NAME = { avatar: "Figur", frame: "Rahmen", title: "Titel", bg: "Hintergrund", fx: "Effekt", snd: "Ton", theme: "Farbwelt" };
+  var KIND_NAME = { sticker: "Sticker", avatar: "Figur", frame: "Rahmen", title: "Titel", bg: "Hintergrund", fx: "Effekt", snd: "Ton", theme: "Farbwelt" };
   var shopTab = "avatar";
   var THEME_DOT = { paper: "#1E6273", mint: "#2E7357", plum: "#6A3D70", amber: "#8A5A1B" };
   function shopIcon(it) {
     switch (it.kind) {
       case "avatar": return avatarHtml(it.val);
+      case "sticker": return stickerHtml(it, 38);
       case "theme": return '<span class="dot" style="background:' + (THEME_DOT[it.val] || "#1E6273") + '"></span>';
       case "frame": return '<span class="avatar fr-' + it.val + '" style="width:26px;height:26px;font-size:14px">' + (it.val === "none" ? "—" : "🙂") + '</span>';
       case "title": return "🏷️";
@@ -3676,6 +3735,32 @@ window.VERBS = [
       case "snd": return it.val === "none" ? "🔇" : "🔔";
     }
     return "";
+  }
+  /* Sticker: Glanz nur für gezeichnete Figuren mit Rangsperre und für Clombo */
+  function stickerHtml(it, size, tilt) {
+    return global.VTC.stickerHtml(it.val, size, tilt || 0, !!it.rank || /clombo/.test(it.val), esc);
+  }
+  var TILTS = [-7, 5, -3];
+  function placedStickers(size) {
+    var ids = S.stickers(); if (!ids.length) return "";
+    return '<span class="stk-row">' + ids.map(function (id, i) {
+      var it = S.SHOP.filter(function (x) { return x.id === id; })[0];
+      return it ? stickerHtml(it, size, TILTS[i % 3]) : "";
+    }).join("") + '</span>';
+  }
+  function stickerBook() {
+    var list = S.SHOP.filter(function (x) { return x.kind === "sticker"; });
+    var have = list.filter(function (x) { return S.owns(x); }).length;
+    return '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Stickerbuch</div><span class="pill tnum">' + have + ' / ' + list.length + '</span></div>' +
+      '<p class="small muted" style="margin:6px 0 10px">Sammle Sticker im Shop und klebe bis zu drei davon auf deine Startseite und dein Profil. Antippen klebt auf oder löst ab.</p>' +
+      '<div class="album stkbook">' + list.map(function (it) {
+        var own = S.owns(it), act = S.isActive(it);
+        var sub = own ? (act ? "aufgeklebt" : "") : lockNote(it) ? "🔒 " + it.rank : "🪙 " + it.cost;
+        return '<button class="album-i' + (own ? "" : " off") + (act ? " on" : "") + '" ' +
+          (own ? 'data-act="equip" data-id="' + esc(it.id) + '"' : 'data-act="albuminfo" data-id="' + esc(it.id) + '"') + ' aria-label="' + esc(it.label) + '">' +
+          '<span class="art">' + stickerHtml(it, 58, own ? TILTS[list.indexOf(it) % 3] : 0) + '</span><small>' + esc(own ? it.label.replace("-Sticker", "") : "???") + '</small>' +
+          '<small class="sub">' + esc(sub) + '</small></button>';
+      }).join("") + '</div></section>';
   }
   function lockNote(it) { return S.minXp(it) > S.state.xp; }
   function albumCard() {
@@ -3725,7 +3810,7 @@ window.VERBS = [
       '<div class="row" style="margin-top:14px;gap:12px"><div class="avatar ' + global.VTC.frameClass(st.profile) + '">' + avatarHtml(st.profile.avatar) + '</div>' +
       '<div style="flex:1 1 auto"><div class="row"><b>' + esc(r.rank.n) + '</b><span class="spacer"></span>' +
       '<span class="small muted tnum">' + st.xp + (r.next ? " / " + r.next.xp : "") + ' XP</span></div>' +
-      '<div class="bar" style="margin-top:6px"><i style="width:' + (r.span ? Math.round(r.into * 100 / r.span) : 100) + '%"></i></div></div></div></section>';
+      '<div class="bar" style="margin-top:6px"><i style="width:' + (r.span ? Math.round(r.into * 100 / r.span) : 100) + '%"></i></div></div>' + placedStickers(46) + '</div></section>';
 
     /* Kompetenzverteilung – eine Farbe, hell nach dunkel (Ordinalskala) */
     var segs = s.dist.map(function (n, i) {
@@ -3766,7 +3851,7 @@ window.VERBS = [
         return '<div class="badge' + (has ? "" : " off") + '" title="' + esc(b.d) + '"><div class="g">' + (has ? "🏅" : "🔒") + '</div><b>' + esc(b.n) + '</b></div>';
       }).join("") + '</div></section>';
 
-    html += albumCard() + shopCard();
+    html += albumCard() + stickerBook() + shopCard();
     html += '</div>';
     view.innerHTML = html;
   }
@@ -4566,7 +4651,11 @@ window.VERBS = [
       if (r.ok) { var rect = act.getBoundingClientRect(); global.VTC.burst("confetti", rect.left + rect.width / 2, rect.top, 26, 1.4); }
       renderHeader(); render();
     }
-    else if (a === "equip") { var re = S.equip(act.getAttribute("data-id")); if (re.error) return toast(re.error); renderHeader(); render(); }
+    else if (a === "equip") {
+      var re = S.equip(act.getAttribute("data-id")); if (re.error) return toast(re.error);
+      if (re.item.kind === "sticker") toast(re.on ? "Aufgeklebt: " + re.item.label : "Abgelöst: " + re.item.label);
+      renderHeader(); render();
+    }
     else if (a === "shoptab") { shopTab = act.getAttribute("data-k"); render(); }
     else if (a === "albuminfo") {
       var ai = S.SHOP.filter(function (x) { return x.id === act.getAttribute("data-id"); })[0];

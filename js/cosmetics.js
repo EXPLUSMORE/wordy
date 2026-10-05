@@ -255,5 +255,35 @@
     }
   }
 
-  global.VTC = { runFinale: runFinale, avatarHtml: avatarHtml, frameClass: frameClass, applyLook: applyLook, burst: burst, finale: finale, sound: sound, ART: ART };
+  /* ---------- Sticker: Stanzrand, Schatten, Glanz ---------- */
+  var cutDone = false, maskCache = {};
+  function ensureCutFilters() {
+    if (cutDone || !document.body) return; cutDone = true;
+    var d = document.createElement("div");
+    d.setAttribute("aria-hidden", "true"); d.style.cssText = "position:absolute;width:0;height:0;overflow:hidden";
+    var f = function (id, r) {
+      return '<filter id="' + id + '" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="' + r + '" result="d"/>' +
+        '<feGaussianBlur in="d" stdDeviation="' + (r / 6).toFixed(2) + '" result="db"/><feFlood flood-color="#fff"/><feComposite in2="db" operator="in" result="w"/>' +
+        '<feMerge><feMergeNode in="w"/><feMergeNode in="SourceGraphic"/></feMerge></filter>';
+    };
+    d.innerHTML = '<svg width="0" height="0">' + f("cutS", 2.2) + f("cutL", 5) + '</svg>';
+    document.body.appendChild(d);
+  }
+  function maskUrl(val) {   // Umriss der Figur als Maske, damit der Glanz nur auf der Figur läuft
+    if (maskCache[val]) return maskCache[val];
+    var svg = ART[val.slice(4)]; if (!svg) return "";
+    svg = svg.replace("<svg ", '<svg xmlns="http://www.w3.org/2000/svg" ').replace('width="1.25em" height="1.25em"', 'width="200" height="200"');
+    return (maskCache[val] = 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")');
+  }
+  /* size in px; shine = Glanz (nur für gezeichnete Figuren); tilt = Neigung in Grad */
+  function stickerHtml(val, size, tilt, shine, esc) {
+    ensureCutFilters();
+    var drawn = /^svg:/.test(val), big = size >= 90;
+    var inner = drawn ? (ART[val.slice(4)] || ART.pummel) : (esc ? esc(val) : String(val));
+    var holo = drawn && shine && size >= 44 ? '<span class="stk-holo" style="-webkit-mask-image:' + maskUrl(val) + ';mask-image:' + maskUrl(val) + '"></span>' : "";
+    return '<span class="stk" style="--s:' + size + 'px;--r:' + (tilt || 0) + 'deg;--f:' + (drawn ? 1 : 0.62) + '">' +
+      '<span class="stk-cut" style="filter:url(#' + (big ? "cutL" : "cutS") + ')">' + inner + '</span>' + holo + '</span>';
+  }
+
+  global.VTC = { stickerHtml: stickerHtml, runFinale: runFinale, avatarHtml: avatarHtml, frameClass: frameClass, applyLook: applyLook, burst: burst, finale: finale, sound: sound, ART: ART };
 })(window);

@@ -86,6 +86,11 @@
     { id: "th:plum",  kind: "theme", label: "Pflaume",cost: 90,  val: "plum" },
     { id: "th:amber", kind: "theme", label: "Amber",  cost: 140, val: "amber" }
   ];
+  /* Sticker: jede Figur gibt es zusätzlich als Aufkleber (halber Preis), die man auf Startseite und Profil klebt */
+  SHOP = SHOP.concat(SHOP.filter(function (a) { return a.kind === "avatar"; }).map(function (a) {
+    return { id: "st:" + a.id.slice(3), kind: "sticker", label: a.label + "-Sticker", cost: a.cost ? Math.max(20, Math.round(a.cost / 20) * 10) : 0, val: a.val, rank: a.rank };
+  }));
+  var MAX_STICKERS = 3;
   var PROFILE_KEY = { avatar: "avatar", frame: "frame", title: "title", bg: "bg", fx: "fx", snd: "snd", theme: "theme" };
 
   var BADGES = [
@@ -626,10 +631,17 @@
     return r ? r.xp : 0;
   }
   function owns(it) { return it.cost === 0 || state.profile.owned.indexOf(it.id) >= 0; }
-  function isActive(it) { var v = state.profile[PROFILE_KEY[it.kind]]; return (v == null ? defaultOf(it.kind) : v) === it.val; }
+  function stickers() { var l = state.profile.stickers; if (!Array.isArray(l)) l = state.profile.stickers = []; return l; }
+  function isActive(it) {
+    if (it.kind === "sticker") return stickers().indexOf(it.id) >= 0; var v = state.profile[PROFILE_KEY[it.kind]]; return (v == null ? defaultOf(it.kind) : v) === it.val; }
   function defaultOf(kind) { return kind === "avatar" ? "🦊" : kind === "theme" ? "paper" : kind === "title" ? "" : "none"; }
   function equip(id) {
     var it = itemById(id); if (!it || !owns(it)) return { error: "Das gehört dir noch nicht." };
+    if (it.kind === "sticker") {            // antippen klebt auf oder löst wieder ab; höchstens drei
+      var l = stickers(), i = l.indexOf(it.id);
+      if (i >= 0) l.splice(i, 1); else { l.push(it.id); if (l.length > MAX_STICKERS) l.shift(); }
+      save(true); return { ok: true, item: it, on: i < 0 };
+    }
     state.profile[PROFILE_KEY[it.kind]] = it.val; save(true); return { ok: true, item: it };
   }
   function buy(id) {
@@ -639,7 +651,8 @@
     if (state.xp < minXp(it)) return { error: "Das gibt es erst ab dem Rang " + it.rank + "." };
     if (state.coins < it.cost) return { error: "Dafür fehlen noch " + (it.cost - state.coins) + " Münzen." };
     state.coins -= it.cost; state.profile.owned.push(id);
-    state.profile[PROFILE_KEY[it.kind]] = it.val;
+    if (it.kind === "sticker") { var l = stickers(); l.push(it.id); if (l.length > MAX_STICKERS) l.shift(); }
+    else state.profile[PROFILE_KEY[it.kind]] = it.val;
     save(true); return { ok: true, item: it };
   }
 
@@ -660,6 +673,6 @@
     backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
-    resetProgress: resetProgress, buy: buy, equip: equip, owns: owns, isActive: isActive, minXp: minXp, defaultOf: defaultOf
+    resetProgress: resetProgress, buy: buy, equip: equip, stickers: stickers, owns: owns, isActive: isActive, minXp: minXp, defaultOf: defaultOf
   };
 })(window);

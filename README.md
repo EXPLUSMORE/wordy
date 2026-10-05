@@ -120,7 +120,10 @@ Münzen gibt es nur für Aussehen. Der Shop (Fortschritt) hat sieben Reiter:
 Figuren (Emojis und gezeichnete Pummelfiguren, die seltenen erst ab einem
 Mindestrang), Rahmen, Titel, Hintergründe, Effekte bei richtigen Antworten
 (Konfetti, Sternenregen, Funken, Feuerwerk am Rundenende), Töne und Farben.
-Das Sammelalbum zeigt alle Figuren, noch fehlende als Silhouette. Katalog und
+Das Sammelalbum zeigt alle Figuren, noch fehlende grau. Jede Figur gibt es
+zusätzlich als **Sticker** (halber Preis, Stanzrand, bei seltenen Figuren und
+Clombo mit Glanz); bis zu drei davon klebt man im Stickerbuch auf Startseite und
+Profil. Katalog und
 Preise stehen in `js/engine.js` (`SHOP`), das Aussehen in `js/cosmetics.js`.
 
 ### Lernstand

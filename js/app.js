@@ -208,7 +208,7 @@
       : hour < 12 ? "Eine kurze Runde vor der Schule?" : "Fünf Minuten reichen für heute.";
 
     var html = '<div class="stack">';
-    html += '<section class="card hero"><div class="inner"><div class="row" style="align-items:flex-start">' +
+    html += '<section class="card hero" style="position:relative">' + (S.stickers().length ? '<div class="stk-corner">' + placedStickers(54) + '</div>' : "") + '<div class="inner"><div class="row" style="align-items:flex-start">' +
       '<div style="flex:1 1 auto;min-width:0"><div class="eyebrow">' + esc(S.today().split("-").reverse().join(".")) +
       ' · ' + (st.settings.track === "business" ? "Business English" : "Schule") + '</div>' +
       '<h1>' + greet + '</h1><p class="muted small" style="margin:6px 0 0">' + esc(tip) + '</p></div>' +
@@ -362,15 +362,16 @@
 
   /* ---------- Shop und Sammelalbum ---------- */
   var SHOP_TABS = [
-    { k: "avatar", n: "Figuren" }, { k: "frame", n: "Rahmen" }, { k: "title", n: "Titel" },
+    { k: "avatar", n: "Figuren" }, { k: "sticker", n: "Sticker" }, { k: "frame", n: "Rahmen" }, { k: "title", n: "Titel" },
     { k: "bg", n: "Hintergründe" }, { k: "fx", n: "Effekte" }, { k: "snd", n: "Töne" }, { k: "theme", n: "Farben" }
   ];
-  var KIND_NAME = { avatar: "Figur", frame: "Rahmen", title: "Titel", bg: "Hintergrund", fx: "Effekt", snd: "Ton", theme: "Farbwelt" };
+  var KIND_NAME = { sticker: "Sticker", avatar: "Figur", frame: "Rahmen", title: "Titel", bg: "Hintergrund", fx: "Effekt", snd: "Ton", theme: "Farbwelt" };
   var shopTab = "avatar";
   var THEME_DOT = { paper: "#1E6273", mint: "#2E7357", plum: "#6A3D70", amber: "#8A5A1B" };
   function shopIcon(it) {
     switch (it.kind) {
       case "avatar": return avatarHtml(it.val);
+      case "sticker": return stickerHtml(it, 38);
       case "theme": return '<span class="dot" style="background:' + (THEME_DOT[it.val] || "#1E6273") + '"></span>';
       case "frame": return '<span class="avatar fr-' + it.val + '" style="width:26px;height:26px;font-size:14px">' + (it.val === "none" ? "—" : "🙂") + '</span>';
       case "title": return "🏷️";
@@ -379,6 +380,32 @@
       case "snd": return it.val === "none" ? "🔇" : "🔔";
     }
     return "";
+  }
+  /* Sticker: Glanz nur für gezeichnete Figuren mit Rangsperre und für Clombo */
+  function stickerHtml(it, size, tilt) {
+    return global.VTC.stickerHtml(it.val, size, tilt || 0, !!it.rank || /clombo/.test(it.val), esc);
+  }
+  var TILTS = [-7, 5, -3];
+  function placedStickers(size) {
+    var ids = S.stickers(); if (!ids.length) return "";
+    return '<span class="stk-row">' + ids.map(function (id, i) {
+      var it = S.SHOP.filter(function (x) { return x.id === id; })[0];
+      return it ? stickerHtml(it, size, TILTS[i % 3]) : "";
+    }).join("") + '</span>';
+  }
+  function stickerBook() {
+    var list = S.SHOP.filter(function (x) { return x.kind === "sticker"; });
+    var have = list.filter(function (x) { return S.owns(x); }).length;
+    return '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Stickerbuch</div><span class="pill tnum">' + have + ' / ' + list.length + '</span></div>' +
+      '<p class="small muted" style="margin:6px 0 10px">Sammle Sticker im Shop und klebe bis zu drei davon auf deine Startseite und dein Profil. Antippen klebt auf oder löst ab.</p>' +
+      '<div class="album stkbook">' + list.map(function (it) {
+        var own = S.owns(it), act = S.isActive(it);
+        var sub = own ? (act ? "aufgeklebt" : "") : lockNote(it) ? "🔒 " + it.rank : "🪙 " + it.cost;
+        return '<button class="album-i' + (own ? "" : " off") + (act ? " on" : "") + '" ' +
+          (own ? 'data-act="equip" data-id="' + esc(it.id) + '"' : 'data-act="albuminfo" data-id="' + esc(it.id) + '"') + ' aria-label="' + esc(it.label) + '">' +
+          '<span class="art">' + stickerHtml(it, 58, own ? TILTS[list.indexOf(it) % 3] : 0) + '</span><small>' + esc(own ? it.label.replace("-Sticker", "") : "???") + '</small>' +
+          '<small class="sub">' + esc(sub) + '</small></button>';
+      }).join("") + '</div></section>';
   }
   function lockNote(it) { return S.minXp(it) > S.state.xp; }
   function albumCard() {
@@ -428,7 +455,7 @@
       '<div class="row" style="margin-top:14px;gap:12px"><div class="avatar ' + global.VTC.frameClass(st.profile) + '">' + avatarHtml(st.profile.avatar) + '</div>' +
       '<div style="flex:1 1 auto"><div class="row"><b>' + esc(r.rank.n) + '</b><span class="spacer"></span>' +
       '<span class="small muted tnum">' + st.xp + (r.next ? " / " + r.next.xp : "") + ' XP</span></div>' +
-      '<div class="bar" style="margin-top:6px"><i style="width:' + (r.span ? Math.round(r.into * 100 / r.span) : 100) + '%"></i></div></div></div></section>';
+      '<div class="bar" style="margin-top:6px"><i style="width:' + (r.span ? Math.round(r.into * 100 / r.span) : 100) + '%"></i></div></div>' + placedStickers(46) + '</div></section>';
 
     /* Kompetenzverteilung – eine Farbe, hell nach dunkel (Ordinalskala) */
     var segs = s.dist.map(function (n, i) {
@@ -469,7 +496,7 @@
         return '<div class="badge' + (has ? "" : " off") + '" title="' + esc(b.d) + '"><div class="g">' + (has ? "🏅" : "🔒") + '</div><b>' + esc(b.n) + '</b></div>';
       }).join("") + '</div></section>';
 
-    html += albumCard() + shopCard();
+    html += albumCard() + stickerBook() + shopCard();
     html += '</div>';
     view.innerHTML = html;
   }
@@ -1269,7 +1296,11 @@
       if (r.ok) { var rect = act.getBoundingClientRect(); global.VTC.burst("confetti", rect.left + rect.width / 2, rect.top, 26, 1.4); }
       renderHeader(); render();
     }
-    else if (a === "equip") { var re = S.equip(act.getAttribute("data-id")); if (re.error) return toast(re.error); renderHeader(); render(); }
+    else if (a === "equip") {
+      var re = S.equip(act.getAttribute("data-id")); if (re.error) return toast(re.error);
+      if (re.item.kind === "sticker") toast(re.on ? "Aufgeklebt: " + re.item.label : "Abgelöst: " + re.item.label);
+      renderHeader(); render();
+    }
     else if (a === "shoptab") { shopTab = act.getAttribute("data-k"); render(); }
     else if (a === "albuminfo") {
       var ai = S.SHOP.filter(function (x) { return x.id === act.getAttribute("data-id"); })[0];
