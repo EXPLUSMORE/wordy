@@ -17,7 +17,9 @@ const src = fs.readFileSync('index.html', 'utf8');
 const VERSION = JSON.parse(fs.readFileSync('package.json', 'utf8')).version;   // Versionsnummer: nur in package.json pflegen
 const stamp = require('crypto').createHash('sha1')
   .update([...DATA, ...CODE].map(f => fs.readFileSync(f)).join('') + src + VERSION)
-  .update(Buffer.concat(ICONS.map(f => fs.readFileSync(f))))   // neue Symbole lösen ebenfalls ein Update aus.digest('hex').slice(0, 10);
+  .update(Buffer.concat(ICONS.map(f => fs.readFileSync(f))))   // neue Symbole lösen ebenfalls ein Update aus
+  .digest('hex').slice(0, 10);
+if (!/^[0-9a-f]{10}$/.test(stamp)) throw new Error('Build-Kennung ungültig: ' + stamp);   // Sicherung: sonst bekäme der Offline-Cache einen festen Namen und Geräte sähen keine Updates mehr
 const head = src.slice(0, src.indexOf('<div id="app">'));
 const body = src.slice(src.indexOf('<div id="app">'));
 
@@ -26,7 +28,7 @@ let inline = src.replace('</head>', `<script>window.WORDY_VERSION="${VERSION}";w
 [...DATA, ...CODE].forEach(f => {
   inline = inline.replace(`<script src="${f}"></script>`, () => '<script>' + fs.readFileSync(f, 'utf8') + '</script>');
 });
-const iHead = inline.slice(0, inline.indexOf('<div id="app">'));
+const iHead = inline.slice(0, inline.indexOf('<div id="app">')) + `\n<script>window.WORDY_VERSION="${VERSION}";window.WORDY_BUILD="${stamp}";</script>`;
 const iBody = inline.slice(inline.indexOf('<div id="app">'));
 fs.writeFileSync('wordy.html',
   '<!doctype html>\n<html lang="de">\n<head>\n<meta charset="utf-8">\n' +

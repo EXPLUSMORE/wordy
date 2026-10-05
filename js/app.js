@@ -612,10 +612,12 @@
       ["✍️", "Unregelmäßige Verben", "<b>Start</b> oder <b>Einheiten</b> → „Verben üben“ (Einführung, Lückenaufgabe, Tippen) oder „Nur Tippen“. Die Verbenliste zeigt alle Verben mit Beispielsätzen."],
       ["⚡", "Arena", "Vier Zeitmodi: <b>Match-Rausch</b> (Paare in 60 Sekunden), <b>Blitzrunde</b> (Zeit sammeln), <b>Letztes Herz</b> (ein Fehler beendet), <b>Fehlerjagd</b> (Kartei leeren)."],
       ["🪙", "Münzen & Shop", "Münzen gibt es für Fortschritt, Missionen und das Tagesziel. Unter <b>Fortschritt</b> siehst du Ränge, „Münzen heute“ und den Shop. Mit dem ⭐ im Shop setzt du einen Wunsch."],
+      ["🎯", "Missionen", "Auf <b>Start</b> stehen jeden Tag drei Missionen, zum Beispiel „15 verschiedene Wörter üben“ oder „10 richtige in Folge“. Sie zählen über den ganzen Tag und werden am Ende einer Runde gutgeschrieben. Jede gibt Münzen."],
+      ["⭐", "Sticker & Sammlung", "Im Shop gibt es zu jeder Figur einen <b>Sticker</b>. Unter <b>Fortschritt → Stickerbuch</b> antippen klebt ihn auf (bis zu drei, sie erscheinen auf Start und Profil). Das <b>Fortnite-Album</b> hat Tiere ab Rang Gold II, die Unreal-Stücke gibt es erst ab Unreal."],
       ["⚙️", "Setup", "Spieler anlegen und wechseln, Tagesziel und Ton einstellen, eigene Vokabeln einfügen, Lernstand sichern und übertragen."]
     ];
     return '<details class="how"><summary class="how-sum"><span class="chev" aria-hidden="true">▸</span><span style="flex:1 1 auto"><b>So funktioniert Wordy</b>' +
-      '<span class="small muted" style="display:block">Kurz erklärt in acht Schritten</span></span></summary>' +
+      '<span class="small muted" style="display:block">Kurz erklärt in zehn Schritten</span></span></summary>' +
       '<ol class="how-list">' + steps.map(function (x) {
         return '<li><span class="hi">' + x[0] + '</span><div><b>' + x[1] + '</b><div class="small muted">' + x[2] + '</div></div></li>';
       }).join("") + '</ol></details>';
@@ -712,7 +714,9 @@
       '<hr class="sep" style="margin:14px 0"><button class="btn ghost" data-act="reset" style="color:var(--bad)">Fortschritt zurücksetzen</button></section>';
     html += '<div class="small muted" style="margin:10px 0 0;text-align:center;line-height:1.6"><b>Wordy · Version ' + esc(global.WORDY_VERSION || "–") + '</b>' +
       '<br><span style="font-size:11px">Build ' + esc(global.WORDY_BUILD || "lokal") + '</span>' +
-      '<br>© ' + new Date().getFullYear() + ' Magnus, Pummel &amp; Christian</div>';
+      '<br>© ' + new Date().getFullYear() + ' Magnus, Pummel &amp; Christian</div>' +
+      '<div class="row wrap" style="gap:8px;justify-content:center;margin-top:10px"><button class="btn ghost" data-act="checkupdate">Nach Updates suchen</button>' +
+      '<button class="btn ghost" data-act="clearcache" title="Lernstand bleibt erhalten">App-Cache leeren</button></div>';
     html += '</div>';
     view.innerHTML = html;
 
@@ -1394,6 +1398,26 @@
       renderHeader(); render();
     }
     else if (a === "shoptab") { shopTab = act.getAttribute("data-k"); render(); }
+    else if (a === "checkupdate") {
+      if (!navigator.serviceWorker) return toast("Dieses Gerät kennt keine App-Updates. Seite einfach neu laden.");
+      toast("Suche nach Updates …");
+      navigator.serviceWorker.getRegistration().then(function (reg) {
+        if (!reg) return toast("Keine installierte Version gefunden. Seite neu laden.");
+        return reg.update().then(function () {
+          setTimeout(function () {
+            if (reg.installing || reg.waiting) toast("Update gefunden – die App lädt gleich neu.");
+            else toast("Du hast die neueste Version (" + (global.WORDY_VERSION || "–") + ").");
+          }, 1500);
+        });
+      }).catch(function () { toast("Keine Verbindung. Versuch es später noch einmal."); });
+    }
+    else if (a === "clearcache") {
+      if (!confirm("App-Cache leeren und neu laden? Dein Lernstand bleibt erhalten.")) return;
+      var done = function () { global.location.reload(); };
+      Promise.resolve(global.caches ? global.caches.keys().then(function (ks) { return Promise.all(ks.map(function (k) { return global.caches.delete(k); })); }) : 0)
+        .then(function () { return navigator.serviceWorker ? navigator.serviceWorker.getRegistrations().then(function (rs) { return Promise.all(rs.map(function (r) { return r.unregister(); })); }) : 0; })
+        .then(done, done);
+    }
     else if (a === "wish") { var rw2 = S.setWish(act.getAttribute("data-id")); toast(rw2.error || (rw2.on ? "Wunsch: " + rw2.item.label : "Wunsch entfernt")); render(); }
     else if (a === "goshop") { tab = "stats"; render(); var shopEl = view.querySelector(".shopitem"); if (shopEl) shopEl.scrollIntoView({ block: "center" }); }
     else if (a === "albuminfo") {
