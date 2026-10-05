@@ -59,10 +59,12 @@ db.exec(`
     key TEXT NOT NULL, ts INTEGER NOT NULL, d TEXT NOT NULL, PRIMARY KEY(player, key));
 `);
 
+if (!db.prepare("PRAGMA table_info(players)").all().some(c => c.name === "hidden")) db.exec("ALTER TABLE players ADD COLUMN hidden INTEGER NOT NULL DEFAULT 0");
 const q = {
   player: db.prepare("SELECT * FROM players WHERE id = ?"),
   players: db.prepare("SELECT * FROM players ORDER BY id"),
-  addPlayer: db.prepare("INSERT INTO players(name, created) VALUES (?, ?)"),
+  addPlayer: db.prepare("INSERT INTO players(name, created, hidden) VALUES (?, ?, ?)"),
+  setHidden: db.prepare("UPDATE players SET hidden = ? WHERE id = ?"),
   renamePlayer: db.prepare("UPDATE players SET name = ? WHERE id = ?"),
   delPlayer: db.prepare("DELETE FROM players WHERE id = ?"),
   addInvite: db.prepare("INSERT INTO invites(code, player, created) VALUES (?, ?, ?)"),
@@ -181,9 +183,10 @@ function apiPair(body, ip) {
   const token = rand(32);
   q.addToken.run(sha(token), pl.id, clean(body.device, 80), Date.now(), Date.now());
   q.useInvite.run(norm);
-  return [200, { token, name: pl.name }];
+  return [200, { token, name: pl.name, hidden: !!pl.hidden }];
 }
 function apiEvents(pid, body) {
+  if (q.player.get(pid).hidden) return [200, { ok: true, stored: 0 }];
   const list = Array.isArray(body.events) ? body.events.slice(0, 500) : [];
   let n = 0;
   db.exec("BEGIN");
@@ -200,6 +203,7 @@ function apiEvents(pid, body) {
   return [200, { ok: true, stored: n }];
 }
 function apiSnapshot(pid, body) {
+  if (q.player.get(pid).hidden) return [200, { ok: true }];
   for (const key of ["words", "catalog", "meta", "texts"]) {
     if (body[key] == null) continue;
     const d = JSON.stringify(body[key]);
@@ -330,6 +334,7 @@ function plansOf(pid) {
   return q.plans.all(pid, ymdAdd(dayOf(Date.now()), -7)).map(p => Object.assign({ id: p.id, title: p.title, exam: p.exam, units: JSON.parse(p.units), coins: p.coins, unitTitles: unitTitles(pid, JSON.parse(p.units)) }, planProgress(pid, p)));
 }
 function createGoal(pid, b) {
+  if (q.player.get(pid).hidden) return [400, { error: "Für nur gesicherte Spieler gibt es keine Ziele." }];
   const kind = String(b.kind || ""), target = Math.round(+b.target), coins = Math.round(+b.coins || 0);
   if (!KINDS[kind]) return [400, { error: "Unbekannte Art von Ziel." }];
   if (!(target >= 1 && target <= (kind === "days" ? 7 : kind === "unit" ? 100 : 10000))) return [400, { error: "Zielwert ungültig." }];
@@ -343,6 +348,7 @@ function createGoal(pid, b) {
   return [200, { id }];
 }
 function createPlan(pid, b) {
+  if (q.player.get(pid).hidden) return [400, { error: "Für nur gesicherte Spieler gibt es keinen Lernplan." }];
   const exam = String(b.exam || ""), coins = Math.round(+b.coins || 0);
   if (!/^\d{4}-\d\d-\d\d$/.test(exam) || exam < dayOf(Date.now())) return [400, { error: "Datum der Arbeit fehlt oder liegt in der Vergangenheit." }];
   const units = Array.isArray(b.units) ? b.units.filter(x => SAFE_ID.test(String(x))).slice(0, 40).map(String) : [];
@@ -391,7 +397,7 @@ function weeklyData(pid) {
   };
 }
 function mailContent() {
-  const players = q.players.all(), parts = [], texts = [];
+  const players = q.players.all().filter(x => !x.hidden), parts = [], texts = [];
   for (const p of players) {
     const d = weeklyData(p.id), idle = !d.items && !d.sec;
     const trend = d.prevSec ? (d.sec >= d.prevSec ? "↑ " : "↓ ") + "Vorwoche " + fmtMin(d.prevSec) : "";
@@ -463,8 +469,8 @@ function apiStateGet(pid, day) {
   return [200, Object.assign(stateMeta(r), { state: JSON.parse(r.d) })];
 }
 
-function adminPlayers() {
-  return q.players.all().map(p => {
+function adminPlayers(hidden) {
+  return q.players.all().filter(p => !!p.hidden === !!hidden).map(p => {
     const c = q.evCount.get(p.id), m = snap(p.id, "meta"), devs = q.devices.all(p.id);
     const today = dayOf(Date.now());
     let todaySec = 0, todayItems = 0;
@@ -473,7 +479,8 @@ function adminPlayers() {
       const d = JSON.parse(r.d);
       if (r.k === "ss") todaySec += d.sec || 0; else if (r.k === "a" || r.k === "s") todayItems++;
     }
-    return { id: p.id, name: p.name, created: p.created, events: c.n, lastEvent: c.last, meta: m ? m.d : null,
+    const lastSt = q.latestState.get(p.id);
+    return { id: p.id, name: p.name, created: p.created, hidden: !!p.hidden, backup: lastSt ? { day: lastSt.day, ts: lastSt.ts, words: lastSt.words, coins: lastSt.coins } : null, events: c.n, lastEvent: c.last, meta: m ? m.d : null,
       devices: devs.map(d => ({ id: d.hash.slice(0, 8), device: d.device, created: d.created, lastSeen: d.last_seen })),
       today: { sec: todaySec, items: todayItems } };
   });
@@ -540,12 +547,12 @@ const server = http.createServer(async (req, res) => {
       if (p === "/api/admin/mail/test" && req.method === "POST") {
         try { await sendWeekly(); return send(res, 200, { ok: true }); } catch (e) { return send(res, 200, { ok: false, error: String(e.message).replace(MAIL.pass || "\u0000", "***").replace(GRAPH.clientSecret || "\u0000", "***").slice(0, 300) }); }
       }
-      if (p === "/api/admin/players" && req.method === "GET") return send(res, 200, adminPlayers());
+      if (p === "/api/admin/players" && req.method === "GET") return send(res, 200, adminPlayers(url.searchParams.get("hidden") === "1"));
       if (p === "/api/admin/players" && req.method === "POST") {
-        const name = clean((await readJson(req)).name, 20);
+        const b = await readJson(req), name = clean(b.name, 20);
         if (!name) return send(res, 400, { error: "Name fehlt." });
-        const id = +q.addPlayer.run(name, Date.now()).lastInsertRowid;
-        return send(res, 200, { id, name, invite: newInvite(id) });
+        const id = +q.addPlayer.run(name, Date.now(), b.hidden ? 1 : 0).lastInsertRowid;
+        return send(res, 200, { id, name, hidden: !!b.hidden, invite: newInvite(id) });
       }
       const mu = p.match(/^\/api\/admin\/players\/(\d+)\/unit\/([A-Za-z0-9_.\-]{1,30})$/);
       if (mu && req.method === "GET") { if (!q.player.get(+mu[1])) return send(res, 404, { error: "Unbekannt." }); const [c, b] = unitDetail(+mu[1], mu[2]); return send(res, c, b); }
@@ -575,6 +582,7 @@ const server = http.createServer(async (req, res) => {
           const name = clean((await readJson(req)).name, 20); if (!name) return send(res, 400, { error: "Name fehlt." });
           q.renamePlayer.run(name, pid); return send(res, 200, { ok: true });
         }
+        if (m[2] === "hidden" && req.method === "POST") { q.setHidden.run((await readJson(req)).hidden ? 1 : 0, pid); return send(res, 200, { ok: true }); }
         if (m[2] === "revoke" && req.method === "POST") { q.delTokens.run(pid); return send(res, 200, { ok: true }); }
         if (!m[2] && req.method === "DELETE") { q.delPlayer.run(pid); return send(res, 200, { ok: true }); }
       }

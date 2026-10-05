@@ -15,11 +15,11 @@
   function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
 
   W.connected = function () { var c = cfg(); return !!(c && c.url && c.token); };
-  W.info = function () { var c = cfg() || {}; return { connected: W.connected(), name: c.name || "", url: c.url || "", last: c.last || 0, pending: queue().length, error: c.err || "", stateAt: c.stateAt || 0, stateErr: c.stateErr || "" }; };
+  W.info = function () { var c = cfg() || {}; return { connected: W.connected(), name: c.name || "", url: c.url || "", last: c.last || 0, pending: queue().length, error: c.err || "", stateAt: c.stateAt || 0, stateErr: c.stateErr || "", hidden: !!c.hidden }; };
 
   /* Ereignis vormerken (nur wenn verbunden) */
   W.log = function (kind, d) {
-    if (!W.connected()) return;
+    if (!W.connected() || (cfg() || {}).hidden) return;   // "nur sichern": keine Lernereignisse senden
     var q = queue(), data = d || {};
     if (W.ctx && W.ctx.mode && !data.m) data.m = W.ctx.mode;
     q.push({ i: uid(), t: Date.now(), k: kind, d: data });
@@ -54,6 +54,7 @@
   W.snapshot = function () {
     var c = cfg(); if (!c || !c.token || !g.fetch) return Promise.resolve(false);
     var st = VT.state, words = {}, units = {}, id;
+    if (c.hidden) return Promise.resolve(false);
     if (VT.isFresh()) return Promise.resolve(false);   // ein leerer Stand (neues Gerät) darf die Übersicht auf dem Server nicht überschreiben
     for (id in st.w) { var r = st.w[id]; if (r && r.reps != null) words[id] = [VT.levelOf(id), r.ok || 0, r.no || 0, r.last || 0]; }
     VT.units().forEach(function (u) { if (u.track === "schule") units[u.id] = { id: u.id, title: u.title, k: u.k, total: u.words.length }; });
@@ -125,7 +126,7 @@
   };
 
   W.pull = function (force) {
-    var c = cfg(); if (!c || !c.token || !g.fetch) return Promise.resolve(false);
+    var c = cfg(); if (!c || !c.token || !g.fetch || c.hidden) return Promise.resolve(false);
     if (!force && Date.now() - lastPull < 3 * 60000) return Promise.resolve(false);
     lastPull = Date.now();
     return g.fetch(c.url + "/api/sync", { headers: { Authorization: "Bearer " + c.token } })
@@ -187,7 +188,7 @@
       .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
       .then(function (x) {
         if (!x.ok) return { error: x.j && x.j.error || "Verbinden hat nicht geklappt." };
-        lsSet("wordy.sync." + pid(), { url: url, token: x.j.token, name: x.j.name, last: 0 });
+        lsSet("wordy.sync." + pid(), { url: url, token: x.j.token, name: x.j.name, last: 0, hidden: !!x.j.hidden });
         W.log("hello", { v: g.WORDY_VERSION || "" });
         if (VT.isFresh()) return flush(false).then(function () { return W.pull(true); }).then(function () { return W.stateList(); }).then(function (l) { return { ok: true, name: x.j.name, backups: l }; });
         return W.snapshot().then(function () { return flush(false); }).then(function () { return W.pull(true); }).then(function () { W.pushState(true); return { ok: true, name: x.j.name }; });
@@ -198,6 +199,7 @@
   /* Aus der App: Ende einer Lernrunde */
   W.sessionEnd = function (d) {
     if (!W.connected()) return;
+    if ((cfg() || {}).hidden) { W.pushState(true); return; }
     W.log("ss", d);
     W.check();
     flush(false).then(function () { return W.snapshot(); }).then(function () { return W.pull(true); }).then(function () { return W.pushState(true); });

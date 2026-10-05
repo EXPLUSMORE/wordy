@@ -467,9 +467,11 @@
     var i = W.info();
     if (i.connected) {
       return '<section class="card"><div class="eyebrow">Eltern-Dashboard</div>' +
-        '<p style="margin:8px 0 4px"><b>✅ Verbunden</b> als <b>' + esc(i.name) + '</b></p>' +
-        '<p class="small muted" style="margin:0 0 10px">Die Eltern sehen, wann und was gelernt wurde: Übungszeit, richtige und falsche Antworten, Fortschritt pro Einheit und die Käufe im Shop. ' +
-        (i.last ? 'Zuletzt gesendet ' + agoText(i.last) + '. ' : 'Noch nichts gesendet. ') + (i.pending ? i.pending + ' Einträge warten auf Netz.' : '') + '</p>' +
+        '<p style="margin:8px 0 4px"><b>✅ Verbunden</b> als <b>' + esc(i.name) + '</b>' + (i.hidden ? ' <span class="pill">nur Sicherung</span>' : '') + '</p>' +
+        (i.hidden
+          ? '<p class="small muted" style="margin:0 0 10px">Es wird nur eine Sicherung deines Lernstands auf dem Server abgelegt. Im Dashboard taucht niemand mit deinen Zahlen auf, es werden keine Antworten oder Zeiten übertragen.</p>'
+          : '<p class="small muted" style="margin:0 0 10px">Die Eltern sehen, wann und was gelernt wurde: Übungszeit, richtige und falsche Antworten, Fortschritt pro Einheit und die Käufe im Shop. ' +
+            (i.last ? 'Zuletzt gesendet ' + agoText(i.last) + '. ' : 'Noch nichts gesendet. ') + (i.pending ? i.pending + ' Einträge warten auf Netz.' : '') + '</p>') +
         (i.error ? '<p class="small" style="margin:0 0 10px;color:var(--bad)">' + esc(i.error) + '</p>' : '') +
         '<p class="small muted" style="margin:0 0 10px">Dein Lernstand wird nach jeder Runde auch auf dem Server gesichert' + (i.stateAt ? ' (zuletzt ' + agoText(i.stateAt) + ')' : '') + '. Geht das Handy kaputt oder werden die Daten gelöscht, kannst du ihn hier wiederherstellen.</p>' +
         (i.stateErr ? '<p class="small" style="margin:0 0 10px;color:var(--bad)">' + esc(i.stateErr) + '</p>' : '') +
@@ -1507,7 +1509,7 @@
       var inp = $("#syncCode"), txt = inp ? inp.value : ""; act.disabled = true; act.textContent = "Verbinde …";
       window.WordySync.pair(txt).then(function (r) {
         if (r.error) { toast(r.error); act.disabled = false; act.textContent = "Verbinden"; return; }
-        toast("Verbunden. Deine Eltern sehen jetzt deinen Lernfortschritt.");
+        toast(window.WordySync.info().hidden ? "Verbunden. Dein Lernstand wird gesichert." : "Verbunden. Deine Eltern sehen jetzt deinen Lernfortschritt.");
         if (r.backups && r.backups.length) {
           var b0 = r.backups[0], dt = new Date(b0.ts);
           if (confirm("Auf dem Server liegt ein gesicherter Lernstand von " + r.name + " (" + dt.toLocaleDateString("de-DE") + ", " + b0.words + " Wörter, " + b0.coins + " Münzen). Wiederherstellen?")) {
@@ -1535,7 +1537,11 @@
       act.disabled = true; act.textContent = "Stelle wieder her …";
       window.WordySync.restore(dayv).then(function (r) { if (r.error) { toast(r.error); act.disabled = false; act.textContent = "Diese Sicherung wiederherstellen"; return; } toast("Lernstand wiederhergestellt."); render(); });
     }
-    else if (a === "syncnow") { window.WordySync.snapshot().then(function () { return window.WordySync.flush(); }).then(function (ok) { toast(ok ? "Gesendet." : "Server gerade nicht erreichbar."); render(); }); }
+    else if (a === "syncnow") {
+      var Wn = window.WordySync;
+      Wn.snapshot().then(function () { return Wn.flush(); }).then(function () { return Wn.pushState(true); })
+        .then(function (ok) { toast(ok ? (Wn.info().hidden ? "Gesichert." : "Gesendet.") : "Server gerade nicht erreichbar oder keine Änderung zu sichern."); render(); });
+    }
     else if (a === "syncoff") { if (confirm("Verbindung zum Eltern-Dashboard trennen? Bereits gesendete Daten bleiben beim Server, es wird nichts Neues mehr gesendet.")) { window.WordySync.disconnect(); toast("Getrennt."); render(); } }
     else if (a === "buy") {
       var r = S.buy(act.getAttribute("data-id"));

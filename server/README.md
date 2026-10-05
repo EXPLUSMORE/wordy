@@ -24,6 +24,9 @@ Ohne SMTP-Passwort, mit einer App-Registrierung. Einmalig im Entra-Admin-Center 
 ### Anderes Mailkonto: SMTP
 `SMTP_HOST`, `SMTP_PORT` (587 STARTTLS oder 465), `SMTP_USER`, `SMTP_PASSWORD`, `MAIL_FROM`, `MAIL_TO` in `.env`. Bei Microsoft 365 ist „SMTP AUTH“ meist gesperrt oder nur mit Zusatzeinstellungen möglich.
 
+## Nur sichern, nicht anzeigen
+Für Erwachsene, die nur ihre Sicherung wollen: Beim Anlegen im Dashboard „Nur sichern, nicht anzeigen“ ankreuzen. Der Server nimmt dann nur den Lernstand an (Wiederherstellen funktioniert wie sonst), speichert aber keine Antworten, Zeiten, Käufe oder Ziele. Der Spieler ist in der Übersicht und der Wochenmail unsichtbar und steht unter „＋ Spieler → Nur gesicherte Spieler“.
+
 ## Adressen
 - **App:** `https://wordy.explusmore.com` bleibt unverändert (GitHub Pages).
 - **Server und Dashboard:** eigene Subdomain `https://track.wordy.explusmore.com` (ein zusätzlicher DNS-Eintrag auf den Server, die App-Adresse wird nicht berührt).

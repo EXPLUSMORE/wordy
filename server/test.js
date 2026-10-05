@@ -116,6 +116,28 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     assert.equal((await dl.json()).coins, 77);
     const rp2 = await J("/api/admin/players/" + mk.j.id + "/report?days=14", { headers: H });
     assert.equal(rp2.j.backups.length, 1, "Dashboard kennt die Sicherung");
+
+    // ---- "Nur sichern, nicht anzeigen"
+    const hk = await J("/api/admin/players", { method: "POST", headers: H, body: JSON.stringify({ name: "Christian", hidden: true }) });
+    assert.equal(hk.j.hidden, true);
+    const hp = await J("/api/pair", { method: "POST", body: JSON.stringify({ code: hk.j.invite.code, device: "Test" }) });
+    assert.equal(hp.j.hidden, true, "App erfährt, dass nur gesichert wird");
+    const HT = T2(hp.j.token);
+    assert.equal((await J("/api/events", { method: "POST", headers: HT, body: JSON.stringify({ events: [{ i: "h1", t: Date.now(), k: "a", d: { id: "x", g: 1 } }] }) })).j.stored, 0, "keine Lernereignisse gespeichert");
+    await J("/api/snapshot", { method: "POST", headers: HT, body: JSON.stringify({ meta: { coins: 1 } }) });
+    assert.equal((await J("/api/state", { method: "PUT", headers: HT, body: JSON.stringify({ state: stFull }) })).s, 200, "Sicherung wird gespeichert");
+    assert.equal((await J("/api/state", { headers: HT })).j.state.coins, 77, "und lässt sich abrufen");
+    const vis = await J("/api/admin/players", { headers: H });
+    assert.ok(!vis.j.some(x => x.name === "Christian"), "in der Übersicht nicht sichtbar");
+    const hid = await J("/api/admin/players?hidden=1", { headers: H });
+    assert.equal(hid.j.length, 1); assert.equal(hid.j[0].backup.words, 2); assert.equal(hid.j[0].events, 0);
+    assert.equal((await J("/api/admin/players/" + hk.j.id + "/goals", { method: "POST", headers: H, body: JSON.stringify({ kind: "minutes", target: 5 }) })).s, 400, "keine Ziele für nur gesicherte Spieler");
+    mailGot = "";
+    assert.equal((await J("/api/admin/mail/test", { method: "POST", headers: H })).j.ok, true);
+    const dec2 = (mailGot.match(/^[A-Za-z0-9+\/=]{20,}$/gm) || []).map(x => Buffer.from(x, "base64").toString("utf8")).join("\n");
+    assert.ok(/Magnus/.test(dec2) && !/Christian/.test(dec2), "Wochenmail zeigt nur sichtbare Spieler");
+    await J("/api/admin/players/" + hk.j.id + "/hidden", { method: "POST", headers: H, body: JSON.stringify({ hidden: false }) });
+    assert.ok((await J("/api/admin/players", { headers: H })).j.some(x => x.name === "Christian"), "nach Umschalten sichtbar");
     await J("/api/admin/players/" + mk.j.id + "/revoke", { method: "POST", headers: H });
     assert.equal((await J("/api/events", { method: "POST", headers: T, body: "{}" })).s, 401, "nach Trennen gesperrt");
     console.log("Alle Prüfungen bestanden.");

@@ -47,7 +47,9 @@ select,textarea{font:inherit;border:1px solid var(--line);border-radius:10px;pad
 .pick label{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--ink);padding:2px 0;margin:0}
 .pick b.g{display:block;font-size:12px;color:var(--ink2);margin:8px 0 2px;text-transform:uppercase;letter-spacing:.06em}
 .goal{display:flex;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
-.goal .t{flex:1 1 auto;min-width:0}
+.goal{flex-wrap:wrap}.goal .t{flex:1 1 220px;min-width:0}
+input[type=checkbox]{width:auto;padding:0;margin:0;flex:none}
+.goal .acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .mini{height:7px;border-radius:4px;background:var(--line);overflow:hidden;margin-top:5px}.mini i{display:block;height:100%;background:var(--acc2)}.mini i.d{background:var(--good)}
 button.sm{padding:5px 10px;font-size:13px}
 tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
@@ -104,14 +106,41 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
 
   function viewNew(inv, name) {
     var h = '<div class="card"><h2>Neuen Spieler anlegen</h2><div class="row"><input id="nn" class="grow" maxlength="20" placeholder="Name, z. B. Magnus"><button id="mk">Anlegen</button></div>' +
+      '<label class="row" style="margin-top:10px;gap:8px;font-size:14px"><input type="checkbox" id="nh"> <span>Nur sichern, nicht anzeigen <span class="muted">(zum Beispiel für dich selbst: der Lernstand wird gesichert, aber es gibt keine Zahlen, Ziele oder Mails dazu)</span></span></label>' +
       '<p class="small muted" style="margin:10px 0 0">Es reicht ein Vorname. Danach erscheint ein Code, den du in der App unter Setup → Eltern-Dashboard einfügst.</p></div>';
     if (inv) h = inviteCard(name, inv) + h;
+    h += '<div id="hiddenList"></div>';
     view.innerHTML = h;
     var b = document.getElementById("mk");
     if (b) b.onclick = function () {
       var n = document.getElementById("nn").value.trim(); if (!n) return;
-      post("/api/admin/players", { name: n }).then(function (r) { return loadPlayers(r.id).then(function () { showInvite(r.name, r.invite); }); }).catch(function (e) { alert(e.message); });
+      var hid = document.getElementById("nh").checked;
+      post("/api/admin/players", { name: n, hidden: hid }).then(function (r) {
+        if (hid) { viewNew(r.invite, r.name); loadHidden(); return; }
+        return loadPlayers(r.id).then(function () { showInvite(r.name, r.invite); });
+      }).catch(function (e) { alert(e.message); });
     };
+    var cp = document.getElementById("cp"); if (cp) wireCopy();
+    loadHidden();
+  }
+  function wireCopy() {
+    document.getElementById("cp").onclick = function () {
+      var t = document.getElementById("ic").textContent;
+      (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(function () { document.getElementById("cp").textContent = "Kopiert ✓"; }, function () { prompt("Code kopieren:", t); });
+    };
+  }
+  function loadHidden() {
+    api("/api/admin/players?hidden=1").then(function (l) {
+      var el = document.getElementById("hiddenList"); if (!el || !l.length) return;
+      el.innerHTML = '<div class="card"><h2>Nur gesicherte Spieler</h2><p class="small muted" style="margin:0 0 6px">Sie sind in der Übersicht und in der Wochenmail nicht zu sehen. Der Server hält nur ihren Lernstand als Sicherung bereit.</p>' + l.map(function (p) {
+        return '<div class="goal"><div class="t"><b>' + esc(p.name) + '</b><div class="small muted">' + (p.backup ? "Letzte Sicherung " + fmtAgo(p.backup.ts) + " · " + p.backup.words + " Wörter · " + p.backup.coins + " Münzen" : "Noch keine Sicherung") + " · " + p.devices.length + " Gerät" + (p.devices.length === 1 ? "" : "e") + '</div></div>' +
+          '<div class="acts"><button class="ghost sm" data-hi="' + p.id + '">Neuer Code</button>' + (p.backup ? '<a class="small" href="/api/admin/players/' + p.id + '/state" download>Herunterladen</a>' : "") +
+          '<button class="ghost sm" data-hs="' + p.id + '">Anzeigen</button><button class="ghost sm" data-hd="' + p.id + '">Löschen</button></div></div>';
+      }).join("") + "</div>";
+      Array.prototype.forEach.call(el.querySelectorAll("button[data-hi]"), function (b) { b.onclick = function () { var pl = l.filter(function (x) { return String(x.id) === b.getAttribute("data-hi"); })[0]; post("/api/admin/players/" + pl.id + "/invite").then(function (i) { viewNew(i, pl.name); loadHidden(); }); }; });
+      Array.prototype.forEach.call(el.querySelectorAll("button[data-hs]"), function (b) { b.onclick = function () { post("/api/admin/players/" + b.getAttribute("data-hs") + "/hidden", { hidden: false }).then(function () { loadPlayers(+b.getAttribute("data-hs")); }); }; });
+      Array.prototype.forEach.call(el.querySelectorAll("button[data-hd]"), function (b) { b.onclick = function () { if (confirm("Diesen Spieler und seine Sicherung endgültig löschen?")) api("/api/admin/players/" + b.getAttribute("data-hd"), { method: "DELETE" }).then(function () { viewNew(); }); }; });
+    }).catch(function () {});
   }
   function inviteString(inv) { return location.origin + "#" + inv.code; }
   function inviteCard(name, inv) {
@@ -152,7 +181,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     h += '<div class="card"><div class="row"><div class="grow"><b style="font-size:18px">' + esc(p.name) + "</b>" +
       '<div class="small muted">Zuletzt aktiv: ' + fmtAgo(p.lastEvent) + (m.rank ? " · " + esc(m.rank) : "") + (m.streak ? " · 🔥 " + m.streak + " Tage Serie" : "") +
       (p.devices.length ? " · " + p.devices.length + " Gerät" + (p.devices.length > 1 ? "e" : "") : " · noch kein Gerät verbunden") + "</div></div>" +
-      '<button class="ghost" id="inv">Neuer Code</button><button class="ghost" id="ren">Umbenennen</button><button class="ghost" id="rev">Geräte trennen</button><button class="ghost" id="del">Löschen</button></div></div>';
+      '<button class="ghost" id="inv">Neuer Code</button><button class="ghost" id="ren">Umbenennen</button><button class="ghost" id="hid">Nur sichern</button><button class="ghost" id="rev">Geräte trennen</button><button class="ghost" id="del">Löschen</button></div></div>';
     h += '<div class="card"><h2>Heute und diese Woche</h2><div class="kpis">' +
       kpi(fmtMin(today.sec), "heute geübt" + (m.goalMin ? " (Ziel " + m.goalMin + " Min.)" : "")) +
       kpi(today.items, "Aufgaben heute · " + pct(today.correct, today.items) + " richtig") +
@@ -196,6 +225,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     Array.prototype.forEach.call(view.querySelectorAll("button[data-d]"), function (b) { b.onclick = function () { days = +b.getAttribute("data-d"); show(); }; });
     document.getElementById("inv").onclick = function () { post("/api/admin/players/" + p.id + "/invite").then(function (i) { showInvite(p.name, i); }).catch(function (e) { alert(e.message); }); };
     document.getElementById("ren").onclick = function () { var n = prompt("Neuer Name:", p.name); if (n) post("/api/admin/players/" + p.id + "/rename", { name: n }).then(function () { loadPlayers(p.id); }); };
+    document.getElementById("hid").onclick = function () { if (confirm(p.name + " nur noch sichern und hier nicht mehr anzeigen? Die Zahlen verschwinden aus Übersicht und Wochenmail, die Sicherung bleibt. Zurückholen kannst du ihn unter „＋ Spieler“.")) post("/api/admin/players/" + p.id + "/hidden", { hidden: true }).then(function () { cur = null; loadPlayers(); }); };
     document.getElementById("rev").onclick = function () { if (confirm("Alle verbundenen Geräte von " + p.name + " trennen? Neu verbinden geht mit einem neuen Code.")) post("/api/admin/players/" + p.id + "/revoke").then(function () { loadPlayers(p.id); }); };
     document.getElementById("del").onclick = function () { if (confirm(p.name + " und alle gespeicherten Lerndaten endgültig löschen?")) api("/api/admin/players/" + p.id, { method: "DELETE" }).then(function () { cur = null; loadPlayers(); }); };
     drawGoals(p, r); drawPlans(p, r); drawBackups(p, r); drawMail();
