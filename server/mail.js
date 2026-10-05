@@ -70,4 +70,39 @@ function sendMail(o) {
     sock.on("data", feed); sock.on("error", e => { clearTimeout(timer); fail(e); });
   });
 }
-module.exports = { sendMail, buildMessage };
+
+/* Versand über Microsoft Graph (Microsoft 365): Anmeldung der App mit Mandanten-ID, Client-ID und Geheimnis, kein SMTP-Passwort nötig.
+   Benötigt in Entra ID eine App-Registrierung mit der Anwendungsberechtigung Mail.Send (Administratorzustimmung). */
+let tokenCache = { token: "", exp: 0 };
+async function graphToken(o, f) {
+  if (tokenCache.token && Date.now() < tokenCache.exp - 60000) return tokenCache.token;
+  const r = await f("https://login.microsoftonline.com/" + encodeURIComponent(o.tenant) + "/oauth2/v2.0/token", {
+    method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ client_id: o.clientId, client_secret: o.clientSecret, scope: "https://graph.microsoft.com/.default", grant_type: "client_credentials" }).toString()
+  });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok || !j.access_token) throw new Error("Microsoft-Anmeldung fehlgeschlagen: " + (j.error_description || j.error || r.status).toString().split("\r")[0].slice(0, 200));
+  tokenCache = { token: j.access_token, exp: Date.now() + (j.expires_in || 3000) * 1000 };
+  return j.access_token;
+}
+async function sendGraph(o, f) {
+  f = f || fetch;
+  const token = await graphToken(o, f);
+  const msg = {
+    message: {
+      subject: o.subject, body: { contentType: "HTML", content: o.html },
+      toRecipients: String(o.to).split(",").map(t => ({ emailAddress: { address: addr(t) } }))
+    },
+    saveToSentItems: false
+  };
+  const r = await f("https://graph.microsoft.com/v1.0/users/" + encodeURIComponent(addr(o.from)) + "/sendMail", {
+    method: "POST", headers: { Authorization: "Bearer " + token, "Content-Type": "application/json" }, body: JSON.stringify(msg)
+  });
+  if (r.status !== 202 && !r.ok) {
+    const j = await r.json().catch(() => ({}));
+    throw new Error("Microsoft Graph: " + r.status + " " + ((j.error && (j.error.message || j.error.code)) || "").toString().slice(0, 200));
+  }
+  return true;
+}
+module.exports = { sendMail, sendGraph, buildMessage };
+

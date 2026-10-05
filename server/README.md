@@ -10,10 +10,19 @@ Keine Abhängigkeiten: nur **Node.js ab 22.13** (eingebautes SQLite). Daten lieg
 - **Wochenmail:** siehe unten.
 
 ## Wochenmail
-Zugangsdaten eines Mailkontos in die `.env` eintragen (Vorlage am Ende von `.env.example`), dann `sudo systemctl restart wordy-server`.
-Im Dashboard unten steht danach „Geht jeden Sonntag um 18 Uhr an …“ und eine Schaltfläche **Testmail jetzt senden**.
-Der Versand nutzt SMTP mit Anmeldung (Port 587 STARTTLS oder 465). Bei Microsoft 365 ist „SMTP AUTH“ oft gesperrt. Dann ein anderes Konto oder einen Mailversanddienst nehmen.
+Im Dashboard unten steht danach „Geht jeden Sonntag um 18 Uhr an …“ und die Schaltfläche **Testmail jetzt senden**. Nach jeder Änderung an `.env`: `sudo systemctl restart wordy-server`.
 Wenn der Versand an einem Tag dreimal scheitert, wird er bis zur nächsten Woche nicht erneut versucht. Die Ursache steht im Protokoll: `sudo journalctl -u wordy-server -n 30`.
+
+### Microsoft 365 (empfohlen): Versand über Microsoft Graph
+Ohne SMTP-Passwort, mit einer App-Registrierung. Einmalig im Entra-Admin-Center (`entra.microsoft.com`):
+1. **Identität → Anwendungen → App-Registrierungen → Neue Registrierung.** Name „Wordy Mail“, nur dieses Verzeichnis. Notiere **Anwendungs-ID (Client-ID)** und **Verzeichnis-ID (Mandanten-ID)**.
+2. **Zertifikate & Geheimnisse → Neuer geheimer Clientschlüssel.** Den **Wert** sofort kopieren (er wird nur einmal angezeigt).
+3. **API-Berechtigungen → Berechtigung hinzufügen → Microsoft Graph → Anwendungsberechtigungen → Mail.Send.** Danach **Administratorzustimmung erteilen**.
+4. In `.env` eintragen: `GRAPH_TENANT`, `GRAPH_CLIENT_ID`, `GRAPH_CLIENT_SECRET`, `MAIL_FROM` (nur die Adresse des sendenden Postfachs) und `MAIL_TO`.
+5. **Sicherheit:** Mail.Send als Anwendungsberechtigung erlaubt dieser App, im Namen *jedes* Postfachs zu senden. Beschränke sie in Exchange Online auf das eine Postfach (`New-ApplicationAccessPolicy`, siehe Microsoft-Dokumentation „Limiting application permissions to specific Exchange Online mailboxes“), oder nimm ein eigenes Absenderpostfach.
+
+### Anderes Mailkonto: SMTP
+`SMTP_HOST`, `SMTP_PORT` (587 STARTTLS oder 465), `SMTP_USER`, `SMTP_PASSWORD`, `MAIL_FROM`, `MAIL_TO` in `.env`. Bei Microsoft 365 ist „SMTP AUTH“ meist gesperrt oder nur mit Zusatzeinstellungen möglich.
 
 ## Adressen
 - **App:** `https://wordy.explusmore.com` bleibt unverändert (GitHub Pages).

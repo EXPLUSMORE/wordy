@@ -6,7 +6,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const crypto = require("node:crypto");
 const { DatabaseSync } = require("node:sqlite");
-const { sendMail } = require("./mail");
+const { sendMail, sendGraph } = require("./mail");
 
 const PORT = +process.env.PORT || 8787;
 const HOST = process.env.HOST || "127.0.0.1";
@@ -24,7 +24,9 @@ const MAIL = {
   from: process.env.MAIL_FROM || "", to: process.env.MAIL_TO || "",
   day: process.env.MAIL_DAY === undefined ? 0 : +process.env.MAIL_DAY, hour: process.env.MAIL_HOUR === undefined ? 18 : +process.env.MAIL_HOUR
 };
-const mailOn = () => !!(MAIL.host && MAIL.from && MAIL.to);
+const GRAPH = { tenant: process.env.GRAPH_TENANT || "", clientId: process.env.GRAPH_CLIENT_ID || "", clientSecret: process.env.GRAPH_CLIENT_SECRET || "" };
+const graphOn = () => !!(GRAPH.tenant && GRAPH.clientId && GRAPH.clientSecret && MAIL.from && MAIL.to);
+const mailOn = () => graphOn() || !!(MAIL.host && MAIL.from && MAIL.to);
 
 if (!ADMIN_PASSWORD || ADMIN_PASSWORD.length < 10) {
   console.error("ADMIN_PASSWORD fehlt oder ist kürzer als 10 Zeichen. Siehe .env.example.");
@@ -412,6 +414,7 @@ function mailContent() {
 async function sendWeekly() {
   if (!mailOn()) throw new Error("Mailversand ist nicht eingerichtet (siehe README).");
   const c = mailContent();
+  if (graphOn()) return sendGraph({ tenant: GRAPH.tenant, clientId: GRAPH.clientId, clientSecret: GRAPH.clientSecret, from: MAIL.from, to: MAIL.to, subject: c.subject, html: c.html });
   await sendMail({ host: MAIL.host, port: MAIL.port, secure: MAIL.secure, user: MAIL.user, pass: MAIL.pass, from: MAIL.from, to: MAIL.to, subject: c.subject, text: c.text, html: c.html });
 }
 const localNow = () => {
@@ -494,7 +497,7 @@ const server = http.createServer(async (req, res) => {
       }
       if (p === "/api/admin/mail" && req.method === "GET") { const sent = q.kvGet.get("mail_sent"); return send(res, 200, { configured: mailOn(), to: mailOn() ? MAIL.to : "", day: MAIL.day, hour: MAIL.hour, lastWeek: sent ? sent.val : null }); }
       if (p === "/api/admin/mail/test" && req.method === "POST") {
-        try { await sendWeekly(); return send(res, 200, { ok: true }); } catch (e) { return send(res, 200, { ok: false, error: String(e.message).replace(MAIL.pass || "\u0000", "***").slice(0, 300) }); }
+        try { await sendWeekly(); return send(res, 200, { ok: true }); } catch (e) { return send(res, 200, { ok: false, error: String(e.message).replace(MAIL.pass || "\u0000", "***").replace(GRAPH.clientSecret || "\u0000", "***").slice(0, 300) }); }
       }
       if (p === "/api/admin/players" && req.method === "GET") return send(res, 200, adminPlayers());
       if (p === "/api/admin/players" && req.method === "POST") {
