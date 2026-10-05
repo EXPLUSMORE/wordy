@@ -76,7 +76,7 @@
       setTimeout(fin, maxMs || 500);
     } catch (e) { fin(); }
   }
-  function speak(text, rate, lang, forceCold) {
+  function speak(text, rate, lang, forceCold, onEnd) {
     if (!S.state.settings.audio || !window.speechSynthesis) return false;
     try {
       var synth = window.speechSynthesis, now = Date.now();
@@ -89,6 +89,7 @@
       if (vo) u.voice = vo;
       u.lang = (vo && vo.lang) || (de ? "de-DE" : "en-GB");
       u.rate = rate || (de ? 1 : 0.92);
+      if (onEnd) { u.onend = onEnd; u.onerror = onEnd; }
       lastSpoke = now;
       var lead = speechLead();
       if (busy) setTimeout(function () { synth.speak(u); }, 150);
@@ -375,6 +376,24 @@
       '<div style="flex:1 1 auto"><b style="font-size:18px">' + b.name + ' ' + b.no + '</b><div class="small muted">' + esc(b.sub) + '</div>' +
       '<div class="small muted" style="margin-top:4px">' + us.length + ' Einheiten · ' + m + '/' + t + ' Wörter gemeistert</div>' +
       '<span class="bar" style="margin-top:8px;display:block"><i style="width:' + pc + '%"></i></span></div></div>';
+  }
+  /* Alle Vokabeln einer Einheit nacheinander vorlesen; Tempo (Sprechgeschwindigkeit und Pause) aus den Einstellungen */
+  var PACES = { fast: { n: "Schnell", rate: 0.85, gap: 700 }, mid: { n: "Mittel", rate: 0.7, gap: 1400 }, slow: { n: "Langsam", rate: 0.55, gap: 2400 } };
+  function readPace() { return PACES[S.state.settings.readPace] || PACES.mid; }
+  var readToken = 0;
+  function stopReading() { readToken++; try { window.speechSynthesis.cancel(); } catch (e) {} }
+  function readAll(u, btn) {
+    if (btn && btn.getAttribute("data-on")) { stopReading(); btn.removeAttribute("data-on"); btn.textContent = "🔊 Alle vorlesen"; return; }
+    var my = ++readToken, i = 0, pace = readPace();
+    if (btn) { btn.setAttribute("data-on", "1"); btn.textContent = "⏹ Stopp"; }
+    function done() { if (btn && my === readToken) { btn.removeAttribute("data-on"); btn.textContent = "🔊 Alle vorlesen"; } }
+    function next() {
+      if (my !== readToken) return;
+      if (i >= u.words.length) return done();
+      var w = u.words[i++][0];
+      if (!speak(w, pace.rate, "en", false, function () { setTimeout(next, pace.gap); })) done();
+    }
+    next();
   }
   function viewUnitDetail(id) {
     var u = S.units().filter(function (x) { return x.id === id; })[0];
@@ -697,6 +716,10 @@
       '<select id="setLead" style="width:auto">' + [[0, "Aus"], [500, "Kurz"], [1000, "Mittel"], [1600, "Lang"]].map(function (o) {
         return '<option value="' + o[0] + '"' + (speechLead() === o[0] ? " selected" : "") + '>' + o[1] + '</option>';
       }).join("") + '</select></label>' +
+      '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Tempo bei „Alle vorlesen“<br><span class="small muted">Sprechgeschwindigkeit und Pause zwischen den Wörtern</span></span>' +
+      '<select id="setPace" style="width:auto">' + [["fast", "Schnell"], ["mid", "Mittel"], ["slow", "Langsam"]].map(function (o) {
+        return '<option value="' + o[0] + '"' + (st.settings.readPace === o[0] || (!st.settings.readPace && o[0] === "mid") ? " selected" : "") + '>' + o[1] + '</option>';
+      }).join("") + '</select></label>' +
       '<button class="btn ghost" data-act="voicetest" style="margin-top:10px">🔊 Stimme testen</button>' +
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Herzen benutzen<br><span class="small muted">Aus = Üben ohne Abbruch</span></span>' +
       '<input type="checkbox" id="setHearts" ' + (st.settings.hearts ? "checked" : "") + ' style="width:auto"></label>' +
@@ -746,6 +769,7 @@
     $("#setNew").onchange = function () { st.settings.newPerDay = +this.value; S.save(true); };
     $("#setAudio").onchange = function () { st.settings.audio = this.checked; S.save(true); };
     $("#setMode").onchange = function () { st.settings.themeMode = this.value; S.save(true); renderHeader(); };
+    $("#setPace").onchange = function () { st.settings.readPace = this.value; S.save(true); };
     $("#setLead").onchange = function () { st.settings.speechLead = +this.value; S.save(true); };
     $("#setHearts").onchange = function () { st.settings.hearts = this.checked; if (this.checked === false) st.hearts = 5; S.save(true); renderHeader(); };
     $("#csvFile").onchange = function () {
@@ -1403,10 +1427,10 @@
     } else if (a === "unit") { detailUnit = act.getAttribute("data-id"); render(); }
     else if (a === "vtoggle") { var vs2 = act.nextElementSibling; if (vs2 && vs2.classList.contains("vsent")) { vs2.hidden = !vs2.hidden; var ch = act.querySelector(".vchev"); if (ch) ch.textContent = vs2.hidden ? "▸" : "▾"; } }
     else if (a === "verblist") { detailUnit = "__verbs"; tab = "units"; render(); view.scrollTop = 0; }
-    else if (a === "back") { detailUnit = null; render(); }
+    else if (a === "back") { stopReading(); detailUnit = null; render(); }
     else if (a === "readall") {
       var u = S.units().filter(function (x) { return x.id === act.getAttribute("data-id"); })[0];
-      if (u) speak(u.words.map(function (w) { return w[0]; }).join(", "), 0.85);
+      if (u) readAll(u, act);
     }
     else if (a === "buy") {
       var r = S.buy(act.getAttribute("data-id"));
@@ -1504,7 +1528,7 @@
 
   tabs.addEventListener("click", function (e) {
     var b = e.target.closest("button[data-tab]"); if (!b) return;
-    tab = b.getAttribute("data-tab"); detailUnit = null; render(); view.scrollTop = 0;
+    stopReading(); tab = b.getAttribute("data-tab"); detailUnit = null; render(); view.scrollTop = 0;
   });
 
   function render() {
