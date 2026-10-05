@@ -16,7 +16,8 @@ const src = fs.readFileSync('index.html', 'utf8');
 /* Version aus dem Inhalt: ändert sich der Code, ändert sich auch diese Kennung (Setup zeigt sie, der Offline-Cache nutzt sie) */
 const VERSION = JSON.parse(fs.readFileSync('package.json', 'utf8')).version;   // Versionsnummer: nur in package.json pflegen
 const stamp = require('crypto').createHash('sha1')
-  .update([...DATA, ...CODE].map(f => fs.readFileSync(f)).join('') + src + VERSION).digest('hex').slice(0, 10);
+  .update([...DATA, ...CODE].map(f => fs.readFileSync(f)).join('') + src + VERSION)
+  .update(Buffer.concat(ICONS.map(f => fs.readFileSync(f))))   // neue Symbole lösen ebenfalls ein Update aus.digest('hex').slice(0, 10);
 const head = src.slice(0, src.indexOf('<div id="app">'));
 const body = src.slice(src.indexOf('<div id="app">'));
 
@@ -41,7 +42,7 @@ const manifest = {
   name: APP, short_name: APP, lang: 'de', dir: 'ltr',
   description: 'Englisch-Vokabeltrainer für Schule und Beruf – mit Spaced Repetition, Satzbau und Arena auf Zeit.',
   start_url: './', scope: './', id: '/', display: 'standalone', orientation: 'portrait',
-  background_color: '#EEF2F8', theme_color: THEME,
+  background_color: '#6A5CF0', theme_color: THEME,
   categories: ['education'],
   icons: [
     { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
