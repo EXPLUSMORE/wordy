@@ -41,28 +41,32 @@
   }
 
   /* ---------- Aussprache ---------- */
-  var voice = null, voicesReady = false;
+  var voice = null, voiceDe = null, voicesReady = false;
   function pickVoice() {
     if (!window.speechSynthesis) return null;
     var v = window.speechSynthesis.getVoices() || [];
     if (!v.length) return null;
     voice = v.filter(function (x) { return /^en[-_]GB/i.test(x.lang); })[0] ||
             v.filter(function (x) { return /^en/i.test(x.lang); })[0] || null;
+    voiceDe = v.filter(function (x) { return /^de[-_]DE/i.test(x.lang); })[0] ||
+              v.filter(function (x) { return /^de/i.test(x.lang); })[0] || null;
     voicesReady = true; return voice;
   }
   if (window.speechSynthesis) {
     pickVoice();
     window.speechSynthesis.onvoiceschanged = pickVoice;
   }
-  function speak(text, rate) {
+  function speak(text, rate, lang) {
     if (!S.state.settings.audio || !window.speechSynthesis) return false;
     try {
       window.speechSynthesis.cancel();
-      var u = new SpeechSynthesisUtterance(String(text).replace(/^to\s+/i, ""));
+      var de = lang === "de";
+      var u = new SpeechSynthesisUtterance(de ? String(text) : String(text).replace(/^to\s+/i, ""));
       if (!voicesReady) pickVoice();
-      if (voice) u.voice = voice;
-      u.lang = (voice && voice.lang) || "en-GB";
-      u.rate = rate || 0.92;
+      var vo = de ? voiceDe : voice;
+      if (vo) u.voice = vo;
+      u.lang = (vo && vo.lang) || (de ? "de-DE" : "en-GB");
+      u.rate = rate || (de ? 1 : 0.92);
       window.speechSynthesis.speak(u);
       return true;
     } catch (e) { return false; }
@@ -601,8 +605,8 @@
       return '<button class="opt" data-opt="' + i + '"><span class="k">' + (i + 1) + '</span><span>' + esc(o.label) + '</span></button>';
     }).join("") + '</div>';
   }
-  function speakBtn(text, big) {
-    return '<button class="speak' + (big ? " big" : "") + '" data-act="say" data-text="' + esc(text) + '" aria-label="Wort anhören">🔊</button>';
+  function speakBtn(text, big, lang) {
+    return '<button class="speak' + (big ? " big" : "") + '" data-act="say" data-text="' + esc(text) + '"' + (lang ? ' data-lang="' + lang + '"' : "") + ' aria-label="Anhören">🔊</button>';
   }
 
   var RENDER = {
@@ -647,10 +651,13 @@
       var opts = S.shuffle(distractors(w, "en", 3).map(function (x) { return { label: x.en.replace(/^to\s+/, ""), ok: false }; })
         .concat([{ label: w.gap, ok: true }]));
       t.opts = opts;
+      var spoken = parts[0] + " … " + parts.slice(1).join(w.gap);   // die Lücke wird als Pause gelesen
       body.innerHTML = '<div class="stack" style="padding-top:8px"><div class="eyebrow">Welches Wort fehlt?</div>' +
-        '<p class="gapline">' + esc(parts[0]) + '<u>&nbsp;</u>' + esc(parts.slice(1).join(w.gap)) + '</p>' +
+        '<div class="row" style="gap:12px;align-items:center">' + (audioAvailable() ? speakBtn(spoken) : "") +
+        '<p class="gapline" style="margin:0;flex:1 1 auto">' + esc(parts[0]) + '<u>&nbsp;</u>' + esc(parts.slice(1).join(w.gap)) + '</p></div>' +
         '<div class="sub">' + esc(w.de) + '</div>' + optionList(opts) + '</div>';
       foot.innerHTML = footCheck();
+      if (audioAvailable()) setTimeout(function () { speak(spoken, 0.9); }, 300);
     },
     odd: function (t, body, foot) {
       var w = t.w;
@@ -702,7 +709,9 @@
       body.innerHTML = '<div class="stack" style="padding-top:8px"><div class="eyebrow">Satzbau</div>' +
         '<h2 style="font-size:19px">Bring die Wörter in die richtige Reihenfolge.</h2>' +
         '<div class="card" style="background:var(--card-2);box-shadow:none"><div class="eyebrow">Gemeint ist</div>' +
-        '<p style="margin:6px 0 0;font-family:Newsreader,serif;font-size:19px">' + esc(x.de) + '</p></div>' +
+        '<div class="row" style="gap:10px;align-items:center;margin-top:6px">' +
+        (audioAvailable() ? '<button class="mini-speak" data-act="say" data-lang="de" data-text="' + esc(x.de) + '" aria-label="Deutschen Satz anhören">🔊</button>' : "") +
+        '<p style="margin:0;font-family:Newsreader,serif;font-size:19px">' + esc(x.de) + '</p></div></div>' +
         '<div class="slot build" id="slot"></div>' +
         '<div class="tiles" id="tiles">' + S.shuffle(parts.slice()).map(function (wd, i) {
           return '<button class="tile word" data-tile="' + i + '" data-ch="' + esc(wd) + '">' + esc(wd) + '</button>';
@@ -847,7 +856,7 @@
   sessionEl.addEventListener("click", function (e) {
     var t = SS && SS.tasks[SS.i];
     var say = e.target.closest("[data-act='say']");
-    if (say) { speak(say.getAttribute("data-text")); return; }
+    if (say) { speak(say.getAttribute("data-text"), 0, say.getAttribute("data-lang")); return; }
     var opt = e.target.closest(".opt");
     if (opt && !SS.answered) {
       SS.pick = +opt.getAttribute("data-opt");
@@ -916,7 +925,7 @@
   view.addEventListener("click", function (e) {
     var act = e.target.closest("[data-act]"); if (!act) return;
     var a = act.getAttribute("data-act"), st = S.state;
-    if (a === "say") { if (!speak(act.getAttribute("data-text"))) toast("Dieses Gerät hat keine Sprachausgabe bereit."); return; }
+    if (a === "say") { if (!speak(act.getAttribute("data-text"), 0, act.getAttribute("data-lang"))) toast("Dieses Gerät hat keine Sprachausgabe bereit."); return; }
     if (a === "install") {
       if (!installPrompt) return toast("Dein Browser bietet die Installation gerade nicht an.");
       installPrompt.prompt();
