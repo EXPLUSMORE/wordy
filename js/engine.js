@@ -136,11 +136,8 @@
   function trackOf(u) { return u.track || (u.k === 0 ? "eigen" : "schule"); }
   function buildCatalogue(state) {
     units = (global.VOCAB_UNITS || []).slice();
-    var cfg = state && state.settings;   // einmalig: Profile mit Klasse 6 bekommen das Schulbuch Headlight 2 dazu
-    if (cfg && !cfg.hl2) {
-      cfg.hl2 = 1;
-      if (Array.isArray(cfg.klassen) && cfg.klassen.indexOf(6) >= 0 && cfg.klassen.indexOf("Headlight 2") < 0) cfg.klassen.push("Headlight 2");
-    }
+    var cfg = state && state.settings;   // einmalig: Schulstoff (Headlight 2) ist die Voreinstellung, die Klassen kommen optional dazu
+    if (cfg && (cfg.hl2 || 0) < 2) { cfg.hl2 = 2; cfg.klassen = ["Headlight 2"]; }
     if (state && state.custom) units = units.concat(state.custom);
     words = []; byId = {};
     units.forEach(function (u) {
@@ -171,7 +168,7 @@
     return {
       v: 2, created: Date.now(),
       profile: { name: "", avatar: "🦊", theme: "paper", owned: ["av:🦊", "th:paper"] },
-      settings: { track: "schule", klassen: [6], bizGroups: ["Basis"], units: [], goalMin: 10, audio: true, hearts: true, newPerDay: 12 },
+      settings: { track: "schule", klassen: ["Headlight 2"], hl2: 2, bizGroups: ["Basis"], units: [], goalMin: 10, audio: true, hearts: true, newPerDay: 12 },
       xp: 0, coins: 0, hearts: 5, heartTs: Date.now(),
       streak: { count: 0, best: 0, last: null, freezes: 2, usedToday: false },
       daily: null, history: {}, w: {}, s: {}, arena: {}, custom: [], badges: [],
@@ -442,7 +439,7 @@
   /* ---------- Auswahl & Sessionplanung ---------- */
   function groupsOf() {
     var s = state.settings, biz = s.track === "business", key = biz ? "bizGroups" : "klassen";
-    if (!Array.isArray(s[key]) || !s[key].length) s[key] = biz ? ["Basis"] : [6];   // immer mindestens eine Auswahl
+    if (!Array.isArray(s[key]) || !s[key].length) s[key] = biz ? ["Basis"] : ["Headlight 2"];   // immer mindestens eine Auswahl
     return s[key];
   }
   function activeWords() {

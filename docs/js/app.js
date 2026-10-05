@@ -319,7 +319,7 @@
     if (detailUnit === "__verbs") return viewVerbList();
     if (detailUnit) return viewUnitDetail(detailUnit);
     var biz = st.settings.track === "business";
-    var groups = biz ? ["Basis", "Aufbau", "Profi", "Smalltalk", "Redewendungen"] : [6, 7, 8, "Headlight 2"];
+    var groups = biz ? ["Basis", "Aufbau", "Profi", "Smalltalk", "Redewendungen"] : ["Headlight 2", 6, 7, 8];
     var sel = S.groupsOf();
     var html = '<div class="stack">';
     html += '<section class="card">' + trackSwitch() +
@@ -330,7 +330,7 @@
       }).join("") +
       '</div><p class="small muted" style="margin:10px 0 0">' + (biz
         ? "Basis deckt Büroalltag, Telefon, E-Mail und Geschäftsreise ab. Aufbau geht in Vertrieb, Marketing, Markt, Finanzen und Verhandlung. Profi behandelt Führung, Strategie, Recht, Steuern, IT-Sicherheit und Nachhaltigkeit. Smalltalk ist alles, was zwischen den Terminen gesprochen wird, Redewendungen sind die 180 Wendungen, die man nicht Wort für Wort übersetzen kann. Unten erscheinen nur die gewählten Stufen."
-        : "Gewählte Jahrgänge kommen im Training vor und erscheinen unten. Einzelne Einheiten kannst du dort gezielt üben.") + '</p></section>';
+        : "Headlight 2 ist der Stoff aus dem Schulbuch. Die Klassen kannst du optional dazuschalten. Gewählte Auswahl kommt im Training vor und erscheint unten. Einzelne Einheiten kannst du dort gezielt üben.") + '</p></section>';
 
     if (!biz) html += verbCard();
     var byGroup = {}, order = [];
@@ -340,6 +340,7 @@
       if (!byGroup[key]) { byGroup[key] = []; order.push(key); }
       byGroup[key].push(u);
     });
+    order.sort(function (a, b) { var ia = groups.indexOf(/^\d+$/.test(a) ? +a : a), ib = groups.indexOf(/^\d+$/.test(b) ? +b : b); return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); });
     order.forEach(function (k) {
       var title = k === "0" ? "Eigene Listen" : groupLabel(byGroup[k][0].k);
       var books = [], rest = [];
