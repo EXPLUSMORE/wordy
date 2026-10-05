@@ -1,7 +1,7 @@
-# Beispiel für eine eigene Subdomain, z. B. wordy.explusmore.com (Zertifikat über certbot).
+# Beispiel für eine eigene Subdomain, z. B. wordy-api.explusmore.com (Zertifikat über certbot).
 server {
     listen 443 ssl http2;
-    server_name wordy.explusmore.com;
+    server_name wordy-api.explusmore.com;
     # ssl_certificate / ssl_certificate_key: von certbot eingetragen
 
     client_max_body_size 1m;
@@ -12,4 +12,4 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 }
-server { listen 80; server_name wordy.explusmore.com; return 301 https://$host$request_uri; }
+server { listen 80; server_name wordy-api.explusmore.com; return 301 https://$host$request_uri; }
