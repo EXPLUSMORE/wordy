@@ -63,8 +63,87 @@
       wish: (VT.wish && VT.wish()) ? VT.wish().label || VT.wish().id : "", klassen: st.settings.klassen, version: g.WORDY_VERSION || "", totals: st.totals
     };
     lastSnap = Date.now();
-    return post(c, "/api/snapshot", { words: words, catalog: Object.keys(units).map(function (k) { return units[k]; }), meta: meta }).then(function (r) { return r.ok; }).catch(function () { return false; });
+    var body = { words: words, catalog: Object.keys(units).map(function (k) { return units[k]; }), meta: meta }, tp = textsPayload();
+    if (tp.sig !== c.textsSig) body.texts = tp.texts;
+    return post(c, "/api/snapshot", body).then(function (r) { if (r.ok && body.texts) setCfg({ textsSig: tp.sig }); return r.ok; }).catch(function () { return false; });
   };
+
+
+  /* ---------- Ziele und Lernpläne der Eltern ---------- */
+  var lastPull = 0;
+  function addDays(d, n) { var a = d.split("-").map(Number); return new Date(Date.UTC(a[0], a[1] - 1, a[2] + n)).toISOString().slice(0, 10); }
+  function monday(d) { var a = d.split("-").map(Number), wd = (new Date(Date.UTC(a[0], a[1] - 1, a[2])).getUTCDay() + 6) % 7; return addDays(d, -wd); }
+  function dayDiff(a, b) { return Math.round((Date.parse(b + "T00:00:00Z") - Date.parse(a + "T00:00:00Z")) / 86400000); }
+  function dayStat(k) { var st = VT.state; return st.daily && st.daily.date === k ? st.daily : st.history[k]; }
+  W.remote = function () { return lsGet("wordy.cfg." + pid()) || { goals: [], plans: [] }; };
+
+  W.progress = function (goal) {
+    var cur = 0, i, h;
+    if (goal.kind === "unit") {
+      var total = 0, ok = 0;
+      VT.units().forEach(function (u) {
+        if (goal.scope.indexOf(u.id) < 0) return;
+        total += u.words.length;
+        for (i = 0; i < u.words.length; i++) if (VT.levelOf(u.id + "#" + i) >= 3) ok++;
+      });
+      cur = total ? Math.round(ok * 100 / total) : 0;
+    } else {
+      for (i = 0; i < 7; i++) {
+        h = dayStat(addDays(goal.week, i)); if (!h) continue;
+        if (goal.kind === "minutes") cur += (h.sec || 0) / 60;
+        else if (goal.kind === "days") { if ((h.sec || 0) >= 300) cur++; }
+        else if (goal.kind === "newwords") cur += h.newSeen || 0;
+      }
+      cur = Math.round(cur);
+    }
+    return { cur: cur, pct: Math.min(100, Math.round(cur * 100 / Math.max(1, goal.target))) };
+  };
+  W.planInfo = function (pl) {
+    var total = 0, ok = 0, today = VT.today();
+    VT.words().forEach(function (w) { if (pl.units.indexOf(w.unit) >= 0) { total++; if (VT.levelOf(w.id) >= 3) ok++; } });
+    var days = dayDiff(today, pl.exam), learnDays = Math.max(1, days);
+    return { total: total, ok: ok, pct: total ? Math.round(ok * 100 / total) : 0, days: days, quota: Math.ceil((total - ok) / learnDays) };
+  };
+  W.currentGoals = function () { var mon = monday(VT.today()); return W.remote().goals.filter(function (g) { return g.week === mon; }); };
+  W.activePlans = function () { var t = VT.today(); return W.remote().plans.filter(function (p) { return p.exam >= t; }); };
+
+  /* Prüft Ziele und Pläne; vergibt Bonusmünzen genau einmal */
+  W.check = function () {
+    if (!W.connected()) return;
+    var st = VT.state, got = [];
+    if (!st.goalsDone) st.goalsDone = {};
+    W.currentGoals().forEach(function (g) {
+      var key = "g" + g.id; if (st.goalsDone[key]) return;
+      if (W.progress(g).cur >= g.target) { st.goalsDone[key] = 1; VT.parentCoins(g.coins); W.log("goal", { id: g.id, done: 1 }); got.push({ title: g.title, coins: g.coins, kind: "goal" }); }
+    });
+    W.activePlans().forEach(function (pl) {
+      var key = "p" + pl.id; if (st.goalsDone[key]) return;
+      if (W.planInfo(pl).pct >= 90) { st.goalsDone[key] = 1; VT.parentCoins(pl.coins); W.log("plan", { id: pl.id, done: 1 }); got.push({ title: pl.title, coins: pl.coins, kind: "plan" }); }
+    });
+    if (got.length) { VT.save(true); if (g.WordyHooks && g.WordyHooks.onReward) g.WordyHooks.onReward(got); }
+  };
+
+  W.pull = function (force) {
+    var c = cfg(); if (!c || !c.token || !g.fetch) return Promise.resolve(false);
+    if (!force && Date.now() - lastPull < 3 * 60000) return Promise.resolve(false);
+    lastPull = Date.now();
+    return g.fetch(c.url + "/api/sync", { headers: { Authorization: "Bearer " + c.token } })
+      .then(function (r) { if (!r.ok) throw new Error(String(r.status)); return r.json(); })
+      .then(function (j) { lsSet("wordy.cfg." + pid(), { goals: j.goals || [], plans: j.plans || [], t: Date.now() }); W.check(); if (g.WordyHooks && g.WordyHooks.onChange) g.WordyHooks.onChange(); return true; })
+      .catch(function () { return false; });
+  };
+
+  /* Wörter der Einheiten im Klartext, damit das Dashboard sie anzeigen kann (nur wenn sich etwas geändert hat) */
+  function textsPayload() {
+    var st = VT.state, sel = st.settings.klassen || [], out = {}, sig = "";
+    VT.units().forEach(function (u) {
+      if (u.track !== "schule") return;
+      var touched = false, i;
+      if (sel.indexOf(u.k) < 0) { for (i = 0; i < u.words.length && !touched; i++) if (st.w[u.id + "#" + i]) touched = true; if (!touched) return; }
+      out[u.id] = u.words.map(function (w) { return [w[0], w[1]]; }); sig += u.id + ":" + u.words.length + ";";
+    });
+    return { texts: out, sig: sig };
+  }
 
   /* Verbinden mit dem Code der Eltern: "https://server#ABCD-EFGH" */
   W.pair = function (text) {
@@ -77,20 +156,21 @@
         if (!x.ok) return { error: x.j && x.j.error || "Verbinden hat nicht geklappt." };
         lsSet("wordy.sync." + pid(), { url: url, token: x.j.token, name: x.j.name, last: 0 });
         W.log("hello", { v: g.WORDY_VERSION || "" });
-        return W.snapshot().then(function () { return flush(false); }).then(function () { return { ok: true, name: x.j.name }; });
+        return W.snapshot().then(function () { return flush(false); }).then(function () { return W.pull(true); }).then(function () { return { ok: true, name: x.j.name }; });
       }).catch(function () { return { error: "Der Server ist nicht erreichbar. Gibt es Netz, und stimmt die Adresse?" }; });
   };
-  W.disconnect = function () { try { g.localStorage.removeItem("wordy.sync." + pid()); g.localStorage.removeItem("wordy.q." + pid()); } catch (e) {} };
+  W.disconnect = function () { try { g.localStorage.removeItem("wordy.sync." + pid()); g.localStorage.removeItem("wordy.q." + pid()); g.localStorage.removeItem("wordy.cfg." + pid()); } catch (e) {} };
 
   /* Aus der App: Ende einer Lernrunde */
   W.sessionEnd = function (d) {
     if (!W.connected()) return;
     W.log("ss", d);
-    flush(false).then(function () { return W.snapshot(); });
+    W.check();
+    flush(false).then(function () { return W.snapshot(); }).then(function () { return W.pull(true); });
   };
   W.maybeSnapshot = function () { if (W.connected() && Date.now() - lastSnap > 10 * 60000) W.snapshot(); };
 
-  g.addEventListener("visibilitychange", function () { if (g.document.visibilityState === "hidden") flush(true); else flush(false); });
+  g.addEventListener("visibilitychange", function () { if (g.document.visibilityState === "hidden") flush(true); else { flush(false); W.pull(false); } });
   g.addEventListener("online", function () { flush(false); });
-  setTimeout(function () { flush(false); W.maybeSnapshot(); }, 4000);
+  setTimeout(function () { flush(false); W.maybeSnapshot(); W.pull(true); }, 4000);
 })(window);

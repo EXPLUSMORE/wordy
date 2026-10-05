@@ -213,6 +213,35 @@
   }
 
   /* ================= START ================= */
+
+  /* ---------- Ziele und Lernpläne der Eltern (Startseite) ---------- */
+  function parentCards() {
+    var W = window.WordySync; if (!W || !W.connected()) return "";
+    var h = "", goals = W.currentGoals(), plans = W.activePlans(), st = S.state;
+    plans.forEach(function (pl) {
+      var i = W.planInfo(pl), done = st.goalsDone && st.goalsDone["p" + pl.id];
+      var when = i.days > 1 ? "in " + i.days + " Tagen" : i.days === 1 ? "morgen" : "heute";
+      var newToday = (st.daily && st.daily.newSeen) || 0, left = Math.max(0, i.quota - newToday);
+      h += '<section class="card"><div class="eyebrow">📅 Lernplan</div>' +
+        '<div style="margin-top:6px"><b>' + esc(pl.title) + '</b> <span class="small muted">· Arbeit ' + when + '</span></div>' +
+        '<div class="bar" style="margin:10px 0 6px"><i style="width:' + i.pct + '%"></i></div>' +
+        '<p class="small muted" style="margin:0 0 10px">' + i.pct + ' % sicher (' + i.ok + ' von ' + i.total + ' Wörtern)' +
+        (done ? ' · ✅ Ziel erreicht' : pl.coins ? ' · Bonus ' + pl.coins + ' Münzen bei 90 %' : '') + '</p>' +
+        (i.total - i.ok > 0 ? '<p class="small" style="margin:0 0 10px">Heute dran: ' + (left > 0 ? '<b>' + left + ' neue ' + plural(left, "Wort", "Wörter") + '</b> und ' : '') + 'Wiederholung.</p>' : '') +
+        '<button class="btn wide" data-act="startplan" data-id="' + esc(pl.id) + '">Lernplan üben</button></section>';
+    });
+    if (goals.length) {
+      h += '<section class="card"><div class="eyebrow">🎯 Wochenziele von deinen Eltern</div><div style="margin-top:8px">' + goals.map(function (g) {
+        var pr = W.progress(g), done = st.goalsDone && st.goalsDone["g" + g.id];
+        return '<div style="padding:8px 0;border-top:1px solid var(--line)"><div class="row"><b class="small" style="flex:1 1 auto">' + (done ? "✅ " : "") + esc(g.title) + '</b>' +
+          '<span class="pill tnum">' + Math.min(pr.cur, g.target) + ' / ' + g.target + (g.kind === "unit" ? " %" : "") + '</span></div>' +
+          '<div class="bar" style="margin-top:6px"><i style="width:' + (done ? 100 : pr.pct) + '%"></i></div>' +
+          (g.coins ? '<div class="small muted" style="margin-top:4px">' + (done ? 'Geschafft, ' + g.coins + ' Münzen sind gutgeschrieben.' : 'Belohnung: 🪙 ' + g.coins) + '</div>' : '') + '</div>';
+      }).join("") + '</div></section>';
+    }
+    return h;
+  }
+
   function viewHome() {
     var st = S.state, p = S.pools(), stt = S.stats(), r = S.rankOf(st.xp);
     var goalSec = st.settings.goalMin * 60, pct = Math.min(100, Math.round(st.daily.sec * 100 / goalSec));
@@ -236,6 +265,7 @@
       '<span>🛡️ ' + st.streak.freezes + ' Streak-Schutz</span>' +
       (r.next ? '<span>Noch ' + toNext + ' XP bis ' + esc(r.next.n) + '</span>' : '<span>Höchster Rang erreicht</span>') +
       '</div></div></section>';
+    html += parentCards();
 
     html += '<section class="card"><div class="eyebrow">Wie viel Zeit hast du?</div>' +
       '<div class="quick" style="margin-top:10px">' +
@@ -421,6 +451,16 @@
 
 
   /* ---------- Eltern-Dashboard: Verbindung zum Server ---------- */
+  {   // sync.js wird nach app.js geladen und ruft diese Hooks auf
+    window.WordyHooks = {};
+    window.WordyHooks.onChange = function () { if (tab === "home" && sessionEl.hidden) render(); };
+    window.WordyHooks.onReward = function (list) {
+      var c = list.reduce(function (a, x) { return a + (x.coins || 0); }, 0);
+      toast("🎉 " + (list[0].kind === "plan" ? "Lernplan geschafft" : "Wochenziel geschafft") + ": " + list[0].title + (c ? " · +" + c + " Münzen" : ""), 6000);
+      try { if (window.VTC && S.state.settings.audio) window.VTC.sound(S.state.profile.snd, true); window.VTC.burst(S.state.profile.fx, window.innerWidth / 2, window.innerHeight * .4, 24, 1); } catch (e) {}
+      if (tab === "home" && sessionEl.hidden) render();
+    };
+  }
   function agoText(t) { var m = Math.round((Date.now() - t) / 60000); return m < 1 ? "gerade eben" : m < 60 ? "vor " + m + " Min." : m < 1440 ? "vor " + Math.round(m / 60) + " Std." : "vor " + Math.round(m / 1440) + " Tg."; }
   function syncCard() {
     var W = window.WordySync; if (!W) return "";
@@ -442,7 +482,7 @@
 
   /* ---------- Münzen: Übersicht und Regeln ---------- */
   function coinsCard() {
-    var c = S.coinsToday(), st = S.state, total = c.fortschritt + c.missionen + c.ziel + c.serie + c.arena;
+    var c = S.coinsToday(), st = S.state, total = c.fortschritt + c.missionen + c.ziel + c.serie + c.arena + c.eltern;
     function row(label, sub, val, done) {
       return '<div class="row" style="gap:10px;align-items:baseline;padding:6px 0;border-top:1px solid var(--line)"><div style="flex:1 1 auto"><b class="small">' + label + '</b>' +
         (sub ? '<div class="small muted">' + sub + '</div>' : "") + '</div><b class="tnum" style="' + (done ? "color:var(--good)" : "") + '">' + val + '</b></div>';
@@ -453,6 +493,7 @@
       row("Missionen", c.missionenDone + " von " + c.missionenAll + " erfüllt", "+" + c.missionen, c.missionenDone === c.missionenAll && c.missionenAll > 0) +
       row("Tagesziel", c.zielDone ? "geschafft" : "noch offen: " + st.settings.goalMin + " Minuten üben", c.zielDone ? "+" + c.ziel : "+20 möglich", c.zielDone) +
       row("Arena", "Tageslimit 30", c.arena + " / 30", c.arena >= 30) +
+      (c.eltern ? row("Ziele der Eltern", "Wochenziel oder Lernplan geschafft", "+" + c.eltern, true) : "") +
       (c.streakNext ? row("Serien-Bonus", "noch " + c.streakDays + " " + plural(c.streakDays, "Tag", "Tage") + " bis zum " + c.streakNext + ". Tag", "+" + c.streakBonus + " möglich") : "") +
       '<details style="margin-top:10px"><summary class="small" style="cursor:pointer;font-weight:700">So verdienst du Münzen</summary>' +
       '<div class="small" style="margin-top:8px;line-height:1.7">' +
@@ -915,7 +956,7 @@
     if (!list.length) { toast(sentOnly ? "Alle Sätze dieses Bereichs sind gerade erledigt." : "Für diese Auswahl gibt es gerade nichts zu üben."); return; }
     var tasks = buildTasks(list, sentOnly);
     /* Unregelmäßige Verben: in normalen Schulrunden immer wieder eingestreut */
-    if (!sentOnly && !opts.unit && opts.mode !== "box" && opts.mode !== "new" && S.state.settings.track === "schule") {
+    if (!sentOnly && !opts.unit && !opts.scope && opts.mode !== "box" && opts.mode !== "new" && S.state.settings.track === "schule") {
       var vs = S.planVerbs(Math.max(1, Math.round(tasks.length / 8)), { mix: true });
       verbTasks(vs).forEach(function (vt, i) {
         var pos = Math.min(tasks.length, Math.round((i + 1) * tasks.length / (vs.length + 1)) + 2);
@@ -1454,6 +1495,10 @@
     else if (a === "readall") {
       var u = S.units().filter(function (x) { return x.id === act.getAttribute("data-id"); })[0];
       if (u) readAll(u, act);
+    }
+    else if (a === "startplan") {
+      var pl = window.WordySync.activePlans().filter(function (x) { return String(x.id) === act.getAttribute("data-id"); })[0];
+      if (pl) { var pi = window.WordySync.planInfo(pl); startSession({ minutes: st.settings.goalMin, scope: pl.units, newMax: Math.max(pi.quota, (st.daily && st.daily.newSeen) || 0), mode: "plan" }); }
     }
     else if (a === "syncpair") {
       var inp = $("#syncCode"), txt = inp ? inp.value : ""; act.disabled = true; act.textContent = "Verbinde …";

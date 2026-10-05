@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Wordy Eltern</title>
+<title>Wordy Lernfortschritt</title>
 <style>
 :root{--bg:#F4F6F8;--card:#fff;--ink:#16222B;--ink2:#52606B;--line:#E1E6EA;--acc:#1E6273;--acc2:#2E8BA0;--good:#2E8B57;--bad:#C0392B;--warn:#D9962B;--l1:#E2B93B;--l2:#E69A3A;--l3:#4FA6B8;--l4:#2E8B57}
 @media (prefers-color-scheme:dark){:root{--bg:#10171C;--card:#18222A;--ink:#E8EEF2;--ink2:#9AA9B4;--line:#26333D;--acc:#5BB6CA;--acc2:#7CC8D9;--good:#58C48B;--bad:#EF6F62;--warn:#E8B054;--l1:#C9A233;--l2:#D18A33;--l3:#4698AA;--l4:#4DB380}}
@@ -39,6 +39,19 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
 svg text{fill:var(--ink2);font-size:10px}
 .err{color:var(--bad)}
+select,textarea{font:inherit;border:1px solid var(--line);border-radius:10px;padding:9px 12px;background:var(--bg);color:var(--ink)}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;align-items:end;margin-top:12px}
+.form label{font-size:12px;color:var(--ink2);display:block;margin-bottom:3px}
+.form input,.form select{width:100%}
+.pick{max-height:200px;overflow:auto;border:1px solid var(--line);border-radius:10px;padding:6px 10px;margin-top:6px;background:var(--bg)}
+.pick label{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--ink);padding:2px 0;margin:0}
+.pick b.g{display:block;font-size:12px;color:var(--ink2);margin:8px 0 2px;text-transform:uppercase;letter-spacing:.06em}
+.goal{display:flex;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.goal .t{flex:1 1 auto;min-width:0}
+.mini{height:7px;border-radius:4px;background:var(--line);overflow:hidden;margin-top:5px}.mini i{display:block;height:100%;background:var(--acc2)}.mini i.d{background:var(--good)}
+button.sm{padding:5px 10px;font-size:13px}
+tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
+.pill.l0{color:var(--ink2)}.pill.l1{border-color:var(--l1)}.pill.l2{border-color:var(--l2)}.pill.l3{border-color:var(--l3)}.pill.l4{border-color:var(--l4);color:var(--good)}
 </style>
 </head>
 <body>
@@ -147,6 +160,7 @@ svg text{fill:var(--ink2);font-size:10px}
       kpi(wk.items, "Aufgaben · " + pct(wk.correct, wk.items) + " richtig") +
       kpi(t.neu, "neue Wörter (" + days + " Tage)") +
       (m.coins != null ? kpi("🪙 " + m.coins, "Münzen" + (m.wish ? " · Wunsch: " + esc(m.wish) : "")) : "") + "</div></div>";
+    h += '<div class="card" id="goalsCard"></div><div class="card" id="plansCard"></div>';
     h += '<div class="card"><div class="row"><h2 class="grow" style="margin:0">Übungszeit pro Tag</h2><button class="tab" data-d="14" aria-pressed="' + (days === 14) + '">14 Tage</button><button class="tab" data-d="30" aria-pressed="' + (days === 30) + '">30 Tage</button><button class="tab" data-d="90" aria-pressed="' + (days === 90) + '">90 Tage</button></div>' +
       bars(r.days) + '<div class="legend"><span><i style="background:var(--good)"></i>10 Min. oder mehr</span><span><i style="background:var(--acc2)"></i>weniger</span><span class="muted">Insgesamt ' + fmtMin(t.sec) + ", " + t.items + " Aufgaben, " + t.activeDays + " aktive Tage</span></div></div>";
 
@@ -155,8 +169,9 @@ svg text{fill:var(--ink2);font-size:10px}
     else {
       h += "<table><tr><th>Einheit</th><th style=\"width:34%\">Stand</th><th class=\"n\">Gemeistert</th></tr>" +
         r.units.map(function (u) {
-          return "<tr><td>" + esc(u.title) + '<div class="small muted">' + u.seen + " von " + u.total + " Wörtern begonnen</div></td><td>" + stack(u.lv, u.total) + '</td><td class="n">' + u.mastered + " / " + u.total + "</td></tr>";
+          return '<tr class="clk" data-u="' + esc(u.id) + '"><td>' + esc(u.title) + '<div class="small muted">' + u.seen + " von " + u.total + " Wörtern begonnen</div></td><td>" + stack(u.lv, u.total) + '</td><td class="n">' + u.mastered + " / " + u.total + "</td></tr>";
         }).join("") + "</table>" +
+        '<p class="small muted" style="margin:8px 0 0">Tippe auf eine Einheit, um die einzelnen Wörter zu sehen.</p><div id="unitdetail"></div>' +
         '<div class="legend"><span><i style="background:var(--l1)"></i>Angefangen</span><span><i style="background:var(--l2)"></i>Geübt</span><span><i style="background:var(--l3)"></i>Sitzt</span><span><i style="background:var(--l4)"></i>Gemeistert</span></div>';
     }
     h += "</div>";
@@ -174,6 +189,7 @@ svg text{fill:var(--ink2);font-size:10px}
     h += "</div>";
 
     if (r.buys.length) h += '<div class="card"><h2>Käufe im Shop</h2><table>' + r.buys.map(function (b) { return "<tr><td>" + fmtDate(b.ts) + "</td><td>" + esc(b.name) + '</td><td class="n">🪙 ' + b.cost + "</td></tr>"; }).join("") + "</table></div>";
+    h += '<div class="card" id="mailCard"></div>';
     h += '<p class="small muted">Es werden nur Lerndaten gespeichert (Wörter, Antworten, Zeiten, Käufe). Magnus sieht in der App, dass seine Eltern den Fortschritt sehen.</p>';
     view.innerHTML = h;
 
@@ -182,11 +198,106 @@ svg text{fill:var(--ink2);font-size:10px}
     document.getElementById("ren").onclick = function () { var n = prompt("Neuer Name:", p.name); if (n) post("/api/admin/players/" + p.id + "/rename", { name: n }).then(function () { loadPlayers(p.id); }); };
     document.getElementById("rev").onclick = function () { if (confirm("Alle verbundenen Geräte von " + p.name + " trennen? Neu verbinden geht mit einem neuen Code.")) post("/api/admin/players/" + p.id + "/revoke").then(function () { loadPlayers(p.id); }); };
     document.getElementById("del").onclick = function () { if (confirm(p.name + " und alle gespeicherten Lerndaten endgültig löschen?")) api("/api/admin/players/" + p.id, { method: "DELETE" }).then(function () { cur = null; loadPlayers(); }); };
+    drawGoals(p, r); drawPlans(p, r); drawMail();
+    Array.prototype.forEach.call(view.querySelectorAll("tr[data-u]"), function (tr) { tr.onclick = function () { showUnit(p, tr.getAttribute("data-u")); }; });
   }
+  var catCache = {};
+  function getCatalog(pid) { return api("/api/admin/players/" + pid + "/catalog").then(function (c) { catCache[pid] = c; return c; }); }
+  function unitPicker(cat, id) {
+    var groups = {}, order = [];
+    cat.forEach(function (u) { var g = String(u.k); if (!groups[g]) { groups[g] = []; order.push(g); } groups[g].push(u); });
+    order.sort(function (a, b) { return (a === "Headlight 2" ? -1 : b === "Headlight 2" ? 1 : 0) || (a < b ? -1 : 1); });
+    return '<div class="pick" id="' + id + '">' + order.map(function (g) {
+      return '<b class="g">' + esc(/^\d+$/.test(g) ? "Klasse " + g : g) + "</b>" + groups[g].map(function (u) {
+        return '<label><input type="checkbox" value="' + esc(u.id) + '"> ' + esc(u.title.replace(/^Headlight 2 · /, "")) + ' <span class="muted small">(' + u.total + ")</span></label>";
+      }).join("");
+    }).join("") + "</div>";
+  }
+  function picked(id) { return Array.prototype.map.call(document.querySelectorAll("#" + id + " input:checked"), function (c) { return c.value; }); }
+
+  function drawGoals(p, r) {
+    var el = document.getElementById("goalsCard"); if (!el) return;
+    var list = r.goals || [], h = '<h2>Wochenziele</h2>';
+    h += list.length ? list.map(function (g) {
+      var pc = Math.min(100, Math.round(g.cur * 100 / g.target)), wk = g.week.split("-").reverse().slice(0, 2).join(".");
+      return '<div class="goal"><div class="t"><b>' + (g.done ? "✅ " : "") + esc(g.title) + '</b><div class="small muted">Woche ab ' + wk + (g.current ? " (diese Woche)" : "") + " · " + g.cur + " von " + g.target + (g.kind === "unit" ? " %" : "") + (g.coins ? " · 🪙 " + g.coins + " Bonus" : "") + '</div><div class="mini"><i class="' + (g.done ? "d" : "") + '" style="width:' + pc + '%"></i></div></div><button class="ghost sm" data-gdel="' + g.id + '">Löschen</button></div>';
+    }).join("") : '<p class="muted small" style="margin:0">Noch keine Ziele. Magnus sieht Ziele in der App auf der Startseite und bekommt die Bonusmünzen automatisch, wenn er sie schafft.</p>';
+    h += '<details style="margin-top:12px"><summary style="cursor:pointer;color:var(--acc);font-weight:600">＋ Ziel hinzufügen</summary><div class="form">' +
+      '<div><label>Art</label><select id="gk"><option value="minutes">Minuten üben</option><option value="days">Tage üben (mind. 5 Min.)</option><option value="newwords">Neue Wörter lernen</option><option value="unit">Einheit sicher lernen (%)</option></select></div>' +
+      '<div><label id="gtl">Ziel (Minuten pro Woche)</label><input id="gt" type="number" min="1" value="60"></div>' +
+      '<div><label>Bonusmünzen</label><input id="gc" type="number" min="0" max="500" value="30"></div>' +
+      '<div><label>Woche</label><select id="gw"><option value="this">Diese Woche</option><option value="next">Nächste Woche</option></select></div></div>' +
+      '<div id="gu" hidden style="margin-top:8px"><label class="small muted">Einheiten (alle zusammen zählen)</label><div id="gup"></div></div>' +
+      '<div style="margin-top:12px"><button id="gadd">Ziel anlegen</button> <span id="gmsg" class="small err"></span></div></details>';
+    el.innerHTML = h;
+    var defs = { minutes: ["Ziel (Minuten pro Woche)", 60], days: ["Ziel (Tage, 1 bis 7)", 4], newwords: ["Ziel (neue Wörter)", 30], unit: ["Ziel (% sicher, 1 bis 100)", 80] };
+    var k = document.getElementById("gk");
+    k.onchange = function () {
+      document.getElementById("gtl").textContent = defs[k.value][0]; document.getElementById("gt").value = defs[k.value][1];
+      document.getElementById("gu").hidden = k.value !== "unit";
+      if (k.value === "unit" && !document.getElementById("gup").innerHTML) (catCache[p.id] ? Promise.resolve(catCache[p.id]) : getCatalog(p.id)).then(function (c) { document.getElementById("gup").innerHTML = c.length ? unitPicker(c, "gpick") : '<p class="small muted">Noch keine Einheiten bekannt. Sie erscheinen, sobald die App einmal gesendet hat.</p>'; });
+    };
+    document.getElementById("gadd").onclick = function () {
+      post("/api/admin/players/" + p.id + "/goals", { kind: k.value, target: +document.getElementById("gt").value, coins: +document.getElementById("gc").value, week: document.getElementById("gw").value, scope: picked("gpick") })
+        .then(function () { show(); }).catch(function (e) { document.getElementById("gmsg").textContent = e.message; });
+    };
+    Array.prototype.forEach.call(el.querySelectorAll("button[data-gdel]"), function (b) { b.onclick = function () { if (confirm("Ziel löschen?")) api("/api/admin/goals/" + b.getAttribute("data-gdel"), { method: "DELETE" }).then(show); }; });
+  }
+
+  function drawPlans(p, r) {
+    var el = document.getElementById("plansCard"); if (!el) return;
+    var list = r.plans || [], h = "<h2>Lernplan für Klassenarbeiten</h2>";
+    h += list.length ? list.map(function (x) {
+      return '<div class="goal"><div class="t"><b>📅 ' + esc(x.title) + '</b><div class="small muted">Arbeit am ' + x.exam.split("-").reverse().join(".") + " · " + (x.daysLeft > 0 ? "noch " + x.daysLeft + " Tage" : x.daysLeft === 0 ? "heute" : "vorbei") + " · " + x.pct + " % sicher (" + x.ok + " von " + x.total + ")" + (x.coins ? " · 🪙 " + x.coins + " Bonus bei 90 %" : "") + '</div><div class="small muted">' + esc(x.unitTitles.join(", ")) + '</div><div class="mini"><i class="' + (x.pct >= 90 ? "d" : "") + '" style="width:' + Math.min(100, x.pct) + '%"></i></div></div><button class="ghost sm" data-pdel="' + x.id + '">Löschen</button></div>';
+    }).join("") : '<p class="muted small" style="margin:0">Noch kein Lernplan. Mit Datum und Einheiten verteilt die App die Wörter auf die Tage bis zur Arbeit und zeigt Magnus, was heute dran ist.</p>';
+    h += '<details style="margin-top:12px"><summary style="cursor:pointer;color:var(--acc);font-weight:600">＋ Lernplan anlegen</summary><div class="form">' +
+      '<div><label>Bezeichnung</label><input id="pt" maxlength="60" placeholder="z. B. Englischarbeit Unit 4"></div>' +
+      '<div><label>Datum der Arbeit</label><input id="pd" type="date"></div>' +
+      '<div><label>Bonusmünzen bei 90 % sicher</label><input id="pc" type="number" min="0" max="500" value="50"></div></div>' +
+      '<div style="margin-top:8px"><label class="small muted">Einheiten für die Arbeit</label><div id="ppp"><p class="small muted">Lade …</p></div></div>' +
+      '<div style="margin-top:12px"><button id="padd">Lernplan anlegen</button> <span id="pmsg" class="small err"></span></div></details>';
+    el.innerHTML = h;
+    var det = el.querySelector("details");
+    det.addEventListener("toggle", function () {
+      if (det.open && !document.getElementById("ppick")) (catCache[p.id] ? Promise.resolve(catCache[p.id]) : getCatalog(p.id)).then(function (c) { document.getElementById("ppp").innerHTML = c.length ? unitPicker(c, "ppick") : '<p class="small muted">Noch keine Einheiten bekannt. Sie erscheinen, sobald die App einmal gesendet hat.</p>'; });
+    });
+    document.getElementById("padd").onclick = function () {
+      post("/api/admin/players/" + p.id + "/plans", { title: document.getElementById("pt").value, exam: document.getElementById("pd").value, coins: +document.getElementById("pc").value, units: picked("ppick") })
+        .then(function () { show(); }).catch(function (e) { document.getElementById("pmsg").textContent = e.message; });
+    };
+    Array.prototype.forEach.call(el.querySelectorAll("button[data-pdel]"), function (b) { b.onclick = function () { if (confirm("Lernplan löschen?")) api("/api/admin/plans/" + b.getAttribute("data-pdel"), { method: "DELETE" }).then(show); }; });
+  }
+
+  function drawMail() {
+    var el = document.getElementById("mailCard"); if (!el) return;
+    api("/api/admin/mail").then(function (m) {
+      var days = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
+      el.innerHTML = "<h2>Wochenzusammenfassung per Mail</h2>" + (m.configured
+        ? '<p style="margin:0 0 10px">Geht jeden <b>' + days[m.day] + " um " + m.hour + " Uhr</b> an <b>" + esc(m.to) + "</b>." + (m.lastWeek ? ' <span class="muted small">Zuletzt für die Woche ab ' + m.lastWeek.split("-").reverse().join(".") + " gesendet.</span>" : "") + '</p><button class="ghost" id="mtest">Testmail jetzt senden</button> <span id="mmsg" class="small"></span>'
+        : '<p class="muted small" style="margin:0">Noch nicht eingerichtet. Auf dem Server in der Datei .env die Mail-Zugangsdaten eintragen (siehe README, Abschnitt „Wochenmail“).</p>');
+      var b = document.getElementById("mtest");
+      if (b) b.onclick = function () { b.disabled = true; document.getElementById("mmsg").textContent = "Sende …"; post("/api/admin/mail/test").then(function (r) { b.disabled = false; var s = document.getElementById("mmsg"); s.className = "small " + (r.ok ? "" : "err"); s.textContent = r.ok ? "Gesendet. Bitte Postfach prüfen." : "Fehler: " + r.error; }); };
+    }).catch(function () {});
+  }
+
+  function showUnit(p, uid) {
+    var el = document.getElementById("unitdetail"); if (!el) return;
+    el.innerHTML = '<p class="muted small">Lade …</p>';
+    api("/api/admin/players/" + p.id + "/unit/" + encodeURIComponent(uid)).then(function (u) {
+      var h = '<div style="margin-top:14px"><div class="row"><b class="grow">' + esc(u.title) + '</b><button class="ghost sm" id="udx">Schließen</button></div>';
+      if (!u.hasTexts) h += '<p class="small muted">Die Wörter selbst kommen mit der nächsten Übertragung der App (App öffnen, eine Runde lernen).</p>';
+      h += '<table><tr><th>Wort</th><th>Bedeutung</th><th>Stand</th><th class="n">✓</th><th class="n">✗</th><th>Zuletzt</th></tr>' + u.words.map(function (w) {
+        return "<tr><td><b>" + esc(w.en || "#" + (w.i + 1)) + "</b></td><td>" + esc(w.de) + '</td><td><span class="pill l' + w.lv + '">' + LV[w.lv] + '</span></td><td class="n">' + w.ok + '</td><td class="n">' + (w.no ? '<b class="err">' + w.no + "</b>" : 0) + "</td><td>" + (w.last ? fmtAgo(w.last) : "–") + "</td></tr>";
+      }).join("") + "</table></div>";
+      el.innerHTML = h; el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      document.getElementById("udx").onclick = function () { el.innerHTML = ""; };
+    }).catch(function (e) { el.innerHTML = '<p class="err small">' + esc(e.message) + "</p>"; });
+  }
+
   function kpi(v, l) { return '<div class="kpi"><b>' + v + "</b><span>" + l + "</span></div>"; }
 
   loadPlayers();
-  setInterval(function () { if (cur !== "new" && !document.hidden && !document.getElementById("nn") && !document.getElementById("ic")) show(); }, 120000);
+  setInterval(function () { if (cur !== "new" && !document.hidden && !document.getElementById("nn") && !document.getElementById("ic") && !document.querySelector("details[open]") && !document.getElementById("unitdetail").innerHTML) show(); }, 120000);
 })();
 </script>
 </body>

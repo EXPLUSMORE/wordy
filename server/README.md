@@ -3,6 +3,18 @@
 Nimmt den Lernverlauf der Wordy-App entgegen und zeigt ihn den Eltern im Dashboard.
 Keine Abhängigkeiten: nur **Node.js ab 22.13** (eingebautes SQLite). Daten liegen in einer einzigen Datei.
 
+## Funktionen im Dashboard
+- **Wochenziele:** Minuten üben, Übungstage (ab 5 Minuten), neue Wörter oder eine Einheit zu x % sicher gelernt (Stufe „Sitzt“ oder höher). Mit Bonusmünzen. Die App holt die Ziele ab und zeigt sie auf der Startseite. Die Münzen werden automatisch gutgeschrieben, genau einmal.
+- **Lernplan für Klassenarbeiten:** Datum und Einheiten festlegen. Die App zeigt, wie viele neue Wörter heute dran sind, und übt gezielt nur diese Einheiten. Bonus bei 90 % sicher.
+- **Einzelansicht pro Einheit:** Tippe im Dashboard auf eine Einheit, dann siehst du alle Wörter mit Stand, richtigen und falschen Antworten.
+- **Wochenmail:** siehe unten.
+
+## Wochenmail
+Zugangsdaten eines Mailkontos in die `.env` eintragen (Vorlage am Ende von `.env.example`), dann `sudo systemctl restart wordy-server`.
+Im Dashboard unten steht danach „Geht jeden Sonntag um 18 Uhr an …“ und eine Schaltfläche **Testmail jetzt senden**.
+Der Versand nutzt SMTP mit Anmeldung (Port 587 STARTTLS oder 465). Bei Microsoft 365 ist „SMTP AUTH“ oft gesperrt. Dann ein anderes Konto oder einen Mailversanddienst nehmen.
+Wenn der Versand an einem Tag dreimal scheitert, wird er bis zur nächsten Woche nicht erneut versucht. Die Ursache steht im Protokoll: `sudo journalctl -u wordy-server -n 30`.
+
 ## Adressen
 - **App:** `https://wordy.explusmore.com` bleibt unverändert (GitHub Pages).
 - **Server und Dashboard:** eigene Subdomain `https://track.wordy.explusmore.com` (ein zusätzlicher DNS-Eintrag auf den Server, die App-Adresse wird nicht berührt).

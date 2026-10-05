@@ -439,7 +439,7 @@ html.ar-open, html.ar-open body{overflow:hidden}
 </style>
 
 
-<script>window.WORDY_VERSION="1.6.0";window.WORDY_BUILD="a7ccafd738";</script>
+<script>window.WORDY_VERSION="1.7.0";window.WORDY_BUILD="7cbacd0143";</script>
 </head>
 <body>
 <div id="app">
@@ -3335,7 +3335,7 @@ window.VERBS = [
     var t = today();
     if (!state.daily || state.daily.date !== t) {
       if (state.daily && state.daily.items > 0) state.history[state.daily.date] = {
-        items: state.daily.items, correct: state.daily.correct, sec: state.daily.sec, xp: state.daily.xp
+        items: state.daily.items, correct: state.daily.correct, sec: state.daily.sec, xp: state.daily.xp, newSeen: state.daily.newSeen || 0
       };
       state.daily = { date: t, items: 0, correct: 0, sec: 0, xp: 0, newSeen: 0, missions: makeMissions(), done: false };
       state.streak.usedToday = false;
@@ -3555,8 +3555,8 @@ window.VERBS = [
     act.forEach(function (x) { var r = state.s[x.id]; if (r && r.reps) { seen++; if (r.iv >= 21) mastered++; } });
     return { total: act.length, seen: seen, mastered: mastered, ok: state.totals.sentOk };
   }
-  function pools() {
-    var now = Date.now(), act = activeWords();
+  function pools(scope) {
+    var now = Date.now(), act = scope ? words.filter(function (w) { return scope.indexOf(w.unit) >= 0; }) : activeWords();
     var due = [], box = [], fresh = [], learning = [];
     act.forEach(function (w) {
       var r = state.w[w.id];
@@ -3573,7 +3573,7 @@ window.VERBS = [
     opts = opts || {};
     var minutes = opts.minutes || 5;
     var n = Math.max(5, Math.round(minutes * 60 / SEC_PER_ITEM));
-    var p = pools(), out = [];
+    var p = pools(opts.scope), out = [];
     if (opts.unit) {
       var list = words.filter(function (w) { return w.unit === opts.unit; });
       out = shuffle(list).slice(0, Math.max(n, 10));
@@ -3586,7 +3586,7 @@ window.VERBS = [
       return out;
     }
     var wantBox = Math.round(n * 0.25), wantNew = Math.round(n * 0.25);
-    var newLeft = Math.max(0, state.settings.newPerDay - state.daily.newSeen);
+    var newLeft = Math.max(0, (opts.newMax != null ? opts.newMax : state.settings.newPerDay) - state.daily.newSeen);
     wantNew = Math.min(wantNew, newLeft, p.fresh.length);
     var takeBox = p.box.slice(0, Math.min(wantBox, p.box.length));
     var takeNew = p.fresh.slice(0, wantNew);
@@ -3826,10 +3826,11 @@ window.VERBS = [
   function coinsToday() {
     var d = state.daily || {}, cl = d.cl || {}, next = 0, nextDays = 0;
     Object.keys(STREAK_BONUS).map(Number).sort(function (a, b) { return a - b; }).some(function (k) { if (k > state.streak.count) { next = k; nextDays = k - state.streak.count; return true; } });
-    return { fortschritt: cl.fortschritt || 0, missionen: cl.missionen || 0, ziel: cl.ziel || 0, serie: cl.serie || 0, arena: d.arenaCoins || 0,
+    return { fortschritt: cl.fortschritt || 0, missionen: cl.missionen || 0, ziel: cl.ziel || 0, serie: cl.serie || 0, eltern: cl.eltern || 0, arena: d.arenaCoins || 0,
       missionenDone: (d.missions || []).filter(function (m) { return m.done; }).length, missionenAll: (d.missions || []).length,
       zielDone: !!d.done, streakNext: next, streakDays: nextDays, streakBonus: STREAK_BONUS[next] || 0 };
   }
+  function parentCoins(c) { if (c > 0) { addCoins(c); addCl("eltern", c); save(true); } }
   function wish() {
     var id = state.profile.wish, it = id ? itemById(id) : null;
     if (it && owns(it)) { state.profile.wish = null; it = null; }
@@ -3871,7 +3872,7 @@ window.VERBS = [
     backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
-    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, stickers: stickers, owns: owns, isActive: isActive, minXp: minXp, defaultOf: defaultOf
+    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, owns: owns, isActive: isActive, minXp: minXp, defaultOf: defaultOf
   };
 })(window);
 </script>
@@ -4502,6 +4503,35 @@ window.VERBS = [
   }
 
   /* ================= START ================= */
+
+  /* ---------- Ziele und Lernpläne der Eltern (Startseite) ---------- */
+  function parentCards() {
+    var W = window.WordySync; if (!W || !W.connected()) return "";
+    var h = "", goals = W.currentGoals(), plans = W.activePlans(), st = S.state;
+    plans.forEach(function (pl) {
+      var i = W.planInfo(pl), done = st.goalsDone && st.goalsDone["p" + pl.id];
+      var when = i.days > 1 ? "in " + i.days + " Tagen" : i.days === 1 ? "morgen" : "heute";
+      var newToday = (st.daily && st.daily.newSeen) || 0, left = Math.max(0, i.quota - newToday);
+      h += '<section class="card"><div class="eyebrow">📅 Lernplan</div>' +
+        '<div style="margin-top:6px"><b>' + esc(pl.title) + '</b> <span class="small muted">· Arbeit ' + when + '</span></div>' +
+        '<div class="bar" style="margin:10px 0 6px"><i style="width:' + i.pct + '%"></i></div>' +
+        '<p class="small muted" style="margin:0 0 10px">' + i.pct + ' % sicher (' + i.ok + ' von ' + i.total + ' Wörtern)' +
+        (done ? ' · ✅ Ziel erreicht' : pl.coins ? ' · Bonus ' + pl.coins + ' Münzen bei 90 %' : '') + '</p>' +
+        (i.total - i.ok > 0 ? '<p class="small" style="margin:0 0 10px">Heute dran: ' + (left > 0 ? '<b>' + left + ' neue ' + plural(left, "Wort", "Wörter") + '</b> und ' : '') + 'Wiederholung.</p>' : '') +
+        '<button class="btn wide" data-act="startplan" data-id="' + esc(pl.id) + '">Lernplan üben</button></section>';
+    });
+    if (goals.length) {
+      h += '<section class="card"><div class="eyebrow">🎯 Wochenziele von deinen Eltern</div><div style="margin-top:8px">' + goals.map(function (g) {
+        var pr = W.progress(g), done = st.goalsDone && st.goalsDone["g" + g.id];
+        return '<div style="padding:8px 0;border-top:1px solid var(--line)"><div class="row"><b class="small" style="flex:1 1 auto">' + (done ? "✅ " : "") + esc(g.title) + '</b>' +
+          '<span class="pill tnum">' + Math.min(pr.cur, g.target) + ' / ' + g.target + (g.kind === "unit" ? " %" : "") + '</span></div>' +
+          '<div class="bar" style="margin-top:6px"><i style="width:' + (done ? 100 : pr.pct) + '%"></i></div>' +
+          (g.coins ? '<div class="small muted" style="margin-top:4px">' + (done ? 'Geschafft, ' + g.coins + ' Münzen sind gutgeschrieben.' : 'Belohnung: 🪙 ' + g.coins) + '</div>' : '') + '</div>';
+      }).join("") + '</div></section>';
+    }
+    return h;
+  }
+
   function viewHome() {
     var st = S.state, p = S.pools(), stt = S.stats(), r = S.rankOf(st.xp);
     var goalSec = st.settings.goalMin * 60, pct = Math.min(100, Math.round(st.daily.sec * 100 / goalSec));
@@ -4525,6 +4555,7 @@ window.VERBS = [
       '<span>🛡️ ' + st.streak.freezes + ' Streak-Schutz</span>' +
       (r.next ? '<span>Noch ' + toNext + ' XP bis ' + esc(r.next.n) + '</span>' : '<span>Höchster Rang erreicht</span>') +
       '</div></div></section>';
+    html += parentCards();
 
     html += '<section class="card"><div class="eyebrow">Wie viel Zeit hast du?</div>' +
       '<div class="quick" style="margin-top:10px">' +
@@ -4710,6 +4741,16 @@ window.VERBS = [
 
 
   /* ---------- Eltern-Dashboard: Verbindung zum Server ---------- */
+  {   // sync.js wird nach app.js geladen und ruft diese Hooks auf
+    window.WordyHooks = {};
+    window.WordyHooks.onChange = function () { if (tab === "home" && sessionEl.hidden) render(); };
+    window.WordyHooks.onReward = function (list) {
+      var c = list.reduce(function (a, x) { return a + (x.coins || 0); }, 0);
+      toast("🎉 " + (list[0].kind === "plan" ? "Lernplan geschafft" : "Wochenziel geschafft") + ": " + list[0].title + (c ? " · +" + c + " Münzen" : ""), 6000);
+      try { if (window.VTC && S.state.settings.audio) window.VTC.sound(S.state.profile.snd, true); window.VTC.burst(S.state.profile.fx, window.innerWidth / 2, window.innerHeight * .4, 24, 1); } catch (e) {}
+      if (tab === "home" && sessionEl.hidden) render();
+    };
+  }
   function agoText(t) { var m = Math.round((Date.now() - t) / 60000); return m < 1 ? "gerade eben" : m < 60 ? "vor " + m + " Min." : m < 1440 ? "vor " + Math.round(m / 60) + " Std." : "vor " + Math.round(m / 1440) + " Tg."; }
   function syncCard() {
     var W = window.WordySync; if (!W) return "";
@@ -4731,7 +4772,7 @@ window.VERBS = [
 
   /* ---------- Münzen: Übersicht und Regeln ---------- */
   function coinsCard() {
-    var c = S.coinsToday(), st = S.state, total = c.fortschritt + c.missionen + c.ziel + c.serie + c.arena;
+    var c = S.coinsToday(), st = S.state, total = c.fortschritt + c.missionen + c.ziel + c.serie + c.arena + c.eltern;
     function row(label, sub, val, done) {
       return '<div class="row" style="gap:10px;align-items:baseline;padding:6px 0;border-top:1px solid var(--line)"><div style="flex:1 1 auto"><b class="small">' + label + '</b>' +
         (sub ? '<div class="small muted">' + sub + '</div>' : "") + '</div><b class="tnum" style="' + (done ? "color:var(--good)" : "") + '">' + val + '</b></div>';
@@ -4742,6 +4783,7 @@ window.VERBS = [
       row("Missionen", c.missionenDone + " von " + c.missionenAll + " erfüllt", "+" + c.missionen, c.missionenDone === c.missionenAll && c.missionenAll > 0) +
       row("Tagesziel", c.zielDone ? "geschafft" : "noch offen: " + st.settings.goalMin + " Minuten üben", c.zielDone ? "+" + c.ziel : "+20 möglich", c.zielDone) +
       row("Arena", "Tageslimit 30", c.arena + " / 30", c.arena >= 30) +
+      (c.eltern ? row("Ziele der Eltern", "Wochenziel oder Lernplan geschafft", "+" + c.eltern, true) : "") +
       (c.streakNext ? row("Serien-Bonus", "noch " + c.streakDays + " " + plural(c.streakDays, "Tag", "Tage") + " bis zum " + c.streakNext + ". Tag", "+" + c.streakBonus + " möglich") : "") +
       '<details style="margin-top:10px"><summary class="small" style="cursor:pointer;font-weight:700">So verdienst du Münzen</summary>' +
       '<div class="small" style="margin-top:8px;line-height:1.7">' +
@@ -5204,7 +5246,7 @@ window.VERBS = [
     if (!list.length) { toast(sentOnly ? "Alle Sätze dieses Bereichs sind gerade erledigt." : "Für diese Auswahl gibt es gerade nichts zu üben."); return; }
     var tasks = buildTasks(list, sentOnly);
     /* Unregelmäßige Verben: in normalen Schulrunden immer wieder eingestreut */
-    if (!sentOnly && !opts.unit && opts.mode !== "box" && opts.mode !== "new" && S.state.settings.track === "schule") {
+    if (!sentOnly && !opts.unit && !opts.scope && opts.mode !== "box" && opts.mode !== "new" && S.state.settings.track === "schule") {
       var vs = S.planVerbs(Math.max(1, Math.round(tasks.length / 8)), { mix: true });
       verbTasks(vs).forEach(function (vt, i) {
         var pos = Math.min(tasks.length, Math.round((i + 1) * tasks.length / (vs.length + 1)) + 2);
@@ -5743,6 +5785,10 @@ window.VERBS = [
     else if (a === "readall") {
       var u = S.units().filter(function (x) { return x.id === act.getAttribute("data-id"); })[0];
       if (u) readAll(u, act);
+    }
+    else if (a === "startplan") {
+      var pl = window.WordySync.activePlans().filter(function (x) { return String(x.id) === act.getAttribute("data-id"); })[0];
+      if (pl) { var pi = window.WordySync.planInfo(pl); startSession({ minutes: st.settings.goalMin, scope: pl.units, newMax: Math.max(pi.quota, (st.daily && st.daily.newSeen) || 0), mode: "plan" }); }
     }
     else if (a === "syncpair") {
       var inp = $("#syncCode"), txt = inp ? inp.value : ""; act.disabled = true; act.textContent = "Verbinde …";
@@ -6342,8 +6388,87 @@ window.VERBS = [
       wish: (VT.wish && VT.wish()) ? VT.wish().label || VT.wish().id : "", klassen: st.settings.klassen, version: g.WORDY_VERSION || "", totals: st.totals
     };
     lastSnap = Date.now();
-    return post(c, "/api/snapshot", { words: words, catalog: Object.keys(units).map(function (k) { return units[k]; }), meta: meta }).then(function (r) { return r.ok; }).catch(function () { return false; });
+    var body = { words: words, catalog: Object.keys(units).map(function (k) { return units[k]; }), meta: meta }, tp = textsPayload();
+    if (tp.sig !== c.textsSig) body.texts = tp.texts;
+    return post(c, "/api/snapshot", body).then(function (r) { if (r.ok && body.texts) setCfg({ textsSig: tp.sig }); return r.ok; }).catch(function () { return false; });
   };
+
+
+  /* ---------- Ziele und Lernpläne der Eltern ---------- */
+  var lastPull = 0;
+  function addDays(d, n) { var a = d.split("-").map(Number); return new Date(Date.UTC(a[0], a[1] - 1, a[2] + n)).toISOString().slice(0, 10); }
+  function monday(d) { var a = d.split("-").map(Number), wd = (new Date(Date.UTC(a[0], a[1] - 1, a[2])).getUTCDay() + 6) % 7; return addDays(d, -wd); }
+  function dayDiff(a, b) { return Math.round((Date.parse(b + "T00:00:00Z") - Date.parse(a + "T00:00:00Z")) / 86400000); }
+  function dayStat(k) { var st = VT.state; return st.daily && st.daily.date === k ? st.daily : st.history[k]; }
+  W.remote = function () { return lsGet("wordy.cfg." + pid()) || { goals: [], plans: [] }; };
+
+  W.progress = function (goal) {
+    var cur = 0, i, h;
+    if (goal.kind === "unit") {
+      var total = 0, ok = 0;
+      VT.units().forEach(function (u) {
+        if (goal.scope.indexOf(u.id) < 0) return;
+        total += u.words.length;
+        for (i = 0; i < u.words.length; i++) if (VT.levelOf(u.id + "#" + i) >= 3) ok++;
+      });
+      cur = total ? Math.round(ok * 100 / total) : 0;
+    } else {
+      for (i = 0; i < 7; i++) {
+        h = dayStat(addDays(goal.week, i)); if (!h) continue;
+        if (goal.kind === "minutes") cur += (h.sec || 0) / 60;
+        else if (goal.kind === "days") { if ((h.sec || 0) >= 300) cur++; }
+        else if (goal.kind === "newwords") cur += h.newSeen || 0;
+      }
+      cur = Math.round(cur);
+    }
+    return { cur: cur, pct: Math.min(100, Math.round(cur * 100 / Math.max(1, goal.target))) };
+  };
+  W.planInfo = function (pl) {
+    var total = 0, ok = 0, today = VT.today();
+    VT.words().forEach(function (w) { if (pl.units.indexOf(w.unit) >= 0) { total++; if (VT.levelOf(w.id) >= 3) ok++; } });
+    var days = dayDiff(today, pl.exam), learnDays = Math.max(1, days);
+    return { total: total, ok: ok, pct: total ? Math.round(ok * 100 / total) : 0, days: days, quota: Math.ceil((total - ok) / learnDays) };
+  };
+  W.currentGoals = function () { var mon = monday(VT.today()); return W.remote().goals.filter(function (g) { return g.week === mon; }); };
+  W.activePlans = function () { var t = VT.today(); return W.remote().plans.filter(function (p) { return p.exam >= t; }); };
+
+  /* Prüft Ziele und Pläne; vergibt Bonusmünzen genau einmal */
+  W.check = function () {
+    if (!W.connected()) return;
+    var st = VT.state, got = [];
+    if (!st.goalsDone) st.goalsDone = {};
+    W.currentGoals().forEach(function (g) {
+      var key = "g" + g.id; if (st.goalsDone[key]) return;
+      if (W.progress(g).cur >= g.target) { st.goalsDone[key] = 1; VT.parentCoins(g.coins); W.log("goal", { id: g.id, done: 1 }); got.push({ title: g.title, coins: g.coins, kind: "goal" }); }
+    });
+    W.activePlans().forEach(function (pl) {
+      var key = "p" + pl.id; if (st.goalsDone[key]) return;
+      if (W.planInfo(pl).pct >= 90) { st.goalsDone[key] = 1; VT.parentCoins(pl.coins); W.log("plan", { id: pl.id, done: 1 }); got.push({ title: pl.title, coins: pl.coins, kind: "plan" }); }
+    });
+    if (got.length) { VT.save(true); if (g.WordyHooks && g.WordyHooks.onReward) g.WordyHooks.onReward(got); }
+  };
+
+  W.pull = function (force) {
+    var c = cfg(); if (!c || !c.token || !g.fetch) return Promise.resolve(false);
+    if (!force && Date.now() - lastPull < 3 * 60000) return Promise.resolve(false);
+    lastPull = Date.now();
+    return g.fetch(c.url + "/api/sync", { headers: { Authorization: "Bearer " + c.token } })
+      .then(function (r) { if (!r.ok) throw new Error(String(r.status)); return r.json(); })
+      .then(function (j) { lsSet("wordy.cfg." + pid(), { goals: j.goals || [], plans: j.plans || [], t: Date.now() }); W.check(); if (g.WordyHooks && g.WordyHooks.onChange) g.WordyHooks.onChange(); return true; })
+      .catch(function () { return false; });
+  };
+
+  /* Wörter der Einheiten im Klartext, damit das Dashboard sie anzeigen kann (nur wenn sich etwas geändert hat) */
+  function textsPayload() {
+    var st = VT.state, sel = st.settings.klassen || [], out = {}, sig = "";
+    VT.units().forEach(function (u) {
+      if (u.track !== "schule") return;
+      var touched = false, i;
+      if (sel.indexOf(u.k) < 0) { for (i = 0; i < u.words.length && !touched; i++) if (st.w[u.id + "#" + i]) touched = true; if (!touched) return; }
+      out[u.id] = u.words.map(function (w) { return [w[0], w[1]]; }); sig += u.id + ":" + u.words.length + ";";
+    });
+    return { texts: out, sig: sig };
+  }
 
   /* Verbinden mit dem Code der Eltern: "https://server#ABCD-EFGH" */
   W.pair = function (text) {
@@ -6356,22 +6481,23 @@ window.VERBS = [
         if (!x.ok) return { error: x.j && x.j.error || "Verbinden hat nicht geklappt." };
         lsSet("wordy.sync." + pid(), { url: url, token: x.j.token, name: x.j.name, last: 0 });
         W.log("hello", { v: g.WORDY_VERSION || "" });
-        return W.snapshot().then(function () { return flush(false); }).then(function () { return { ok: true, name: x.j.name }; });
+        return W.snapshot().then(function () { return flush(false); }).then(function () { return W.pull(true); }).then(function () { return { ok: true, name: x.j.name }; });
       }).catch(function () { return { error: "Der Server ist nicht erreichbar. Gibt es Netz, und stimmt die Adresse?" }; });
   };
-  W.disconnect = function () { try { g.localStorage.removeItem("wordy.sync." + pid()); g.localStorage.removeItem("wordy.q." + pid()); } catch (e) {} };
+  W.disconnect = function () { try { g.localStorage.removeItem("wordy.sync." + pid()); g.localStorage.removeItem("wordy.q." + pid()); g.localStorage.removeItem("wordy.cfg." + pid()); } catch (e) {} };
 
   /* Aus der App: Ende einer Lernrunde */
   W.sessionEnd = function (d) {
     if (!W.connected()) return;
     W.log("ss", d);
-    flush(false).then(function () { return W.snapshot(); });
+    W.check();
+    flush(false).then(function () { return W.snapshot(); }).then(function () { return W.pull(true); });
   };
   W.maybeSnapshot = function () { if (W.connected() && Date.now() - lastSnap > 10 * 60000) W.snapshot(); };
 
-  g.addEventListener("visibilitychange", function () { if (g.document.visibilityState === "hidden") flush(true); else flush(false); });
+  g.addEventListener("visibilitychange", function () { if (g.document.visibilityState === "hidden") flush(true); else { flush(false); W.pull(false); } });
   g.addEventListener("online", function () { flush(false); });
-  setTimeout(function () { flush(false); W.maybeSnapshot(); }, 4000);
+  setTimeout(function () { flush(false); W.maybeSnapshot(); W.pull(true); }, 4000);
 })(window);
 </script>
 

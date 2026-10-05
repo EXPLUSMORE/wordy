@@ -270,7 +270,7 @@
     var t = today();
     if (!state.daily || state.daily.date !== t) {
       if (state.daily && state.daily.items > 0) state.history[state.daily.date] = {
-        items: state.daily.items, correct: state.daily.correct, sec: state.daily.sec, xp: state.daily.xp
+        items: state.daily.items, correct: state.daily.correct, sec: state.daily.sec, xp: state.daily.xp, newSeen: state.daily.newSeen || 0
       };
       state.daily = { date: t, items: 0, correct: 0, sec: 0, xp: 0, newSeen: 0, missions: makeMissions(), done: false };
       state.streak.usedToday = false;
@@ -490,8 +490,8 @@
     act.forEach(function (x) { var r = state.s[x.id]; if (r && r.reps) { seen++; if (r.iv >= 21) mastered++; } });
     return { total: act.length, seen: seen, mastered: mastered, ok: state.totals.sentOk };
   }
-  function pools() {
-    var now = Date.now(), act = activeWords();
+  function pools(scope) {
+    var now = Date.now(), act = scope ? words.filter(function (w) { return scope.indexOf(w.unit) >= 0; }) : activeWords();
     var due = [], box = [], fresh = [], learning = [];
     act.forEach(function (w) {
       var r = state.w[w.id];
@@ -508,7 +508,7 @@
     opts = opts || {};
     var minutes = opts.minutes || 5;
     var n = Math.max(5, Math.round(minutes * 60 / SEC_PER_ITEM));
-    var p = pools(), out = [];
+    var p = pools(opts.scope), out = [];
     if (opts.unit) {
       var list = words.filter(function (w) { return w.unit === opts.unit; });
       out = shuffle(list).slice(0, Math.max(n, 10));
@@ -521,7 +521,7 @@
       return out;
     }
     var wantBox = Math.round(n * 0.25), wantNew = Math.round(n * 0.25);
-    var newLeft = Math.max(0, state.settings.newPerDay - state.daily.newSeen);
+    var newLeft = Math.max(0, (opts.newMax != null ? opts.newMax : state.settings.newPerDay) - state.daily.newSeen);
     wantNew = Math.min(wantNew, newLeft, p.fresh.length);
     var takeBox = p.box.slice(0, Math.min(wantBox, p.box.length));
     var takeNew = p.fresh.slice(0, wantNew);
@@ -761,10 +761,11 @@
   function coinsToday() {
     var d = state.daily || {}, cl = d.cl || {}, next = 0, nextDays = 0;
     Object.keys(STREAK_BONUS).map(Number).sort(function (a, b) { return a - b; }).some(function (k) { if (k > state.streak.count) { next = k; nextDays = k - state.streak.count; return true; } });
-    return { fortschritt: cl.fortschritt || 0, missionen: cl.missionen || 0, ziel: cl.ziel || 0, serie: cl.serie || 0, arena: d.arenaCoins || 0,
+    return { fortschritt: cl.fortschritt || 0, missionen: cl.missionen || 0, ziel: cl.ziel || 0, serie: cl.serie || 0, eltern: cl.eltern || 0, arena: d.arenaCoins || 0,
       missionenDone: (d.missions || []).filter(function (m) { return m.done; }).length, missionenAll: (d.missions || []).length,
       zielDone: !!d.done, streakNext: next, streakDays: nextDays, streakBonus: STREAK_BONUS[next] || 0 };
   }
+  function parentCoins(c) { if (c > 0) { addCoins(c); addCl("eltern", c); save(true); } }
   function wish() {
     var id = state.profile.wish, it = id ? itemById(id) : null;
     if (it && owns(it)) { state.profile.wish = null; it = null; }
@@ -806,6 +807,6 @@
     backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
-    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, stickers: stickers, owns: owns, isActive: isActive, minXp: minXp, defaultOf: defaultOf
+    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, owns: owns, isActive: isActive, minXp: minXp, defaultOf: defaultOf
   };
 })(window);

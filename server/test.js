@@ -5,8 +5,29 @@ const os = require("node:os"), path = require("node:path"), fs = require("node:f
 const dir = fs.mkdtempSync(path.join(os.tmpdir(), "wordy-"));
 const PORT = 18900 + Math.floor(Math.random() * 500), base = "http://127.0.0.1:" + PORT;
 const auth = "Basic " + Buffer.from("eltern:test-passwort-123").toString("base64");
-const srv = spawn(process.execPath, [path.join(__dirname, "server.js")], { env: Object.assign({}, process.env, { PORT, DB_FILE: path.join(dir, "t.db"), ADMIN_PASSWORD: "test-passwort-123" }), stdio: "inherit" });
+const net = require("node:net");
+let mailGot = "";
+const smtpPort = 19900 + Math.floor(Math.random() * 90);
+const fake = net.createServer(c => {
+  let data = false, buf = "";
+  c.write("220 fake\r\n");
+  c.on("data", d => {
+    buf += d.toString();
+    let i;
+    while ((i = buf.indexOf("\r\n")) >= 0) {
+      const l = buf.slice(0, i); buf = buf.slice(i + 2);
+      if (data) { if (l === ".") { data = false; c.write("250 ok\r\n"); } else mailGot += l + "\n"; continue; }
+      if (/^EHLO/.test(l)) c.write("250-fake\r\n250 AUTH PLAIN\r\n");
+      else if (/^AUTH/.test(l)) c.write("235 ok\r\n");
+      else if (/^(MAIL|RCPT)/.test(l)) c.write("250 ok\r\n");
+      else if (l === "DATA") { data = true; c.write("354 go\r\n"); }
+      else if (l === "QUIT") { c.write("221 bye\r\n"); c.end(); }
+    }
+  });
+}).listen(smtpPort, "127.0.0.1");
+const srv = spawn(process.execPath, [path.join(__dirname, "server.js")], { env: Object.assign({}, process.env, { PORT, DB_FILE: path.join(dir, "t.db"), ADMIN_PASSWORD: "test-passwort-123", SMTP_HOST: "127.0.0.1", SMTP_PORT: String(smtpPort), SMTP_SECURE: "none", SMTP_USER: "u", SMTP_PASSWORD: "p", MAIL_FROM: "Wordy <w@example.org>", MAIL_TO: "eltern@example.org" }), stdio: "inherit" });
 const wait = ms => new Promise(r => setTimeout(r, ms));
+const T2 = t => ({ Authorization: "Bearer " + t, "Content-Type": "application/json" });
 const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await r.json().catch(() => null) }));
 (async () => {
   try {
@@ -45,9 +66,40 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     assert.equal(pl.j[0].events, 4);
     const page = await fetch(base + "/", { headers: { Authorization: auth } });
     assert.equal(page.status, 200);
+
+    // ---- Wochenziele, Lernplan, Abholen, Einheitsdetail, Mail
+    const catalog = [{ id: "H2-1a", title: "Headlight 2 · Unit 1 · Together again (1)", k: "Headlight 2", total: 37 }];
+    await J("/api/snapshot", { method: "POST", headers: T2(pr.j.token), body: JSON.stringify({ texts: { "H2-1a": [["mountain", "Berg"], ["lake", "See"]] }, catalog }) });
+    const mkGoal = b => J("/api/admin/players/" + mk.j.id + "/goals", { method: "POST", headers: H, body: JSON.stringify(b) });
+    assert.equal((await mkGoal({ kind: "bogus", target: 5 })).s, 400, "unbekannte Art");
+    assert.equal((await mkGoal({ kind: "unit", target: 80, scope: [] })).s, 400, "Einheit fehlt");
+    const g1 = await mkGoal({ kind: "minutes", target: 10, coins: 30 });
+    const g2 = await mkGoal({ kind: "unit", target: 5, coins: 20, scope: ["H2-1a"] });
+    assert.equal(g1.s, 200); assert.equal(g2.s, 200);
+    const gl = await J("/api/admin/players/" + mk.j.id + "/goals", { headers: H });
+    const m1 = gl.j.find(g => g.kind === "minutes");
+    assert.equal(m1.cur, 12, "700 Sekunden = 12 Minuten"); assert.equal(m1.done, true);
+    assert.equal(gl.j.find(g => g.kind === "unit").cur, 3, "1 von 37 Wörtern sicher = 3 %");
+    assert.ok(gl.j.find(g => g.kind === "unit").title.includes("Unit 1"), "Titel nennt die Einheit");
+    const tomorrow = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Berlin", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(Date.now() + 3 * 86400000));
+    assert.equal((await J("/api/admin/players/" + mk.j.id + "/plans", { method: "POST", headers: H, body: JSON.stringify({ title: "Arbeit", exam: "2020-01-01", units: ["H2-1a"] }) })).s, 400, "Datum in der Vergangenheit");
+    assert.equal((await J("/api/admin/players/" + mk.j.id + "/plans", { method: "POST", headers: H, body: JSON.stringify({ title: "Arbeit Unit 1", exam: tomorrow, units: ["H2-1a"], coins: 50 }) })).s, 200);
+    const sy = await J("/api/sync", { headers: { Authorization: "Bearer " + pr.j.token } });
+    assert.equal(sy.s, 200); assert.equal(sy.j.goals.length, 2); assert.equal(sy.j.plans[0].units[0], "H2-1a");
+    assert.equal((await J("/api/sync")).s, 401, "Abholen nur mit Schlüssel");
+    const ud = await J("/api/admin/players/" + mk.j.id + "/unit/H2-1a", { headers: H });
+    assert.equal(ud.j.words[0].en, "mountain"); assert.equal(ud.j.words[0].lv, 1); assert.equal(ud.j.words[2].lv, 4);
+    assert.equal(ud.j.words.length, 37);
+    const plr = await J("/api/admin/players/" + mk.j.id + "/plans", { headers: H });
+    assert.equal(plr.j[0].daysLeft, 3);
+    const ml = await J("/api/admin/mail/test", { method: "POST", headers: H });
+    assert.equal(ml.j.ok, true, "Testmail: " + (ml.j.error || ""));
+    const decoded = (mailGot.match(/^[A-Za-z0-9+\/=]{20,}$/gm) || []).map(x => Buffer.from(x, "base64").toString("utf8")).join("\n");
+    assert.ok(/Magnus/.test(decoded) && /Übungszeit/.test(decoded) && /Wochenziele/.test(decoded) && /Lernplan/.test(decoded), "Mail enthält Spieler, Zeit, Ziele, Lernplan");
+    assert.ok(/Subject: =\?UTF-8/.test(mailGot) || /Subject: Wordy/.test(mailGot), "Betreff vorhanden");
     await J("/api/admin/players/" + mk.j.id + "/revoke", { method: "POST", headers: H });
     assert.equal((await J("/api/events", { method: "POST", headers: T, body: "{}" })).s, 401, "nach Trennen gesperrt");
     console.log("Alle Prüfungen bestanden.");
   } catch (e) { console.error("FEHLER:", e.message); process.exitCode = 1; }
-  srv.kill(); fs.rmSync(dir, { recursive: true, force: true });
+  srv.kill(); fake.close(); fs.rmSync(dir, { recursive: true, force: true });
 })();
