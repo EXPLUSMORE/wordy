@@ -378,6 +378,28 @@
       '<section class="card"><div class="eyebrow">Wortliste</div>' + rows + '</section></div>';
   }
 
+  /* ---------- Münzen: Übersicht und Regeln ---------- */
+  function coinsCard() {
+    var c = S.coinsToday(), st = S.state, total = c.fortschritt + c.missionen + c.ziel + c.serie + c.arena;
+    function row(label, sub, val, done) {
+      return '<div class="row" style="gap:10px;align-items:baseline;padding:6px 0;border-top:1px solid var(--line)"><div style="flex:1 1 auto"><b class="small">' + label + '</b>' +
+        (sub ? '<div class="small muted">' + sub + '</div>' : "") + '</div><b class="tnum" style="' + (done ? "color:var(--good)" : "") + '">' + val + '</b></div>';
+    }
+    return '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Münzen heute</div><span class="pill tnum">🪙 ' + st.coins + ' gesamt</span></div>' +
+      '<div style="font-family:Newsreader,serif;font-size:30px;font-weight:600;margin:6px 0 4px" class="tnum">+' + total + ' <span class="small muted" style="font-family:Karla,sans-serif;font-weight:400">heute verdient</span></div>' +
+      row("Lernfortschritt", "neue Wörter, höhere Stufen, Fehlerkartei, Einheiten", "+" + c.fortschritt) +
+      row("Missionen", c.missionenDone + " von " + c.missionenAll + " erfüllt", "+" + c.missionen, c.missionenDone === c.missionenAll && c.missionenAll > 0) +
+      row("Tagesziel", c.zielDone ? "geschafft" : "noch offen: " + st.settings.goalMin + " Minuten üben", c.zielDone ? "+" + c.ziel : "+20 möglich", c.zielDone) +
+      row("Arena", "Tageslimit 30", c.arena + " / 30", c.arena >= 30) +
+      (c.streakNext ? row("Serien-Bonus", "noch " + c.streakDays + " " + plural(c.streakDays, "Tag", "Tage") + " bis zum " + c.streakNext + ". Tag", "+" + c.streakBonus + " möglich") : "") +
+      '<details style="margin-top:10px"><summary class="small" style="cursor:pointer;font-weight:700">So verdienst du Münzen</summary>' +
+      '<div class="small" style="margin-top:8px;line-height:1.7">' +
+      '• <b>Neues Wort</b> +1, <b>höhere Stufe</b> +1 (Gemeistert +4), <b>Wort aus der Fehlerkartei</b> +2<br>' +
+      '• <b>Neue Einheit entdeckt</b> +8 (fünf Wörter angefangen), <b>Einheit geschafft</b> +30 (Verben +60)<br>' +
+      '• <b>Missionen</b> 10 bis 18, <b>Tagesziel</b> +20, <b>Serien</b> bei 3, 7, 14, 30, 60, 100 Tagen<br>' +
+      '• <b>Arena</b> bis 30 pro Tag, +10 bei Rekord<br>' +
+      '<span class="muted">Jedes Wort zahlt höchstens einmal pro Tag und nur, wenn es zur Wiederholung dran war. Immer dieselben Wörter zu üben bringt nichts – neue Einheiten und fällige Wörter schon. Missionen, Tagesziel und Serien werden am Ende der Runde gutgeschrieben.</span></div></details></section>';
+  }
   /* ---------- Ränge und XP: Übersicht ---------- */
   function ranksCard() {
     var st = S.state, cur = S.rankOf(st.xp);
@@ -541,6 +563,7 @@
         return '<div class="badge' + (has ? "" : " off") + '" title="' + esc(b.d) + '"><div class="g">' + (has ? "🏅" : "🔒") + '</div><b>' + esc(b.n) + '</b></div>';
       }).join("") + '</div></section>';
 
+    html += coinsCard();
     html += ranksCard();
     html += albumCard() + albumCard("fn") + stickerBook() + stickerBook("fn") + shopCard();
     html += '</div>';

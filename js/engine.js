@@ -384,8 +384,9 @@
      und nur, wenn es fällig war. Dasselbe Wort immer wieder zu üben bringt also nichts. */
   var progressLog = { neu: 0, stufe: 0, gemeistert: 0, kartei: 0, einheit: 0, serie: 0, parts: [], n: {} };
   var PART_TEXT = { neu: "neue Wörter", stufe: "Stufen aufgestiegen", gemeistert: "Wörter gemeistert", kartei: "aus der Fehlerkartei" };
+  function addCl(cat, c) { var d = state.daily; if (!d || c <= 0) return; if (!d.cl) d.cl = {}; d.cl[cat] = (d.cl[cat] || 0) + c; }
   function logCoins(kind, c, label) {
-    if (c <= 0) return; addCoins(c); progressLog[kind] = (progressLog[kind] || 0) + c;
+    if (c <= 0) return; addCoins(c); addCl(kind === "serie" ? "serie" : "fortschritt", c); progressLog[kind] = (progressLog[kind] || 0) + c;
     progressLog.n = progressLog.n || {}; progressLog.n[kind] = (progressLog.n[kind] || 0) + 1;
     if (label) progressLog.parts.push({ c: c, t: label });
   }
@@ -589,7 +590,7 @@
     state.daily.missions.forEach(function (m) {
       if (m.done || m.type !== type) return;
       m.p = type === "chain" ? Math.max(m.p, amount) : m.p + amount;
-      if (m.p >= m.goal) { m.done = true; addCoins(m.coins); hit.push(m); }
+      if (m.p >= m.goal) { m.done = true; addCoins(m.coins); addCl("missionen", m.coins); hit.push(m); }
     });
     return hit;
   }
@@ -634,7 +635,7 @@
       .concat(bumpMission("sent", res.sentOk || 0));
     var goalSec = state.settings.goalMin * 60;
     if (d.sec >= goalSec && !d.done) {
-      d.done = true; rewards.goalReached = true; addCoins(20); rewards.coins += 20;
+      d.done = true; rewards.goalReached = true; addCoins(20); addCl("ziel", 20); rewards.coins += 20;
       rewards.missions = rewards.missions.concat(bumpMission("goal", 1));
       if (state.streak.last !== d.date) {
         state.streak.count += 1; state.streak.last = d.date;
@@ -751,6 +752,14 @@
     state.profile[PROFILE_KEY[it.kind]] = it.val; save(true); return { ok: true, item: it };
   }
   /* Wunsch: ein Shop-Eintrag, auf den gespart wird; die Startseite zeigt den Fortschritt dorthin */
+  /* Münzen heute nach Quelle, für die Übersicht im Fortschritt */
+  function coinsToday() {
+    var d = state.daily || {}, cl = d.cl || {}, next = 0, nextDays = 0;
+    Object.keys(STREAK_BONUS).map(Number).sort(function (a, b) { return a - b; }).some(function (k) { if (k > state.streak.count) { next = k; nextDays = k - state.streak.count; return true; } });
+    return { fortschritt: cl.fortschritt || 0, missionen: cl.missionen || 0, ziel: cl.ziel || 0, serie: cl.serie || 0, arena: d.arenaCoins || 0,
+      missionenDone: (d.missions || []).filter(function (m) { return m.done; }).length, missionenAll: (d.missions || []).length,
+      zielDone: !!d.done, streakNext: next, streakDays: nextDays, streakBonus: STREAK_BONUS[next] || 0 };
+  }
   function wish() {
     var id = state.profile.wish, it = id ? itemById(id) : null;
     if (it && owns(it)) { state.profile.wish = null; it = null; }
@@ -791,6 +800,6 @@
     backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
-    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, stickers: stickers, owns: owns, isActive: isActive, minXp: minXp, defaultOf: defaultOf
+    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, stickers: stickers, owns: owns, isActive: isActive, minXp: minXp, defaultOf: defaultOf
   };
 })(window);

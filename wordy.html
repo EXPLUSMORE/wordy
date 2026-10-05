@@ -2774,8 +2774,9 @@ window.VERBS = [
      und nur, wenn es fällig war. Dasselbe Wort immer wieder zu üben bringt also nichts. */
   var progressLog = { neu: 0, stufe: 0, gemeistert: 0, kartei: 0, einheit: 0, serie: 0, parts: [], n: {} };
   var PART_TEXT = { neu: "neue Wörter", stufe: "Stufen aufgestiegen", gemeistert: "Wörter gemeistert", kartei: "aus der Fehlerkartei" };
+  function addCl(cat, c) { var d = state.daily; if (!d || c <= 0) return; if (!d.cl) d.cl = {}; d.cl[cat] = (d.cl[cat] || 0) + c; }
   function logCoins(kind, c, label) {
-    if (c <= 0) return; addCoins(c); progressLog[kind] = (progressLog[kind] || 0) + c;
+    if (c <= 0) return; addCoins(c); addCl(kind === "serie" ? "serie" : "fortschritt", c); progressLog[kind] = (progressLog[kind] || 0) + c;
     progressLog.n = progressLog.n || {}; progressLog.n[kind] = (progressLog.n[kind] || 0) + 1;
     if (label) progressLog.parts.push({ c: c, t: label });
   }
@@ -2979,7 +2980,7 @@ window.VERBS = [
     state.daily.missions.forEach(function (m) {
       if (m.done || m.type !== type) return;
       m.p = type === "chain" ? Math.max(m.p, amount) : m.p + amount;
-      if (m.p >= m.goal) { m.done = true; addCoins(m.coins); hit.push(m); }
+      if (m.p >= m.goal) { m.done = true; addCoins(m.coins); addCl("missionen", m.coins); hit.push(m); }
     });
     return hit;
   }
@@ -3024,7 +3025,7 @@ window.VERBS = [
       .concat(bumpMission("sent", res.sentOk || 0));
     var goalSec = state.settings.goalMin * 60;
     if (d.sec >= goalSec && !d.done) {
-      d.done = true; rewards.goalReached = true; addCoins(20); rewards.coins += 20;
+      d.done = true; rewards.goalReached = true; addCoins(20); addCl("ziel", 20); rewards.coins += 20;
       rewards.missions = rewards.missions.concat(bumpMission("goal", 1));
       if (state.streak.last !== d.date) {
         state.streak.count += 1; state.streak.last = d.date;
@@ -3141,6 +3142,14 @@ window.VERBS = [
     state.profile[PROFILE_KEY[it.kind]] = it.val; save(true); return { ok: true, item: it };
   }
   /* Wunsch: ein Shop-Eintrag, auf den gespart wird; die Startseite zeigt den Fortschritt dorthin */
+  /* Münzen heute nach Quelle, für die Übersicht im Fortschritt */
+  function coinsToday() {
+    var d = state.daily || {}, cl = d.cl || {}, next = 0, nextDays = 0;
+    Object.keys(STREAK_BONUS).map(Number).sort(function (a, b) { return a - b; }).some(function (k) { if (k > state.streak.count) { next = k; nextDays = k - state.streak.count; return true; } });
+    return { fortschritt: cl.fortschritt || 0, missionen: cl.missionen || 0, ziel: cl.ziel || 0, serie: cl.serie || 0, arena: d.arenaCoins || 0,
+      missionenDone: (d.missions || []).filter(function (m) { return m.done; }).length, missionenAll: (d.missions || []).length,
+      zielDone: !!d.done, streakNext: next, streakDays: nextDays, streakBonus: STREAK_BONUS[next] || 0 };
+  }
   function wish() {
     var id = state.profile.wish, it = id ? itemById(id) : null;
     if (it && owns(it)) { state.profile.wish = null; it = null; }
@@ -3181,7 +3190,7 @@ window.VERBS = [
     backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
-    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, stickers: stickers, owns: owns, isActive: isActive, minXp: minXp, defaultOf: defaultOf
+    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, stickers: stickers, owns: owns, isActive: isActive, minXp: minXp, defaultOf: defaultOf
   };
 })(window);
 </script>
@@ -3977,6 +3986,28 @@ window.VERBS = [
       '<section class="card"><div class="eyebrow">Wortliste</div>' + rows + '</section></div>';
   }
 
+  /* ---------- Münzen: Übersicht und Regeln ---------- */
+  function coinsCard() {
+    var c = S.coinsToday(), st = S.state, total = c.fortschritt + c.missionen + c.ziel + c.serie + c.arena;
+    function row(label, sub, val, done) {
+      return '<div class="row" style="gap:10px;align-items:baseline;padding:6px 0;border-top:1px solid var(--line)"><div style="flex:1 1 auto"><b class="small">' + label + '</b>' +
+        (sub ? '<div class="small muted">' + sub + '</div>' : "") + '</div><b class="tnum" style="' + (done ? "color:var(--good)" : "") + '">' + val + '</b></div>';
+    }
+    return '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Münzen heute</div><span class="pill tnum">🪙 ' + st.coins + ' gesamt</span></div>' +
+      '<div style="font-family:Newsreader,serif;font-size:30px;font-weight:600;margin:6px 0 4px" class="tnum">+' + total + ' <span class="small muted" style="font-family:Karla,sans-serif;font-weight:400">heute verdient</span></div>' +
+      row("Lernfortschritt", "neue Wörter, höhere Stufen, Fehlerkartei, Einheiten", "+" + c.fortschritt) +
+      row("Missionen", c.missionenDone + " von " + c.missionenAll + " erfüllt", "+" + c.missionen, c.missionenDone === c.missionenAll && c.missionenAll > 0) +
+      row("Tagesziel", c.zielDone ? "geschafft" : "noch offen: " + st.settings.goalMin + " Minuten üben", c.zielDone ? "+" + c.ziel : "+20 möglich", c.zielDone) +
+      row("Arena", "Tageslimit 30", c.arena + " / 30", c.arena >= 30) +
+      (c.streakNext ? row("Serien-Bonus", "noch " + c.streakDays + " " + plural(c.streakDays, "Tag", "Tage") + " bis zum " + c.streakNext + ". Tag", "+" + c.streakBonus + " möglich") : "") +
+      '<details style="margin-top:10px"><summary class="small" style="cursor:pointer;font-weight:700">So verdienst du Münzen</summary>' +
+      '<div class="small" style="margin-top:8px;line-height:1.7">' +
+      '• <b>Neues Wort</b> +1, <b>höhere Stufe</b> +1 (Gemeistert +4), <b>Wort aus der Fehlerkartei</b> +2<br>' +
+      '• <b>Neue Einheit entdeckt</b> +8 (fünf Wörter angefangen), <b>Einheit geschafft</b> +30 (Verben +60)<br>' +
+      '• <b>Missionen</b> 10 bis 18, <b>Tagesziel</b> +20, <b>Serien</b> bei 3, 7, 14, 30, 60, 100 Tagen<br>' +
+      '• <b>Arena</b> bis 30 pro Tag, +10 bei Rekord<br>' +
+      '<span class="muted">Jedes Wort zahlt höchstens einmal pro Tag und nur, wenn es zur Wiederholung dran war. Immer dieselben Wörter zu üben bringt nichts – neue Einheiten und fällige Wörter schon. Missionen, Tagesziel und Serien werden am Ende der Runde gutgeschrieben.</span></div></details></section>';
+  }
   /* ---------- Ränge und XP: Übersicht ---------- */
   function ranksCard() {
     var st = S.state, cur = S.rankOf(st.xp);
@@ -4140,6 +4171,7 @@ window.VERBS = [
         return '<div class="badge' + (has ? "" : " off") + '" title="' + esc(b.d) + '"><div class="g">' + (has ? "🏅" : "🔒") + '</div><b>' + esc(b.n) + '</b></div>';
       }).join("") + '</div></section>';
 
+    html += coinsCard();
     html += ranksCard();
     html += albumCard() + albumCard("fn") + stickerBook() + stickerBook("fn") + shopCard();
     html += '</div>';
