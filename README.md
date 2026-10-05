@@ -98,13 +98,13 @@ Kopfzeile wird erkannt. Eigene Listen sind in beiden Bereichen aktiv.
 
 ### Unregelmäßige Verben
 Eigene Rubrik mit 108 Verben der Schule (`data/verben.js`), Stufe 1–3 nach
-Häufigkeit. Abgefragt werden Simple Past und Past Participle, beides muss
+Häufigkeit. Abgefragt werden Simple Past (Präteritum) und Past Participle (Partizip Perfekt), beides muss
 stimmen; mehrere gültige Formen (learnt/learned) stehen mit `/`. Neue Verben
 bekommen erst eine Einführungskarte. Geübt wird mit „Verben üben“ (Start,
 Einheiten) oder automatisch: in normalen Schulrunden kommt etwa jede achte
 Aufgabe ein Verb, bevorzugt fällige und fehlerhafte. Zu jedem Verb gibt es drei
-Beispielsätze mit Übersetzung, Zeitwort-Hinweis und Vorlesen (Gegenwart, Simple
-Past, Perfekt). Neben dem Tippen gibt es die Lückenaufgabe „Welche Form passt?“:
+Beispielsätze mit Übersetzung, Zeitwort-Hinweis und Vorlesen (Präsens, Simple
+Past, Present Perfect). Neben dem Tippen gibt es die Lückenaufgabe „Welche Form passt?“:
 ein Satz mit Zeitwort, aus drei bis vier Formen (auch der falsch regelmäßigen wie
 *goed*) wählt man die richtige. Die Verbenliste zeigt
 alle Verben mit Lernstufe; der Lernstand liegt im selben Speicher wie die Wörter.

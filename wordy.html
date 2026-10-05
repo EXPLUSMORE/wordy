@@ -3364,7 +3364,7 @@ window.VERBS = [
       '<button class="btn ghost" data-act="back" style="align-self:flex-start">← Zurück</button>' +
       '<section class="card"><div class="eyebrow">Unregelmäßige Verben</div>' +
       '<h1 style="font-size:24px">Verbenliste</h1>' +
-      '<p class="small muted" style="margin:6px 0 0">' + vs.total + ' Verben · ' + vs.seen + ' geübt · ' + vs.mastered + ' gemeistert. Infinitive – Simple Past – Past Participle.</p>' +
+      '<p class="small muted" style="margin:6px 0 0">' + vs.total + ' Verben · ' + vs.seen + ' geübt · ' + vs.mastered + ' gemeistert. Infinitiv – Simple Past (Präteritum) – Past Participle (Partizip Perfekt).</p>' +
       '<div class="row" style="margin-top:12px;gap:8px"><button class="btn" data-act="start" data-mode="verbs" data-min="5">Verben üben</button></div></section>' +
       '<section class="card"><div class="eyebrow">Alle Verben · Tippen zeigt die Beispielsätze</div>' + rows + '</section></div>';
   }
@@ -3811,9 +3811,9 @@ window.VERBS = [
   }
   /* ---------- Unregelmäßige Verben: Sätze, Aufgaben ---------- */
   var TENSES = [
-    { label: "Infinitiv · Gegenwart", name: "Simple Present" },
-    { label: "Simple Past · Vergangenheit", name: "Simple Past" },
-    { label: "Past Participle · Perfekt", name: "Present Perfect" }
+    { label: "Infinitiv · Präsens", name: "Simple Present (Präsens)" },
+    { label: "Simple Past · Präteritum", name: "Simple Past (Präteritum)" },
+    { label: "Past Participle · Partizip Perfekt", name: "Present Perfect (Perfekt)" }
   ];
   function reEsc(x) { return x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
   /* Satz mit fett markierter Verbform und unterstrichenem Zeitwort */
@@ -4070,9 +4070,9 @@ window.VERBS = [
       body.innerHTML = '<div class="stack" style="padding-top:8px"><div class="eyebrow">Unregelmäßiges Verb</div>' +
         '<div class="row" style="gap:12px;align-items:center">' + (audioAvailable() ? speakBtn(v.inf) : "") +
         '<div><div class="prompt">' + esc(v.inf) + '</div><div class="sub" style="margin-top:4px">' + esc(v.de) + '</div></div></div>' +
-        '<label class="small muted" for="vPast" style="margin-bottom:-6px">Simple Past</label>' +
+        '<label class="small muted" for="vPast" style="margin-bottom:-6px">Simple Past (Präteritum, 2. Form)</label>' +
         '<input id="vPast" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="z. B. went">' +
-        '<label class="small muted" for="vPp" style="margin-bottom:-6px">Past Participle</label>' +
+        '<label class="small muted" for="vPp" style="margin-bottom:-6px">Past Participle (Partizip Perfekt, 3. Form)</label>' +
         '<input id="vPp" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="z. B. gone">' +
         '<p class="small muted" style="margin:0">Beides muss stimmen. Kleine Tippfehler zählen halb.</p></div>';
       foot.innerHTML = footCheck();
