@@ -1,5 +1,5 @@
 /* Wordy – Offline-Cache. Automatisch erzeugt, nicht von Hand ändern. */
-const CACHE = 'wordy-3e10a89b8b';
+const CACHE = 'wordy-5d641b08fa';
 const FILES = [
   "./",
   "index.html",
@@ -18,6 +18,7 @@ const FILES = [
   "data/verben.js",
   "js/engine.js",
   "js/cosmetics.js",
+  "js/fortnite.js",
   "js/app.js",
   "js/arena.js",
   "icons/icon-192.png",

@@ -381,7 +381,7 @@
   /* ---------- Shop und Sammelalbum ---------- */
   var SHOP_TABS = [
     { k: "avatar", n: "Figuren" }, { k: "sticker", n: "Sticker" }, { k: "frame", n: "Rahmen" }, { k: "title", n: "Titel" },
-    { k: "bg", n: "Hintergründe" }, { k: "fx", n: "Effekte" }, { k: "snd", n: "Töne" }, { k: "theme", n: "Farben" }
+    { k: "fn", n: "Fortnite" }, { k: "bg", n: "Hintergründe" }, { k: "fx", n: "Effekte" }, { k: "snd", n: "Töne" }, { k: "theme", n: "Farben" }
   ];
   var KIND_NAME = { sticker: "Sticker", avatar: "Figur", frame: "Rahmen", title: "Titel", bg: "Hintergrund", fx: "Effekt", snd: "Ton", theme: "Farbwelt" };
   var shopTab = "avatar";
@@ -411,10 +411,10 @@
       return it ? stickerHtml(it, size, TILTS[i % 3]) : "";
     }).join("") + '</span>';
   }
-  function stickerBook() {
-    var list = S.SHOP.filter(function (x) { return x.kind === "sticker"; });
+  function stickerBook(set) {
+    var list = S.SHOP.filter(function (x) { return x.kind === "sticker" && (set ? x.set === set : !x.set); });
     var have = list.filter(function (x) { return S.owns(x); }).length;
-    return '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Stickerbuch</div><span class="pill tnum">' + have + ' / ' + list.length + '</span></div>' +
+    return '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">' + (set ? "Fortnite-Stickerbuch" : "Stickerbuch") + '</div><span class="pill tnum">' + have + ' / ' + list.length + '</span></div>' +
       '<p class="small muted" style="margin:6px 0 10px">Sammle Sticker im Shop und klebe bis zu drei davon auf deine Startseite und dein Profil. Antippen klebt auf oder löst ab.</p>' +
       '<div class="album stkbook">' + list.map(function (it) {
         var own = S.owns(it), act = S.isActive(it);
@@ -426,11 +426,12 @@
       }).join("") + '</div></section>';
   }
   function lockNote(it) { return S.minXp(it) > S.state.xp; }
-  function albumCard() {
-    var st = S.state, list = S.SHOP.filter(function (x) { return x.kind === "avatar"; });
+  function albumCard(set) {
+    var st = S.state, list = S.SHOP.filter(function (x) { return x.kind === "avatar" && (set ? x.set === set : !x.set); });
     var have = list.filter(function (x) { return S.owns(x); }).length;
-    return '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Sammelalbum</div><span class="pill tnum">' + have + ' / ' + list.length + '</span></div>' +
-      '<p class="small muted" style="margin:6px 0 10px">Alle Figuren auf einen Blick. Tippe auf eine, die du hast, um sie zu wählen.</p>' +
+    return '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">' + (set ? "Fortnite-Album" : "Sammelalbum") + '</div><span class="pill tnum">' + have + ' / ' + list.length + '</span></div>' +
+      '<p class="small muted" style="margin:6px 0 10px">' + (set ? "Tiere und Kristalle aus Fortnite, selbst gezeichnet. Die Tiere gibt es ab Rang Gold II, die Kristalle ab ihrem Rang, die Unreal-Stücke erst ab Unreal. Tippe auf ein graues Feld, um es dir zu wünschen ⭐."
+        : "Alle Figuren auf einen Blick. Tippe auf eine, die du hast, um sie zu wählen.") + '</p>' +
       '<div class="album">' + list.map(function (it) {
         var own = S.owns(it), act = S.isActive(it);
         var sub = own ? (act ? "aktiv" : "") : lockNote(it) ? "🔒 " + it.rank : "🪙 " + it.cost;
@@ -447,7 +448,7 @@
       '<div class="row wrap" style="gap:6px;margin-bottom:6px">' + SHOP_TABS.map(function (t) {
         return '<button class="chip" data-act="shoptab" data-k="' + t.k + '" aria-pressed="' + (shopTab === t.k) + '">' + t.n + '</button>';
       }).join("") + '</div>';
-    html += S.SHOP.filter(function (it) { return it.kind === shopTab; }).map(function (it) {
+    html += S.SHOP.filter(function (it) { return shopTab === "fn" ? it.set === "fn" : it.kind === shopTab && !it.set; }).map(function (it) {
       var own = S.owns(it), act = S.isActive(it), locked = !own && lockNote(it);
       return '<div class="shopitem"><span class="si">' + shopIcon(it) + '</span>' +
         '<span style="flex:1 1 auto"><b class="small">' + esc(it.label) + '</b><br><span class="small muted">' + KIND_NAME[it.kind] +
@@ -514,7 +515,7 @@
         return '<div class="badge' + (has ? "" : " off") + '" title="' + esc(b.d) + '"><div class="g">' + (has ? "🏅" : "🔒") + '</div><b>' + esc(b.n) + '</b></div>';
       }).join("") + '</div></section>';
 
-    html += albumCard() + stickerBook() + shopCard();
+    html += albumCard() + albumCard("fn") + stickerBook() + stickerBook("fn") + shopCard();
     html += '</div>';
     view.innerHTML = html;
   }

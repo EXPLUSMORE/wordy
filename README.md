@@ -138,6 +138,12 @@ Clombo mit Glanz); bis zu drei davon klebt man im Stickerbuch auf Startseite und
 Profil. Katalog und
 Preise stehen in `js/engine.js` (`SHOP`), das Aussehen in `js/cosmetics.js`.
 
+### Fortnite-Sammlung
+Eigene Zeichnungen (Fan-Art, keine Originalgrafiken, `js/fortnite.js`): Tiere ab
+Rang Gold II, Rang-Kristalle ab Elite und Champion, die Unreal-Stücke erst ab
+Unreal. Jede Figur gibt es als Album-Figur und als Sticker; eigener Shop-Reiter
+„Fortnite“, Fortnite-Album und Fortnite-Stickerbuch.
+
 ### Lernstand
 Liegt im `localStorage`, also pro Gerät und Browser getrennt. Gespeichert
 wird nach jeder Antwort und beim Schließen oder Verlassen der App; dazu

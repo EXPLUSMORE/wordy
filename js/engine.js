@@ -52,6 +52,18 @@
     { id: "av:pregen",   kind: "avatar", label: "Regenbogenpummel", cost: 1200, val: "svg:pregen", rank: "Diamant I" },
     { id: "av:pgalaxie", kind: "avatar", label: "Galaxiepummel", cost: 2000, val: "svg:pgalaxie", rank: "Elite" },
 
+    /* Fortnite-Sammlung (eigene Zeichnungen): Tiere ab Gold II, Rang-Kristalle ab ihrem Rang, Unreal-Stücke erst ab Unreal */
+    { id: "av:fnhuhn",     kind: "avatar", set: "fn", label: "Huhn",           cost: 150,  val: "svg:fnhuhn",     rank: "Gold II" },
+    { id: "av:fnschwein",  kind: "avatar", set: "fn", label: "Wildschwein",    cost: 200,  val: "svg:fnschwein",  rank: "Gold II" },
+    { id: "av:fnfrosch",   kind: "avatar", set: "fn", label: "Frosch",         cost: 200,  val: "svg:fnfrosch",   rank: "Gold II" },
+    { id: "av:fnwolf",     kind: "avatar", set: "fn", label: "Wolf",           cost: 250,  val: "svg:fnwolf",     rank: "Gold II" },
+    { id: "av:fnraptor",   kind: "avatar", set: "fn", label: "Raptor",         cost: 300,  val: "svg:fnraptor",   rank: "Gold II" },
+    { id: "av:fnllama",    kind: "avatar", set: "fn", label: "Beute-Lama",     cost: 350,  val: "svg:fnllama",    rank: "Gold II" },
+    { id: "av:fnelite",    kind: "avatar", set: "fn", label: "Elite-Kristall", cost: 800,  val: "svg:fnelite",    rank: "Elite" },
+    { id: "av:fnchamp",    kind: "avatar", set: "fn", label: "Champion-Kristall", cost: 1200, val: "svg:fnchamp", rank: "Champion" },
+    { id: "av:fnkristall", kind: "avatar", set: "fn", label: "Kristall-Lama",  cost: 1500, val: "svg:fnkristall", rank: "Unreal" },
+    { id: "av:fnunreal",   kind: "avatar", set: "fn", label: "Unreal-Kristall", cost: 2500, val: "svg:fnunreal",  rank: "Unreal" },
+
     { id: "fr:none",    kind: "frame", label: "Kein Rahmen", cost: 0,   val: "none" },
     { id: "fr:gold",    kind: "frame", label: "Goldrahmen",  cost: 120, val: "gold" },
     { id: "fr:rainbow", kind: "frame", label: "Regenbogenrahmen", cost: 220, val: "rainbow" },
@@ -88,7 +100,7 @@
   ];
   /* Sticker: jede Figur gibt es zusätzlich als Aufkleber (halber Preis), die man auf Startseite und Profil klebt */
   SHOP = SHOP.concat(SHOP.filter(function (a) { return a.kind === "avatar"; }).map(function (a) {
-    return { id: "st:" + a.id.slice(3), kind: "sticker", label: a.label + "-Sticker", cost: a.cost ? Math.max(20, Math.round(a.cost / 20) * 10) : 0, val: a.val, rank: a.rank };
+    return { id: "st:" + a.id.slice(3), kind: "sticker", set: a.set, label: a.label + "-Sticker", cost: a.cost ? Math.max(20, Math.round(a.cost / 20) * 10) : 0, val: a.val, rank: a.rank };
   }));
   SHOP.forEach(function (x) { if (x.id === "st:clombo") x.cost = 300; });   // Clombo als Sticker: gleicher Preis und gleicher Mindestrang wie die Figur
   var MAX_STICKERS = 3;
