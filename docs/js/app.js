@@ -466,7 +466,7 @@
     var W = window.WordySync; if (!W) return "";
     var i = W.info();
     if (i.connected) {
-      return '<section class="card"><div class="eyebrow">Auto-Save / Lernfortschritt</div>' +
+      return '<div class="eyebrow" style="margin-top:14px">🌐 Auf dem Server</div>' +
         '<p style="margin:8px 0 4px"><b>✅ Verbunden</b> als <b>' + esc(i.name) + '</b>' + (i.hidden ? ' <span class="pill">nur Sicherung</span>' : '') + '</p>' +
         (i.hidden
           ? '<p class="small muted" style="margin:0 0 10px">Es wird nur eine Sicherung deines Lernstands auf dem Server abgelegt. Im Dashboard taucht niemand mit deinen Zahlen auf, es werden keine Antworten oder Zeiten übertragen.</p>'
@@ -477,12 +477,38 @@
         (i.stateErr ? '<p class="small" style="margin:0 0 10px;color:var(--bad)">' + esc(i.stateErr) + '</p>' : '') +
         '<div class="row wrap" style="gap:8px"><button class="btn ghost" data-act="syncnow">Jetzt senden</button>' +
         '<button class="btn ghost" data-act="restoreopen">Lernstand wiederherstellen</button>' +
-        '<button class="btn ghost" data-act="syncoff">Verbindung trennen</button></div><div id="restoreBox" style="margin-top:10px"></div></section>';
+        '<button class="btn ghost" data-act="syncoff">Verbindung trennen</button></div><div id="restoreBox" style="margin-top:10px"></div>';
     }
-    return '<section class="card"><div class="eyebrow">Auto-Save / Lernfortschritt</div>' +
+    return '<div class="eyebrow" style="margin-top:14px">🌐 Auf dem Server</div>' +
       '<p class="small muted" style="margin:6px 0 10px">Optional: Verbinde dieses Gerät mit dem Wordy-Server. Der Fortschritt wird gespeichert. Den Code bekommst du von deinen Eltern. Ohne Verbindung läuft alles wie bisher.</p>' +
       '<input id="syncCode" placeholder="Code einfügen" autocomplete="off" autocapitalize="off" spellcheck="false" style="width:100%">' +
-      '<button class="btn soft wide" data-act="syncpair" style="margin-top:8px">Verbinden</button></section>';
+      '<button class="btn soft wide" data-act="syncpair" style="margin-top:8px">Verbinden</button>';
+  }
+  /* Eine Karte für alles rund ums Speichern: Server, dieses Gerät, manuelles Sichern */
+  function saveCard() {
+    var st = S.state, bi = S.backupInfo(), pers = S.isPersisted();
+    function ago(t) { return agoText(t); }
+    return '<section class="card"><div class="eyebrow">Auto-Save / Lernfortschritt</div>' +
+      '<p class="small muted" style="margin:6px 0 0">Dein Lernstand wird automatisch gesichert, auf diesem Gerät und, wenn du verbunden bist, zusätzlich auf dem Server.</p>' +
+      syncCard() +
+      '<hr class="sep" style="margin:16px 0 0">' +
+      '<div class="eyebrow" style="margin-top:14px">📱 Auf diesem Gerät</div>' +
+      '<p class="small muted" style="margin:6px 0 10px">Der Lernstand wird nach jeder Antwort und beim Schließen der App in diesem Browser gespeichert. Zusätzlich entsteht regelmäßig eine Sicherungskopie.' +
+      (pers === true ? ' Der Browser hält den Speicher dauerhaft vor.' : pers === false ? ' Der Browser kann den Speicher bei Platzmangel räumen. Sichere den Lernstand gelegentlich unten oder verbinde dich mit dem Server.' : '') + '</p>' +
+      (bi.restored ? '<p class="small" style="margin:0 0 10px;color:var(--bad)">Der Lernstand war beschädigt und wurde aus der Sicherung wiederhergestellt.</p>' : '') +
+      '<div class="row wrap" style="gap:8px">' +
+      (bi.auto ? '<button class="btn ghost" data-act="restore" data-slot="auto">Sicherung von ' + ago(bi.auto) + ' laden</button>' : '<span class="small muted">Noch keine Sicherungskopie.</span>') +
+      (bi.pre ? '<button class="btn ghost" data-act="restore" data-slot="pre">Stand vor letzter Änderung (' + ago(bi.pre) + ') laden</button>' : '') +
+      '</div>' +
+      '<details style="margin-top:16px"><summary class="small" style="cursor:pointer;font-weight:700">Manuell sichern oder auf ein anderes Gerät übertragen</summary>' +
+      '<p class="small muted" style="margin:8px 0 10px">Zum Umziehen auf ein anderes Gerät ohne Server: hier kopieren und dort einfügen.</p>' +
+      '<div class="row wrap" style="gap:8px"><button class="btn ghost" data-act="exp" data-kind="json">Lernstand kopieren</button>' +
+      '<button class="btn ghost" data-act="exp" data-kind="csv">Wortliste als CSV</button>' +
+      '<button class="btn ghost" data-act="impopen">Lernstand einspielen</button></div>' +
+      '<textarea id="expBox" rows="4" hidden style="margin-top:10px"></textarea>' +
+      '<div id="impWrap" hidden style="margin-top:10px"><textarea id="impBox" rows="4" placeholder="Hier den kopierten Lernstand einfügen"></textarea>' +
+      '<button class="btn" data-act="impdo" style="margin-top:8px">Einspielen</button></div>' +
+      '<hr class="sep" style="margin:14px 0"><button class="btn ghost" data-act="reset" style="color:var(--bad)">Fortschritt zurücksetzen</button></details></section>';
   }
 
   /* ---------- Münzen: Übersicht und Regeln ---------- */
@@ -793,7 +819,7 @@
       '<p class="small muted" style="margin:10px 0 0">Gelernt wird als <b>' + esc(playerName()) + '</b>. Den Namen änderst du oben unter „Spieler“.</p>' +
       '</section>';
 
-    html += syncCard();
+    html += saveCard();
     html += '<section class="card"><div class="eyebrow">Eigene Vokabelliste importieren</div>' +
       '<p class="small muted" style="margin:6px 0 10px">Eine Zeile pro Wort: <code>englisch;deutsch;beispielsatz</code>. Semikolon, Komma oder Tabulator funktionieren.</p>' +
       '<input id="csvTitle" placeholder="Name der Liste, z. B. Access 7 Unit 3" style="margin-bottom:8px">' +
@@ -805,26 +831,6 @@
           '<button class="chip" data-act="delcustom" data-id="' + esc(u.id) + '">entfernen</button></div>';
       }).join("") + '</div>' : "") + '</section>';
 
-    var bi = S.backupInfo(), pers = S.isPersisted();
-    function ago(t) { var m = Math.round((Date.now() - t) / 60000); return m < 1 ? "gerade eben" : m < 60 ? "vor " + m + " Min." : m < 1440 ? "vor " + Math.round(m / 60) + " Std." : "vor " + Math.round(m / 1440) + " Tg."; }
-    html += '<section class="card"><div class="eyebrow">Automatische Sicherung</div>' +
-      '<p class="small muted" style="margin:6px 0 10px">Der Lernstand wird nach jeder Antwort und beim Schließen der App auf diesem Gerät gespeichert. Zusätzlich entsteht regelmäßig eine Sicherungskopie.' +
-      (pers === true ? ' Der Browser hält den Speicher dauerhaft vor.' : pers === false ? ' Der Browser kann den Speicher bei Platzmangel räumen – sichere den Lernstand gelegentlich unten.' : '') + '</p>' +
-      (bi.restored ? '<p class="small" style="margin:0 0 10px;color:var(--bad)">Der Lernstand war beschädigt und wurde aus der Sicherung wiederhergestellt.</p>' : '') +
-      '<div class="row wrap" style="gap:8px">' +
-      (bi.auto ? '<button class="btn ghost" data-act="restore" data-slot="auto">Sicherung von ' + ago(bi.auto) + ' laden</button>' : '<span class="small muted">Noch keine Sicherungskopie.</span>') +
-      (bi.pre ? '<button class="btn ghost" data-act="restore" data-slot="pre">Stand vor letzter Änderung (' + ago(bi.pre) + ') laden</button>' : '') +
-      '</div></section>';
-
-    html += '<section class="card"><div class="eyebrow">Sichern &amp; übertragen</div>' +
-      '<p class="small muted" style="margin:6px 0 10px">Der Lernstand liegt nur in diesem Browser. Zum Umziehen auf ein anderes Gerät hier kopieren und dort einfügen.</p>' +
-      '<div class="row wrap" style="gap:8px"><button class="btn ghost" data-act="exp" data-kind="json">Lernstand kopieren</button>' +
-      '<button class="btn ghost" data-act="exp" data-kind="csv">Wortliste als CSV</button>' +
-      '<button class="btn ghost" data-act="impopen">Lernstand einspielen</button></div>' +
-      '<textarea id="expBox" rows="4" hidden style="margin-top:10px"></textarea>' +
-      '<div id="impWrap" hidden style="margin-top:10px"><textarea id="impBox" rows="4" placeholder="Hier den kopierten Lernstand einfügen"></textarea>' +
-      '<button class="btn" data-act="impdo" style="margin-top:8px">Einspielen</button></div>' +
-      '<hr class="sep" style="margin:14px 0"><button class="btn ghost" data-act="reset" style="color:var(--bad)">Fortschritt zurücksetzen</button></section>';
     html += '<div class="small muted" style="margin:10px 0 0;text-align:center;line-height:1.6"><b>Wordy · Version ' + esc(global.WORDY_VERSION || "–") + '</b>' +
       '<br><span style="font-size:11px">Build ' + esc(global.WORDY_BUILD || "lokal") + '</span>' +
       '<br>© ' + new Date().getFullYear() + ' Magnus, Pummel &amp; Christian</div>' +
