@@ -419,6 +419,27 @@
       '<section class="card"><div class="eyebrow">Wortliste</div>' + rows + '</section></div>';
   }
 
+
+  /* ---------- Eltern-Dashboard: Verbindung zum Server ---------- */
+  function agoText(t) { var m = Math.round((Date.now() - t) / 60000); return m < 1 ? "gerade eben" : m < 60 ? "vor " + m + " Min." : m < 1440 ? "vor " + Math.round(m / 60) + " Std." : "vor " + Math.round(m / 1440) + " Tg."; }
+  function syncCard() {
+    var W = window.WordySync; if (!W) return "";
+    var i = W.info();
+    if (i.connected) {
+      return '<section class="card"><div class="eyebrow">Eltern-Dashboard</div>' +
+        '<p style="margin:8px 0 4px"><b>✅ Verbunden</b> als <b>' + esc(i.name) + '</b></p>' +
+        '<p class="small muted" style="margin:0 0 10px">Die Eltern sehen, wann und was gelernt wurde: Übungszeit, richtige und falsche Antworten, Fortschritt pro Einheit und die Käufe im Shop. ' +
+        (i.last ? 'Zuletzt gesendet ' + agoText(i.last) + '. ' : 'Noch nichts gesendet. ') + (i.pending ? i.pending + ' Einträge warten auf Netz.' : '') + '</p>' +
+        (i.error ? '<p class="small" style="margin:0 0 10px;color:var(--bad)">' + esc(i.error) + '</p>' : '') +
+        '<div class="row wrap" style="gap:8px"><button class="btn ghost" data-act="syncnow">Jetzt senden</button>' +
+        '<button class="btn ghost" data-act="syncoff">Verbindung trennen</button></div></section>';
+    }
+    return '<section class="card"><div class="eyebrow">Eltern-Dashboard</div>' +
+      '<p class="small muted" style="margin:6px 0 10px">Optional: Verbinde dieses Gerät mit dem Wordy-Server der Eltern. Dann sehen sie deinen Lernfortschritt. Den Code bekommst du von ihnen. Ohne Verbindung läuft alles wie bisher.</p>' +
+      '<input id="syncCode" placeholder="Code der Eltern einfügen" autocomplete="off" autocapitalize="off" spellcheck="false" style="width:100%">' +
+      '<button class="btn soft wide" data-act="syncpair" style="margin-top:8px">Verbinden</button></section>';
+  }
+
   /* ---------- Münzen: Übersicht und Regeln ---------- */
   function coinsCard() {
     var c = S.coinsToday(), st = S.state, total = c.fortschritt + c.missionen + c.ziel + c.serie + c.arena;
@@ -726,6 +747,7 @@
       '<p class="small muted" style="margin:10px 0 0">Gelernt wird als <b>' + esc(playerName()) + '</b>. Den Namen änderst du oben unter „Spieler“.</p>' +
       '</section>';
 
+    html += syncCard();
     html += '<section class="card"><div class="eyebrow">Eigene Vokabelliste importieren</div>' +
       '<p class="small muted" style="margin:6px 0 10px">Eine Zeile pro Wort: <code>englisch;deutsch;beispielsatz</code>. Semikolon, Komma oder Tabulator funktionieren.</p>' +
       '<input id="csvTitle" placeholder="Name der Liste, z. B. Access 7 Unit 3" style="margin-bottom:8px">' +
@@ -911,7 +933,7 @@
     renderTask();
   }
   /* Stand zu Rundenbeginn, damit das Finale zeigen kann, was die Runde gebracht hat */
-  function snapStart() { SS.xp0 = S.state.xp; SS.coins0 = S.state.coins; }
+  function snapStart() { SS.xp0 = S.state.xp; SS.coins0 = S.state.coins; if (window.WordySync) window.WordySync.ctx = { mode: SS.mode || "mix" }; }
   function star(on, i) {
     return '<svg viewBox="0 0 24 24" class="fin-star' + (on ? " on" : "") + '" style="--i:' + i + '" aria-hidden="true"><path d="M12 2.2l2.9 6.2 6.8.8-5 4.7 1.3 6.7L12 17.2 6 20.6l1.3-6.7-5-4.7 6.8-.8z"/></svg>';
   }
@@ -929,6 +951,7 @@
     var perfect = good && SS.correct === SS.items && SS.items > 3;
     var stars = !good ? 0 : acc >= 90 ? 3 : acc >= 70 ? 2 : 1;
     var xp0 = SS.xp0 == null ? st.xp : SS.xp0, gain = Math.max(0, st.xp - xp0), coinGain = Math.max(0, st.coins - (SS.coins0 == null ? st.coins : SS.coins0));
+    if (window.WordySync) { window.WordySync.sessionEnd({ sec: sec, items: SS.items, correct: SS.correct, mode: SS.mode || "mix", coins: coinGain, xp: gain, reason: reason }); window.WordySync.ctx = null; }
     var r0 = S.rankOf(xp0), r1 = S.rankOf(st.xp), rankUp = r0.rank.n !== r1.rank.n;
     var pct = function (r) { return r.span ? Math.round(r.into * 100 / r.span) : 100; };
     var html = '<div class="sbody"><div class="stack" style="padding-top:20px">' +
@@ -1432,6 +1455,15 @@
       var u = S.units().filter(function (x) { return x.id === act.getAttribute("data-id"); })[0];
       if (u) readAll(u, act);
     }
+    else if (a === "syncpair") {
+      var inp = $("#syncCode"), txt = inp ? inp.value : ""; act.disabled = true; act.textContent = "Verbinde …";
+      window.WordySync.pair(txt).then(function (r) {
+        if (r.error) { toast(r.error); act.disabled = false; act.textContent = "Verbinden"; return; }
+        toast("Verbunden. Deine Eltern sehen jetzt deinen Lernfortschritt."); render();
+      });
+    }
+    else if (a === "syncnow") { window.WordySync.snapshot().then(function () { return window.WordySync.flush(); }).then(function (ok) { toast(ok ? "Gesendet." : "Server gerade nicht erreichbar."); render(); }); }
+    else if (a === "syncoff") { if (confirm("Verbindung zum Eltern-Dashboard trennen? Bereits gesendete Daten bleiben beim Server, es wird nichts Neues mehr gesendet.")) { window.WordySync.disconnect(); toast("Getrennt."); render(); } }
     else if (a === "buy") {
       var r = S.buy(act.getAttribute("data-id"));
       toast(r.error || ("Gekauft: " + r.item.label));

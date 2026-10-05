@@ -1,0 +1,19 @@
+[Unit]
+Description=Wordy-Server (Lernfortschritt und Eltern-Dashboard)
+After=network.target
+
+[Service]
+Type=simple
+User=wordy
+WorkingDirectory=/opt/wordy/server
+EnvironmentFile=/opt/wordy/server/.env
+ExecStart=/usr/bin/node server.js
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/wordy
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

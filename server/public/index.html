@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Wordy Eltern</title>
+<style>
+:root{--bg:#F4F6F8;--card:#fff;--ink:#16222B;--ink2:#52606B;--line:#E1E6EA;--acc:#1E6273;--acc2:#2E8BA0;--good:#2E8B57;--bad:#C0392B;--warn:#D9962B;--l1:#E2B93B;--l2:#E69A3A;--l3:#4FA6B8;--l4:#2E8B57}
+@media (prefers-color-scheme:dark){:root{--bg:#10171C;--card:#18222A;--ink:#E8EEF2;--ink2:#9AA9B4;--line:#26333D;--acc:#5BB6CA;--acc2:#7CC8D9;--good:#58C48B;--bad:#EF6F62;--warn:#E8B054;--l1:#C9A233;--l2:#D18A33;--l3:#4698AA;--l4:#4DB380}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:980px;margin:0 auto;padding:16px}
+h1{font-size:22px;margin:4px 0 14px}
+h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2);margin:0 0 10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:0 0 14px;overflow-x:auto}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.grow{flex:1 1 auto}
+.muted{color:var(--ink2)}.small{font-size:13px}
+button,input{font:inherit}
+button{background:var(--acc);color:#fff;border:0;border-radius:10px;padding:9px 14px;cursor:pointer}
+button.ghost{background:transparent;color:var(--acc);border:1px solid var(--line)}
+button.tab{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+button.tab[aria-pressed=true]{background:var(--acc);color:#fff;border-color:var(--acc)}
+input{border:1px solid var(--line);border-radius:10px;padding:9px 12px;background:var(--bg);color:var(--ink)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kpi{background:var(--bg);border-radius:12px;padding:12px}
+.kpi b{display:block;font-size:26px;font-variant-numeric:tabular-nums}
+.kpi span{font-size:13px;color:var(--ink2)}
+.bar{height:10px;border-radius:5px;background:var(--line);overflow:hidden;display:flex}
+.bar i{display:block;height:100%}
+table{width:100%;border-collapse:collapse}
+td,th{padding:7px 6px;border-top:1px solid var(--line);text-align:left;vertical-align:top;font-size:14px}
+th{font-size:12px;color:var(--ink2);font-weight:600;border-top:0}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+.pill{display:inline-block;border-radius:99px;padding:2px 9px;font-size:12px;background:var(--bg);border:1px solid var(--line)}
+.code{font:600 15px ui-monospace,Menlo,monospace;background:var(--bg);border:1px dashed var(--acc);border-radius:10px;padding:10px 12px;word-break:break-all}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--ink2);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+svg text{fill:var(--ink2);font-size:10px}
+.err{color:var(--bad)}
+</style>
+</head>
+<body>
+<main>
+  <h1>📚 Wordy · Lernfortschritt</h1>
+  <div id="tabs" class="row" style="margin-bottom:12px"></div>
+  <div id="view"></div>
+</main>
+<script>
+(function () {
+  var view = document.getElementById("view"), tabs = document.getElementById("tabs");
+  var players = [], cur = null, days = 14;
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function api(path, opt) {
+    return fetch(path, Object.assign({ credentials: "same-origin" }, opt || {})).then(function (r) {
+      return r.json().then(function (j) { if (!r.ok) throw new Error(j.error || r.status); return j; });
+    });
+  }
+  function post(path, body) { return api(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body || {}) }); }
+  function fmtMin(s) { var m = Math.round(s / 60); return m >= 60 ? Math.floor(m / 60) + " Std. " + (m % 60) + " Min." : m + " Min."; }
+  function fmtAgo(t) {
+    if (!t) return "noch nie";
+    var m = Math.round((Date.now() - t) / 60000);
+    return m < 1 ? "gerade eben" : m < 60 ? "vor " + m + " Min." : m < 1440 ? "vor " + Math.round(m / 60) + " Std." : "vor " + Math.round(m / 1440) + " Tagen";
+  }
+  function fmtDate(ts) { return new Date(ts).toLocaleString("de-DE", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }); }
+  function pct(a, b) { return b ? Math.round(a * 100 / b) + " %" : "–"; }
+  var MODE = { mix: "Gemischt", new: "Neue Wörter", box: "Fehlerkartei", sent: "Sätze", verbs: "Verben", arena: "Arena", unit: "Einheit" };
+
+  function loadPlayers(keep) {
+    return api("/api/admin/players").then(function (l) {
+      players = l; if (!cur || !players.some(function (p) { return p.id === cur; })) cur = players[0] ? players[0].id : "new";
+      if (keep) cur = keep;
+      drawTabs(); return show();
+    }).catch(function (e) { view.innerHTML = '<div class="card err">' + esc(e.message) + "</div>"; });
+  }
+  function drawTabs() {
+    tabs.innerHTML = players.map(function (p) { return '<button class="tab" data-p="' + p.id + '" aria-pressed="' + (cur === p.id) + '">' + esc(p.name) + "</button>"; }).join("") +
+      '<button class="tab" data-p="new" aria-pressed="' + (cur === "new") + '">＋ Spieler</button>';
+  }
+  tabs.onclick = function (e) { var b = e.target.closest("button[data-p]"); if (!b) return; cur = b.getAttribute("data-p") === "new" ? "new" : +b.getAttribute("data-p"); drawTabs(); show(); };
+
+  function show() {
+    if (cur === "new" || !players.length) return Promise.resolve(viewNew());
+    var p = players.filter(function (x) { return x.id === cur; })[0];
+    view.innerHTML = '<div class="card muted">Lade …</div>';
+    return api("/api/admin/players/" + cur + "/report?days=" + days).then(function (r) { viewPlayer(p, r); })
+      .catch(function (e) { view.innerHTML = '<div class="card err">' + esc(e.message) + "</div>"; });
+  }
+
+  function viewNew(inv, name) {
+    var h = '<div class="card"><h2>Neuen Spieler anlegen</h2><div class="row"><input id="nn" class="grow" maxlength="20" placeholder="Name, z. B. Magnus"><button id="mk">Anlegen</button></div>' +
+      '<p class="small muted" style="margin:10px 0 0">Es reicht ein Vorname. Danach erscheint ein Code, den du in der App unter Setup → Eltern-Dashboard einfügst.</p></div>';
+    if (inv) h = inviteCard(name, inv) + h;
+    view.innerHTML = h;
+    var b = document.getElementById("mk");
+    if (b) b.onclick = function () {
+      var n = document.getElementById("nn").value.trim(); if (!n) return;
+      post("/api/admin/players", { name: n }).then(function (r) { return loadPlayers(r.id).then(function () { showInvite(r.name, r.invite); }); }).catch(function (e) { alert(e.message); });
+    };
+  }
+  function inviteString(inv) { return location.origin + "#" + inv.code; }
+  function inviteCard(name, inv) {
+    return '<div class="card"><h2>Verbindungscode für ' + esc(name) + "</h2><div class=\"code\" id=\"ic\">" + esc(inviteString(inv)) + "</div>" +
+      '<div class="row" style="margin-top:10px"><button id="cp">Kopieren</button></div>' +
+      '<p class="small muted" style="margin:10px 0 0">In der App: Setup → Eltern-Dashboard → Code einfügen → Verbinden. Der Code gilt ' + inv.validDays + " Tage und nur für ein Gerät.</p></div>";
+  }
+  function showInvite(name, inv) {
+    view.insertAdjacentHTML("afterbegin", inviteCard(name, inv));
+    document.getElementById("cp").onclick = function () {
+      var t = document.getElementById("ic").textContent;
+      (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(function () { document.getElementById("cp").textContent = "Kopiert ✓"; }, function () { prompt("Code kopieren:", t); });
+    };
+  }
+
+  function bars(list) {
+    var w = 640, h = 130, pad = 18, n = list.length, bw = (w - pad * 2) / n, max = Math.max(600, Math.max.apply(null, list.map(function (d) { return d.sec; })));
+    var s = '<svg viewBox="0 0 ' + w + " " + (h + 22) + '" width="100%" role="img" aria-label="Übungszeit pro Tag">';
+    [0, 0.5, 1].forEach(function (f) { var y = h - f * (h - 8); s += '<line x1="' + pad + '" x2="' + (w - pad) + '" y1="' + y + '" y2="' + y + '" stroke="var(--line)"/>'; });
+    s += '<text x="0" y="' + (h - (h - 8) + 3) + '">' + Math.round(max / 60) + "</text>";
+    list.forEach(function (d, i) {
+      var bh = Math.max(d.sec ? 2 : 0, d.sec / max * (h - 8)), x = pad + i * bw + bw * 0.15, bwi = bw * 0.7;
+      s += '<rect x="' + x + '" y="' + (h - bh) + '" width="' + bwi + '" height="' + bh + '" rx="3" fill="' + (d.sec >= 600 ? "var(--good)" : d.sec ? "var(--acc2)" : "var(--line)") + '"><title>' + d.date + ": " + fmtMin(d.sec) + ", " + d.items + " Aufgaben</title></rect>";
+      if (n <= 16 || i % 5 === 0) s += '<text x="' + (x + bwi / 2) + '" y="' + (h + 14) + '" text-anchor="middle">' + d.date.slice(8) + "." + d.date.slice(5, 7) + "</text>";
+    });
+    return s + "</svg>";
+  }
+  function stack(lv, total) {
+    var cols = ["", "var(--l1)", "var(--l2)", "var(--l3)", "var(--l4)"], s = "";
+    for (var i = 4; i >= 1; i--) if (lv[i]) s += '<i style="width:' + (lv[i] * 100 / Math.max(1, total)) + "%;background:" + cols[i] + '"></i>';
+    return '<div class="bar">' + s + "</div>";
+  }
+  var LV = ["Neu", "Angefangen", "Geübt", "Sitzt", "Gemeistert"];
+
+  function viewPlayer(p, r) {
+    var m = r.meta || {}, t = r.totals, wk = r.week, h = "";
+    var today = r.days[r.days.length - 1];
+    h += '<div class="card"><div class="row"><div class="grow"><b style="font-size:18px">' + esc(p.name) + "</b>" +
+      '<div class="small muted">Zuletzt aktiv: ' + fmtAgo(p.lastEvent) + (m.rank ? " · " + esc(m.rank) : "") + (m.streak ? " · 🔥 " + m.streak + " Tage Serie" : "") +
+      (p.devices.length ? " · " + p.devices.length + " Gerät" + (p.devices.length > 1 ? "e" : "") : " · noch kein Gerät verbunden") + "</div></div>" +
+      '<button class="ghost" id="inv">Neuer Code</button><button class="ghost" id="ren">Umbenennen</button><button class="ghost" id="rev">Geräte trennen</button><button class="ghost" id="del">Löschen</button></div></div>';
+    h += '<div class="card"><h2>Heute und diese Woche</h2><div class="kpis">' +
+      kpi(fmtMin(today.sec), "heute geübt" + (m.goalMin ? " (Ziel " + m.goalMin + " Min.)" : "")) +
+      kpi(today.items, "Aufgaben heute · " + pct(today.correct, today.items) + " richtig") +
+      kpi(fmtMin(wk.sec), "letzte 7 Tage · " + wk.activeDays + " von 7 Tagen aktiv") +
+      kpi(wk.items, "Aufgaben · " + pct(wk.correct, wk.items) + " richtig") +
+      kpi(t.neu, "neue Wörter (" + days + " Tage)") +
+      (m.coins != null ? kpi("🪙 " + m.coins, "Münzen" + (m.wish ? " · Wunsch: " + esc(m.wish) : "")) : "") + "</div></div>";
+    h += '<div class="card"><div class="row"><h2 class="grow" style="margin:0">Übungszeit pro Tag</h2><button class="tab" data-d="14" aria-pressed="' + (days === 14) + '">14 Tage</button><button class="tab" data-d="30" aria-pressed="' + (days === 30) + '">30 Tage</button><button class="tab" data-d="90" aria-pressed="' + (days === 90) + '">90 Tage</button></div>' +
+      bars(r.days) + '<div class="legend"><span><i style="background:var(--good)"></i>10 Min. oder mehr</span><span><i style="background:var(--acc2)"></i>weniger</span><span class="muted">Insgesamt ' + fmtMin(t.sec) + ", " + t.items + " Aufgaben, " + t.activeDays + " aktive Tage</span></div></div>";
+
+    h += '<div class="card"><h2>Fortschritt pro Einheit</h2>';
+    if (!r.units.length) h += '<p class="muted small">Noch keine Daten. Sie erscheinen, sobald Magnus die App geöffnet und eine Runde gelernt hat.</p>';
+    else {
+      h += "<table><tr><th>Einheit</th><th style=\"width:34%\">Stand</th><th class=\"n\">Gemeistert</th></tr>" +
+        r.units.map(function (u) {
+          return "<tr><td>" + esc(u.title) + '<div class="small muted">' + u.seen + " von " + u.total + " Wörtern begonnen</div></td><td>" + stack(u.lv, u.total) + '</td><td class="n">' + u.mastered + " / " + u.total + "</td></tr>";
+        }).join("") + "</table>" +
+        '<div class="legend"><span><i style="background:var(--l1)"></i>Angefangen</span><span><i style="background:var(--l2)"></i>Geübt</span><span><i style="background:var(--l3)"></i>Sitzt</span><span><i style="background:var(--l4)"></i>Gemeistert</span></div>';
+    }
+    h += "</div>";
+
+    h += '<div class="card"><h2>Problemwörter (' + days + " Tage)</h2>";
+    h += r.problems.length ? "<table><tr><th>Wort</th><th>Bedeutung</th><th class=\"n\">Fehler</th><th>Stand</th></tr>" + r.problems.map(function (x) {
+      return "<tr><td><b>" + esc(x.en) + "</b></td><td>" + esc(x.de) + '</td><td class="n">' + x.n + '</td><td><span class="pill">' + LV[x.lv] + "</span></td></tr>";
+    }).join("") + "</table>" : '<p class="muted small">Keine Fehler in diesem Zeitraum.</p>';
+    h += "</div>";
+
+    h += '<div class="card"><h2>Letzte Runden</h2>';
+    h += r.sessions.length ? "<table><tr><th>Wann</th><th>Art</th><th class=\"n\">Dauer</th><th class=\"n\">Aufgaben</th><th class=\"n\">Richtig</th><th class=\"n\">Münzen</th></tr>" + r.sessions.map(function (s) {
+      return "<tr><td>" + fmtDate(s.ts) + "</td><td>" + esc(MODE[s.mode] || s.mode) + '</td><td class="n">' + fmtMin(s.sec) + '</td><td class="n">' + s.items + '</td><td class="n">' + pct(s.correct, s.items) + '</td><td class="n">' + s.coins + "</td></tr>";
+    }).join("") + "</table>" : '<p class="muted small">Noch keine Runden.</p>';
+    h += "</div>";
+
+    if (r.buys.length) h += '<div class="card"><h2>Käufe im Shop</h2><table>' + r.buys.map(function (b) { return "<tr><td>" + fmtDate(b.ts) + "</td><td>" + esc(b.name) + '</td><td class="n">🪙 ' + b.cost + "</td></tr>"; }).join("") + "</table></div>";
+    h += '<p class="small muted">Es werden nur Lerndaten gespeichert (Wörter, Antworten, Zeiten, Käufe). Magnus sieht in der App, dass seine Eltern den Fortschritt sehen.</p>';
+    view.innerHTML = h;
+
+    Array.prototype.forEach.call(view.querySelectorAll("button[data-d]"), function (b) { b.onclick = function () { days = +b.getAttribute("data-d"); show(); }; });
+    document.getElementById("inv").onclick = function () { post("/api/admin/players/" + p.id + "/invite").then(function (i) { showInvite(p.name, i); }).catch(function (e) { alert(e.message); }); };
+    document.getElementById("ren").onclick = function () { var n = prompt("Neuer Name:", p.name); if (n) post("/api/admin/players/" + p.id + "/rename", { name: n }).then(function () { loadPlayers(p.id); }); };
+    document.getElementById("rev").onclick = function () { if (confirm("Alle verbundenen Geräte von " + p.name + " trennen? Neu verbinden geht mit einem neuen Code.")) post("/api/admin/players/" + p.id + "/revoke").then(function () { loadPlayers(p.id); }); };
+    document.getElementById("del").onclick = function () { if (confirm(p.name + " und alle gespeicherten Lerndaten endgültig löschen?")) api("/api/admin/players/" + p.id, { method: "DELETE" }).then(function () { cur = null; loadPlayers(); }); };
+  }
+  function kpi(v, l) { return '<div class="kpi"><b>' + v + "</b><span>" + l + "</span></div>"; }
+
+  loadPlayers();
+  setInterval(function () { if (cur !== "new" && !document.hidden && !document.getElementById("nn") && !document.getElementById("ic")) show(); }, 120000);
+})();
+</script>
+</body>
+</html>

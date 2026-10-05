@@ -64,7 +64,7 @@
     var mult = Math.min(3, 1 + run.combo * 0.1);
     var pts = Math.round(10 * mult * (weight || 1));
     run.score += pts; run.correct++; run.items++;
-    if (w) S.grade(w.id, 1);            // Tempo zählt als sichere, nicht als tiefe Wiederholung
+    if (w) { if (global.WordySync) global.WordySync.ctx = { mode: "arena" }; S.grade(w.id, 1); }            // Tempo zählt als sichere, nicht als tiefe Wiederholung
     S.addXp(2);
     flash("+" + pts, run.combo >= 5 ? "combo" : "ok");
     var pr = S.state.profile;
@@ -74,7 +74,7 @@
   }
   function miss(w) {
     run.combo = 0; run.items++; run.wrong++;
-    if (w) S.grade(w.id, 0);
+    if (w) { if (global.WordySync) global.WordySync.ctx = { mode: "arena" }; S.grade(w.id, 0); }
     buzz(35);
     shake();
     if (S.state.settings.audio) global.VTC.sound(S.state.profile.snd, false);
@@ -309,6 +309,7 @@
     if (!S.state.arena) S.state.arena = {};
     S.state.arena[key(run.mode)] = { best: Math.max(rec.best, score), plays: rec.plays + 1 };
     var coins = Math.min(40, Math.floor(score / 40)) + (isRecord ? 10 : 0);
+    if (global.WordySync) { global.WordySync.sessionEnd({ sec: sec, items: run.items, correct: run.correct, mode: "arena", sub: run.mode, score: score, coins: coins }); global.WordySync.ctx = null; }
     S.rollDay();
     var left = Math.max(0, 30 - (S.state.daily.arenaCoins || 0));   // Tageslimit, damit dieselben Wörter nicht endlos Münzen bringen
     var capped = coins > left; coins = Math.min(coins, left);

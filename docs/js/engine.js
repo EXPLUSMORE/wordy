@@ -359,6 +359,7 @@
     return 1;
   }
   // grade: 2 = sicher richtig, 1 = richtig mit Hilfe/langsam, 0 = falsch
+  function ev(kind, d) { var f = global.WordySync; if (f) { try { f.log(kind, d); } catch (e) {} } }
   function grade(id, g) {
     var r = rec(id), before = levelOf(id);
     var wasDue = !r.reps || r.due <= Date.now(), wasBox = inErrorBox(id);   // Münzen nur für fällige Wörter: Wiederholen ohne Abstand bringt nichts
@@ -377,6 +378,7 @@
     }
     var after = levelOf(id);
     if (g > 0) awardProgress(id, before, after, wasDue, wasBox && !inErrorBox(id));
+    var it = byId[id]; ev("a", { id: id, g: g, b: before, a: after, en: it ? it.en : "", de: it ? it.de : "", u: it ? it.unit : "" });
     return { before: before, after: after, rec: r };
   }
 
@@ -480,6 +482,7 @@
       r.iv = r.reps === 0 ? 2 : r.reps === 1 ? 5 : Math.min(400, Math.round(r.iv * r.ef));
       r.reps++; r.due = Date.now() + r.iv * 86400000;
     }
+    ev("s", { id: id, g: g });
     return r;
   }
   function sentenceStats() {
@@ -780,6 +783,7 @@
     if (state.xp < minXp(it)) return { error: "Das gibt es erst ab dem Rang " + it.rank + "." };
     if (state.coins < it.cost) return { error: "Dafür fehlen noch " + (it.cost - state.coins) + " Münzen." };
     state.coins -= it.cost; state.profile.owned.push(id);
+    ev("buy", { id: id, name: it.label || it.id, cost: it.cost });
     if (it.kind === "sticker") { var l = stickers(); l.push(it.id); if (l.length > MAX_STICKERS) l.shift(); }
     else state.profile[PROFILE_KEY[it.kind]] = it.val;
     save(true); return { ok: true, item: it };

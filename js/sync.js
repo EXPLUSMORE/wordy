@@ -1,0 +1,96 @@
+/* Sync: sendet den Lernverlauf an den Wordy-Server (Eltern-Dashboard).
+   Offline-zuerst: Ereignisse landen in einer Warteschlange und gehen raus, sobald es Netz gibt.
+   Ohne Verbindung zum Server passiert nichts, die App arbeitet wie bisher. */
+(function (g) {
+  "use strict";
+  var VT = g.VT, W = g.WordySync = { ctx: null }, timer = null, busy = false, lastSnap = 0;
+  var MAX_Q = 4000, BATCH = 200;
+
+  function pid() { try { return VT.profiles().active; } catch (e) { return "p1"; } }
+  function lsGet(k) { try { return JSON.parse(g.localStorage.getItem(k)); } catch (e) { return null; } }
+  function lsSet(k, v) { try { g.localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function cfg() { return lsGet("wordy.sync." + pid()); }
+  function queue() { return lsGet("wordy.q." + pid()) || []; }
+  function saveQ(a) { lsSet("wordy.q." + pid(), a.slice(-MAX_Q)); }
+  function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+
+  W.connected = function () { var c = cfg(); return !!(c && c.url && c.token); };
+  W.info = function () { var c = cfg() || {}; return { connected: W.connected(), name: c.name || "", url: c.url || "", last: c.last || 0, pending: queue().length, error: c.err || "" }; };
+
+  /* Ereignis vormerken (nur wenn verbunden) */
+  W.log = function (kind, d) {
+    if (!W.connected()) return;
+    var q = queue(), data = d || {};
+    if (W.ctx && W.ctx.mode && !data.m) data.m = W.ctx.mode;
+    q.push({ i: uid(), t: Date.now(), k: kind, d: data });
+    saveQ(q);
+    if (q.length >= 25) flush(); else if (!timer) timer = setTimeout(function () { timer = null; flush(); }, 20000);
+  };
+
+  function post(c, path, body, keep) {
+    return g.fetch(c.url + path, { method: "POST", keepalive: !!keep, headers: { "Content-Type": "application/json", Authorization: "Bearer " + c.token }, body: JSON.stringify(body) });
+  }
+  function setCfg(patch) { var c = cfg(); if (!c) return; for (var k in patch) c[k] = patch[k]; lsSet("wordy.sync." + pid(), c); }
+
+  function flush(keep) {
+    var c = cfg();
+    if (!c || !c.token || busy || !g.fetch) return Promise.resolve(false);
+    var q = queue(); if (!q.length) return Promise.resolve(true);
+    busy = true;
+    var batch = q.slice(0, BATCH);
+    return post(c, "/api/events", { events: batch }, keep).then(function (r) {
+      if (r.status === 401) { setCfg({ err: "Die Verbindung wurde von den Eltern getrennt." }); throw new Error("401"); }
+      if (!r.ok) throw new Error(String(r.status));
+      var cur = queue(), sent = {}; batch.forEach(function (e) { sent[e.i] = 1; });
+      saveQ(cur.filter(function (e) { return !sent[e.i]; }));
+      setCfg({ last: Date.now(), err: "" });
+      busy = false;
+      return queue().length ? flush(keep) : true;
+    }).catch(function (e) { busy = false; if (String(e.message) !== "401") setCfg({ err: "Server gerade nicht erreichbar, es wird später erneut versucht." }); return false; });
+  }
+  W.flush = function () { return flush(false); };
+
+  /* Stand der Wörter, Einheiten und Münzen: damit sieht man auch, was schon vor der Verbindung gelernt war */
+  W.snapshot = function () {
+    var c = cfg(); if (!c || !c.token || !g.fetch) return Promise.resolve(false);
+    var st = VT.state, words = {}, units = {}, id;
+    for (id in st.w) { var r = st.w[id]; if (r && r.reps != null) words[id] = [VT.levelOf(id), r.ok || 0, r.no || 0, r.last || 0]; }
+    VT.units().forEach(function (u) { if (u.track === "schule") units[u.id] = { id: u.id, title: u.title, k: u.k, total: u.words.length }; });
+    var rk = VT.rankOf(st.xp), d = st.daily || {};
+    var meta = {
+      name: st.profile.name || "", coins: st.coins, xp: st.xp, rank: rk.rank ? rk.rank.n : "", streak: st.streak.count, best: st.streak.best,
+      goalMin: st.settings.goalMin, todaySec: d.sec || 0, todayItems: d.items || 0, owned: (st.profile.owned || []).length,
+      wish: (VT.wish && VT.wish()) ? VT.wish().label || VT.wish().id : "", klassen: st.settings.klassen, version: g.WORDY_VERSION || "", totals: st.totals
+    };
+    lastSnap = Date.now();
+    return post(c, "/api/snapshot", { words: words, catalog: Object.keys(units).map(function (k) { return units[k]; }), meta: meta }).then(function (r) { return r.ok; }).catch(function () { return false; });
+  };
+
+  /* Verbinden mit dem Code der Eltern: "https://server#ABCD-EFGH" */
+  W.pair = function (text) {
+    var s = String(text || "").trim(), m = s.match(/^(https?:\/\/[^\s#]+?)\/?#?\s*([A-Za-z0-9]{4}-?[A-Za-z0-9]{4})$/);
+    if (!m) return Promise.resolve({ error: "Bitte den ganzen Code einfügen, so wie ihn die Eltern-Seite zeigt (Adresse und Code)." });
+    var url = m[1].replace(/\/+$/, "");
+    return g.fetch(url + "/api/pair", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ code: m[2], device: (g.navigator && g.navigator.userAgent || "").slice(0, 70) }) })
+      .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (x) {
+        if (!x.ok) return { error: x.j && x.j.error || "Verbinden hat nicht geklappt." };
+        lsSet("wordy.sync." + pid(), { url: url, token: x.j.token, name: x.j.name, last: 0 });
+        W.log("hello", { v: g.WORDY_VERSION || "" });
+        return W.snapshot().then(function () { return flush(false); }).then(function () { return { ok: true, name: x.j.name }; });
+      }).catch(function () { return { error: "Der Server ist nicht erreichbar. Gibt es Netz, und stimmt die Adresse?" }; });
+  };
+  W.disconnect = function () { try { g.localStorage.removeItem("wordy.sync." + pid()); g.localStorage.removeItem("wordy.q." + pid()); } catch (e) {} };
+
+  /* Aus der App: Ende einer Lernrunde */
+  W.sessionEnd = function (d) {
+    if (!W.connected()) return;
+    W.log("ss", d);
+    flush(false).then(function () { return W.snapshot(); });
+  };
+  W.maybeSnapshot = function () { if (W.connected() && Date.now() - lastSnap > 10 * 60000) W.snapshot(); };
+
+  g.addEventListener("visibilitychange", function () { if (g.document.visibilityState === "hidden") flush(true); else flush(false); });
+  g.addEventListener("online", function () { flush(false); });
+  setTimeout(function () { flush(false); W.maybeSnapshot(); }, 4000);
+})(window);
