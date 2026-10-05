@@ -99,6 +99,7 @@ async function sendGraph(o, f) {
     method: "POST", headers: { Authorization: "Bearer " + token, "Content-Type": "application/json" }, body: JSON.stringify(msg)
   });
   if (r.status !== 202 && !r.ok) {
+    if (r.status === 401 || r.status === 403) tokenCache = { token: "", exp: 0 };   // nächster Versuch holt ein frisches Token
     const j = await r.json().catch(() => ({}));
     throw new Error("Microsoft Graph: " + r.status + " " + ((j.error && (j.error.message || j.error.code)) || "").toString().slice(0, 200));
   }
