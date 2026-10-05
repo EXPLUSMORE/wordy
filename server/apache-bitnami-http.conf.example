@@ -1,0 +1,13 @@
+# Bitnami-Apache, Schritt 1 (vor dem Zertifikat): als /opt/bitnami/apache/conf/vhosts/wordy-track-http.conf ablegen.
+# Betrifft nur den Namen track.wordy.explusmore.com. Danach "apachectl configtest" und "apachectl graceful".
+<VirtualHost *:80>
+    ServerName track.wordy.explusmore.com
+    DocumentRoot "/opt/bitnami/apache/htdocs/wordy-acme"
+    <Directory "/opt/bitnami/apache/htdocs/wordy-acme">
+        Require all granted
+    </Directory>
+    # Let's-Encrypt-Prüfung durchlassen, alles andere auf https umleiten
+    RewriteEngine On
+    RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+</VirtualHost>

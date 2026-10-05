@@ -1,0 +1,13 @@
+# Bitnami-Apache, Schritt 2 (erst wenn das Zertifikat existiert): als /opt/bitnami/apache/conf/vhosts/wordy-track-https.conf ablegen.
+<VirtualHost *:443>
+    ServerName track.wordy.explusmore.com
+    SSLEngine on
+    SSLCertificateFile    "/etc/letsencrypt/live/track.wordy.explusmore.com/fullchain.pem"
+    SSLCertificateKeyFile "/etc/letsencrypt/live/track.wordy.explusmore.com/privkey.pem"
+
+    ProxyPreserveHost On
+    # Eine vom Client mitgeschickte Adresse nie vertrauen, Apache setzt die echte selbst
+    RequestHeader unset X-Forwarded-For
+    ProxyPass        / http://127.0.0.1:8787/
+    ProxyPassReverse / http://127.0.0.1:8787/
+</VirtualHost>

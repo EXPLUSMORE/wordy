@@ -50,7 +50,7 @@ Der Server hört nur auf `127.0.0.1`, von außen erreichbar ist er ausschließli
 
 ## Variante: Server mit Bitnami-Apache (statt nginx)
 Läuft auf dem Rechner bereits ein Bitnami-Apache auf Port 80/443, gibt es keinen nginx. Dann übernimmt Apache die Rolle von nginx:
-`apache-bitnami.conf.example` ist die passende Vorlage (eigener virtueller Host nur für die Wordy-Subdomain). Zertifikat per Let's Encrypt im Webroot-Verfahren, ohne bestehende Seiten anzufassen.
+`apache-bitnami-http.conf.example` (vor dem Zertifikat) und `apache-bitnami-https.conf.example` (danach) sind die Vorlagen, je ein eigener virtueller Host nur für die Wordy-Subdomain. Zertifikat per Let's Encrypt im Webroot-Verfahren, ohne bestehende Seiten anzufassen.
 
 ## Sicherung
 Alles steht in `DB_FILE`. Eine konsistente Kopie, auch im laufenden Betrieb:
