@@ -2476,6 +2476,7 @@ window.VERBS = [
   SHOP = SHOP.concat(SHOP.filter(function (a) { return a.kind === "avatar"; }).map(function (a) {
     return { id: "st:" + a.id.slice(3), kind: "sticker", label: a.label + "-Sticker", cost: a.cost ? Math.max(20, Math.round(a.cost / 20) * 10) : 0, val: a.val, rank: a.rank };
   }));
+  SHOP.forEach(function (x) { if (x.id === "st:clombo") x.cost = 400; });   // Clombo: das Lieblingsstück, teurer als die Figur selbst
   var MAX_STICKERS = 3;
   var PROFILE_KEY = { avatar: "avatar", frame: "frame", title: "title", bg: "bg", fx: "fx", snd: "snd", theme: "theme" };
 
