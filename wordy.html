@@ -3061,10 +3061,22 @@ window.SENTENCES = [
     pickVoice();
     window.speechSynthesis.onvoiceschanged = pickVoice;
   }
+  /* Browser (vor allem auf Handys) schneiden den Anfang ab, wenn die Sprachausgabe "kalt" ist oder
+     gleich nach cancel() neu startet. Deshalb: nur bei laufender Ausgabe abbrechen und dann kurz warten,
+     und nach längerer Pause zuerst eine unhörbare Silbe schicken, die den Audiokanal öffnet. */
+  var lastSpoke = 0;
+  function primeSpeech() {
+    var synth = window.speechSynthesis; if (!synth) return;
+    var w = new SpeechSynthesisUtterance(".");
+    w.volume = 0; w.rate = 2;
+    synth.speak(w);
+  }
   function speak(text, rate, lang) {
     if (!S.state.settings.audio || !window.speechSynthesis) return false;
     try {
-      window.speechSynthesis.cancel();
+      var synth = window.speechSynthesis, now = Date.now();
+      var busy = synth.speaking || synth.pending, cold = !busy && now - lastSpoke > 8000;
+      if (busy) synth.cancel();
       var de = lang === "de";
       var u = new SpeechSynthesisUtterance(de ? String(text) : String(text).replace(/^to\s+/i, ""));
       if (!voicesReady) pickVoice();
@@ -3072,10 +3084,17 @@ window.SENTENCES = [
       if (vo) u.voice = vo;
       u.lang = (vo && vo.lang) || (de ? "de-DE" : "en-GB");
       u.rate = rate || (de ? 1 : 0.92);
-      window.speechSynthesis.speak(u);
+      lastSpoke = now;
+      var go = function () { if (cold) primeSpeech(); synth.speak(u); };
+      if (busy) setTimeout(go, 150); else go();
       return true;
     } catch (e) { return false; }
   }
+  /* Beim ersten Tippen die Sprachausgabe unhörbar anwerfen, damit schon der erste Satz vollständig kommt. */
+  document.addEventListener("pointerdown", function warm() {
+    document.removeEventListener("pointerdown", warm);
+    if (S.state.settings.audio && window.speechSynthesis) { try { primeSpeech(); lastSpoke = Date.now(); } catch (e) {} }
+  }, { passive: true });
   function audioAvailable() { return !!(window.speechSynthesis && S.state.settings.audio); }
 
   /* ---------- Textvergleich ---------- */
