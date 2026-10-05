@@ -179,5 +179,63 @@
     (ok ? set.ok : set.no).forEach(function (n) { tone(n[0], n[1], n[2], n[3], ok ? .13 : .1); });
   }
 
-  global.VTC = { avatarHtml: avatarHtml, frameClass: frameClass, applyLook: applyLook, burst: burst, finale: finale, sound: sound, ART: ART };
+  /* ---------- Lektionsfinale: Zahlen, Balken, Münzen, Effekte nacheinander ---------- */
+  function countUp(el, to, ms, suffix) {
+    suffix = suffix || "";
+    if (reduce || !global.requestAnimationFrame) { el.textContent = to + suffix; return; }
+    var t0 = global.performance.now();
+    (function f(t) {
+      var k = Math.min(1, (t - t0) / ms); k = 1 - Math.pow(1 - k, 3);
+      el.textContent = Math.round(to * k) + suffix;
+      if (k < 1) global.requestAnimationFrame(f);
+    })(t0);
+  }
+  function flyCoins(from, to, n) {
+    if (reduce || !from || !to) return;
+    var a = from.getBoundingClientRect(), b = to.getBoundingClientRect();
+    for (var i = 0; i < n; i++) {
+      (function (i) {
+        var c = document.createElement("span"); c.textContent = "🪙";
+        c.style.cssText = "position:fixed;left:" + (a.left + a.width / 2) + "px;top:" + (a.top + a.height / 2) + "px;font-size:22px;z-index:210;pointer-events:none;opacity:0";
+        document.body.appendChild(c);
+        var dx = b.left + b.width / 2 - (a.left + a.width / 2), dy = b.top + b.height / 2 - (a.top + a.height / 2);
+        var an = c.animate([
+          { transform: "translate(0,0) scale(.6)", opacity: 0 },
+          { transform: "translate(" + dx * .15 + "px," + (dy * .15 - 50) + "px) scale(1.2)", opacity: 1, offset: .25 },
+          { transform: "translate(" + dx + "px," + dy + "px) scale(.8)", opacity: 1 }
+        ], { duration: 800, delay: i * 90, easing: "cubic-bezier(.4,0,.2,1)", fill: "both" });
+        an.onfinish = function () { c.remove(); };
+      })(i);
+    }
+  }
+  /* root = Abschlussbildschirm; o = {pct0, pct1, rankUp, coins, perfect, ok, fx, snd, audio} */
+  function runFinale(root, o) {
+    var secs = root.querySelectorAll(".sbody .stack > section");
+    for (var i = 0; i < secs.length; i++) { secs[i].classList.add("fin-in"); secs[i].style.setProperty("--d", (i * 0.2) + "s"); }
+    root.querySelectorAll("[data-count]").forEach(function (el) { countUp(el, +el.getAttribute("data-count"), 1000, el.getAttribute("data-suffix") || ""); });
+    var bar = root.querySelector(".fin-bar i"), banner = root.querySelector(".fin-rankup");
+    if (bar) {
+      var set = function (w, anim) { bar.style.transition = anim ? "width 1s cubic-bezier(.2,.8,.2,1)" : "none"; bar.style.width = w + "%"; };
+      set(o.pct0, false); void bar.offsetWidth;
+      global.setTimeout(function () { set(o.rankUp ? 100 : o.pct1, !reduce); }, 700);
+      if (o.rankUp) global.setTimeout(function () {
+        set(0, false); void bar.offsetWidth; set(o.pct1, !reduce);
+        if (banner) banner.classList.add("show");
+        burst("stars", global.innerWidth / 2, global.innerHeight * .3, 24, 1.8);
+        if (global.navigator.vibrate) { try { global.navigator.vibrate([30, 50, 30]); } catch (e) {} }
+      }, 1900);
+    }
+    if (o.coins > 0) {
+      var chip = root.querySelector(".fin-coin b");
+      if (chip) countUp(chip, o.coins, 900, "");
+      global.setTimeout(function () { flyCoins(root.querySelector(".fin-xp"), root.querySelector(".fin-coin"), Math.min(9, o.coins)); }, 900);
+    }
+    if (o.ok) {
+      global.setTimeout(function () { finale(o.fx && o.fx !== "none" ? o.fx : "confetti"); }, 500);
+      if (o.perfect) global.setTimeout(function () { finale("firework"); }, 1500);
+      if (o.snd && o.audio) global.setTimeout(function () { sound(o.snd, true); }, 450);
+    }
+  }
+
+  global.VTC = { runFinale: runFinale, avatarHtml: avatarHtml, frameClass: frameClass, applyLook: applyLook, burst: burst, finale: finale, sound: sound, ART: ART };
 })(window);

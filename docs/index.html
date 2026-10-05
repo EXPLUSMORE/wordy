@@ -117,6 +117,41 @@ html[data-bg="space"][data-theme="light"]{--bgstar:rgba(60,50,140,.55)}
 html[data-bg="space"][data-theme="dark"]{--bgstar:rgba(255,255,255,.9)}
 /* Karten lassen das Muster leicht durchscheinen */
 html[data-bg="stars"] .card,html[data-bg="clouds"] .card,html[data-bg="space"] .card{background:color-mix(in srgb,var(--card) 88%,transparent)}
+
+/* Lektionsfinale */
+.fin-in{animation:finUp .55s cubic-bezier(.2,.8,.2,1) both;animation-delay:var(--d,0s)}
+@keyframes finUp{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}
+.fin-top{position:relative;overflow:hidden}
+.fin-hero{position:relative;width:96px;height:96px;margin:6px auto 4px;display:grid;place-items:center}
+.fin-rays{position:absolute;inset:-46px;border-radius:50%;opacity:.9;
+  background:repeating-conic-gradient(from 0deg,color-mix(in srgb,var(--gold) 55%,transparent) 0 8deg,transparent 8deg 20deg);
+  -webkit-mask:radial-gradient(circle,transparent 34%,#000 36%,transparent 70%);mask:radial-gradient(circle,transparent 34%,#000 36%,transparent 70%);
+  animation:finSpin 14s linear infinite,finFade 1s ease-out both}
+@keyframes finSpin{to{transform:rotate(360deg)}}
+@keyframes finFade{from{opacity:0;transform:scale(.4)}to{opacity:.9}}
+.fin-av{width:92px;height:92px;font-size:54px;position:relative;animation:finPop .8s cubic-bezier(.3,1.6,.4,1) both .1s}
+.fin-av svg{width:60px;height:60px}
+@keyframes finPop{0%{transform:scale(0) rotate(-25deg)}60%{transform:scale(1.2) rotate(6deg)}100%{transform:scale(1) rotate(0)}}
+.fin-stars{display:flex;justify-content:center;gap:6px;margin-top:6px}
+.fin-star{width:38px;height:38px;fill:var(--line);stroke:var(--rule);stroke-width:1}
+.fin-star.on{fill:#FFC93C;stroke:#E0A800;filter:drop-shadow(0 0 6px rgba(255,201,60,.7));
+  animation:finStar .6s cubic-bezier(.3,1.7,.4,1) both;animation-delay:calc(.9s + var(--i) * .28s)}
+@keyframes finStar{0%{transform:scale(0) rotate(-120deg);opacity:0}70%{transform:scale(1.35) rotate(12deg);opacity:1}100%{transform:scale(1) rotate(0);opacity:1}}
+.fin-stamp{position:absolute;right:10px;top:12px;z-index:2;padding:4px 10px;border:3px solid var(--bad);color:var(--bad);border-radius:8px;
+  font-weight:800;letter-spacing:.08em;font-size:15px;transform:rotate(-9deg);animation:finStamp .5s cubic-bezier(.2,1.4,.4,1) both 1.2s}
+@keyframes finStamp{0%{transform:scale(3) rotate(-25deg);opacity:0}70%{transform:scale(.94) rotate(-9deg);opacity:1}100%{transform:scale(1) rotate(-9deg);opacity:1}}
+.fin-rankup{margin-top:12px;padding:12px;border-radius:12px;text-align:center;color:var(--accent-ink);background:linear-gradient(100deg,var(--accent) 30%,color-mix(in srgb,var(--gold) 60%,var(--accent)) 50%,var(--accent) 70%);
+  background-size:250% 100%;display:none}
+.fin-rankup span{display:block;font-size:12px;letter-spacing:.1em;text-transform:uppercase;opacity:.85}
+.fin-rankup b{font-family:Newsreader,Georgia,serif;font-size:24px}
+.fin-rankup.show{display:block;animation:finBanner .7s cubic-bezier(.2,1.4,.4,1) both,finShine 1.6s ease-in-out .3s 2}
+@keyframes finBanner{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes finShine{from{background-position:120% 0}to{background-position:-60% 0}}
+.fin-coin b{font-weight:700}
+.fin-flame{font-size:34px;text-align:center;transform-origin:50% 90%}
+.fin-flame.go{animation:finFlame .9s ease-in-out 3 .5s}
+@keyframes finFlame{0%,100%{transform:scale(1) rotate(0)}30%{transform:scale(1.35) rotate(-8deg)}60%{transform:scale(1.2) rotate(7deg)}}
+@media (prefers-reduced-motion:reduce){.fin-in,.fin-rays,.fin-av,.fin-star.on,.fin-stamp,.fin-rankup.show,.fin-flame.go{animation:none!important}.fin-rankup.show{display:block}}
 /* Shop und Sammelalbum */
 .shopitem .si{font-size:20px;width:30px;text-align:center;flex:0 0 auto;display:grid;place-items:center}
 .shopitem .si svg{width:30px;height:30px}

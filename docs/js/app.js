@@ -717,6 +717,7 @@
         newSeen: 0, boxSolved: 0, mastered: 0, sentOk: 0, start: Date.now(), answered: false,
         retry: [], mode: "verbs", ended: false
       };
+      snapStart();
       sessionEl.hidden = false; document.body.style.overflow = "hidden";
       return renderTask();
     }
@@ -737,8 +738,14 @@
       newSeen: 0, boxSolved: 0, mastered: 0, sentOk: 0, start: Date.now(), answered: false,
       retry: [], mode: opts.mode || "mix", ended: false
     };
+    snapStart();
     sessionEl.hidden = false; document.body.style.overflow = "hidden";
     renderTask();
+  }
+  /* Stand zu Rundenbeginn, damit das Finale zeigen kann, was die Runde gebracht hat */
+  function snapStart() { SS.xp0 = S.state.xp; SS.coins0 = S.state.coins; }
+  function star(on, i) {
+    return '<svg viewBox="0 0 24 24" class="fin-star' + (on ? " on" : "") + '" style="--i:' + i + '" aria-hidden="true"><path d="M12 2.2l2.9 6.2 6.8.8-5 4.7 1.3 6.7L12 17.2 6 20.6l1.3-6.7-5-4.7 6.8-.8z"/></svg>';
   }
   function endSession(reason) {
     if (!SS || SS.ended) return;
@@ -750,24 +757,41 @@
     var msg = reason === "hearts"
       ? "Die Herzen sind alle. Dein Fortschritt ist gespeichert – die Herzen füllen sich von selbst wieder auf."
       : acc >= 90 ? "Das saß. Weiter so." : acc >= 70 ? "Solide Runde. Die Wackelkandidaten kommen bald wieder." : "Schwierige Wörter dabei – die landen jetzt in der Fehlerkartei und kommen häufiger dran.";
+    var good = reason !== "hearts";
+    var perfect = good && SS.correct === SS.items && SS.items > 3;
+    var stars = !good ? 0 : acc >= 90 ? 3 : acc >= 70 ? 2 : 1;
+    var xp0 = SS.xp0 == null ? st.xp : SS.xp0, gain = Math.max(0, st.xp - xp0), coinGain = Math.max(0, st.coins - (SS.coins0 == null ? st.coins : SS.coins0));
+    var r0 = S.rankOf(xp0), r1 = S.rankOf(st.xp), rankUp = r0.rank.n !== r1.rank.n;
+    var pct = function (r) { return r.span ? Math.round(r.into * 100 / r.span) : 100; };
     var html = '<div class="sbody"><div class="stack" style="padding-top:20px">' +
-      '<section class="card" style="text-align:center"><div style="font-size:40px">' + (reason === "hearts" ? "💤" : acc >= 90 ? "🌟" : "✅") + '</div>' +
+      '<section class="card fin-top" style="text-align:center">' + (perfect ? '<div class="fin-stamp">PERFEKT!</div>' : "") +
+      (good ? '<div class="fin-hero"><div class="fin-rays"></div><div class="avatar fin-av ' + global.VTC.frameClass(st.profile) + '">' + avatarHtml(st.profile.avatar) + '</div></div>' +
+        '<div class="fin-stars" aria-label="' + stars + ' von 3 Sternen">' + [0, 1, 2].map(function (i) { return star(i < stars, i); }).join("") + '</div>'
+        : '<div style="font-size:40px">💤</div>') +
       '<h1 style="font-size:26px;margin-top:6px">' + head + '</h1><p class="muted small" style="margin:8px 0 0">' + esc(msg) + '</p>' +
       '<div class="tiles4" style="margin-top:16px">' +
-      '<div class="kpi"><b class="tnum">' + SS.items + '</b><span>Aufgaben</span></div>' +
-      '<div class="kpi"><b class="tnum">' + acc + '%</b><span>richtig</span></div>' +
-      '<div class="kpi"><b class="tnum">' + SS.maxChain + '</b><span>beste Serie</span></div>' +
+      '<div class="kpi"><b class="tnum" data-count="' + SS.items + '">' + SS.items + '</b><span>Aufgaben</span></div>' +
+      '<div class="kpi"><b class="tnum" data-count="' + acc + '" data-suffix="%">' + acc + '%</b><span>richtig</span></div>' +
+      '<div class="kpi"><b class="tnum" data-count="' + SS.maxChain + '">' + SS.maxChain + '</b><span>beste Serie</span></div>' +
       '<div class="kpi"><b class="tnum">' + fmtMin(sec).replace(" Min", "") + '</b><span>Minuten</span></div></div></section>';
+    if (gain || coinGain) html += '<section class="card fin-xp"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Erfahrung</div>' +
+      (gain ? '<b class="tnum" style="color:var(--accent)">+<span data-count="' + gain + '">' + gain + '</span> XP</b>' : "") +
+      (coinGain ? '<span class="pill fin-coin" style="margin-left:10px">🪙 +<b data-count="' + coinGain + '">' + coinGain + '</b></span>' : "") + '</div>' +
+      '<div class="row" style="margin-top:8px"><b>' + esc(r1.rank.n) + '</b><span class="spacer"></span><span class="small muted tnum">' + st.xp + (r1.next ? " / " + r1.next.xp : "") + ' XP</span></div>' +
+      '<div class="bar fin-bar" style="margin-top:6px"><i style="width:' + pct(r1) + '%"></i></div>' +
+      (rankUp ? '<div class="fin-rankup"><span>⬆️ Neuer Rang</span><b>' + esc(r1.rank.n) + '</b></div>' : "") + '</section>';
     if (SS.sentOk) html += '<section class="card"><div class="eyebrow">Satzbau</div><p style="margin:6px 0 0">' + SS.sentOk + ' ' + plural(SS.sentOk, "Satz", "Sätze") + ' richtig zusammengesetzt.</p></section>';
     if (SS.mastered) html += '<section class="card"><div class="eyebrow" style="color:var(--gold)">Neu gemeistert</div><p style="margin:6px 0 0">' + SS.mastered + ' ' + plural(SS.mastered, "Wort sitzt", "Wörter sitzen") + ' jetzt langfristig.</p></section>';
-    if (rw.goalReached) html += '<section class="card"><div class="eyebrow" style="color:var(--good)">Tagesziel erreicht</div><p style="margin:6px 0 0">' + (rw.streakUp ? "Streak steht bei " + st.streak.count + " " + plural(st.streak.count, "Tag", "Tagen") + "." : "Schon erledigt heute.") + '</p></section>';
+    if (rw.goalReached) html += '<section class="card"><div class="eyebrow" style="color:var(--good)">Tagesziel erreicht</div>' + (rw.streakUp ? '<div class="fin-flame">🔥</div>' : "") + '<p style="margin:6px 0 0">' + (rw.streakUp ? "Streak steht bei " + st.streak.count + " " + plural(st.streak.count, "Tag", "Tagen") + "." : "Schon erledigt heute.") + '</p></section>';
     if (rw.missions.length) html += '<section class="card"><div class="eyebrow">Missionen erfüllt</div>' + rw.missions.map(function (m) { return '<div class="mission done"><div class="tick">✓</div><div class="txt small">' + esc(m.n) + '</div><span class="pill">🪙 ' + m.coins + '</span></div>'; }).join("") + '</section>';
     if (rw.badges.length) html += '<section class="card"><div class="eyebrow">Neue Abzeichen</div><div class="badges" style="margin-top:8px">' + rw.badges.map(function (b) { return '<div class="badge"><div class="g">🏅</div><b>' + esc(b.n) + '</b></div>'; }).join("") + '</div></section>';
     html += '<div class="row" style="gap:8px"><button class="btn wide" data-act="again">Noch eine Runde</button>' +
       '<button class="btn ghost" data-act="close">Fertig</button></div></div></div>';
     sessionEl.innerHTML = html;
     renderHeader();
-    if (reason !== "hearts" && acc >= 70) global.VTC.finale(S.state.profile.fx);
+    global.VTC.runFinale(sessionEl, { pct0: pct(r0), pct1: pct(r1), rankUp: rankUp, coins: coinGain, perfect: perfect,
+      ok: good && acc >= 70, fx: st.profile.fx, snd: st.profile.snd, audio: st.settings.audio });
+    if (rw.streakUp) { var fl = sessionEl.querySelector(".fin-flame"); if (fl) fl.classList.add("go"); }
   }
   function closeSession() {
     sessionEl.hidden = true; sessionEl.innerHTML = ""; SS = null;
