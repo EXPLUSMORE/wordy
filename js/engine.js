@@ -485,8 +485,10 @@
     if (!r) r = state.s[id] = { reps: 0, ef: 2.3, iv: 0, due: 0, ok: 0, no: 0, last: 0 };
     return r;
   }
+  /* Schulbücher haben keine eigenen Sätze: Headlight 2 (Klasse 6) nutzt die Sätze der Klasse 6 */
+  var BOOK_CLASS = { "Headlight 2": 6 };
   function activeSentences() {
-    var s = state.settings, sel = groupsOf();
+    var s = state.settings, sel = groupsOf().map(function (k) { return BOOK_CLASS[k] || k; });
     return sentences.filter(function (x) { return x.track === s.track && sel.indexOf(x.k) >= 0; });
   }
   function planSentences(n) {
