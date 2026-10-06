@@ -464,7 +464,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.0.1";window.WORDY_BUILD="4edb5791e4";</script>
+<script>window.WORDY_VERSION="2.0.2";window.WORDY_BUILD="fbc1e21ef3";</script>
 </head>
 <body>
 <div id="app">
@@ -4418,6 +4418,27 @@ window.VERBS = [
       setTimeout(fin, maxMs || 500);
     } catch (e) { fin(); }
   }
+  /* Englischen Text für die Sprachausgabe aufbereiten: Abkürzungen ausschreiben, Klammern und Schrägstriche glätten */
+  function speechClean(t) {
+    return String(t)
+      .replace(/\bsb\.?\s*\/\s*sth\.?/gi, "somebody or something")
+      .replace(/\bsth\.?\s*\/\s*sb\.?/gi, "something or somebody")
+      .replace(/\bsb\.?(?=\W|$)/gi, "somebody")
+      .replace(/\bsth\.?(?=\W|$)/gi, "something")
+      .replace(/\be\.\s?g\.?/gi, "for example")
+      .replace(/\bi\.\s?e\.?/gi, "that is")
+      .replace(/\betc\.?/gi, "et cetera")
+      .replace(/£\s?(\d+(?:[.,]\d+)?)/g, "$1 pounds")
+      .replace(/\bthe (\d)0s\b/gi, function (m, d) { return "the " + ({ 6: "sixties", 7: "seventies", 8: "eighties", 9: "nineties" }[d] || m.slice(4)); })
+      .replace(/\s*\((Nomen|Verb|Adjektiv|Vergangenheit|überhören|Stufe|klein|zum Beispiel)\)/g, "")   // deutsche Hinweise nicht vorlesen
+      .replace(/\bat (\d{1,2})\.(\d{2})\b/g, "at $1:$2")
+      .replace(/\s*(…|\.\.\.)\s*/g, " ")
+      .replace(/[()]/g, "")
+      .replace(/\s*\/\s*/g, ", ")
+      .replace(/\s*[;:]\s*/g, ", ")
+      .replace(/([.!?]),/g, "$1")
+      .replace(/\s+/g, " ").trim();
+  }
   function speak(text, rate, lang, forceCold, onEnd) {
     if (!S.state.settings.audio || !window.speechSynthesis) return false;
     try {
@@ -4425,7 +4446,7 @@ window.VERBS = [
       var busy = synth.speaking || synth.pending, cold = !busy && (forceCold || now - lastSpoke > 8000);
       if (busy) synth.cancel();
       var de = lang === "de";
-      var u = new SpeechSynthesisUtterance(de ? String(text) : String(text).replace(/^to\s+/i, ""));
+      var u = new SpeechSynthesisUtterance(de ? String(text) : speechClean(String(text)).replace(/^to\s+/i, ""));
       if (!voicesReady) pickVoice();
       var vo = de ? voiceDe : voice;
       if (vo) u.voice = vo;
@@ -6078,6 +6099,7 @@ window.VERBS = [
   }
 
   global.VTUI = {
+    speechText: speechClean,
     toast: toast,
     refreshHeader: renderHeader,
     afterArena: function () { render(); }
