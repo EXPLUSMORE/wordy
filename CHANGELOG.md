@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.2.0 – 2026-10-06
+
+- Fortschritt > Wörter: Verteilung (Neu bis Gemeistert) und eine Liste aller geübten Wörter mit Suche (englisch/deutsch) und Filtern „Schwierig“, „Gerade gelernt“, „Lange nicht geübt“ und „Gemeistert“. Pro Wort: Stufe, zuletzt geübt, nächste Wiederholung, Treffer und Fehler. Zeile „In den letzten 7 Tagen X Wörter geübt“.
+
 ## 2.1.0 – 2026-10-06
 
 - Headlight 2 hat jetzt eigene Sätze (123, passend zu Unit 1–6: simple past, Vergleiche, if-Sätze, present perfect, will-Future …). Bisher wurden die Sätze der Klasse 6 genutzt; sie bleiben der Rückfall, falls ein Buch keine eigenen Sätze hat.

@@ -464,7 +464,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.1.0";window.WORDY_BUILD="3b3c027230";</script>
+<script>window.WORDY_VERSION="2.2.0";window.WORDY_BUILD="dc8b4e056a";</script>
 </head>
 <body>
 <div id="app">
@@ -5085,7 +5085,7 @@ window.VERBS = [
   "use strict";
   var S = global.VT, view = document.getElementById("view"), tabs = document.getElementById("tabs"),
       sessionEl = document.getElementById("session"), tab = "home", detailUnit = null,
-      uebenSeg = "modi", statsSeg = "ueb", shopSeg = "shop", startMin = null, lastRec = null, openGroups = {}, openFolds = {};
+      uebenSeg = "modi", statsSeg = "ueb", shopSeg = "shop", startMin = null, lastRec = null, openGroups = {}, openFolds = {}, wFilter = "alle", wQuery = "", wMax = 40;
 
   /* ---------- Werkzeug ---------- */
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]; }); }
@@ -5779,6 +5779,44 @@ window.VERBS = [
   }
 
   /* ================= FORTSCHRITT ================= */
+  /* ---------- Wörterliste (Fortschritt > Wörter) ---------- */
+  var WFILTERS = [["alle", "Alle"], ["schwer", "Schwierig"], ["neu", "Gerade gelernt"], ["alt", "Lange nicht geübt"], ["sitzt", "Gemeistert"]];
+  function wordRows() {
+    var now = Date.now(), q = wQuery.trim().toLowerCase();
+    return S.activeWords().map(function (w) { return { w: w, r: S.state.w[w.id], l: S.levelOf(w.id) }; }).filter(function (x) {
+      if (!x.r || !x.r.reps && !x.r.no && !x.r.ok) return false;                       // nur schon geübte Wörter
+      if (q && (x.w.en + " " + x.w.de).toLowerCase().indexOf(q) < 0) return false;
+      if (wFilter === "schwer") return x.r.no > 0 && x.l < 3;
+      if (wFilter === "neu") return now - (x.r.last || 0) < 7 * 86400000 && x.l >= 1 && x.l <= 2;
+      if (wFilter === "alt") return x.l >= 1 && now - (x.r.last || 0) > 14 * 86400000;
+      if (wFilter === "sitzt") return x.l === 4;
+      return true;
+    }).sort(function (a, b) {
+      return wFilter === "schwer" ? (b.r.no - a.r.no) || (a.r.ok - b.r.ok)
+        : wFilter === "alt" ? (a.r.last || 0) - (b.r.last || 0)
+        : (b.r.last || 0) - (a.r.last || 0);
+    });
+  }
+  function wordListHtml() {
+    var rows = wordRows(), shown = rows.slice(0, wMax), now = Date.now();
+    if (!rows.length) return '<p class="small muted" style="margin:10px 0 0">' + (wQuery || wFilter !== "alle" ? "Dazu gibt es nichts." : "Noch keine Wörter geübt. Nach der ersten Runde steht hier etwas.") + '</p>';
+    return '<p class="small muted" style="margin:10px 0 0">' + rows.length + ' ' + plural(rows.length, "Wort", "Wörter") + '</p>' + shown.map(function (x) {
+      var days = x.r.last ? Math.floor((now - x.r.last) / 86400000) : null, nd = x.r.due ? Math.ceil((x.r.due - now) / 86400000) : null;
+      return '<div class="wordrow"><span class="en">' + esc(x.w.en) + '</span><span class="de" style="flex:1 1 auto">' + esc(x.w.de) +
+        '<span class="small muted" style="display:block">' + esc(S.LEVELS[x.l].n) + (days != null ? " · zuletzt " + (days === 0 ? "heute" : "vor " + days + " " + plural(days, "Tag", "Tagen")) : "") +
+        (nd != null && x.l > 0 ? " · nächste Wiederholung " + (nd <= 0 ? "jetzt" : "in " + nd + " " + plural(nd, "Tag", "Tagen")) : "") + '</span></span>' +
+        '<span class="pill">✗ ' + x.r.no + '</span><span class="pill">✓ ' + x.r.ok + '</span></div>';
+    }).join("") + (rows.length > wMax ? '<button class="btn ghost wide" data-act="wmore" style="margin-top:10px">Mehr anzeigen</button>' : '');
+  }
+  function wordListCard() {
+    var week = S.activeWords().filter(function (w) { var r = S.state.w[w.id]; return r && r.last && Date.now() - r.last < 7 * 86400000; }).length;
+    return '<section class="card"><div class="eyebrow">Alle Wörter</div>' +
+      '<p class="small muted" style="margin:6px 0 0">In den letzten 7 Tagen hast du ' + week + ' ' + plural(week, "Wort", "Wörter") + ' geübt.</p>' +
+      '<input id="wSearch" type="search" placeholder="Wort suchen (englisch oder deutsch)" value="' + esc(wQuery) + '" autocomplete="off" style="width:100%;margin-top:10px">' +
+      '<div class="row wrap" style="margin-top:10px">' + WFILTERS.map(function (f) {
+        return '<button class="chip" data-act="wfilter" data-f="' + f[0] + '" aria-pressed="' + (wFilter === f[0]) + '">' + f[1] + '</button>';
+      }).join("") + '</div><div id="wList">' + wordListHtml() + '</div></section>';
+  }
   function viewStats() {
     var st = S.state, s = S.stats(), r = S.rankOf(st.xp);
     var maxItems = Math.max.apply(null, s.d14.map(function (d) { return d.items; }).concat([1]));
@@ -5835,11 +5873,6 @@ window.VERBS = [
             '<div class="bar"><i style="width:' + pc + '%"></i></div></div><span class="pill tnum nowrap">' + pc + '%</span></div>';
         }).join("") || '<p class="small muted">Noch keine Daten. Nach der ersten Übungsrunde steht hier etwas.</p>') +
       '</div></section>';
-    var secWeak = '<section class="card"><div class="eyebrow">Schwierigste Wörter</div><div style="margin-top:6px">' +
-      (s.weak.length ? s.weak.slice(0, 12).map(function (x) {
-        return '<div class="wordrow"><span class="en">' + esc(x.w.en) + '</span><span class="de">' + esc(x.w.de) + '</span>' +
-          '<span class="pill">✗ ' + x.r.no + '</span><span class="pill">✓ ' + x.r.ok + '</span></div>';
-      }).join("") : '<p class="small muted">Noch keine Fehler erfasst.</p>') + '</div></section>';
     var secOverview = '<section class="card"><div class="eyebrow">Lernstand im Überblick</div>' +
       '<div class="tiles4" style="margin-top:10px">' +
       '<div class="kpi"><b class="tnum">' + Math.round(st.totals.sec / 60) + '</b><span>Minuten gesamt</span></div>' +
@@ -5852,10 +5885,12 @@ window.VERBS = [
       '<p style="margin:8px 0 0"><b class="tnum">' + s.boxSize + '</b> ' + plural(s.boxSize, "Wort macht", "Wörter machen") + ' noch Probleme. Sie kommen automatisch häufiger dran.</p>' +
       (s.boxSize ? '<button class="btn soft wide" data-act="start" data-mode="box" data-min="5" style="margin-top:12px">Fehlerkartei üben</button>' : '') + '</section>';
     var html = '<div class="stack">' + segBar("stats", statsSeg, [["ueb", "Übersicht"], ["woerter", "Wörter"], ["verlauf", "Verlauf"]]);
-    if (statsSeg === "woerter") html += secWeak + secBox + secVerbs;
+    if (statsSeg === "woerter") html += secDist + wordListCard() + secBox + secVerbs;
     else if (statsSeg === "verlauf") html += secDays + secSent;
     else html += secTiles + secDist + secOverview + secBehind;
     view.innerHTML = html + '</div>';
+    var ws = $("#wSearch");
+    if (ws) ws.addEventListener("input", function () { wQuery = ws.value; wMax = 40; $("#wList").innerHTML = wordListHtml(); });
   }
 
   /* ================= SHOP & ABZEICHEN ================= */
@@ -6684,6 +6719,8 @@ window.VERBS = [
       render(); view.scrollTop = 0;
     }
     else if (a === "startrec") { if (lastRec) startSession(lastRec.opts); }
+    else if (a === "wfilter") { wFilter = act.getAttribute("data-f"); wMax = 40; render(); }
+    else if (a === "wmore") { wMax += 40; $("#wList").innerHTML = wordListHtml(); }
     else if (a === "setmin") { startMin = +act.getAttribute("data-min"); render(); }
     else if (a === "goueben") { tab = "ueben"; uebenSeg = "modi"; detailUnit = null; render(); view.scrollTop = 0; }
     else if (a === "back") { stopReading(); detailUnit = null; render(); }
