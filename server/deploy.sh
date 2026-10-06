@@ -6,7 +6,7 @@
 #   DEPLOY_MODE=branch|tag    branch: jeder neue Stand auf DEPLOY_BRANCH (Standard main); tag: nur Tags passend zu DEPLOY_TAG_GLOB
 #   DEPLOY_BRANCH=main        DEPLOY_TAG_GLOB='server-*'
 #   DEPLOY_KEY=/etc/wordy-deploy/id_ed25519   Nur-Lesen-Deploy-Schlüssel (bei öffentlichem Repository nicht nötig)
-#   SERVICE=wordy-server      NODE_BIN=/usr/bin/node      RUN_AS=wordy (Benutzer, dem die Dateien gehören)
+#   SERVICE=wordy-server      NODE_BIN=/opt/node22/bin/node (sonst: Node aus der Dienst-Datei)      RUN_AS=wordy (Benutzer, dem die Dateien gehören)
 set -uo pipefail
 
 main() {
@@ -17,7 +17,10 @@ main() {
   REPO="$HERE"; while [ "$REPO" != / ] && [ ! -e "$REPO/.git" ]; do REPO="$(dirname "$REPO")"; done
   [ "$REPO" != / ] || { echo "FEHLER: $HERE liegt in keinem Git-Ordner. Der Server muss per git clone angelegt sein."; return 2; }
   MODE="${DEPLOY_MODE:-branch}"; BRANCH="${DEPLOY_BRANCH:-main}"; GLOB="${DEPLOY_TAG_GLOB:-server-*}"
-  SERVICE="${SERVICE:-wordy-server}"; NODE="${NODE_BIN:-/usr/bin/node}"; KEY="${DEPLOY_KEY:-}"
+  SERVICE="${SERVICE:-wordy-server}"; KEY="${DEPLOY_KEY:-}"
+  # Node: dasselbe Programm, mit dem der Dienst läuft (steht in dessen systemd-Datei), sonst das erste node im Pfad
+  NODE="${NODE_BIN:-$(systemctl show -p ExecStart --value "$SERVICE" 2>/dev/null | sed -n 's/.*path=\([^ ;]*\).*/\1/p' | head -n1)}"
+  [ -x "${NODE:-}" ] || NODE="$(command -v node || echo /usr/bin/node)"
   RUN_AS="${RUN_AS:-$(stat -c %U "$REPO")}"
   BAD="$REPO/.deploy-bad"
   local RESTART="${RESTART_CMD:-systemctl restart $SERVICE}"

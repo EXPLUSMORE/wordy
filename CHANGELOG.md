@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.9.1 – 2026-10-06
+
+- Server: `deploy.sh` testet und sichert jetzt mit demselben Node wie der Dienst (aus dessen systemd-Datei, sonst `NODE_BIN`), nicht mit dem alten System-Node. Behebt, dass der Selbsttest auf dem Server mit `MODULE_NOT_FOUND` (node:child_process) scheiterte und Stände abgelehnt wurden.
+
 ## 2.9.0 – 2026-10-06
 
 - Ziele und Lernpläne im Dashboard: Die Einheiten-Auswahl enthält jetzt **alle** Einheiten (Headlight 2, Klassen 6–8, Business Basis/Aufbau/Profi/Smalltalk/Redewendungen, eigene Listen). Bisher fehlten die Business-Einheiten, und ein frisches Profil ohne Lernstand sendete gar keine Einheitenliste. Die Liste und die Wörter der Einheiten werden jetzt auch von einem leeren Profil gesendet (Wörter und Übersicht weiterhin nicht, damit nichts überschrieben wird). Dashboard: Einheiten in sinnvoller Reihenfolge (Headlight 2, 6, 7, 8, Basis, Aufbau, Profi, Smalltalk, Redewendungen, Eigene Listen). Die App muss einmal geöffnet werden, damit die Liste ankommt; für die Reihenfolge ist ein **Server-Update** nötig (läuft automatisch).
