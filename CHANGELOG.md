@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.8.0 – 2026-10-06
+
+- Start: Jedes offene Wochenziel hat jetzt einen Knopf „Jetzt üben →“, der direkt eine passende Runde startet: Minuten-Ziel = gemischte Runde in der Länge des Rests (5 bis 15 Min.), Tage-Ziel = Runde in Tagesziel-Länge (mind. 5 Min.), Neue-Wörter-Ziel = Runde mit neuen Wörtern, Einheiten-Ziel = Runde aus den Wörtern dieser Einheit. Lernpläne hatten den Knopf „Lernplan üben“ schon. Geschaffte Ziele zeigen keinen Knopf.
+
 ## 2.7.2 – 2026-10-06
 
 - Server: `deploy.sh` findet den Git-Ordner jetzt ohne Git (als root meldete Git bei fremdem Besitzer „dubious ownership“ und das Skript brach mit „kein Git-Ordner“ ab). Mit Besitzer-Wechsel (root führt aus, Dateien gehören `wordy`) getestet.

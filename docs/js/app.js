@@ -264,7 +264,8 @@
         return '<div style="padding:8px 0;border-top:1px solid var(--line)"><div class="row"><b class="small" style="flex:1 1 auto">' + (done ? "✅ " : "") + esc(g.title) + '</b>' +
           '<span class="pill tnum">' + Math.min(pr.cur, g.target) + ' / ' + g.target + (g.kind === "unit" ? " %" : "") + '</span></div>' +
           '<div class="bar" style="margin-top:6px"><i style="width:' + (done ? 100 : pr.pct) + '%"></i></div>' +
-          (g.coins ? '<div class="small muted" style="margin-top:4px">' + (done ? 'Geschafft, ' + g.coins + ' Münzen sind gutgeschrieben.' : 'Belohnung: 🪙 ' + g.coins) + '</div>' : '') + '</div>';
+          '<div class="row" style="margin-top:6px;gap:8px">' + (g.coins ? '<div class="small muted" style="flex:1 1 auto">' + (done ? 'Geschafft, ' + g.coins + ' Münzen sind gutgeschrieben.' : 'Belohnung: 🪙 ' + g.coins) + '</div>' : '<span style="flex:1 1 auto"></span>') +
+          (done ? '' : '<button class="chip" data-act="startgoal" data-id="' + esc(g.id) + '">Jetzt üben →</button>') + '</div></div>';
       }).join("") + '</div></section>';
     }
     return h;
@@ -1652,6 +1653,16 @@
     else if (a === "readall") {
       var u = S.units().filter(function (x) { return x.id === act.getAttribute("data-id"); })[0];
       if (u) readAll(u, act);
+    }
+    else if (a === "startgoal") {
+      var gl = window.WordySync.currentGoals().filter(function (x) { return String(x.id) === act.getAttribute("data-id"); })[0];
+      if (gl) {
+        var gp = window.WordySync.progress(gl), gleft = Math.max(0, gl.target - gp.cur);
+        if (gl.kind === "unit") startSession({ minutes: Math.max(5, st.settings.goalMin), scope: gl.scope, newMax: 10, mode: "unit" });
+        else if (gl.kind === "newwords") startSession({ minutes: 10, mode: "new" });
+        else if (gl.kind === "days") startSession({ minutes: Math.max(5, st.settings.goalMin), mode: "mix" });
+        else startSession({ minutes: Math.min(15, Math.max(5, gleft)), mode: "mix" });
+      }
     }
     else if (a === "startplan") {
       var pl = window.WordySync.activePlans().filter(function (x) { return String(x.id) === act.getAttribute("data-id"); })[0];
