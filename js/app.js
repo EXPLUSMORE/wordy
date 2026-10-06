@@ -183,6 +183,12 @@
   function groupLabel(k) { return typeof k === "number" ? "Klasse " + k : k; }
 
   /* ---------- Wunsch ---------- */
+  /* Wunsch als Silhouette, die sich mit dem Fortschritt von unten mit Farbe füllt */
+  function wishFigure(it, pc, locked) {
+    var ico = it.kind === "sticker" ? stickerHtml(it, 40) : it.kind === "avatar" ? avatarHtml(it.val) : shopIcon(it);
+    return '<div class="wishfig" style="--p:' + Math.max(0, Math.min(100, pc)) + '%" role="img" aria-label="' + esc(it.label) + ', ' + Math.round(pc) + ' Prozent">' +
+      '<span class="sil" aria-hidden="true">' + ico + '</span><span class="col" aria-hidden="true">' + ico + '</span>' + (locked ? '<span class="lock">🔒</span>' : "") + '</div>';
+  }
   function wishCard() {
     var st = S.state, it = S.wish();
     if (!it) return '<section class="card"><div class="row" style="gap:12px;align-items:center"><div style="font-size:30px">⭐</div>' +
@@ -190,7 +196,7 @@
       '<button class="btn soft wide" data-act="goshop" style="margin-top:10px">Zum Shop</button></section>';
     var have = Math.min(st.coins, it.cost), pc = it.cost ? Math.round(have * 100 / it.cost) : 100, left = Math.max(0, it.cost - st.coins);
     var needXp = Math.max(0, S.minXp(it) - st.xp);
-    var icon = it.kind === "sticker" ? stickerHtml(it, 46) : it.kind === "avatar" ? '<div class="avatar" style="width:46px;height:46px;font-size:26px">' + avatarHtml(it.val) + '</div>' : shopIcon(it);
+    var icon = wishFigure(it, pc, needXp > 0);
     var line = needXp ? "Du brauchst noch " + needXp + " XP bis Rang " + esc(it.rank) + (left ? " und " + left + " 🪙." : ".")
       : left ? "Noch " + left + " 🪙 – das schaffst du." : "Genug Münzen! Jetzt im Shop holen.";
     return '<section class="card"><div class="eyebrow">Dein Wunsch</div><div class="row" style="gap:12px;align-items:center;margin-top:8px"><div style="width:50px;display:grid;place-items:center">' + icon + '</div>' +
@@ -335,7 +341,7 @@
           '<div class="bar"><i style="width:' + pc + '%"></i></div></div>' +
           '<div class="pill nowrap">🪙 ' + m.coins + '</div></div>';
       }).join("") +
-      (wish ? '<div class="mission"><div class="tick" style="background:none;color:var(--gold)">⭐</div><div class="txt"><div class="small" style="font-weight:600">Dein Wunsch: ' + esc(wish.label) + '</div>' +
+      (wish ? '<div class="mission">' + wishFigure(wish, Math.round(Math.min(st.coins, wish.cost) * 100 / Math.max(1, wish.cost)), S.minXp(wish) > st.xp) + '<div class="txt"><div class="small" style="font-weight:600">Dein Wunsch: ' + esc(wish.label) + '</div>' +
           '<div class="bar"><i style="width:' + Math.min(100, Math.round(st.coins * 100 / Math.max(1, wish.cost))) + '%"></i></div></div>' +
           '<div class="pill nowrap tnum">' + Math.min(st.coins, wish.cost) + ' / ' + wish.cost + '</div></div>'
         : '<div class="mission"><div class="tick" style="background:none">⭐</div><div class="txt small muted">Noch kein Wunsch gewählt.</div><button class="chip" data-act="goshop">Zum Shop</button></div>') +

@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.4.0 – 2026-10-06
+
+- Wunsch als Silhouette: Auf dem Start-Tab (Heute) und im Shop (Karte „Dein Wunsch“) erscheint das Wunsch-Element zuerst grau und füllt sich mit dem Fortschritt von unten mit Farbe. Fehlt noch Rang-XP, zeigt ein 🔒 das an. Hell und Dunkel unterstützt.
+
 ## 2.3.1 – 2026-10-06
 
 - Smalltalk: „how did you two meet“ heißt jetzt „Wie haben Sie sich kennengelernt?“.

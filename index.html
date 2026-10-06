@@ -69,6 +69,13 @@ nav#tabs button{font-size:10.5px}
 nav#tabs button[aria-current="true"]{color:var(--accent);background:var(--accent-soft)}
 
 /* Kopfzeile */
+.wishfig{position:relative;width:48px;height:48px;display:grid;place-items:center;font-size:36px;line-height:1;flex:0 0 auto}
+.wishfig>span.sil,.wishfig>span.col{grid-area:1/1;display:grid;place-items:center}
+.wishfig .sil{filter:brightness(0);opacity:.2}
+.wishfig .col{clip-path:inset(calc(100% - var(--p)) 0 0 0);transition:clip-path .6s ease}
+.wishfig .lock{position:absolute;right:-5px;bottom:-5px;font-size:15px;line-height:1}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .wishfig .sil{filter:brightness(0) invert(1);opacity:.22} }
+:root[data-theme="dark"] .wishfig .sil{filter:brightness(0) invert(1);opacity:.22}
 .avatar{width:34px;height:34px;border-radius:50%;background:var(--accent-soft);display:grid;place-items:center;font-size:19px;flex:0 0 auto}
 /* Rahmen um den Avatar (Shop) */
 .avatar{position:relative}
