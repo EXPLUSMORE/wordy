@@ -13,7 +13,9 @@ main() {
   [ -f /etc/default/wordy-deploy ] && . /etc/default/wordy-deploy
   local HERE REPO MODE BRANCH GLOB SERVICE NODE RUN_AS KEY BAD
   HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-  REPO="$(git -C "$HERE" rev-parse --show-toplevel 2>/dev/null)" || { echo "FEHLER: $HERE ist kein Git-Ordner. Der Server muss per git clone angelegt sein."; return 2; }
+  # Git-Ordner ohne Git suchen (als root würde Git bei fremdem Besitzer "dubious ownership" melden)
+  REPO="$HERE"; while [ "$REPO" != / ] && [ ! -e "$REPO/.git" ]; do REPO="$(dirname "$REPO")"; done
+  [ "$REPO" != / ] || { echo "FEHLER: $HERE liegt in keinem Git-Ordner. Der Server muss per git clone angelegt sein."; return 2; }
   MODE="${DEPLOY_MODE:-branch}"; BRANCH="${DEPLOY_BRANCH:-main}"; GLOB="${DEPLOY_TAG_GLOB:-server-*}"
   SERVICE="${SERVICE:-wordy-server}"; NODE="${NODE_BIN:-/usr/bin/node}"; KEY="${DEPLOY_KEY:-}"
   RUN_AS="${RUN_AS:-$(stat -c %U "$REPO")}"

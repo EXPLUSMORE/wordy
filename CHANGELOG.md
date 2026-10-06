@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.7.2 – 2026-10-06
+
+- Server: `deploy.sh` findet den Git-Ordner jetzt ohne Git (als root meldete Git bei fremdem Besitzer „dubious ownership“ und das Skript brach mit „kein Git-Ordner“ ab). Mit Besitzer-Wechsel (root führt aus, Dateien gehören `wordy`) getestet.
+
 ## 2.7.1 – 2026-10-06
 
 - Dashboard: Am Ende steht „Server-Version … · Stand (Git) … · Dienst gestartet …“, damit man sieht, was auf dem Server wirklich läuft. Neuer Endpunkt `GET /api/admin/info`. **Server-Update nötig.**
