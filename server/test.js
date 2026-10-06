@@ -98,6 +98,11 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     const aw = await J("/api/admin/players/" + mk.j.id + "/words", { headers: H });
     assert.equal(aw.s, 200); assert.ok(aw.j.words.length >= 3, "Wörterliste"); assert.equal(aw.j.words.find(x => x.i === 0 && x.u === "H2-1a").en, "mountain");
     assert.equal((await J("/api/admin/players/" + mk.j.id + "/words")).s, 401, "Wörterliste nur für Admin");
+    const pg = await J("/api/ping", { method: "POST", headers: T });
+    assert.equal(pg.j.hidden, false, "Ping nennt den Modus");
+    await J("/api/admin/players/" + mk.j.id + "/hidden", { method: "POST", headers: H, body: JSON.stringify({ hidden: true }) });
+    assert.equal((await J("/api/ping", { method: "POST", headers: T })).j.hidden, true, "Modus nach Umstellung");
+    await J("/api/admin/players/" + mk.j.id + "/hidden", { method: "POST", headers: H, body: JSON.stringify({ hidden: false }) });
     const inf = await J("/api/admin/info", { headers: H });
     assert.equal(inf.s, 200); assert.equal(inf.j.version, require("../package.json").version, "Server-Version"); assert.ok(inf.j.started > 0);
     assert.equal((await J("/api/admin/info")).s, 401, "Info nur für Admin");

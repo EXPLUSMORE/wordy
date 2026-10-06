@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.10.0 – 2026-10-06
+
+- Modus vom Dashboard in die App: Stellt man im Dashboard „Nur sichern“ um oder wieder auf sichtbar, übernimmt die App das beim nächsten Öffnen (spätestens nach einer Minute im Vordergrund) von selbst, ohne Trennen und neu Verbinden. Beim Wechsel auf „nur sichern“ werden wartende Einträge verworfen, beim Wechsel auf sichtbar gehen Einheitenliste, Wörter und Übersicht sofort an den Server. Die App zeigt kurz einen Hinweis. Der Server meldet den Modus über `POST /api/ping`. **Server-Update nötig** (läuft automatisch).
+
 ## 2.9.1 – 2026-10-06
 
 - Server: `deploy.sh` testet und sichert jetzt mit demselben Node wie der Dienst (aus dessen systemd-Datei, sonst `NODE_BIN`), nicht mit dem alten System-Node. Behebt, dass der Selbsttest auf dem Server mit `MODULE_NOT_FOUND` (node:child_process) scheiterte und Stände abgelehnt wurden.

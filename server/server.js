@@ -568,7 +568,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (p === "/api/ping" && req.method === "POST") {
       const pid = playerOf(req); if (!pid) return send(res, 401, { error: "Nicht verbunden." });
-      return send(res, 200, { ok: true, name: q.player.get(pid).name });
+      { const pl = q.player.get(pid); return send(res, 200, { ok: true, name: pl.name, hidden: !!pl.hidden }); }
     }
 
     /* Ab hier nur für Eltern */

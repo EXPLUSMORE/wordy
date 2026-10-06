@@ -126,6 +126,24 @@
     if (got.length) { VT.save(true); if (g.WordyHooks && g.WordyHooks.onReward) g.WordyHooks.onReward(got); }
   };
 
+  /* Modus (sichtbar oder „nur sichern“) vom Dashboard übernehmen: die Eltern können ihn dort jederzeit umstellen */
+  var lastMode = 0;
+  W.syncMode = function (force) {
+    var c = cfg(); if (!c || !c.token || !g.fetch) return Promise.resolve(false);
+    if (!force && Date.now() - lastMode < 60000) return Promise.resolve(false);
+    lastMode = Date.now();
+    return post(c, "/api/ping", {}).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
+      if (!j || typeof j.hidden !== "boolean") return false;
+      var was = !!c.hidden;
+      if (j.hidden === was && (!j.name || j.name === c.name)) return false;
+      setCfg({ hidden: j.hidden, name: j.name || c.name });
+      if (j.hidden) { saveQ([]); }   // nichts mehr senden, was noch wartet
+      else if (was) { W.snapshot().then(function () { return flush(false); }).then(function () { return W.pull(true); }).then(function () { return W.pushState(true); }); }
+      if (j.hidden !== was && g.WordyHooks && g.WordyHooks.onMode) g.WordyHooks.onMode(j.hidden);
+      return true;
+    }).catch(function () { return false; });
+  };
+
   W.pull = function (force) {
     var c = cfg(); if (!c || !c.token || !g.fetch || c.hidden) return Promise.resolve(false);
     if (!force && Date.now() - lastPull < 3 * 60000) return Promise.resolve(false);
@@ -204,7 +222,7 @@
   };
   W.maybeSnapshot = function () { if (W.connected() && Date.now() - lastSnap > 10 * 60000) W.snapshot(); };
 
-  g.addEventListener("visibilitychange", function () { if (g.document.visibilityState === "hidden") { flush(true); W.pushState(false); } else { flush(false); W.pull(false); } });
+  g.addEventListener("visibilitychange", function () { if (g.document.visibilityState === "hidden") { flush(true); W.pushState(false); } else { W.syncMode().then(function () { flush(false); W.pull(false); }); } });
   g.addEventListener("online", function () { flush(false); });
-  setTimeout(function () { flush(false); W.maybeSnapshot(); W.pull(true); }, 4000);
+  setTimeout(function () { W.syncMode(true).then(function () { flush(false); W.maybeSnapshot(); W.pull(true); }); }, 4000);
 })(window);

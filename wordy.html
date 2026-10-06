@@ -471,7 +471,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.9.1";window.WORDY_BUILD="4faf370dc7";</script>
+<script>window.WORDY_VERSION="2.10.0";window.WORDY_BUILD="1aa8fe9e77";</script>
 </head>
 <body>
 <div id="app">
@@ -5604,7 +5604,11 @@ window.VERBS = [
   /* ---------- Auto-Save / Lernfortschritt: Verbindung zum Server ---------- */
   {   // sync.js wird nach app.js geladen und ruft diese Hooks auf
     window.WordyHooks = {};
-    window.WordyHooks.onChange = function () { if (tab === "home" && sessionEl.hidden) render(); };
+    window.WordyHooks.onChange = function () { if ((tab === "home" || tab === "parent") && sessionEl.hidden) render(); };
+    window.WordyHooks.onMode = function (hidden) {
+      toast(hidden ? "Dein Fortschritt wird jetzt nur noch gesichert, nicht mehr angezeigt." : "Dein Fortschritt ist jetzt für die Eltern im Dashboard sichtbar.", 6000);
+      if (sessionEl.hidden) render();
+    };
     window.WordyHooks.onReward = function (list) {
       var c = list.reduce(function (a, x) { return a + (x.coins || 0); }, 0);
       toast("🎉 " + (list[0].kind === "plan" ? "Lernplan geschafft" : "Wochenziel geschafft") + ": " + list[0].title + (c ? " · +" + c + " Münzen" : ""), 6000);
@@ -7449,6 +7453,24 @@ window.VERBS = [
     if (got.length) { VT.save(true); if (g.WordyHooks && g.WordyHooks.onReward) g.WordyHooks.onReward(got); }
   };
 
+  /* Modus (sichtbar oder „nur sichern“) vom Dashboard übernehmen: die Eltern können ihn dort jederzeit umstellen */
+  var lastMode = 0;
+  W.syncMode = function (force) {
+    var c = cfg(); if (!c || !c.token || !g.fetch) return Promise.resolve(false);
+    if (!force && Date.now() - lastMode < 60000) return Promise.resolve(false);
+    lastMode = Date.now();
+    return post(c, "/api/ping", {}).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
+      if (!j || typeof j.hidden !== "boolean") return false;
+      var was = !!c.hidden;
+      if (j.hidden === was && (!j.name || j.name === c.name)) return false;
+      setCfg({ hidden: j.hidden, name: j.name || c.name });
+      if (j.hidden) { saveQ([]); }   // nichts mehr senden, was noch wartet
+      else if (was) { W.snapshot().then(function () { return flush(false); }).then(function () { return W.pull(true); }).then(function () { return W.pushState(true); }); }
+      if (j.hidden !== was && g.WordyHooks && g.WordyHooks.onMode) g.WordyHooks.onMode(j.hidden);
+      return true;
+    }).catch(function () { return false; });
+  };
+
   W.pull = function (force) {
     var c = cfg(); if (!c || !c.token || !g.fetch || c.hidden) return Promise.resolve(false);
     if (!force && Date.now() - lastPull < 3 * 60000) return Promise.resolve(false);
@@ -7527,9 +7549,9 @@ window.VERBS = [
   };
   W.maybeSnapshot = function () { if (W.connected() && Date.now() - lastSnap > 10 * 60000) W.snapshot(); };
 
-  g.addEventListener("visibilitychange", function () { if (g.document.visibilityState === "hidden") { flush(true); W.pushState(false); } else { flush(false); W.pull(false); } });
+  g.addEventListener("visibilitychange", function () { if (g.document.visibilityState === "hidden") { flush(true); W.pushState(false); } else { W.syncMode().then(function () { flush(false); W.pull(false); }); } });
   g.addEventListener("online", function () { flush(false); });
-  setTimeout(function () { flush(false); W.maybeSnapshot(); W.pull(true); }, 4000);
+  setTimeout(function () { W.syncMode(true).then(function () { flush(false); W.maybeSnapshot(); W.pull(true); }); }, 4000);
 })(window);
 </script>
 

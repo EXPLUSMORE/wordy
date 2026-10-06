@@ -514,7 +514,11 @@
   /* ---------- Auto-Save / Lernfortschritt: Verbindung zum Server ---------- */
   {   // sync.js wird nach app.js geladen und ruft diese Hooks auf
     window.WordyHooks = {};
-    window.WordyHooks.onChange = function () { if (tab === "home" && sessionEl.hidden) render(); };
+    window.WordyHooks.onChange = function () { if ((tab === "home" || tab === "parent") && sessionEl.hidden) render(); };
+    window.WordyHooks.onMode = function (hidden) {
+      toast(hidden ? "Dein Fortschritt wird jetzt nur noch gesichert, nicht mehr angezeigt." : "Dein Fortschritt ist jetzt für die Eltern im Dashboard sichtbar.", 6000);
+      if (sessionEl.hidden) render();
+    };
     window.WordyHooks.onReward = function (list) {
       var c = list.reduce(function (a, x) { return a + (x.coins || 0); }, 0);
       toast("🎉 " + (list[0].kind === "plan" ? "Lernplan geschafft" : "Wochenziel geschafft") + ": " + list[0].title + (c ? " · +" + c + " Münzen" : ""), 6000);
