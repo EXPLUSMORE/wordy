@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.6.0 – 2026-10-06
+
+- Dashboard: Neue Karte „Tage einzeln“ – jeder Tag der gewählten Zeitspanne (14/30/90) als Zeile mit Balken, Zeit, Aufgaben und Richtig-Quote; Tage ohne Üben sind sichtbar. Antippen zeigt Runden mit Uhrzeit und Art sowie die Fehlerwörter des Tages. Darüber eine Muster-Zeile (aktive Tage, Schnitt, Tagesziel-Tage, Aufgaben/Runde, übliche Uhrzeit, Arten, längste Pause). **Server-Update nötig.**
+
 ## 2.5.0 – 2026-10-06
 
 - Dashboard: Neue Karten „Heute · Datum“ (geübte Zeit mit Tagesziel-Balken, Aufgaben, richtig %, neue Wörter, Münzen, Runden mit Uhrzeit, Fehlerwörter heute) und „Woche · Mo bis So“ (Kalenderwoche mit Daten von–bis, Zeit/Aufgaben/neue Wörter mit Vergleich zur Vorwoche, Tagesbalken Mo–So mit Tagesziel-Markierung, Fehlerwörter der Woche). **Server-Update nötig.**

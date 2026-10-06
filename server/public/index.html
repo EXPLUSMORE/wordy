@@ -213,6 +213,41 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     h += '<h3 style="margin:14px 0 4px;font-size:14px">Fehlerwörter der Woche</h3>' + probList(w.problems);
     return h + "</div>";
   }
+  function hhmm(ts) { return new Date(ts).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" }); }
+  function muster(r, m) {
+    var ds = r.days, act = ds.filter(function (d) { return d.items > 0 || d.sec > 0; }), goal = (m.goalMin || 0) * 60, runs = [], modes = {}, hours = {}, gap = 0, best = 0;
+    ds.forEach(function (d) { gap = d.items || d.sec ? 0 : gap + 1; best = Math.max(best, gap); d.runs.forEach(function (s) { runs.push(s); modes[s.mode] = (modes[s.mode] || 0) + 1; var hr = new Date(s.ts).getHours(); hours[hr] = (hours[hr] || 0) + 1; }); });
+    var out = [act.length + " von " + ds.length + " Tagen aktiv"];
+    if (act.length) out.push("im Schnitt " + fmtMin(act.reduce(function (a, d) { return a + d.sec; }, 0) / act.length) + " an aktiven Tagen");
+    if (goal) out.push("Tagesziel an " + ds.filter(function (d) { return d.sec >= goal; }).length + " Tagen erreicht");
+    if (runs.length) {
+      out.push("Ø " + Math.round(runs.reduce(function (a, s) { return a + s.items; }, 0) / runs.length) + " Aufgaben und " + fmtMin(runs.reduce(function (a, s) { return a + s.sec; }, 0) / runs.length) + " pro Runde");
+      var hk = Object.keys(hours).sort(function (a, b) { return hours[b] - hours[a]; })[0]; out.push("meist gegen " + hk + " Uhr");
+      out.push("Arten: " + Object.keys(modes).sort(function (a, b) { return modes[b] - modes[a]; }).slice(0, 3).map(function (k) { return (MODE[k] || k) + " " + Math.round(modes[k] * 100 / runs.length) + " %"; }).join(", "));
+    }
+    if (best >= 2) out.push("längste Pause: " + best + " Tage");
+    return out.join(" · ");
+  }
+  function tageCard(r, m) {
+    var goal = (m.goalMin || 0) * 60, mx = Math.max.apply(null, r.days.map(function (d) { return d.sec; }).concat([goal, 60]));
+    var h = '<div class="card"><h2>Tage einzeln (' + r.days.length + " Tage)</h2><p class=\"small muted\" style=\"margin:0 0 8px\">" + muster(r, m) + "</p>";
+    h += r.days.slice().reverse().map(function (d) {
+      var wk = dparts(d.date).wd, we = wk === 0 || wk === 6, has = d.items > 0 || d.sec > 0, ok = goal && d.sec >= goal;
+      var sum = '<summary style="display:grid;grid-template-columns:78px 1fr 62px 46px 46px;gap:8px;align-items:center;cursor:pointer;padding:6px 0;border-top:1px solid var(--line)">' +
+        "<span" + (we ? ' style="color:var(--acc)"' : "") + "><b>" + WD[wk] + "</b> " + dShort(d.date) + '</span><span><div class="mini" style="margin:0"><i class="' + (ok ? "d" : "") + '" style="width:' + (d.sec ? Math.max(3, Math.round(d.sec * 100 / mx)) : 0) + '%"></i></div></span>' +
+        '<span class="small' + (has ? "" : " muted") + '" style="text-align:right">' + (has ? fmtMin(d.sec) : "–") + '</span><span class="small muted" style="text-align:right">' + (has ? d.items : "") + '</span><span class="small muted" style="text-align:right">' + (has ? pct(d.correct, d.items) : "") + "</span></summary>";
+      var det = "";
+      if (has) {
+        det = '<div class="small" style="padding:4px 0 10px 4px"><div class="muted">' + d.sessions + (d.sessions === 1 ? " Runde" : " Runden") + " · " + d.neu + (d.neu === 1 ? " neues Wort" : " neue Wörter") + " · 🪙 " + d.coins + "</div>" +
+          (d.runs.length ? "<table><tr><th>Uhr</th><th>Art</th><th class=\"n\">Dauer</th><th class=\"n\">Aufgaben</th><th class=\"n\">Richtig</th></tr>" + d.runs.map(function (s) {
+            return "<tr><td>" + hhmm(s.ts) + "</td><td>" + esc(MODE[s.mode] || s.mode) + '</td><td class="n">' + fmtMin(s.sec) + '</td><td class="n">' + s.items + '</td><td class="n">' + pct(s.correct, s.items) + "</td></tr>";
+          }).join("") + "</table>" : "") +
+          (d.problems.length ? '<div class="muted" style="margin-top:6px">Fehler: ' + d.problems.map(function (x) { return "<b>" + esc(x.en) + "</b> (" + x.n + "×)"; }).join(", ") + "</div>" : "") + "</div>";
+      } else det = '<div class="small muted" style="padding:4px 0 10px 4px">An diesem Tag wurde nicht geübt.</div>';
+      return "<details>" + sum + det + "</details>";
+    }).join("");
+    return h + '<div class="small muted" style="margin-top:8px">Spalten: Tag · Balken (grün = Tagesziel erreicht) · Zeit · Aufgaben · richtig. Tippe auf einen Tag für die Runden und Fehler.</div></div>';
+  }
   function viewPlayer(p, r) {
     var m = r.meta || {}, t = r.totals, wk = r.week, h = "";
     var today = r.days[r.days.length - 1];
@@ -225,6 +260,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     h += '<div class="card"><div class="row"><h2 class="grow" style="margin:0">Übungszeit pro Tag</h2><button class="tab" data-d="14" aria-pressed="' + (days === 14) + '">14 Tage</button><button class="tab" data-d="30" aria-pressed="' + (days === 30) + '">30 Tage</button><button class="tab" data-d="90" aria-pressed="' + (days === 90) + '">90 Tage</button></div>' +
       bars(r.days) + '<div class="legend"><span><i style="background:var(--good)"></i>10 Min. oder mehr</span><span><i style="background:var(--acc2)"></i>weniger</span><span class="muted">Insgesamt ' + fmtMin(t.sec) + ", " + t.items + " Aufgaben, " + t.activeDays + " aktive Tage</span></div></div>";
 
+    h += tageCard(r, m);
     h += '<div class="card"><h2>Fortschritt pro Einheit</h2>';
     if (!r.units.length) h += '<p class="muted small">Noch keine Daten. Sie erscheinen, sobald Magnus die App geöffnet und eine Runde gelernt hat.</p>';
     else {

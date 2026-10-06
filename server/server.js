@@ -237,10 +237,16 @@ function report(pid, days) {
       sessions.push({ ts: e.ts, sec: d.sec || 0, items: d.items || 0, correct: d.correct || 0, mode: d.mode || "", unit: d.unit || "", coins: d.coins || 0 });
     } else if (e.k === "buy") buys.push({ ts: e.ts, name: d.name || d.id, cost: d.cost || 0 });
   }
+  const runsBy = {}, badBy = {};
+  for (const s of sessions) (runsBy[dayOf(s.ts)] = runsBy[dayOf(s.ts)] || []).push(s);
+  for (const e of evs) if (e.ts >= from && (e.k === "a" || e.k === "s") && e.d.g === 0 && e.d.id) {
+    const m = badBy[dayOf(e.ts)] = badBy[dayOf(e.ts)] || {}, x = m[e.d.id] = m[e.d.id] || { en: e.d.en || e.d.id, de: e.d.de || "", n: 0 };
+    x.n++;
+  }
   const dayList = [];
   for (let i = days - 1; i >= 0; i--) {
-    const k = dayOf(now - i * 86400000);
-    dayList.push(perDay[k] || { date: k, sec: 0, items: 0, correct: 0, neu: 0, coins: 0, sessions: 0 });
+    const k = dayOf(now - i * 86400000), base = perDay[k] || { date: k, sec: 0, items: 0, correct: 0, neu: 0, coins: 0, sessions: 0 };
+    dayList.push(Object.assign({}, base, { runs: runsBy[k] || [], problems: Object.values(badBy[k] || {}).sort((a, b) => b.n - a.n).slice(0, 5) }));
   }
   /* Heute und laufende Kalenderwoche (Mo–So), unabhängig von der gewählten Zeitspanne */
   const todayK = dayOf(now), mon = mondayOf(todayK), sun = ymdAdd(mon, 6), pmon = ymdAdd(mon, -7), psun = ymdAdd(mon, -1);
