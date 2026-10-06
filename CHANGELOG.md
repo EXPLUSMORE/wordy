@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.0.4 – 2026-10-06
+
+- Satzbau: rund 570 neue Sätze – jetzt mindestens 100 pro Klasse (6/7/8) und pro Business-Gruppe (Basis, Aufbau, Profi, Smalltalk, Redewendungen). Bestehende Sätze und ihr Lernstand bleiben unverändert.
+
 ## 2.0.3 – 2026-10-06
 
 - **Fehlerkorrektur: Sätze waren bei „Headlight 2“ leer.** Die Satzübungen gehören zu den Klassen, Headlight 2 hatte keine eigenen. Jetzt nutzt Headlight 2 die Sätze der Klasse 6, damit funktionieren die Kachel „Sätze“ und die Satzaufgaben in normalen Runden wieder.
