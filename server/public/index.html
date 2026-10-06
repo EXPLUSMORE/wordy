@@ -288,8 +288,9 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
 
     if (r.buys.length) h += '<div class="card"><h2>Käufe im Shop</h2><table>' + r.buys.map(function (b) { return "<tr><td>" + fmtDate(b.ts) + "</td><td>" + esc(b.name) + '</td><td class="n">🪙 ' + b.cost + "</td></tr>"; }).join("") + "</table></div>";
     h += '<div class="card" id="backupCard"></div><div class="card" id="mailCard"></div>';
-    h += '<p class="small muted">Es werden nur Lerndaten gespeichert (Wörter, Antworten, Zeiten, Käufe). Magnus sieht in der App, dass seine Eltern den Fortschritt sehen.</p>';
+    h += '<p class="small muted">Es werden nur Lerndaten gespeichert (Wörter, Antworten, Zeiten, Käufe). Magnus sieht in der App, dass seine Eltern den Fortschritt sehen.</p><p class="small muted" id="srvinfo"></p>';
     view.innerHTML = h;
+    api("/api/admin/info").then(function (i) { var el = document.getElementById("srvinfo"); if (el) el.textContent = "Server-Version " + (i.version || "?") + (i.commit ? " · Stand " + i.commit : "") + " · Dienst gestartet " + fmtAgo(i.started); }).catch(function () {});
 
     Array.prototype.forEach.call(view.querySelectorAll("button[data-d]"), function (b) { b.onclick = function () { days = +b.getAttribute("data-d"); show(); }; });
     document.getElementById("inv").onclick = function () { post("/api/admin/players/" + p.id + "/invite").then(function (i) { showInvite(p.name, i); }).catch(function (e) { alert(e.message); }); };

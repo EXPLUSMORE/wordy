@@ -98,6 +98,9 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     const aw = await J("/api/admin/players/" + mk.j.id + "/words", { headers: H });
     assert.equal(aw.s, 200); assert.ok(aw.j.words.length >= 3, "Wörterliste"); assert.equal(aw.j.words.find(x => x.i === 0 && x.u === "H2-1a").en, "mountain");
     assert.equal((await J("/api/admin/players/" + mk.j.id + "/words")).s, 401, "Wörterliste nur für Admin");
+    const inf = await J("/api/admin/info", { headers: H });
+    assert.equal(inf.s, 200); assert.equal(inf.j.version, require("../package.json").version, "Server-Version"); assert.ok(inf.j.started > 0);
+    assert.equal((await J("/api/admin/info")).s, 401, "Info nur für Admin");
     const plr = await J("/api/admin/players/" + mk.j.id + "/plans", { headers: H });
     assert.equal(plr.j[0].daysLeft, 3);
     const ml = await J("/api/admin/mail/test", { method: "POST", headers: H });

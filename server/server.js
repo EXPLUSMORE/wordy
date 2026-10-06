@@ -8,6 +8,14 @@ const crypto = require("node:crypto");
 const { DatabaseSync } = require("node:sqlite");
 const { sendMail, sendGraph } = require("./mail");
 
+/* Welche Version und welcher Git-Stand läuft hier? (für die Zeile am Ende des Dashboards) */
+const SERVER_INFO = (() => {
+  let version = "", commit = "";
+  try { version = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "package.json"), "utf8")).version; } catch (e) {}
+  try { commit = require("node:child_process").execFileSync("git", ["-C", __dirname, "rev-parse", "--short", "HEAD"], { timeout: 3000, stdio: ["ignore", "pipe", "ignore"] }).toString().trim(); } catch (e) {}
+  return { version, commit, started: Date.now() };
+})();
+
 const PORT = +process.env.PORT || 8787;
 const HOST = process.env.HOST || "127.0.0.1";
 const DB_FILE = process.env.DB_FILE || path.join(__dirname, "data", "wordy.db");
@@ -574,6 +582,7 @@ const server = http.createServer(async (req, res) => {
         return send(res, 200, fs.readFileSync(path.join(PUBLIC, "index.html"), "utf8"),
           { "Content-Security-Policy": "default-src 'self'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'self'; img-src 'self' data:" });
       }
+      if (p === "/api/admin/info" && req.method === "GET") return send(res, 200, SERVER_INFO);
       if (p === "/api/admin/mail" && req.method === "GET") { const sent = q.kvGet.get("mail_sent"); return send(res, 200, { configured: mailOn(), to: mailOn() ? MAIL.to : "", day: MAIL.day, hour: MAIL.hour, lastWeek: sent ? sent.val : null }); }
       if (p === "/api/admin/mail/test" && req.method === "POST") {
         try { await sendWeekly(); return send(res, 200, { ok: true }); } catch (e) { return send(res, 200, { ok: false, error: String(e.message).replace(MAIL.pass || "\u0000", "***").replace(GRAPH.clientSecret || "\u0000", "***").slice(0, 300) }); }
