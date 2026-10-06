@@ -4,7 +4,20 @@
   "use strict";
 
   var KEY = "vokabeltrainer.v2";
-  var SEC_PER_ITEM = 11;           // Schätzwert für die Zeitplanung
+  var SEC_PER_ITEM = 11;           // Schätzwert für die Zeitplanung, solange noch keine eigenen Runden vorliegen
+  /* Sekunden pro geplantem Wort aus den eigenen, fertig gespielten Runden (ab 50 Wörtern), sonst der Schätzwert */
+  function secPerItem() {
+    var pc = state && state.pace;
+    if (!pc || pc.n < 50 || !pc.sec) return SEC_PER_ITEM;
+    return clamp(Math.round(pc.sec / pc.n), 6, 40);
+  }
+  function itemsFor(minutes) { return Math.max(5, Math.round(minutes * 60 / secPerItem())); }
+  function recordPace(sec, planned) {
+    if (!(sec >= 20 && planned >= 5)) return;
+    if (!state.pace) state.pace = { sec: 0, n: 0 };
+    state.pace.sec += sec; state.pace.n += planned;
+    if (state.pace.n > 400) { state.pace.sec = Math.round(state.pace.sec * 0.5); state.pace.n = Math.round(state.pace.n * 0.5); }   // neuere Runden zählen mehr
+  }
   var HEART_REGEN_MS = 8 * 60000;  // ein Herz alle 8 Minuten
 
   var LEVELS = [
@@ -520,7 +533,7 @@
   function planSession(opts) {
     opts = opts || {};
     var minutes = opts.minutes || 5;
-    var n = Math.max(5, Math.round(minutes * 60 / SEC_PER_ITEM));
+    var n = itemsFor(minutes);
     var p = pools(opts.scope), out = [];
     if (opts.unit) {
       var list = words.filter(function (w) { return w.unit === opts.unit; });
@@ -805,7 +818,7 @@
 
   global.VT = {
     LEVELS: LEVELS, RANKS: RANKS, AVATARS: AVATARS, SHOP: SHOP, BADGES: BADGES,
-    SEC_PER_ITEM: SEC_PER_ITEM,
+    SEC_PER_ITEM: SEC_PER_ITEM, secPerItem: secPerItem, itemsFor: itemsFor, recordPace: recordPace,
     load: load, save: save, get state() { return state; },
     units: function () { return units; }, words: function () { return words; }, byId: function (id) { return byId[id]; },
     buildCatalogue: function () { return buildCatalogue(state); },

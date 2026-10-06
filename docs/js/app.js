@@ -300,7 +300,8 @@
       '<button class="btn wide lg" data-act="startrec">Los geht\'s ▶</button>' +
       '<div class="row" style="gap:6px;margin-top:12px;justify-content:space-between;align-items:center"><span class="small muted">Dauer</span><span class="row" style="gap:6px">' +
       [3, 5, 10, 15].map(function (m) { return '<button class="chip" data-act="setmin" data-min="' + m + '" aria-pressed="' + (mins === m) + '">' + m + ' Min</button>'; }).join("") +
-      '</span></div></section>';
+      '</span></div>' +
+      '<p class="small muted" style="margin:10px 0 0">≈ ' + S.itemsFor(mins) + ' ' + plural(S.itemsFor(mins), "Aufgabe", "Aufgaben") + ' · ' + (S.secPerItem() === 11 && !(st.pace && st.pace.n >= 50) ? 'geschätzt, ohne Zeitlimit' : 'nach deinem Tempo (ca. ' + S.secPerItem() + ' Sek. pro Wort), ohne Zeitlimit') + '</p></section>';
 
     html += parentCards(rec.plan);
 
@@ -999,7 +1000,7 @@
   }
   /* Wörter für "Gezielt üben": zuerst bekannte, fällige Wörter, die zur Aufgabenform passen */
   function focusList(opts) {
-    var n = Math.max(6, Math.round((opts.minutes || 5) * 60 / S.SEC_PER_ITEM));
+    var n = Math.max(6, S.itemsFor(opts.minutes || 5));
     var base = opts.unit ? S.words().filter(function (w) { return w.unit === opts.unit; }) : S.pools(opts.scope).all;
     var fits = function (w) {
       var pl = w.en.replace(/^to\s+/, "");
@@ -1044,7 +1045,7 @@
     SS = {
       tasks: tasks, i: 0, chain: 0, maxChain: 0, items: 0, correct: 0,
       newSeen: 0, boxSolved: 0, mastered: 0, sentOk: 0, start: Date.now(), answered: false,
-      retry: [], mode: opts.mode || "mix", ended: false
+      retry: [], mode: opts.mode || "mix", ended: false, planned: list.length
     };
     snapStart();
     sessionEl.hidden = false; document.body.style.overflow = "hidden";
@@ -1059,6 +1060,7 @@
     if (!SS || SS.ended) return;
     SS.ended = true;
     var sec = Math.round((Date.now() - SS.start) / 1000);
+    if (reason === "done" && SS.planned) S.recordPace(sec, SS.planned);
     var rw = S.finishSession({ items: SS.items, correct: SS.correct, sec: sec, maxChain: SS.maxChain, newSeen: SS.newSeen, boxSolved: SS.boxSolved, mastered: SS.mastered, sentOk: SS.sentOk });
     var st = S.state, acc = SS.items ? Math.round(SS.correct * 100 / SS.items) : 0;
     var head = reason === "hearts" ? "Kurze Pause" : SS.correct === SS.items && SS.items > 3 ? "Fehlerfrei!" : "Runde geschafft";
