@@ -20,8 +20,11 @@ const stamp = require('crypto').createHash('sha1')
   .update(Buffer.concat(ICONS.map(f => fs.readFileSync(f))))   // neue Symbole lösen ebenfalls ein Update aus
   .digest('hex').slice(0, 10);
 if (!/^[0-9a-f]{10}$/.test(stamp)) throw new Error('Build-Kennung ungültig: ' + stamp);   // Sicherung: sonst bekäme der Offline-Cache einen festen Namen und Geräte sähen keine Updates mehr
-const head = src.slice(0, src.indexOf('<div id="app">'));
-const body = src.slice(src.indexOf('<div id="app">'));
+/* Skripte der Website bekommen die Build-Kennung als Parameter: eine neue index.html holt dadurch immer die passenden Dateien
+   und nie alte aus dem Cache (sonst zeigt Setup die neue Version, die Oberfläche ist aber noch die alte). */
+const vers = h => [...DATA, ...CODE].reduce((t, f) => t.split(`src="${f}"`).join(`src="${f}?v=${stamp}"`), h);
+const head = vers(src.slice(0, src.indexOf('<div id="app">')));
+const body = vers(src.slice(src.indexOf('<div id="app">')));
 
 /* ---------- 1. Einzeldatei ---------- */
 let inline = src.replace('</head>', `<script>window.WORDY_VERSION="${VERSION}";window.WORDY_BUILD="${stamp}";</script>\n</head>`);
@@ -54,7 +57,7 @@ const manifest = {
 };
 fs.writeFileSync('docs/manifest.webmanifest', JSON.stringify(manifest, null, 2));
 
-const PRECACHE = ['./', 'index.html', 'manifest.webmanifest', ...DATA, ...CODE, ...ICONS];
+const PRECACHE = ['./', 'index.html', 'manifest.webmanifest', ...[...DATA, ...CODE].map(f => `${f}?v=${stamp}`), ...ICONS];
 /* Version aus dem Inhalt: ändert sich der Code, lädt der Cache neu */
 
 
