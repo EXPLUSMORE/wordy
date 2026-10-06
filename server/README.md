@@ -113,14 +113,8 @@ Der Server fragt alle 5 Minuten selbst bei GitHub nach (nur lesen). Gibt es eine
 cd /opt/wordy && sudo -u wordy git pull
 ls -l server/deploy.sh        # muss ausführbar sein (-rwxr-xr-x)
 
-# 2. Nur bei PRIVATEM Repository: Nur-Lesen-Schlüssel anlegen
-sudo mkdir -p /etc/wordy-deploy && sudo ssh-keygen -t ed25519 -N "" -C wordy-server -f /etc/wordy-deploy/id_ed25519
-sudo chown -R wordy: /etc/wordy-deploy && sudo chmod 600 /etc/wordy-deploy/id_ed25519
-sudo cat /etc/wordy-deploy/id_ed25519.pub     # Inhalt kopieren
-#    GitHub: Repository -> Settings -> Deploy keys -> Add deploy key, einfügen, "Allow write access" NICHT anhaken
-sudo -u wordy git -C /opt/wordy remote set-url origin git@github.com:EXPLUSMORE/wordy.git
-echo 'DEPLOY_KEY=/etc/wordy-deploy/id_ed25519' | sudo tee /etc/default/wordy-deploy
-#    (Bei öffentlichem Repository diesen ganzen Schritt weglassen.)
+# 2. Adresse prüfen: muss mit https:// beginnen (Repository ist öffentlich, es ist kein Schlüssel nötig)
+git -C /opt/wordy remote -v
 
 # 3. Probelauf von Hand (gibt nichts aus, wenn alles aktuell ist; sonst zeigt er den Ablauf)
 sudo /opt/wordy/server/deploy.sh; echo "Ende: $?"
@@ -130,6 +124,8 @@ sudo cp /opt/wordy/server/wordy-deploy.service /opt/wordy/server/wordy-deploy.ti
 sudo systemctl daemon-reload && sudo systemctl enable --now wordy-deploy.timer
 systemctl list-timers wordy-deploy.timer
 ```
+*Nur falls das Repository einmal privat wird:* Nur-Lesen-Schlüssel anlegen (`sudo mkdir -p /etc/wordy-deploy && sudo ssh-keygen -t ed25519 -N "" -C wordy-server -f /etc/wordy-deploy/id_ed25519 && sudo chown -R wordy: /etc/wordy-deploy`), den Inhalt von `id_ed25519.pub` bei GitHub unter Settings -> Deploy keys eintragen (ohne Schreibrecht), `sudo -u wordy git -C /opt/wordy remote set-url origin git@github.com:EXPLUSMORE/wordy.git` und `DEPLOY_KEY=/etc/wordy-deploy/id_ed25519` in `/etc/default/wordy-deploy` setzen.
+
 **Beobachten:** `journalctl -u wordy-deploy -n 50 --no-pager` zeigt jeden Lauf („Neuer Stand …“, „Selbsttest bestanden“, „ERFOLG …“ oder „ZURÜCK auf …“).
 
 **Nur freigegebene Stände (Variante „Tag“):** In `/etc/default/wordy-deploy` die Zeilen `DEPLOY_MODE=tag` und optional `DEPLOY_TAG_GLOB=server-*` eintragen. Dann geht nur ein Stand live, der mit einem Tag wie `server-2.7.0` versehen ist, nicht jeder Push auf `main`. Beispiel Vorlage: `wordy-deploy.env.example`.
