@@ -55,9 +55,9 @@
     var c = cfg(); if (!c || !c.token || !g.fetch) return Promise.resolve(false);
     var st = VT.state, words = {}, units = {}, id;
     if (c.hidden) return Promise.resolve(false);
-    if (VT.isFresh()) return Promise.resolve(false);   // ein leerer Stand (neues Gerät) darf die Übersicht auf dem Server nicht überschreiben
+    var fresh = VT.isFresh();   // ein leerer Stand (neues Gerät) darf Wörter und Übersicht auf dem Server nicht überschreiben; die Einheitenliste ist unkritisch und geht immer mit
     for (id in st.w) { var r = st.w[id]; if (r && r.reps != null) words[id] = [VT.levelOf(id), r.ok || 0, r.no || 0, r.last || 0, r.m || 0]; }
-    VT.units().forEach(function (u) { if (u.track === "schule") units[u.id] = { id: u.id, title: u.title, k: u.k, total: u.words.length }; });
+    VT.units().forEach(function (u) { units[u.id] = { id: u.id, title: u.title, k: u.track === "eigen" ? "Eigene Listen" : u.k, total: u.words.length }; });   // alle Einheiten (Schule, Beruf, eigene Listen), damit Ziele und Lernpläne jede wählen können
     var rk = VT.rankOf(st.xp), d = st.daily || {};
     var meta = {
       name: st.profile.name || "", coins: st.coins, xp: st.xp, rank: rk.rank ? rk.rank.n : "", streak: st.streak.count, best: st.streak.best,
@@ -65,7 +65,8 @@
       wish: (VT.wish && VT.wish()) ? VT.wish().label || VT.wish().id : "", klassen: st.settings.klassen, version: g.WORDY_VERSION || "", totals: st.totals
     };
     lastSnap = Date.now();
-    var body = { words: words, catalog: Object.keys(units).map(function (k) { return units[k]; }), meta: meta }, tp = textsPayload();
+    var cat = Object.keys(units).map(function (k) { return units[k]; });
+    var body = fresh ? { catalog: cat } : { words: words, catalog: cat, meta: meta }, tp = textsPayload();
     if (tp.sig !== c.textsSig) body.texts = tp.texts;
     return post(c, "/api/snapshot", body).then(function (r) { if (r.ok && body.texts) setCfg({ textsSig: tp.sig }); return r.ok; }).catch(function () { return false; });
   };
@@ -137,11 +138,8 @@
 
   /* Wörter der Einheiten im Klartext, damit das Dashboard sie anzeigen kann (nur wenn sich etwas geändert hat) */
   function textsPayload() {
-    var st = VT.state, sel = st.settings.klassen || [], out = {}, sig = "";
-    VT.units().forEach(function (u) {
-      if (u.track !== "schule") return;
-      var touched = false, i;
-      if (sel.indexOf(u.k) < 0) { for (i = 0; i < u.words.length && !touched; i++) if (st.w[u.id + "#" + i]) touched = true; if (!touched) return; }
+    var out = {}, sig = "";
+    VT.units().forEach(function (u) {   // alle Einheiten: zusammen unter 100 KB
       out[u.id] = u.words.map(function (w) { return [w[0], w[1]]; }); sig += u.id + ":" + u.words.length + ";";
     });
     return { texts: out, sig: sig };
@@ -190,7 +188,7 @@
         if (!x.ok) return { error: x.j && x.j.error || "Verbinden hat nicht geklappt." };
         lsSet("wordy.sync." + pid(), { url: url, token: x.j.token, name: x.j.name, last: 0, hidden: !!x.j.hidden });
         W.log("hello", { v: g.WORDY_VERSION || "" });
-        if (VT.isFresh()) return flush(false).then(function () { return W.pull(true); }).then(function () { return W.stateList(); }).then(function (l) { return { ok: true, name: x.j.name, backups: l }; });
+        if (VT.isFresh()) return W.snapshot().then(function () { return flush(false); }).then(function () { return W.pull(true); }).then(function () { return W.stateList(); }).then(function (l) { return { ok: true, name: x.j.name, backups: l }; });
         return W.snapshot().then(function () { return flush(false); }).then(function () { return W.pull(true); }).then(function () { W.pushState(true); return { ok: true, name: x.j.name }; });
       }).catch(function () { return { error: "Der Server ist nicht erreichbar. Gibt es Netz, und stimmt die Adresse?" }; });
   };

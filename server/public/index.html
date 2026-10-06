@@ -307,7 +307,8 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
   function unitPicker(cat, id) {
     var groups = {}, order = [];
     cat.forEach(function (u) { var g = String(u.k); if (!groups[g]) { groups[g] = []; order.push(g); } groups[g].push(u); });
-    order.sort(function (a, b) { return (a === "Headlight 2" ? -1 : b === "Headlight 2" ? 1 : 0) || (a < b ? -1 : 1); });
+    var RANK = ["Headlight 2", "6", "7", "8", "Basis", "Aufbau", "Profi", "Smalltalk", "Redewendungen", "Eigene Listen"], rk = function (x) { var i = RANK.indexOf(x); return i < 0 ? 99 : i; };
+    order.sort(function (a, b) { return (rk(a) - rk(b)) || (a < b ? -1 : 1); });
     return '<div class="pick" id="' + id + '">' + order.map(function (g) {
       return '<b class="g">' + esc(/^\d+$/.test(g) ? "Klasse " + g : g) + "</b>" + groups[g].map(function (u) {
         return '<label><input type="checkbox" value="' + esc(u.id) + '"> ' + esc(u.title.replace(/^Headlight 2 · /, "")) + ' <span class="muted small">(' + u.total + ")</span></label>";
