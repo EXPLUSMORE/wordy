@@ -347,13 +347,15 @@
 
   /* ================= ÜBEN: Spielmodi und Einheiten ================= */
   function modiHtml() {
-    var st = S.state, p = S.pools(), stt = S.stats(), mins = st.settings.goalMin, biz = st.settings.track === "business", few = p.all.length < 8;
+    var st = S.state, p = S.pools(), stt = S.stats(), mins = startMin || st.settings.goalMin, biz = st.settings.track === "business", few = p.all.length < 8;
+    var nW = S.itemsFor(mins), nS = Math.max(5, Math.round(mins * 60 / 16)), nV = Math.max(5, Math.round(mins * 60 / 20));
+    function cnt(n) { return " · ≈ " + n + " " + plural(n, "Aufgabe", "Aufgaben"); }
     var W = window.WordySync, plans = (W && W.connected()) ? W.activePlans() : [], aud = audioAvailable();
-    var learn = tile("🧠", 'Weiterlernen <span style="color:var(--gold)">★</span>', "Mix aus allem, was dran ist", 'data-act="start" data-min="' + mins + '"') +
-      tile("✨", "Neue Wörter", p.fresh.length ? p.fresh.length + " warten auf dich" : "Alles schon gesehen", 'data-act="start" data-mode="new" data-min="5"' + (p.fresh.length ? "" : " disabled")) +
-      tile("♻️", "Fehlerkartei", p.box.length ? p.box.length + " " + plural(p.box.length, "Wort", "Wörter") + " üben" : "Leer, sehr gut!", 'data-act="start" data-mode="box" data-min="5"' + (p.box.length ? "" : " disabled")) +
-      tile("💬", "Sätze", stt.sent.total ? stt.sent.seen + " von " + stt.sent.total + " geübt" : "Für diesen Bereich noch keine", 'data-act="start" data-mode="sent" data-min="5"' + (stt.sent.total ? "" : " disabled")) +
-      (biz ? "" : tile("🔀", "Verben", "Unregelmäßige Verben", 'data-act="start" data-mode="verbs" data-min="5"')) +
+    var learn = tile("🧠", 'Weiterlernen <span style="color:var(--gold)">★</span>', "Mix aus allem, was dran ist" + cnt(nW), 'data-act="start" data-min="' + mins + '"') +
+      tile("✨", "Neue Wörter", p.fresh.length ? p.fresh.length + " warten auf dich" + cnt(Math.min(nW, p.fresh.length)) : "Alles schon gesehen", 'data-act="start" data-mode="new" data-min="' + mins + '"' + (p.fresh.length ? "" : " disabled")) +
+      tile("♻️", "Fehlerkartei", p.box.length ? p.box.length + " " + plural(p.box.length, "Wort", "Wörter") + " üben" + cnt(Math.min(nW, p.box.length)) : "Leer, sehr gut!", 'data-act="start" data-mode="box" data-min="' + mins + '"' + (p.box.length ? "" : " disabled")) +
+      tile("💬", "Sätze", stt.sent.total ? stt.sent.seen + " von " + stt.sent.total + " geübt" + cnt(Math.min(nS, stt.sent.total)) : "Für diesen Bereich noch keine", 'data-act="start" data-mode="sent" data-min="' + mins + '"' + (stt.sent.total ? "" : " disabled")) +
+      (biz ? "" : tile("🔀", "Verben", "Unregelmäßige Verben" + cnt(nV), 'data-act="start" data-mode="verbs" data-min="' + mins + '"')) +
       plans.map(function (pl) {
         var pi = W.planInfo(pl);
         return tile("📅", esc(pl.title), (pi.days > 1 ? "in " + pi.days + " Tagen" : pi.days === 1 ? "morgen" : pi.days === 0 ? "heute" : "vorbei") + " · " + pi.pct + " %", 'data-act="startplan" data-id="' + esc(pl.id) + '"');
@@ -366,15 +368,17 @@
     var plays = 0, arena = st.arena || {};
     for (var k in arena) plays += arena[k].plays || 0;
     var focusT = [["👂", "Hören", "Wort hören und finden", "listen", !aud], ["⌨️", "Tippen", "Wort selbst schreiben", "type"], ["🧩", "Lücken", "Satz vervollständigen", "gap"], ["🔗", "Zuordnen", "Paare verbinden", "match"]];
-    return '<section class="card"><div class="eyebrow">Lernen</div><div class="tiles">' + learn + '</div></section>' +
+    return '<section class="card"><div class="eyebrow">Lernen</div>' +
+      '<div class="row wrap" style="margin-top:8px"><span class="small muted">Dauer</span>' + [3, 5, 10, 15].map(function (m2) { return '<button class="chip" data-act="setmin" data-min="' + m2 + '" aria-pressed="' + (mins === m2) + '">' + m2 + ' Min</button>'; }).join("") + '</div>' +
+      '<div class="tiles">' + learn + '</div></section>' +
       '<section class="card"><div class="eyebrow">Spielen</div>' +
       (few ? '<p class="small muted" style="margin:6px 0 0">Für die Spiele brauchst du mindestens acht Wörter im gewählten Bereich. Schalte unter „Einheiten“ ein weiteres Schuljahr dazu.</p>' : '') +
       '<div class="tiles">' + play + '</div>' +
       '<details style="margin-top:12px"><summary class="small" style="cursor:pointer;font-weight:700">Wie die Spiele zählen</summary>' +
       '<p class="small muted" style="margin:8px 0 0">Ein Treffer unter Zeitdruck wird als sichere, aber flache Wiederholung gewertet. Er schiebt ein Wort eine Stufe weiter, ersetzt aber nicht das ruhige Training. Ein Fehlgriff landet sofort in der Fehlerkartei. Die Zeit läuft aufs Tagesziel.' + (plays ? ' Bisher ' + plays + ' ' + plural(plays, "Runde", "Runden") + ' gespielt.' : '') + '</p></details></section>' +
       '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Gezielt üben</div><span class="pill">neu</span></div>' +
-      '<p class="small muted" style="margin:6px 0 0">Eine Aufgabenform üben, mit Wörtern, die dran sind.</p><div class="tiles">' +
-      focusT.map(function (f) { return tile(f[0], f[1], f[2], 'data-act="start" data-mode="focus" data-focus="' + f[3] + '" data-min="5"' + (f[4] ? " disabled" : "")); }).join("") + '</div></section>';
+      '<p class="small muted" style="margin:6px 0 0">Eine Aufgabenform üben, mit Wörtern, die dran sind (≈ ' + nW + ' ' + plural(nW, "Aufgabe", "Aufgaben") + ').</p><div class="tiles">' +
+      focusT.map(function (f) { return tile(f[0], f[1], f[2], 'data-act="start" data-mode="focus" data-focus="' + f[3] + '" data-min="' + mins + '"' + (f[4] ? " disabled" : "")); }).join("") + '</div></section>';
   }
   function viewUeben() {
     if (detailUnit === "__verbs") return viewVerbList();
