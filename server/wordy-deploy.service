@@ -1,0 +1,8 @@
+[Unit]
+Description=Wordy-Server: neuen Stand aus GitHub holen, prüfen und einspielen
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/wordy/server/deploy.sh

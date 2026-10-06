@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.7.0 – 2026-10-06
+
+- Server: Automatische Updates per Pull. `server/deploy.sh` mit systemd-Timer (alle 5 Minuten) holt neue Stände aus GitHub, führt den Selbsttest aus, sichert die Datenbank, startet den Dienst neu und prüft `/healthz`; bei Fehlern automatisch zurück auf den alten Stand. Optional nur freigegebene Tags (`DEPLOY_MODE=tag`). Anleitung in `server/README.md`. **Einmalige Einrichtung auf dem Server nötig.**
+
 ## 2.6.0 – 2026-10-06
 
 - Dashboard: Neue Karte „Tage einzeln“ – jeder Tag der gewählten Zeitspanne (14/30/90) als Zeile mit Balken, Zeit, Aufgaben und Richtig-Quote; Tage ohne Üben sind sichtbar. Antippen zeigt Runden mit Uhrzeit und Art sowie die Fehlerwörter des Tages. Darüber eine Muster-Zeile (aktive Tage, Schnitt, Tagesziel-Tage, Aufgaben/Runde, übliche Uhrzeit, Arten, längste Pause). **Server-Update nötig.**

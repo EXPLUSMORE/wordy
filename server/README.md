@@ -99,3 +99,43 @@ Von Hand testen: `sudo -u wordy /opt/node22/bin/node /opt/wordy/server/backup.js
 
 ## Schnittstellen (zur Information)
 App: `POST /api/pair`, `/api/events`, `/api/snapshot`, `/api/ping` · Eltern: `GET /`, `/api/admin/players`, `/api/admin/players/:id/report?days=30` u. a.
+
+## Automatische Updates aus GitHub (Pull, ohne offenen Zugang)
+Der Server fragt alle 5 Minuten selbst bei GitHub nach (nur lesen). Gibt es einen neuen Stand, der `server/` ändert, passiert das Folgende (`deploy.sh`):
+1. Stand holen, `node server/test.js` laufen lassen (Selbsttest).
+2. Datenbank sichern (`backup.js`), Dienst neu starten.
+3. `/healthz` prüfen. Antwortet der Dienst nicht oder schlägt der Test fehl, **geht der Server automatisch auf den alten Stand zurück**, startet den alten Stand neu und versucht den abgelehnten Stand nicht noch einmal.
+Änderungen nur an der App (`docs/`, `js/`, `data/`) holt er sich ebenfalls, startet aber nichts neu. Es kommt nichts von außen auf den Server, es gibt kein offenes SSH und keine Geheimnisse in GitHub.
+
+**Einmalig einrichten** (Annahme: der Ordner `/opt/wordy` ist ein `git clone` des Repositories, dann liegt der Server unter `/opt/wordy/server`):
+```bash
+# 1. Aktuellen Stand holen, damit deploy.sh vorhanden ist (dein bisheriger Weg)
+cd /opt/wordy && sudo -u wordy git pull
+ls -l server/deploy.sh        # muss ausführbar sein (-rwxr-xr-x)
+
+# 2. Nur bei PRIVATEM Repository: Nur-Lesen-Schlüssel anlegen
+sudo mkdir -p /etc/wordy-deploy && sudo ssh-keygen -t ed25519 -N "" -C wordy-server -f /etc/wordy-deploy/id_ed25519
+sudo chown -R wordy: /etc/wordy-deploy && sudo chmod 600 /etc/wordy-deploy/id_ed25519
+sudo cat /etc/wordy-deploy/id_ed25519.pub     # Inhalt kopieren
+#    GitHub: Repository -> Settings -> Deploy keys -> Add deploy key, einfügen, "Allow write access" NICHT anhaken
+sudo -u wordy git -C /opt/wordy remote set-url origin git@github.com:EXPLUSMORE/wordy.git
+echo 'DEPLOY_KEY=/etc/wordy-deploy/id_ed25519' | sudo tee /etc/default/wordy-deploy
+#    (Bei öffentlichem Repository diesen ganzen Schritt weglassen.)
+
+# 3. Probelauf von Hand (gibt nichts aus, wenn alles aktuell ist; sonst zeigt er den Ablauf)
+sudo /opt/wordy/server/deploy.sh; echo "Ende: $?"
+
+# 4. Zeitgeber einschalten
+sudo cp /opt/wordy/server/wordy-deploy.service /opt/wordy/server/wordy-deploy.timer /etc/systemd/system/
+sudo systemctl daemon-reload && sudo systemctl enable --now wordy-deploy.timer
+systemctl list-timers wordy-deploy.timer
+```
+**Beobachten:** `journalctl -u wordy-deploy -n 50 --no-pager` zeigt jeden Lauf („Neuer Stand …“, „Selbsttest bestanden“, „ERFOLG …“ oder „ZURÜCK auf …“).
+
+**Nur freigegebene Stände (Variante „Tag“):** In `/etc/default/wordy-deploy` die Zeilen `DEPLOY_MODE=tag` und optional `DEPLOY_TAG_GLOB=server-*` eintragen. Dann geht nur ein Stand live, der mit einem Tag wie `server-2.7.0` versehen ist, nicht jeder Push auf `main`. Beispiel Vorlage: `wordy-deploy.env.example`.
+
+**Wenn ein Stand abgelehnt wurde:** Er steht in `/opt/wordy/.deploy-bad` und wird nicht erneut versucht. Nach einem Korrektur-Push (neuer Stand) läuft es von selbst weiter.
+
+**Pausieren / abschalten:** `sudo systemctl stop wordy-deploy.timer` (wieder starten mit `start`, dauerhaft aus mit `disable --now`).
+
+**Nicht automatisch:** Änderungen an den systemd-Dateien (`wordy-server.service`, `wordy-deploy.*`), der Apache-Konfiguration und der `.env` bleiben Handarbeit. Der Dienst-Benutzer `wordy` braucht kein sudo, denn der Zeitgeber läuft als root und führt Git-Befehle als `wordy` aus.

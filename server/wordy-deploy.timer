@@ -1,0 +1,11 @@
+[Unit]
+Description=Wordy-Server: alle 5 Minuten nach einem neuen Stand suchen
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=5min
+RandomizedDelaySec=30
+Persistent=true
+
+[Install]
+WantedBy=timers.target
