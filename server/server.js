@@ -218,12 +218,13 @@ function snap(pid, key) { const r = q.snap.get(pid, key); return r ? { ts: r.ts,
 
 function report(pid, days) {
   const now = Date.now(), from = now - days * 86400000;
-  const evs = q.events.all(pid, from).map(r => ({ ts: r.ts, k: r.k, d: JSON.parse(r.d) }));
+  const evs = q.events.all(pid, now - Math.max(days, 15) * 86400000).map(r => ({ ts: r.ts, k: r.k, d: JSON.parse(r.d) }));
   const perDay = {};
   const day = ts => (perDay[dayOf(ts)] = perDay[dayOf(ts)] || { date: dayOf(ts), sec: 0, items: 0, correct: 0, neu: 0, coins: 0, sessions: 0 });
   const bad = {}, sessions = [], buys = [];
   for (const e of evs) {
     const d = e.d;
+    if (e.ts < from) continue;       // die Zeitraum-Auswahl gilt für Tagesbalken, Problemwörter und Runden
     if (e.k === "a" || e.k === "s") {
       const x = day(e.ts); x.items++; if (d.g > 0) x.correct++;
       if (e.k === "a" && (d.b || 0) === 0 && d.g > 0) x.neu++;
@@ -241,6 +242,17 @@ function report(pid, days) {
     const k = dayOf(now - i * 86400000);
     dayList.push(perDay[k] || { date: k, sec: 0, items: 0, correct: 0, neu: 0, coins: 0, sessions: 0 });
   }
+  /* Heute und laufende Kalenderwoche (Mo–So), unabhängig von der gewählten Zeitspanne */
+  const todayK = dayOf(now), mon = mondayOf(todayK), sun = ymdAdd(mon, 6), pmon = ymdAdd(mon, -7), psun = ymdAdd(mon, -1);
+  const empty = k => ({ date: k, sec: 0, items: 0, correct: 0, neu: 0, coins: 0, sessions: 0 });
+  const dayAt = k => perDay[k] || empty(k);
+  const sumDays = list => list.reduce((a, x) => ({ sec: a.sec + x.sec, items: a.items + x.items, correct: a.correct + x.correct, neu: a.neu + x.neu, coins: a.coins + x.coins, sessions: a.sessions + x.sessions, activeDays: a.activeDays + (x.items > 0 ? 1 : 0) }), { sec: 0, items: 0, correct: 0, neu: 0, coins: 0, sessions: 0, activeDays: 0 });
+  const wdays = []; for (let i = 0; i < 7; i++) wdays.push(dayAt(ymdAdd(mon, i)));
+  const pdays = []; for (let i = 0; i < 7; i++) pdays.push(dayAt(ymdAdd(pmon, i)));
+  const topBad = (a, b) => { const m = {}; for (const e of evs) { const k = dayOf(e.ts); if ((e.k === "a" || e.k === "s") && e.d.g === 0 && e.d.id && k >= a && k <= b) { const x = m[e.d.id] = m[e.d.id] || { id: e.d.id, en: e.d.en || e.d.id, de: e.d.de || "", n: 0, last: 0 }; x.n++; x.last = e.ts; } }
+    return Object.values(m).sort((x, y) => y.n - x.n || y.last - x.last).slice(0, 5); };
+  const todayInfo = Object.assign(dayAt(todayK), { problems: topBad(todayK, todayK), runs: sessions.filter(s => dayOf(s.ts) === todayK).reverse() });
+  const weekInfo = Object.assign(sumDays(wdays), { from: mon, to: sun, days: wdays, problems: topBad(mon, sun), prev: Object.assign(sumDays(pdays), { from: pmon, to: psun }) });
   const words = snap(pid, "words"), cat = snap(pid, "catalog"), meta = snap(pid, "meta");
   const lvOf = id => (words && words.d[id]) ? words.d[id][0] : 0;
   const badList = Object.values(bad).sort((a, b) => b.n - a.n || b.last - a.last).slice(0, 15)
@@ -262,7 +274,7 @@ function report(pid, days) {
   const last7 = dayList.slice(-7);
   const c = q.evCount.get(pid);
   return {
-    days: dayList, units, problems: badList, sessions: sessions.slice(-25).reverse(), buys: buys.slice(-20).reverse(), meta: meta ? meta.d : null,
+    days: dayList, today: todayInfo, calWeek: weekInfo, units, problems: badList, sessions: sessions.slice(-25).reverse(), buys: buys.slice(-20).reverse(), meta: meta ? meta.d : null,
     metaTs: meta ? meta.ts : null,
     totals: { sec: sum(x => x.sec), items: sum(x => x.items), correct: sum(x => x.correct), neu: sum(x => x.neu), activeDays: dayList.filter(x => x.items > 0).length },
     week: { sec: last7.reduce((a, x) => a + x.sec, 0), items: last7.reduce((a, x) => a + x.items, 0), correct: last7.reduce((a, x) => a + x.correct, 0), activeDays: last7.filter(x => x.items > 0).length },

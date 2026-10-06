@@ -176,6 +176,43 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
   }
   var LV = ["Neu", "Angefangen", "Geübt", "Sitzt", "Gemeistert"];
 
+  var WD = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
+  function dparts(k) { var x = k.split("-"); return { y: +x[0], m: +x[1], d: +x[2], wd: new Date(Date.UTC(+x[0], +x[1] - 1, +x[2])).getUTCDay() }; }
+  function dShort(k) { var p = dparts(k); return p.d + "." + p.m + "."; }
+  function dLong(k) { var p = dparts(k); return WD[p.wd] + ", " + p.d + "." + p.m + "." + p.y; }
+  function delta(a, b, fmt) { if (!b && !a) return ""; var d = a - b; return "<br>" + (d === 0 ? "= wie Vorwoche" : (d > 0 ? "▲ " : "▼ ") + fmt(Math.abs(d)) + " zur Vorwoche"); }
+  function probList(l) {
+    return l.length ? "<table><tr><th>Wort</th><th>Bedeutung</th><th class=\"n\">Fehler</th></tr>" + l.map(function (x) { return "<tr><td><b>" + esc(x.en) + "</b></td><td>" + esc(x.de) + '</td><td class="n">' + x.n + "</td></tr>"; }).join("") + "</table>" : '<p class="muted small" style="margin:6px 0 0">Keine Fehler.</p>';
+  }
+  function heuteCard(r, m) {
+    var t = r.today, goal = (m.goalMin || 0) * 60, h = '<div class="card"><h2>Heute · ' + dLong(t.date) + "</h2>";
+    if (!t.items && !t.sec) return h + '<p class="muted small" style="margin:0">Heute wurde noch nicht geübt.' + (goal ? " Tagesziel: " + m.goalMin + " Min." : "") + "</p></div>";
+    h += '<div class="kpis">' + kpi(fmtMin(t.sec), "geübt" + (goal ? " · Ziel " + m.goalMin + " Min." : "")) +
+      kpi(t.items, "Aufgaben · " + pct(t.correct, t.items) + " richtig") + kpi(t.neu, "neue Wörter") + kpi("🪙 " + t.coins, t.sessions + (t.sessions === 1 ? " Runde" : " Runden")) + "</div>";
+    if (goal) h += '<div class="mini" style="margin-top:10px"><i class="' + (t.sec >= goal ? "d" : "") + '" style="width:' + Math.min(100, Math.round(t.sec * 100 / goal)) + '%"></i></div><div class="small muted" style="margin-top:4px">' + (t.sec >= goal ? "Tagesziel geschafft ✅" : "Noch " + fmtMin(goal - t.sec) + " bis zum Tagesziel") + "</div>";
+    if (t.runs.length) h += '<h3 style="margin:14px 0 4px;font-size:14px">Runden heute</h3><table><tr><th>Uhr</th><th>Art</th><th class="n">Dauer</th><th class="n">Aufgaben</th><th class="n">Richtig</th></tr>' + t.runs.map(function (s) {
+      return "<tr><td>" + new Date(s.ts).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" }) + "</td><td>" + esc(MODE[s.mode] || s.mode) + '</td><td class="n">' + fmtMin(s.sec) + '</td><td class="n">' + s.items + '</td><td class="n">' + pct(s.correct, s.items) + "</td></tr>";
+    }).join("") + "</table>";
+    if (t.problems.length) h += '<h3 style="margin:14px 0 4px;font-size:14px">Fehlerwörter heute</h3>' + probList(t.problems);
+    return h + "</div>";
+  }
+  function wocheCard(r, m) {
+    var w = r.calWeek, pv = w.prev, goal = (m.goalMin || 0) * 60, h = '<div class="card"><h2>Woche · ' + dLong(w.from) + " bis " + dLong(w.to) + "</h2>";
+    h += '<div class="kpis">' + kpi(fmtMin(w.sec), w.activeDays + " von 7 Tagen aktiv" + delta(w.sec, pv.sec, fmtMin)) +
+      kpi(w.items, "Aufgaben · " + pct(w.correct, w.items) + " richtig" + delta(w.items, pv.items, String)) +
+      kpi(w.neu, "neue Wörter" + delta(w.neu, pv.neu, String)) + kpi("🪙 " + w.coins, w.sessions + (w.sessions === 1 ? " Runde" : " Runden")) + "</div>";
+    var mx = Math.max.apply(null, w.days.map(function (d) { return d.sec; }).concat([goal, 60])), todayK = r.today.date;
+    h += '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:14px;align-items:end;height:90px">' + w.days.map(function (d) {
+      var hh = d.sec ? Math.max(6, Math.round(d.sec * 100 / mx)) : 3, ok = goal && d.sec >= goal, fut = d.date > todayK;
+      return '<div title="' + dLong(d.date) + ": " + fmtMin(d.sec) + '" style="height:100%;display:flex;align-items:flex-end"><i style="display:block;width:100%;height:' + hh + "%;border-radius:4px;background:" + (d.sec ? (ok ? "var(--good)" : "var(--acc2)") : "var(--line)") + (fut ? ";opacity:.4" : "") + '"></i></div>';
+    }).join("") + "</div>";
+    h += '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center" class="small muted">' + w.days.map(function (d) {
+      return "<div" + (d.date === todayK ? ' style="font-weight:700;color:var(--ink)"' : "") + ">" + WD[dparts(d.date).wd] + "<br>" + fmtMin(d.sec).replace(" Min.", "") + "</div>";
+    }).join("") + "</div>";
+    h += '<div class="small muted" style="margin-top:6px">Minuten pro Tag' + (goal ? " · grün = Tagesziel (" + m.goalMin + " Min.) erreicht" : "") + ". Vorwoche: " + dShort(pv.from) + " – " + dShort(pv.to) + ", " + fmtMin(pv.sec) + ", " + pv.activeDays + " aktive Tage.</div>";
+    h += '<h3 style="margin:14px 0 4px;font-size:14px">Fehlerwörter der Woche</h3>' + probList(w.problems);
+    return h + "</div>";
+  }
   function viewPlayer(p, r) {
     var m = r.meta || {}, t = r.totals, wk = r.week, h = "";
     var today = r.days[r.days.length - 1];
@@ -183,13 +220,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
       '<div class="small muted">Zuletzt aktiv: ' + fmtAgo(p.lastEvent) + (m.rank ? " · " + esc(m.rank) : "") + (m.streak ? " · 🔥 " + m.streak + " Tage Serie" : "") +
       (p.devices.length ? " · " + p.devices.length + " Gerät" + (p.devices.length > 1 ? "e" : "") : " · noch kein Gerät verbunden") + "</div></div>" +
       '<button class="ghost" id="inv">Neuer Code</button><button class="ghost" id="ren">Umbenennen</button><button class="ghost" id="hid">Nur sichern</button><button class="ghost" id="rev">Geräte trennen</button><button class="ghost" id="del">Löschen</button></div></div>';
-    h += '<div class="card"><h2>Heute und diese Woche</h2><div class="kpis">' +
-      kpi(fmtMin(today.sec), "heute geübt" + (m.goalMin ? " (Ziel " + m.goalMin + " Min.)" : "")) +
-      kpi(today.items, "Aufgaben heute · " + pct(today.correct, today.items) + " richtig") +
-      kpi(fmtMin(wk.sec), "letzte 7 Tage · " + wk.activeDays + " von 7 Tagen aktiv") +
-      kpi(wk.items, "Aufgaben · " + pct(wk.correct, wk.items) + " richtig") +
-      kpi(t.neu, "neue Wörter (" + days + " Tage)") +
-      (m.coins != null ? kpi("🪙 " + m.coins, "Münzen" + (m.wish ? " · Wunsch: " + esc(m.wish) : "")) : "") + "</div></div>";
+    h += heuteCard(r, m) + wocheCard(r, m);
     h += '<div class="card" id="goalsCard"></div><div class="card" id="plansCard"></div>';
     h += '<div class="card"><div class="row"><h2 class="grow" style="margin:0">Übungszeit pro Tag</h2><button class="tab" data-d="14" aria-pressed="' + (days === 14) + '">14 Tage</button><button class="tab" data-d="30" aria-pressed="' + (days === 30) + '">30 Tage</button><button class="tab" data-d="90" aria-pressed="' + (days === 90) + '">90 Tage</button></div>' +
       bars(r.days) + '<div class="legend"><span><i style="background:var(--good)"></i>10 Min. oder mehr</span><span><i style="background:var(--acc2)"></i>weniger</span><span class="muted">Insgesamt ' + fmtMin(t.sec) + ", " + t.items + " Aufgaben, " + t.activeDays + " aktive Tage</span></div></div>";

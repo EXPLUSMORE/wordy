@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.5.0 – 2026-10-06
+
+- Dashboard: Neue Karten „Heute · Datum“ (geübte Zeit mit Tagesziel-Balken, Aufgaben, richtig %, neue Wörter, Münzen, Runden mit Uhrzeit, Fehlerwörter heute) und „Woche · Mo bis So“ (Kalenderwoche mit Daten von–bis, Zeit/Aufgaben/neue Wörter mit Vergleich zur Vorwoche, Tagesbalken Mo–So mit Tagesziel-Markierung, Fehlerwörter der Woche). **Server-Update nötig.**
+
 ## 2.4.1 – 2026-10-06
 
 - Update-Sicherheit: Die Skripte der Website tragen jetzt die Build-Kennung (`?v=…`) in der Adresse. Eine neue Seite holt dadurch immer die passenden Dateien statt alter aus dem Cache. Behebt, dass Setup die neue Version anzeigte, die Oberfläche aber noch die alte war (z. B. fehlte die Wunsch-Silhouette).

@@ -60,6 +60,10 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     const today = rep.j.days[rep.j.days.length - 1];
     assert.equal(today.items, 2); assert.equal(today.correct, 1); assert.equal(today.sec, 700); assert.equal(today.neu, 1);
     assert.equal(rep.j.problems[0].en, "lake");
+    assert.equal(rep.j.today.date, today.date); assert.equal(rep.j.today.items, 2); assert.equal(rep.j.today.sec, 700); assert.equal(rep.j.today.problems[0].en, "lake");
+    assert.equal(rep.j.today.runs.length, 1, "Runden heute");
+    const cw = rep.j.calWeek; assert.equal(cw.days.length, 7); assert.ok(cw.from <= today.date && today.date <= cw.to, "Heute liegt in der Woche");
+    assert.equal(new Date(cw.from + "T00:00:00Z").getUTCDay(), 1, "Woche beginnt am Montag"); assert.ok(cw.items >= 2 && cw.sec >= 700, "Woche enthält heute"); assert.equal(cw.prev.items, 0);
     assert.equal(rep.j.units[0].mastered, 1); assert.equal(rep.j.units[0].seen, 2);
     assert.equal(rep.j.buys[0].name, "Panda");
     const pl = await J("/api/admin/players", { headers: H });
