@@ -2,7 +2,8 @@
 (function (global) {
   "use strict";
   var S = global.VT, view = document.getElementById("view"), tabs = document.getElementById("tabs"),
-      sessionEl = document.getElementById("session"), tab = "home", detailUnit = null;
+      sessionEl = document.getElementById("session"), tab = "home", detailUnit = null,
+      uebenSeg = "modi", statsSeg = "ueb", shopSeg = "shop", startMin = null, lastRec = null, openGroups = {}, openFolds = {};
 
   /* ---------- Werkzeug ---------- */
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]; }); }
@@ -215,10 +216,10 @@
   /* ================= START ================= */
 
   /* ---------- Ziele und Lernpläne der Eltern (Startseite) ---------- */
-  function parentCards() {
+  function parentCards(skipPlans) {
     var W = window.WordySync; if (!W || !W.connected()) return "";
     var h = "", goals = W.currentGoals(), plans = W.activePlans(), st = S.state;
-    plans.forEach(function (pl) {
+    (skipPlans ? [] : plans).forEach(function (pl) {
       var i = W.planInfo(pl), done = st.goalsDone && st.goalsDone["p" + pl.id];
       var when = i.days > 1 ? "in " + i.days + " Tagen" : i.days === 1 ? "morgen" : "heute";
       var newToday = (st.daily && st.daily.newSeen) || 0, left = Math.max(0, i.quota - newToday);
@@ -242,8 +243,34 @@
     return h;
   }
 
+  /* ---------- Segment-Umschalter und Kacheln ---------- */
+  function segBar(group, cur, items) {
+    return '<div class="segs">' + items.map(function (x) {
+      return '<button data-act="seg" data-g="' + group + '" data-v="' + x[0] + '" aria-pressed="' + (cur === x[0]) + '">' + x[1] + '</button>';
+    }).join("") + '</div>';
+  }
+  function tile(icon, title, desc, attrs, extra, cls) {
+    return '<button class="tile' + (cls ? " " + cls : "") + '" ' + attrs + '><span class="ti">' + icon + '</span><span class="tt"><b>' + title + '</b><span class="d">' + desc + '</span>' + (extra || "") + '</span></button>';
+  }
+
+  /* ---------- Start: eine Empfehlung, ein Knopf ---------- */
+  function recommend() {
+    var st = S.state, p = S.pools(), W = window.WordySync, mins = startMin || st.settings.goalMin;
+    var plans = (W && W.connected()) ? W.activePlans().filter(function (pl) { var d = W.planInfo(pl).days; return d >= 0 && d <= 14; }) : [];
+    if (plans.length) {
+      plans.sort(function (a, b) { return a.exam < b.exam ? -1 : 1; });
+      var pl = plans[0], pi = W.planInfo(pl), newToday = (st.daily && st.daily.newSeen) || 0, left = Math.max(0, pi.quota - newToday);
+      return { plan: true, icon: "📅", title: esc(pl.title),
+        sub: "Arbeit " + (pi.days > 1 ? "in " + pi.days + " Tagen" : pi.days === 1 ? "morgen" : "heute") + " · " + pi.pct + " % sicher" + (left ? " · heute " + left + " neue " + plural(left, "Wort", "Wörter") : ""),
+        opts: { minutes: mins, scope: pl.units, newMax: Math.max(pi.quota, newToday), mode: "plan" } };
+    }
+    if (p.box.length >= 8) return { icon: "♻️", title: "Fehlerkartei", sub: p.box.length + " Wörter warten darauf, endlich zu sitzen.", opts: { minutes: mins, mode: "box" } };
+    if (p.due.length) return { icon: "🧠", title: "Wiederholen", sub: p.due.length + " " + plural(p.due.length, "Wort ist", "Wörter sind") + " fällig.", opts: { minutes: mins, mode: "mix" } };
+    if (p.fresh.length) return { icon: "✨", title: "Neue Wörter", sub: "Nichts ist fällig. Zeit für etwas Neues.", opts: { minutes: mins, mode: "new" } };
+    return { icon: "🧠", title: "Weiterlernen", sub: "Eine bunte Runde aus allem.", opts: { minutes: mins, mode: "mix" } };
+  }
   function viewHome() {
-    var st = S.state, p = S.pools(), stt = S.stats(), r = S.rankOf(st.xp);
+    var st = S.state, r = S.rankOf(st.xp);
     var goalSec = st.settings.goalMin * 60, pct = Math.min(100, Math.round(st.daily.sec * 100 / goalSec));
     var toNext = r.next ? (r.next.xp - st.xp) : 0;
     var pn = playerName(), greet = pn && !/^Spieler \d+$/.test(pn) ? "Hallo " + esc(pn) : "Willkommen zurück";
@@ -253,11 +280,12 @@
       : st.daily.sec > 0 ? "Noch " + fmtMin(goalSec - st.daily.sec) + " bis zum Tagesziel."
       : biz ? (hour < 12 ? "Fünf Minuten vor dem ersten Termin?" : "Eine kurze Runde zwischen zwei Meetings.")
       : hour < 12 ? "Eine kurze Runde vor der Schule?" : "Fünf Minuten reichen für heute.";
+    var rec = lastRec = recommend(), mins = startMin || st.settings.goalMin;
 
     var html = '<div class="stack">';
     html += '<section class="card hero" style="position:relative">' + (S.stickers().length ? '<div class="stk-corner">' + placedStickers(54) + '</div>' : "") + '<div class="inner"><div class="row" style="align-items:flex-start">' +
       '<div style="flex:1 1 auto;min-width:0"><div class="eyebrow">' + esc(S.today().split("-").reverse().join(".")) +
-      ' · ' + (st.settings.track === "business" ? "Business English" : "Schule") + '</div>' +
+      ' · ' + (biz ? "Business English" : "Schule") + '</div>' +
       '<h1>' + greet + '</h1><p class="muted small" style="margin:6px 0 0">' + esc(tip) + '</p></div>' +
       '<div class="ring" style="--p:' + pct + '"><span class="tnum">' + pct + '%</span></div></div>' +
       '<div class="row wrap small muted" style="margin-top:12px;gap:14px">' +
@@ -265,105 +293,98 @@
       '<span>🛡️ ' + st.streak.freezes + ' Streak-Schutz</span>' +
       (r.next ? '<span>Noch ' + toNext + ' XP bis ' + esc(r.next.n) + '</span>' : '<span>Höchster Rang erreicht</span>') +
       '</div></div></section>';
-    html += parentCards();
 
-    html += '<section class="card"><div class="eyebrow">Wie viel Zeit hast du?</div>' +
-      '<div class="quick" style="margin-top:10px">' +
-      [3, 5, 10, 15].map(function (m) {
-        return '<button data-act="start" data-min="' + m + '">' + m + ' Min<small>' + Math.round(m * 60 / S.SEC_PER_ITEM) + ' Aufgaben</small></button>';
-      }).join("") + '</div>' +
-      '<button class="btn wide lg" data-act="start" data-min="' + st.settings.goalMin + '" style="margin-top:12px">Weiterlernen</button>' +
-      '<p class="small muted" style="margin:10px 0 0">' + (p.due.length ? p.due.length + ' ' + plural(p.due.length, "Wort ist", "Wörter sind") + ' zur Wiederholung dran' : "Keine Wiederholung fällig – du kannst neue Wörter kennenlernen") + '.</p>' +
-      '</section>';
+    html += '<section class="card rec-card"><div class="eyebrow">Heute für dich</div>' +
+      '<h2>' + rec.icon + ' ' + rec.title + '</h2>' +
+      '<p class="small muted" style="margin:0 0 12px">' + esc(rec.sub) + '</p>' +
+      '<button class="btn wide lg" data-act="startrec">Los geht\'s ▶</button>' +
+      '<div class="row" style="gap:6px;margin-top:12px;justify-content:space-between;align-items:center"><span class="small muted">Dauer</span><span class="row" style="gap:6px">' +
+      [3, 5, 10, 15].map(function (m) { return '<button class="chip" data-act="setmin" data-min="' + m + '" aria-pressed="' + (mins === m) + '">' + m + ' Min</button>'; }).join("") +
+      '</span></div></section>';
 
-    if (p.box.length) {
-      html += '<section class="card"><div class="row"><div style="flex:1 1 auto"><div class="eyebrow" style="color:var(--margin)">Fehlerkartei</div>' +
-        '<h2 style="font-size:19px">' + p.box.length + ' ' + plural(p.box.length, "Wort macht", "Wörter machen") + ' noch Probleme</h2>' +
-        '<p class="small muted" style="margin:4px 0 0">Diese Wörter kommen automatisch häufiger dran.</p></div></div>' +
-        '<button class="btn soft wide" data-act="start" data-mode="box" data-min="5" style="margin-top:12px">Fehlerkartei üben</button></section>';
-    }
+    html += parentCards(rec.plan);
 
-    html += wishCard();
-    html += verbCard();
-    html += '<section class="card"><div class="eyebrow">Heutige Missionen</div><div style="margin-top:6px">' +
+    var wish = S.wish();
+    html += '<section class="card"><div class="eyebrow">Heute</div><div style="margin-top:6px">' +
       st.daily.missions.map(function (m) {
         var pc = Math.min(100, Math.round(m.p * 100 / m.goal));
         return '<div class="mission' + (m.done ? " done" : "") + '"><div class="tick">✓</div>' +
           '<div class="txt"><div class="small" style="font-weight:600">' + esc(m.n) + '</div>' +
           '<div class="bar"><i style="width:' + pc + '%"></i></div></div>' +
-          '<div class="pill">🪙 ' + m.coins + '</div></div>';
-      }).join("") + '</div></section>';
-
-    var sn = stt.sent;
-    html += '<section class="card"><div class="row"><div style="flex:1 1 auto"><div class="eyebrow">Satzbau</div>' +
-      '<h2 style="font-size:19px">' + sn.seen + ' von ' + sn.total + ' Sätzen geübt</h2>' +
-      '<p class="small muted" style="margin:4px 0 0">' + (st.settings.track === "business"
-        ? "Wendungen aus Meetings, E-Mails und Verhandlungen – in der richtigen Wortstellung."
-        : "Wortstellung, Zeiten und Satzbaumuster aus dem Unterricht.") + '</p></div></div>' +
-      '<button class="btn ghost wide" data-act="start" data-mode="sent" data-min="5" style="margin-top:12px">Nur Sätze üben</button></section>';
-
-    var mastered = stt.dist[4], nextMile = Math.ceil((mastered + 1) / 25) * 25;
-    html += '<section class="card"><div class="eyebrow">Dein Können</div>' +
-      '<div class="row" style="margin-top:8px;gap:16px"><div><div style="font-family:Newsreader,serif;font-size:30px;font-weight:600" class="tnum">' + mastered + '</div>' +
-      '<div class="small muted">Wörter sitzen langfristig</div></div>' +
-      '<div style="flex:1 1 auto"><div class="bar"><i style="width:' + Math.round(mastered * 100 / Math.max(1, nextMile)) + '%"></i></div>' +
-      '<div class="small muted" style="margin-top:6px">Noch ' + (nextMile - mastered) + ' bis zum nächsten Meilenstein (' + nextMile + ')</div></div></div>' +
-      '<div class="small muted" style="margin-top:10px">' + stt.dist[0] + ' noch nie geübt · ' + (stt.dist[1] + stt.dist[2]) + ' in Arbeit · ' + stt.dist[3] + ' sitzen gut</div>' +
-      '</section>';
+          '<div class="pill nowrap">🪙 ' + m.coins + '</div></div>';
+      }).join("") +
+      (wish ? '<div class="mission"><div class="tick" style="background:none;color:var(--gold)">⭐</div><div class="txt"><div class="small" style="font-weight:600">Dein Wunsch: ' + esc(wish.label) + '</div>' +
+          '<div class="bar"><i style="width:' + Math.min(100, Math.round(st.coins * 100 / Math.max(1, wish.cost))) + '%"></i></div></div>' +
+          '<div class="pill nowrap tnum">' + Math.min(st.coins, wish.cost) + ' / ' + wish.cost + '</div></div>'
+        : '<div class="mission"><div class="tick" style="background:none">⭐</div><div class="txt small muted">Noch kein Wunsch gewählt.</div><button class="chip" data-act="goshop">Zum Shop</button></div>') +
+      '</div></section>';
+    html += '<div style="text-align:center"><button class="chip" data-act="goueben">Alle Spielmodi und Einheiten →</button></div>';
     html += '</div>';
     view.innerHTML = html;
   }
 
-  /* ================= ARENA ================= */
-  function viewArena() {
-    var st = S.state, p = S.pools(), few = p.all.length < 8;
-    var html = '<div class="stack">';
-    html += '<section class="card hero"><div class="inner">' +
-      '<div class="eyebrow">Arena · ' + (st.settings.track === "business" ? "Business English" : "Schule") + '</div>' +
-      '<h1 style="font-size:24px">Auf Zeit, nicht auf Ruhe</h1>' +
-      '<p class="muted small" style="margin:6px 0 0">Vier kurze Modi für schnelles Wiederholen. Alles, was du hier triffst, zählt für deinen Lernstand mit – und die Zeit läuft aufs Tagesziel.</p>' +
-      '</div></section>';
-    if (few) html += '<section class="card"><p class="small" style="margin:0">Für die Arena brauchst du mindestens acht Wörter im gewählten Bereich. Schalte unter „Einheiten“ ein weiteres Schuljahr oder eine weitere Stufe dazu.</p></section>';
-    html += '<section class="card">' + (global.ARENA ? global.ARENA.MODES : []).map(function (m) {
+  /* ================= ÜBEN: Spielmodi und Einheiten ================= */
+  function modiHtml() {
+    var st = S.state, p = S.pools(), stt = S.stats(), mins = st.settings.goalMin, biz = st.settings.track === "business", few = p.all.length < 8;
+    var W = window.WordySync, plans = (W && W.connected()) ? W.activePlans() : [], aud = audioAvailable();
+    var learn = tile("🧠", 'Weiterlernen <span style="color:var(--gold)">★</span>', "Mix aus allem, was dran ist", 'data-act="start" data-min="' + mins + '"') +
+      tile("✨", "Neue Wörter", p.fresh.length ? p.fresh.length + " warten auf dich" : "Alles schon gesehen", 'data-act="start" data-mode="new" data-min="5"' + (p.fresh.length ? "" : " disabled")) +
+      tile("♻️", "Fehlerkartei", p.box.length ? p.box.length + " " + plural(p.box.length, "Wort", "Wörter") + " üben" : "Leer, sehr gut!", 'data-act="start" data-mode="box" data-min="5"' + (p.box.length ? "" : " disabled")) +
+      tile("💬", "Sätze", stt.sent.total ? stt.sent.seen + " von " + stt.sent.total + " geübt" : "Für diesen Bereich noch keine", 'data-act="start" data-mode="sent" data-min="5"' + (stt.sent.total ? "" : " disabled")) +
+      (biz ? "" : tile("🔀", "Verben", "Unregelmäßige Verben", 'data-act="start" data-mode="verbs" data-min="5"')) +
+      plans.map(function (pl) {
+        var pi = W.planInfo(pl);
+        return tile("📅", esc(pl.title), (pi.days > 1 ? "in " + pi.days + " Tagen" : pi.days === 1 ? "morgen" : pi.days === 0 ? "heute" : "vorbei") + " · " + pi.pct + " %", 'data-act="startplan" data-id="' + esc(pl.id) + '"');
+      }).join("");
+    var modes = global.ARENA ? global.ARENA.MODES : [];
+    var play = modes.map(function (m) {
       var b = global.ARENA.best(m.id);
-      return '<button class="mode" data-act="arena" data-id="' + esc(m.id) + '"' + (few ? " disabled" : "") + '>' +
-        '<span class="mi">' + esc(m.icon) + '</span>' +
-        '<span class="mt"><b>' + esc(m.name) + '</b>' +
-        '<span class="claim">' + esc(m.claim) + '</span>' +
-        '<span class="desc">' + esc(m.desc) + '</span></span>' +
-        '<span class="mr"><b class="tnum">' + (b.best || "–") + '</b><span>' + (b.plays ? "Bestwert" : esc(m.tag)) + '</span></span>' +
-        '</button>';
-    }).join("") + '</section>';
+      return tile(esc(m.icon), esc(m.name), esc(m.tag), 'data-act="arena" data-id="' + esc(m.id) + '"' + (few ? " disabled" : ""), b.best ? '<span class="pill tnum">Bestwert ' + b.best + '</span>' : "");
+    }).join("");
     var plays = 0, arena = st.arena || {};
     for (var k in arena) plays += arena[k].plays || 0;
-    html += '<section class="card"><div class="eyebrow">Wie die Arena zählt</div>' +
-      '<p class="small muted" style="margin:8px 0 0">Ein Treffer unter Zeitdruck wird als sichere, aber flache Wiederholung gewertet – er schiebt ein Wort eine Stufe weiter, ersetzt aber nicht das ruhige Training. Ein Fehlgriff landet sofort in der Fehlerkartei.</p>' +
-      (plays ? '<p class="small muted" style="margin:10px 0 0">Bisher ' + plays + ' ' + plural(plays, "Runde", "Runden") + ' gespielt.</p>' : "") +
-      '</section>';
-    html += '</div>';
-    view.innerHTML = html;
+    var focusT = [["👂", "Hören", "Wort hören und finden", "listen", !aud], ["⌨️", "Tippen", "Wort selbst schreiben", "type"], ["🧩", "Lücken", "Satz vervollständigen", "gap"], ["🔗", "Zuordnen", "Paare verbinden", "match"]];
+    return '<section class="card"><div class="eyebrow">Lernen</div><div class="tiles">' + learn + '</div></section>' +
+      '<section class="card"><div class="eyebrow">Spielen</div>' +
+      (few ? '<p class="small muted" style="margin:6px 0 0">Für die Spiele brauchst du mindestens acht Wörter im gewählten Bereich. Schalte unter „Einheiten“ ein weiteres Schuljahr dazu.</p>' : '') +
+      '<div class="tiles">' + play + '</div>' +
+      '<details style="margin-top:12px"><summary class="small" style="cursor:pointer;font-weight:700">Wie die Spiele zählen</summary>' +
+      '<p class="small muted" style="margin:8px 0 0">Ein Treffer unter Zeitdruck wird als sichere, aber flache Wiederholung gewertet. Er schiebt ein Wort eine Stufe weiter, ersetzt aber nicht das ruhige Training. Ein Fehlgriff landet sofort in der Fehlerkartei. Die Zeit läuft aufs Tagesziel.' + (plays ? ' Bisher ' + plays + ' ' + plural(plays, "Runde", "Runden") + ' gespielt.' : '') + '</p></details></section>' +
+      '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Gezielt üben</div><span class="pill">neu</span></div>' +
+      '<p class="small muted" style="margin:6px 0 0">Eine Aufgabenform üben, mit Wörtern, die dran sind.</p><div class="tiles">' +
+      focusT.map(function (f) { return tile(f[0], f[1], f[2], 'data-act="start" data-mode="focus" data-focus="' + f[3] + '" data-min="5"' + (f[4] ? " disabled" : "")); }).join("") + '</div></section>';
+  }
+  function viewUeben() {
+    if (detailUnit === "__verbs") return viewVerbList();
+    if (detailUnit) return viewUnitDetail(detailUnit);
+    view.innerHTML = '<div class="stack">' + segBar("ueben", uebenSeg, [["modi", "🎮 Spielmodi"], ["units", "📚 Einheiten"]]) +
+      (uebenSeg === "units" ? unitsHtml() : modiHtml()) + '</div>';
+    $$("details.grp").forEach(function (d) { d.addEventListener("toggle", function () { openGroups[d.getAttribute("data-k")] = d.open; }); });
   }
 
   /* ================= EINHEITEN ================= */
-  function viewUnits() {
+  function unitsHtml() {
     var st = S.state, stt = S.stats();
-    if (detailUnit === "__verbs") return viewVerbList();
-    if (detailUnit) return viewUnitDetail(detailUnit);
     var biz = st.settings.track === "business";
     var groups = biz ? ["Basis", "Aufbau", "Profi", "Smalltalk", "Redewendungen"] : ["Headlight 2", 6, 7, 8];
     var sel = S.groupsOf();
-    var html = '<div class="stack">';
-    html += '<section class="card">' + trackSwitch() +
-      '<div class="eyebrow" style="margin-top:14px">' + (biz ? "Stufe" : "Schuljahr") + '</div>' +
+    var html = '';
+    html += '<section class="card">' +
+      '<div class="eyebrow">' + (biz ? "Stufe" : "Schuljahr") + '</div>' +
       '<div class="row wrap" style="margin-top:8px">' +
       groups.map(function (k) {
         return '<button class="chip" data-act="klasse" data-k="' + esc(k) + '" aria-pressed="' + (sel.indexOf(k) >= 0) + '">' + esc(groupLabel(k)) + '</button>';
       }).join("") +
       '</div><p class="small muted" style="margin:10px 0 0">' + (biz
-        ? "Basis deckt Büroalltag, Telefon, E-Mail und Geschäftsreise ab. Aufbau geht in Vertrieb, Marketing, Markt, Finanzen und Verhandlung. Profi behandelt Führung, Strategie, Recht, Steuern, IT-Sicherheit und Nachhaltigkeit. Smalltalk ist alles, was zwischen den Terminen gesprochen wird, Redewendungen sind die 180 Wendungen, die man nicht Wort für Wort übersetzen kann. Unten erscheinen nur die gewählten Stufen."
-        : "Headlight 2 ist der Stoff aus dem Schulbuch. Die Klassen kannst du optional dazuschalten. Gewählte Auswahl kommt im Training vor und erscheint unten. Einzelne Einheiten kannst du dort gezielt üben.") + '</p></section>';
+        ? "Wähle, was im Training vorkommen soll. Unten stehen die Einheiten dazu."
+        : "Headlight 2 ist das Schulbuch. Klassen kannst du dazuschalten.") + '</p></section>';
 
-    if (!biz) html += verbCard();
+    if (!biz) {
+      var vs0 = S.verbStats();
+      html += '<details class="grp" data-k="__verbs"' + (openGroups.__verbs ? " open" : "") + '><summary><span class="chev">▸</span><span style="flex:1 1 auto;min-width:0"><b>🔀 Unregelmäßige Verben</b>' +
+        '<span class="small muted" style="display:block">' + vs0.seen + ' von ' + vs0.total + ' geübt · ' + vs0.mastered + ' sitzen</span></span></summary>' +
+        verbCard().replace(/^<section class="card"[^>]*>(<div class="row"><div style="flex:1 1 auto"><div class="eyebrow">[^<]*<\/div>)/, '<div class="row"><div style="flex:1 1 auto">').replace(/<\/section>$/, "") + '</details>';
+    }
     var byGroup = {}, order = [];
     stt.perUnit.forEach(function (u) {
       if (u.track !== "eigen" && sel.indexOf(u.k) < 0) return;   // nur die gewählten Stufen bzw. Jahrgänge
@@ -383,11 +404,14 @@
             '<span class="bar" style="margin-top:6px;display:block"><i style="width:' + pc + '%"></i></span></span>' +
             '<span class="pill tnum">' + u.mastered + '/' + u.total + '</span></button>';
       }
-      html += '<section class="card"><div class="eyebrow">' + esc(title) + '</div><div>' + rest.map(unitRow).join("") + '</div>' +
-        (books.length ? bookTile(BOOKS.filter(function (b) { return books[0].id.indexOf(b.pre) === 0; })[0], books) + books.map(unitRow).join("") : "") + '</section>';
+      var tot = 0, mas = 0; byGroup[k].forEach(function (u) { tot += u.total; mas += u.mastered; });
+      var isOpen = openGroups[k] === undefined ? order.indexOf(k) === 0 : openGroups[k];
+      html += '<details class="grp" data-k="' + esc(k) + '"' + (isOpen ? " open" : "") + '><summary><span class="chev">▸</span><span style="flex:1 1 auto;min-width:0"><b>' + esc(title) + '</b>' +
+        '<span class="small muted" style="display:block">' + byGroup[k].length + ' ' + plural(byGroup[k].length, "Einheit", "Einheiten") + ' · ' + mas + ' / ' + tot + ' Wörter gemeistert</span></span></summary>' +
+        '<div>' + rest.map(unitRow).join("") + '</div>' +
+        (books.length ? bookTile(BOOKS.filter(function (b) { return books[0].id.indexOf(b.pre) === 0; })[0], books) + books.map(unitRow).join("") : "") + '</details>';
     });
-    html += '</div>';
-    view.innerHTML = html;
+    return html;
   }
   /* Buchkachel: selbst gezeichnetes Cover über den Einheiten eines Schulbuchs */
   var BOOKS = [{ pre: "H2-", name: "HEADLIGHT", no: "2", sub: "Schulbuch · Unit 1–6" }];
@@ -427,7 +451,7 @@
   }
   function viewUnitDetail(id) {
     var u = S.units().filter(function (x) { return x.id === id; })[0];
-    if (!u) { detailUnit = null; return viewUnits(); }
+    if (!u) { detailUnit = null; return viewUeben(); }
     var mastered = 0;
     var rows = u.words.map(function (w, i) {
       var wid = u.id + "#" + i, lv = S.levelOf(wid), r = S.state.w[wid];
@@ -445,6 +469,10 @@
       '<p class="small muted" style="margin:6px 0 0">' + u.words.length + ' Wörter · ' + mastered + ' gemeistert</p>' +
       '<div class="row" style="margin-top:12px;gap:8px"><button class="btn" data-act="start" data-unit="' + esc(u.id) + '">Diese Einheit üben</button>' +
       (audioAvailable() ? '<button class="btn ghost" data-act="readall" data-id="' + esc(u.id) + '">🔊 Alle vorlesen</button>' : '') + '</div>' +
+      '<div class="eyebrow" style="margin-top:14px">Wie möchtest du üben?</div><div class="row wrap" style="margin-top:8px;gap:8px">' +
+      [["👂", "Hören", "listen", !audioAvailable()], ["⌨️", "Tippen", "type"], ["🧩", "Lücken", "gap"], ["🔗", "Zuordnen", "match"]].map(function (f) {
+        return f[3] ? "" : '<button class="chip" data-act="start" data-unit="' + esc(u.id) + '" data-focus="' + f[2] + '" data-min="5">' + f[0] + ' ' + f[1] + '</button>';
+      }).join("") + '</div>' +
       (audioAvailable() ? '<p class="small muted" style="margin:10px 0 0">Tippe auf 🔊 neben einem Wort, um nur dieses zu hören.</p>' : '') + '</section>' +
       '<section class="card"><div class="eyebrow">Wortliste</div>' + rows + '</section></div>';
   }
@@ -646,8 +674,7 @@
   function viewStats() {
     var st = S.state, s = S.stats(), r = S.rankOf(st.xp);
     var maxItems = Math.max.apply(null, s.d14.map(function (d) { return d.items; }).concat([1]));
-    var html = '<div class="stack">';
-    html += '<section class="card"><div class="tiles4">' +
+    var secTiles = '<section class="card"><div class="tiles4">' +
       '<div class="kpi"><b class="tnum">' + s.dist[4] + '</b><span>gemeistert</span></div>' +
       '<div class="kpi"><b class="tnum">' + (s.total - s.dist[0]) + '</b><span>schon geübt</span></div>' +
       '<div class="kpi"><b class="tnum">' + s.acc + '%</b><span>richtig</span></div>' +
@@ -662,14 +689,14 @@
     var segs = s.dist.map(function (n, i) {
       return n ? '<i class="lv' + i + '" style="flex:' + n + '" title="' + esc(S.LEVELS[i].n) + ': ' + n + '"></i>' : "";
     }).join("");
-    html += '<section class="card"><div class="eyebrow">Wo stehen die ' + s.total + ' Wörter?</div>' +
+    var secDist = '<section class="card"><div class="eyebrow">Wo stehen die ' + s.total + ' Wörter?</div>' +
       '<div class="levelbar" style="margin-top:10px">' + segs + '</div>' +
       '<div class="legend">' + s.dist.map(function (n, i) {
         return '<span><i class="lv' + i + '"></i>' + esc(S.LEVELS[i].n) + ' <b class="tnum">' + n + '</b></span>';
       }).join("") + '</div>' +
       '<p class="small muted" style="margin:10px 0 0">„Gemeistert“ heißt: mindestens drei Wochen Abstand bis zur nächsten Wiederholung.</p></section>';
 
-    html += '<section class="card"><div class="eyebrow">Letzte 14 Tage</div>' +
+    var secDays = '<section class="card"><div class="eyebrow">Letzte 14 Tage</div>' +
       '<div class="days" style="margin-top:12px">' + s.d14.map(function (d) {
         var h = d.items ? Math.max(4, Math.round(d.items * 100 / maxItems)) : 3;
         return '<div class="d" title="' + esc(d.date) + ': ' + d.items + ' Aufgaben"><i class="' + (d.items ? "" : "zero") + '" style="height:' + h + '%"></i><small>' + esc(d.label[0]) + '</small></div>';
@@ -677,38 +704,75 @@
       '<p class="small muted" style="margin:10px 0 0">' + (s.d14.some(function (d) { return d.items; }) ? 'Bester Tag: ' + maxItems + ' ' + plural(maxItems, "Aufgabe", "Aufgaben") + '.' : 'Noch keine Übungen in den letzten 14 Tagen.') + '</p></section>';
 
     var sn2 = s.sent;
-    html += '<section class="card"><div class="eyebrow">Satzbau</div>' +
+    var secSent = '<section class="card"><div class="eyebrow">Satzbau</div>' +
       '<div class="row" style="margin-top:10px;gap:16px"><div><div style="font-family:Newsreader,serif;font-size:30px;font-weight:600" class="tnum">' + sn2.seen + '</div>' +
       '<div class="small muted">von ' + sn2.total + ' Sätzen geübt</div></div>' +
       '<div style="flex:1 1 auto"><div class="bar"><i style="width:' + Math.round(sn2.seen * 100 / Math.max(1, sn2.total)) + '%"></i></div>' +
       '<div class="small muted" style="margin-top:6px">' + sn2.mastered + ' sitzen langfristig · ' + sn2.ok + ' richtig gebaut</div></div></div></section>';
 
     var vst = S.verbStats();
-    html += '<section class="card"><div class="eyebrow">Unregelmäßige Verben</div>' +
+    var secVerbs = '<section class="card"><div class="eyebrow">Unregelmäßige Verben</div>' +
       '<div class="row" style="margin-top:10px;gap:16px"><div><div style="font-family:Newsreader,serif;font-size:30px;font-weight:600" class="tnum">' + vst.seen + '</div>' +
       '<div class="small muted">von ' + vst.total + ' Verben geübt</div></div>' +
       '<div style="flex:1 1 auto"><div class="bar"><i style="width:' + Math.round(vst.seen * 100 / Math.max(1, vst.total)) + '%"></i></div>' +
       '<div class="small muted" style="margin-top:6px">' + vst.mastered + ' sitzen langfristig</div></div></div>' +
       '<button class="btn ghost" data-act="verblist" style="margin-top:10px">Verbenliste öffnen</button></section>';
 
-    html += '<section class="card"><div class="eyebrow">Abzeichen</div><div class="badges" style="margin-top:10px">' +
-      S.BADGES.map(function (b) {
-        var has = st.badges.indexOf(b.id) >= 0;
-        return '<div class="badge' + (has ? "" : " off") + '" title="' + esc(b.d) + '"><div class="g">' + (has ? "🏅" : "🔒") + '</div><b>' + esc(b.n) + '</b></div>';
-      }).join("") + '</div></section>';
+    var secBehind = '<section class="card"><div class="eyebrow">Einheiten mit dem größten Rückstand</div><div style="margin-top:6px">' +
+      (s.perUnit.filter(function (u) { return u.seen > 0; })
+        .sort(function (a, b) { return (a.mastered / a.total) - (b.mastered / b.total); }).slice(0, 6)
+        .map(function (u) {
+          var pc = Math.round(u.mastered * 100 / u.total);
+          return '<div class="mission"><div class="txt"><div class="small" style="font-weight:600">' + esc(u.icon + " " + u.title) + '</div>' +
+            '<div class="bar"><i style="width:' + pc + '%"></i></div></div><span class="pill tnum nowrap">' + pc + '%</span></div>';
+        }).join("") || '<p class="small muted">Noch keine Daten. Nach der ersten Übungsrunde steht hier etwas.</p>') +
+      '</div></section>';
+    var secWeak = '<section class="card"><div class="eyebrow">Schwierigste Wörter</div><div style="margin-top:6px">' +
+      (s.weak.length ? s.weak.slice(0, 12).map(function (x) {
+        return '<div class="wordrow"><span class="en">' + esc(x.w.en) + '</span><span class="de">' + esc(x.w.de) + '</span>' +
+          '<span class="pill">✗ ' + x.r.no + '</span><span class="pill">✓ ' + x.r.ok + '</span></div>';
+      }).join("") : '<p class="small muted">Noch keine Fehler erfasst.</p>') + '</div></section>';
+    var secOverview = '<section class="card"><div class="eyebrow">Lernstand im Überblick</div>' +
+      '<div class="tiles4" style="margin-top:10px">' +
+      '<div class="kpi"><b class="tnum">' + Math.round(st.totals.sec / 60) + '</b><span>Minuten gesamt</span></div>' +
+      '<div class="kpi"><b class="tnum">' + st.totals.items + '</b><span>Aufgaben</span></div>' +
+      '<div class="kpi"><b class="tnum">' + s.acc + '%</b><span>richtig</span></div>' +
+      '<div class="kpi"><b class="tnum">' + s.boxSize + '</b><span>in der Fehlerkartei</span></div>' +
+      '<div class="kpi"><b class="tnum">' + s.sent.seen + '/' + s.sent.total + '</b><span>Sätze geübt</span></div>' +
+      '<div class="kpi"><b class="tnum">' + s.dist[4] + '</b><span>Wörter gemeistert</span></div></div></section>';
+    var secBox = '<section class="card"><div class="eyebrow">Fehlerkartei</div>' +
+      '<p style="margin:8px 0 0"><b class="tnum">' + s.boxSize + '</b> ' + plural(s.boxSize, "Wort macht", "Wörter machen") + ' noch Probleme. Sie kommen automatisch häufiger dran.</p>' +
+      (s.boxSize ? '<button class="btn soft wide" data-act="start" data-mode="box" data-min="5" style="margin-top:12px">Fehlerkartei üben</button>' : '') + '</section>';
+    var html = '<div class="stack">' + segBar("stats", statsSeg, [["ueb", "Übersicht"], ["woerter", "Wörter"], ["verlauf", "Verlauf"]]);
+    if (statsSeg === "woerter") html += secWeak + secBox + secVerbs;
+    else if (statsSeg === "verlauf") html += secDays + secSent;
+    else html += secTiles + secDist + secOverview + secBehind;
+    view.innerHTML = html + '</div>';
+  }
 
-    html += coinsCard();
-    html += ranksCard();
-    html += albumCard() + albumCard("fn") + stickerBook() + stickerBook("fn") + shopCard();
-    html += '</div>';
-    view.innerHTML = html;
+  /* ================= SHOP & ABZEICHEN ================= */
+  function viewShop() {
+    var st = S.state, html = '<div class="stack">';
+    html += '<div class="row" style="align-items:center"><h1 style="font-size:22px;flex:1 1 auto">Shop &amp; Abzeichen</h1><span class="pill tnum nowrap">🪙 ' + st.coins + '</span></div>';
+    html += segBar("shop", shopSeg, [["shop", "Shop"], ["sammlung", "Sammlung"], ["abzeichen", "Abzeichen"], ["raenge", "Ränge"]]);
+    if (shopSeg === "sammlung") html += albumCard() + albumCard("fn") + stickerBook() + stickerBook("fn");
+    else if (shopSeg === "abzeichen") {
+      html += '<section class="card"><div class="eyebrow">Abzeichen · ' + st.badges.length + ' von ' + S.BADGES.length + '</div><div class="badges" style="margin-top:10px">' +
+        S.BADGES.map(function (b) {
+          var has = st.badges.indexOf(b.id) >= 0;
+          return '<div class="badge' + (has ? "" : " off") + '" title="' + esc(b.d) + '"><div class="g">' + (has ? "🏅" : "🔒") + '</div><b>' + esc(b.n) + '</b></div>';
+        }).join("") + '</div></section>';
+    }
+    else if (shopSeg === "raenge") html += ranksCard();
+    else html += wishCard() + coinsCard() + shopCard();
+    view.innerHTML = html + '</div>';
   }
 
   /* ================= ELTERN / LEHRER ================= */
   function playersCard() {
     var d = S.profiles();
     var h = '<section class="card"><div class="eyebrow">Spieler</div>' +
-      '<p class="small muted" style="margin:8px 0 10px">Jeder Spieler hat einen eigenen Lernstand auf diesem Gerät. Andere sehen deinen Fortschritt nicht.</p><div class="stack" style="gap:8px">';
+      '<p class="small muted" style="margin:8px 0 10px">Jeder Spieler hat einen eigenen Lernstand auf diesem Gerät. Wer verbunden ist, wird zusätzlich auf dem Server gesichert.</p><div class="stack" style="gap:8px">';
     d.list.forEach(function (x) {
       var on = x.id === d.active;
       h += '<div class="row wrap" style="gap:8px;align-items:center"><b style="flex:1">' + (on ? "● " : "") + esc(x.name) + '</b>' +
@@ -739,18 +803,17 @@
   /* ---------- How-to (eingeklappt, ganz oben im Setup) ---------- */
   function howToCard() {
     var steps = [
-      ["🚀", "Loslegen", "Auf <b>Start</b> „Weiterlernen“ oder 3, 5, 10, 15 Minuten wählen. Wordy mischt fällige Wörter, neue Wörter, Fehlerkartei, Sätze und Verben selbst."],
-      ["📚", "Wörter aussuchen", "Unter <b>Einheiten</b> oben <b>Schule</b> oder <b>Business</b> wählen, dann Jahrgang bzw. Stufe antippen (mindestens eine bleibt an). Darunter erscheinen nur diese Einheiten. Einheit antippen: Wortliste anhören oder „Diese Einheit üben“."],
+      ["🚀", "Loslegen", "Auf <b>Start</b> schlägt Wordy dir die beste Runde für heute vor (zum Beispiel Fehlerkartei oder Lernplan). Mit <b>Los geht\'s</b> startest du, darunter stellst du die Dauer ein."],
+      ["🎮", "Üben", "Unter <b>Üben → Spielmodi</b> wählst du selbst: <b>Lernen</b> (Weiterlernen, Neue Wörter, Fehlerkartei, Sätze, Verben), <b>Spielen</b> (die Arena) oder <b>Gezielt üben</b> (nur Hören, Tippen, Lücken oder Zuordnen)."],
+      ["📚", "Einheiten", "Unter <b>Üben → Einheiten</b> wählst du Schuljahr oder Stufe und öffnest eine Einheit. Dort kannst du nur diese Einheit üben, anhören oder gezielt eine Aufgabenform trainieren."],
       ["🧩", "Aufgaben", "Wortkarte, Auswahl, Hören, Lückentext, Schreiben, Zuordnen und Satzbau. Eine falsche Antwort kostet ein Herz (unter Setup abschaltbar) und kommt später wieder."],
-      ["🔁", "Fehlerkartei & Sätze", "Falsche Wörter landen in der <b>Fehlerkartei</b> (Start → „Fehlerkartei üben“). „Nur Sätze üben“ trainiert den Satzbau."],
-      ["✍️", "Unregelmäßige Verben", "<b>Start</b> oder <b>Einheiten</b> → „Verben üben“ (Einführung, Lückenaufgabe, Tippen) oder „Nur Tippen“. Die Verbenliste zeigt alle Verben mit Beispielsätzen."],
-      ["⚡", "Arena", "Vier Zeitmodi: <b>Match-Rausch</b> (Paare in 60 Sekunden), <b>Blitzrunde</b> (Zeit sammeln), <b>Letztes Herz</b> (ein Fehler beendet), <b>Fehlerjagd</b> (Kartei leeren)."],
-      ["🪙", "Münzen & Shop", "Münzen gibt es für Fortschritt, Missionen und das Tagesziel. Unter <b>Fortschritt</b> siehst du Ränge, „Münzen heute“ und den Shop. Mit dem ⭐ im Shop setzt du einen Wunsch."],
-      ["🎯", "Missionen", "Auf <b>Start</b> stehen jeden Tag drei Missionen, zum Beispiel „15 verschiedene Wörter üben“ oder „10 richtige in Folge“. Sie zählen über den ganzen Tag und werden am Ende einer Runde gutgeschrieben. Jede gibt Münzen."],
-      ["⭐", "Sticker & Sammlung", "Im Shop gibt es zu jeder Figur einen <b>Sticker</b>. Unter <b>Fortschritt → Stickerbuch</b> antippen klebt ihn auf (bis zu drei, sie erscheinen auf Start und Profil). Das <b>Fortnite-Album</b> hat Tiere ab Rang Gold II, die Unreal-Stücke gibt es erst ab Unreal."],
-      ["⚙️", "Setup", "Spieler anlegen und wechseln, Tagesziel und Ton einstellen, eigene Vokabeln einfügen, Lernstand sichern und übertragen."]
-    ];
-    return '<details class="how"><summary class="how-sum"><span class="chev" aria-hidden="true">▸</span><span style="flex:1 1 auto"><b>So funktioniert Wordy</b>' +
+      ["✍️", "Unregelmäßige Verben", "<b>Üben → Spielmodi → Verben</b> (Einführung, Lückenaufgabe, Tippen). Die Verbenliste mit Beispielsätzen findest du unter <b>Üben → Einheiten</b>."],
+      ["⚡", "Arena", "Vier Zeitmodi unter <b>Spielen</b>: <b>Match-Rausch</b> (Paare in 60 Sekunden), <b>Blitzrunde</b> (Zeit sammeln), <b>Letztes Herz</b> (ein Fehler beendet), <b>Fehlerjagd</b> (Kartei leeren)."],
+      ["📈", "Fortschritt", "Drei Ansichten: <b>Übersicht</b> (Wo stehe ich?), <b>Wörter</b> (schwierigste Wörter, Fehlerkartei, Verben) und <b>Verlauf</b> (die letzten 14 Tage, Satzbau)."],
+      ["🪙", "Münzen & Shop", "Münzen gibt es für Fortschritt, Missionen und das Tagesziel. Im <b>Shop</b> kaufst du Figuren, Rahmen, Farben und mehr. Mit dem ⭐ setzt du einen Wunsch, auf den du sparst."],
+      ["⭐", "Sammlung & Abzeichen", "<b>Shop → Sammlung</b>: Tier-Album und Stickerbuch (Sticker antippen klebt sie auf, bis zu drei). <b>Abzeichen</b> und <b>Ränge</b> haben eigene Reiter im Shop."],
+      ["⚙️", "Setup", "Das Zahnrad ⚙️ oben rechts: Spieler wechseln, Tagesziel und Ton einstellen, Auto-Save, eigene Vokabeln und Updates."]
+    ];    return '<details class="how"><summary class="how-sum"><span class="chev" aria-hidden="true">▸</span><span style="flex:1 1 auto"><b>So funktioniert Wordy</b>' +
       '<span class="small muted" style="display:block">Kurz erklärt in zehn Schritten</span></span></summary>' +
       '<ol class="how-list">' + steps.map(function (x) {
         return '<li><span class="hi">' + x[0] + '</span><div><b>' + x[1] + '</b><div class="small muted">' + x[2] + '</div></div></li>';
@@ -760,38 +823,16 @@
     var st = S.state, s = S.stats();
     var html = '<div class="stack">';
     html += howToCard();
-    html += installCard();
-    html += playersCard();
-    html += '<section class="card"><div class="eyebrow">Lernbereich</div>' + trackSwitch() +
-      '<p class="small muted" style="margin:12px 0 0">Schule und Business haben getrennte Wortschätze, Sätze und Statistiken. Der Fortschritt bleibt in beiden Bereichen erhalten.</p></section>';
-
-    html += '<section class="card"><div class="eyebrow">Lernstand im Überblick</div>' +
-      '<div class="tiles4" style="margin-top:10px">' +
-      '<div class="kpi"><b class="tnum">' + Math.round(st.totals.sec / 60) + '</b><span>Minuten gesamt</span></div>' +
-      '<div class="kpi"><b class="tnum">' + st.totals.items + '</b><span>Aufgaben</span></div>' +
-      '<div class="kpi"><b class="tnum">' + s.acc + '%</b><span>richtig</span></div>' +
-      '<div class="kpi"><b class="tnum">' + s.boxSize + '</b><span>in der Fehlerkartei</span></div>' +
-      '<div class="kpi"><b class="tnum">' + s.sent.seen + '/' + s.sent.total + '</b><span>Sätze geübt</span></div>' +
-      '<div class="kpi"><b class="tnum">' + s.dist[4] + '</b><span>Wörter gemeistert</span></div></div></section>';
-
-    html += '<section class="card"><div class="eyebrow">Einheiten mit dem größten Rückstand</div><div style="margin-top:6px">' +
-      (s.perUnit.filter(function (u) { return u.seen > 0; })
-        .sort(function (a, b) { return (a.mastered / a.total) - (b.mastered / b.total); }).slice(0, 6)
-        .map(function (u) {
-          var pc = Math.round(u.mastered * 100 / u.total);
-          return '<div class="mission"><div class="txt"><div class="small" style="font-weight:600">' + esc(u.icon + " " + u.title) + '</div>' +
-            '<div class="bar"><i style="width:' + pc + '%"></i></div></div><span class="pill tnum">' + pc + '%</span></div>';
-        }).join("") || '<p class="small muted">Noch keine Daten – nach der ersten Übungsrunde steht hier etwas.</p>') +
-      '</div></section>';
-
-    html += '<section class="card"><div class="eyebrow">Schwierigste Wörter</div><div style="margin-top:6px">' +
-      (s.weak.length ? s.weak.slice(0, 12).map(function (x) {
-        return '<div class="wordrow"><span class="en">' + esc(x.w.en) + '</span><span class="de">' + esc(x.w.de) + '</span>' +
-          '<span class="pill">✗ ' + x.r.no + '</span><span class="pill">✓ ' + x.r.ok + '</span></div>';
-      }).join("") : '<p class="small muted">Noch keine Fehler erfasst.</p>') + '</div></section>';
-
-    html += '<section class="card"><div class="eyebrow">Einstellungen</div>' +
-      '<label class="row" style="margin-top:12px"><span style="flex:1 1 auto">Tagesziel</span>' +
+    function unCard(h) { return h.replace(/^<section class="card"[^>]*>(<div class="eyebrow"[^>]*>[^<]*<\/div>)?/, "").replace(/<\/section>$/, ""); }
+    function fold(key, icon, title, sub, inner) {
+      return '<details class="fold" data-f="' + key + '"' + (openFolds[key] ? " open" : "") + '><summary><span class="chev">▸</span><span style="flex:1 1 auto;min-width:0"><b>' + icon + " " + title + '</b>' +
+        (sub ? '<span class="small muted" style="display:block">' + sub + '</span>' : "") + '</span></summary><div class="fbody">' + inner + '</div></details>';
+    }
+    html += fold("spieler", "👤", "Spieler &amp; Lernbereich", "Wer lernt, Schule oder Business", unCard(playersCard()) +
+      '<div class="eyebrow" style="margin-top:16px">Lernbereich</div>' + trackSwitch() +
+      '<p class="small muted" style="margin:12px 0 0">Schule und Business haben getrennte Wortschätze, Sätze und Statistiken. Der Fortschritt bleibt in beiden Bereichen erhalten.</p>');
+    html += fold("lernen", "🎓", "Lernen", "Tagesziel, neue Wörter, Herzen",
+      '<label class="row" style="margin-top:4px"><span style="flex:1 1 auto">Tagesziel</span>' +
       '<select id="setGoal" style="width:auto">' + [5, 10, 15, 20, 30].map(function (m) {
         return '<option value="' + m + '"' + (st.settings.goalMin === m ? " selected" : "") + '>' + m + ' Minuten</option>';
       }).join("") + '</select></label>' +
@@ -799,7 +840,11 @@
       '<select id="setNew" style="width:auto">' + [6, 12, 20, 30].map(function (m) {
         return '<option value="' + m + '"' + (st.settings.newPerDay === m ? " selected" : "") + '>' + m + '</option>';
       }).join("") + '</select></label>' +
-      '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Aussprache vorlesen<br><span class="small muted">Nutzt die englische Stimme des Geräts</span></span>' +
+      '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Herzen benutzen<br><span class="small muted">Aus = Üben ohne Abbruch</span></span>' +
+      '<input type="checkbox" id="setHearts" ' + (st.settings.hearts ? "checked" : "") + ' style="width:auto"></label>' +
+      '<p class="small muted" style="margin:10px 0 0">Gelernt wird als <b>' + esc(playerName()) + '</b>. Den Namen änderst du unter „Spieler“.</p>');
+    html += fold("ton", "🔊", "Ton &amp; Aussehen", "Vorlesen, Hell oder Dunkel",
+      '<label class="row" style="margin-top:4px"><span style="flex:1 1 auto">Aussprache vorlesen<br><span class="small muted">Nutzt die englische Stimme des Geräts</span></span>' +
       '<input type="checkbox" id="setAudio" ' + (st.settings.audio ? "checked" : "") + ' style="width:auto"></label>' +
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Erscheinungsbild<br><span class="small muted">Automatisch folgt der Einstellung des Geräts</span></span>' +
       '<select id="setMode" style="width:auto">' + [["auto", "Automatisch"], ["light", "Hell"], ["dark", "Dunkel"]].map(function (o) {
@@ -813,14 +858,9 @@
       '<select id="setPace" style="width:auto">' + [["fast", "Schnell"], ["mid", "Mittel"], ["slow", "Langsam"]].map(function (o) {
         return '<option value="' + o[0] + '"' + (st.settings.readPace === o[0] || (!st.settings.readPace && o[0] === "mid") ? " selected" : "") + '>' + o[1] + '</option>';
       }).join("") + '</select></label>' +
-      '<button class="btn ghost" data-act="voicetest" style="margin-top:10px">🔊 Stimme testen</button>' +
-      '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Herzen benutzen<br><span class="small muted">Aus = Üben ohne Abbruch</span></span>' +
-      '<input type="checkbox" id="setHearts" ' + (st.settings.hearts ? "checked" : "") + ' style="width:auto"></label>' +
-      '<p class="small muted" style="margin:10px 0 0">Gelernt wird als <b>' + esc(playerName()) + '</b>. Den Namen änderst du oben unter „Spieler“.</p>' +
-      '</section>';
-
-    html += saveCard();
-    html += '<section class="card"><div class="eyebrow">Eigene Vokabelliste importieren</div>' +
+      '<button class="btn ghost" data-act="voicetest" style="margin-top:10px">🔊 Stimme testen</button>');
+    html += fold("save", "💾", "Auto-Save / Lernfortschritt", "Server, dieses Gerät, manuell sichern", unCard(saveCard()));
+    var customCard = '<section class="card"><div class="eyebrow">Eigene Vokabelliste importieren</div>' +
       '<p class="small muted" style="margin:6px 0 10px">Eine Zeile pro Wort: <code>englisch;deutsch;beispielsatz</code>. Semikolon, Komma oder Tabulator funktionieren.</p>' +
       '<input id="csvTitle" placeholder="Name der Liste, z. B. Access 7 Unit 3" style="margin-bottom:8px">' +
       '<textarea id="csvText" rows="4" placeholder="library;die Bibliothek;I borrowed a book from the library."></textarea>' +
@@ -830,14 +870,16 @@
         return '<div class="shopitem"><span style="flex:1 1 auto"><b class="small">' + esc(u.title) + '</b><br><span class="small muted">' + u.words.length + ' Wörter</span></span>' +
           '<button class="chip" data-act="delcustom" data-id="' + esc(u.id) + '">entfernen</button></div>';
       }).join("") + '</div>' : "") + '</section>';
-
-    html += '<div class="small muted" style="margin:10px 0 0;text-align:center;line-height:1.6"><b>Wordy · Version ' + esc(global.WORDY_VERSION || "–") + '</b>' +
+    html += fold("eigene", "➕", "Eigene Vokabeln", st.custom.length ? st.custom.length + " " + plural(st.custom.length, "Liste", "Listen") : "Eigene Wortlisten einfügen", unCard(customCard));
+    var aboutHtml = '<div class="small muted" style="margin:10px 0 0;text-align:center;line-height:1.6"><b>Wordy · Version ' + esc(global.WORDY_VERSION || "–") + '</b>' +
       '<br><span style="font-size:11px">Build ' + esc(global.WORDY_BUILD || "lokal") + '</span>' +
       '<br>© ' + new Date().getFullYear() + ' Magnus, Pummel &amp; Christian</div>' +
       '<div class="row wrap" style="gap:8px;justify-content:center;margin-top:10px"><button class="btn ghost" data-act="checkupdate">Nach Updates suchen</button>' +
       '<button class="btn ghost" data-act="clearcache" title="Lernstand bleibt erhalten">App-Cache leeren</button></div>';
+    html += fold("about", "ℹ️", "Über Wordy", "Version " + esc(global.WORDY_VERSION || "–") + ", Updates, Installieren", unCard(installCard()) + '<hr class="sep" style="margin:14px 0">' + aboutHtml);
     html += '</div>';
     view.innerHTML = html;
+    $$("details.fold").forEach(function (d) { d.addEventListener("toggle", function () { openFolds[d.getAttribute("data-f")] = d.open; }); });
 
     $("#setGoal").onchange = function () { st.settings.goalMin = +this.value; S.save(true); renderHeader(); };
     $("#setNew").onchange = function () { st.settings.newPerDay = +this.value; S.save(true); };
@@ -856,8 +898,15 @@
 
   /* ================= SESSION ================= */
   var SS = null;
-  function pickType(w) {
+  function pickType(w, focus) {
     var lv = S.levelOf(w.id), c;
+    if (focus) {   // gezielt eine Aufgabenform üben
+      var pl = w.en.replace(/^to\s+/, "");
+      if (focus === "listen" && audioAvailable()) return "listen";
+      if (focus === "type" && pl.length <= 24) return pl.length <= 16 && Math.random() < 0.35 ? "spell" : "type";
+      if (focus === "gap" && w.gap) return "gap";
+      if (focus === "match") return "match";
+    }
     if (lv <= 1) c = ["mc_en_de", "mc_de_en", "listen", "odd"];
     else if (lv === 2) c = ["mc_de_en", "gap", "match", "listen", "spell", "odd"];
     else c = ["type", "spell", "gap", "match", "type"];
@@ -931,13 +980,14 @@
     });
     return out;
   }
-  function buildTasks(list, sentOnly) {
+  function buildTasks(list, sentOnly, focus) {
     var t = [];
     if (!sentOnly) list.forEach(function (w) {
       if (S.levelOf(w.id) === 0 && !(S.state.w[w.id] && S.state.w[w.id].no)) {
         t.push({ type: "intro", w: w }); t.push({ type: "mc_en_de", w: w, isNew: true });
-      } else t.push({ type: pickType(w), w: w });
+      } else t.push({ type: pickType(w, focus), w: w });
     });
+    if (focus) return t;   // gezielt üben: keine Sätze und Verben einstreuen
     var want = sentOnly ? Math.max(4, list.length) : Math.round(t.length / 8);
     var sents = S.planSentences(want);
     if (sentOnly) return sents.map(function (x) { return { type: "build", s: x }; });
@@ -946,6 +996,22 @@
       t.splice(pos, 0, { type: "build", s: x });
     });
     return t;
+  }
+  /* Wörter für "Gezielt üben": zuerst bekannte, fällige Wörter, die zur Aufgabenform passen */
+  function focusList(opts) {
+    var n = Math.max(6, Math.round((opts.minutes || 5) * 60 / S.SEC_PER_ITEM));
+    var base = opts.unit ? S.words().filter(function (w) { return w.unit === opts.unit; }) : S.pools(opts.scope).all;
+    var fits = function (w) {
+      var pl = w.en.replace(/^to\s+/, "");
+      return opts.focus === "gap" ? !!w.gap : opts.focus === "type" ? pl.length <= 24 : opts.focus === "listen" ? audioAvailable() : true;
+    };
+    var seen = function (w) { var r = S.state.w[w.id]; return S.levelOf(w.id) > 0 || (r && r.no > 0); };
+    var ok = base.filter(fits);
+    var known = ok.filter(seen).sort(function (a, b) { return (S.state.w[a.id].due || 0) - (S.state.w[b.id].due || 0); });
+    var fresh = S.shuffle(ok.filter(function (w) { return !seen(w); }));
+    var out = known.slice(0, n);
+    if (out.length < Math.min(n, 8)) out = out.concat(fresh.slice(0, Math.min(n, 8) - out.length));
+    return S.shuffle(out);
   }
   function startSession(opts) {
     S.rollDay(); S.regenHearts();
@@ -963,11 +1029,11 @@
       sessionEl.hidden = false; document.body.style.overflow = "hidden";
       return renderTask();
     }
-    var list = sentOnly ? S.planSentences(Math.max(5, Math.round((opts.minutes || 5) * 60 / 16))) : S.planSession(opts);
-    if (!list.length) { toast(sentOnly ? "Alle Sätze dieses Bereichs sind gerade erledigt." : "Für diese Auswahl gibt es gerade nichts zu üben."); return; }
-    var tasks = buildTasks(list, sentOnly);
+    var list = opts.focus ? focusList(opts) : sentOnly ? S.planSentences(Math.max(5, Math.round((opts.minutes || 5) * 60 / 16))) : S.planSession(opts);
+    if (!list.length) { toast(opts.focus ? "Dafür gibt es gerade keine passenden Wörter. Probier eine andere Form." : sentOnly ? "Alle Sätze dieses Bereichs sind gerade erledigt." : "Für diese Auswahl gibt es gerade nichts zu üben."); return; }
+    var tasks = buildTasks(list, sentOnly, opts.focus);
     /* Unregelmäßige Verben: in normalen Schulrunden immer wieder eingestreut */
-    if (!sentOnly && !opts.unit && !opts.scope && opts.mode !== "box" && opts.mode !== "new" && S.state.settings.track === "schule") {
+    if (!sentOnly && !opts.focus && !opts.unit && !opts.scope && opts.mode !== "box" && opts.mode !== "new" && S.state.settings.track === "schule") {
       var vs = S.planVerbs(Math.max(1, Math.round(tasks.length / 8)), { mix: true });
       verbTasks(vs).forEach(function (vt, i) {
         var pos = Math.min(tasks.length, Math.round((i + 1) * tasks.length / (vs.length + 1)) + 2);
@@ -1487,8 +1553,9 @@
     }
     if (a === "arena") { if (global.ARENA) global.ARENA.start(act.getAttribute("data-id")); return; }
     if (a === "start") {
-      startSession({ minutes: +(act.getAttribute("data-min") || st.settings.goalMin), mode: act.getAttribute("data-mode") || "mix", unit: act.getAttribute("data-unit") || null,
-        vtype: act.getAttribute("data-vtype") === "1", verb: act.getAttribute("data-verb") || null });
+      var fc = act.getAttribute("data-focus") || null;
+      startSession({ minutes: +(act.getAttribute("data-min") || st.settings.goalMin), mode: act.getAttribute("data-mode") || (fc ? "focus" : "mix"), unit: act.getAttribute("data-unit") || null,
+        vtype: act.getAttribute("data-vtype") === "1", verb: act.getAttribute("data-verb") || null, focus: fc });
     } else if (a === "track") {
       var nt = act.getAttribute("data-t");
       if (nt !== st.settings.track) { S.setTrack(nt); toast(nt === "business" ? "Business English aktiv." : "Schule aktiv."); render(); view.scrollTop = 0; }
@@ -1501,7 +1568,15 @@
       st.settings.units = []; S.save(true); render();
     } else if (a === "unit") { detailUnit = act.getAttribute("data-id"); render(); }
     else if (a === "vtoggle") { var vs2 = act.nextElementSibling; if (vs2 && vs2.classList.contains("vsent")) { vs2.hidden = !vs2.hidden; var ch = act.querySelector(".vchev"); if (ch) ch.textContent = vs2.hidden ? "▸" : "▾"; } }
-    else if (a === "verblist") { detailUnit = "__verbs"; tab = "units"; render(); view.scrollTop = 0; }
+    else if (a === "verblist") { detailUnit = "__verbs"; tab = "ueben"; uebenSeg = "units"; render(); view.scrollTop = 0; }
+    else if (a === "seg") {
+      var sg = act.getAttribute("data-g"), sv = act.getAttribute("data-v");
+      if (sg === "ueben") uebenSeg = sv; else if (sg === "stats") statsSeg = sv; else if (sg === "shop") shopSeg = sv;
+      render(); view.scrollTop = 0;
+    }
+    else if (a === "startrec") { if (lastRec) startSession(lastRec.opts); }
+    else if (a === "setmin") { startMin = +act.getAttribute("data-min"); render(); }
+    else if (a === "goueben") { tab = "ueben"; uebenSeg = "modi"; detailUnit = null; render(); view.scrollTop = 0; }
     else if (a === "back") { stopReading(); detailUnit = null; render(); }
     else if (a === "readall") {
       var u = S.units().filter(function (x) { return x.id === act.getAttribute("data-id"); })[0];
@@ -1582,7 +1657,7 @@
         .then(done, done);
     }
     else if (a === "wish") { var rw2 = S.setWish(act.getAttribute("data-id")); toast(rw2.error || (rw2.on ? "Wunsch: " + rw2.item.label : "Wunsch entfernt")); render(); }
-    else if (a === "goshop") { tab = "stats"; render(); var shopEl = view.querySelector(".shopitem"); if (shopEl) shopEl.scrollIntoView({ block: "center" }); }
+    else if (a === "goshop") { tab = "shop"; shopSeg = "shop"; render(); var shopEl = view.querySelector(".shopitem"); if (shopEl) shopEl.scrollIntoView({ block: "center" }); }
     else if (a === "albuminfo") {
       var ai = S.SHOP.filter(function (x) { return x.id === act.getAttribute("data-id"); })[0];
       if (ai) toast(S.minXp(ai) > S.state.xp ? ai.label + ": erst ab Rang " + ai.rank + " (" + ai.cost + " Münzen)." : ai.label + ": " + ai.cost + " Münzen.");
@@ -1643,19 +1718,19 @@
     }
   });
 
-  tabs.addEventListener("click", function (e) {
+  document.addEventListener("click", function (e) {
     var b = e.target.closest("button[data-tab]"); if (!b) return;
     stopReading(); tab = b.getAttribute("data-tab"); detailUnit = null; render(); view.scrollTop = 0;
   });
 
   function render() {
     S.rollDay();
-    $$("#tabs button").forEach(function (b) { b.setAttribute("aria-current", b.getAttribute("data-tab") === tab); });
+    $$("#tabs button, #hGear").forEach(function (b) { b.setAttribute("aria-current", b.getAttribute("data-tab") === tab); });
     renderHeader();
     if (tab === "home") viewHome();
-    else if (tab === "arena") viewArena();
-    else if (tab === "units") viewUnits();
+    else if (tab === "ueben") viewUeben();
     else if (tab === "stats") viewStats();
+    else if (tab === "shop") viewShop();
     else viewParent();
   }
 
