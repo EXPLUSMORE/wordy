@@ -403,6 +403,7 @@
       r.due = Date.now() + r.iv * 86400000;
     }
     var after = levelOf(id);
+    if (after === 4 && before < 4) r.m = Date.now();   // wann das Wort gemeistert wurde (für „diese Woche gemeistert“)
     if (g > 0) awardProgress(id, before, after, wasDue, wasBox && !inErrorBox(id));
     var it = byId[id]; ev("a", { id: id, g: g, b: before, a: after, en: it ? it.en : "", de: it ? it.de : "", u: it ? it.unit : "" });
     return { before: before, after: after, rec: r };

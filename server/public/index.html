@@ -21,6 +21,7 @@ button,input{font:inherit}
 button{background:var(--acc);color:#fff;border:0;border-radius:10px;padding:9px 14px;cursor:pointer}
 button.ghost{background:transparent;color:var(--acc);border:1px solid var(--line)}
 button.tab{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+button.ghost[aria-pressed=true]{background:var(--acc);color:#fff;border-color:var(--acc)}
 button.tab[aria-pressed=true]{background:var(--acc);color:#fff;border-color:var(--acc)}
 input{border:1px solid var(--line);border-radius:10px;padding:9px 12px;background:var(--bg);color:var(--ink)}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
@@ -205,6 +206,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     }
     h += "</div>";
 
+    h += '<div class="card"><h2>Alle Wörter</h2><details id="wdet"><summary style="cursor:pointer;color:var(--acc);font-weight:600">Wörterliste öffnen (Suche, Filter, Fehlerquote)</summary><div id="wbox"></div></details></div>';
     h += '<div class="card"><h2>Problemwörter (' + days + " Tage)</h2>";
     h += r.problems.length ? "<table><tr><th>Wort</th><th>Bedeutung</th><th class=\"n\">Fehler</th><th>Stand</th></tr>" + r.problems.map(function (x) {
       return "<tr><td><b>" + esc(x.en) + "</b></td><td>" + esc(x.de) + '</td><td class="n">' + x.n + '</td><td><span class="pill">' + LV[x.lv] + "</span></td></tr>";
@@ -229,6 +231,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     document.getElementById("rev").onclick = function () { if (confirm("Alle verbundenen Geräte von " + p.name + " trennen? Neu verbinden geht mit einem neuen Code.")) post("/api/admin/players/" + p.id + "/revoke").then(function () { loadPlayers(p.id); }); };
     document.getElementById("del").onclick = function () { if (confirm(p.name + " und alle gespeicherten Lerndaten endgültig löschen?")) api("/api/admin/players/" + p.id, { method: "DELETE" }).then(function () { cur = null; loadPlayers(); }); };
     drawGoals(p, r); drawPlans(p, r); drawBackups(p, r); drawMail();
+    var wd = document.getElementById("wdet"); if (wd) wd.addEventListener("toggle", function () { if (wd.open) showWords(p); });
     Array.prototype.forEach.call(view.querySelectorAll("tr[data-u]"), function (tr) { tr.onclick = function () { showUnit(p, tr.getAttribute("data-u")); }; });
   }
   var catCache = {};
@@ -318,6 +321,45 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
       var b = document.getElementById("mtest");
       if (b) b.onclick = function () { b.disabled = true; document.getElementById("mmsg").textContent = "Sende …"; post("/api/admin/mail/test").then(function (r) { b.disabled = false; var s = document.getElementById("mmsg"); s.className = "small " + (r.ok ? "" : "err"); s.textContent = r.ok ? "Gesendet. Bitte Postfach prüfen." : "Fehler: " + r.error; }); };
     }).catch(function () {});
+  }
+
+  var wfil = "alle", wsort = "no", wq = "";
+  function showWords(p) {
+    var box = document.getElementById("wbox"); if (!box || box.innerHTML) return;
+    box.innerHTML = '<p class="muted small">Lade …</p>';
+    api("/api/admin/players/" + p.id + "/words").then(function (r) {
+      var all = r.words, wk = Date.now() - 7 * 86400000;
+      var F = [["alle", "Alle"], ["schwer", "Schwierig"], ["woche", "Diese Woche gemeistert"], ["sitzt", "Gemeistert"], ["offen", "Noch nicht geübt"]];
+      function rate(x) { return x.ok + x.no ? x.no / (x.ok + x.no) : 0; }
+      function rows() {
+        var q = wq.trim().toLowerCase();
+        var l = all.filter(function (x) {
+          if (q && (x.en + " " + x.de + " " + x.ut).toLowerCase().indexOf(q) < 0) return false;
+          if (wfil === "schwer") return x.no > 0 && x.lv < 3;
+          if (wfil === "woche") return x.lv === 4 && x.m > wk;
+          if (wfil === "sitzt") return x.lv === 4;
+          if (wfil === "offen") return x.lv === 0 && !x.ok && !x.no;
+          return true;
+        });
+        l.sort(function (a, b) { return wsort === "rate" ? (rate(b) - rate(a)) || (b.no - a.no) : wsort === "last" ? b.last - a.last : wsort === "en" ? (a.en || "~").localeCompare(b.en || "~") : (b.no - a.no) || (rate(b) - rate(a)); });
+        return l;
+      }
+      function draw() {
+        var l = rows();
+        document.getElementById("wlist").innerHTML = '<p class="small muted">' + l.length + " von " + all.length + ' Wörtern' + (r.hasTexts ? "" : " · Wörter-Texte kommen mit der nächsten Übertragung der App") + '</p>' +
+          '<table><tr><th>Wort</th><th>Bedeutung</th><th>Einheit</th><th>Stand</th><th class="n">✓</th><th class="n">✗</th><th class="n">Fehler</th><th>Zuletzt</th></tr>' +
+          l.slice(0, 200).map(function (x) {
+            return "<tr><td><b>" + esc(x.en || "#" + (x.i + 1)) + "</b></td><td>" + esc(x.de) + '</td><td class="small muted">' + esc(x.ut) + '</td><td><span class="pill l' + x.lv + '">' + LV[x.lv] + '</span></td><td class="n">' + x.ok + '</td><td class="n">' + (x.no ? '<b class="err">' + x.no + "</b>" : 0) + '</td><td class="n">' + (x.ok + x.no ? Math.round(rate(x) * 100) + " %" : "–") + "</td><td>" + (x.last ? fmtAgo(x.last) : "–") + "</td></tr>";
+          }).join("") + "</table>" + (l.length > 200 ? '<p class="small muted">Es werden die ersten 200 gezeigt. Mit Suche oder Filter eingrenzen.</p>' : "");
+      }
+      box.innerHTML = '<div class="form" style="margin-top:10px"><input id="wq" type="search" placeholder="Wort oder Einheit suchen"><div class="row" style="gap:8px;flex-wrap:wrap;margin-top:8px">' +
+        F.map(function (f) { return '<button class="ghost sm" data-wf="' + f[0] + '" aria-pressed="' + (wfil === f[0]) + '">' + f[1] + "</button>"; }).join("") +
+        '<select id="ws" style="width:auto"><option value="no">Sortiert: meiste Fehler</option><option value="rate">Sortiert: Fehlerquote</option><option value="last">Sortiert: zuletzt geübt</option><option value="en">Sortiert: A–Z</option></select></div></div><div id="wlist" style="margin-top:8px"></div>';
+      var qi = document.getElementById("wq"); qi.value = wq; qi.oninput = function () { wq = qi.value; draw(); };
+      var ws = document.getElementById("ws"); ws.value = wsort; ws.onchange = function () { wsort = ws.value; draw(); };
+      Array.prototype.forEach.call(box.querySelectorAll("[data-wf]"), function (b) { b.onclick = function () { wfil = b.getAttribute("data-wf"); Array.prototype.forEach.call(box.querySelectorAll("[data-wf]"), function (o) { o.setAttribute("aria-pressed", o === b); }); draw(); }; });
+      draw();
+    }).catch(function (e) { box.innerHTML = '<p class="err small">' + esc(e.message) + "</p>"; });
   }
 
   function showUnit(p, uid) {

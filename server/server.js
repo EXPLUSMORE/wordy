@@ -382,6 +382,19 @@ function unitDetail(pid, uid) {
 }
 
 
+/* Alle Wörter eines Spielers mit Stand (für die Wörterliste im Dashboard) */
+function allWords(pid) {
+  const w = snap(pid, "words"), t = snap(pid, "texts"), cat = snap(pid, "catalog");
+  const title = {}; if (cat) for (const u of cat.d) title[u.id] = u.title;
+  const out = [];
+  if (w) for (const id of Object.keys(w.d)) {
+    const [uid, i] = id.split("#"), r = w.d[id], tx = t && t.d[uid] && t.d[uid][+i];
+    if (!(uid in title)) continue;                       // nur Schulbuch-/Klassenwörter, die der Server kennt
+    out.push({ u: uid, ut: title[uid], i: +i, en: tx ? tx[0] : "", de: tx ? tx[1] : "", lv: r[0], ok: r[1], no: r[2], last: r[3], m: r[4] || 0 });
+  }
+  return { words: out, hasTexts: !!t };
+}
+
 /* ---------- Wochenzusammenfassung per Mail ---------- */
 const esc = t => String(t == null ? "" : t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const fmtMin = s => { const m = Math.round(s / 60); return m >= 60 ? Math.floor(m / 60) + " Std. " + (m % 60) + " Min." : m + " Min."; };
@@ -556,6 +569,8 @@ const server = http.createServer(async (req, res) => {
       }
       const mu = p.match(/^\/api\/admin\/players\/(\d+)\/unit\/([A-Za-z0-9_.\-]{1,30})$/);
       if (mu && req.method === "GET") { if (!q.player.get(+mu[1])) return send(res, 404, { error: "Unbekannt." }); const [c, b] = unitDetail(+mu[1], mu[2]); return send(res, c, b); }
+      const mw = p.match(/^\/api\/admin\/players\/(\d+)\/words$/);
+      if (mw && req.method === "GET") { if (!q.player.get(+mw[1])) return send(res, 404, { error: "Unbekannt." }); return send(res, 200, allWords(+mw[1])); }
       const mg = p.match(/^\/api\/admin\/(goals|plans)\/(\d+)$/);
       if (mg && req.method === "DELETE") { (mg[1] === "goals" ? q.delGoal : q.delPlan).run(+mg[2]); return send(res, 200, { ok: true }); }
       const m = p.match(/^\/api\/admin\/players\/(\d+)(?:\/(\w+))?$/);

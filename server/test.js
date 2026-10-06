@@ -90,6 +90,9 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     const ud = await J("/api/admin/players/" + mk.j.id + "/unit/H2-1a", { headers: H });
     assert.equal(ud.j.words[0].en, "mountain"); assert.equal(ud.j.words[0].lv, 1); assert.equal(ud.j.words[2].lv, 4);
     assert.equal(ud.j.words.length, 37);
+    const aw = await J("/api/admin/players/" + mk.j.id + "/words", { headers: H });
+    assert.equal(aw.s, 200); assert.ok(aw.j.words.length >= 3, "Wörterliste"); assert.equal(aw.j.words.find(x => x.i === 0 && x.u === "H2-1a").en, "mountain");
+    assert.equal((await J("/api/admin/players/" + mk.j.id + "/words")).s, 401, "Wörterliste nur für Admin");
     const plr = await J("/api/admin/players/" + mk.j.id + "/plans", { headers: H });
     assert.equal(plr.j[0].daysLeft, 3);
     const ml = await J("/api/admin/mail/test", { method: "POST", headers: H });

@@ -464,7 +464,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.2.0";window.WORDY_BUILD="dc8b4e056a";</script>
+<script>window.WORDY_VERSION="2.3.0";window.WORDY_BUILD="dbb3262210";</script>
 </head>
 <body>
 <div id="app">
@@ -4231,6 +4231,7 @@ window.VERBS = [
       r.due = Date.now() + r.iv * 86400000;
     }
     var after = levelOf(id);
+    if (after === 4 && before < 4) r.m = Date.now();   // wann das Wort gemeistert wurde (für „diese Woche gemeistert“)
     if (g > 0) awardProgress(id, before, after, wasDue, wasBox && !inErrorBox(id));
     var it = byId[id]; ev("a", { id: id, g: g, b: before, a: after, en: it ? it.en : "", de: it ? it.de : "", u: it ? it.unit : "" });
     return { before: before, after: after, rec: r };
@@ -5810,8 +5811,9 @@ window.VERBS = [
   }
   function wordListCard() {
     var week = S.activeWords().filter(function (w) { var r = S.state.w[w.id]; return r && r.last && Date.now() - r.last < 7 * 86400000; }).length;
+    var mast = S.activeWords().filter(function (w) { var r = S.state.w[w.id]; return r && r.m && S.levelOf(w.id) === 4 && Date.now() - r.m < 7 * 86400000; }).length;
     return '<section class="card"><div class="eyebrow">Alle Wörter</div>' +
-      '<p class="small muted" style="margin:6px 0 0">In den letzten 7 Tagen hast du ' + week + ' ' + plural(week, "Wort", "Wörter") + ' geübt.</p>' +
+      '<p class="small muted" style="margin:6px 0 0">In den letzten 7 Tagen hast du ' + week + ' ' + plural(week, "Wort", "Wörter") + ' geübt' + (mast ? ' und ' + mast + ' ' + plural(mast, "Wort", "Wörter") + ' gemeistert 🎉' : '') + '.</p>' +
       '<input id="wSearch" type="search" placeholder="Wort suchen (englisch oder deutsch)" value="' + esc(wQuery) + '" autocomplete="off" style="width:100%;margin-top:10px">' +
       '<div class="row wrap" style="margin-top:10px">' + WFILTERS.map(function (f) {
         return '<button class="chip" data-act="wfilter" data-f="' + f[0] + '" aria-pressed="' + (wFilter === f[0]) + '">' + f[1] + '</button>';
@@ -7353,7 +7355,7 @@ window.VERBS = [
     var st = VT.state, words = {}, units = {}, id;
     if (c.hidden) return Promise.resolve(false);
     if (VT.isFresh()) return Promise.resolve(false);   // ein leerer Stand (neues Gerät) darf die Übersicht auf dem Server nicht überschreiben
-    for (id in st.w) { var r = st.w[id]; if (r && r.reps != null) words[id] = [VT.levelOf(id), r.ok || 0, r.no || 0, r.last || 0]; }
+    for (id in st.w) { var r = st.w[id]; if (r && r.reps != null) words[id] = [VT.levelOf(id), r.ok || 0, r.no || 0, r.last || 0, r.m || 0]; }
     VT.units().forEach(function (u) { if (u.track === "schule") units[u.id] = { id: u.id, title: u.title, k: u.k, total: u.words.length }; });
     var rk = VT.rankOf(st.xp), d = st.daily || {};
     var meta = {

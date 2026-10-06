@@ -728,8 +728,9 @@
   }
   function wordListCard() {
     var week = S.activeWords().filter(function (w) { var r = S.state.w[w.id]; return r && r.last && Date.now() - r.last < 7 * 86400000; }).length;
+    var mast = S.activeWords().filter(function (w) { var r = S.state.w[w.id]; return r && r.m && S.levelOf(w.id) === 4 && Date.now() - r.m < 7 * 86400000; }).length;
     return '<section class="card"><div class="eyebrow">Alle Wörter</div>' +
-      '<p class="small muted" style="margin:6px 0 0">In den letzten 7 Tagen hast du ' + week + ' ' + plural(week, "Wort", "Wörter") + ' geübt.</p>' +
+      '<p class="small muted" style="margin:6px 0 0">In den letzten 7 Tagen hast du ' + week + ' ' + plural(week, "Wort", "Wörter") + ' geübt' + (mast ? ' und ' + mast + ' ' + plural(mast, "Wort", "Wörter") + ' gemeistert 🎉' : '') + '.</p>' +
       '<input id="wSearch" type="search" placeholder="Wort suchen (englisch oder deutsch)" value="' + esc(wQuery) + '" autocomplete="off" style="width:100%;margin-top:10px">' +
       '<div class="row wrap" style="margin-top:10px">' + WFILTERS.map(function (f) {
         return '<button class="chip" data-act="wfilter" data-f="' + f[0] + '" aria-pressed="' + (wFilter === f[0]) + '">' + f[1] + '</button>';

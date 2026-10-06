@@ -9,6 +9,11 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.3.0 – 2026-10-06
+
+- App: Der Zeitpunkt, an dem ein Wort „gemeistert“ wird, wird gespeichert. Die Wörterliste zeigt „… und X Wörter gemeistert 🎉“ für die letzten 7 Tage (gilt für Wörter, die ab jetzt gemeistert werden).
+- Server/Dashboard: Neue Karte „Alle Wörter“ mit Suche, Filtern (Schwierig, Diese Woche gemeistert, Gemeistert, Noch nicht geübt) und Sortierung nach Fehlern, Fehlerquote, zuletzt geübt oder A–Z. Neuer Endpunkt `GET /api/admin/players/:id/words`. **Server-Update nötig.**
+
 ## 2.2.0 – 2026-10-06
 
 - Fortschritt > Wörter: Verteilung (Neu bis Gemeistert) und eine Liste aller geübten Wörter mit Suche (englisch/deutsch) und Filtern „Schwierig“, „Gerade gelernt“, „Lange nicht geübt“ und „Gemeistert“. Pro Wort: Stufe, zuletzt geübt, nächste Wiederholung, Treffer und Fehler. Zeile „In den letzten 7 Tagen X Wörter geübt“.

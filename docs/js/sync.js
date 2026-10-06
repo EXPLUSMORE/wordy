@@ -56,7 +56,7 @@
     var st = VT.state, words = {}, units = {}, id;
     if (c.hidden) return Promise.resolve(false);
     if (VT.isFresh()) return Promise.resolve(false);   // ein leerer Stand (neues Gerät) darf die Übersicht auf dem Server nicht überschreiben
-    for (id in st.w) { var r = st.w[id]; if (r && r.reps != null) words[id] = [VT.levelOf(id), r.ok || 0, r.no || 0, r.last || 0]; }
+    for (id in st.w) { var r = st.w[id]; if (r && r.reps != null) words[id] = [VT.levelOf(id), r.ok || 0, r.no || 0, r.last || 0, r.m || 0]; }
     VT.units().forEach(function (u) { if (u.track === "schule") units[u.id] = { id: u.id, title: u.title, k: u.k, total: u.words.length }; });
     var rk = VT.rankOf(st.xp), d = st.daily || {};
     var meta = {
