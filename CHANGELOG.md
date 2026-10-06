@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.10.1 – 2026-10-06
+
+- Dashboard: Beim letzten Stand steht jetzt die Uhrzeit dabei: „Zuletzt aktiv: vor 5 Min. (heute 14:32 Uhr) · Übersicht von heute 14:30 Uhr“ (gestern und ältere Tage mit Wochentag und Datum), ebenso bei „Letzte Sicherung“ in der Liste der verborgenen Spieler. **Server-Update nötig** (läuft automatisch).
+
 ## 2.10.0 – 2026-10-06
 
 - Modus vom Dashboard in die App: Stellt man im Dashboard „Nur sichern“ um oder wieder auf sichtbar, übernimmt die App das beim nächsten Öffnen (spätestens nach einer Minute im Vordergrund) von selbst, ohne Trennen und neu Verbinden. Beim Wechsel auf „nur sichern“ werden wartende Einträge verworfen, beim Wechsel auf sichtbar gehen Einheitenliste, Wörter und Übersicht sofort an den Server. Die App zeigt kurz einen Hinweis. Der Server meldet den Modus über `POST /api/ping`. **Server-Update nötig** (läuft automatisch).

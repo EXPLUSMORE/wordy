@@ -80,6 +80,13 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     var m = Math.round((Date.now() - t) / 60000);
     return m < 1 ? "gerade eben" : m < 60 ? "vor " + m + " Min." : m < 1440 ? "vor " + Math.round(m / 60) + " Std." : "vor " + Math.round(m / 1440) + " Tagen";
   }
+  /* Uhrzeit dazu: „heute 14:32 Uhr“, „gestern 21:05 Uhr“, sonst „Mo 5.10., 14:32 Uhr“ */
+  function fmtAt(t) {
+    if (!t) return "";
+    var d = new Date(t), n = new Date(), hm = d.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" }) + " Uhr";
+    var day0 = function (x) { return new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime(); }, diff = Math.round((day0(n) - day0(d)) / 86400000);
+    return (diff === 0 ? "heute" : diff === 1 ? "gestern" : ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"][d.getDay()] + " " + d.getDate() + "." + (d.getMonth() + 1) + ".") + (diff === 0 || diff === 1 ? " " : ", ") + hm;
+  }
   function fmtDate(ts) { return new Date(ts).toLocaleString("de-DE", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }); }
   function pct(a, b) { return b ? Math.round(a * 100 / b) + " %" : "–"; }
   var MODE = { mix: "Gemischt", new: "Neue Wörter", box: "Fehlerkartei", sent: "Sätze", verbs: "Verben", arena: "Arena", unit: "Einheit", plan: "Lernplan", focus: "Gezielt üben" };
@@ -134,7 +141,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     api("/api/admin/players?hidden=1").then(function (l) {
       var el = document.getElementById("hiddenList"); if (!el || !l.length) return;
       el.innerHTML = '<div class="card"><h2>Nur gesicherte Spieler</h2><p class="small muted" style="margin:0 0 6px">Sie sind in der Übersicht und in der Wochenmail nicht zu sehen. Der Server hält nur ihren Lernstand als Sicherung bereit.</p>' + l.map(function (p) {
-        return '<div class="goal"><div class="t"><b>' + esc(p.name) + '</b><div class="small muted">' + (p.backup ? "Letzte Sicherung " + fmtAgo(p.backup.ts) + " · " + p.backup.words + " Wörter · " + p.backup.coins + " Münzen" : "Noch keine Sicherung") + " · " + p.devices.length + " Gerät" + (p.devices.length === 1 ? "" : "e") + '</div></div>' +
+        return '<div class="goal"><div class="t"><b>' + esc(p.name) + '</b><div class="small muted">' + (p.backup ? "Letzte Sicherung " + fmtAgo(p.backup.ts) + " (" + fmtAt(p.backup.ts) + ") · " + p.backup.words + " Wörter · " + p.backup.coins + " Münzen" : "Noch keine Sicherung") + " · " + p.devices.length + " Gerät" + (p.devices.length === 1 ? "" : "e") + '</div></div>' +
           '<div class="acts"><button class="ghost sm" data-hi="' + p.id + '">Neuer Code</button>' + (p.backup ? '<a class="small" href="/api/admin/players/' + p.id + '/state" download>Herunterladen</a>' : "") +
           '<button class="ghost sm" data-hs="' + p.id + '">Anzeigen</button><button class="ghost sm" data-hd="' + p.id + '">Löschen</button></div></div>';
       }).join("") + "</div>";
@@ -252,7 +259,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     var m = r.meta || {}, t = r.totals, wk = r.week, h = "";
     var today = r.days[r.days.length - 1];
     h += '<div class="card"><div class="row"><div class="grow"><b style="font-size:18px">' + esc(p.name) + "</b>" +
-      '<div class="small muted">Zuletzt aktiv: ' + fmtAgo(p.lastEvent) + (m.rank ? " · " + esc(m.rank) : "") + (m.streak ? " · 🔥 " + m.streak + " Tage Serie" : "") +
+      '<div class="small muted">Zuletzt aktiv: ' + fmtAgo(p.lastEvent) + (p.lastEvent ? " (" + fmtAt(p.lastEvent) + ")" : "") + (r.metaTs ? " · Übersicht von " + fmtAt(r.metaTs) : "") + (m.rank ? " · " + esc(m.rank) : "") + (m.streak ? " · 🔥 " + m.streak + " Tage Serie" : "") +
       (p.devices.length ? " · " + p.devices.length + " Gerät" + (p.devices.length > 1 ? "e" : "") : " · noch kein Gerät verbunden") + "</div></div>" +
       '<button class="ghost" id="inv">Neuer Code</button><button class="ghost" id="ren">Umbenennen</button><button class="ghost" id="hid">Nur sichern</button><button class="ghost" id="rev">Geräte trennen</button><button class="ghost" id="del">Löschen</button></div></div>';
     h += heuteCard(r, m) + wocheCard(r, m);
