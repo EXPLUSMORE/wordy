@@ -9,7 +9,7 @@ window.VOCAB_UNITS = (window.VOCAB_UNITS || []).concat([
 ["what do you do","was machen Sie beruflich",1,"So, what do you do at Siemens?"],
 ["I'm with","ich bin bei (Firma)",2,"I'm with a mid-sized engineering firm."],
 ["I look after","ich betreue",2,"I look after the northern region."],
-["how did you two meet","wie kennen Sie sich",2,"How did you two meet originally?"],
+["how did you two meet","Wie haben Sie sich kennengelernt?",2,"How did you two meet originally?"],
 ["first name terms","das Du (Vornamen)",3,"We are on first name terms here."],
 ["to shake hands","die Hand geben",2,"In Britain you shake hands once, briefly."],
 ["business card","die Visitenkarte",1,"Here is my business card."],
