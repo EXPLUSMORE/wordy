@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.43.0 – 2026-10-07
+- **Bessere Erzählerstimme** (Erklärfilme und alle deutschen Ansagen): Die App wählt statt der ersten die natürlichste deutsche Stimme des Geräts (Siri, Enhanced, Premium, Neural, Google vor alten Computerstimmen).
+- Setup › Töne: **Erzählerstimme Automatisch / Frau / Mann** (Frau warm und etwas langsamer, Mann tief und ruhig), Auswahl einer bestimmten Stimme des Geräts und „🎬 Erzähler testen“.
+
 ## 2.42.0 – 2026-10-07
 - **Startseite aufgeräumt**: nur noch Begrüßung (kleinere Bühne mit Figur, Tagesziel, Rang, Streak, Münzen), Lernpfad, Lernplan für die Klassenarbeit (nur wenn die Eltern einen angelegt haben) und die Tagesaufgaben mit Links zu den Übungen. Die Daily Challenge ist die erste Tagesaufgabe.
 - Umgezogen: Battle-Pass → Showroom (oben), Wochenplan und Wochenziele der Eltern → Fortschritt › Verlauf. Entfallen sind Favoriten-Leiste und große Start-Karte (Daily Challenge steht unter Üben und in den Tagesaufgaben).

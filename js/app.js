@@ -57,6 +57,31 @@
     pickVoice();
     window.speechSynthesis.onvoiceschanged = pickVoice;
   }
+  /* Erzählerstimme (deutsch): bewertet die Geräte-Stimmen (natürlich klingende zuerst) und wählt nach Wunsch Frau oder Mann */
+  var FEM = /anna|petra|marlene|vicki|helena|katja|hedda|amala|seraphina|jana|elke|kerstin|marie|female|weiblich|frau|sandy|shelley|flo\b/i, MAL = /markus|yannick|martin|stefan|conrad|killian|jonas|florian|reed|rocko|eddy|grandpa|male|männlich|mann|hans|dieter/i;
+  function scoreVoice(v) {
+    var n = v.name + " " + v.voiceURI, s = 0;
+    if (/natural|neural|premium|enhanced|erweitert|siri|online|wavenet|studio/i.test(n)) s += 50;
+    if (/google/i.test(n)) s += 20;
+    if (v.localService === false) s += 10;
+    if (/compact|espeak|robot|novelty|fred|ralph|zarvox|trinoids|whisper|bad|bells|cellos|boing|bubbles|deranged|hysterical|organ|superstar|wobble/i.test(n)) s -= 80;
+    if (/^de[-_]DE/i.test(v.lang)) s += 8;
+    return s;
+  }
+  function deVoices() {
+    var all = (window.speechSynthesis && window.speechSynthesis.getVoices()) || [];
+    return all.filter(function (x) { return /^de/i.test(x.lang); });
+  }
+  function narratorVoice() {
+    var set = S.state.settings, list = deVoices();
+    if (!list.length) return voiceDe;
+    if (set.narratorVoice) { var f = list.filter(function (x) { return x.voiceURI === set.narratorVoice; })[0]; if (f) return f; }
+    var g = set.narrator || "auto", re = g === "f" ? FEM : g === "m" ? MAL : null;
+    list.sort(function (a, b) { return (scoreVoice(b) + (re && re.test(b.name) ? 100 : 0)) - (scoreVoice(a) + (re && re.test(a.name) ? 100 : 0)); });
+    return list[0];
+  }
+  /* Klangfarbe: Frau warm und etwas langsamer, Mann tief und ruhig */
+  function narratorTune() { var g = S.state.settings.narrator || "auto"; return g === "f" ? { pitch: 1.08, rate: 0.94 } : g === "m" ? { pitch: 0.82, rate: 0.93 } : { pitch: 1, rate: 1 }; }
   /* Handy-Browser öffnen den Audiokanal erst beim Sprechen und verlieren dabei den Anfang des Satzes
      (nur beim ersten Vorlesen nach einer Pause). Deshalb: war die Ausgabe länger still, wird zuerst eine
      kaum hörbare Silbe gesprochen und der eigentliche Satz erst nach einem Vorlauf gestartet.
@@ -107,10 +132,10 @@
       var de = lang === "de";
       var u = new SpeechSynthesisUtterance(de ? String(text) : speechClean(String(text)).replace(/^to\s+/i, ""));
       if (!voicesReady) pickVoice();
-      var vo = de ? voiceDe : voice;
+      var vo = de ? narratorVoice() : voice, tune = de ? narratorTune() : null;
       if (vo) u.voice = vo;
       u.lang = (vo && vo.lang) || (de ? "de-DE" : "en-GB");
-      u.rate = rate || (de ? 1 : 0.92);
+      u.rate = rate || (de ? tune.rate : 0.92); if (de) u.pitch = tune.pitch;
       if (onEnd) { u.onend = onEnd; u.onerror = onEnd; }
       lastSpoke = now;
       var lead = speechLead();
@@ -1402,6 +1427,15 @@
       '<select id="setPace" style="width:auto">' + [["fast", "Schnell"], ["mid", "Mittel"], ["slow", "Langsam"]].map(function (o) {
         return '<option value="' + o[0] + '"' + (st.settings.readPace === o[0] || (!st.settings.readPace && o[0] === "mid") ? " selected" : "") + '>' + o[1] + '</option>';
       }).join("") + '</select></label>' +
+      '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Erzählerstimme (Erklärfilme)<br><span class="small muted">Frau: warm, Mann: tief und ruhig</span></span>' +
+      '<select id="setNarr" style="width:auto">' + [["auto", "Automatisch"], ["f", "Frau"], ["m", "Mann"]].map(function (o) {
+        return '<option value="' + o[0] + '"' + ((st.settings.narrator || "auto") === o[0] ? " selected" : "") + '>' + o[1] + '</option>';
+      }).join("") + '</select></label>' +
+      '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Stimme auf diesem Gerät<br><span class="small muted">Automatisch nimmt die natürlichste deutsche Stimme</span></span>' +
+      '<select id="setNarrV" style="width:auto;max-width:48%"><option value="">Automatisch</option>' + deVoices().sort(function (a, b) { return scoreVoice(b) - scoreVoice(a); }).map(function (v) {
+        return '<option value="' + esc(v.voiceURI) + '"' + (st.settings.narratorVoice === v.voiceURI ? " selected" : "") + '>' + esc(v.name.replace(/^(Microsoft|Google) /, "")) + '</option>';
+      }).join("") + '</select></label>' +
+      '<button class="btn ghost" data-act="narrtest" style="margin-top:10px">🎬 Erzähler testen</button>' +
       '<button class="btn ghost" data-act="voicetest" style="margin-top:10px">🔊 Stimme testen</button>');
     html += fold("save", "💾", "Auto-Save / Lernfortschritt", "Server, dieses Gerät, manuell sichern", unCard(saveCard()));
     var customCard = '<section class="card"><div class="eyebrow">Eigene Vokabelliste importieren</div>' +
@@ -1433,6 +1467,8 @@
     if ($("#setPause")) $("#setPause").onchange = function () { st.settings.pause = this.checked; S.save(true); };
     $("#setMode").onchange = function () { st.settings.themeMode = this.value; S.save(true); renderHeader(); };
     $("#setPace").onchange = function () { st.settings.readPace = this.value; S.save(true); };
+    $("#setNarr").onchange = function () { st.settings.narrator = this.value; st.settings.narratorVoice = ""; S.save(true); render(); };
+    $("#setNarrV").onchange = function () { st.settings.narratorVoice = this.value; S.save(true); };
     $("#setLead").onchange = function () { st.settings.speechLead = +this.value; S.save(true); };
     $("#setHearts").onchange = function () { st.settings.hearts = this.checked; if (this.checked === false) st.hearts = 5; S.save(true); renderHeader(); };
     $("#csvFile").onchange = function () {
@@ -2391,8 +2427,9 @@
       try { global.VTC.burst("stars", hf.getBoundingClientRect().left + 55, hf.getBoundingClientRect().top + 40, 10, .9); } catch (e) {}
       clearTimeout(hhT); hhT = setTimeout(function () { var h2 = $("#hhFig"); if (h2) h2.innerHTML = heroHtml(S.state.profile.avatar, 0); }, 4200);
     }
+    else if (a === "narrtest") { speak("Hallo Magnus! Ich bin dein Erzähler. Heute zeige ich dir, wie man Wörter knackt – ohne Schweiß, aber mit Style.", null, "de", true); }
     else if (a === "film") {
-      global.VTFILM.play(act.getAttribute("data-id"), { audio: S.state.settings.audio, speak: function (t) { speak(t, 1.02, "de"); }, onGo: function (g) {
+      global.VTFILM.play(act.getAttribute("data-id"), { audio: S.state.settings.audio, speak: function (t) { speak(t, null, "de"); }, onGo: function (g) {
         var b = document.createElement("button"); b.hidden = true;
         if (g.arena) { b.setAttribute("data-act", "arena"); b.setAttribute("data-id", g.arena); }
         else { b.setAttribute("data-act", "start"); b.setAttribute("data-mode", g.mode); if (g.focus) b.setAttribute("data-focus", g.focus); b.setAttribute("data-min", S.goalMin()); }
