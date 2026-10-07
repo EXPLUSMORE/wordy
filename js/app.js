@@ -703,9 +703,23 @@
       toast(hidden ? "Dein Fortschritt wird jetzt nur noch gesichert, nicht mehr angezeigt." : "Dein Fortschritt ist jetzt für die Eltern im Dashboard sichtbar.", 6000);
       if (sessionEl.hidden) render();
     };
-    window.WordyHooks.onReward = function (list) {
+    /* Geschenk der Eltern: Karte mit der Nachricht, erst wenn gerade keine Runde läuft */
+    function showGifts(gifts) {
+      if (!sessionEl.hidden) return setTimeout(function () { showGifts(gifts); }, 3000);
+      var ov = document.createElement("div"); ov.className = "giftov";
+      ov.innerHTML = '<div class="giftcard pop"><div style="font-size:44px">💌</div><div class="eyebrow">Post von den Eltern</div>' +
+        gifts.map(function (g) { return '<div class="giftmsg">' + (g.note ? '„' + esc(g.note) + '“' : "Extramünzen für dich!") + '</div><div style="font-weight:800;font-size:20px">+' + g.coins + ' 🪙</div>'; }).join('<hr class="sep" style="margin:10px 0">') +
+        '<button class="btn lg" id="giftOk" style="margin-top:12px">Danke! 🥰</button></div>';
+      document.body.appendChild(ov);
+      try { if (S.state.settings.audio) window.VTC.sound(S.state.profile.snd, true); window.VTC.burst("stars", window.innerWidth / 2, window.innerHeight * .4, 30, 1.6); } catch (e) {}
+      document.getElementById("giftOk").onclick = function () { ov.remove(); renderHeader(); if (sessionEl.hidden) render(); };
+    }
+    window.WordyHooks.onReward = function (all) {
+      var gl = all.filter(function (x) { return x.kind === "gift"; }), list = all.filter(function (x) { return x.kind !== "gift"; });
+      if (gl.length) showGifts(gl.map(function (x) { return { note: x.note, coins: x.coins }; }));
+      if (!list.length) return;
       var c = list.reduce(function (a, x) { return a + (x.coins || 0); }, 0);
-      toast("🎉 " + (list[0].kind === "gift" ? "Extramünzen von den Eltern" : list[0].kind === "plan" ? "Lernplan geschafft" : list[0].kind === "week" ? "Wochenplan geschafft" : "Wochenziel geschafft") + ": " + list[0].title + (c ? " · +" + c + " Münzen" : ""), 6000);
+      toast("🎉 " + (list[0].kind === "plan" ? "Lernplan geschafft" : list[0].kind === "week" ? "Wochenplan geschafft" : "Wochenziel geschafft") + ": " + list[0].title + (c ? " · +" + c + " Münzen" : ""), 6000);
       try { if (window.VTC && S.state.settings.audio) window.VTC.sound(S.state.profile.snd, true); window.VTC.burst(S.state.profile.fx, window.innerWidth / 2, window.innerHeight * .4, 24, 1); } catch (e) {}
       if (tab === "home" && sessionEl.hidden) render();
     };

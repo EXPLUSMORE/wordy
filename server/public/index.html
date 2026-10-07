@@ -373,7 +373,9 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     el.innerHTML = "<h2>Extramünzen schenken</h2><p class='small muted' style='margin:0 0 8px'>Für besondere Leistungen. Die Münzen werden beim nächsten Öffnen der App gutgeschrieben, Magnus sieht deine Nachricht." +
       (m.coins != null ? " Aktueller Stand laut App: <b>🪙 " + m.coins + "</b>, " + (m.xp || 0).toLocaleString("de-DE") + " XP." : "") + "</p>" +
       '<div class="row" style="gap:6px;flex-wrap:wrap;align-items:center">' + [10, 20, 50, 100].map(function (c) { return '<button class="ghost gamt" data-c="' + c + '">+' + c + '</button>'; }).join("") +
-      '<input id="gAmt" type="number" min="1" max="500" value="20" style="width:80px"><input id="gNote" placeholder="Nachricht, z. B. Tolle Woche!" maxlength="80" style="flex:1 1 180px"><button id="gSend">Überweisen</button><span id="gMsg" class="small"></span></div><div id="gList" style="margin-top:10px"></div>';
+      '<input id="gAmt" type="number" min="1" max="500" value="20" style="width:80px"><button id="gSend">Überweisen</button><span id="gMsg" class="small"></span></div>' +
+      '<textarea id="gNote" rows="3" maxlength="240" placeholder="Deine Nachricht an Magnus (frei wählbar), z. B. Tolle Woche, ich bin stolz auf dich!" style="width:100%;box-sizing:border-box;margin-top:8px"></textarea>' +
+      '<div class="row" style="gap:6px;flex-wrap:wrap;margin-top:6px;align-items:center"><span class="small muted">Vorschläge:</span>' + ["Tolle Woche!", "Super Boss-Runde!", "Danke fürs fleißige Üben!", "Ich bin stolz auf dich!", "Weiter so, Champion!"].map(function (t) { return '<button class="ghost gtxt" style="font-size:12px;padding:4px 8px">' + t + '</button>'; }).join("") + '<span class="small muted" id="gCnt" style="margin-left:auto">0 / 240</span></div><div id="gList" style="margin-top:10px"></div>';
     var msg = function (t, bad) { var e = document.getElementById("gMsg"); if (e) { e.className = "small" + (bad ? " err" : ""); e.textContent = t; } };
     var done = (m.gifts || []);
     var list = function (arr) {
@@ -382,12 +384,15 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
         return '<div class="small">' + (done.indexOf(g.id) >= 0 ? "✅" : "⏳") + " +" + g.coins + " 🪙 · " + fmtAt(g.ts) + (g.note ? " · „" + esc(g.note) + "“" : "") + (done.indexOf(g.id) >= 0 ? " · angekommen" : " · kommt beim nächsten Öffnen der App") + "</div>"; }).join("") : '<div class="small muted">Noch keine Geschenke.</div>';
     };
     api("/api/admin/players/" + p.id + "/gifts").then(list).catch(function () {});
+    var gn = document.getElementById("gNote"), cnt = function () { document.getElementById("gCnt").textContent = gn.value.length + " / 240"; };
+    gn.oninput = cnt;
+    Array.prototype.forEach.call(el.querySelectorAll(".gtxt"), function (b) { b.onclick = function () { gn.value = b.textContent; cnt(); gn.focus(); }; });
     Array.prototype.forEach.call(el.querySelectorAll(".gamt"), function (b) { b.onclick = function () { document.getElementById("gAmt").value = b.getAttribute("data-c"); }; });
     document.getElementById("gSend").onclick = function () {
       var c = +document.getElementById("gAmt").value, note = document.getElementById("gNote").value;
       if (!(c >= 1 && c <= 500)) return msg("Bitte 1 bis 500 Münzen.", 1);
       if (!confirm("Wirklich " + c + " Münzen an " + p.name + " überweisen?")) return;
-      post("/api/admin/players/" + p.id + "/gifts", { coins: c, note: note }).then(function (x) { msg("Gesendet."); document.getElementById("gNote").value = ""; list(x.list); }).catch(function (e) { msg(e.message, 1); });
+      post("/api/admin/players/" + p.id + "/gifts", { coins: c, note: note }).then(function (x) { msg("Gesendet."); document.getElementById("gNote").value = ""; cnt(); list(x.list); }).catch(function (e) { msg(e.message, 1); });
     };
   }
   function drawWeekPlan(p, r) {

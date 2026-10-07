@@ -420,7 +420,7 @@ function giftsOf(pid) { const r = q.kvGet.get("gifts:" + pid); try { return r ? 
 function addGift(pid, body) {
   const coins = Math.round(+body.coins);
   if (!(coins >= 1 && coins <= 500)) return [400, { error: "Münzen müssen zwischen 1 und 500 liegen." }];
-  const note = String(body.note || "").trim().slice(0, 80), list = giftsOf(pid);
+  const note = String(body.note || "").replace(/\r/g, "").trim().slice(0, 240), list = giftsOf(pid);
   const gift = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), coins, note, ts: Date.now() };
   list.push(gift); q.kvSet.run("gifts:" + pid, JSON.stringify(list.slice(-50)));
   return [200, { ok: true, gift, list: list.slice(-50) }];

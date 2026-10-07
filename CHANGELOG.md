@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.33.1 – 2026-10-07
+
+- Extramünzen: freie Nachricht bis 240 Zeichen (mehrzeilig) mit Textvorschlägen und Zeichenzähler im Dashboard. In der App erscheint das Geschenk als Karte „Post von den Eltern“ mit der Nachricht (statt nur als kurzer Hinweis), erst wenn gerade keine Runde läuft.
+
 ## 2.33.0 – 2026-10-07
 
 - Dashboard: Im Kopf der Spielerkarte stehen jetzt Münzen und XP (Stand der letzten Übertragung). Neue Karte „Extramünzen schenken“ (1 bis 500 Münzen, mit Nachricht): kommt beim nächsten Abgleich der App genau einmal als Münzgeschenk an, Magnus sieht die Nachricht. Der Verlauf zeigt ⏳ wartet oder ✅ angekommen.

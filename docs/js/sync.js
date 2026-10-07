@@ -135,7 +135,7 @@
     (W.remote().gifts || []).forEach(function (gf) {   // Extramünzen der Eltern, genau einmal
       var key = "gift" + gf.id; if (st.goalsDone[key]) return;
       st.goalsDone[key] = 1; VT.parentCoins(gf.coins); W.log("gift", { id: gf.id, coins: gf.coins });
-      got.push({ title: gf.note || "Extramünzen von den Eltern", coins: gf.coins, kind: "gift" });
+      got.push({ title: gf.note || "Extramünzen von den Eltern", note: gf.note || "", coins: gf.coins, kind: "gift" });
     });
     if (got.length) { VT.save(true); if (g.WordyHooks && g.WordyHooks.onReward) g.WordyHooks.onReward(got); }
   };
