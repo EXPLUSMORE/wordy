@@ -112,6 +112,12 @@
     { id: "dn:eislauf", kind: "dance", label: "Eislauf",       cost: 350, val: "eislauf", bundle: "eis" },
     { id: "dn:sieg",    kind: "dance", label: "Epischer Sieg", cost: 500, val: "sieg", rank: "Silber I" },
 
+    { id: "kt:muenchen",  kind: "kit", label: "München · Rot-Weiß",          cost: 50, val: "k-muenchen" },
+    { id: "kt:barcelona", kind: "kit", label: "Barcelona · Blaugrana",       cost: 50, val: "k-barcelona" },
+    { id: "kt:turin",     kind: "kit", label: "Turin · Schwarz-Weiß",        cost: 50, val: "k-turin" },
+    { id: "kt:deutschland", kind: "kit", label: "Deutschland · Weiß",        cost: 50, val: "k-deutschland" },
+    { id: "kt:argentinien", kind: "kit", label: "Argentinien · Himmelblau-Weiß", cost: 50, val: "k-argentinien" },
+    { id: "kt:portugal",  kind: "kit", label: "Portugal · Rot-Grün",         cost: 50, val: "k-portugal" },
     { id: "of:natur",  kind: "outfit", label: "Natur pur",       cost: 0,   val: "natur" },
     { id: "of:shirt",  kind: "outfit", label: "T-Shirt",         cost: 60,  val: "shirt" },
     { id: "of:hoodie", kind: "outfit", label: "Hoodie",          cost: 90,  val: "hoodie" },
@@ -145,7 +151,7 @@
   var MAX_STICKERS = 5;
   /* Sticker-Plätze auf dem Profil: der erste ist gratis, die weiteren werden nacheinander freigeschaltet */
   var STICKER_SLOT_COST = [0, 100, 150, 150, 150];
-  var PROFILE_KEY = { avatar: "avatar", frame: "frame", title: "title", bg: "bg", fx: "fx", snd: "snd", theme: "theme", dance: "dance", outfit: "outfit" };
+  var PROFILE_KEY = { avatar: "avatar", frame: "frame", title: "title", bg: "bg", fx: "fx", snd: "snd", theme: "theme", dance: "dance", outfit: "outfit", kit: "outfit" };
 
   var BADGES = [
     { id: "start",   n: "Erster Schritt",  d: "Die erste Übung abgeschlossen." },
@@ -934,7 +940,7 @@
   function stickers() { var l = state.profile.stickers; if (!Array.isArray(l)) l = state.profile.stickers = []; return l; }
   function isActive(it) {
     if (it.kind === "sticker") return stickers().indexOf(it.id) >= 0; var v = state.profile[PROFILE_KEY[it.kind]]; return (v == null ? defaultOf(it.kind) : v) === it.val; }
-  function defaultOf(kind) { return kind === "avatar" ? "🦊" : kind === "theme" ? "paper" : kind === "dance" ? "wackler" : kind === "outfit" ? "natur" : kind === "title" ? "" : "none"; }
+  function defaultOf(kind) { return kind === "avatar" ? "🦊" : kind === "theme" ? "paper" : kind === "dance" ? "wackler" : (kind === "outfit" || kind === "kit") ? "natur" : kind === "title" ? "" : "none"; }
   function equip(id) {
     var it = itemById(id); if (!it || !owns(it)) return { error: "Das gehört dir noch nicht." };
     if (it.kind === "sticker") {            // antippen klebt auf oder löst wieder ab; höchstens so viele wie freigeschaltete Plätze

@@ -39,6 +39,15 @@
     "svg:fnchamp": ["crys", "#CFE9FF", "#FFFFFF", "#5B54C8", "", ""],
     "svg:fnunreal": ["crys", "#8F7DFF", "#FFD66B", "#C2410C", "", ""]
   };
+  /* Trikots: Farben und Streifen (keine Wappen oder Sponsoren), Rückennummer immer 7. [Shirt-Hintergrund, Ärmel, Hose, Stutzen, Kragen, Nummer, Nummern-Schatten] */
+  var KITS = {
+    "k-muenchen": ["linear-gradient(#d4151f,#d4151f)", "#d4151f", "#ffffff", "#d4151f", "#ffffff", "#ffffff", "rgba(0,0,0,.35)"],
+    "k-barcelona": ["repeating-linear-gradient(90deg,#a50044 0 7px,#004d98 7px 14px)", "#004d98", "#1b2a6b", "#1b2a6b", "#edbb00", "#ffffff", "rgba(0,0,0,.6)"],
+    "k-turin": ["repeating-linear-gradient(90deg,#111 0 7px,#fff 7px 14px)", "#111111", "#111111", "#ffffff", "#111111", "#e53935", "#ffffff"],
+    "k-deutschland": ["linear-gradient(#ffffff,#f1f1f4)", "#ffffff", "#111111", "#ffffff", "#111111", "#111111", "rgba(255,255,255,.4)"],
+    "k-argentinien": ["repeating-linear-gradient(90deg,#74acdf 0 7px,#fff 7px 14px)", "#74acdf", "#111111", "#ffffff", "#111111", "#111111", "#ffffff"],
+    "k-portugal": ["linear-gradient(#c1121f,#c1121f)", "#c1121f", "#0b6b3a", "#c1121f", "#0b6b3a", "#f7d117", "rgba(0,0,0,.4)"]
+  };
   var EMB = { trikot: "7", held: "★", raum: "★", rock: "♪", polar: "❄" };
   /* Eigene Köpfe für Figuren, deren Emoji/Zeichnung schon ein ganzes Tier zeigt (sonst säße ein Tier auf dem Körper) */
   var V = '<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">';
@@ -67,8 +76,10 @@
     if (ex === "wings") back += '<div class="wg wg1"></div><div class="wg wg2"></div>';
     if (t === "tent") back += '<div class="te te1"></div><div class="te te2"></div>';
     back += '<div class="cape"></div>';
-    return '<div class="fig k-' + t + (ex === "stripes" ? " stripes" : "") + " of-" + (outfit || "natur") + '" style="' + st + '">' +
-      '<div class="bk">' + back + '</div><div class="ll lg"></div><div class="lr lg"></div><div class="to" data-e="' + (EMB[outfit] || "") + '"><i></i></div>' +
+    var kit = KITS[outfit], ofc = kit ? " kit of-kit" : " of-" + (outfit || "natur");
+    if (kit) st += ";--tb:" + kit[0] + ";--sl:" + kit[1] + ";--pc:" + kit[2] + ";--sk:" + kit[3] + ";--col:" + kit[4] + ";--nc:" + kit[5] + ";--ns:" + kit[6];
+    return '<div class="fig k-' + t + (ex === "stripes" ? " stripes" : "") + ofc + '" style="' + st + '">' +
+      '<div class="bk">' + back + '</div><div class="ll lg"></div><div class="lr lg"></div><div class="to" data-e="' + (kit ? "7" : (EMB[outfit] || "")) + '"><i></i></div>' +
       '<div class="al ar"></div><div class="arr ar"></div><div class="hd">' + (HEAD[av] || headHtml) + '</div></div>';
   }
   global.VTFIG = { figure: figure };

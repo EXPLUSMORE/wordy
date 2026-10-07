@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.31.0 – 2026-10-07
+
+- Neue Shop-Rubrik „Trikots ⚽“: sechs Fußballtrikots mit den Farben und Streifen von München, Barcelona, Turin, Deutschland, Argentinien und Portugal, je 50 Münzen, Rückennummer immer 7. Ohne Wappen, Sponsoren und Logos. Die Figur trägt das Trikot beim Siegertanz, Vorschau mit ▶︎. Trikot und Outfit schließen sich aus (eins von beiden).
+
 ## 2.30.0 – 2026-10-07
 
 - Preise neu in vier Stufen (Gewöhnlich 60–120, Selten 200–350, Episch 500–800, Legendär 1500–2500; die Stufe steht im Shop). Wurde etwas günstiger, gibt es die Differenz für schon Gekauftes einmalig als Münzen zurück.

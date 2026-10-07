@@ -624,6 +624,12 @@ details.fold>.fbody{padding:2px 0 14px}
 .d6{animation:s-b 1.8s ease-in-out infinite}@keyframes s-b{0%,100%{transform:translateY(0) scale(1.05,.92)}15%{transform:translateY(-28px)}30%{transform:translateY(0) scale(1.1,.88)}45%{transform:translateY(-28px)}60%{transform:translateY(0) scale(1.1,.88)}75%{transform:translateY(-44px) rotateY(360deg)}90%{transform:translateY(0) scale(1.12,.86)}}
 .d6 .al{animation:s-al 1.8s ease-in-out infinite}.d6 .arr{animation:s-ar 1.8s ease-in-out infinite}.d6 .ll{animation:s-l 1.8s ease-in-out infinite}.d6 .lr{animation:s-l2 1.8s ease-in-out infinite}.d6 .hd{animation:s-h 1.8s ease-in-out infinite}
 @keyframes s-al{0%,100%{transform:rotate(30deg)}15%,45%{transform:rotate(165deg)}30%,60%{transform:rotate(40deg)}75%{transform:rotate(175deg)}}@keyframes s-ar{0%,100%{transform:rotate(-30deg)}15%,45%{transform:rotate(-165deg)}30%,60%{transform:rotate(-40deg)}75%{transform:rotate(-175deg)}}@keyframes s-l{0%,30%,60%,100%{transform:rotate(0)}15%,45%{transform:rotate(26deg)}75%{transform:rotate(36deg)}}@keyframes s-l2{0%,30%,60%,100%{transform:rotate(0)}15%,45%{transform:rotate(-26deg)}75%{transform:rotate(-36deg)}}@keyframes s-h{15%{transform:rotate(-10deg)}30%{transform:rotate(10deg)}45%{transform:rotate(10deg)}60%{transform:rotate(-10deg)}}
+.kit .to{background:var(--tb);box-shadow:inset 0 5px 0 var(--col)}
+.kit .to:after{color:var(--nc);top:17px;font-size:21px;text-shadow:0 0 3px var(--ns)}
+.fig.of-kit .to i{display:none}
+.kit .ar{background:linear-gradient(var(--sl) 0 52%,var(--limb) 52%)}
+.kit .lg{background:linear-gradient(var(--pc) 0 36%,var(--sk) 36%)}
+.kit .lg:after{background:#1b1b1b}
 .of-polar{--tc:#4aa3df;--sl:#4aa3df;--pc:#2e5f8f}.of-polar .to{box-shadow:inset 0 9px 0 #fff}
 .d7{animation:e-b 2.2s ease-in-out infinite}@keyframes e-b{0%{transform:translateX(-50px) rotate(-5deg)}40%{transform:translateX(50px) rotate(4deg)}50%{transform:translateX(0) translateY(-10px) rotateY(360deg)}70%{transform:translateX(0) translateY(-14px) rotateY(1080deg)}85%{transform:translateX(0)}100%{transform:translateX(-50px) rotate(-5deg)}}
 .d7 .al{animation:e-al 2.2s ease-in-out infinite}.d7 .arr{animation:e-ar 2.2s ease-in-out infinite}.d7 .lr{animation:e-lr 2.2s ease-in-out infinite}.d7 .ll{animation:e-ll 2.2s ease-in-out infinite}
@@ -637,7 +643,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.30.0";window.WORDY_BUILD="c4e99cd93b";</script>
+<script>window.WORDY_VERSION="2.31.0";window.WORDY_BUILD="d0066ec201";</script>
 </head>
 <body>
 <div id="app">
@@ -4114,6 +4120,12 @@ window.VERBS = [
     { id: "dn:eislauf", kind: "dance", label: "Eislauf",       cost: 350, val: "eislauf", bundle: "eis" },
     { id: "dn:sieg",    kind: "dance", label: "Epischer Sieg", cost: 500, val: "sieg", rank: "Silber I" },
 
+    { id: "kt:muenchen",  kind: "kit", label: "München · Rot-Weiß",          cost: 50, val: "k-muenchen" },
+    { id: "kt:barcelona", kind: "kit", label: "Barcelona · Blaugrana",       cost: 50, val: "k-barcelona" },
+    { id: "kt:turin",     kind: "kit", label: "Turin · Schwarz-Weiß",        cost: 50, val: "k-turin" },
+    { id: "kt:deutschland", kind: "kit", label: "Deutschland · Weiß",        cost: 50, val: "k-deutschland" },
+    { id: "kt:argentinien", kind: "kit", label: "Argentinien · Himmelblau-Weiß", cost: 50, val: "k-argentinien" },
+    { id: "kt:portugal",  kind: "kit", label: "Portugal · Rot-Grün",         cost: 50, val: "k-portugal" },
     { id: "of:natur",  kind: "outfit", label: "Natur pur",       cost: 0,   val: "natur" },
     { id: "of:shirt",  kind: "outfit", label: "T-Shirt",         cost: 60,  val: "shirt" },
     { id: "of:hoodie", kind: "outfit", label: "Hoodie",          cost: 90,  val: "hoodie" },
@@ -4147,7 +4159,7 @@ window.VERBS = [
   var MAX_STICKERS = 5;
   /* Sticker-Plätze auf dem Profil: der erste ist gratis, die weiteren werden nacheinander freigeschaltet */
   var STICKER_SLOT_COST = [0, 100, 150, 150, 150];
-  var PROFILE_KEY = { avatar: "avatar", frame: "frame", title: "title", bg: "bg", fx: "fx", snd: "snd", theme: "theme", dance: "dance", outfit: "outfit" };
+  var PROFILE_KEY = { avatar: "avatar", frame: "frame", title: "title", bg: "bg", fx: "fx", snd: "snd", theme: "theme", dance: "dance", outfit: "outfit", kit: "outfit" };
 
   var BADGES = [
     { id: "start",   n: "Erster Schritt",  d: "Die erste Übung abgeschlossen." },
@@ -4936,7 +4948,7 @@ window.VERBS = [
   function stickers() { var l = state.profile.stickers; if (!Array.isArray(l)) l = state.profile.stickers = []; return l; }
   function isActive(it) {
     if (it.kind === "sticker") return stickers().indexOf(it.id) >= 0; var v = state.profile[PROFILE_KEY[it.kind]]; return (v == null ? defaultOf(it.kind) : v) === it.val; }
-  function defaultOf(kind) { return kind === "avatar" ? "🦊" : kind === "theme" ? "paper" : kind === "dance" ? "wackler" : kind === "outfit" ? "natur" : kind === "title" ? "" : "none"; }
+  function defaultOf(kind) { return kind === "avatar" ? "🦊" : kind === "theme" ? "paper" : kind === "dance" ? "wackler" : (kind === "outfit" || kind === "kit") ? "natur" : kind === "title" ? "" : "none"; }
   function equip(id) {
     var it = itemById(id); if (!it || !owns(it)) return { error: "Das gehört dir noch nicht." };
     if (it.kind === "sticker") {            // antippen klebt auf oder löst wieder ab; höchstens so viele wie freigeschaltete Plätze
@@ -5612,6 +5624,15 @@ window.VERBS = [
     "svg:fnchamp": ["crys", "#CFE9FF", "#FFFFFF", "#5B54C8", "", ""],
     "svg:fnunreal": ["crys", "#8F7DFF", "#FFD66B", "#C2410C", "", ""]
   };
+  /* Trikots: Farben und Streifen (keine Wappen oder Sponsoren), Rückennummer immer 7. [Shirt-Hintergrund, Ärmel, Hose, Stutzen, Kragen, Nummer, Nummern-Schatten] */
+  var KITS = {
+    "k-muenchen": ["linear-gradient(#d4151f,#d4151f)", "#d4151f", "#ffffff", "#d4151f", "#ffffff", "#ffffff", "rgba(0,0,0,.35)"],
+    "k-barcelona": ["repeating-linear-gradient(90deg,#a50044 0 7px,#004d98 7px 14px)", "#004d98", "#1b2a6b", "#1b2a6b", "#edbb00", "#ffffff", "rgba(0,0,0,.6)"],
+    "k-turin": ["repeating-linear-gradient(90deg,#111 0 7px,#fff 7px 14px)", "#111111", "#111111", "#ffffff", "#111111", "#e53935", "#ffffff"],
+    "k-deutschland": ["linear-gradient(#ffffff,#f1f1f4)", "#ffffff", "#111111", "#ffffff", "#111111", "#111111", "rgba(255,255,255,.4)"],
+    "k-argentinien": ["repeating-linear-gradient(90deg,#74acdf 0 7px,#fff 7px 14px)", "#74acdf", "#111111", "#ffffff", "#111111", "#111111", "#ffffff"],
+    "k-portugal": ["linear-gradient(#c1121f,#c1121f)", "#c1121f", "#0b6b3a", "#c1121f", "#0b6b3a", "#f7d117", "rgba(0,0,0,.4)"]
+  };
   var EMB = { trikot: "7", held: "★", raum: "★", rock: "♪", polar: "❄" };
   /* Eigene Köpfe für Figuren, deren Emoji/Zeichnung schon ein ganzes Tier zeigt (sonst säße ein Tier auf dem Körper) */
   var V = '<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">';
@@ -5640,8 +5661,10 @@ window.VERBS = [
     if (ex === "wings") back += '<div class="wg wg1"></div><div class="wg wg2"></div>';
     if (t === "tent") back += '<div class="te te1"></div><div class="te te2"></div>';
     back += '<div class="cape"></div>';
-    return '<div class="fig k-' + t + (ex === "stripes" ? " stripes" : "") + " of-" + (outfit || "natur") + '" style="' + st + '">' +
-      '<div class="bk">' + back + '</div><div class="ll lg"></div><div class="lr lg"></div><div class="to" data-e="' + (EMB[outfit] || "") + '"><i></i></div>' +
+    var kit = KITS[outfit], ofc = kit ? " kit of-kit" : " of-" + (outfit || "natur");
+    if (kit) st += ";--tb:" + kit[0] + ";--sl:" + kit[1] + ";--pc:" + kit[2] + ";--sk:" + kit[3] + ";--col:" + kit[4] + ";--nc:" + kit[5] + ";--ns:" + kit[6];
+    return '<div class="fig k-' + t + (ex === "stripes" ? " stripes" : "") + ofc + '" style="' + st + '">' +
+      '<div class="bk">' + back + '</div><div class="ll lg"></div><div class="lr lg"></div><div class="to" data-e="' + (kit ? "7" : (EMB[outfit] || "")) + '"><i></i></div>' +
       '<div class="al ar"></div><div class="arr ar"></div><div class="hd">' + (HEAD[av] || headHtml) + '</div></div>';
   }
   global.VTFIG = { figure: figure };
@@ -6454,9 +6477,9 @@ window.VERBS = [
   /* ---------- Shop und Sammelalbum ---------- */
   var SHOP_TABS = [
     { k: "avatar", n: "Figuren" }, { k: "sticker", n: "Sticker" }, { k: "frame", n: "Rahmen" }, { k: "title", n: "Titel" },
-    { k: "fn", n: "Fortnite" }, { k: "bg", n: "Hintergründe" }, { k: "fx", n: "Effekte" }, { k: "dance", n: "Tänze 💃" }, { k: "outfit", n: "Outfits 👕" }, { k: "sets", n: "Sets ⭐" }, { k: "snd", n: "Töne" }, { k: "theme", n: "Farben" }
+    { k: "fn", n: "Fortnite" }, { k: "bg", n: "Hintergründe" }, { k: "fx", n: "Effekte" }, { k: "dance", n: "Tänze 💃" }, { k: "outfit", n: "Outfits 👕" }, { k: "kit", n: "Trikots ⚽" }, { k: "sets", n: "Sets ⭐" }, { k: "snd", n: "Töne" }, { k: "theme", n: "Farben" }
   ];
-  var KIND_NAME = { sticker: "Sticker", avatar: "Figur", frame: "Rahmen", title: "Titel", bg: "Hintergrund", fx: "Effekt", dance: "Tanz", outfit: "Outfit", snd: "Ton", theme: "Farbwelt" };
+  var KIND_NAME = { sticker: "Sticker", avatar: "Figur", frame: "Rahmen", title: "Titel", bg: "Hintergrund", fx: "Effekt", dance: "Tanz", outfit: "Outfit", kit: "Trikot", snd: "Ton", theme: "Farbwelt" };
   var shopTab = "avatar";
   var THEME_DOT = { paper: "#1E6273", mint: "#2E7357", plum: "#6A3D70", amber: "#8A5A1B" };
   function shopIcon(it) {
@@ -6471,6 +6494,7 @@ window.VERBS = [
       case "snd": return it.val === "none" ? "🔇" : "🔔";
       case "dance": return "💃";
       case "outfit": return "👕";
+      case "kit": return "⚽";
     }
     return "";
   }
@@ -6539,7 +6563,7 @@ window.VERBS = [
     return '<div class="shopitem"><span class="si">' + shopIcon(it) + '</span>' +
       '<span style="flex:1 1 auto"><b class="small">' + esc(it.label) + '</b><br><span class="small muted">' + KIND_NAME[it.kind] + (it.cost > 0 ? " · " + tierOf(it.cost) : "") +
       (it.rank && !own ? " · ab " + esc(it.rank) : "") + (it.bundle ? " · ❄️ Eis-Set" : "") + '</span></span>' +
-      ((it.kind === "dance" || it.kind === "outfit") ? '<button class="chip" data-act="dancetry" data-id="' + esc(it.id) + '" aria-label="Vorschau" style="margin-right:6px">▶︎</button>' : '') +
+      ((it.kind === "dance" || it.kind === "outfit" || it.kind === "kit") ? '<button class="chip" data-act="dancetry" data-id="' + esc(it.id) + '" aria-label="Vorschau" style="margin-right:6px">▶︎</button>' : '') +
       (own ? '<button class="chip" data-act="equip" data-id="' + esc(it.id) + '" aria-pressed="' + act + '">' + (act ? "aktiv" : "auswählen") + '</button>'
         : locked && !it.reward ? '<span class="pill" title="Erst ab Rang ' + esc(it.rank) + '">🔒 ' + esc(it.rank) + '</span><button class="chip" data-act="wish" data-id="' + esc(it.id) + '" aria-pressed="' + (wishId === it.id) + '" aria-label="Wunsch" style="margin-left:6px">⭐</button>'
         : buyBtn) + '</div>';
@@ -7818,7 +7842,7 @@ window.VERBS = [
       if (re.item.kind === "sticker") toast(re.on ? "Aufgeklebt: " + re.item.label : "Abgelöst: " + re.item.label);
       renderHeader(); render();
     }
-    else if (a === "dancetry") { var dit = S.SHOP.filter(function (x) { return x.id === act.getAttribute("data-id"); })[0]; if (dit) { var pf = S.state.profile; global.VTC.dance({ av: pf.avatar, avatar: avatarHtml(pf.avatar), outfit: dit.kind === "outfit" ? dit.val : pf.outfit, dance: dit.kind === "dance" ? dit.val : (pf.dance || "wackler"), title: dit.label }); } }
+    else if (a === "dancetry") { var dit = S.SHOP.filter(function (x) { return x.id === act.getAttribute("data-id"); })[0]; if (dit) { var pf = S.state.profile; global.VTC.dance({ av: pf.avatar, avatar: avatarHtml(pf.avatar), outfit: (dit.kind === "outfit" || dit.kind === "kit") ? dit.val : pf.outfit, dance: dit.kind === "dance" ? dit.val : (pf.dance || "wackler"), title: dit.label }); } }
     else if (a === "shoptab") { shopTab = act.getAttribute("data-k"); render(); }
     else if (a === "checkupdate") {
       if (!navigator.serviceWorker) return toast("Dieses Gerät kennt keine App-Updates. Seite einfach neu laden.");
