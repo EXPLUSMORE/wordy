@@ -111,16 +111,23 @@ return '<svg class="afs" viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg
     "k-muenchen": ["#d4151f", "#8a0b12"], "k-barcelona": ["#a50044", "#004d98"], "k-turin": ["#f4f4f4", "#222222"], "k-deutschland": ["#ffffff", "#b9bfd0"], "k-argentinien": ["#74acdf", "#4a88c2"], "k-portugal": ["#c1121f", "#0b6b3a"]
   };
   var DEFC = { bear: ["#3f9bff", "#1a5fd0"], penguin: ["#e8453c", "#a31515"], seal: ["#4aa8ff", "#1a5fd0"], king: ["#ffd24a", "#c8780a"] };
+  var EXT = {}, EXTC = {};   // weitere Figuren (stilb.js): kind -> Zeichenfunktion(jacke, jackeDunkel), Standardfarben
   function full(av, outfit) {
     var k = KIND[av]; if (!k) return "";
-    var c = (k !== "king" && OUT[outfit]) || DEFC[k], o = { jacket: c[0], jacketD: c[1] };
+    var c = (k !== "king" && OUT[outfit]) || DEFC[k] || EXTC[k] || ["#35c6ff", "#1a7fd0"], o = { jacket: c[0], jacketD: c[1] };
+    if (EXT[k]) return EXT[k](c[0], c[1]);
     if (k === "king") o.king = true;
     return k === "penguin" ? figPenguin(o) : k === "seal" ? figSeal(o) : figBear(o);
+  }
+  function artKey(k) { return /^svg:/.test(k) ? k.slice(4) : k; }
+  function register(av, kind, fn, def) {
+    KIND[av] = kind; EXT[kind] = fn; if (def) EXTC[kind] = def;
+    if (global.VTC && global.VTC.ART) global.VTC.ART[artKey(av)] = head(av);
   }
   /* Kopf als Symbol (Avatar, Sticker, Karten) */
   function head(av) { return full(av).replace('class="afs" viewBox="0 0 220 300"', 'class="afs" style="display:block;width:1.25em;height:1.25em" viewBox="22 4 176 176"'); }
   function inner(av, outfit) { return full(av, outfit).replace(/^<svg[^>]*>/, "").replace(/<\/svg>$/, ""); }
   function dancer(av, outfit, n) { return '<div class="afig a' + n + '">' + full(av, outfit) + '</div>'; }
-  global.VTA = { inner: inner, has: function (av) { return !!KIND[av]; }, full: full, head: head, dancer: dancer, kinds: Object.keys(KIND) };
-  if (global.VTC && global.VTC.ART) Object.keys(KIND).forEach(function (k) { global.VTC.ART[k.slice(4)] = head(k); });
+  global.VTA = { register: register, inner: inner, has: function (av) { return !!KIND[av]; }, full: full, head: head, dancer: dancer, get kinds() { return Object.keys(KIND); } };
+  if (global.VTC && global.VTC.ART) Object.keys(KIND).forEach(function (k) { global.VTC.ART[artKey(k)] = head(k); });
 })(window);

@@ -112,6 +112,7 @@
   };
   function avatarHtml(v, esc) {
     if (/^svg:/.test(v)) return ART[v.slice(4)] || ART.pummel;
+    if (ART[v]) return ART[v];   // Emoji-Figuren, die als gezeichnete Figur vorliegen
     return esc ? esc(v) : String(v);
   }
 
@@ -279,15 +280,15 @@
   }
   function maskUrl(val) {   // Umriss der Figur als Maske, damit der Glanz nur auf der Figur läuft
     if (maskCache[val]) return maskCache[val];
-    var svg = ART[val.slice(4)]; if (!svg) return "";
+    var svg = ART[/^svg:/.test(val) ? val.slice(4) : val]; if (!svg) return "";
     svg = svg.replace("<svg ", '<svg xmlns="http://www.w3.org/2000/svg" ').replace('width="1.25em" height="1.25em"', 'width="200" height="200"');
     return (maskCache[val] = 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")');
   }
   /* size in px; shine = Glanz (nur für gezeichnete Figuren); tilt = Neigung in Grad */
   function stickerHtml(val, size, tilt, shine, esc) {
     ensureCutFilters();
-    var drawn = /^svg:/.test(val), big = size >= 90;
-    var inner = drawn ? (ART[val.slice(4)] || ART.pummel) : (esc ? esc(val) : String(val));
+    var drawn = /^svg:/.test(val) || !!ART[val], big = size >= 90;
+    var inner = drawn ? (ART[/^svg:/.test(val) ? val.slice(4) : val] || ART.pummel) : (esc ? esc(val) : String(val));
     var holo = drawn && shine && size >= 44 ? '<span class="stk-holo" style="-webkit-mask-image:' + maskUrl(val) + ';mask-image:' + maskUrl(val) + '"></span>' : "";
     return '<span class="stk" style="--s:' + size + 'px;--r:' + (tilt || 0) + 'deg;--f:' + (drawn ? 1 : 0.62) + '">' +
       '<span class="stk-cut" style="filter:url(#' + (big ? "cutL" : "cutS") + ')">' + inner + '</span>' + holo + '</span>';
