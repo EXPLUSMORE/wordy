@@ -348,7 +348,7 @@
       '<path d="' + dDone + '" fill="none" stroke="#2e7d4f" stroke-width="6" stroke-linecap="round" stroke-dasharray="1 12" vector-effect="non-scaling-stroke"/></svg>';
     sec.forEach(function (s, k) {
       var pt = pts[k], state = s.index < p.pos ? "done" : s.index === p.pos ? "cur" : "lock", stars = p.stars[s.id] || 0;
-      var tip = (s.last ? "Boss-Runde: " + BOSS_NAMES[s.bossMode] + " (Ziel " + s.bossNeed + " richtig)" : "Station " + s.n + " von " + s.of) + " · " + s.sectionTitle +
+      var tip = (s.last ? "Boss-Runde: " + BOSS_NAMES[s.bossMode] + " (Ziel " + s.bossNeed + " richtig)" : "Station " + s.n + " von " + s.of + (s.verbIds ? " (mit unregelmäßigen Verben)" : "")) + " · " + s.sectionTitle +
         (state === "done" ? " · " + "★".repeat(stars) + "☆".repeat(3 - stars) + " · antippen zum Wiederholen" : state === "cur" ? " · jetzt dran" : " · noch gesperrt");
       h += '<button class="pnode ' + state + (s.last ? " boss" : "") + '" style="left:' + pt.x + '%;top:' + pt.y + 'px" data-tip="' + esc(tip) + '" title="' + esc(tip) + '" data-act="' + (state === "lock" ? "pathlocked" : state === "cur" ? "pathgo" : "pathreplay") + '" data-id="' + esc(s.id) + '" aria-label="' + esc(tip) + '">' +
         (state === "done" ? "✓" : state === "cur" ? (s.last ? "⚔️" : "▶") : s.last ? "⚔️" : "🔒") + '</button>';
@@ -421,7 +421,7 @@
     var stars = correct >= boss.need * 2 ? 3 : correct >= boss.need * 1.5 ? 2 : 1, res = pass ? S.pathComplete(boss.id, stars) : null;
     return { pass: pass, stars: stars, chest: res && res.chest, advanced: res && res.advanced, finished: res && res.finished };
   }
-  var STEP_NAMES = ["Kennenlernen", "Tippen", "Hören & finden", "Zuordnen"];
+  var STEP_NAMES = ["Kennenlernen", "Tippen", "Hören & finden", "Zuordnen", "Unregelmäßige Verben"];
   function pathTasks(st) {
     var ids = st.last ? st.reviewWords.slice() : st.words, ws = ids.map(function (id) { return S.byId(id); }).filter(Boolean);
     if (st.last && ws.length > 12) ws = ws.sort(function (a, b) { return S.levelOf(a.id) - S.levelOf(b.id); }).slice(0, 12);
@@ -439,6 +439,10 @@
       t.push({ type: audioAvailable() ? "listen" : w.gap ? "gap" : "mc_de_en", w: w, step: 3 });
     });
     pick(ws, st.last ? 3 : 2).forEach(function (w) { t.push({ type: "match", w: w, step: 4 }); });   // 4 Zuordnen
+    if (st.verbIds) {   // 5 Unregelmäßige Verben (einmal pro Abschnitt)
+      var vs = st.verbIds.map(function (id) { return S.verbs().filter(function (v) { return v.id === id; })[0]; }).filter(Boolean);
+      verbTasks(vs).forEach(function (vt) { vt.step = 5; t.push(vt); });
+    }
     return t;
   }
 
@@ -1421,7 +1425,7 @@
     var stepHtml = "";
     if (SS.station) {
       var cs = t.step || SS.curStep || 1; SS.curStep = cs;
-      stepHtml = '<div class="stepbar">' + [1, 2, 3, 4].map(function (k) { return '<i class="' + (k < cs ? "ok" : k === cs ? "now" : "") + '"></i>'; }).join("") + '<b>Station ' + SS.station.n + ' · ' + STEP_NAMES[cs - 1] + '</b></div>';
+      stepHtml = '<div class="stepbar">' + (SS.station.verbIds ? [1, 2, 3, 4, 5] : [1, 2, 3, 4]).map(function (k) { return '<i class="' + (k < cs ? "ok" : k === cs ? "now" : "") + '"></i>'; }).join("") + '<b>Station ' + SS.station.n + ' · ' + STEP_NAMES[cs - 1] + '</b></div>';
     }
     sessionEl.innerHTML = head + stepHtml + '<div class="sbody" id="sbody"></div><div class="sfoot" id="sfoot"></div>';
     var body = $("#sbody"), foot = $("#sfoot");

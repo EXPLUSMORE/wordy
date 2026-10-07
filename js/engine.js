@@ -881,7 +881,7 @@
   function pathStations() {
     var ul = pathUnitList(), bf = bossFactor(), key = state.settings.track + ":" + bf + ":" + ul.map(function (u) { return u.id; }).join(",");
     if (pathCache && pathCacheKey === key) return pathCache;
-    var out = [], secCount = 0;
+    var out = [], secCount = 0, verbSec = 0, verbOrder = verbs.map(function (v, i) { return { id: v.id, l: v.lvl, i: i }; }).sort(function (a, b) { return (a.l - b.l) || (a.i - b.i); }).map(function (x) { return x.id; });
     ul.forEach(function (u) {
       var ids = u.words.map(function (w, i) { return u.id + "#" + i; }), n = ids.length;
       if (n < 4) return;
@@ -898,6 +898,9 @@
         var bs = sec[sec.length - 1]; bs.last = true; bs.reviewWords = secWords;   // die letzte Station jedes Abschnitts ist die Boss-Runde in der Arena
         bs.bossMode = BOSS_MODES[secCount++ % BOSS_MODES.length]; bs.bossNeed = Math.max(3, Math.min(Math.round(BOSS_NEED[bs.bossMode] * bf), Math.max(Math.round(5 * bf), Math.floor(secWords.length * 0.8 * bf))));
         sec.forEach(function (s, ix) { s.n = ix + 1; s.of = sec.length; });
+        if (state.settings.track !== "business" && sec.length >= 2 && verbOrder.length) {   // in jedem Abschnitt einmal unregelmäßige Verben (Station vor dem Boss), fest nach Abschnitt verteilt
+          sec[sec.length - 2].verbIds = [0, 1, 2, 3].map(function (q) { return verbOrder[(verbSec * 4 + q) % verbOrder.length]; }); verbSec++;
+        }
         out = out.concat(sec);
       }
     });
@@ -936,7 +939,7 @@
     var p = pathState(), st = pathStations(), pos = 0, moved = false;
     while (pos < st.length && p.stars[st[pos].id]) pos++;   // Reihenfolge streng: die erste Station ohne Sterne ist dran
     while (pos < st.length) {
-      var s = st[pos], all = (s.last ? s.reviewWords : s.words).every(function (id) { return levelOf(id) >= 3; });
+      var s = st[pos], all = (s.last ? s.reviewWords : s.words).concat(s.verbIds || []).every(function (id) { return levelOf(id) >= 3; });
       if (!all) break;
       p.stars[s.id] = Math.max(p.stars[s.id] || 0, 3); p.auto = (p.auto || 0) + 1;
       if (s.last) p.chests[s.section] = 1;   // übersprungener Abschnitt: keine Truhe

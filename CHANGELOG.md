@@ -9,6 +9,11 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.25.0 – 2026-10-07
+
+- Lernpfad (Schule): In jedem Abschnitt gibt es einmal unregelmäßige Verben, als fünfter Schritt „Unregelmäßige Verben" in der Station vor der Boss-Runde (je 4 Verben, fest verteilt, 25 Abschnitte = 100 Verben). Business hat keine Verben.
+- Stationen mit Verben werden nur übersprungen, wenn auch die Verben schon sitzen.
+
 ## 2.24.0 – 2026-10-07
 
 - Boss-Runden werden mitgeschrieben (Modus, Ziel, richtige Antworten, Versuch) und erscheinen im Dashboard in der Lernpfad-Karte mit Auswertung je Modus.
