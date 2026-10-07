@@ -9,6 +9,12 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.36.1 – 2026-10-07
+- **Münzen nur fürs Behalten, nicht fürs Durchklicken**: Das erste Ansehen eines neuen Worts bringt keine Münze und kaum XP (2 statt 10). Die Münzen (jetzt 2) gibt es erst, wenn das Wort nach dem Abstand wirklich wieder erkannt wird.
+- Entdecker-Bonus einer Einheit erst, wenn 5 Wörter wiedererkannt wurden (Stufe „Geübt“), nicht schon beim Ansehen.
+- Tagesaufgabe „6 neue Wörter kennenlernen“ heißt jetzt „6 Wörter von früher wiedererkennen“ und zählt nur wiedererkannte Wörter.
+- „Neue Wörter“ pausiert, solange 30 oder mehr Wörter fällig sind: erst wiederholen.
+
 ## 2.36.0 – 2026-10-07
 - **Showroom** als eigener Reiter: Trophäenschrank mit Regalen (Pokale & Medaillen, Figuren, Tänze, Outfits & Trikots, Sticker, Extras), Seltenheitsstufen, gesperrte Stücke als Silhouette, „NEU“-Marke, Detailansicht (Liebling, Tragen, Ansehen, Zum Shop/Pass).
 - **Sammler-Pokale** Bronze/Silber/Gold/Platin (25/50/75/100 % der Sammlung) mit einmaliger Münzbelohnung.

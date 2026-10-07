@@ -801,7 +801,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.36.0";window.WORDY_BUILD="e20f0b8b26";</script>
+<script>window.WORDY_VERSION="2.36.1";window.WORDY_BUILD="6194f986b9";</script>
 </head>
 <body>
 <div id="app">
@@ -4539,7 +4539,7 @@ window.VERBS = [
     { id: "mgoal", n: "Tagesziel erreichen", goal: 1, type: "goal", coins: 15 },
     { id: "mbox", n: "5 Fehlerkartei-Wörter richtig beantworten", goal: 5, type: "box", coins: 12 },
     { id: "mchain", n: "10 richtige in Folge", goal: 10, type: "chain", coins: 12 },
-    { id: "mnew", n: "6 neue Wörter kennenlernen", goal: 6, type: "new", coins: 10 },
+    { id: "mnew", n: "6 Wörter von früher wiedererkennen", goal: 6, type: "new", coins: 10 },
     { id: "mmaster", n: "2 Wörter meistern", goal: 2, type: "master", coins: 18 },
     { id: "msent", n: "4 Sätze richtig bauen", goal: 4, type: "sent", coins: 14 },
     { id: "marena", n: "Eine Arena-Runde spielen", goal: 1, type: "arena", coins: 10 }
@@ -4571,8 +4571,7 @@ window.VERBS = [
     switch (m.type) {
       case "box": return p.box.length >= m.goal;
       case "new":
-        var seen = state.daily && state.daily.date === today() ? (state.daily.newSeen || 0) : 0;
-        return p.fresh.length >= m.goal && Math.max(0, state.settings.newPerDay - seen) >= m.goal;
+        return p.due.filter(function (w) { return levelOf(w.id) === 1; }).length >= m.goal;
       case "master": return p.all.filter(function (w) { return levelOf(w.id) >= 3; }).length >= m.goal;
       case "sent": return activeSentences().length >= m.goal;
       case "arena": return state.settings.arenaMissions !== false && p.all.length >= 8;
@@ -4690,13 +4689,15 @@ window.VERBS = [
     if (d.paid[id]) return;
     var c = 0, kind = null;
     if (after > before) {
-      for (var lv = before + 1; lv <= after; lv++) c += lv === 4 ? 4 : 1;
+      /* Erstes Ansehen zahlt nichts (sonst genügt Durchklicken). Die Münze fürs neue Wort gibt es erst, wenn es später,
+         nach dem Abstand, wirklich wieder erkannt wird (Stufe 1 → 2). */
+      for (var lv = before + 1; lv <= after; lv++) c += lv === 4 ? 4 : lv === 1 ? 0 : lv === 2 ? 2 : 1;
       kind = before === 0 ? "neu" : after === 4 ? "gemeistert" : "stufe";
-      logCoins(kind, c);
+      if (c > 0) logCoins(kind, c);
     }
     if (boxSolved) logCoins("kartei", 2);
     if (c > 0 || boxSolved) d.paid[id] = 1;
-    if (after >= 1) unitBonus(id);
+    if (after >= 2) unitBonus(id);
   }
   function unitIds(uid) {
     if (uid === "verbs") return verbs.map(function (v) { return v.id; });
@@ -4710,7 +4711,7 @@ window.VERBS = [
     if (!u || u.track === "eigen") return;
     var ids = unitIds(uid); if (ids.length < 8) return;
     var ub = state.unitBonus || (state.unitBonus = {}), r = ub[uid] || (ub[uid] = {});
-    if (!r.s && ids.filter(function (x) { return levelOf(x) >= 1; }).length >= 5) { r.s = 1; logCoins("einheit", 8, "Neue Einheit entdeckt: " + u.title); }
+    if (!r.s && ids.filter(function (x) { return levelOf(x) >= 2; }).length >= 5) { r.s = 1; logCoins("einheit", 8, "Neue Einheit entdeckt: " + u.title); }
     if (!r.d && ids.every(function (x) { return levelOf(x) >= 2; })) { r.d = 1; logCoins("einheit", uid === "verbs" ? 60 : 30, "Einheit geschafft: " + u.title); }
   }
   var STREAK_BONUS = { 3: 15, 7: 40, 14: 80, 30: 200, 60: 300, 100: 500 };
@@ -4771,6 +4772,8 @@ window.VERBS = [
     act.forEach(function (x) { var r = state.s[x.id]; if (r && r.reps) { seen++; if (r.iv >= 21) mastered++; } });
     return { total: act.length, seen: seen, mastered: mastered, ok: state.totals.sentOk };
   }
+  /* Zu viel Fälliges: erst wiederholen, bevor neue Wörter dazukommen (sonst wächst nur der Berg) */
+  function newBlocked() { var p = pools(); return p.due.length + p.box.length >= 30 ? p.due.length + p.box.length : 0; }
   function pools(scope) {
     var now = Date.now(), act = scope ? words.filter(function (w) { return scope.indexOf(w.unit) >= 0; }) : activeWords();
     var due = [], box = [], fresh = [], learning = [];
@@ -5120,7 +5123,7 @@ window.VERBS = [
     rewards.missions = rewards.missions
       .concat(bumpMission("items", (function () { var dd = (d.distinct || 0) - (d.distinctBooked || 0); d.distinctBooked = d.distinct || 0; return dd; })()))
       .concat(bumpMission("box", res.boxSolved || 0))
-      .concat(bumpMission("new", res.newSeen || 0))
+      .concat(bumpMission("new", res.deep || 0))
       .concat(bumpMission("chain", res.maxChain || 0))
       .concat(bumpMission("master", res.mastered || 0))
       .concat(bumpMission("sent", res.sentOk || 0))
@@ -5439,7 +5442,7 @@ window.VERBS = [
     sentences: function () { return sentences; }, activeSentences: activeSentences,
     planSentences: planSentences, gradeSentence: gradeSentence, sentenceStats: sentenceStats,
     srec: srec, groupsOf: groupsOf, setTrack: setTrack,
-    rankOf: rankOf, addXp: addXp, addCoins: addCoins, finishSession: finishSession,
+    newBlocked: newBlocked, rankOf: rankOf, addXp: addXp, addCoins: addCoins, finishSession: finishSession,
     stats: stats, today: today, shuffle: shuffle, regenHearts: regenHearts, heartsIn: heartsIn,
     rollDay: rollDay, verbs: function () { return verbs; }, verbPools: verbPools, planVerbs: planVerbs, verbStats: verbStats, parseCsv: parseCsv, removeCustom: removeCustom,
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
@@ -6499,7 +6502,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   /* ---------- Tagesmissionen: direkt zum passenden Modus ---------- */
   var MISSION_TIP = {
     items: "Gemischte Runde: jedes Wort zählt.", goal: "Gemischte Runde bis zum Tagesziel.", box: "Fehlerkartei üben: richtige Antworten zählen.",
-    chain: "Gemischte Runde, konzentriert und ohne Hinweis.", new: "Neue Wörter kennenlernen.", master: "Fast sitzende Wörter tippen, ohne Hinweis.",
+    chain: "Gemischte Runde, konzentriert und ohne Hinweis.", new: "Wörter wiedererkennen, die du schon mal gesehen hast.", master: "Fast sitzende Wörter tippen, ohne Hinweis.",
     sent: "Satzbau: Sätze richtig legen.", arena: "Ein Spiel aus der Arena."
   };
   function missionGo(m) {
@@ -6509,7 +6512,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       case "goal": return 'data-act="start" data-mode="mix" data-min="' + left + '"';
       case "box": return 'data-act="start" data-mode="box" data-min="5"';
       case "chain": return 'data-act="start" data-mode="mix" data-min="5"';
-      case "new": return 'data-act="start" data-mode="new" data-min="5"';
+      case "new": return 'data-act="start" data-mode="mix" data-min="5"';
       case "master": return 'data-act="start" data-mode="master" data-min="5"';
       case "sent": return 'data-act="start" data-mode="sent" data-min="5"';
       case "arena": return global.ARENA ? 'data-act="arena" data-id="' + esc(m.mode || "match") + '"' : "";
@@ -6928,7 +6931,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     function cnt(n) { return " · ≈ " + n + " " + plural(n, "Aufgabe", "Aufgaben"); }
     var W = window.WordySync, plans = (W && W.connected()) ? W.activePlans() : [], aud = audioAvailable();
     var learn = tile("🧠", 'Weiterlernen <span style="color:var(--gold)">★</span>', "Mix aus allem, was dran ist" + cnt(nW), 'data-act="start" data-min="' + mins + '"') +
-      tile("✨", "Neue Wörter", p.fresh.length ? p.fresh.length + " warten auf dich" + cnt(Math.min(nW, p.fresh.length)) : "Alles schon gesehen", 'data-act="start" data-mode="new" data-min="' + mins + '"' + (p.fresh.length ? "" : " disabled")) +
+      tile("✨", "Neue Wörter", S.newBlocked() ? "Erst die " + S.newBlocked() + " fälligen wiederholen" : p.fresh.length ? p.fresh.length + " warten auf dich" + cnt(Math.min(nW, p.fresh.length)) : "Alles schon gesehen", 'data-act="start" data-mode="new" data-min="' + mins + '"' + (p.fresh.length && !S.newBlocked() ? "" : " disabled")) +
       tile("♻️", "Fehlerkartei", p.box.length ? p.box.length + " " + plural(p.box.length, "Wort", "Wörter") + " üben" + cnt(Math.min(nW, p.box.length)) : "Leer, sehr gut!", 'data-act="start" data-mode="box" data-min="' + mins + '"' + (p.box.length ? "" : " disabled")) +
       tile("💬", "Sätze", stt.sent.total ? stt.sent.seen + " von " + stt.sent.total + " geübt" + cnt(Math.min(nS, stt.sent.total)) : "Für diesen Bereich noch keine", 'data-act="start" data-mode="sent" data-min="' + mins + '"' + (stt.sent.total ? "" : " disabled")) +
       (biz ? "" : tile("🔀", "Verben", "Unregelmäßige Verben" + cnt(nV), 'data-act="start" data-mode="verbs" data-min="' + mins + '"')) +
@@ -7807,7 +7810,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     SS.ended = true;
     var sec = Math.round((Date.now() - SS.start) / 1000);
     if (reason === "done" && SS.planned) S.recordPace(sec, SS.planned);
-    var rw = S.finishSession({ items: SS.items, correct: SS.correct, sec: sec, maxChain: SS.maxChain, newSeen: SS.newSeen, boxSolved: SS.boxSolved, mastered: SS.mastered, sentOk: SS.sentOk });
+    var rw = S.finishSession({ items: SS.items, correct: SS.correct, sec: sec, maxChain: SS.maxChain, newSeen: SS.newSeen, deep: SS.deep || 0, boxSolved: SS.boxSolved, mastered: SS.mastered, sentOk: SS.sentOk });
     var st = S.state, acc = SS.items ? Math.round(SS.correct * 100 / SS.items) : 0;
     var head = reason === "hearts" ? "Kurze Pause" : SS.correct === SS.items && SS.items > 3 ? "Fehlerfrei!" : "Runde geschafft";
     var msg = reason === "hearts"
@@ -8148,7 +8151,8 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       SS.correct++; SS.chain = 0;   // mit Hinweis: gezählt, aber keine Serie und keine XP
     } else if (g > 0) {
       SS.correct++; SS.chain++; SS.maxChain = Math.max(SS.maxChain, SS.chain);
-      S.addXp(g === 2 ? 10 : 6);
+      S.addXp(before === 0 ? 2 : g === 2 ? 10 : 6);   // erstes Ansehen kaum XP: echte Punkte gibt es fürs Wiedererkennen
+      if (before === 1 && res.after >= 2) SS.deep = (SS.deep || 0) + 1;
       if (wasBox) SS.boxSolved++;   // zählt für die Mission "Fehlerkartei-Wörter richtig beantworten"
       if (res.after === 4 && before < 4) SS.mastered++;
     } else {

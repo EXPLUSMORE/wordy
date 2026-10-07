@@ -371,7 +371,7 @@
     { id: "mgoal", n: "Tagesziel erreichen", goal: 1, type: "goal", coins: 15 },
     { id: "mbox", n: "5 Fehlerkartei-Wörter richtig beantworten", goal: 5, type: "box", coins: 12 },
     { id: "mchain", n: "10 richtige in Folge", goal: 10, type: "chain", coins: 12 },
-    { id: "mnew", n: "6 neue Wörter kennenlernen", goal: 6, type: "new", coins: 10 },
+    { id: "mnew", n: "6 Wörter von früher wiedererkennen", goal: 6, type: "new", coins: 10 },
     { id: "mmaster", n: "2 Wörter meistern", goal: 2, type: "master", coins: 18 },
     { id: "msent", n: "4 Sätze richtig bauen", goal: 4, type: "sent", coins: 14 },
     { id: "marena", n: "Eine Arena-Runde spielen", goal: 1, type: "arena", coins: 10 }
@@ -403,8 +403,7 @@
     switch (m.type) {
       case "box": return p.box.length >= m.goal;
       case "new":
-        var seen = state.daily && state.daily.date === today() ? (state.daily.newSeen || 0) : 0;
-        return p.fresh.length >= m.goal && Math.max(0, state.settings.newPerDay - seen) >= m.goal;
+        return p.due.filter(function (w) { return levelOf(w.id) === 1; }).length >= m.goal;
       case "master": return p.all.filter(function (w) { return levelOf(w.id) >= 3; }).length >= m.goal;
       case "sent": return activeSentences().length >= m.goal;
       case "arena": return state.settings.arenaMissions !== false && p.all.length >= 8;
@@ -522,13 +521,15 @@
     if (d.paid[id]) return;
     var c = 0, kind = null;
     if (after > before) {
-      for (var lv = before + 1; lv <= after; lv++) c += lv === 4 ? 4 : 1;
+      /* Erstes Ansehen zahlt nichts (sonst genügt Durchklicken). Die Münze fürs neue Wort gibt es erst, wenn es später,
+         nach dem Abstand, wirklich wieder erkannt wird (Stufe 1 → 2). */
+      for (var lv = before + 1; lv <= after; lv++) c += lv === 4 ? 4 : lv === 1 ? 0 : lv === 2 ? 2 : 1;
       kind = before === 0 ? "neu" : after === 4 ? "gemeistert" : "stufe";
-      logCoins(kind, c);
+      if (c > 0) logCoins(kind, c);
     }
     if (boxSolved) logCoins("kartei", 2);
     if (c > 0 || boxSolved) d.paid[id] = 1;
-    if (after >= 1) unitBonus(id);
+    if (after >= 2) unitBonus(id);
   }
   function unitIds(uid) {
     if (uid === "verbs") return verbs.map(function (v) { return v.id; });
@@ -542,7 +543,7 @@
     if (!u || u.track === "eigen") return;
     var ids = unitIds(uid); if (ids.length < 8) return;
     var ub = state.unitBonus || (state.unitBonus = {}), r = ub[uid] || (ub[uid] = {});
-    if (!r.s && ids.filter(function (x) { return levelOf(x) >= 1; }).length >= 5) { r.s = 1; logCoins("einheit", 8, "Neue Einheit entdeckt: " + u.title); }
+    if (!r.s && ids.filter(function (x) { return levelOf(x) >= 2; }).length >= 5) { r.s = 1; logCoins("einheit", 8, "Neue Einheit entdeckt: " + u.title); }
     if (!r.d && ids.every(function (x) { return levelOf(x) >= 2; })) { r.d = 1; logCoins("einheit", uid === "verbs" ? 60 : 30, "Einheit geschafft: " + u.title); }
   }
   var STREAK_BONUS = { 3: 15, 7: 40, 14: 80, 30: 200, 60: 300, 100: 500 };
@@ -603,6 +604,8 @@
     act.forEach(function (x) { var r = state.s[x.id]; if (r && r.reps) { seen++; if (r.iv >= 21) mastered++; } });
     return { total: act.length, seen: seen, mastered: mastered, ok: state.totals.sentOk };
   }
+  /* Zu viel Fälliges: erst wiederholen, bevor neue Wörter dazukommen (sonst wächst nur der Berg) */
+  function newBlocked() { var p = pools(); return p.due.length + p.box.length >= 30 ? p.due.length + p.box.length : 0; }
   function pools(scope) {
     var now = Date.now(), act = scope ? words.filter(function (w) { return scope.indexOf(w.unit) >= 0; }) : activeWords();
     var due = [], box = [], fresh = [], learning = [];
@@ -952,7 +955,7 @@
     rewards.missions = rewards.missions
       .concat(bumpMission("items", (function () { var dd = (d.distinct || 0) - (d.distinctBooked || 0); d.distinctBooked = d.distinct || 0; return dd; })()))
       .concat(bumpMission("box", res.boxSolved || 0))
-      .concat(bumpMission("new", res.newSeen || 0))
+      .concat(bumpMission("new", res.deep || 0))
       .concat(bumpMission("chain", res.maxChain || 0))
       .concat(bumpMission("master", res.mastered || 0))
       .concat(bumpMission("sent", res.sentOk || 0))
@@ -1271,7 +1274,7 @@
     sentences: function () { return sentences; }, activeSentences: activeSentences,
     planSentences: planSentences, gradeSentence: gradeSentence, sentenceStats: sentenceStats,
     srec: srec, groupsOf: groupsOf, setTrack: setTrack,
-    rankOf: rankOf, addXp: addXp, addCoins: addCoins, finishSession: finishSession,
+    newBlocked: newBlocked, rankOf: rankOf, addXp: addXp, addCoins: addCoins, finishSession: finishSession,
     stats: stats, today: today, shuffle: shuffle, regenHearts: regenHearts, heartsIn: heartsIn,
     rollDay: rollDay, verbs: function () { return verbs; }, verbPools: verbPools, planVerbs: planVerbs, verbStats: verbStats, parseCsv: parseCsv, removeCustom: removeCustom,
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
