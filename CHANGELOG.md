@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.37.0 – 2026-10-07
+- **Erklärfilme**: 13 kurze, witzige Trickfilme (Üben → Spielmodi → 🎬 Erklärfilme) zu Weiterlernen, Neue Wörter, Fehlerkartei, Sätze, Verben, Hören, Tippen, Lücken, Zuordnen und den vier Arena-Spielen. Bruno, Pingo, Robbi und Eisi im Fortnite-Cartoon-Stil, Sprechblasen, Untertitel, optional vorgelesen, Pause/Weiter/Zurück per Tipp, am Ende „Jetzt ausprobieren“. Neue Datei `js/film.js`.
+
 ## 2.36.2 – 2026-10-07
 - Wochenziel „Neue Wörter“ heißt jetzt „Wörter wiedererkennen“ und zählt nur Wörter, die am Folgetag (nach dem Abstand) richtig beantwortet wurden. App (`deep` im Tagesverlauf), Server-Auswertung und Dashboard sind angepasst.
 

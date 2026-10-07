@@ -805,10 +805,45 @@ details.fold>.fbody{padding:2px 0 14px}
 @keyframes ctapl{50%{box-shadow:0 5px 0 #14213d,0 0 22px 4px rgba(140,255,110,.6)}}
 .ctachip{white-space:nowrap;padding:8px 8px!important;font-size:13px!important;background:rgba(255,255,255,.15)!important;color:#fff!important;border-color:rgba(255,255,255,.3)!important}.ctachip[aria-pressed="true"]{background:#ffd21f!important;color:#3a2500!important}
 @media (prefers-reduced-motion:reduce){.hhcl,.hhst,.ctabtn,.srray,.srs .it{animation:none!important}}
+/* Erklärfilme */
+.fmlist{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fmcard{display:flex;align-items:center;gap:8px;border:2px solid #14213d;border-radius:12px;padding:8px 10px;background:linear-gradient(#fff,#e9f1ff);color:#14213d;font-family:inherit;cursor:pointer;text-align:left;box-shadow:0 3px 0 rgba(20,33,61,.25)}
+.fmcard span{font-size:22px}.fmcard b{flex:1;font-size:13px;line-height:1.15}.fmcard i{font-style:normal;background:#ff3d6e;color:#fff;border-radius:50%;width:22px;height:22px;display:grid;place-items:center;font-size:10px}
+:root[data-theme="dark"] .fmcard{background:linear-gradient(#26324a,#1b2538);color:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .fmcard{background:linear-gradient(#26324a,#1b2538);color:#fff}}
+.fmov{position:fixed;inset:0;background:rgba(5,4,20,.88);z-index:400;display:grid;place-items:center;padding:10px}
+.fmwrap{width:min(94vw,430px);display:flex;flex-direction:column;gap:8px;color:#fff}
+.fmseg{display:flex;gap:4px}.fmseg i{flex:1;height:5px;border-radius:3px;background:rgba(255,255,255,.25);overflow:hidden;position:relative}
+.fmseg i.done{background:#ffd21f}.fmseg i.cur:after{content:"";position:absolute;inset:0;background:#ffd21f;transform-origin:left;animation:fmprog linear forwards}
+.paused .fmseg i.cur:after{animation-play-state:paused}
+@keyframes fmprog{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.fmbar{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-weight:800;font-size:14px}
+.fmic{border:0;background:rgba(255,255,255,.15);color:#fff;border-radius:10px;width:34px;height:34px;font-size:16px;margin-left:6px;cursor:pointer}
+.fmstage{position:relative;height:min(74vh,600px);border-radius:22px;overflow:hidden;border:3px solid #14213d;box-shadow:0 0 40px rgba(120,160,255,.35);touch-action:manipulation}
+.fmstage.in{animation:fmin .35s ease-out}@keyframes fmin{from{opacity:.2;transform:scale(.97)}}
+.fmbg{position:absolute;inset:0}
+.fmbg.day{background:linear-gradient(#3fa4ff,#bfe8ff)}.fmbg.night{background:linear-gradient(#0b1033,#3a2a8f)}.fmbg.ice{background:linear-gradient(#8fd8ff,#e8f8ff)}.fmbg.gold{background:radial-gradient(circle at 50% 30%,#ffe58a,#ff9a1a 70%)}.fmbg.arena{background:radial-gradient(ellipse at 50% 100%,#ff4d8a,#2a0f5e 70%)}
+.fmfloor{position:absolute;left:0;right:0;bottom:0;height:26%;background:linear-gradient(rgba(255,255,255,.55),rgba(255,255,255,.2));border-top:3px solid #14213d}
+.fmprop{position:absolute;font-style:normal;transform:translate(-50%,0);line-height:1;filter:drop-shadow(0 4px 0 rgba(20,33,61,.35))}
+.fm-bob{animation:fmbob 1.6s ease-in-out infinite alternate}@keyframes fmbob{to{transform:translate(-50%,-14px)}}
+.fm-spin{animation:fmspin 3s linear infinite}@keyframes fmspin{to{transform:translate(-50%,0) rotate(360deg)}}
+.fm-pop{animation:fmpop 1s cubic-bezier(.2,1.8,.4,1) infinite alternate}@keyframes fmpop{from{transform:translate(-50%,0) scale(.7)}to{transform:translate(-50%,0) scale(1.15)}}
+.fm-shake{animation:fmsh .4s linear infinite}@keyframes fmsh{25%{transform:translate(-54%,0) rotate(-8deg)}75%{transform:translate(-46%,0) rotate(8deg)}}
+.fm-fly{animation:fmfly 2s ease-in-out infinite alternate}@keyframes fmfly{from{transform:translate(-50%,10px) rotate(-10deg)}to{transform:translate(-50%,-26px) rotate(14deg)}}
+.fmc{position:absolute;bottom:17%;width:150px;margin-left:-75px;animation:fmdrop .6s cubic-bezier(.2,1.6,.4,1) both}@keyframes fmdrop{from{transform:translateY(-120%);opacity:0}}
+.fmfig{position:relative;width:130px;height:176px;margin:0 auto}
+.fmsay{position:absolute;left:50%;bottom:100%;margin-bottom:6px;transform:translateX(-50%);width:max-content;max-width:170px;background:#fff;color:#14213d;border:3px solid #14213d;border-radius:14px;padding:6px 10px;font-size:13px;font-weight:800;line-height:1.2;text-align:center;animation:fmbub .45s cubic-bezier(.2,1.7,.4,1) both}
+.fmsay:after{content:"";position:absolute;left:50%;bottom:-9px;margin-left:-6px;width:12px;height:12px;background:#fff;border-right:3px solid #14213d;border-bottom:3px solid #14213d;transform:rotate(45deg)}
+@keyframes fmbub{from{opacity:0;transform:translateX(-50%) scale(.4)}}
+.fmcap{position:absolute;left:0;right:0;bottom:0;padding:10px 14px 14px;background:linear-gradient(transparent,rgba(10,10,40,.85) 40%);text-align:center}
+.fmcap span{font-size:16px;font-weight:800;line-height:1.25;color:#fff;text-shadow:0 2px 0 #000}
+.fmend{position:absolute;inset:auto 0 24px;text-align:center;display:flex;flex-direction:column;gap:8px;align-items:center}.fmend h3{margin:0;font-size:24px;color:#fff;text-shadow:0 2px 0 #14213d}
+.fmbtn{border:3px solid #14213d;border-radius:14px;background:linear-gradient(#8bf06a,#2fb52a);color:#fff;font-weight:900;font-size:17px;padding:10px 20px;text-shadow:0 2px 0 #14213d;box-shadow:0 4px 0 #14213d;cursor:pointer;font-family:inherit}.fmbtn.b2{background:linear-gradient(#7fd2ff,#2f8cff);font-size:14px}
+@media (prefers-reduced-motion:reduce){.fmprop,.fmc,.fmsay{animation:none!important}}
 </style>
 
 
-<script>window.WORDY_VERSION="2.36.2";window.WORDY_BUILD="19449b8b4d";</script>
+<script>window.WORDY_VERSION="2.37.0";window.WORDY_BUILD="00275c3df8";</script>
 </head>
 <body>
 <div id="app">
@@ -837,28 +872,29 @@ details.fold>.fbody{padding:2px 0 14px}
   <div id="session" hidden></div>
 </div>
 <div id="arena" hidden></div>
-<script src="data/klasse6.js?v=19449b8b4d"></script>
-<script src="data/klasse7.js?v=19449b8b4d"></script>
-<script src="data/klasse8.js?v=19449b8b4d"></script>
-<script src="data/business.js?v=19449b8b4d"></script>
-<script src="data/business-basis2.js?v=19449b8b4d"></script>
-<script src="data/business-aufbau2.js?v=19449b8b4d"></script>
-<script src="data/business-profi2.js?v=19449b8b4d"></script>
-<script src="data/smalltalk.js?v=19449b8b4d"></script>
-<script src="data/idioms.js?v=19449b8b4d"></script>
-<script src="data/saetze.js?v=19449b8b4d"></script>
-<script src="data/saetze2.js?v=19449b8b4d"></script>
-<script src="data/lernbuch.js?v=19449b8b4d"></script>
-<script src="data/verben.js?v=19449b8b4d"></script>
-<script src="js/engine.js?v=19449b8b4d"></script>
-<script src="js/cosmetics.js?v=19449b8b4d"></script>
-<script src="js/fortnite.js?v=19449b8b4d"></script>
-<script src="js/figur.js?v=19449b8b4d"></script>
-<script src="js/stila.js?v=19449b8b4d"></script>
-<script src="js/loot.js?v=19449b8b4d"></script>
-<script src="js/app.js?v=19449b8b4d"></script>
-<script src="js/arena.js?v=19449b8b4d"></script>
-<script src="js/sync.js?v=19449b8b4d"></script>
+<script src="data/klasse6.js?v=00275c3df8"></script>
+<script src="data/klasse7.js?v=00275c3df8"></script>
+<script src="data/klasse8.js?v=00275c3df8"></script>
+<script src="data/business.js?v=00275c3df8"></script>
+<script src="data/business-basis2.js?v=00275c3df8"></script>
+<script src="data/business-aufbau2.js?v=00275c3df8"></script>
+<script src="data/business-profi2.js?v=00275c3df8"></script>
+<script src="data/smalltalk.js?v=00275c3df8"></script>
+<script src="data/idioms.js?v=00275c3df8"></script>
+<script src="data/saetze.js?v=00275c3df8"></script>
+<script src="data/saetze2.js?v=00275c3df8"></script>
+<script src="data/lernbuch.js?v=00275c3df8"></script>
+<script src="data/verben.js?v=00275c3df8"></script>
+<script src="js/engine.js?v=00275c3df8"></script>
+<script src="js/cosmetics.js?v=00275c3df8"></script>
+<script src="js/fortnite.js?v=00275c3df8"></script>
+<script src="js/figur.js?v=00275c3df8"></script>
+<script src="js/stila.js?v=00275c3df8"></script>
+<script src="js/loot.js?v=00275c3df8"></script>
+<script src="js/film.js?v=00275c3df8"></script>
+<script src="js/app.js?v=00275c3df8"></script>
+<script src="js/arena.js?v=00275c3df8"></script>
+<script src="js/sync.js?v=00275c3df8"></script>
 
 <script>
 if ('serviceWorker' in navigator) {

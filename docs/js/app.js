@@ -725,6 +725,9 @@
     var plays = 0, arena = st.arena || {};
     for (var k in arena) plays += arena[k].plays || 0;
     var focusT = [["👂", "Hören", "Wort hören und finden", "listen", !aud], ["⌨️", "Tippen", "Wort selbst schreiben", "type"], ["🧩", "Lücken", "Satz vervollständigen", "gap"], ["🔗", "Zuordnen", "Paare verbinden", "match"]];
+    var films = global.VTFILM ? '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">🎬 Erklärfilme</div><span class="pill">neu</span></div>' +
+      '<p class="small muted" style="margin:6px 0 10px">Bruno, Pingo, Robbi und Eisi erklären jeden Modus in 30 Sekunden.</p><div class="fmlist">' +
+      global.VTFILM.list.map(function (f) { return '<button class="fmcard" data-act="film" data-id="' + f.id + '"><span>' + f.icon + '</span><b>' + esc(f.title) + '</b><i>▶</i></button>'; }).join("") + '</div></section>' : "";
     return '<section class="card"><div class="eyebrow">Lernen</div>' +
       '<div class="row wrap" style="margin-top:8px"><span class="small muted">Dauer</span>' + [3, 5, 10, 15].map(function (m2) { return '<button class="chip" data-act="setmin" data-min="' + m2 + '" aria-pressed="' + (mins === m2) + '">' + m2 + ' Min</button>'; }).join("") + '</div>' +
       '<div class="tiles">' + learn + '</div></section>' +
@@ -733,7 +736,7 @@
       '<div class="tiles">' + play + '</div>' +
       '<details style="margin-top:12px"><summary class="small" style="cursor:pointer;font-weight:700">Wie die Spiele zählen</summary>' +
       '<p class="small muted" style="margin:8px 0 0">Ein Treffer unter Zeitdruck wird als sichere, aber flache Wiederholung gewertet. Er schiebt ein Wort eine Stufe weiter, ersetzt aber nicht das ruhige Training. Ein Fehlgriff landet sofort in der Fehlerkartei. Die Zeit läuft aufs Tagesziel.' + (plays ? ' Bisher ' + plays + ' ' + plural(plays, "Runde", "Runden") + ' gespielt.' : '') + '</p></details></section>' +
-      '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Gezielt üben</div><span class="pill">neu</span></div>' +
+      films + '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Gezielt üben</div><span class="pill">neu</span></div>' +
       '<p class="small muted" style="margin:6px 0 0">Eine Aufgabenform üben, mit Wörtern, die dran sind (≈ ' + nW + ' ' + plural(nW, "Aufgabe", "Aufgaben") + ').</p><div class="tiles">' +
       focusT.map(function (f) { return tile(f[0], f[1], f[2], 'data-act="start" data-mode="focus" data-focus="' + f[3] + '" data-min="' + mins + '"' + (f[4] ? " disabled" : "")); }).join("") + '</div></section>';
   }
@@ -2360,6 +2363,14 @@
       hf.innerHTML = heroHtml(hp.avatar, hn); if (hb) hb.textContent = CH[Math.floor(Math.random() * CH.length)];
       try { global.VTC.burst("stars", hf.getBoundingClientRect().left + 55, hf.getBoundingClientRect().top + 40, 10, .9); } catch (e) {}
       clearTimeout(hhT); hhT = setTimeout(function () { var h2 = $("#hhFig"); if (h2) h2.innerHTML = heroHtml(S.state.profile.avatar, 0); }, 4200);
+    }
+    else if (a === "film") {
+      global.VTFILM.play(act.getAttribute("data-id"), { audio: S.state.settings.audio, speak: function (t) { speak(t, 1.02, "de"); }, onGo: function (g) {
+        var b = document.createElement("button"); b.hidden = true;
+        if (g.arena) { b.setAttribute("data-act", "arena"); b.setAttribute("data-id", g.arena); }
+        else { b.setAttribute("data-act", "start"); b.setAttribute("data-mode", g.mode); if (g.focus) b.setAttribute("data-focus", g.focus); b.setAttribute("data-min", S.goalMin()); }
+        view.appendChild(b); b.click(); b.remove();
+      } });
     }
     else if (a === "srfavhint") { toast("Tippe ein Stück im Schrank an und wähle „Als Liebling“ ⭐"); }
     else if (a === "gotab") { tab = act.getAttribute("data-t"); render(); view.scrollTop = 0; }
