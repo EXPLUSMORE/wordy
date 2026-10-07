@@ -9,6 +9,12 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.27.0 – 2026-10-07
+
+- Einheiten sind überall nach Lernbereich und Gruppe geordnet: Schule (Headlight 2 als Schulbuch zuerst, dann Klasse 6, 7, 8), Business English (Basis bis Redewendungen), Eigene Vokabeln.
+- Fortschritt: Eine Karte „Einheiten nach Gruppen“ ersetzt die beiden Rückstand-Karten. Jede Gruppe zeigt Gesamtbalken, „x % sicher“ und „Gruppe üben (5 Min.)“; darin zuerst angefangene, noch nicht gefestigte Einheiten, dann neue, zuletzt gefestigte.
+- Dashboard: Fortschritt pro Einheit und alle Einheitenlisten (Ziele, Lernpläne, Lernpfad) mit Überschrift je Lernbereich; Headlight 2 als „Schulbuch“ benannt.
+
 ## 2.26.1 – 2026-10-07
 
 - Fortschritt: „Einheiten mit dem größten Rückstand“ heißt jetzt „Angefangen, noch nicht gefestigt“, gemessen am Anteil sicherer Wörter (Stufe 3+), mit Angabe „x von y geübt · z sicher“; alle angefangenen Einheiten (sechs sichtbar, Rest aufklappbar). Neu: Gruppe „Noch nicht angefangen“ mit Üben-Knopf.

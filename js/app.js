@@ -973,29 +973,32 @@
       '<div class="small muted" style="margin-top:6px">' + vst.mastered + ' sitzen langfristig</div></div></div>' +
       '<button class="btn ghost" data-act="verblist" style="margin-top:10px">Verbenliste öffnen</button></section>';
 
+    /* Einheiten nach Gruppen: Schulbuch (Headlight 2), Klassen 6–8, Eigene Listen bzw. Business Basis bis Redewendungen; je Gruppe nach Lernstand sortiert */
+    var bizT = st.settings.track === "business";
+    var ORDER = ["Headlight 2", "6", "7", "8", "Basis", "Aufbau", "Profi", "Smalltalk", "Redewendungen", "0"], byK = {}, ks = [];
+    s.perUnit.forEach(function (u) { var k = String(u.k); if (!byK[k]) { byK[k] = []; ks.push(k); } byK[k].push(u); });
+    ks.sort(function (a, b) { var ia = ORDER.indexOf(a), ib = ORDER.indexOf(b); return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); });
+    var state3 = function (u) { return u.seen === 0 ? 1 : u.sure < u.total ? 0 : 2; };   // 0 angefangen, 1 neu, 2 gefestigt
     var behindRow = function (u) {
-      var pc = Math.round(u.sure * 100 / u.total);
-      return '<div class="mission"><div class="txt"><div class="small" style="font-weight:600">' + esc(u.icon + " " + u.title) + '</div>' +
+      var pc = Math.round(u.sure * 100 / Math.max(1, u.total)), cur = state3(u), tag = cur === 1 ? "noch nicht angefangen · " + u.total + " Wörter" : u.seen + " von " + u.total + " geübt · " + u.sure + " sicher" + (cur === 2 ? " ✓" : "");
+      return '<div class="mission"><div class="txt"><div class="small" style="font-weight:600">' + esc(u.icon + " " + u.title.replace(/^Headlight 2 · /, "")) + '</div>' +
         '<div class="bar"><i style="width:' + pc + '%"></i></div>' +
-        '<div class="small muted" style="margin-top:2px">' + u.seen + ' von ' + u.total + ' geübt · ' + u.sure + ' sicher</div></div><span class="pill tnum nowrap">' + pc + '%</span>' +
+        '<div class="small muted" style="margin-top:2px">' + tag + '</div></div><span class="pill tnum nowrap">' + pc + '%</span>' +
         '<button class="btn soft" data-act="start" data-unit="' + esc(u.id) + '" data-min="5" aria-label="' + esc(u.title) + ' üben">Üben</button></div>';
     };
-    var startedU = s.perUnit.filter(function (u) { return u.seen > 0 && u.sure < u.total; })
-      .sort(function (a, b) { return (a.sure / a.total) - (b.sure / b.total); });
-    var freshU = s.perUnit.filter(function (u) { return u.seen === 0; });
-    var secBehind = '<section class="card"><div class="eyebrow">Angefangen, noch nicht gefestigt</div>' +
-      '<p class="small muted" style="margin:4px 0 0">Einheiten, in denen du schon geübt hast, sortiert nach dem Anteil sicherer Wörter (Stufe „sicher“ oder höher). „Üben“ startet fünf Minuten genau mit dieser Einheit.</p><div style="margin-top:6px">' +
-      (startedU.slice(0, 6).map(behindRow).join("") || '<p class="small muted">Noch nichts angefangen oder alles gefestigt. Nach der ersten Übungsrunde steht hier etwas.</p>') + '</div>' +
-      (startedU.length > 6 ? '<details style="margin-top:6px"><summary class="small" style="cursor:pointer">Weitere ' + (startedU.length - 6) + ' angefangene Einheiten</summary>' + startedU.slice(6).map(behindRow).join("") + '</details>' : "") +
-      '</section>' +
-      (freshU.length ? '<section class="card"><div class="eyebrow">Noch nicht angefangen</div><p class="small muted" style="margin:4px 0 0">' + freshU.length + ' ' + plural(freshU.length, "Einheit", "Einheiten") + ' ohne eine einzige geübte Vokabel.</p><div style="margin-top:6px">' +
-        freshU.slice(0, 5).map(function (u) {
-          return '<div class="mission"><div class="txt"><div class="small" style="font-weight:600">' + esc(u.icon + " " + u.title) + '</div><div class="small muted">' + u.total + ' Wörter</div></div>' +
-            '<button class="btn soft" data-act="start" data-unit="' + esc(u.id) + '" data-min="5" aria-label="' + esc(u.title) + ' üben">Üben</button></div>';
-        }).join("") + '</div>' +
-        (freshU.length > 5 ? '<details style="margin-top:6px"><summary class="small" style="cursor:pointer">Weitere ' + (freshU.length - 5) + '</summary>' + freshU.slice(5).map(function (u) {
-          return '<div class="mission"><div class="txt"><div class="small" style="font-weight:600">' + esc(u.icon + " " + u.title) + '</div><div class="small muted">' + u.total + ' Wörter</div></div><button class="btn soft" data-act="start" data-unit="' + esc(u.id) + '" data-min="5">Üben</button></div>';
-        }).join("") + '</details>' : "") + '</section>' : "");
+    var secBehind = '<section class="card"><div class="eyebrow">' + (bizT ? "Business English" : "Schule") + ' · Einheiten nach Gruppen</div>' +
+      '<p class="small muted" style="margin:4px 0 6px">Tippe eine Gruppe an. Innerhalb der Gruppe stehen zuerst die angefangenen, noch nicht gefestigten Einheiten (nach Anteil sicherer Wörter, Stufe „sicher“ oder höher), dann die noch nicht begonnenen, zuletzt die gefestigten.</p>' +
+      ks.map(function (k, gi) {
+        var us = byK[k].slice().sort(function (a, b) { return (state3(a) - state3(b)) || ((a.sure / a.total) - (b.sure / b.total)); });
+        var tot = 0, sure = 0, seen = 0, ids = []; us.forEach(function (u) { tot += u.total; sure += u.sure; seen += u.seen; ids.push(u.id); });
+        var title = k === "0" ? "✏️ Eigene Vokabeln" : (k === "Headlight 2" ? "📕 Headlight 2 (Schulbuch)" : groupLabel(/^\d+$/.test(k) ? +k : k)), pc = Math.round(sure * 100 / Math.max(1, tot));
+        var open = gi === 0 || (seen > 0 && sure < tot);
+        return '<details class="grp"' + (open ? " open" : "") + '><summary><span class="chev">▸</span><span style="flex:1 1 auto;min-width:0"><b>' + esc(title) + '</b>' +
+          '<span class="small muted" style="display:block">' + us.length + ' ' + plural(us.length, "Einheit", "Einheiten") + ' · ' + pc + ' % sicher · ' + seen + ' von ' + tot + ' Wörtern geübt</span></span></summary>' +
+          '<div class="bar" style="margin:4px 0 8px"><i style="width:' + pc + '%"></i></div>' +
+          '<button class="btn soft wide" data-act="start" data-scope="' + esc(ids.join(",")) + '" data-min="5" style="margin-bottom:6px">Gruppe üben (5 Min.)</button>' +
+          us.map(behindRow).join("") + '</details>';
+      }).join("") + '</section>';
     var secOverview = '<section class="card"><div class="eyebrow">Lernstand im Überblick</div>' +
       '<div class="tiles4" style="margin-top:10px">' +
       '<div class="kpi"><b class="tnum">' + Math.round(st.totals.sec / 60) + '</b><span>Minuten gesamt</span></div>' +
@@ -1007,7 +1010,6 @@
     var secBox = '<section class="card"><div class="eyebrow">Fehlerkartei</div>' +
       '<p style="margin:8px 0 0"><b class="tnum">' + s.boxSize + '</b> ' + plural(s.boxSize, "Wort macht", "Wörter machen") + ' noch Probleme. Sie kommen automatisch häufiger dran.</p>' +
       (s.boxSize ? '<button class="btn soft wide" data-act="start" data-mode="box" data-min="5" style="margin-top:12px">Fehlerkartei üben</button>' : '') + '</section>';
-    var bizT = st.settings.track === "business";
     var html = '<div class="stack"><div class="row" style="gap:8px"><span class="pill">' + (bizT ? "💼 Business English" : "🎒 Schule") + '</span><span class="small muted">Fortschritt in diesem Lernbereich</span></div>' + segBar("stats", statsSeg, [["ueb", "Übersicht"], ["woerter", "Wörter"], ["verlauf", "Verlauf"]]);
     if (statsSeg === "woerter") html += secDist + wordListCard() + secBox + secVerbs;
     else if (statsSeg === "verlauf") html += secDays + secSent;
@@ -2014,7 +2016,7 @@
     if (a === "arena") { if (global.ARENA) global.ARENA.start(act.getAttribute("data-id")); return; }
     if (a === "start") {
       var fc = act.getAttribute("data-focus") || null;
-      startSession({ minutes: +(act.getAttribute("data-min") || S.goalMin()), mode: act.getAttribute("data-mode") || (fc ? "focus" : "mix"), unit: act.getAttribute("data-unit") || null,
+      startSession({ minutes: +(act.getAttribute("data-min") || S.goalMin()), mode: act.getAttribute("data-mode") || (fc ? "focus" : "mix"), unit: act.getAttribute("data-unit") || null, scope: act.getAttribute("data-scope") ? act.getAttribute("data-scope").split(",") : undefined,
         vtype: act.getAttribute("data-vtype") === "1", verb: act.getAttribute("data-verb") || null, focus: fc });
     } else if (a === "track") {
       var nt = act.getAttribute("data-t");
