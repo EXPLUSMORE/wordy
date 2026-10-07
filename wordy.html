@@ -833,10 +833,30 @@ details.fold>.fbody{padding:2px 0 14px}
 .fmbtn{border:3px solid #14213d;border-radius:14px;background:linear-gradient(#8bf06a,#2fb52a);color:#fff;font-weight:900;font-size:17px;padding:10px 20px;text-shadow:0 2px 0 #14213d;box-shadow:0 4px 0 #14213d;cursor:pointer;font-family:inherit}.fmbtn.b2{background:linear-gradient(#7fd2ff,#2f8cff);font-size:14px}
 @media (prefers-reduced-motion:reduce){.fmprop,.fmc,.fmsay{animation:none!important}}
 .fslot svg,.hhf svg{width:100%!important;height:100%!important}
+/* Seltenheits-Karten im Shop */
+.rgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+.rtile{position:relative;border-radius:16px;border:3px solid #14213d;background:radial-gradient(circle at 50% 28%,var(--c1),var(--c2) 78%);color:#fff;padding:26px 8px 8px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px;box-shadow:0 4px 0 rgba(20,33,61,.35);overflow:hidden}
+.rtile.epic{box-shadow:0 4px 0 rgba(20,33,61,.35),0 0 16px var(--g)}.rtile.legend{box-shadow:0 4px 0 rgba(20,33,61,.35),0 0 22px var(--g);animation:rtpl 2.4s ease-in-out infinite alternate}
+@keyframes rtpl{to{box-shadow:0 4px 0 rgba(20,33,61,.35),0 0 34px var(--g)}}
+.rtile.epic:after,.rtile.legend:after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.35) 48%,transparent 56%);transform:translateX(-130%);animation:srgl 5s ease-in-out infinite;pointer-events:none}
+.rtile.lock{filter:saturate(.55) brightness(.85)}
+.rtag{position:absolute;left:0;top:0;background:#14213d;color:#fff;font-size:10px;font-weight:900;letter-spacing:.5px;text-transform:uppercase;padding:3px 9px;border-radius:0 0 10px 0}
+.rtile.legend .rtag{background:linear-gradient(90deg,#ffb61e,#e8730c);color:#3a2000}
+.rwish,.rown{position:absolute;right:6px;top:4px;width:26px;height:26px;border-radius:50%;border:0;background:rgba(20,33,61,.45);color:#fff;font-size:13px;display:grid;place-items:center;cursor:pointer;padding:0}
+.rwish[aria-pressed="true"]{background:#ffd21f}.rown{background:#2fb52a;font-weight:900}
+.rico{position:relative;width:78px;height:78px;display:grid;place-items:center;font-size:56px;filter:drop-shadow(0 4px 0 rgba(20,33,61,.3))}
+.rico svg{width:100%;height:100%}.rico .srst,.rico .srdisc{transform:scale(1.4)}.rico .srem{font-size:48px}.rico .dot{width:44px;height:44px}.rico .avatar{width:56px!important;height:56px!important;font-size:30px!important}
+.rprev{position:absolute;right:-10px;bottom:-4px;width:26px;height:26px;border-radius:50%;border:2px solid #14213d;background:#fff;color:#14213d;font-size:11px;cursor:pointer;padding:0}
+.rname{font-size:13px;line-height:1.15;text-shadow:0 1px 0 rgba(0,0,0,.45)}.rsub{font-size:10px;opacity:.85;line-height:1.1;min-height:11px}
+.ract{margin-top:6px;width:100%}
+.rbtn{width:100%;border:3px solid #14213d;border-radius:11px;background:linear-gradient(#7fd2ff,#2f8cff);color:#fff;font-weight:900;font-size:13px;padding:6px 4px;text-shadow:0 2px 0 #14213d;box-shadow:0 3px 0 #14213d;cursor:pointer;font-family:inherit}
+.rbtn.buy{background:linear-gradient(#ffe58a,#ffb61e);color:#3a2500;text-shadow:none}.rbtn.buy s{opacity:.55;font-weight:600}.rbtn.on{background:linear-gradient(#78e65c,#2fae2a)}
+.rpill{display:block;width:100%;background:rgba(20,33,61,.55);border-radius:10px;padding:7px 4px;font-size:11px;font-weight:800}
+@media (prefers-reduced-motion:reduce){.rtile.legend,.rtile:after{animation:none!important}}
 </style>
 
 
-<script>window.WORDY_VERSION="2.39.1";window.WORDY_BUILD="63dac420ef";</script>
+<script>window.WORDY_VERSION="2.40.0";window.WORDY_BUILD="adb2552d45";</script>
 </head>
 <body>
 <div id="app">
@@ -7714,6 +7734,22 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var n = new Date(), m = new Date(n.getFullYear(), n.getMonth(), n.getDate() + 1), mins = Math.max(1, Math.round((m - n) / 60000));
     return Math.floor(mins / 60) + " Std. " + (mins % 60) + " Min.";
   }
+  /* Seltenheits-Karte im Shop: Farbe, Glanz und Etikett nach Seltenheit; gleiche Aktionen wie die Listenzeile */
+  function shopTile(it, wishId) {
+    var own = S.owns(it), act = S.isActive(it), locked = !own && lockNote(it), price = S.priceOf(it), deal = price !== it.cost, rar = S.rarityOf(it), c = MED_COL[rar] || MED_COL.common;
+    var setName = it.reward ? (S.SETS.filter(function (s) { return s.reward === it.id; })[0] || {}).name : "";
+    var star = '<button class="rwish" data-act="wish" data-id="' + esc(it.id) + '" aria-pressed="' + (wishId === it.id) + '" aria-label="Wunsch">⭐</button>';
+    var action = own ? '<button class="rbtn' + (act ? " on" : "") + '" data-act="equip" data-id="' + esc(it.id) + '">' + (act ? "✓ aktiv" : "Auswählen") + '</button>'
+      : it.pass ? '<span class="rpill">🎁 ' + esc(it.pass) + '-Pass</span>' : it.reward ? '<span class="rpill">🎁 ' + esc(setName) + '</span>'
+      : locked ? '<span class="rpill">🔒 ab ' + esc(it.rank) + '</span>'
+      : '<button class="rbtn buy" data-act="buy" data-id="' + esc(it.id) + '">🪙 ' + (deal ? '<s>' + it.cost + '</s> ' : "") + price + '</button>';
+    var sub = KIND_NAME[it.kind] + (it.bundle ? " · ❄️ Eis-Set" : "") + (it.rank && !own && !locked ? " · ab " + esc(it.rank) : "");
+    var prev = (it.kind === "dance" || it.kind === "outfit" || it.kind === "kit") ? '<button class="rprev" data-act="dancetry" data-id="' + esc(it.id) + '" aria-label="Vorschau">▶︎</button>' : "";
+    return '<div class="rtile ' + rar + (own ? " own" : "") + (locked ? " lock" : "") + '" style="--c1:' + c[0] + ';--c2:' + c[1] + ';--g:' + RAR_GLOW[rar] + '">' +
+      '<span class="rtag">' + RAR_NAME[rar] + '</span>' + (own || it.pass || it.reward || locked ? "" : star) + (own ? '<span class="rown">✓</span>' : "") +
+      '<div class="rico">' + srIcon({ kind: it.kind, val: it.val, rar: rar, it: it }) + prev + '</div>' +
+      '<b class="rname">' + esc(it.label) + '</b><span class="rsub">' + sub + '</span><div class="ract">' + action + '</div></div>';
+  }
   function shopRow(it, wishId) {
     var own = S.owns(it), act = S.isActive(it), locked = !own && lockNote(it), price = S.priceOf(it), deal = price !== it.cost;
     var setName = it.reward ? (S.SETS.filter(function (s) { return s.reward === it.id; })[0] || {}).name : "";
@@ -7745,11 +7781,11 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
         return '<div style="margin:6px 0 12px"><div class="row" style="gap:8px;align-items:center"><b style="flex:1 1 auto">' + s.icon + ' ' + esc(s.name) + '</b><span class="pill tnum">' + have + ' / ' + its.length + '</span></div>' +
           '<div class="bar" style="margin:6px 0"><i style="width:' + Math.round(have * 100 / its.length) + '%"></i></div>' +
           '<p class="small muted" style="margin:0 0 6px">' + (done ? "Komplett! Belohnung: " + esc(rw.label) + " ✓" : "Hol alle vier Teile und bekomm den " + esc(rw.label) + " geschenkt.") + '</p>' +
-          its.map(function (x) { return shopRow(x, wishId); }).join("") + shopRow(rw, wishId) + '</div>';
+          '<div class="rgrid">' + its.map(function (x) { return shopTile(x, wishId); }).join("") + shopTile(rw, wishId) + '</div></div>';
       }).join("");
       return html + '</section>';
     }
-    html += S.SHOP.filter(function (it) { return shopTab === "fn" ? it.set === "fn" : it.kind === shopTab && !it.set; }).map(function (it) { return shopRow(it, wishId); }).join("");
+    html += '<div class="rgrid">' + S.SHOP.filter(function (it) { return shopTab === "fn" ? it.set === "fn" : it.kind === shopTab && !it.set; }).map(function (it) { return shopTile(it, wishId); }).join("") + '</div>';
     return html + '</section>';
   }
   /* Rang- und Set-Geschenke sowie die einmalige Preisgutschrift ansagen */

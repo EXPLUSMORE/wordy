@@ -1075,6 +1075,22 @@
     var n = new Date(), m = new Date(n.getFullYear(), n.getMonth(), n.getDate() + 1), mins = Math.max(1, Math.round((m - n) / 60000));
     return Math.floor(mins / 60) + " Std. " + (mins % 60) + " Min.";
   }
+  /* Seltenheits-Karte im Shop: Farbe, Glanz und Etikett nach Seltenheit; gleiche Aktionen wie die Listenzeile */
+  function shopTile(it, wishId) {
+    var own = S.owns(it), act = S.isActive(it), locked = !own && lockNote(it), price = S.priceOf(it), deal = price !== it.cost, rar = S.rarityOf(it), c = MED_COL[rar] || MED_COL.common;
+    var setName = it.reward ? (S.SETS.filter(function (s) { return s.reward === it.id; })[0] || {}).name : "";
+    var star = '<button class="rwish" data-act="wish" data-id="' + esc(it.id) + '" aria-pressed="' + (wishId === it.id) + '" aria-label="Wunsch">⭐</button>';
+    var action = own ? '<button class="rbtn' + (act ? " on" : "") + '" data-act="equip" data-id="' + esc(it.id) + '">' + (act ? "✓ aktiv" : "Auswählen") + '</button>'
+      : it.pass ? '<span class="rpill">🎁 ' + esc(it.pass) + '-Pass</span>' : it.reward ? '<span class="rpill">🎁 ' + esc(setName) + '</span>'
+      : locked ? '<span class="rpill">🔒 ab ' + esc(it.rank) + '</span>'
+      : '<button class="rbtn buy" data-act="buy" data-id="' + esc(it.id) + '">🪙 ' + (deal ? '<s>' + it.cost + '</s> ' : "") + price + '</button>';
+    var sub = KIND_NAME[it.kind] + (it.bundle ? " · ❄️ Eis-Set" : "") + (it.rank && !own && !locked ? " · ab " + esc(it.rank) : "");
+    var prev = (it.kind === "dance" || it.kind === "outfit" || it.kind === "kit") ? '<button class="rprev" data-act="dancetry" data-id="' + esc(it.id) + '" aria-label="Vorschau">▶︎</button>' : "";
+    return '<div class="rtile ' + rar + (own ? " own" : "") + (locked ? " lock" : "") + '" style="--c1:' + c[0] + ';--c2:' + c[1] + ';--g:' + RAR_GLOW[rar] + '">' +
+      '<span class="rtag">' + RAR_NAME[rar] + '</span>' + (own || it.pass || it.reward || locked ? "" : star) + (own ? '<span class="rown">✓</span>' : "") +
+      '<div class="rico">' + srIcon({ kind: it.kind, val: it.val, rar: rar, it: it }) + prev + '</div>' +
+      '<b class="rname">' + esc(it.label) + '</b><span class="rsub">' + sub + '</span><div class="ract">' + action + '</div></div>';
+  }
   function shopRow(it, wishId) {
     var own = S.owns(it), act = S.isActive(it), locked = !own && lockNote(it), price = S.priceOf(it), deal = price !== it.cost;
     var setName = it.reward ? (S.SETS.filter(function (s) { return s.reward === it.id; })[0] || {}).name : "";
@@ -1106,11 +1122,11 @@
         return '<div style="margin:6px 0 12px"><div class="row" style="gap:8px;align-items:center"><b style="flex:1 1 auto">' + s.icon + ' ' + esc(s.name) + '</b><span class="pill tnum">' + have + ' / ' + its.length + '</span></div>' +
           '<div class="bar" style="margin:6px 0"><i style="width:' + Math.round(have * 100 / its.length) + '%"></i></div>' +
           '<p class="small muted" style="margin:0 0 6px">' + (done ? "Komplett! Belohnung: " + esc(rw.label) + " ✓" : "Hol alle vier Teile und bekomm den " + esc(rw.label) + " geschenkt.") + '</p>' +
-          its.map(function (x) { return shopRow(x, wishId); }).join("") + shopRow(rw, wishId) + '</div>';
+          '<div class="rgrid">' + its.map(function (x) { return shopTile(x, wishId); }).join("") + shopTile(rw, wishId) + '</div></div>';
       }).join("");
       return html + '</section>';
     }
-    html += S.SHOP.filter(function (it) { return shopTab === "fn" ? it.set === "fn" : it.kind === shopTab && !it.set; }).map(function (it) { return shopRow(it, wishId); }).join("");
+    html += '<div class="rgrid">' + S.SHOP.filter(function (it) { return shopTab === "fn" ? it.set === "fn" : it.kind === shopTab && !it.set; }).map(function (it) { return shopTile(it, wishId); }).join("") + '</div>';
     return html + '</section>';
   }
   /* Rang- und Set-Geschenke sowie die einmalige Preisgutschrift ansagen */

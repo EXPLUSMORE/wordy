@@ -840,10 +840,30 @@ details.fold>.fbody{padding:2px 0 14px}
 .fmbtn{border:3px solid #14213d;border-radius:14px;background:linear-gradient(#8bf06a,#2fb52a);color:#fff;font-weight:900;font-size:17px;padding:10px 20px;text-shadow:0 2px 0 #14213d;box-shadow:0 4px 0 #14213d;cursor:pointer;font-family:inherit}.fmbtn.b2{background:linear-gradient(#7fd2ff,#2f8cff);font-size:14px}
 @media (prefers-reduced-motion:reduce){.fmprop,.fmc,.fmsay{animation:none!important}}
 .fslot svg,.hhf svg{width:100%!important;height:100%!important}
+/* Seltenheits-Karten im Shop */
+.rgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+.rtile{position:relative;border-radius:16px;border:3px solid #14213d;background:radial-gradient(circle at 50% 28%,var(--c1),var(--c2) 78%);color:#fff;padding:26px 8px 8px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px;box-shadow:0 4px 0 rgba(20,33,61,.35);overflow:hidden}
+.rtile.epic{box-shadow:0 4px 0 rgba(20,33,61,.35),0 0 16px var(--g)}.rtile.legend{box-shadow:0 4px 0 rgba(20,33,61,.35),0 0 22px var(--g);animation:rtpl 2.4s ease-in-out infinite alternate}
+@keyframes rtpl{to{box-shadow:0 4px 0 rgba(20,33,61,.35),0 0 34px var(--g)}}
+.rtile.epic:after,.rtile.legend:after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.35) 48%,transparent 56%);transform:translateX(-130%);animation:srgl 5s ease-in-out infinite;pointer-events:none}
+.rtile.lock{filter:saturate(.55) brightness(.85)}
+.rtag{position:absolute;left:0;top:0;background:#14213d;color:#fff;font-size:10px;font-weight:900;letter-spacing:.5px;text-transform:uppercase;padding:3px 9px;border-radius:0 0 10px 0}
+.rtile.legend .rtag{background:linear-gradient(90deg,#ffb61e,#e8730c);color:#3a2000}
+.rwish,.rown{position:absolute;right:6px;top:4px;width:26px;height:26px;border-radius:50%;border:0;background:rgba(20,33,61,.45);color:#fff;font-size:13px;display:grid;place-items:center;cursor:pointer;padding:0}
+.rwish[aria-pressed="true"]{background:#ffd21f}.rown{background:#2fb52a;font-weight:900}
+.rico{position:relative;width:78px;height:78px;display:grid;place-items:center;font-size:56px;filter:drop-shadow(0 4px 0 rgba(20,33,61,.3))}
+.rico svg{width:100%;height:100%}.rico .srst,.rico .srdisc{transform:scale(1.4)}.rico .srem{font-size:48px}.rico .dot{width:44px;height:44px}.rico .avatar{width:56px!important;height:56px!important;font-size:30px!important}
+.rprev{position:absolute;right:-10px;bottom:-4px;width:26px;height:26px;border-radius:50%;border:2px solid #14213d;background:#fff;color:#14213d;font-size:11px;cursor:pointer;padding:0}
+.rname{font-size:13px;line-height:1.15;text-shadow:0 1px 0 rgba(0,0,0,.45)}.rsub{font-size:10px;opacity:.85;line-height:1.1;min-height:11px}
+.ract{margin-top:6px;width:100%}
+.rbtn{width:100%;border:3px solid #14213d;border-radius:11px;background:linear-gradient(#7fd2ff,#2f8cff);color:#fff;font-weight:900;font-size:13px;padding:6px 4px;text-shadow:0 2px 0 #14213d;box-shadow:0 3px 0 #14213d;cursor:pointer;font-family:inherit}
+.rbtn.buy{background:linear-gradient(#ffe58a,#ffb61e);color:#3a2500;text-shadow:none}.rbtn.buy s{opacity:.55;font-weight:600}.rbtn.on{background:linear-gradient(#78e65c,#2fae2a)}
+.rpill{display:block;width:100%;background:rgba(20,33,61,.55);border-radius:10px;padding:7px 4px;font-size:11px;font-weight:800}
+@media (prefers-reduced-motion:reduce){.rtile.legend,.rtile:after{animation:none!important}}
 </style>
 
 
-<script>window.WORDY_VERSION="2.39.1";window.WORDY_BUILD="63dac420ef";</script>
+<script>window.WORDY_VERSION="2.40.0";window.WORDY_BUILD="adb2552d45";</script>
 </head>
 <body>
 <div id="app">
@@ -871,30 +891,30 @@ details.fold>.fbody{padding:2px 0 14px}
   <div id="session" hidden></div>
 </div>
 <div id="arena" hidden></div>
-<script src="data/klasse6.js?v=63dac420ef"></script>
-<script src="data/klasse7.js?v=63dac420ef"></script>
-<script src="data/klasse8.js?v=63dac420ef"></script>
-<script src="data/business.js?v=63dac420ef"></script>
-<script src="data/business-basis2.js?v=63dac420ef"></script>
-<script src="data/business-aufbau2.js?v=63dac420ef"></script>
-<script src="data/business-profi2.js?v=63dac420ef"></script>
-<script src="data/smalltalk.js?v=63dac420ef"></script>
-<script src="data/idioms.js?v=63dac420ef"></script>
-<script src="data/saetze.js?v=63dac420ef"></script>
-<script src="data/saetze2.js?v=63dac420ef"></script>
-<script src="data/lernbuch.js?v=63dac420ef"></script>
-<script src="data/verben.js?v=63dac420ef"></script>
-<script src="js/engine.js?v=63dac420ef"></script>
-<script src="js/cosmetics.js?v=63dac420ef"></script>
-<script src="js/fortnite.js?v=63dac420ef"></script>
-<script src="js/figur.js?v=63dac420ef"></script>
-<script src="js/stila.js?v=63dac420ef"></script>
-<script src="js/stilb.js?v=63dac420ef"></script>
-<script src="js/loot.js?v=63dac420ef"></script>
-<script src="js/film.js?v=63dac420ef"></script>
-<script src="js/app.js?v=63dac420ef"></script>
-<script src="js/arena.js?v=63dac420ef"></script>
-<script src="js/sync.js?v=63dac420ef"></script>
+<script src="data/klasse6.js?v=adb2552d45"></script>
+<script src="data/klasse7.js?v=adb2552d45"></script>
+<script src="data/klasse8.js?v=adb2552d45"></script>
+<script src="data/business.js?v=adb2552d45"></script>
+<script src="data/business-basis2.js?v=adb2552d45"></script>
+<script src="data/business-aufbau2.js?v=adb2552d45"></script>
+<script src="data/business-profi2.js?v=adb2552d45"></script>
+<script src="data/smalltalk.js?v=adb2552d45"></script>
+<script src="data/idioms.js?v=adb2552d45"></script>
+<script src="data/saetze.js?v=adb2552d45"></script>
+<script src="data/saetze2.js?v=adb2552d45"></script>
+<script src="data/lernbuch.js?v=adb2552d45"></script>
+<script src="data/verben.js?v=adb2552d45"></script>
+<script src="js/engine.js?v=adb2552d45"></script>
+<script src="js/cosmetics.js?v=adb2552d45"></script>
+<script src="js/fortnite.js?v=adb2552d45"></script>
+<script src="js/figur.js?v=adb2552d45"></script>
+<script src="js/stila.js?v=adb2552d45"></script>
+<script src="js/stilb.js?v=adb2552d45"></script>
+<script src="js/loot.js?v=adb2552d45"></script>
+<script src="js/film.js?v=adb2552d45"></script>
+<script src="js/app.js?v=adb2552d45"></script>
+<script src="js/arena.js?v=adb2552d45"></script>
+<script src="js/sync.js?v=adb2552d45"></script>
 
 <script>
 if ('serviceWorker' in navigator) {
