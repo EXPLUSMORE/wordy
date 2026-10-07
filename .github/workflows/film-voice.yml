@@ -1,0 +1,39 @@
+# Vertont die Erklärfilme mit einer Sprach-KI (Frauenstimme) und committet die MP3-Dateien.
+# Einmal einrichten: Repository › Settings › Secrets and variables › Actions › New repository secret
+#   Name: OPENAI_API_KEY   Wert: dein OpenAI-Schlüssel
+# Starten: Actions › „Film-Stimme erzeugen“ › Run workflow.
+name: Film-Stimme erzeugen
+on:
+  workflow_dispatch:
+    inputs:
+      voice:
+        description: "Stimme: f (Frau), m (Mann) oder both"
+        default: "f"
+      voice_name:
+        description: "OpenAI-Stimme für Frau (z. B. coral, nova, shimmer)"
+        default: "coral"
+permissions:
+  contents: write
+jobs:
+  voice:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Aufnahmen erzeugen
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          VOICE_F: ${{ inputs.voice_name }}
+        run: |
+          if [ -z "$OPENAI_API_KEY" ]; then echo "Secret OPENAI_API_KEY fehlt (Settings › Secrets and variables › Actions)."; exit 1; fi
+          if [ "${{ inputs.voice }}" = "both" ]; then node tools/film-voice.js; else node tools/film-voice.js --voice "${{ inputs.voice }}"; fi
+      - name: Website neu bauen
+        run: node build.js
+      - name: Committen
+        run: |
+          git config user.name "Wordy Film-Stimme"
+          git config user.email "actions@users.noreply.github.com"
+          git add audio docs wordy.html
+          git diff --cached --quiet && echo "Keine Änderungen." || (git commit -m "Film-Stimme: Aufnahmen erzeugt (${{ inputs.voice }})" && git push)
