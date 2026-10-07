@@ -341,6 +341,7 @@
     var line = run.mode === "survival"
       ? run.correct + " " + (run.correct === 1 ? "Wort" : "Wörter") + " am Stück"
       : score + " Punkte";
+    if (boss && boss.pass && global.VTUI && global.VTUI.danceWin) global.setTimeout(function () { global.VTUI.danceWin(true, "Boss besiegt!"); }, 700);
     el.innerHTML = '<div class="ar-end">' +
       '<div class="ar-endicon">' + (isRecord ? "🏆" : reason === "cleared" ? "🎯" : esc(m.icon)) + '</div>' +
       '<h1>' + esc(head) + '</h1>' +

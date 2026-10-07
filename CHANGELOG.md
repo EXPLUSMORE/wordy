@@ -9,6 +9,11 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.28.0 – 2026-10-07
+
+- Neue Shop-Rubrik „Tänze 💃“: Die gewählte Figur (Emoji oder gezeichnet) tanzt bei großen Siegen auf einer Bühne mit Scheinwerfern und Disco-Boden. Sechs Tänze: Wackler (gratis), Hüpfer 120, Drehung 150, Roboter 200, Moonwalk 250, Epischer Sieg 400 (ab Silber I). Jeder Tanz hat im Shop eine Vorschau (▶︎).
+- Auslöser: Boss besiegt (epischer Tanz, wenn gekauft), Rangaufstieg, fehlerfreie Runde. Tippen beendet den Tanz; bei „Bewegung reduzieren“ nur ein kleiner Hüpfer.
+
 ## 2.27.1 – 2026-10-07
 
 - Üben: Der Reiter „Einheiten“ heißt jetzt „Lernbereich“. Oben Wahl Schule/Business, darunter Gruppen wie im Fortschritt (Headlight 2 als Schulbuch, Klassen, Eigene Vokabeln bzw. Business-Stufen) mit „x % sicher“, „x von y Wörtern geübt“ und „Gruppe üben (5 Min.)“.

@@ -285,5 +285,19 @@
       '<span class="stk-cut" style="filter:url(#' + (big ? "cutL" : "cutS") + ')">' + inner + '</span>' + holo + '</span>';
   }
 
-  global.VTC = { stickerHtml: stickerHtml, runFinale: runFinale, avatarHtml: avatarHtml, frameClass: frameClass, applyLook: applyLook, burst: burst, finale: finale, sound: sound, ART: ART };
+  /* Siegertanz: Figur tanzt kurz auf einer Bühne; Tippen beendet ihn. Bei „Bewegung reduzieren“ nur ein kleiner Hüpfer. */
+  function dance(o) {
+    var old = document.getElementById("dnOv"); if (old) old.remove();
+    var ov = document.createElement("div"); ov.id = "dnOv"; ov.className = "dn-ov" + (reduce ? " dn-reduce" : "");
+    var conf = "", cols = ["#ff3d9a", "#35e0ff", "#ffd23d", "#7cff6b", "#fff"];
+    if (!reduce && (o.big || o.dance === "sieg")) for (var i = 0; i < 18; i++) conf += '<i style="left:' + (i * 5.5 + Math.random() * 3).toFixed(1) + '%;background:' + cols[i % 5] + ';animation-delay:' + (Math.random() * 1.6).toFixed(2) + 's"></i>';
+    var fig = o.dance === "moonwalk" ? '<div class="dn-mi">' + o.avatar + '</div>' : o.avatar;
+    ov.innerHTML = '<div class="dn-stage"><div class="dn-beam dn-b1"></div><div class="dn-beam dn-b2"></div><div class="dn-floor"></div><div class="dn-conf">' + conf + '</div>' +
+      '<div class="dn-sh"></div><div class="dn-fig dn-' + (o.dance || "wackler") + '">' + fig + '</div>' + (o.title ? '<div class="dn-title">' + o.title + '</div>' : "") + '</div>';
+    document.body.appendChild(ov);
+    var done = function () { if (!ov.parentNode) return; ov.classList.add("out"); global.setTimeout(function () { if (ov.parentNode) ov.remove(); }, 300); };
+    ov.addEventListener("click", done);
+    global.setTimeout(done, reduce ? 1800 : 4200);
+  }
+  global.VTC = { dance: dance, stickerHtml: stickerHtml, runFinale: runFinale, avatarHtml: avatarHtml, frameClass: frameClass, applyLook: applyLook, burst: burst, finale: finale, sound: sound, ART: ART };
 })(window);

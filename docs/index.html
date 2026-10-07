@@ -534,10 +534,44 @@ details.fold>.fbody{padding:2px 0 14px}
 .rec-card h2{font-size:21px;margin:6px 0 2px}
 .nowrap{white-space:nowrap}
 @media (min-width:520px){ .tiles4{grid-template-columns:repeat(4,1fr)} .quick{grid-template-columns:repeat(4,1fr)} }
+
+/* Siegertanz */
+.dn-ov{position:fixed;inset:0;z-index:300;display:grid;place-items:center;background:rgba(10,8,30,.55);animation:dnIn .25s ease-out}
+.dn-ov.out{opacity:0;transition:opacity .3s}
+@keyframes dnIn{from{opacity:0}}
+.dn-stage{position:relative;width:min(86vw,340px);height:250px;border-radius:20px;overflow:hidden;background:radial-gradient(ellipse at 50% 0,#6a4bd6aa,transparent 65%),#17133a;display:flex;align-items:flex-end;justify-content:center;box-shadow:0 14px 40px rgba(0,0,0,.5)}
+.dn-floor{position:absolute;left:0;right:0;bottom:0;height:46px;background:repeating-linear-gradient(90deg,#ff3d9a 0 25%,#35e0ff 25% 50%,#ffd23d 50% 75%,#7cff6b 75% 100%);opacity:.55;animation:dnFl 1s steps(4) infinite}
+@keyframes dnFl{to{filter:hue-rotate(180deg)}}
+.dn-beam{position:absolute;top:-10px;width:56px;height:240px;background:linear-gradient(#fff6,transparent);transform-origin:50% 0;opacity:.35}
+.dn-b1{left:20%;animation:dnSw 2s ease-in-out infinite alternate}.dn-b2{right:20%;animation:dnSw 2s ease-in-out infinite alternate-reverse}
+@keyframes dnSw{from{transform:rotate(-22deg)}to{transform:rotate(22deg)}}
+.dn-fig{position:relative;z-index:2;font-size:92px;line-height:1;margin-bottom:34px;width:92px;height:92px;transform-origin:50% 100%;display:flex;align-items:center;justify-content:center}
+.dn-fig svg{width:92px;height:92px}
+.dn-sh{position:absolute;bottom:28px;left:50%;width:76px;height:12px;margin-left:-38px;border-radius:50%;background:#0008;z-index:1}
+.dn-title{position:absolute;top:14px;left:0;right:0;text-align:center;font-weight:800;font-size:22px;color:#fff;text-shadow:0 2px 10px #000a;z-index:3;animation:dnT .6s cubic-bezier(.2,1.4,.4,1)}
+@keyframes dnT{from{transform:scale(.3);opacity:0}}
+.dn-wackler{animation:dnWa .5s ease-in-out infinite alternate}
+@keyframes dnWa{0%{transform:rotate(-14deg) translateX(-10px)}100%{transform:rotate(14deg) translateX(10px)}}
+.dn-huepfer{animation:dnHu .6s cubic-bezier(.3,0,.4,1) infinite}
+@keyframes dnHu{0%,100%{transform:translateY(0) scale(1.15,.8)}45%{transform:translateY(-60px) scale(.9,1.15) rotate(8deg)}70%{transform:translateY(-60px) scale(.9,1.15) rotate(-8deg)}}
+.dn-drehung{animation:dnDr 1.4s cubic-bezier(.5,0,.3,1) infinite}
+@keyframes dnDr{0%{transform:translateY(0) rotateY(0)}40%{transform:translateY(-44px) rotateY(360deg) scale(1.1)}60%,100%{transform:translateY(0) rotateY(720deg)}}
+.dn-roboter{animation:dnRo 1.6s steps(1) infinite}
+@keyframes dnRo{0%{transform:rotate(0)}12%{transform:rotate(-18deg) translateX(-14px)}25%{transform:rotate(0) translateY(-14px)}37%{transform:rotate(18deg) translateX(14px)}50%{transform:rotate(0) scaleY(.8)}62%{transform:rotate(-18deg) translateX(-14px) translateY(-14px)}75%{transform:rotate(0)}87%{transform:rotate(18deg) translateX(14px) scaleX(.85)}}
+.dn-moonwalk{animation:dnMo 2.4s linear infinite}
+@keyframes dnMo{0%{transform:translateX(-80px) scaleX(-1) rotate(-6deg)}50%{transform:translateX(80px) scaleX(-1) rotate(6deg)}50.01%{transform:translateX(80px) scaleX(1) rotate(-6deg)}100%{transform:translateX(-80px) scaleX(1) rotate(6deg)}}
+.dn-mi{animation:dnMw .3s ease-in-out infinite alternate;display:flex}@keyframes dnMw{to{transform:translateY(-8px)}}
+.dn-sieg{animation:dnSi 1.8s ease-in-out infinite}
+@keyframes dnSi{0%,100%{transform:translateY(0) rotate(0) scale(1)}15%{transform:translateY(-52px) rotate(-14deg) scale(1.25)}30%{transform:translateY(0) rotate(14deg) scale(1.1,.9)}45%{transform:translateY(-52px) rotate(14deg) scale(1.25)}60%{transform:translateY(0) rotate(-14deg) scale(1.1,.9)}75%{transform:translateY(-76px) rotate(360deg) scale(1.35)}90%{transform:translateY(0) scale(1.15,.85)}}
+.dn-conf i{position:absolute;top:-8px;width:7px;height:12px;opacity:.9;animation:dnCf 2s linear infinite}
+@keyframes dnCf{to{transform:translateY(270px) rotate(540deg)}}
+.dn-reduce .dn-fig,.dn-reduce .dn-beam,.dn-reduce .dn-floor,.dn-reduce .dn-mi{animation:none}
+.dn-reduce .dn-fig{animation:dnHop .5s ease-out 1}
+@keyframes dnHop{50%{transform:translateY(-24px)}}
 </style>
 
 
-<script>window.WORDY_VERSION="2.27.1";window.WORDY_BUILD="c90991f354";</script>
+<script>window.WORDY_VERSION="2.28.0";window.WORDY_BUILD="534ed876cb";</script>
 </head>
 <body>
 <div id="app">
@@ -564,25 +598,25 @@ details.fold>.fbody{padding:2px 0 14px}
   <div id="session" hidden></div>
 </div>
 <div id="arena" hidden></div>
-<script src="data/klasse6.js?v=c90991f354"></script>
-<script src="data/klasse7.js?v=c90991f354"></script>
-<script src="data/klasse8.js?v=c90991f354"></script>
-<script src="data/business.js?v=c90991f354"></script>
-<script src="data/business-basis2.js?v=c90991f354"></script>
-<script src="data/business-aufbau2.js?v=c90991f354"></script>
-<script src="data/business-profi2.js?v=c90991f354"></script>
-<script src="data/smalltalk.js?v=c90991f354"></script>
-<script src="data/idioms.js?v=c90991f354"></script>
-<script src="data/saetze.js?v=c90991f354"></script>
-<script src="data/saetze2.js?v=c90991f354"></script>
-<script src="data/lernbuch.js?v=c90991f354"></script>
-<script src="data/verben.js?v=c90991f354"></script>
-<script src="js/engine.js?v=c90991f354"></script>
-<script src="js/cosmetics.js?v=c90991f354"></script>
-<script src="js/fortnite.js?v=c90991f354"></script>
-<script src="js/app.js?v=c90991f354"></script>
-<script src="js/arena.js?v=c90991f354"></script>
-<script src="js/sync.js?v=c90991f354"></script>
+<script src="data/klasse6.js?v=534ed876cb"></script>
+<script src="data/klasse7.js?v=534ed876cb"></script>
+<script src="data/klasse8.js?v=534ed876cb"></script>
+<script src="data/business.js?v=534ed876cb"></script>
+<script src="data/business-basis2.js?v=534ed876cb"></script>
+<script src="data/business-aufbau2.js?v=534ed876cb"></script>
+<script src="data/business-profi2.js?v=534ed876cb"></script>
+<script src="data/smalltalk.js?v=534ed876cb"></script>
+<script src="data/idioms.js?v=534ed876cb"></script>
+<script src="data/saetze.js?v=534ed876cb"></script>
+<script src="data/saetze2.js?v=534ed876cb"></script>
+<script src="data/lernbuch.js?v=534ed876cb"></script>
+<script src="data/verben.js?v=534ed876cb"></script>
+<script src="js/engine.js?v=534ed876cb"></script>
+<script src="js/cosmetics.js?v=534ed876cb"></script>
+<script src="js/fortnite.js?v=534ed876cb"></script>
+<script src="js/app.js?v=534ed876cb"></script>
+<script src="js/arena.js?v=534ed876cb"></script>
+<script src="js/sync.js?v=534ed876cb"></script>
 
 <script>
 if ('serviceWorker' in navigator) {

@@ -101,6 +101,13 @@
     { id: "fx:sparks",   kind: "fx", label: "Funken",        cost: 200, val: "sparks" },
     { id: "fx:firework", kind: "fx", label: "Feuerwerk",     cost: 300, val: "firework" },
 
+    { id: "dn:wackler", kind: "dance", label: "Wackler",       cost: 0,   val: "wackler" },
+    { id: "dn:huepfer", kind: "dance", label: "Hüpfer",        cost: 120, val: "huepfer" },
+    { id: "dn:drehung", kind: "dance", label: "Drehung",       cost: 150, val: "drehung" },
+    { id: "dn:roboter", kind: "dance", label: "Roboter",       cost: 200, val: "roboter" },
+    { id: "dn:moonwalk", kind: "dance", label: "Moonwalk",     cost: 250, val: "moonwalk" },
+    { id: "dn:sieg",    kind: "dance", label: "Epischer Sieg", cost: 400, val: "sieg", rank: "Silber I" },
+
     { id: "sn:none",  kind: "snd", label: "Stumm",     cost: 0,   val: "none" },
     { id: "sn:bell",  kind: "snd", label: "Glöckchen", cost: 80,  val: "bell" },
     { id: "sn:arcade", kind: "snd", label: "Arcade",   cost: 120, val: "arcade" },
@@ -119,7 +126,7 @@
   var MAX_STICKERS = 5;
   /* Sticker-Plätze auf dem Profil: der erste ist gratis, die weiteren werden nacheinander freigeschaltet */
   var STICKER_SLOT_COST = [0, 100, 150, 150, 150];
-  var PROFILE_KEY = { avatar: "avatar", frame: "frame", title: "title", bg: "bg", fx: "fx", snd: "snd", theme: "theme" };
+  var PROFILE_KEY = { avatar: "avatar", frame: "frame", title: "title", bg: "bg", fx: "fx", snd: "snd", theme: "theme", dance: "dance" };
 
   var BADGES = [
     { id: "start",   n: "Erster Schritt",  d: "Die erste Übung abgeschlossen." },
@@ -840,7 +847,7 @@
   function stickers() { var l = state.profile.stickers; if (!Array.isArray(l)) l = state.profile.stickers = []; return l; }
   function isActive(it) {
     if (it.kind === "sticker") return stickers().indexOf(it.id) >= 0; var v = state.profile[PROFILE_KEY[it.kind]]; return (v == null ? defaultOf(it.kind) : v) === it.val; }
-  function defaultOf(kind) { return kind === "avatar" ? "🦊" : kind === "theme" ? "paper" : kind === "title" ? "" : "none"; }
+  function defaultOf(kind) { return kind === "avatar" ? "🦊" : kind === "theme" ? "paper" : kind === "dance" ? "wackler" : kind === "title" ? "" : "none"; }
   function equip(id) {
     var it = itemById(id); if (!it || !owns(it)) return { error: "Das gehört dir noch nicht." };
     if (it.kind === "sticker") {            // antippen klebt auf oder löst wieder ab; höchstens so viele wie freigeschaltete Plätze

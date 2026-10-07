@@ -527,10 +527,44 @@ details.fold>.fbody{padding:2px 0 14px}
 .rec-card h2{font-size:21px;margin:6px 0 2px}
 .nowrap{white-space:nowrap}
 @media (min-width:520px){ .tiles4{grid-template-columns:repeat(4,1fr)} .quick{grid-template-columns:repeat(4,1fr)} }
+
+/* Siegertanz */
+.dn-ov{position:fixed;inset:0;z-index:300;display:grid;place-items:center;background:rgba(10,8,30,.55);animation:dnIn .25s ease-out}
+.dn-ov.out{opacity:0;transition:opacity .3s}
+@keyframes dnIn{from{opacity:0}}
+.dn-stage{position:relative;width:min(86vw,340px);height:250px;border-radius:20px;overflow:hidden;background:radial-gradient(ellipse at 50% 0,#6a4bd6aa,transparent 65%),#17133a;display:flex;align-items:flex-end;justify-content:center;box-shadow:0 14px 40px rgba(0,0,0,.5)}
+.dn-floor{position:absolute;left:0;right:0;bottom:0;height:46px;background:repeating-linear-gradient(90deg,#ff3d9a 0 25%,#35e0ff 25% 50%,#ffd23d 50% 75%,#7cff6b 75% 100%);opacity:.55;animation:dnFl 1s steps(4) infinite}
+@keyframes dnFl{to{filter:hue-rotate(180deg)}}
+.dn-beam{position:absolute;top:-10px;width:56px;height:240px;background:linear-gradient(#fff6,transparent);transform-origin:50% 0;opacity:.35}
+.dn-b1{left:20%;animation:dnSw 2s ease-in-out infinite alternate}.dn-b2{right:20%;animation:dnSw 2s ease-in-out infinite alternate-reverse}
+@keyframes dnSw{from{transform:rotate(-22deg)}to{transform:rotate(22deg)}}
+.dn-fig{position:relative;z-index:2;font-size:92px;line-height:1;margin-bottom:34px;width:92px;height:92px;transform-origin:50% 100%;display:flex;align-items:center;justify-content:center}
+.dn-fig svg{width:92px;height:92px}
+.dn-sh{position:absolute;bottom:28px;left:50%;width:76px;height:12px;margin-left:-38px;border-radius:50%;background:#0008;z-index:1}
+.dn-title{position:absolute;top:14px;left:0;right:0;text-align:center;font-weight:800;font-size:22px;color:#fff;text-shadow:0 2px 10px #000a;z-index:3;animation:dnT .6s cubic-bezier(.2,1.4,.4,1)}
+@keyframes dnT{from{transform:scale(.3);opacity:0}}
+.dn-wackler{animation:dnWa .5s ease-in-out infinite alternate}
+@keyframes dnWa{0%{transform:rotate(-14deg) translateX(-10px)}100%{transform:rotate(14deg) translateX(10px)}}
+.dn-huepfer{animation:dnHu .6s cubic-bezier(.3,0,.4,1) infinite}
+@keyframes dnHu{0%,100%{transform:translateY(0) scale(1.15,.8)}45%{transform:translateY(-60px) scale(.9,1.15) rotate(8deg)}70%{transform:translateY(-60px) scale(.9,1.15) rotate(-8deg)}}
+.dn-drehung{animation:dnDr 1.4s cubic-bezier(.5,0,.3,1) infinite}
+@keyframes dnDr{0%{transform:translateY(0) rotateY(0)}40%{transform:translateY(-44px) rotateY(360deg) scale(1.1)}60%,100%{transform:translateY(0) rotateY(720deg)}}
+.dn-roboter{animation:dnRo 1.6s steps(1) infinite}
+@keyframes dnRo{0%{transform:rotate(0)}12%{transform:rotate(-18deg) translateX(-14px)}25%{transform:rotate(0) translateY(-14px)}37%{transform:rotate(18deg) translateX(14px)}50%{transform:rotate(0) scaleY(.8)}62%{transform:rotate(-18deg) translateX(-14px) translateY(-14px)}75%{transform:rotate(0)}87%{transform:rotate(18deg) translateX(14px) scaleX(.85)}}
+.dn-moonwalk{animation:dnMo 2.4s linear infinite}
+@keyframes dnMo{0%{transform:translateX(-80px) scaleX(-1) rotate(-6deg)}50%{transform:translateX(80px) scaleX(-1) rotate(6deg)}50.01%{transform:translateX(80px) scaleX(1) rotate(-6deg)}100%{transform:translateX(-80px) scaleX(1) rotate(6deg)}}
+.dn-mi{animation:dnMw .3s ease-in-out infinite alternate;display:flex}@keyframes dnMw{to{transform:translateY(-8px)}}
+.dn-sieg{animation:dnSi 1.8s ease-in-out infinite}
+@keyframes dnSi{0%,100%{transform:translateY(0) rotate(0) scale(1)}15%{transform:translateY(-52px) rotate(-14deg) scale(1.25)}30%{transform:translateY(0) rotate(14deg) scale(1.1,.9)}45%{transform:translateY(-52px) rotate(14deg) scale(1.25)}60%{transform:translateY(0) rotate(-14deg) scale(1.1,.9)}75%{transform:translateY(-76px) rotate(360deg) scale(1.35)}90%{transform:translateY(0) scale(1.15,.85)}}
+.dn-conf i{position:absolute;top:-8px;width:7px;height:12px;opacity:.9;animation:dnCf 2s linear infinite}
+@keyframes dnCf{to{transform:translateY(270px) rotate(540deg)}}
+.dn-reduce .dn-fig,.dn-reduce .dn-beam,.dn-reduce .dn-floor,.dn-reduce .dn-mi{animation:none}
+.dn-reduce .dn-fig{animation:dnHop .5s ease-out 1}
+@keyframes dnHop{50%{transform:translateY(-24px)}}
 </style>
 
 
-<script>window.WORDY_VERSION="2.27.1";window.WORDY_BUILD="c90991f354";</script>
+<script>window.WORDY_VERSION="2.28.0";window.WORDY_BUILD="534ed876cb";</script>
 </head>
 <body>
 <div id="app">
@@ -3996,6 +4030,13 @@ window.VERBS = [
     { id: "fx:sparks",   kind: "fx", label: "Funken",        cost: 200, val: "sparks" },
     { id: "fx:firework", kind: "fx", label: "Feuerwerk",     cost: 300, val: "firework" },
 
+    { id: "dn:wackler", kind: "dance", label: "Wackler",       cost: 0,   val: "wackler" },
+    { id: "dn:huepfer", kind: "dance", label: "Hüpfer",        cost: 120, val: "huepfer" },
+    { id: "dn:drehung", kind: "dance", label: "Drehung",       cost: 150, val: "drehung" },
+    { id: "dn:roboter", kind: "dance", label: "Roboter",       cost: 200, val: "roboter" },
+    { id: "dn:moonwalk", kind: "dance", label: "Moonwalk",     cost: 250, val: "moonwalk" },
+    { id: "dn:sieg",    kind: "dance", label: "Epischer Sieg", cost: 400, val: "sieg", rank: "Silber I" },
+
     { id: "sn:none",  kind: "snd", label: "Stumm",     cost: 0,   val: "none" },
     { id: "sn:bell",  kind: "snd", label: "Glöckchen", cost: 80,  val: "bell" },
     { id: "sn:arcade", kind: "snd", label: "Arcade",   cost: 120, val: "arcade" },
@@ -4014,7 +4055,7 @@ window.VERBS = [
   var MAX_STICKERS = 5;
   /* Sticker-Plätze auf dem Profil: der erste ist gratis, die weiteren werden nacheinander freigeschaltet */
   var STICKER_SLOT_COST = [0, 100, 150, 150, 150];
-  var PROFILE_KEY = { avatar: "avatar", frame: "frame", title: "title", bg: "bg", fx: "fx", snd: "snd", theme: "theme" };
+  var PROFILE_KEY = { avatar: "avatar", frame: "frame", title: "title", bg: "bg", fx: "fx", snd: "snd", theme: "theme", dance: "dance" };
 
   var BADGES = [
     { id: "start",   n: "Erster Schritt",  d: "Die erste Übung abgeschlossen." },
@@ -4735,7 +4776,7 @@ window.VERBS = [
   function stickers() { var l = state.profile.stickers; if (!Array.isArray(l)) l = state.profile.stickers = []; return l; }
   function isActive(it) {
     if (it.kind === "sticker") return stickers().indexOf(it.id) >= 0; var v = state.profile[PROFILE_KEY[it.kind]]; return (v == null ? defaultOf(it.kind) : v) === it.val; }
-  function defaultOf(kind) { return kind === "avatar" ? "🦊" : kind === "theme" ? "paper" : kind === "title" ? "" : "none"; }
+  function defaultOf(kind) { return kind === "avatar" ? "🦊" : kind === "theme" ? "paper" : kind === "dance" ? "wackler" : kind === "title" ? "" : "none"; }
   function equip(id) {
     var it = itemById(id); if (!it || !owns(it)) return { error: "Das gehört dir noch nicht." };
     if (it.kind === "sticker") {            // antippen klebt auf oder löst wieder ab; höchstens so viele wie freigeschaltete Plätze
@@ -5216,7 +5257,21 @@ window.VERBS = [
       '<span class="stk-cut" style="filter:url(#' + (big ? "cutL" : "cutS") + ')">' + inner + '</span>' + holo + '</span>';
   }
 
-  global.VTC = { stickerHtml: stickerHtml, runFinale: runFinale, avatarHtml: avatarHtml, frameClass: frameClass, applyLook: applyLook, burst: burst, finale: finale, sound: sound, ART: ART };
+  /* Siegertanz: Figur tanzt kurz auf einer Bühne; Tippen beendet ihn. Bei „Bewegung reduzieren“ nur ein kleiner Hüpfer. */
+  function dance(o) {
+    var old = document.getElementById("dnOv"); if (old) old.remove();
+    var ov = document.createElement("div"); ov.id = "dnOv"; ov.className = "dn-ov" + (reduce ? " dn-reduce" : "");
+    var conf = "", cols = ["#ff3d9a", "#35e0ff", "#ffd23d", "#7cff6b", "#fff"];
+    if (!reduce && (o.big || o.dance === "sieg")) for (var i = 0; i < 18; i++) conf += '<i style="left:' + (i * 5.5 + Math.random() * 3).toFixed(1) + '%;background:' + cols[i % 5] + ';animation-delay:' + (Math.random() * 1.6).toFixed(2) + 's"></i>';
+    var fig = o.dance === "moonwalk" ? '<div class="dn-mi">' + o.avatar + '</div>' : o.avatar;
+    ov.innerHTML = '<div class="dn-stage"><div class="dn-beam dn-b1"></div><div class="dn-beam dn-b2"></div><div class="dn-floor"></div><div class="dn-conf">' + conf + '</div>' +
+      '<div class="dn-sh"></div><div class="dn-fig dn-' + (o.dance || "wackler") + '">' + fig + '</div>' + (o.title ? '<div class="dn-title">' + o.title + '</div>' : "") + '</div>';
+    document.body.appendChild(ov);
+    var done = function () { if (!ov.parentNode) return; ov.classList.add("out"); global.setTimeout(function () { if (ov.parentNode) ov.remove(); }, 300); };
+    ov.addEventListener("click", done);
+    global.setTimeout(done, reduce ? 1800 : 4200);
+  }
+  global.VTC = { dance: dance, stickerHtml: stickerHtml, runFinale: runFinale, avatarHtml: avatarHtml, frameClass: frameClass, applyLook: applyLook, burst: burst, finale: finale, sound: sound, ART: ART };
 })(window);
 </script>
 <script>/* Wordy – Fortnite-Sammlung: eigene Zeichnungen im App-Stil (Fan-Art, keine Originalgrafiken).
@@ -5748,6 +5803,11 @@ window.VERBS = [
     pathShown = { section: cur.section, pos: p.pos, k: coords ? coords.curIdx : 0, jump: false };
     return h;
   }
+  /* Siegertanz der gewählten Figur: bei Boss immer der epische (wenn gekauft), sonst der gewählte */
+  function danceWin(big, title) {
+    var p = S.state.profile, sieg = S.SHOP.filter(function (x) { return x.id === "dn:sieg"; })[0];
+    global.VTC.dance({ avatar: avatarHtml(p.avatar), dance: big && sieg && S.owns(sieg) ? "sieg" : (p.dance || "wackler"), title: title, big: big });
+  }
   var BOSS_NAMES = { match: "Match-Rausch", blitz: "Blitzrunde", survival: "Letztes Herz" };
   /* Boss-Runde: ein Arena-Modus mit den Wörtern des ganzen Abschnitts; geschafft ab einer Mindestzahl richtiger Antworten */
   function startBoss(st) {
@@ -6141,9 +6201,9 @@ window.VERBS = [
   /* ---------- Shop und Sammelalbum ---------- */
   var SHOP_TABS = [
     { k: "avatar", n: "Figuren" }, { k: "sticker", n: "Sticker" }, { k: "frame", n: "Rahmen" }, { k: "title", n: "Titel" },
-    { k: "fn", n: "Fortnite" }, { k: "bg", n: "Hintergründe" }, { k: "fx", n: "Effekte" }, { k: "snd", n: "Töne" }, { k: "theme", n: "Farben" }
+    { k: "fn", n: "Fortnite" }, { k: "bg", n: "Hintergründe" }, { k: "fx", n: "Effekte" }, { k: "dance", n: "Tänze 💃" }, { k: "snd", n: "Töne" }, { k: "theme", n: "Farben" }
   ];
-  var KIND_NAME = { sticker: "Sticker", avatar: "Figur", frame: "Rahmen", title: "Titel", bg: "Hintergrund", fx: "Effekt", snd: "Ton", theme: "Farbwelt" };
+  var KIND_NAME = { sticker: "Sticker", avatar: "Figur", frame: "Rahmen", title: "Titel", bg: "Hintergrund", fx: "Effekt", dance: "Tanz", snd: "Ton", theme: "Farbwelt" };
   var shopTab = "avatar";
   var THEME_DOT = { paper: "#1E6273", mint: "#2E7357", plum: "#6A3D70", amber: "#8A5A1B" };
   function shopIcon(it) {
@@ -6156,6 +6216,7 @@ window.VERBS = [
       case "bg": return it.val === "stars" ? "✨" : it.val === "clouds" ? "☁️" : it.val === "space" ? "🌌" : "▫️";
       case "fx": return it.val === "confetti" ? "🎊" : it.val === "stars" ? "⭐" : it.val === "sparks" ? "⚡" : it.val === "firework" ? "🎆" : "▫️";
       case "snd": return it.val === "none" ? "🔇" : "🔔";
+      case "dance": return "💃";
     }
     return "";
   }
@@ -6224,6 +6285,7 @@ window.VERBS = [
       return '<div class="shopitem"><span class="si">' + shopIcon(it) + '</span>' +
         '<span style="flex:1 1 auto"><b class="small">' + esc(it.label) + '</b><br><span class="small muted">' + KIND_NAME[it.kind] +
         (it.rank && !own ? " · ab " + esc(it.rank) : "") + '</span></span>' +
+        (it.kind === "dance" ? '<button class="chip" data-act="dancetry" data-id="' + esc(it.id) + '" aria-label="Vorschau" style="margin-right:6px">▶︎</button>' : '') +
         (own ? '<button class="chip" data-act="equip" data-id="' + esc(it.id) + '" aria-pressed="' + act + '">' + (act ? "aktiv" : "auswählen") + '</button>'
           : locked ? '<span class="pill" title="Erst ab Rang ' + esc(it.rank) + '">🔒 ' + esc(it.rank) + '</span><button class="chip" data-act="wish" data-id="' + esc(it.id) + '" aria-pressed="' + (wishId === it.id) + '" aria-label="Wunsch" style="margin-left:6px">⭐</button>'
           : '<button class="chip" data-act="wish" data-id="' + esc(it.id) + '" aria-pressed="' + (wishId === it.id) + '" aria-label="Wunsch" style="margin-right:6px">⭐</button><button class="btn soft" data-act="buy" data-id="' + esc(it.id) + '">🪙 ' + it.cost + '</button>') + '</div>';
@@ -6740,6 +6802,7 @@ window.VERBS = [
     renderHeader();
     global.VTC.runFinale(sessionEl, { pct0: pct(r0), pct1: pct(r1), rankUp: rankUp, coins: coinGain, perfect: perfect,
       ok: good && acc >= 70, fx: st.profile.fx, snd: st.profile.snd, audio: st.settings.audio });
+    if (rankUp || perfect) setTimeout(function () { danceWin(!!rankUp, rankUp ? "Rangaufstieg!" : "Fehlerfrei!"); }, 1900);
     if (rw.streakUp) { var fl = sessionEl.querySelector(".fin-flame"); if (fl) fl.classList.add("go"); }
   }
   var CHEST_SVG = '<svg class="chestsvg" viewBox="0 0 120 104" aria-hidden="true"><rect x="14" y="52" width="92" height="46" rx="6" fill="#8a5a2b"/><rect x="14" y="64" width="92" height="8" fill="#f2b33d"/>' +
@@ -7465,6 +7528,7 @@ window.VERBS = [
       if (re.item.kind === "sticker") toast(re.on ? "Aufgeklebt: " + re.item.label : "Abgelöst: " + re.item.label);
       renderHeader(); render();
     }
+    else if (a === "dancetry") { var dit = S.SHOP.filter(function (x) { return x.id === act.getAttribute("data-id"); })[0]; if (dit) global.VTC.dance({ avatar: avatarHtml(S.state.profile.avatar), dance: dit.val, title: dit.label }); }
     else if (a === "shoptab") { shopTab = act.getAttribute("data-k"); render(); }
     else if (a === "checkupdate") {
       if (!navigator.serviceWorker) return toast("Dieses Gerät kennt keine App-Updates. Seite einfach neu laden.");
@@ -7570,6 +7634,7 @@ window.VERBS = [
     refreshHeader: renderHeader,
     afterArena: function () { render(); },
     bossFinish: bossFinish,
+    danceWin: danceWin,
     openChest: openChest
   };
 
@@ -7929,6 +7994,7 @@ window.VERBS = [
     var line = run.mode === "survival"
       ? run.correct + " " + (run.correct === 1 ? "Wort" : "Wörter") + " am Stück"
       : score + " Punkte";
+    if (boss && boss.pass && global.VTUI && global.VTUI.danceWin) global.setTimeout(function () { global.VTUI.danceWin(true, "Boss besiegt!"); }, 700);
     el.innerHTML = '<div class="ar-end">' +
       '<div class="ar-endicon">' + (isRecord ? "🏆" : reason === "cleared" ? "🎯" : esc(m.icon)) + '</div>' +
       '<h1>' + esc(head) + '</h1>' +
