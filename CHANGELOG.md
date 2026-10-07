@@ -9,6 +9,12 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.36.0 – 2026-10-07
+- **Showroom** als eigener Reiter: Trophäenschrank mit Regalen (Pokale & Medaillen, Figuren, Tänze, Outfits & Trikots, Sticker, Extras), Seltenheitsstufen, gesperrte Stücke als Silhouette, „NEU“-Marke, Detailansicht (Liebling, Tragen, Ansehen, Zum Shop/Pass).
+- **Sammler-Pokale** Bronze/Silber/Gold/Platin (25/50/75/100 % der Sammlung) mit einmaliger Münzbelohnung.
+- **Lieblingsstücke**: bis zu 3, auf der Bühne im Showroom, auf der Startseite und im Kopf der App.
+- **Neue Startseite**: Hero-Bühne mit Himmel je nach Tageszeit, tippbare tanzende Figur mit Sprechblase, Tagesziel-Ring, Rang-Balken, Streak/Münzen, Lieblingsleiste und große „Los geht’s“-Karte.
+
 ## 2.35.0 – 2026-10-07
 
 - Pass „Eiswelt“: ein Monat aus vier Wochen-Sets plus Finale. Jede Woche gibt es eine Aufgabe (Tage mit Tagesziel in 7 Tagen); wer sie schafft, holt das Set ab: Figur mit passendem Sticker, Tanz, +1 Stickerplatz und Münzen. Abholen läuft als Beute-Animation (Eisblock bzw. Tresor beim Finale) mit Seltenheits-Karten. Karte „Eiswelt“ auf der Startseite.

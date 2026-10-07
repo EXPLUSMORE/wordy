@@ -65,7 +65,7 @@ header#top{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:10px 1
   background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:blur(8px);
   border-bottom:1px solid var(--line)}
 main{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;padding:16px 16px 28px;-webkit-overflow-scrolling:touch}
-nav#tabs{flex:0 0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:2px;
+nav#tabs{flex:0 0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:2px;
   border-top:1px solid var(--line);background:var(--card);
   padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px))}
 nav#tabs button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;border-radius:10px;
@@ -694,10 +694,114 @@ details.fold>.fbody{padding:2px 0 14px}
 .giftov{position:fixed;inset:0;z-index:310;background:rgba(10,8,30,.62);display:grid;place-items:center;padding:20px}
 .giftcard{background:var(--card,#fff);color:var(--ink,#16202e);border-radius:20px;padding:22px 20px;max-width:340px;width:100%;text-align:center;box-shadow:0 14px 40px rgba(0,0,0,.4)}
 .giftmsg{font-family:Newsreader,Georgia,serif;font-size:22px;line-height:1.3;margin:10px 0 8px;white-space:pre-wrap;word-break:break-word}
+/* Showroom */
+.srv{--common:#7a9a6a;--rare:#2f8cff;--epic:#a855f7;--legend:#ffb61e}
+.srtop{display:flex;gap:12px;align-items:center;background:linear-gradient(160deg,#22307a,#10184a);border:2px solid #7fd0ff;border-radius:18px;padding:12px;color:#fff;box-shadow:0 6px 0 rgba(0,0,0,.25),0 0 22px rgba(100,200,255,.3)}
+.srring{--p:54;width:84px;height:84px;border-radius:50%;background:conic-gradient(#ffd21f calc(var(--p)*1%),rgba(255,255,255,.15) 0);display:grid;place-items:center;flex:none;position:relative}
+.srring:before{content:"";position:absolute;inset:8px;border-radius:50%;background:#10184a}.srring b{position:relative;font-size:22px}
+.srcups{display:flex;gap:6px;flex:1;justify-content:space-around}
+.srcup{text-align:center;font-size:10px;font-weight:800;text-shadow:0 1px 0 #000}.srcup svg{width:42px;height:42px;display:block;margin:0 auto 2px}.srcup small{display:block;font-weight:600;opacity:.7;font-size:9px}.srcup.lock svg{filter:brightness(0);opacity:.35}
+.srrar{display:flex;gap:6px}.srrar span{display:block!important;flex:1;font-size:10px!important;text-align:center;border-radius:10px;border:2px solid #14213d;padding:4px 0;font-size:11px;font-weight:800;color:#fff;text-shadow:0 1px 0 #000;background:var(--rc)}
+.srrar b{display:block;font-size:17px}.srrar .legend{margin:0;gap:0}
+.srrar .common{--rc:#5f7d52}.srrar .rare{--rc:#2f6fd0}.srrar .epic{--rc:#8a3fd0}.srrar .legend{--rc:#d8920e}
+.srstage{position:relative;height:310px;border-radius:20px;overflow:hidden;border:3px solid #14213d;background:radial-gradient(ellipse at 50% 100%,#3a2d8a,#120d38 70%);box-shadow:0 8px 0 rgba(0,0,0,.25);color:#fff}
+.srray{position:absolute;left:50%;top:-40px;width:300px;height:380px;margin-left:-150px;background:linear-gradient(rgba(255,255,255,.45),transparent 85%);clip-path:polygon(38% 0,62% 0,100% 100%,0 100%);opacity:.5;animation:srfl 3s ease-in-out infinite alternate}
+@keyframes srfl{to{opacity:.8}}
+.srfloor{position:absolute;left:0;right:0;bottom:0;height:70px;background:linear-gradient(#251c60,#0d0a2a)}
+.srpod{position:absolute;left:50%;bottom:44px;width:200px;height:58px;margin-left:-100px}
+.srpod i{position:absolute;inset:0;border-radius:50%;background:linear-gradient(#8f7bff,#4a3ab8);border:3px solid #14213d;box-shadow:0 14px 0 #2a1f78,0 14px 0 3px #14213d}
+.srpod i:after{content:"";position:absolute;inset:6px;border-radius:50%;border:3px dashed rgba(255,255,255,.45);animation:srsp 14s linear infinite}
+@keyframes srsp{to{transform:rotate(360deg)}}
+.srhero{position:absolute;left:50%;bottom:76px;width:120px;height:150px;margin-left:-60px}
+.srleg{position:absolute;inset:0;display:grid;place-items:end center;font-size:68px}
+.srname{position:absolute;bottom:42px;left:0;right:0;text-align:center;font-size:12px;z-index:3}
+.srbtns{position:absolute;bottom:8px;left:0;right:0;display:flex;gap:8px;justify-content:center;z-index:3}
+.sbtn{border:3px solid #14213d;border-radius:12px;background:linear-gradient(#78e65c,#2fae2a);color:#fff;font-weight:900;padding:6px 14px;font-size:13px;text-shadow:0 2px 0 #14213d;box-shadow:0 3px 0 #14213d;cursor:pointer;font-family:inherit}
+.sbtn.b2{background:linear-gradient(#7fd2ff,#2f8cff)}.sbtn.b3{background:linear-gradient(#ffb85c,#e8741a)}.sbtn.b4{background:linear-gradient(#aab4cc,#6a7592)}
+.srfav{position:absolute;top:8px;left:8px;right:8px;display:flex;justify-content:center;gap:10px;z-index:3}
+.fslot{width:54px;height:54px;padding:3px;border-radius:14px;border:3px solid #ffd21f;background:rgba(0,0,0,.35);display:grid;place-items:center;font-size:24px;color:#fff;box-shadow:0 0 14px rgba(255,210,31,.5);cursor:pointer;font-family:inherit}
+.fslot svg{width:100%;height:100%}.fslot.e{border-style:dashed;border-color:rgba(255,255,255,.4);box-shadow:none;opacity:.7;font-size:20px}
+.srlbl{position:absolute;top:68px;left:0;right:0;text-align:center;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;opacity:.75}
+.srcab{position:relative;border-radius:18px;padding:12px;background:linear-gradient(135deg,#7a4a24,#3b1f0c 60%,#5a3516);border:3px solid #14213d;box-shadow:0 8px 0 rgba(0,0,0,.3),inset 0 0 0 3px rgba(255,200,120,.25);overflow:hidden;color:#fff}
+.srcab:after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.22) 48%,transparent 56%);transform:translateX(-130%);animation:srgl 6s ease-in-out infinite;pointer-events:none;mix-blend-mode:screen}
+@keyframes srgl{0%,50%{transform:translateX(-130%)}85%,100%{transform:translateX(130%)}}
+.srshelf{position:relative;margin-bottom:12px;border-radius:10px;background:linear-gradient(#141a4a,#0a0e30);box-shadow:inset 0 0 18px rgba(0,0,0,.6),inset 0 0 0 2px #2a2f6a}.srshelf:last-child{margin-bottom:0}
+.srshelf:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;border-radius:10px 10px 0 0;background:linear-gradient(90deg,transparent,rgba(255,236,160,.95),transparent);box-shadow:0 0 18px 4px rgba(255,226,140,.5)}
+.srhead{display:flex;justify-content:space-between;align-items:center;padding:10px 10px 0;font-size:12px;font-weight:900;letter-spacing:1px;text-transform:uppercase}
+.srhead .c{background:#ffffff1f;border-radius:9px;padding:1px 8px;font-size:11px;letter-spacing:0}.srhead .c.full{background:#ffd21f;color:#3a2500}
+.sritems{display:flex;gap:6px;padding:8px 8px 12px;overflow-x:auto;scroll-snap-type:x proximity}
+.srs{position:relative;flex:0 0 66px;text-align:center;scroll-snap-align:start;cursor:pointer;background:none;border:0;color:#fff;padding:0;font-family:inherit}
+.srs.common{--c:#7a9a6a}.srs.rare{--c:#2f8cff}.srs.epic{--c:#a855f7}.srs.legend{--c:#ffb61e}
+.srs .ped{position:relative;height:64px;display:grid;place-items:end center}
+.srs .ped:after{content:"";position:absolute;left:4px;right:4px;bottom:-2px;height:14px;border-radius:50%;background:radial-gradient(var(--g),transparent 70%)}
+.srs .it{position:relative;z-index:1;width:54px;height:54px;font-size:46px;display:grid;place-items:center;animation:srflo 3s ease-in-out infinite alternate}
+.srs:nth-child(2n) .it{animation-delay:-1.2s}.srs:nth-child(3n) .it{animation-delay:-2.1s}
+@keyframes srflo{to{transform:translateY(-4px)}}
+.srs .it svg{width:100%;height:100%;overflow:visible}
+.srs b{display:block;font-size:10px;margin-top:4px;line-height:1.1;text-shadow:0 1px 0 #000;height:22px;overflow:hidden}
+.srs.lock .it{filter:brightness(0);opacity:.3;animation:none}.srs.lock:before{content:"?";position:absolute;left:0;right:0;top:14px;font-size:26px;font-weight:900;z-index:2;text-shadow:0 2px 0 #000}
+.srs .rb{position:absolute;right:6px;top:0;width:10px;height:10px;border-radius:50%;border:2px solid #14213d;background:var(--c);z-index:3}
+.srs.legend:not(.lock) .it:after{content:"✦";position:absolute;right:-2px;top:-4px;font-size:16px;color:#fff3a0;text-shadow:0 0 8px #ffb61e}
+.srs.isnew:after{content:"NEU";position:absolute;left:2px;top:0;z-index:4;background:#ff3d6e;color:#fff;font-size:9px;font-weight:900;border-radius:7px;padding:1px 5px;border:2px solid #14213d}
+.srdisc{width:48px;height:48px;border-radius:50%;background:repeating-radial-gradient(#111 0 2px,#222 2px 4px);border:2px solid #000;display:grid;place-items:center;animation:srsp 4s linear infinite}.srdisc i{width:22px;height:22px;border-radius:50%;background:var(--c);border:2px solid #000;display:grid;place-items:center;font-style:normal;font-size:12px}
+.srem{font-size:34px}.srst{display:block;width:46px;height:46px}
+.srmd{position:fixed;inset:0;background:rgba(5,4,20,.75);display:grid;place-items:center;z-index:300;padding:20px}
+.srmc{width:100%;max-width:320px;border-radius:22px;border:4px solid #14213d;background:radial-gradient(circle at 50% 30%,var(--c),#120d38 80%);box-shadow:0 0 36px var(--g);padding:16px;text-align:center;color:#fff;animation:srpop .35s cubic-bezier(.2,1.7,.4,1)}
+@keyframes srpop{from{transform:scale(.6);opacity:0}}
+.srmc .big{height:150px;display:grid;place-items:center;font-size:90px}.srmc .big svg{height:100%;width:auto;max-width:100%}.srmc .big.lock svg,.srmc .big.lock .srst{filter:brightness(0);opacity:.35}
+.srmc h3{margin:6px 0 2px;font-size:20px;text-shadow:0 2px 0 #000}.srmc p{margin:2px 0 10px;font-size:12px;opacity:.9}
+.srmc .sbtn{margin:3px}
+.hfavs{display:flex;gap:4px}.hf{width:26px;height:26px;display:grid;place-items:center;cursor:pointer;border-radius:8px;border:2px solid #ffd21f;background:rgba(0,0,0,.25);padding:1px}.hf svg{width:100%;height:100%}.hf .avatar{width:20px!important;height:20px!important;font-size:12px!important}.hf .srst{width:20px;height:20px}.hf .srdisc{width:20px;height:20px;animation:none}.hf .srdisc i{width:9px;height:9px;font-size:0}.hf .srem{font-size:15px}
+@media (max-width:430px){.hfavs .hf:nth-child(n+3){display:none}.hf{width:24px;height:24px}}#hRank{white-space:nowrap}
+/* Startseite: Hero-Bühne + Start-Karte */
+.hh{position:relative;overflow:hidden;border-radius:22px;border:3px solid #14213d;color:#fff;min-height:392px;box-shadow:0 6px 0 rgba(20,33,61,.25);background:linear-gradient(#5db8ff,#c9ecff)}
+.hh.sky-m{background:linear-gradient(#ffb36b,#ffe2a8 55%,#bfe6ff)}.hh.sky-d{background:linear-gradient(#3fa4ff,#bfe8ff)}.hh.sky-e{background:linear-gradient(#5a3fa8,#ff7a5c 70%,#ffc27a)}.hh.sky-n{background:linear-gradient(#0b1033,#2a2a7a 70%,#4a3a8f)}
+.hhsky{position:absolute;inset:0;pointer-events:none}
+.hhsun{position:absolute;right:26px;top:70px;width:46px;height:46px;border-radius:50%;background:#fff3a0;box-shadow:0 0 40px 14px rgba(255,236,140,.7)}
+.sky-e .hhsun{background:#ffd27a;top:120px;box-shadow:0 0 50px 18px rgba(255,150,80,.6)}.sky-n .hhsun{background:#f4f6ff;box-shadow:0 0 30px 8px rgba(190,200,255,.5);width:38px;height:38px}
+.hhcl{position:absolute;width:90px;height:26px;border-radius:20px;background:rgba(255,255,255,.75);box-shadow:24px -12px 0 -4px rgba(255,255,255,.75);animation:hhdr 40s linear infinite}
+.hhcl.c1{top:150px;left:-120px}.hhcl.c2{top:210px;left:-60px;animation-duration:60s;animation-delay:-20s;opacity:.7}
+.sky-n .hhcl{opacity:.12}.sky-e .hhcl{background:rgba(255,200,170,.7);box-shadow:24px -12px 0 -4px rgba(255,200,170,.7)}
+@keyframes hhdr{to{transform:translateX(560px)}}
+.hhst{position:absolute;inset:0;display:none;background-image:radial-gradient(2px 2px at 20px 30px,#fff,transparent),radial-gradient(2px 2px at 90px 80px,#fff,transparent),radial-gradient(1.5px 1.5px at 160px 40px,#fff,transparent),radial-gradient(2px 2px at 250px 110px,#fff,transparent),radial-gradient(1.5px 1.5px at 320px 60px,#fff,transparent),radial-gradient(2px 2px at 60px 160px,#fff,transparent);animation:hhtw 3s ease-in-out infinite alternate}
+.sky-n .hhst{display:block}@keyframes hhtw{from{opacity:.4}to{opacity:1}}
+.hh .stk-corner{z-index:4;top:8px;right:8px}
+.hhtop{position:relative;z-index:3;padding:16px 16px 0;max-width:68%}
+.hhdate{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;opacity:.9;text-shadow:0 1px 0 rgba(0,0,0,.35)}
+.hh h1{margin:4px 0 4px;font-size:26px;line-height:1.1;color:#fff;text-shadow:0 3px 0 #14213d}
+.hhtip{margin:0;font-size:13px;font-weight:700;text-shadow:0 2px 0 rgba(20,33,61,.55)}
+.hhgoal{position:absolute;z-index:3;left:16px;top:146px;text-align:center}
+.hhring{--p:0;width:78px;height:78px;border-radius:50%;background:conic-gradient(#ffd21f calc(var(--p)*1%),rgba(20,33,61,.45) 0);display:grid;place-items:center;position:relative;border:3px solid #14213d;box-shadow:0 4px 0 rgba(20,33,61,.4)}
+.hhring:before{content:"";position:absolute;inset:7px;border-radius:50%;background:#14213d}.hhring b{position:relative;font-size:19px}
+.hhgoal small{display:block;margin-top:6px;font-size:11px;font-weight:800;text-shadow:0 1px 0 #14213d}
+.hhbubble{position:absolute;z-index:4;left:106px;top:164px;max-width:112px;background:#fff;color:#14213d;border:3px solid #14213d;border-radius:14px;padding:6px 10px;font-size:12px;font-weight:800;line-height:1.2;box-shadow:0 3px 0 rgba(20,33,61,.3)}
+.hhbubble:after{content:"";position:absolute;right:-9px;top:50%;margin-top:-7px;width:14px;height:14px;background:#fff;border-right:3px solid #14213d;border-bottom:3px solid #14213d;transform:rotate(-45deg)}
+.hhpod{position:absolute;z-index:1;right:12px;bottom:112px;width:170px;height:46px}
+.hhpod i{position:absolute;inset:0;border-radius:50%;background:linear-gradient(#ffd98a,#e8a43a);border:3px solid #14213d;box-shadow:0 10px 0 #a8641c,0 10px 0 3px #14213d}
+.hh.sky-n .hhpod i,.hh.sky-e .hhpod i{background:linear-gradient(#8f7bff,#4a3ab8);box-shadow:0 10px 0 #2a1f78,0 10px 0 3px #14213d}
+.hhfig{position:absolute;z-index:2;right:40px;bottom:128px;width:112px;height:150px;border:0;background:none;padding:0;cursor:pointer;color:inherit;-webkit-tap-highlight-color:transparent}
+.hhfig .srleg{font-size:72px}
+.hhbar{position:absolute;z-index:3;left:10px;right:10px;bottom:52px;display:flex;flex-direction:column;gap:6px;background:rgba(20,33,61,.82);border:2px solid rgba(255,255,255,.25);border-radius:14px;padding:8px 10px}
+.hhrank{display:flex;align-items:center;gap:8px;font-size:12px}.hhrank b{font-size:13px;white-space:nowrap}.hhrank small{font-size:10px;opacity:.8;white-space:nowrap}
+.hhxp{flex:1;height:9px;border-radius:6px;background:rgba(255,255,255,.2);overflow:hidden}.hhxp i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,#78e65c,#ffd21f)}
+.hhchips{display:flex;gap:6px;flex-wrap:wrap}.hhc{background:rgba(255,255,255,.14);border-radius:10px;padding:2px 9px;font-size:12px;font-weight:700}
+.hhfavs{position:absolute;z-index:3;left:10px;right:10px;bottom:8px;display:flex;align-items:center;gap:6px;height:36px}
+.hhfl{font-size:11px;font-weight:800;text-shadow:0 1px 0 #14213d;white-space:nowrap}.hhfe{font-size:10px;line-height:1.1;flex:1;opacity:.9;text-shadow:0 1px 0 #14213d}
+.hhf{width:34px;height:34px;border-radius:10px;border:2px solid #ffd21f;background:rgba(20,33,61,.55);padding:2px;display:grid;place-items:center;cursor:pointer;color:inherit}.hhf svg{width:100%;height:100%}.hhf .avatar{width:26px!important;height:26px!important;font-size:16px!important}.hhf .srst{width:26px;height:26px}.hhf .srdisc{width:26px;height:26px;animation:none}.hhf .srem{font-size:20px}
+.hhsr{margin-left:auto;border:2px solid #14213d;border-radius:10px;background:linear-gradient(#ffe58a,#ffb61e);color:#3a2500;font-weight:900;font-size:12px;padding:6px 10px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.hh .afig,.hh .afig *{animation-play-state:running}
+.cta{position:relative;overflow:hidden;border-radius:22px;padding:18px 16px;color:#fff;background:linear-gradient(150deg,#2b2f8f,#6a2fc0 55%,#c83fa0);border:3px solid #14213d;box-shadow:0 6px 0 rgba(20,33,61,.25)}
+.cta .eyebrow{color:#ffe58a}.cta h2{color:#fff;margin:4px 0 4px;text-shadow:0 2px 0 rgba(20,33,61,.5)}
+.ctaglow{position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(rgba(255,230,140,.55),transparent 65%);pointer-events:none}
+.ctabtn{position:relative;width:100%;border:3px solid #14213d;border-radius:16px;background:linear-gradient(#8bf06a,#2fb52a);color:#fff;font-weight:900;font-size:20px;padding:14px;text-shadow:0 2px 0 #14213d;box-shadow:0 5px 0 #14213d;cursor:pointer;font-family:inherit;animation:ctapl 2s ease-in-out infinite}
+.ctabtn:active{transform:translateY(3px);box-shadow:0 2px 0 #14213d}
+@keyframes ctapl{50%{box-shadow:0 5px 0 #14213d,0 0 22px 4px rgba(140,255,110,.6)}}
+.ctachip{white-space:nowrap;padding:8px 8px!important;font-size:13px!important;background:rgba(255,255,255,.15)!important;color:#fff!important;border-color:rgba(255,255,255,.3)!important}.ctachip[aria-pressed="true"]{background:#ffd21f!important;color:#3a2500!important}
+@media (prefers-reduced-motion:reduce){.hhcl,.hhst,.ctabtn,.srray,.srs .it{animation:none!important}}
 </style>
 
 
-<script>window.WORDY_VERSION="2.35.0";window.WORDY_BUILD="08dc0f4992";</script>
+<script>window.WORDY_VERSION="2.36.0";window.WORDY_BUILD="e20f0b8b26";</script>
 </head>
 <body>
 <div id="app">
@@ -707,6 +811,7 @@ details.fold>.fbody{padding:2px 0 14px}
       <div class="eyebrow" id="hRank">Bronze I</div>
       <div class="stat"><b id="hXp" class="tnum">0</b> XP</div>
     </div>
+    <div id="hFavs" class="hfavs"></div>
     <div class="spacer"></div>
     <div class="stat" id="hBoost" title="XP-Booster: doppelte XP" hidden style="color:var(--gold,#c98a00);font-weight:800">⚡</div>
     <div class="stat" title="Münzen">🪙 <b id="hCoins" class="tnum">0</b></div>
@@ -719,6 +824,7 @@ details.fold>.fbody{padding:2px 0 14px}
     <button data-tab="home"><span class="ic">🏠</span>Start</button>
     <button data-tab="ueben"><span class="ic">🎮</span>Üben</button>
     <button data-tab="stats"><span class="ic">📈</span>Fortschritt</button>
+    <button data-tab="showroom"><span class="ic">🏆</span>Showroom</button>
     <button data-tab="shop"><span class="ic">🛍️</span>Shop</button>
   </nav>
   <div id="session" hidden></div>
@@ -4785,7 +4891,7 @@ window.VERBS = [
       }
     });
   }
-  function takeNews() { var n = state.news; state.news = null; return n && (n.ranks.length || n.sets.length) ? n : null; }
+  function takeNews() { var n = state.news; state.news = null; if (n && !n.cups) n.cups = []; return n && (n.ranks.length || n.sets.length || n.cups.length) ? n : null; }
   /* Münzfaktor: erste Woche ×1,5, dazu der Regler der Eltern (Dashboard) */
   function coinFactor() {
     var f = 1;
@@ -4902,6 +5008,52 @@ window.VERBS = [
   }
   function rarityOf(it) { return it.rar || (it.cost <= 120 ? "common" : it.cost <= 350 ? "rare" : it.cost <= 800 ? "epic" : "legend"); }
   function shopList() { return SHOP.filter(function (x) { return ["avatar", "dance", "outfit", "kit", "fx", "frame"].indexOf(x.kind) >= 0 && x.cost > 0 || x.kind === "dance"; }).map(function (x) { return [x.id, x.label, x.kind]; }); }
+
+  /* ---------- Showroom: alles Gesammelte, Medaillen, Sammler-Pokale, Lieblingsstücke ---------- */
+  function favs() { var f = state.profile.favs; if (!Array.isArray(f)) f = state.profile.favs = []; return f; }
+  function toggleFav(id) { var f = favs(), i = f.indexOf(id); if (i >= 0) f.splice(i, 1); else { f.push(id); while (f.length > 3) f.shift(); } save(true); return i < 0; }
+  function medalList() {
+    var ms = [], ps = pathState(), bosses = pathStations().filter(function (s) { return s.last && ps.stars[s.id]; }).length, mast = stats().dist[4], best = state.streak.best || 0, info = passInfo(), sid = info.season.id;
+    function M(id, label, rar, done, how, val) { ms.push({ id: "md:" + id, label: label, kind: "medal", rar: rar, owned: !!done, how: how, val: val }); }
+    M("boss1", "Erster Boss", "common", bosses >= 1, "Eine Boss-Runde im Lernpfad besiegen", "⚔");
+    M("boss5", "Boss-Jäger", "rare", bosses >= 5, "5 Bosse besiegen (" + Math.min(bosses, 5) + "/5)", "⚔");
+    M("boss10", "Boss-König", "epic", bosses >= 10, "10 Bosse besiegen (" + Math.min(bosses, 10) + "/10)", "⚔");
+    M("serie7", "Serie 7", "rare", best >= 7, "7 Tage am Stück üben (Bestwert " + best + ")", "7");
+    M("serie30", "Serie 30", "epic", best >= 30, "30 Tage am Stück üben", "30");
+    M("serie100", "Serie 100", "legend", best >= 100, "100 Tage am Stück üben", "100");
+    M("w25", "25 Meister", "rare", mast >= 25, "25 Wörter meistern (" + Math.min(mast, 25) + "/25)", "25");
+    M("w100", "100 Meister", "epic", mast >= 100, "100 Wörter meistern (" + Math.min(mast, 100) + "/100)", "100");
+    info.weeks.forEach(function (w) { M(sid + "p" + w.n, "Woche " + w.n, w.n === info.weeks.length ? "legend" : "epic", w.claimed, info.season.title + "-Pass, Woche " + w.n, String(w.n)); });
+    if (info.season.finale) M(sid + "cup", info.season.title + "-Pokal", "legend", info.fin.claimed, "Alle Wochen und das Finale im " + info.season.title + "-Pass", "cup");
+    return ms;
+  }
+  function howText(x) {
+    if (x.pass) return "Gibt es im " + x.pass + "-Pass";
+    if (x.reward) { var s = SETS.filter(function (z) { return z.reward === x.id; })[0]; return "Belohnung für das " + (s ? s.name : "Set") + " (alle Teile sammeln)"; }
+    if (x.cost === 0) return "Gratis";
+    return "Im Shop" + (x.rank ? " ab Rang " + x.rank : "") + " für " + x.cost + " Münzen";
+  }
+  var CUP_TIERS = [{ n: "Bronze", pct: 25, coins: 30 }, { n: "Silber", pct: 50, coins: 60 }, { n: "Gold", pct: 75, coins: 120 }, { n: "Platin", pct: 100, coins: 300 }];
+  function collection(award) {
+    function mk(x) { return { id: x.id, label: x.label, kind: x.kind, val: x.val, rar: rarityOf(x), owned: owns(x), how: howText(x), it: x }; }
+    var vis = SHOP.filter(function (x) { return !(x.val === "none" || x.val === ""); }), by = function (kinds) { return vis.filter(function (x) { return kinds.indexOf(x.kind) >= 0; }).map(mk); };
+    var shelves = [
+      { id: "medal", title: "Pokale & Medaillen", icon: "🏆", items: medalList() },
+      { id: "fig", title: "Figuren", icon: "🦊", items: by(["avatar"]) },
+      { id: "dance", title: "Tänze", icon: "💃", items: by(["dance"]) },
+      { id: "outfit", title: "Outfits & Trikots", icon: "👕", items: by(["outfit", "kit"]) },
+      { id: "sticker", title: "Sticker", icon: "🏷️", items: by(["sticker"]) },
+      { id: "extra", title: "Rahmen, Effekte & mehr", icon: "🖼️", items: by(["frame", "fx", "snd", "bg", "theme", "title"]) }
+    ], own = 0, tot = 0, rar = { common: 0, rare: 0, epic: 0, legend: 0 };
+    shelves.forEach(function (s) { s.own = s.items.filter(function (i) { return i.owned; }).length; own += s.own; tot += s.items.length; s.items.forEach(function (i) { if (i.owned) rar[i.rar]++; }); });
+    var pct = tot ? Math.floor(own * 100 / tot) : 0, cups = CUP_TIERS.map(function (t) { return { n: t.n, pct: t.pct, coins: t.coins, done: pct >= t.pct }; });
+    if (award) {
+      var got = state.cups || (state.cups = {});
+      cups.forEach(function (c) { if (c.done && !got[c.pct]) { got[c.pct] = 1; parentCoins(c.coins); (state.news || (state.news = { ranks: [], sets: [] })).cups = ((state.news && state.news.cups) || []).concat([{ cup: c.n, coins: c.coins }]); } });
+    }
+    return { shelves: shelves, own: own, tot: tot, pct: pct, rar: rar, cups: cups };
+  }
+  function findCollItem(id) { var c = collection(false), r = null; c.shelves.forEach(function (s) { s.items.forEach(function (i) { if (i.id === id) r = i; }); }); return r; }
   /* Preisumstellung: Wurde etwas günstiger, gibt es die Differenz einmalig als Münzen zurück */
   function priceMigrate() {
     var pf = state.profile; if (!pf || pf.priceVer >= 3) return;
@@ -5293,7 +5445,7 @@ window.VERBS = [
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
-    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, boost: boost, coinFactor: coinFactor, avgCoins: avgCoins, dealItem: dealItem, priceOf: priceOf, passInfo: passInfo, claimPassWeek: claimPassWeek, claimPassFinale: claimPassFinale, passMeta: passMeta, rarityOf: rarityOf, shopList: shopList, activeSetDeal: activeSetDeal, buySet: buySet, takeNews: takeNews, SETS: SETS, itemById: itemById, minXp: minXp, defaultOf: defaultOf
+    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, boost: boost, coinFactor: coinFactor, avgCoins: avgCoins, dealItem: dealItem, priceOf: priceOf, passInfo: passInfo, favs: favs, toggleFav: toggleFav, collection: collection, findCollItem: findCollItem, CUP_TIERS: CUP_TIERS, claimPassWeek: claimPassWeek, claimPassFinale: claimPassFinale, passMeta: passMeta, rarityOf: rarityOf, shopList: shopList, activeSetDeal: activeSetDeal, buySet: buySet, takeNews: takeNews, SETS: SETS, itemById: itemById, minXp: minXp, defaultOf: defaultOf
   };
 })(window);
 </script>
@@ -6233,6 +6385,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     $("#hAvatar").title = pn ? pn.name : "";
     $("#hRank").textContent = r.rank.n + (st.profile.title ? " · " + st.profile.title : "");
     $("#hXp").textContent = st.xp;
+    var hf = $("#hFavs"); if (hf) hf.innerHTML = favMini();
     $("#hCoins").textContent = st.coins;
     $("#hStreak").textContent = st.streak.count;
     var hEl = $("#hHearts");
@@ -6441,6 +6594,102 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     return '<section class="card passc"><div class="row"><div class="eyebrow" style="flex:1 1 auto">❄️ ' + esc(s.title) + '</div><span class="pill tnum">' + head + '</span></div>' +
       '<div class="ptiles">' + tiles + '</div>' + det + '</section>';
   }
+  /* ---------- Showroom (Trophäenschrank) ---------- */
+  var DANCE_NUM = { wackler: 1, huepfer: 2, drehung: 3, roboter: 4, moonwalk: 5, sieg: 6, eislauf: 7 };
+  var RAR_NAME = { common: "Gewöhnlich", rare: "Selten", epic: "Episch", legend: "Legendär" };
+  var RAR_GLOW = { common: "rgba(150,200,130,.7)", rare: "rgba(70,160,255,.8)", epic: "rgba(190,110,255,.85)", legend: "rgba(255,200,70,.95)" };
+  var MED_COL = { common: ["#9bd48a", "#4f9a46"], rare: ["#7fd0ff", "#2f8cff"], epic: ["#d79bff", "#a855f7"], legend: ["#ffe58a", "#ffb61e"] };
+  var SHIRTS = { natur: ["#b9c9de", "#b9c9de", ""], shirt: ["#35c6ff", "#35c6ff", ""], hoodie: ["#7a63f0", "#7a63f0", ""], trikot: [["#e53935", "#fff"], "#e53935", "7"], held: ["#2b6fe0", "#c62828", "★"], raum: ["#dfe6ee", "#dfe6ee", "★"], rock: ["#ffd23d", "#ffd23d", "♪"], polar: ["#3f9bff", "#3f9bff", "❄"],
+    "k-muenchen": ["#d4151f", "#d4151f", "7"], "k-barcelona": [["#a50044", "#004d98"], "#004d98", "7"], "k-turin": [["#111", "#fff"], "#111", "7"], "k-deutschland": ["#f1f1f4", "#fff", "7"], "k-argentinien": [["#74acdf", "#fff"], "#74acdf", "7"], "k-portugal": ["#c1121f", "#c1121f", "7"] };
+  function svgCup(c1, c2) { return '<svg viewBox="0 0 64 64"><path d="M16 8h32v14q0 14-16 18q-16-4-16-18z" fill="' + c1 + '" stroke="#14213d" stroke-width="4" stroke-linejoin="round"/><path d="M16 14H6q0 14 12 16M48 14h10q0 14-12 16" fill="none" stroke="#14213d" stroke-width="4"/><rect x="28" y="40" width="8" height="8" fill="' + c2 + '" stroke="#14213d" stroke-width="3"/><rect x="18" y="48" width="28" height="10" rx="3" fill="' + c2 + '" stroke="#14213d" stroke-width="4"/><path d="M22 14q0 10 6 14" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".6" fill="none"/><path d="M32 18l3 6l6 1l-4.5 4l1 6l-5.5-3l-5.5 3l1-6l-4.5-4l6-1z" fill="#fff" opacity=".85"/></svg>'; }
+  function svgMedal(c, n) { return '<svg viewBox="0 0 64 64"><path d="M20 4l8 22h8l8-22z" fill="#2f8cff" stroke="#14213d" stroke-width="3" stroke-linejoin="round"/><circle cx="32" cy="40" r="19" fill="' + c + '" stroke="#14213d" stroke-width="4"/><circle cx="32" cy="40" r="13" fill="none" stroke="#fff" stroke-width="2" opacity=".6"/><text x="32" y="' + (String(n).length > 2 ? 44 : 46) + '" text-anchor="middle" font-size="' + (String(n).length > 2 ? 13 : 18) + '" font-weight="900" fill="#14213d" font-family="Trebuchet MS,sans-serif">' + esc(n) + '</text></svg>'; }
+  var jid = 0;
+  function svgShirt(spec) {
+    var id = "sj" + (jid++), tb = spec[0], f = "", x;
+    if (Array.isArray(tb)) for (x = 0; x < 64; x += 8) f += '<rect x="' + x + '" width="4" height="64" fill="' + tb[0] + '"/><rect x="' + (x + 4) + '" width="4" height="64" fill="' + tb[1] + '"/>'; else f = '<rect width="64" height="64" fill="' + tb + '"/>';
+    return '<svg viewBox="0 0 64 64"><clipPath id="' + id + '"><path d="M20 8l-14 8l6 12l6-4v30h28V24l6 4l6-12l-14-8q-4 6-12 6t-12-6z"/></clipPath><g clip-path="url(#' + id + ')">' + f + '<path d="M0 0h20v34H0zM44 0h20v34H44z" fill="' + spec[1] + '"/></g><path d="M20 8l-14 8l6 12l6-4v30h28V24l6 4l6-12l-14-8q-4 6-12 6t-12-6z" fill="none" stroke="#14213d" stroke-width="3.5" stroke-linejoin="round"/>' +
+      (spec[2] ? '<text x="32" y="44" text-anchor="middle" font-size="22" font-weight="900" fill="#fff" stroke="#14213d" stroke-width="1.2" font-family="Trebuchet MS,sans-serif">' + esc(spec[2]) + '</text>' : "") + '</svg>';
+  }
+  /* Symbol für ein Sammelstück: c = {kind, val, rar, it} */
+  function srIcon(c) {
+    var col = MED_COL[c.rar] || MED_COL.common;
+    if (c.kind === "medal") return c.val === "cup" ? svgCup(col[0], col[1]) : svgMedal(col[0], c.val);
+    if (c.kind === "avatar") return avatarHtml(c.val);
+    if (c.kind === "sticker") return '<span class="srst">' + stickerHtml(c.it, 46) + '</span>';
+    if (c.kind === "dance") return '<div class="srdisc" style="--c:' + col[1] + '"><i>♪</i></div>';
+    if (c.kind === "outfit" || c.kind === "kit") return svgShirt(SHIRTS[c.val] || SHIRTS.natur);
+    if (c.kind === "frame") return '<span class="avatar fr-' + esc(c.val) + '" style="width:44px;height:44px;font-size:22px">' + avatarHtml(S.state.profile.avatar) + '</span>';
+    return '<span class="srem">' + (c.it ? shopIcon(c.it) : "🎁") + '</span>';
+  }
+  function medalStyle(id) {
+    var m = /^md:(\w+?)(?:p(\d)|cup)?$/.exec(id) || [], k = id.slice(3), T = { boss1: ["common", "⚔"], boss5: ["rare", "⚔"], boss10: ["epic", "⚔"], serie7: ["rare", "7"], serie30: ["epic", "30"], serie100: ["legend", "100"], w25: ["rare", "25"], w100: ["epic", "100"] };
+    if (T[k]) return { rar: T[k][0], val: T[k][1] };
+    var pm = /p(\d)$/.exec(k); if (pm) return { rar: +pm[1] >= S.passInfo().weeks.length ? "legend" : "epic", val: pm[1] };
+    return { rar: "legend", val: "cup" };
+  }
+  function favIcon(id) {
+    if (id.indexOf("md:") === 0) { var ms = medalStyle(id); return srIcon({ kind: "medal", val: ms.val, rar: ms.rar }); }
+    var it = S.itemById(id); return it ? srIcon({ kind: it.kind, val: it.val, rar: S.rarityOf(it), it: it }) : "";
+  }
+  function favMini() { return S.favs().map(function (id) { return '<span class="hf" data-act="gotab" data-t="showroom" title="Lieblingsstück">' + favIcon(id) + '</span>'; }).join(""); }
+  var srAv = null, srDn = null, hhT = null;
+  function heroHtml(av, dn) {
+    var o = S.state.profile.outfit;
+    if (global.VTA && global.VTA.has(av)) return global.VTA.dancer(av, o, dn || 0).replace('class="afig a0"', 'class="afig"');
+    return '<div class="srleg">' + global.VTFIG.figure(av, o, avatarHtml(av)).replace('class="fig ', 'class="fig ' + (dn ? "d" + dn + " " : "")) + '</div>';
+  }
+  function srMark(id) { var p = S.state.profile; if (!p.seen) p.seen = {}; if (!p.seen[id]) { p.seen[id] = 1; S.save(); } }
+  function viewShowroom() {
+    var c = S.collection(true), pf = S.state.profile, seen = pf.seen;
+    if (!pf.seen) { seen = pf.seen = {}; c.shelves.forEach(function (s) { s.items.forEach(function (i) { if (i.owned) seen[i.id] = 1; }); }); S.save(); }
+    var favHtml = [0, 1, 2].map(function (i) { var id = S.favs()[i]; return id ? '<button class="fslot" data-act="sritem" data-id="' + esc(id) + '">' + favIcon(id) + '</button>' : '<button class="fslot e" data-act="srfavhint">＋</button>'; }).join("");
+    if (!srAv) srAv = pf.avatar;
+    var h = '<div class="stack srv"><div><h1 style="font-size:22px">🏆 Mein Showroom</h1><p class="small muted" style="margin:2px 0 0">Alles, was du gesammelt, gekauft und erspielt hast. Tippe auf ein Stück.</p></div>' +
+      '<section class="srtop"><div class="srring" style="--p:' + c.pct + '"><b>' + c.pct + '%</b></div><div class="srcups">' + c.cups.map(function (t) { var col = { Bronze: ["#e0975a", "#8a4a1e"], Silber: ["#eef2fa", "#8794ad"], Gold: ["#ffd24a", "#c8780a"], Platin: ["#c9efff", "#7a8fff"] }[t.n]; return '<div class="srcup' + (t.done ? "" : " lock") + '">' + svgCup(col[0], col[1]) + '<b>' + t.n + '</b><small>ab ' + t.pct + '%</small></div>'; }).join("") + '</div></section>' +
+      '<div class="srrar">' + ["common", "rare", "epic", "legend"].map(function (r) { return '<span class="' + r + '"><b>' + c.rar[r] + '</b>' + RAR_NAME[r] + '</span>'; }).join("") + '</div>' +
+      '<section class="srstage"><div class="srray"></div><div class="srfloor"></div><div class="srfav">' + favHtml + '</div><div class="srlbl">Lieblingsstücke</div><div class="srpod"><i></i></div><div class="srhero" id="srHero"></div>' +
+      '<div class="srname" id="srName"></div><div class="srbtns"><button class="sbtn" data-act="srdance">💃 Tanzen</button><button class="sbtn b2" data-act="srswap">🔄 Wechseln</button></div></section>' +
+      '<section class="srcab">' + c.shelves.map(function (s) {
+        return '<div class="srshelf"><div class="srhead"><span>' + s.icon + ' ' + esc(s.title) + '</span><span class="c' + (s.own === s.items.length ? " full" : "") + '">' + s.own + ' / ' + s.items.length + '</span></div><div class="sritems">' + s.items.map(function (i) {
+          var isNew = i.owned && !seen[i.id];
+          return '<button class="srs ' + i.rar + (i.owned ? "" : " lock") + (isNew ? " isnew" : "") + '" data-act="sritem" data-id="' + esc(i.id) + '" style="--g:' + RAR_GLOW[i.rar] + '"><div class="ped"><span class="rb"></span><div class="it">' + srIcon(i) + '</div></div><b>' + esc(i.label) + '</b></button>';
+        }).join("") + '</div></div>';
+      }).join("") + '</section></div>';
+    view.innerHTML = h; srHero(false);
+    flushNews();
+  }
+  function srHero(dance) {
+    var e = $("#srHero"); if (!e) return;
+    var pf = S.state.profile, dn = dance ? srDn : 0;
+    e.innerHTML = heroHtml(srAv, dn);
+    var it = S.SHOP.filter(function (x) { return x.kind === "avatar" && x.val === srAv; })[0], same = srAv === pf.avatar;
+    var nm = $("#srName"); if (nm) nm.innerHTML = '<b>' + esc(it ? it.label : "Fuchs") + '</b>' + (same ? ' · aktiv' : ' · <button class="chip" data-act="srwear">Als Avatar tragen</button>');
+  }
+  function srModal(id) {
+    var it = S.findCollItem(id), fav = S.favs().indexOf(id) >= 0;
+    if (!it) return;
+    var ms = id.indexOf("md:") === 0 ? medalStyle(id) : null, rar = ms ? ms.rar : it.rar, col = MED_COL[rar] || MED_COL.common, val = ms ? ms.val : it.val;
+    var c = { kind: it.kind, val: val, rar: rar, it: it.it }, canEq = it.owned && it.kind !== "medal", eq = it.it && S.isActive(it.it);
+    var ov = document.createElement("div"); ov.className = "srmd";
+    ov.innerHTML = '<div class="srmc" style="--c:' + col[1] + ';--g:' + RAR_GLOW[rar] + '"><div class="eyebrow" style="color:#fff;opacity:.85">' + RAR_NAME[rar] + '</div><div class="big' + (it.owned ? "" : " lock") + '">' + srIcon(c) + '</div><h3>' + esc(it.label) + '</h3><p>' + (it.owned ? "Gehört dir! " : "Noch nicht gesammelt. ") + esc(it.how || "") + '</p><div class="row wrap" style="gap:8px;justify-content:center">' +
+      (it.owned ? '<button class="sbtn" data-m="fav">' + (fav ? "★ Lieblingsstück" : "☆ Als Liebling") + '</button>' : "") +
+      (canEq ? '<button class="sbtn b2" data-m="eq">' + (it.kind === "sticker" ? (eq ? "Ablösen" : "Aufkleben") : eq ? "✓ Aktiv" : "Tragen") + '</button>' : "") +
+      (it.owned && (it.kind === "dance" || it.kind === "outfit" || it.kind === "kit") ? '<button class="sbtn b3" data-m="try">▶ Ansehen</button>' : "") +
+      (!it.owned && it.it && !it.it.pass && !it.it.reward ? '<button class="sbtn b2" data-m="shop">Zum Shop</button>' : "") +
+      (!it.owned && it.it && it.it.pass ? '<button class="sbtn b2" data-m="pass">Zum Pass</button>' : "") + '<button class="sbtn b4" data-m="x">Schließen</button></div></div>';
+    document.body.appendChild(ov);
+    if (it.owned) srMark(id);
+    ov.addEventListener("click", function (e) {
+      var m = e.target.closest("[data-m]"), mm = m && m.getAttribute("data-m");
+      if (e.target === ov || mm === "x") { ov.remove(); render(); return; }
+      if (mm === "fav") { var on = S.toggleFav(id); toast(on ? "Zu deinen Lieblingsstücken gelegt ⭐" : "Aus den Lieblingsstücken genommen"); ov.remove(); render(); }
+      else if (mm === "eq") { var r = S.equip(it.it.id); if (r.error) return toast(r.error); ov.remove(); toast(it.kind === "sticker" ? (r.on ? "Aufgeklebt" : "Abgelöst") : "Getragen: " + it.label); render(); }
+      else if (mm === "try") { global.VTC.dance({ av: S.state.profile.avatar, avatar: avatarHtml(S.state.profile.avatar), outfit: it.kind === "dance" ? S.state.profile.outfit : it.it.val, dance: it.kind === "dance" ? it.it.val : (S.state.profile.dance || "wackler"), title: it.label }); }
+      else if (mm === "shop") { ov.remove(); shopTab = it.kind === "kit" ? "kit" : it.it.set === "fn" ? "fn" : it.kind; tab = "shop"; shopSeg = "shop"; render(); view.scrollTop = 0; }
+      else if (mm === "pass") { ov.remove(); tab = "home"; render(); view.scrollTop = 0; }
+    });
+  }
+
   function openPassReward(n) {
     var r = n === "fin" ? S.claimPassFinale() : S.claimPassWeek(+n);
     if (r.error) return toast(r.error);
@@ -6623,28 +6872,32 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       : hour < 12 ? "Eine kurze Runde vor der Schule?" : "Fünf Minuten reichen für heute.";
     var rec = lastRec = recommend(), mins = startMin || S.goalMin();
 
+    var pf = S.state.profile, sky = hour >= 5 && hour < 11 ? "m" : hour < 17 ? "d" : hour < 21 ? "e" : "n";
+    var cheer = pct >= 100 ? "Tagesziel geschafft! 🎉" : biz ? "Bereit für die nächste Runde?" : "Tipp mich an – ich tanze!";
+    var rn = r.rank ? r.rank.n : "", xpPct = r.next ? Math.min(100, Math.round(r.into * 100 / Math.max(1, r.span))) : 100;
+    var favs = S.favs().map(function (id) { return '<button class="hhf" data-act="gotab" data-t="showroom" aria-label="Lieblingsstück">' + favIcon(id) + '</button>'; }).join("");
     var html = '<div class="stack">';
-    html += '<section class="card hero" style="position:relative">' + (S.stickers().length ? '<div class="stk-corner">' + placedStickers(54) + '</div>' : "") + '<div class="inner"><div class="row" style="align-items:flex-start">' +
-      '<div style="flex:1 1 auto;min-width:0"><div class="eyebrow">' + esc(S.today().split("-").reverse().join(".")) +
-      ' · ' + (biz ? "Business English" : "Schule") + '</div>' +
-      '<h1>' + greet + '</h1><p class="muted small" style="margin:6px 0 0">' + esc(tip) + '</p></div>' +
-      '<div class="ring" style="--p:' + pct + '"><span class="tnum">' + pct + '%</span></div></div>' +
-      '<div class="row wrap small muted" style="margin-top:12px;gap:14px">' +
-      '<span>🔥 ' + st.streak.count + ' ' + plural(st.streak.count, "Tag", "Tage") + (st.streak.best > st.streak.count ? ' · Bestwert ' + st.streak.best : '') + '</span>' +
-      '<span>🛡️ ' + st.streak.freezes + ' Streak-Schutz</span>' +
-      (S.weekPlan() ? '<span>📅 ' + (S.freeDay() ? "Heute frei" : "Heute laut Plan: " + S.goalMin() + " Min.") + '</span>' : '') +
-      (r.next ? '<span>Noch ' + toNext + ' XP bis ' + esc(r.next.n) + '</span>' : '<span>Höchster Rang erreicht</span>') +
-      '</div></div></section>';
+    html += '<section class="hh sky-' + sky + '"><div class="hhsky"><i class="hhsun"></i><i class="hhcl c1"></i><i class="hhcl c2"></i><i class="hhst"></i></div>' +
+      (S.stickers().length ? '<div class="stk-corner">' + placedStickers(46) + '</div>' : "") +
+      '<div class="hhtop"><div class="hhdate">' + esc(S.today().split("-").reverse().join(".")) + ' · ' + (biz ? "Business English" : "Schule") + '</div>' +
+      '<h1>' + greet + '</h1><p class="hhtip">' + esc(tip) + '</p></div>' +
+      '<div class="hhgoal"><div class="hhring" style="--p:' + pct + '"><b class="tnum">' + pct + '%</b></div><small>Tagesziel</small></div>' +
+      '<div class="hhbubble" id="hhBub">' + esc(cheer) + '</div>' +
+      '<div class="hhpod"><i></i></div><button class="hhfig" id="hhFig" data-act="hhdance" aria-label="Figur antippen">' + heroHtml(pf.avatar, 0) + '</button>' +
+      '<div class="hhbar"><div class="hhrank"><b>' + esc(rn) + '</b><div class="hhxp"><i style="width:' + xpPct + '%"></i></div><small class="tnum">' + (r.next ? toNext + ' XP bis ' + esc(r.next.n) : "Höchster Rang") + '</small></div>' +
+      '<div class="hhchips"><span class="hhc">🔥 <b class="tnum">' + st.streak.count + '</b></span><span class="hhc">🪙 <b class="tnum">' + st.coins + '</b></span><span class="hhc" title="Streak-Schutz">🛡️ <b class="tnum">' + st.streak.freezes + '</b></span>' +
+      (S.weekPlan() ? '<span class="hhc">📅 ' + (S.freeDay() ? "frei" : S.goalMin() + " Min") + '</span>' : "") + '</div></div>' +
+      '<div class="hhfavs"><span class="hhfl">⭐ Lieblinge</span>' + (favs || '<span class="hhfe">Lege im Showroom bis zu 3 Lieblingsstücke aufs Podest</span>') + '<button class="hhsr" data-act="gotab" data-t="showroom">🏆 Showroom</button></div></section>';
+
+    html += '<section class="cta"><div class="ctaglow"></div><div class="eyebrow">Heute für dich</div>' +
+      '<h2>' + rec.icon + ' ' + rec.title + '</h2><p class="small" style="margin:0 0 14px;opacity:.85">' + esc(rec.sub) + '</p>' +
+      '<button class="ctabtn" data-act="startrec">Los geht\'s ▶</button>' +
+      '<div class="row" style="gap:6px;margin-top:14px;justify-content:space-between;align-items:center"><span class="small" style="opacity:.8">Dauer</span><span class="row" style="gap:6px">' +
+      [3, 5, 10, 15].map(function (m) { return '<button class="chip ctachip" data-act="setmin" data-min="' + m + '" aria-pressed="' + (mins === m) + '">' + m + ' Min</button>'; }).join("") +
+      '</span></div>' +
+      '<p class="small" style="margin:10px 0 0;opacity:.7">≈ ' + S.itemsFor(mins) + ' ' + plural(S.itemsFor(mins), "Aufgabe", "Aufgaben") + ' · ' + (S.secPerItem() === 11 && !(st.pace && st.pace.n >= 50) ? 'geschätzt, ohne Zeitlimit' : 'nach deinem Tempo (ca. ' + S.secPerItem() + ' Sek. pro Wort), ohne Zeitlimit') + '</p></section>';
 
     html += passCard() + weekPlanCard() + pathCard();
-    html += '<section class="card rec-card"><div class="eyebrow">Heute für dich</div>' +
-      '<h2>' + rec.icon + ' ' + rec.title + '</h2>' +
-      '<p class="small muted" style="margin:0 0 12px">' + esc(rec.sub) + '</p>' +
-      '<button class="btn wide lg" data-act="startrec">Los geht\'s ▶</button>' +
-      '<div class="row" style="gap:6px;margin-top:12px;justify-content:space-between;align-items:center"><span class="small muted">Dauer</span><span class="row" style="gap:6px">' +
-      [3, 5, 10, 15].map(function (m) { return '<button class="chip" data-act="setmin" data-min="' + m + '" aria-pressed="' + (mins === m) + '">' + m + ' Min</button>'; }).join("") +
-      '</span></div>' +
-      '<p class="small muted" style="margin:10px 0 0">≈ ' + S.itemsFor(mins) + ' ' + plural(S.itemsFor(mins), "Aufgabe", "Aufgaben") + ' · ' + (S.secPerItem() === 11 && !(st.pace && st.pace.n >= 50) ? 'geschätzt, ohne Zeitlimit' : 'nach deinem Tempo (ca. ' + S.secPerItem() + ' Sek. pro Wort), ohne Zeitlimit') + '</p></section>';
 
     html += parentCards(rec.plan);
 
@@ -7086,6 +7339,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (n) {
       n.ranks.forEach(function (r) { parts.push("Rang " + r.rank + ": +" + r.coins + " 🪙" + (r.item ? " und " + r.item + " geschenkt" : "")); });
       n.sets.forEach(function (s) { parts.push(s.set + " komplett! Neu: " + s.reward); });
+      (n.cups || []).forEach(function (c) { parts.push("Sammler-Pokal " + c.cup + "! +" + c.coins + " 🪙"); });
       S.save(true);
     }
     if (parts.length) toast("🎉 " + parts.join(" · "), 5200);
@@ -8317,6 +8571,24 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     }
     else if (a === "passsel") { var pn = act.getAttribute("data-n"); passSel = pn === "fin" ? "fin" : +pn; render(); }
     else if (a === "passclaim") { openPassReward(act.getAttribute("data-n")); }
+    else if (a === "sritem") { srModal(act.getAttribute("data-id")); }
+    else if (a === "hhdance") {
+      var hp = S.state.profile, hn = DANCE_NUM[hp.dance] || 1, hb = $("#hhBub"), CH = ["Yeah! 💪", "Weiter so, Champion! 🏆", "Heute knacken wir ein Wort mehr!", "Ich tanze nur für dich 💃", "Wörter sammeln macht stark!"];
+      var hf = $("#hhFig"); if (!hf) return;
+      hf.innerHTML = heroHtml(hp.avatar, hn); if (hb) hb.textContent = CH[Math.floor(Math.random() * CH.length)];
+      try { global.VTC.burst("stars", hf.getBoundingClientRect().left + 55, hf.getBoundingClientRect().top + 40, 10, .9); } catch (e) {}
+      clearTimeout(hhT); hhT = setTimeout(function () { var h2 = $("#hhFig"); if (h2) h2.innerHTML = heroHtml(S.state.profile.avatar, 0); }, 4200);
+    }
+    else if (a === "srfavhint") { toast("Tippe ein Stück im Schrank an und wähle „Als Liebling“ ⭐"); }
+    else if (a === "gotab") { tab = act.getAttribute("data-t"); render(); view.scrollTop = 0; }
+    else if (a === "srdance") {
+      var owned = S.SHOP.filter(function (x) { return x.kind === "dance" && S.owns(x); }).map(function (x) { return DANCE_NUM[x.val]; }).filter(Boolean), k = owned.indexOf(srDn);
+      srDn = owned[(k + 1) % owned.length] || 1; srHero(true);
+    }
+    else if (a === "srswap") {
+      var figs = S.SHOP.filter(function (x) { return x.kind === "avatar" && S.owns(x); }).map(function (x) { return x.val; }), j = figs.indexOf(srAv);
+      srAv = figs[(j + 1) % figs.length]; srHero(srDn != null); }
+    else if (a === "srwear") { var fi = S.SHOP.filter(function (x) { return x.kind === "avatar" && x.val === srAv; })[0]; if (fi) { S.equip(fi.id); toast("Neuer Avatar: " + fi.label); renderHeader(); srHero(srDn != null); } }
     else if (a === "buyset") {
       var bs = S.buySet();
       toast(bs.error || ("Gekauft: " + bs.items.join(", ") + (bs.locked && bs.locked.length ? ". Noch offen: " + bs.locked.join(", ") : "")), bs.error || (bs.locked && bs.locked.length) ? 5200 : 3200);
@@ -8431,6 +8703,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (tab === "home") viewHome();
     else if (tab === "ueben") viewUeben();
     else if (tab === "stats") viewStats();
+    else if (tab === "showroom") viewShowroom();
     else if (tab === "shop") viewShop();
     else viewParent();
   }

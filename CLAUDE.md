@@ -30,3 +30,4 @@ Lernfortschritts-Server: https://track.wordy.explusmore.com (eigenständig, Node
 - Sprachausgabe: `speechClean()` entfernt Abkürzungen wie „sb.“ vor dem Vorlesen.
 - Offene Ideen: „5-Min“-Kacheln in Üben ohne Aufgabenanzahl; eigene Headlight-Sätze statt Klasse 6.
 - Shop-Preise stehen in `engine.js` (SHOP) in Stufen; `OLD_PRICES` + `priceMigrate()` zahlen bei Preissenkungen einmalig die Differenz zurück (`profile.priceVer`). Bei künftigen Preisänderungen die Version erhöhen und `OLD_PRICES` aktualisieren. Sets: `SETS` (Eis-Set), Belohnung `reward: ...`. Verdienst: `boost()` (erste Woche ×1,5, Eltern-Regler `coinFactor`).
+- Showroom (Reiter `showroom`, `viewShowroom()` in app.js): Logik in engine.js (`collection()`, `medalList()`, `favs()/toggleFav()` max. 3, `CUP_TIERS` mit einmaliger Münzbelohnung über `state.cups`). `profile.seen` steuert die NEU-Marke. Startseite: `viewHome()` mit Hero-Bühne (`.hh`, Himmel nach Uhrzeit) und CTA-Karte (`.cta`).
