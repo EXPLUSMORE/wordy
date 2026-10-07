@@ -105,8 +105,32 @@
     return h;
   }
 
+  /* Aufgenommene Sprecherstimme (audio/film/*.mp3, erzeugt mit tools/film-voice.js). Der Dateiname enthält Stimme und Textprüfsumme,
+     index.json listet, was es gibt. Fehlt eine Datei, spricht die Gerätestimme (opts.speak). */
+  function hash(s) { var x = 2166136261, i; for (i = 0; i < s.length; i++) { x ^= s.charCodeAt(i); x = Math.imul(x, 16777619) >>> 0; } return ("00000000" + x.toString(16)).slice(-8); }
+  var audIdx = null, audLoad = null, aud = null, ptok = 0;
+  function loadIndex() {
+    if (audLoad) return audLoad;
+    audLoad = fetch("audio/film/index.json").then(function (r) { return r.ok ? r.json() : []; }).catch(function () { return []; }).then(function (a) { audIdx = {}; (a || []).forEach(function (f) { audIdx[f] = 1; }); });
+    return audLoad;
+  }
+  function playRec(text, v) {
+    var n = v + "-" + hash(text) + ".mp3"; if (!v || !audIdx || !audIdx[n]) return false;
+    var tk = ++ptok;
+    fetch("audio/film/" + n).then(function (r) { return r.blob(); }).then(function (b) {
+      if (tk !== ptok || !ov) return;
+      var url = URL.createObjectURL(b), a = new Audio(url); aud = a;
+      a.onended = function () { URL.revokeObjectURL(url); };
+      a.onloadedmetadata = function () {   // länger als geplant: Szene bleibt, bis die Stimme fertig ist
+        var need = Math.round(a.duration * 1000) + 700;
+        if (!paused && need > left - (Date.now() - t0)) { clearTimeout(timer); left = need; t0 = Date.now(); var i0 = idx; timer = setTimeout(function () { show(i0 + 1); }, need); }
+      };
+      a.play().catch(function () {});
+    }).catch(function () { if (tk === ptok && opts && opts.speak) { try { opts.speak(text); } catch (e) {} } });
+    return true;
+  }
   var ov = null, timer = null, idx = 0, film = null, paused = false, voice = false, opts = null, t0 = 0, left = 0;
-  function stop() { clearTimeout(timer); try { if (global.speechSynthesis) global.speechSynthesis.cancel(); } catch (e) {} }
+  function stop() { clearTimeout(timer); ptok++; try { if (aud) { aud.pause(); aud = null; } } catch (e) {} try { if (global.speechSynthesis) global.speechSynthesis.cancel(); } catch (e) {} }
   function close() { stop(); if (ov) ov.remove(); ov = null; }
   function show(i) {
     stop(); idx = i;
@@ -116,7 +140,7 @@
     stage.classList.remove("in"); void stage.offsetWidth; stage.classList.add("in");
     ov.querySelectorAll(".fmseg i").forEach(function (b, k) { b.className = k < i ? "done" : k === i ? "cur" : ""; b.style.animationDuration = dur(sc) + "ms"; });
     ov.querySelector(".fmttl").textContent = film.icon + " " + film.title + " · " + (i + 1) + "/" + film.scenes.length;
-    if (voice && opts && opts.speak) { try { opts.speak(sc.nar); } catch (e) {} }
+    if (voice && opts) { var rv = opts.voice ? opts.voice() : null; if (!(rv && playRec(sc.nar, rv)) && opts.speak) { try { opts.speak(sc.nar); } catch (e) {} } }
     left = dur(sc); t0 = Date.now();
     if (!paused) timer = setTimeout(function () { show(i + 1); }, left);
   }
@@ -130,7 +154,7 @@
   }
   function play(id, o) {
     var f = byId(id); if (!f) return;
-    close(); film = f; opts = o || {}; paused = false; voice = !!(opts.speak && opts.audio !== false);
+    close(); film = f; opts = o || {}; paused = false; voice = !!((opts.speak || opts.voice) && opts.audio !== false);
     ov = document.createElement("div"); ov.className = "fmov";
     ov.innerHTML = '<div class="fmwrap"><div class="fmtop"><div class="fmseg">' + f.scenes.map(function () { return "<i></i>"; }).join("") + '</div>' +
       '<div class="fmbar"><span class="fmttl"></span><span><button class="fmic" data-fm="voice" aria-label="Ton">' + (voice ? "🔊" : "🔇") + '</button><button class="fmic" data-fm="pause" aria-label="Pause">⏸</button><button class="fmic" data-fm="x" aria-label="Schließen">✕</button></span></div></div>' +
@@ -140,12 +164,12 @@
       var b = e.target.closest("[data-fm]"), a = b && b.getAttribute("data-fm");
       if (a === "x" || e.target === ov) return close();
       if (a === "voice") { voice = !voice; b.textContent = voice ? "🔊" : "🔇"; if (!voice) stop(); else show(idx); return; }
-      if (a === "pause") { paused = !paused; b.textContent = paused ? "▶" : "⏸"; ov.classList.toggle("paused", paused); if (paused) { clearTimeout(timer); try { global.speechSynthesis.pause(); } catch (x) {} } else { try { global.speechSynthesis.resume(); } catch (x) {} var rest = Math.max(600, left - (Date.now() - t0)); left = rest; t0 = Date.now(); timer = setTimeout(function () { show(idx + 1); }, rest); } return; }
+      if (a === "pause") { paused = !paused; b.textContent = paused ? "▶" : "⏸"; ov.classList.toggle("paused", paused); if (paused) { clearTimeout(timer); try { if (aud) aud.pause(); global.speechSynthesis.pause(); } catch (x) {} } else { try { if (aud) aud.play(); global.speechSynthesis.resume(); } catch (x) {} var rest = Math.max(600, left - (Date.now() - t0)); left = rest; t0 = Date.now(); timer = setTimeout(function () { show(idx + 1); }, rest); } return; }
       if (a === "again") return show(0);
       if (a === "go") { var g = film.go, cb = opts.onGo; close(); if (cb) cb(g); return; }
       if (e.target.closest(".fmstage") && !(ov.querySelector(".fmend"))) { if (e.clientX > global.innerWidth / 2) show(idx + 1); else show(Math.max(0, idx - 1)); }
     });
-    show(0);
+    Promise.race([loadIndex(), new Promise(function (r) { setTimeout(r, 800); })]).then(function () { if (ov) show(0); });
   }
-  global.VTFILM = { list: FILMS, play: play, close: close };
+  global.VTFILM = { list: FILMS, play: play, close: close, hash: hash };
 })(window);

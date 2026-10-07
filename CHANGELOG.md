@@ -9,6 +9,11 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.44.0 – 2026-10-07
+- **Aufgenommene Erzählerstimme für die Erklärfilme**: Die App spielt MP3-Dateien aus `audio/film/` (Stimme Frau oder Mann, Dateiname mit Textprüfsumme, `index.json`), wenn sie vorhanden sind, sonst die Gerätestimme. Die Szene wartet, bis die Aufnahme zu Ende ist. Neue Auswahl „Nur Gerätestimme“ im Setup.
+- Neues Werkzeug `tools/film-voice.js` (OpenAI oder ElevenLabs): vertont alle Filmtexte, überspringt Vorhandenes, entfernt Veraltetes. Anleitung in `tools/README-film-voice.md`. `build.js` nimmt `audio/film` in die Website und den Offline-Cache auf.
+- Noch keine Aufnahmen im Repository: bis sie erzeugt sind, bleibt es bei der Gerätestimme.
+
 ## 2.43.0 – 2026-10-07
 - **Bessere Erzählerstimme** (Erklärfilme und alle deutschen Ansagen): Die App wählt statt der ersten die natürlichste deutsche Stimme des Geräts (Siri, Enhanced, Premium, Neural, Google vor alten Computerstimmen).
 - Setup › Töne: **Erzählerstimme Automatisch / Frau / Mann** (Frau warm und etwas langsamer, Mann tief und ruhig), Auswahl einer bestimmten Stimme des Geräts und „🎬 Erzähler testen“.

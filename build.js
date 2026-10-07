@@ -15,8 +15,10 @@ const THEME = '#1E6273';
 const src = fs.readFileSync('index.html', 'utf8');
 /* Version aus dem Inhalt: ändert sich der Code, ändert sich auch diese Kennung (Setup zeigt sie, der Offline-Cache nutzt sie) */
 const VERSION = JSON.parse(fs.readFileSync('package.json', 'utf8')).version;   // Versionsnummer: nur in package.json pflegen
+const AUDIO = fs.existsSync('audio/film') ? fs.readdirSync('audio/film').filter(f => /\.(mp3|json)$/.test(f)).sort().map(f => 'audio/film/' + f) : [];
 const stamp = require('crypto').createHash('sha1')
   .update([...DATA, ...CODE].map(f => fs.readFileSync(f)).join('') + src + VERSION)
+  .update(Buffer.concat(AUDIO.map(f => fs.readFileSync(f))))
   .update(Buffer.concat(ICONS.map(f => fs.readFileSync(f))))   // neue Symbole lösen ebenfalls ein Update aus
   .digest('hex').slice(0, 10);
 if (!/^[0-9a-f]{10}$/.test(stamp)) throw new Error('Build-Kennung ungültig: ' + stamp);   // Sicherung: sonst bekäme der Offline-Cache einen festen Namen und Geräte sähen keine Updates mehr
@@ -40,8 +42,8 @@ fs.writeFileSync('wordy.html',
 
 /* ---------- 2. Website ---------- */
 fs.rmSync('docs', { recursive: true, force: true });
-for (const d of ['docs', 'docs/js', 'docs/data', 'docs/icons']) fs.mkdirSync(d, { recursive: true });
-[...DATA, ...CODE, ...ICONS].forEach(f => fs.copyFileSync(f, path.join('docs', f)));
+for (const d of ['docs', 'docs/js', 'docs/data', 'docs/icons', ...(AUDIO.length ? ['docs/audio/film'] : [])]) fs.mkdirSync(d, { recursive: true });
+[...DATA, ...CODE, ...ICONS, ...AUDIO].forEach(f => fs.copyFileSync(f, path.join('docs', f)));
 
 const manifest = {
   name: APP, short_name: APP, lang: 'de', dir: 'ltr',
@@ -57,7 +59,7 @@ const manifest = {
 };
 fs.writeFileSync('docs/manifest.webmanifest', JSON.stringify(manifest, null, 2));
 
-const PRECACHE = ['./', 'index.html', 'manifest.webmanifest', ...[...DATA, ...CODE].map(f => `${f}?v=${stamp}`), ...ICONS];
+const PRECACHE = ['./', 'index.html', 'manifest.webmanifest', ...[...DATA, ...CODE].map(f => `${f}?v=${stamp}`), ...ICONS, ...AUDIO];
 /* Version aus dem Inhalt: ändert sich der Code, lädt der Cache neu */
 
 

@@ -1427,8 +1427,8 @@
       '<select id="setPace" style="width:auto">' + [["fast", "Schnell"], ["mid", "Mittel"], ["slow", "Langsam"]].map(function (o) {
         return '<option value="' + o[0] + '"' + (st.settings.readPace === o[0] || (!st.settings.readPace && o[0] === "mid") ? " selected" : "") + '>' + o[1] + '</option>';
       }).join("") + '</select></label>' +
-      '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Erzählerstimme (Erklärfilme)<br><span class="small muted">Frau: warm, Mann: tief und ruhig</span></span>' +
-      '<select id="setNarr" style="width:auto">' + [["auto", "Automatisch"], ["f", "Frau"], ["m", "Mann"]].map(function (o) {
+      '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Erzählerstimme (Erklärfilme)<br><span class="small muted">Frau: warm, Mann: tief und ruhig. Gibt es eine aufgenommene Stimme, wird sie genutzt.</span></span>' +
+      '<select id="setNarr" style="width:auto">' + [["auto", "Automatisch"], ["f", "Frau"], ["m", "Mann"], ["dev", "Nur Gerätestimme"]].map(function (o) {
         return '<option value="' + o[0] + '"' + ((st.settings.narrator || "auto") === o[0] ? " selected" : "") + '>' + o[1] + '</option>';
       }).join("") + '</select></label>' +
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Stimme auf diesem Gerät<br><span class="small muted">Automatisch nimmt die natürlichste deutsche Stimme</span></span>' +
@@ -2429,7 +2429,7 @@
     }
     else if (a === "narrtest") { speak("Hallo Magnus! Ich bin dein Erzähler. Heute zeige ich dir, wie man Wörter knackt – ohne Schweiß, aber mit Style.", null, "de", true); }
     else if (a === "film") {
-      global.VTFILM.play(act.getAttribute("data-id"), { audio: S.state.settings.audio, speak: function (t) { speak(t, null, "de"); }, onGo: function (g) {
+      global.VTFILM.play(act.getAttribute("data-id"), { audio: S.state.settings.audio, speak: function (t) { speak(t, null, "de"); }, voice: function () { var n = S.state.settings.narrator || "auto"; return n === "dev" ? null : n === "m" ? "m" : "f"; }, onGo: function (g) {
         var b = document.createElement("button"); b.hidden = true;
         if (g.arena) { b.setAttribute("data-act", "arena"); b.setAttribute("data-id", g.arena); }
         else { b.setAttribute("data-act", "start"); b.setAttribute("data-mode", g.mode); if (g.focus) b.setAttribute("data-focus", g.focus); b.setAttribute("data-min", S.goalMin()); }

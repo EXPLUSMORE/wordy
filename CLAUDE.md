@@ -34,3 +34,4 @@ Lernfortschritts-Server: https://track.wordy.explusmore.com (eigenständig, Node
 - Erklärfilme: `js/film.js` (`VTFILM`, Szenenlisten je Modus, live aus Figuren/Emoji/CSS gespielt, kein Video). Karte in `modiHtml()`, Handler `film`. Neuer Modus = neuer Eintrag in `FILMS`.
 - Figuren: `js/stila.js` (Eisbär, Pinguin, Robbe, König) und `js/stilb.js` (alle übrigen, Katalog `D` mit Farben/Ohren/Gesicht/Zusätzen). Neue Figur = Eintrag in `D` bzw. `VTA.register`; `avatarHtml` nimmt gezeichnete Köpfe auch für Emoji-Werte.
 - Neues Set: Eintrag in `SETS` (engine.js) mit `fig` (Figur im Eisblock der Abschluss-Szene `openSetReveal`), `items`, `reward`.
+- Film-Stimme: `tools/film-voice.js` erzeugt `audio/film/*.mp3` + `index.json` (Anleitung `tools/README-film-voice.md`); `film.js` spielt sie (Blob, wegen iOS-Range), sonst Gerätestimme. Nie echte Schlüssel einchecken.
