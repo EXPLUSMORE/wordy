@@ -651,7 +651,8 @@
     for (var i = 0; i < RANKS.length; i++) { if (xp >= RANKS[i].xp) { r = RANKS[i]; next = RANKS[i + 1] || null; } }
     return { rank: r, next: next, into: xp - r.xp, span: next ? next.xp - r.xp : 0 };
   }
-  function addXp(v) { state.xp += v; state.daily.xp += v; }
+  function addXp(v) { if (boostActive()) v *= 2; state.xp += v; state.daily.xp += v; }
+  function boostActive() { var b = state.path && state.path.boost; return !!(b && b.on && b.left > 0); }
   function addCoins(v) { state.coins += v; }
 
   function bumpMission(type, amount) {
@@ -690,6 +691,8 @@
     return got;
   }
   function finishSession(res) {
+    var bst = state.path && state.path.boost;
+    if (bst && bst.on) { bst.left = Math.max(0, bst.left - (res.sec || 0)); if (bst.left <= 0) bst.on = false; }   // Booster zählt echte Übungszeit
     // res: {items, correct, sec, maxChain, newSeen, boxSolved}
     var d = state.daily;
     d.items += res.items; d.correct += res.correct; d.sec += res.sec; d.newSeen += res.newSeen || 0;
@@ -835,6 +838,84 @@
     }
     state.profile[PROFILE_KEY[it.kind]] = it.val; save(true); return { ok: true, item: it };
   }
+  /* ---------- Lernpfad (Headlight 2): Abschnitte aus Stationen, Truhe am Ende jedes Abschnitts ---------- */
+  var STATION_WORDS = 7, pathCache = null, pathCacheKey = "";
+  function pathState() {
+    var p = state.path;
+    if (!p) p = state.path = { pos: 0, stars: {}, chests: {}, pending: [], boost: { stock: 0, on: false, left: 0 } };
+    if (!p.boost) p.boost = { stock: 0, on: false, left: 0 };
+    if (!Array.isArray(p.pending)) p.pending = [];
+    return p;
+  }
+  function pathStations() {
+    var key = units.length + ":" + (units[0] && units[0].id);
+    if (pathCache && pathCacheKey === key) return pathCache;
+    var out = [];
+    units.filter(function (u) { return u.track === "schule" && u.k === "Headlight 2"; }).forEach(function (u) {
+      var ids = u.words.map(function (w, i) { return u.id + "#" + i; }), n = ids.length;
+      if (n < 4) return;
+      var ns = Math.max(1, Math.round(n / STATION_WORDS)), parts = Math.ceil(ns / 5), per = Math.ceil(ns / parts), chunk = Math.ceil(n / ns), k = 0;
+      var name = u.title.replace(/^Headlight 2 · /, "");
+      for (var part = 0; part < parts; part++) {
+        var cnt = Math.min(per, ns - k), sec = [], secWords = [], secId = u.id + (parts > 1 ? "." + (part + 1) : "");
+        for (var j = 0; j < cnt; j++, k++) {
+          var w = ids.slice(k * chunk, (k + 1) * chunk); if (!w.length) continue;
+          secWords = secWords.concat(w);
+          sec.push({ id: "S" + u.id + "." + k, unit: u.id, section: secId, sectionTitle: name + (parts > 1 ? " (Teil " + (part + 1) + ")" : ""), words: w, last: false });
+        }
+        if (!sec.length) continue;
+        sec[sec.length - 1].last = true; sec[sec.length - 1].reviewWords = secWords;
+        sec.forEach(function (s, ix) { s.n = ix + 1; s.of = sec.length; });
+        out = out.concat(sec);
+      }
+    });
+    out.forEach(function (s, i) { s.index = i; });
+    pathCache = out; pathCacheKey = key;
+    return out;
+  }
+  /* Stationen, deren Wörter schon alle „sitzen“, werden übersprungen (Magnus hat Stoff ja schon gelernt) */
+  function pathSync() {
+    var p = pathState(), st = pathStations(), moved = false;
+    while (p.pos < st.length) {
+      var s = st[p.pos], all = (s.last ? s.reviewWords : s.words).every(function (id) { return levelOf(id) >= 3; });
+      if (!all) break;
+      p.stars[s.id] = Math.max(p.stars[s.id] || 0, 3); p.auto = (p.auto || 0) + 1;
+      if (s.last) p.chests[s.section] = 1;   // übersprungener Abschnitt: keine Truhe
+      p.pos++; moved = true;
+    }
+    if (moved) save();
+    return p;
+  }
+  function pathComplete(id, stars) {
+    var p = pathState(), st = pathStations().filter(function (x) { return x.id === id; })[0];
+    if (!st) return { error: true };
+    p.stars[id] = Math.max(p.stars[id] || 0, stars);
+    var adv = st.index === p.pos, chest = null;
+    if (adv) {
+      p.pos++;
+      if (st.last && !p.chests[st.section]) {
+        p.chests[st.section] = 1;
+        chest = { section: st.section, title: st.sectionTitle, coins: 15 + Math.floor(Math.random() * 16), boost: Math.random() < 0.4 };
+        p.pending.push(chest);
+      }
+    }
+    pathSync(); save(true);
+    return { advanced: adv, chest: chest, finished: p.pos >= pathStations().length };
+  }
+  function claimChest() {
+    var p = pathState(), c = p.pending.shift();
+    if (!c) return null;
+    addCoins(c.coins); addCl("fortschritt", c.coins);
+    if (c.boost) p.boost.stock++;
+    save(true); return c;
+  }
+  function boostStart() {
+    var b = pathState().boost;
+    if (b.on) return { error: "Ein Booster läuft schon." };
+    if (b.stock < 1) return { error: "Kein Booster im Vorrat." };
+    b.stock--; b.on = true; b.left = 900; save(true); return { ok: true, left: b.left };
+  }
+
   /* Wunsch: ein Shop-Eintrag, auf den gespart wird; die Startseite zeigt den Fortschritt dorthin */
   /* Münzen heute nach Quelle, für die Übersicht im Fortschritt */
   function coinsToday() {
@@ -886,6 +967,6 @@
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
-    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, minXp: minXp, defaultOf: defaultOf
+    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, minXp: minXp, defaultOf: defaultOf
   };
 })(window);

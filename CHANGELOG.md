@@ -9,6 +9,13 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.18.0 – 2026-10-07
+
+- **Lernpfad auf dem Start-Tab** (Headlight 2, streng nacheinander): Jede Unit ist ein Abschnitt (längere Units sind in Teile geteilt) aus Stationen mit je etwa 7 Wörtern, am Ende eine Truhe. Eine Station hat vier Schritte mit den Aufgaben der App: Kennenlernen (neue Wörter mit Einführung und Auswahlaufgaben), Tippen oder Rechtschreibung, Hören & finden (ohne Ton: Lückensatz oder Auswahl), Zuordnen. Die letzte Station jedes Abschnitts wiederholt Wörter des ganzen Abschnitts. Sterne nach Treffern (★ bis ★★★). Die Figur läuft auf der Karte zur nächsten Station. Stationen, deren Wörter schon alle „sitzen“, werden automatisch übersprungen. Falsche Antworten werden wie sonst am Ende der Station wiederholt.
+- **Truhe** nach jedem Abschnitt mit Animation (wackeln, aufspringen, Konfetti): 15 bis 30 Münzen, mit 40 % Chance ein **XP-Booster**.
+- **XP-Booster:** liegt im Vorrat, auf dem Pfad „Starten“; dann 15 Minuten echte Übungszeit doppelte XP (nur XP, nicht Münzen oder Lernstand); Anzeige „⚡×2 mm:ss“ in der Kopfzeile.
+- Dashboard zeigt Pfad-Runden als „Lernpfad“. Boss-Runden mit Arena-Modi folgen später.
+
 ## 2.17.0 – 2026-10-07
 
 - Sticker einmalig zurückgesetzt: Beim ersten Start mit dieser Version werden bei allen Profilen alle aufgeklebten Sticker abgenommen, und es gibt wieder genau einen freien Platz. Weitere Plätze schalten Münzen frei (2: 100, 3 bis 5: je 150). Gekaufte Sticker bleiben im Besitz und lassen sich wieder aufkleben.

@@ -172,6 +172,11 @@
     if (!st.settings.hearts) { hEl.textContent = "∞"; hEl.title = "Ohne Herzen"; }
     else { S.regenHearts(); hEl.innerHTML = "<span style='color:var(--bad)'>" + "♥".repeat(st.hearts) + "</span><span style='color:var(--line)'>" + "♥".repeat(5 - st.hearts) + "</span>"; }
     global.VTC.applyLook(st.profile, st.settings.themeMode);
+    var hb = $("#hBoost");
+    if (hb) {
+      var bs = st.path && st.path.boost, on = !!(bs && bs.on && bs.left > 0);
+      hb.hidden = !on; if (on) hb.textContent = "⚡×2 " + Math.floor(bs.left / 60) + ":" + ("0" + (bs.left % 60)).slice(-2);
+    }
   }
 
   function trackSwitch() {
@@ -302,6 +307,80 @@
     return '<button class="tile' + (cls ? " " + cls : "") + '" ' + attrs + '><span class="ti">' + icon + '</span><span class="tt"><b>' + title + '</b><span class="d">' + desc + '</span>' + (extra || "") + '</span></button>';
   }
 
+  /* ---------- Lernpfad ---------- */
+  var pathShown = null;   // zuletzt gezeigte Position, damit die Figur beim Weiterkommen zur nächsten Station läuft
+  function pathPoint(i, n, H) { return { x: i === n ? 50 : (i % 2 ? 74 : 26), y: H - 54 - i * 84 }; }
+  function pathCard() {
+    var st = S.state; if (st.settings.track !== "schule") return "";
+    var p = S.pathSync(), all = S.pathStations(); if (!all.length) return "";
+    var boost = p.boost, secList = [];
+    all.forEach(function (s) { if (secList.indexOf(s.section) < 0) secList.push(s.section); });
+    var bar = boost.on && boost.left > 0 ? '<div class="row small" style="margin-top:10px;gap:8px"><span>⚡</span><b>Booster läuft: doppelte XP</b><span class="muted tnum">' + Math.floor(boost.left / 60) + ':' + ("0" + (boost.left % 60)).slice(-2) + '</span></div>'
+      : boost.stock > 0 ? '<div class="row" style="margin-top:10px;gap:8px"><span style="font-size:20px">⚡</span><span class="small" style="flex:1 1 auto"><b>' + boost.stock + ' XP-Booster</b> bereit<br><span class="muted">15 Minuten Üben mit doppelten XP</span></span><button class="chip" data-act="boostgo">Starten</button></div>' : "";
+    if (p.pos >= all.length && !p.pending.length) return '<section class="card"><div class="eyebrow">Dein Lernpfad</div><h2>🏆 Alle Abschnitte geschafft!</h2><p class="small muted" style="margin:6px 0 0">Du hast den ganzen Pfad durch. Mit „Üben“ hältst du die Wörter frisch.</p>' + bar + '</section>';
+    var cur = all[Math.min(p.pos, all.length - 1)];
+    var sec = all.filter(function (s) { return s.section === cur.section; }), n = sec.length, H = (n + 1) * 84 + 30, secNo = secList.indexOf(cur.section) + 1;
+    var chestReady = p.pending.some(function (c) { return c.section === cur.section; }) || (p.pending.length && p.pos >= all.length);
+    var pts = [], i;
+    for (i = 0; i <= n; i++) pts.push(pathPoint(i, n, H));
+    var d = "M" + pts[0].x + " " + pts[0].y, dDone = d, curIdx = Math.max(0, Math.min(n, cur.index - sec[0].index));
+    for (i = 1; i <= n; i++) {
+      var ym = (pts[i - 1].y + pts[i].y) / 2, seg = " C" + pts[i - 1].x + " " + ym + "," + pts[i].x + " " + ym + "," + pts[i].x + " " + pts[i].y;
+      d += seg; if (i <= curIdx) dDone += seg;
+    }
+    var h = '<section class="card path"><div class="eyebrow">Dein Lernpfad · Abschnitt ' + secNo + ' von ' + secList.length + '</div><h2 style="margin:4px 0 2px">' + esc(cur.sectionTitle) + '</h2>' +
+      '<div class="small muted">' + (p.pos >= all.length ? "Truhe wartet" : "Station " + cur.n + " von " + cur.of + (cur.last && cur.n > 1 ? " · Abschlussrunde" : "")) + '</div>' +
+      '<div class="pmap" id="pmap" style="height:' + H + 'px"><svg viewBox="0 0 100 ' + H + '" preserveAspectRatio="none" aria-hidden="true">' +
+      '<path d="' + d + '" fill="none" stroke="#fff" stroke-opacity=".85" stroke-width="16" stroke-linecap="round" vector-effect="non-scaling-stroke"/>' +
+      '<path d="' + dDone + '" fill="none" stroke="#2e7d4f" stroke-width="6" stroke-linecap="round" stroke-dasharray="1 12" vector-effect="non-scaling-stroke"/></svg>';
+    sec.forEach(function (s, k) {
+      var pt = pts[k], state = s.index < p.pos ? "done" : s.index === p.pos ? "cur" : "lock", stars = p.stars[s.id] || 0;
+      h += '<button class="pnode ' + state + '" style="left:' + pt.x + '%;top:' + pt.y + 'px" data-act="' + (state === "done" ? "pathreplay" : state === "cur" ? "pathgo" : "pathlocked") + '" data-id="' + esc(s.id) + '" aria-label="Station ' + s.n + '">' +
+        (state === "done" ? "✓" : state === "cur" ? "▶" : "🔒") + '</button>';
+      if (state === "done") h += '<span class="pstars" style="left:' + pt.x + '%;top:' + pt.y + 'px">' + "★".repeat(stars) + "☆".repeat(3 - stars) + '</span>';
+    });
+    var cp = pts[n];
+    h += '<button class="pchest' + (chestReady ? " ready" : p.chests[cur.section] ? " got" : "") + '" style="left:' + cp.x + '%;top:' + cp.y + 'px" data-act="' + (chestReady ? "openchest" : "pathlocked") + '" aria-label="Truhe">🎁</button>';
+    var cpt = pts[curIdx], side = cpt.x < 50 ? 1 : -1;
+    var fig = '<div class="pme" id="pme" style="left:calc(' + cpt.x + '% + ' + (side * 62) + 'px);top:' + (cpt.y - 4) + 'px">' + avatarHtml(st.profile.avatar) + '</div>';
+    if (p.pos < all.length) fig += '<div class="pbubble" style="left:calc(' + cpt.x + '% + ' + (side * 62) + 'px);top:' + (cpt.y - 46) + 'px;transform:translateX(-50%)">Los geht’s!</div>';
+    h += fig + '</div>';
+    if (p.pending.length) h += '<button class="btn wide lg" data-act="openchest" style="background:var(--gold,#f2b33d);color:#2b1d00;margin-bottom:8px">🎁 Truhe öffnen' + (p.pending.length > 1 ? ' (' + p.pending.length + ')' : '') + '</button>';
+    if (p.pos < all.length) h += '<button class="btn wide lg" data-act="pathgo" data-id="' + esc(cur.id) + '">Los geht’s – Station ' + cur.n + ' ▶</button>';
+    h += bar + '</section>';
+    // Figur läuft zur neuen Station, wenn sie seit dem letzten Anzeigen weitergekommen ist
+    if (pathShown && pathShown.section === cur.section && pathShown.pos < p.pos && pathShown.k < n) {
+      var from = pts[pathShown.k], fx = from.x + (from.x < 50 ? 1 : -1) * 0;
+      setTimeout(function () {
+        var el = $("#pme"); if (!el) return;
+        el.style.transition = "none"; el.style.left = "calc(" + from.x + "% + " + (side * 62) + "px)"; el.style.top = (from.y - 4) + "px";
+        void el.offsetWidth; el.style.transition = ""; el.style.left = "calc(" + cpt.x + "% + " + (side * 62) + "px)"; el.style.top = (cpt.y - 4) + "px";
+      }, 50);
+    }
+    pathShown = { section: cur.section, pos: p.pos, k: curIdx };
+    return h;
+  }
+  var STEP_NAMES = ["Kennenlernen", "Tippen", "Hören & finden", "Zuordnen"];
+  function pathTasks(st) {
+    var ids = st.last ? st.reviewWords.slice() : st.words, ws = ids.map(function (id) { return S.byId(id); }).filter(Boolean);
+    if (st.last && ws.length > 12) ws = ws.sort(function (a, b) { return S.levelOf(a.id) - S.levelOf(b.id); }).slice(0, 12);
+    ws = S.shuffle(ws);
+    var t = [], pick = function (a, n) { return S.shuffle(a.slice()).slice(0, n); }, long = function (w) { return w.en.replace(/^to\s+/, "").length > 24; };
+    ws.forEach(function (w, k) {   // 1 Kennenlernen
+      if (S.levelOf(w.id) === 0 && !(S.state.w[w.id] && S.state.w[w.id].no)) { t.push({ type: "intro", w: w, step: 1 }); t.push({ type: "mc_en_de", w: w, isNew: true, step: 1 }); }
+      else t.push({ type: k % 2 ? "mc_de_en" : "mc_en_de", w: w, step: 1 });
+    });
+    pick(ws, st.last ? 6 : ws.length).forEach(function (w) {   // 2 Tippen
+      var plain = w.en.replace(/^to\s+/, ""), ty = long(w) ? "mc_de_en" : plain.length <= 16 && Math.random() < 0.35 ? "spell" : "type";
+      t.push({ type: ty, w: w, step: 2 });
+    });
+    pick(ws, st.last ? 6 : Math.min(ws.length, 6)).forEach(function (w) {   // 3 Hören und finden
+      t.push({ type: audioAvailable() ? "listen" : w.gap ? "gap" : "mc_de_en", w: w, step: 3 });
+    });
+    pick(ws, st.last ? 3 : 2).forEach(function (w) { t.push({ type: "match", w: w, step: 4 }); });   // 4 Zuordnen
+    return t;
+  }
+
   /* ---------- Start: eine Empfehlung, ein Knopf ---------- */
   function recommend() {
     var st = S.state, p = S.pools(), W = window.WordySync, mins = startMin || st.settings.goalMin;
@@ -343,6 +422,7 @@
       (r.next ? '<span>Noch ' + toNext + ' XP bis ' + esc(r.next.n) + '</span>' : '<span>Höchster Rang erreicht</span>') +
       '</div></div></section>';
 
+    html += pathCard();
     html += '<section class="card rec-card"><div class="eyebrow">Heute für dich</div>' +
       '<h2>' + rec.icon + ' ' + rec.title + '</h2>' +
       '<p class="small muted" style="margin:0 0 12px">' + esc(rec.sub) + '</p>' +
@@ -1162,6 +1242,15 @@
     sessionEl.hidden = false; document.body.style.overflow = "hidden";
     renderTask();
   }
+  function startPathStation(id) {
+    S.rollDay(); S.regenHearts();
+    var st = S.pathStations().filter(function (x) { return x.id === id; })[0]; if (!st) return;
+    if (S.state.settings.hearts && S.state.hearts <= 0) { toast("Die Herzen sind alle. Sie füllen sich bald wieder auf."); return; }
+    var tasks = pathTasks(st); if (!tasks.length) { toast("Für diese Station gibt es gerade nichts zu üben."); return; }
+    SS = { tasks: tasks, i: 0, chain: 0, maxChain: 0, items: 0, correct: 0, newSeen: 0, boxSolved: 0, mastered: 0, sentOk: 0, start: Date.now(), answered: false,
+      retry: [], mode: "path", ended: false, planned: tasks.length, station: st, curStep: 1 };
+    snapStart(); sessionEl.hidden = false; document.body.style.overflow = "hidden"; renderTask();
+  }
   /* Stand zu Rundenbeginn, damit das Finale zeigen kann, was die Runde gebracht hat */
   function snapStart() { SS.xp0 = S.state.xp; SS.coins0 = S.state.coins; if (window.WordySync) window.WordySync.ctx = { mode: SS.mode || "mix" }; }
   function star(on, i) {
@@ -1181,6 +1270,7 @@
     var good = reason !== "hearts";
     var perfect = good && SS.correct === SS.items && SS.items > 3;
     var stars = !good ? 0 : acc >= 90 ? 3 : acc >= 70 ? 2 : 1;
+    var pr = SS.station && reason === "done" ? S.pathComplete(SS.station.id, stars) : null;
     var xp0 = SS.xp0 == null ? st.xp : SS.xp0, gain = Math.max(0, st.xp - xp0), coinGain = Math.max(0, st.coins - (SS.coins0 == null ? st.coins : SS.coins0));
     if (window.WordySync) { window.WordySync.sessionEnd({ sec: sec, items: SS.items, correct: SS.correct, mode: SS.mode || "mix", coins: coinGain, xp: gain, reason: reason }); window.WordySync.ctx = null; }
     var r0 = S.rankOf(xp0), r1 = S.rankOf(st.xp), rankUp = r0.rank.n !== r1.rank.n;
@@ -1209,13 +1299,40 @@
     if (rw.goalReached) html += '<section class="card"><div class="eyebrow" style="color:var(--good)">Tagesziel erreicht</div>' + (rw.streakUp ? '<div class="fin-flame">🔥</div>' : "") + '<p style="margin:6px 0 0">' + (rw.streakUp ? "Streak steht bei " + st.streak.count + " " + plural(st.streak.count, "Tag", "Tagen") + "." : "Schon erledigt heute.") + '</p></section>';
     if (rw.missions.length) html += '<section class="card"><div class="eyebrow">Missionen erfüllt</div>' + rw.missions.map(function (m) { return '<div class="mission done"><div class="tick">✓</div><div class="txt small">' + esc(m.n) + '</div><span class="pill">🪙 ' + m.coins + '</span></div>'; }).join("") + '</section>';
     if (rw.badges.length) html += '<section class="card"><div class="eyebrow">Neue Abzeichen</div><div class="badges" style="margin-top:8px">' + rw.badges.map(function (b) { return '<div class="badge"><div class="g">🏅</div><b>' + esc(b.n) + '</b></div>'; }).join("") + '</div></section>';
-    html += '<div class="row" style="gap:8px"><button class="btn wide" data-act="again">Noch eine Runde</button>' +
+    if (pr) html += '<section class="card"><div class="eyebrow">Lernpfad</div><p style="margin:6px 0 0"><b>Station geschafft</b> · ' + "★".repeat(stars) + "☆".repeat(3 - stars) + (pr.advanced ? "" : " (Wiederholung)") + '</p>' +
+      (pr.chest ? '<p class="small" style="margin:6px 0 0">🎁 Abschnitt geschafft – eine Truhe wartet auf dich!</p>' : pr.finished ? '<p class="small" style="margin:6px 0 0">🏆 Du hast den ganzen Pfad geschafft!</p>' : "") + '</section>';
+    if (SS.station) html += '<div class="row" style="gap:8px">' + (pr && pr.chest ? '<button class="btn wide lg" data-act="openchest">🎁 Truhe öffnen</button>' : '<button class="btn wide lg" data-act="close">' + (pr ? "Weiter auf dem Pfad" : "Zurück zum Pfad") + '</button>') + '</div></div></div>';
+    else html += '<div class="row" style="gap:8px"><button class="btn wide" data-act="again">Noch eine Runde</button>' +
       '<button class="btn ghost" data-act="close">Fertig</button></div></div></div>';
     sessionEl.innerHTML = html;
     renderHeader();
     global.VTC.runFinale(sessionEl, { pct0: pct(r0), pct1: pct(r1), rankUp: rankUp, coins: coinGain, perfect: perfect,
       ok: good && acc >= 70, fx: st.profile.fx, snd: st.profile.snd, audio: st.settings.audio });
     if (rw.streakUp) { var fl = sessionEl.querySelector(".fin-flame"); if (fl) fl.classList.add("go"); }
+  }
+  var CHEST_SVG = '<svg class="chestsvg" viewBox="0 0 120 104" aria-hidden="true"><rect x="14" y="52" width="92" height="46" rx="6" fill="#8a5a2b"/><rect x="14" y="64" width="92" height="8" fill="#f2b33d"/>' +
+    '<g class="lid"><path d="M14 52 V38 a46 30 0 0 1 92 0 V52 Z" fill="#a66d33"/><rect x="14" y="44" width="92" height="8" fill="#f2b33d"/></g>' +
+    '<rect x="52" y="54" width="16" height="18" rx="3" fill="#f2b33d" stroke="#8a5a2b" stroke-width="2"/><circle cx="60" cy="63" r="3" fill="#5a3a12"/></svg>';
+  function openChest() {
+    var c = S.claimChest(); if (!c) { render(); return; }
+    var pf = S.state.profile, ov = document.createElement("div"); ov.className = "chestov";
+    ov.innerHTML = '<div class="cray"></div><div class="eyebrow" style="color:#d8cfff;position:relative;z-index:2">' + esc(c.title) + ' geschafft</div>' +
+      '<h2 style="position:relative;z-index:2;font-size:26px;margin:0">Deine Truhe</h2>' + CHEST_SVG +
+      '<div class="rwd" id="cr1"><span style="font-size:30px">🪙</span><span><b class="tnum" style="font-size:22px">+' + c.coins + '</b> Münzen</span></div>' +
+      (c.boost ? '<div class="rwd" id="cr2"><span style="font-size:30px">⚡</span><span>XP-Booster<br><span style="font-weight:500;font-size:12px;color:#66748a">15 Minuten doppelte XP, im Vorrat</span></span></div>' : "") +
+      '<button class="btn lg" id="cOk" style="position:relative;z-index:2;opacity:0;pointer-events:none;background:var(--gold,#f2b33d);color:#2b1d00;margin-top:8px">Weiter ▶</button>';
+    document.body.appendChild(ov);
+    var show = function (id, ms) { setTimeout(function () { var e = document.getElementById(id); if (e) e.classList.add("show"); }, ms); };
+    setTimeout(function () {
+      ov.classList.add("open");
+      try { if (S.state.settings.audio) global.VTC.sound(pf.snd, true); global.VTC.burst("confetti", global.innerWidth / 2, global.innerHeight * .4, 44, 1.7); } catch (e) {}
+    }, 1900);
+    show("cr1", 2400); if (c.boost) show("cr2", 3000);
+    setTimeout(function () { var b = $("#cOk"); if (b) { b.style.transition = "opacity .4s"; b.style.opacity = 1; b.style.pointerEvents = "auto"; } }, c.boost ? 3500 : 2900);
+    $("#cOk").addEventListener("click", function () {
+      ov.remove(); renderHeader();
+      if (SS && !sessionEl.hidden) closeSession(); else render();
+    });
   }
   function closeSession() {
     sessionEl.hidden = true; sessionEl.innerHTML = ""; SS = null;
@@ -1235,7 +1352,12 @@
     var hearts = st.settings.hearts ? '<span class="hearts" style="color:var(--bad)">' + "♥".repeat(st.hearts) + '</span><span class="hearts" style="color:var(--line)">' + "♥".repeat(5 - st.hearts) + '</span>' : '<span class="pill">ohne Herzen</span>';
     var head = '<div class="shead"><button class="chip" data-act="quit">✕</button>' +
       '<div class="bar" style="flex:1 1 auto"><i style="width:' + pc + '%"></i></div>' + hearts + '</div>';
-    sessionEl.innerHTML = head + '<div class="sbody" id="sbody"></div><div class="sfoot" id="sfoot"></div>';
+    var stepHtml = "";
+    if (SS.station) {
+      var cs = t.step || SS.curStep || 1; SS.curStep = cs;
+      stepHtml = '<div class="stepbar">' + [1, 2, 3, 4].map(function (k) { return '<i class="' + (k < cs ? "ok" : k === cs ? "now" : "") + '"></i>'; }).join("") + '<b>Station ' + SS.station.n + ' · ' + STEP_NAMES[cs - 1] + '</b></div>';
+    }
+    sessionEl.innerHTML = head + stepHtml + '<div class="sbody" id="sbody"></div><div class="sfoot" id="sfoot"></div>';
     var body = $("#sbody"), foot = $("#sfoot");
     body.className = "sbody pop";
     (RENDER[t.type] || RENDER.mc_en_de)(t, body, foot);
@@ -1673,6 +1795,7 @@
     else if (a === "next") next();
     else if (a === "quit") { if (SS && SS.items) endSession("quit"); else closeSession(); }
     else if (a === "close") closeSession();
+    else if (a === "openchest") openChest();
     else if (a === "again") { closeSession(); startSession({ minutes: S.state.settings.goalMin }); }
     else if (a === "undo" && t && (t.type === "spell" || t.type === "build") && !SS.answered) {
       if (!t.built.length) return;
@@ -1818,6 +1941,10 @@
       render(); view.scrollTop = 0;
     }
     else if (a === "startrec") { if (lastRec) startSession(lastRec.opts); }
+    else if (a === "pathgo" || a === "pathreplay") startPathStation(act.getAttribute("data-id"));
+    else if (a === "pathlocked") { act.classList.remove("shake"); void act.offsetWidth; act.classList.add("shake"); toast(act.classList.contains("pchest") ? "Erst alle Stationen dieses Abschnitts schaffen, dann geht die Truhe auf." : "Erst die Station davor schaffen."); }
+    else if (a === "openchest") openChest();
+    else if (a === "boostgo") { var bg = S.boostStart(); toast(bg.error || "Booster läuft: 15 Minuten doppelte XP beim Üben."); renderHeader(); render(); }
     else if (a === "wfilter") { wFilter = act.getAttribute("data-f"); wMax = 40; render(); }
     else if (a === "wmore") { wMax += 40; $("#wList").innerHTML = wordListHtml(); }
     else if (a === "setmin") { startMin = +act.getAttribute("data-min"); render(); }
