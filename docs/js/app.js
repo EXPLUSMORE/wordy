@@ -1414,8 +1414,7 @@
         '<div class="tiles" id="tiles">' + S.shuffle(parts.slice()).map(function (wd, i) {
           return '<button class="tile word" data-tile="' + i + '" data-ch="' + esc(wd) + '">' + esc(wd) + '</button>';
         }).join("") + '</div>' +
-        '<p class="small muted" style="margin:0">Tippe ein Wort an, um es zu legen oder zurückzulegen. Ziehen mit dem Finger schiebt es an eine andere Stelle.</p>' +
-        '<button class="chip" data-act="undo" style="align-self:flex-start">← Wort zurück</button></div>';
+        '<p class="small muted" style="margin:0">Tippe ein Wort an, um es zu legen oder zurückzulegen. Ziehen mit dem Finger schiebt es an eine andere Stelle.</p></div>';
       foot.innerHTML = footCheck();
       paintSlot(t, true);
     },
