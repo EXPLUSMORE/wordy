@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.21.0 – 2026-10-07
+
+- Dashboard „Fortschritt pro Einheit“ neu gegliedert: Gruppen nach Schuljahr bzw. Business-Stufe (Headlight 2, Klassen, Basis, Aufbau, Profi, Smalltalk, Redewendungen, eigene Listen), aufklappbar; die Gruppe mit laufendem Lernen ist offen. Pro Gruppe Balken, Wörter begonnen/gemeistert und Lernpfad-Stationen, pro Einheit der Stand der Wörter und die Lernpfad-Abschnitte als Chips (✓ geschafft, ▶ begonnen, ⚔️ Boss besiegt, 🎁 Truhe geholt). Gesamtzeile oben. Die App sendet die Abschnitte mit; dafür ist die neue App-Version und ein **Server-Update** nötig.
+
 ## 2.20.0 – 2026-10-07
 
 - **Boss-Runden im Lernpfad:** Die letzte Station jedes Abschnitts ist jetzt eine Boss-Runde in der Arena, reihum Match-Rausch (10 richtig), Blitzrunde (12 richtig) und Letztes Herz (7 richtig). Gespielt wird mit den Wörtern des ganzen Abschnitts (Fehlauswahl-Antworten kommen aus dem übrigen Stoff). Auf der Pfadkarte ist die Station mit ⚔️ markiert, ein Zähler „Boss 3 / 10“ zeigt den Stand. Geschafft ab der Mindestzahl richtiger Antworten (Sterne: 1 bei Ziel, 2 bei dem 1,5-fachen, 3 bei dem Doppelten), dann öffnet sich die Truhe. Sonst „Nochmal versuchen“, der Pfad bleibt bei der Boss-Runde. Boss-Runden zählen auch für die Arena-Tagesmission und den Lernstand der Wörter.

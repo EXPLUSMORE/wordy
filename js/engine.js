@@ -886,6 +886,16 @@
     pathCache = out; pathCacheKey = key;
     return out;
   }
+  /* Abschnitte mit Stand für das Dashboard: [{id, u (Einheit), t (Titel), n (Stationen), d (geschafft), b (Boss geschafft), c (Truhe geholt)}] */
+  function pathSections() {
+    var p = pathState(), secs = [], by = {};
+    pathStations().forEach(function (s) {
+      var x = by[s.section];
+      if (!x) { x = by[s.section] = { id: s.section, u: s.unit, t: s.sectionTitle, n: 0, d: 0, b: 0, c: p.chests[s.section] ? 1 : 0 }; secs.push(x); }
+      x.n++; if (p.stars[s.id]) { x.d++; if (s.last) x.b = 1; }
+    });
+    return secs;
+  }
   function pathProgress() { var p = pathState(), st = pathStations(), d = st.filter(function (s) { return p.stars[s.id]; }).length; return { done: d, total: st.length }; }
   /* Stationen, deren Wörter schon alle „sitzen“, werden übersprungen (Magnus hat Stoff ja schon gelernt) */
   function pathSync() {
@@ -983,6 +993,6 @@
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
-    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, pathProgress: pathProgress, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, minXp: minXp, defaultOf: defaultOf
+    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, pathProgress: pathProgress, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, minXp: minXp, defaultOf: defaultOf
   };
 })(window);

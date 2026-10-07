@@ -220,6 +220,40 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     h += '<h3 style="margin:14px 0 4px;font-size:14px">Fehlerwörter der Woche</h3>' + probList(w.problems);
     return h + "</div>";
   }
+  /* Fortschritt pro Einheit, gegliedert nach Schuljahr bzw. Business-Stufe; je Einheit die Abschnitte des Lernpfads */
+  var GROUP_RANK = ["Headlight 2", "6", "7", "8", "Basis", "Aufbau", "Profi", "Smalltalk", "Redewendungen", "Eigene Listen"];
+  function unitsCard(r, m) {
+    var h = '<div class="card"><h2>Fortschritt pro Einheit</h2>';
+    if (!r.units.length) return h + '<p class="muted small">Noch keine Daten. Sie erscheinen, sobald Magnus die App geöffnet und eine Runde gelernt hat.</p></div>';
+    var secBy = {}, pp = r.meta && r.meta.path;
+    ((pp && pp.sections) || []).forEach(function (x) { (secBy[x.u] = secBy[x.u] || []).push(x); });
+    var groups = {}, order = [];
+    r.units.forEach(function (u) { var g = String(u.k); if (!groups[g]) { groups[g] = []; order.push(g); } groups[g].push(u); });
+    var rk = function (g) { var i = GROUP_RANK.indexOf(g); return i < 0 ? 99 : i; };
+    order.sort(function (a, b) { return (rk(a) - rk(b)) || (a < b ? -1 : 1); });
+    var tot = r.units.reduce(function (a, u) { return { n: a.n + u.total, m: a.m + u.mastered, s: a.s + u.seen }; }, { n: 0, m: 0, s: 0 });
+    h += '<p class="small muted" style="margin:0 0 10px">' + tot.s + " von " + tot.n + " Wörtern begonnen, " + tot.m + " gemeistert" + (pp && pp.total ? " · Lernpfad: " + pp.done + " von " + pp.total + " Stationen" : "") + ".</p>";
+    h += order.map(function (g) {
+      var us = groups[g], n = 0, mm = 0, seen = 0, sd = 0, st = 0;
+      us.forEach(function (u) { n += u.total; mm += u.mastered; seen += u.seen; (secBy[u.id] || []).forEach(function (x) { sd += x.d; st += x.n; }); });
+      var active = seen > 0 && mm < n, label = /^\d+$/.test(g) ? "Klasse " + g : g;
+      return '<details class="ugrp"' + (active ? " open" : "") + '><summary style="cursor:pointer;display:grid;grid-template-columns:1fr auto;gap:4px 10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)">' +
+        '<b>' + esc(label) + '</b><span class="small muted">' + mm + " / " + n + " gemeistert</span>" +
+        '<span style="grid-column:1 / 3">' + '<div class="mini" style="margin:0"><i class="' + (mm >= n ? "d" : "") + '" style="width:' + Math.round(mm * 100 / Math.max(1, n)) + '%"></i></div></span>' +
+        '<span class="small muted" style="grid-column:1 / 3">' + seen + " von " + n + " begonnen" + (st ? " · Lernpfad " + sd + " von " + st + " Stationen" : "") + " · " + us.length + (us.length === 1 ? " Einheit" : " Einheiten") + '</span></summary>' +
+        '<table><tr><th>Einheit</th><th style="width:34%">Stand</th><th class="n">Gemeistert</th></tr>' + us.map(function (u) {
+          var secs = secBy[u.id] || [];
+          return '<tr class="clk" data-u="' + esc(u.id) + '"><td>' + esc(u.title.replace(/^Headlight 2 · /, "")) + '<div class="small muted">' + u.seen + " von " + u.total + " Wörtern begonnen</div>" +
+            (secs.length ? '<div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:4px">' + secs.map(function (x, i) {
+              var full = x.d >= x.n;
+              return '<span class="pill" title="Lernpfad-Abschnitt">' + (secs.length > 1 ? "Teil " + (i + 1) + " · " : "Pfad · ") + x.d + "/" + x.n + (full ? " ✓" : x.d ? " ▶" : "") + (x.b ? " ⚔️" : "") + (x.c ? " 🎁" : "") + '</span>';
+            }).join("") + '</div>' : "") + '</td><td>' + stack(u.lv, u.total) + '</td><td class="n">' + u.mastered + " / " + u.total + "</td></tr>";
+        }).join("") + "</table></details>";
+    }).join("");
+    h += '<p class="small muted" style="margin:8px 0 0">Tippe auf eine Gruppe zum Aufklappen und auf eine Einheit für die einzelnen Wörter. Lernpfad-Chips: ✓ Abschnitt geschafft, ▶ begonnen, ⚔️ Boss besiegt, 🎁 Truhe geholt.</p><div id="unitdetail"></div>' +
+      '<div class="legend"><span><i style="background:var(--l1)"></i>Angefangen</span><span><i style="background:var(--l2)"></i>Geübt</span><span><i style="background:var(--l3)"></i>Sitzt</span><span><i style="background:var(--l4)"></i>Gemeistert</span></div></div>';
+    return h;
+  }
   function hhmm(ts) { return new Date(ts).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" }); }
   function muster(r, m) {
     var ds = r.days, act = ds.filter(function (d) { return d.items > 0 || d.sec > 0; }), goal = (m.goalMin || 0) * 60, runs = [], modes = {}, hours = {}, gap = 0, best = 0;
@@ -268,17 +302,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
       bars(r.days) + '<div class="legend"><span><i style="background:var(--good)"></i>10 Min. oder mehr</span><span><i style="background:var(--acc2)"></i>weniger</span><span class="muted">Insgesamt ' + fmtMin(t.sec) + ", " + t.items + " Aufgaben, " + t.activeDays + " aktive Tage</span></div></div>";
 
     h += tageCard(r, m);
-    h += '<div class="card"><h2>Fortschritt pro Einheit</h2>';
-    if (!r.units.length) h += '<p class="muted small">Noch keine Daten. Sie erscheinen, sobald Magnus die App geöffnet und eine Runde gelernt hat.</p>';
-    else {
-      h += "<table><tr><th>Einheit</th><th style=\"width:34%\">Stand</th><th class=\"n\">Gemeistert</th></tr>" +
-        r.units.map(function (u) {
-          return '<tr class="clk" data-u="' + esc(u.id) + '"><td>' + esc(u.title) + '<div class="small muted">' + u.seen + " von " + u.total + " Wörtern begonnen</div></td><td>" + stack(u.lv, u.total) + '</td><td class="n">' + u.mastered + " / " + u.total + "</td></tr>";
-        }).join("") + "</table>" +
-        '<p class="small muted" style="margin:8px 0 0">Tippe auf eine Einheit, um die einzelnen Wörter zu sehen.</p><div id="unitdetail"></div>' +
-        '<div class="legend"><span><i style="background:var(--l1)"></i>Angefangen</span><span><i style="background:var(--l2)"></i>Geübt</span><span><i style="background:var(--l3)"></i>Sitzt</span><span><i style="background:var(--l4)"></i>Gemeistert</span></div>';
-    }
-    h += "</div>";
+    h += unitsCard(r, m);
 
     h += '<div class="card"><h2>Alle Wörter</h2><details id="wdet"><summary style="cursor:pointer;color:var(--acc);font-weight:600">Wörterliste öffnen (Suche, Filter, Fehlerquote)</summary><div id="wbox"></div></details></div>';
     h += '<div class="card"><h2>Problemwörter (' + days + " Tage)</h2>";
@@ -479,7 +503,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
   function kpi(v, l) { return '<div class="kpi"><b>' + v + "</b><span>" + l + "</span></div>"; }
 
   loadPlayers();
-  setInterval(function () { if (cur !== "new" && !document.hidden && !document.getElementById("nn") && !document.getElementById("ic") && !document.querySelector("details[open]") && !document.getElementById("unitdetail").innerHTML) show(); }, 120000);
+  setInterval(function () { if (cur !== "new" && !document.hidden && !document.getElementById("nn") && !document.getElementById("ic") && !document.querySelector("details[open]:not(.ugrp)") && !document.getElementById("unitdetail").innerHTML) show(); }, 120000);
 })();
 </script>
 </body>
