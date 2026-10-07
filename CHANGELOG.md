@@ -9,6 +9,12 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.13.0 – 2026-10-07
+
+- Tagesmissionen mit Link: Jede offene Mission auf dem Start-Tab hat einen Knopf „Los →“, der direkt den passenden Modus startet (mit kurzer Anleitung darunter): Wörter üben = gemischte Runde, Tagesziel = gemischte Runde bis zum Ziel, Fehlerkartei, Neue Wörter, Sätze, 10 in Folge = gemischte Runde.
+- Neuer Modus „Meistern“ (Mission „2 Wörter meistern“): Es werden die Wörter getippt, die dem Meistern am nächsten sind (Stufe „Sitzt“, fällige zuerst, dann „Geübt“).
+- Arena in den Tagesmissionen: Ab und zu (etwa jeden dritten Tag) ist eine Arena-Runde mit festem Spielmodus eine der drei Missionen (10 🪙). Setup → Üben: Schalter „Arena als Tagesmission“ (Standard an). Das Dashboard kennt den neuen Modus „Meistern“ (Server-Update, läuft automatisch).
+
 ## 2.12.0 – 2026-10-07
 
 - Pause nach der Antwort: Der Weiter-Knopf ist nach jeder Antwort kurz gesperrt (mit Füllbalken), damit die Lösung gesehen wird. Richtig: 1 Sekunde, bei Sätzen 1,5. Falsch: 3 Sekunden (Sätze 4), die richtige Lösung wird automatisch vorgelesen. Bei einem falsch beantworteten Wort muss es zusätzlich einmal richtig abgeschrieben werden, erst dann geht es weiter (nicht bei Verben mit mehreren Formen). Ohne Ton bleibt es bei der Pause. Setup → Üben: Schalter „Pause nach der Antwort“ (Standard an).

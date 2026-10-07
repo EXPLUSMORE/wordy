@@ -321,8 +321,30 @@
     { id: "mchain", n: "10 richtige in Folge", goal: 10, type: "chain", coins: 12 },
     { id: "mnew", n: "6 neue Wörter kennenlernen", goal: 6, type: "new", coins: 10 },
     { id: "mmaster", n: "2 Wörter meistern", goal: 2, type: "master", coins: 18 },
-    { id: "msent", n: "4 Sätze richtig bauen", goal: 4, type: "sent", coins: 14 }
+    { id: "msent", n: "4 Sätze richtig bauen", goal: 4, type: "sent", coins: 14 },
+    { id: "marena", n: "Eine Arena-Runde spielen", goal: 1, type: "arena", coins: 10 }
   ];
+  var ARENA_NAMES = { match: "Match-Rausch", blitz: "Blitzrunde", survival: "Letztes Herz", hunt: "Fehlerjagd" };
+  /* Aus einer Vorlage wird die Tagesmission; die Arena-Mission bekommt einen Spielmodus */
+  function instMission(def) {
+    var m = { id: def.id, n: def.n, goal: def.goal, type: def.type, coins: def.coins, p: 0, done: false };
+    if (def.type === "arena") {
+      var ids = ["match", "blitz", "survival"]; if (pools().box.length >= 5) ids.push("hunt");
+      m.mode = ids[Math.floor(Math.random() * ids.length)]; m.n = "Eine Runde " + ARENA_NAMES[m.mode] + " spielen";
+    }
+    return m;
+  }
+  /* Wörter, die dem Meistern am nächsten sind: erst Stufe „Sitzt“ (fällige zuerst), dann Stufe „Geübt“ */
+  function masterList(n) {
+    var now = Date.now();
+    var cand = pools().all.filter(function (w) { var l = levelOf(w.id); return l === 3 || l === 2; });
+    cand.sort(function (a, b) {
+      var la = levelOf(a.id), lb = levelOf(b.id); if (la !== lb) return lb - la;
+      var ra = state.w[a.id], rb = state.w[b.id], da = ra.due <= now ? 0 : 1, db = rb.due <= now ? 0 : 1;
+      return (da - db) || ((rb.iv || 0) - (ra.iv || 0));
+    });
+    return cand.slice(0, n);
+  }
   /* Nur Missionen, die heute überhaupt machbar sind: leere Fehlerkartei, keine neuen Wörter mehr, keine Sätze usw. fallen heraus */
   function missionFeasible(m) {
     var p = pools();
@@ -333,14 +355,15 @@
         return p.fresh.length >= m.goal && Math.max(0, state.settings.newPerDay - seen) >= m.goal;
       case "master": return p.all.filter(function (w) { return levelOf(w.id) >= 3; }).length >= m.goal;
       case "sent": return activeSentences().length >= m.goal;
+      case "arena": return state.settings.arenaMissions !== false && p.all.length >= 8;
       default: return true;
     }
   }
   function makeMissions() {
-    var pool = MISSION_POOL.filter(missionFeasible);
+    var pool = MISSION_POOL.filter(missionFeasible).filter(function (m) { return m.type !== "arena" || Math.random() < 0.3; });   // „ab und zu“ eine Arena-Runde
     if (pool.length < 3) pool = MISSION_POOL.filter(function (m) { return /^(items|goal|chain)$/.test(m.type); });
     var picked = shuffle(pool.slice()).slice(0, 3);
-    return picked.map(function (m) { return { id: m.id, n: m.n, goal: m.goal, type: m.type, coins: m.coins, p: 0, done: false }; });
+    return picked.map(instMission);
   }
   /* Eine schon gezogene, unerfüllbare und noch nicht begonnene Mission wird durch eine machbare ersetzt */
   function fixMissions() {
@@ -353,7 +376,7 @@
       var alt = shuffle(MISSION_POOL.filter(function (x) { return have.indexOf(x.id) < 0 && missionFeasible(x); }))[0];
       if (!alt) return m;
       changed = true;
-      return { id: alt.id, n: alt.n, goal: alt.goal, type: alt.type, coins: alt.coins, p: 0, done: false };
+      return instMission(alt);
     });
     if (changed) save();
   }
@@ -674,7 +697,8 @@
       .concat(bumpMission("new", res.newSeen || 0))
       .concat(bumpMission("chain", res.maxChain || 0))
       .concat(bumpMission("master", res.mastered || 0))
-      .concat(bumpMission("sent", res.sentOk || 0));
+      .concat(bumpMission("sent", res.sentOk || 0))
+      .concat(bumpMission("arena", res.arena ? 1 : 0));
     var goalSec = state.settings.goalMin * 60;
     if (d.sec >= goalSec && !d.done) {
       d.done = true; rewards.goalReached = true; addCoins(20); addCl("ziel", 20); rewards.coins += 20;
@@ -834,7 +858,7 @@
     units: function () { return units; }, words: function () { return words; }, byId: function (id) { return byId[id]; },
     buildCatalogue: function () { return buildCatalogue(state); },
     levelOf: levelOf, grade: grade, inErrorBox: inErrorBox, rec: rec,
-    pools: pools, planSession: planSession, activeWords: activeWords,
+    pools: pools, planSession: planSession, activeWords: activeWords, masterList: masterList,
     sentences: function () { return sentences; }, activeSentences: activeSentences,
     planSentences: planSentences, gradeSentence: gradeSentence, sentenceStats: sentenceStats,
     srec: srec, groupsOf: groupsOf, setTrack: setTrack,

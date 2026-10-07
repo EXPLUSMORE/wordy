@@ -271,6 +271,27 @@
     return h;
   }
 
+  /* ---------- Tagesmissionen: direkt zum passenden Modus ---------- */
+  var MISSION_TIP = {
+    items: "Gemischte Runde: jedes Wort zählt.", goal: "Gemischte Runde bis zum Tagesziel.", box: "Fehlerkartei üben: richtige Antworten zählen.",
+    chain: "Gemischte Runde, konzentriert und ohne Hinweis.", new: "Neue Wörter kennenlernen.", master: "Fast sitzende Wörter tippen, ohne Hinweis.",
+    sent: "Satzbau: Sätze richtig legen.", arena: "Ein Spiel aus der Arena."
+  };
+  function missionGo(m) {
+    var st = S.state, left = Math.max(5, Math.min(15, Math.ceil((st.settings.goalMin * 60 - ((st.daily && st.daily.sec) || 0)) / 60)));
+    switch (m.type) {
+      case "items": return 'data-act="start" data-mode="mix" data-min="' + st.settings.goalMin + '"';
+      case "goal": return 'data-act="start" data-mode="mix" data-min="' + left + '"';
+      case "box": return 'data-act="start" data-mode="box" data-min="5"';
+      case "chain": return 'data-act="start" data-mode="mix" data-min="5"';
+      case "new": return 'data-act="start" data-mode="new" data-min="5"';
+      case "master": return 'data-act="start" data-mode="master" data-min="5"';
+      case "sent": return 'data-act="start" data-mode="sent" data-min="5"';
+      case "arena": return global.ARENA ? 'data-act="arena" data-id="' + esc(m.mode || "match") + '"' : "";
+    }
+    return "";
+  }
+
   /* ---------- Segment-Umschalter und Kacheln ---------- */
   function segBar(group, cur, items) {
     return '<div class="segs">' + items.map(function (x) {
@@ -336,10 +357,11 @@
     var wish = S.wish();
     html += '<section class="card"><div class="eyebrow">Heute</div><div style="margin-top:6px">' +
       st.daily.missions.map(function (m) {
-        var pc = Math.min(100, Math.round(m.p * 100 / m.goal));
+        var pc = Math.min(100, Math.round(m.p * 100 / m.goal)), go = m.done ? "" : missionGo(m);
         return '<div class="mission' + (m.done ? " done" : "") + '"><div class="tick">✓</div>' +
           '<div class="txt"><div class="small" style="font-weight:600">' + esc(m.n) + '</div>' +
-          '<div class="bar"><i style="width:' + pc + '%"></i></div></div>' +
+          '<div class="bar"><i style="width:' + pc + '%"></i></div>' +
+          (go ? '<div class="row" style="margin-top:6px;gap:8px"><span class="small muted" style="flex:1 1 auto">' + esc(MISSION_TIP[m.type] || "") + '</span><button class="chip" style="white-space:nowrap" ' + go + '>Los →</button></div>' : '') + '</div>' +
           '<div class="pill nowrap">🪙 ' + m.coins + '</div></div>';
       }).join("") +
       (wish ? '<div class="mission">' + wishFigure(wish, Math.round(Math.min(st.coins, wish.cost) * 100 / Math.max(1, wish.cost)), S.minXp(wish) > st.xp) + '<div class="txt"><div class="small" style="font-weight:600">Dein Wunsch: ' + esc(wish.label) + '</div>' +
@@ -915,6 +937,8 @@
       }).join("") + '</select></label>' +
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Pause nach der Antwort<br><span class="small muted">Die Lösung bleibt kurz stehen. Bei Fehlern wird sie vorgelesen und das Wort einmal abgeschrieben</span></span>' +
       '<input type="checkbox" id="setPause" ' + (st.settings.pause !== false ? "checked" : "") + ' style="width:auto"></label>' +
+      '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Arena als Tagesmission<br><span class="small muted">Ab und zu ist eine Arena-Runde eine der drei Tagesmissionen</span></span>' +
+      '<input type="checkbox" id="setArenaM" ' + (st.settings.arenaMissions !== false ? "checked" : "") + ' style="width:auto"></label>' +
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Herzen benutzen<br><span class="small muted">Aus = Üben ohne Abbruch</span></span>' +
       '<input type="checkbox" id="setHearts" ' + (st.settings.hearts ? "checked" : "") + ' style="width:auto"></label>' +
       '<p class="small muted" style="margin:10px 0 0">Gelernt wird als <b>' + esc(playerName()) + '</b>. Den Namen änderst du unter „Spieler“.</p>');
@@ -959,6 +983,7 @@
     $("#setGoal").onchange = function () { st.settings.goalMin = +this.value; S.save(true); renderHeader(); };
     $("#setNew").onchange = function () { st.settings.newPerDay = +this.value; S.save(true); };
     $("#setAudio").onchange = function () { st.settings.audio = this.checked; S.save(true); };
+    if ($("#setArenaM")) $("#setArenaM").onchange = function () { st.settings.arenaMissions = this.checked; S.save(true); };
     if ($("#setPause")) $("#setPause").onchange = function () { st.settings.pause = this.checked; S.save(true); };
     $("#setMode").onchange = function () { st.settings.themeMode = this.value; S.save(true); renderHeader(); };
     $("#setPace").onchange = function () { st.settings.readPace = this.value; S.save(true); };
@@ -1105,11 +1130,11 @@
       sessionEl.hidden = false; document.body.style.overflow = "hidden";
       return renderTask();
     }
-    var list = opts.focus ? focusList(opts) : sentOnly ? S.planSentences(Math.max(5, Math.round((opts.minutes || 5) * 60 / 16))) : S.planSession(opts);
-    if (!list.length) { toast(opts.focus ? "Dafür gibt es gerade keine passenden Wörter. Probier eine andere Form." : sentOnly ? "Alle Sätze dieses Bereichs sind gerade erledigt." : "Für diese Auswahl gibt es gerade nichts zu üben."); return; }
-    var tasks = buildTasks(list, sentOnly, opts.focus);
+    var list = opts.mode === "master" ? S.masterList(Math.max(6, S.itemsFor(opts.minutes || 5))) : opts.focus ? focusList(opts) : sentOnly ? S.planSentences(Math.max(5, Math.round((opts.minutes || 5) * 60 / 16))) : S.planSession(opts);
+    if (!list.length) { toast(opts.mode === "master" ? "Es gibt noch keine Wörter, die fast sitzen. Übe erst normal weiter." : opts.focus ? "Dafür gibt es gerade keine passenden Wörter. Probier eine andere Form." : sentOnly ? "Alle Sätze dieses Bereichs sind gerade erledigt." : "Für diese Auswahl gibt es gerade nichts zu üben."); return; }
+    var tasks = buildTasks(list, sentOnly, opts.mode === "master" ? "type" : opts.focus);
     /* Unregelmäßige Verben: in normalen Schulrunden immer wieder eingestreut */
-    if (!sentOnly && !opts.focus && !opts.unit && !opts.scope && opts.mode !== "box" && opts.mode !== "new" && S.state.settings.track === "schule") {
+    if (!sentOnly && !opts.focus && !opts.unit && !opts.scope && opts.mode !== "box" && opts.mode !== "new" && opts.mode !== "master" && S.state.settings.track === "schule") {
       var vs = S.planVerbs(Math.max(1, Math.round(tasks.length / 8)), { mix: true });
       verbTasks(vs).forEach(function (vt, i) {
         var pos = Math.min(tasks.length, Math.round((i + 1) * tasks.length / (vs.length + 1)) + 2);

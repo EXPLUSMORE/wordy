@@ -316,7 +316,7 @@
     S.state.daily.arenaCoins = (S.state.daily.arenaCoins || 0) + coins;
     S.addCoins(coins);
     S.addXp(Math.min(60, Math.round(score / 8)));
-    var rw = S.finishSession({ items: run.items, correct: run.correct, sec: sec, maxChain: run.maxCombo, newSeen: 0, boxSolved: run.cleared, mastered: 0, sentOk: 0 });
+    var rw = S.finishSession({ items: run.items, correct: run.correct, sec: sec, maxChain: run.maxCombo, newSeen: 0, boxSolved: run.cleared, mastered: 0, sentOk: 0, arena: true });
     var fresh = [];
     function give(id) {
       if (S.state.badges.indexOf(id) < 0) {
@@ -348,6 +348,7 @@
       '</div>' +
       '<p class="ar-note">' + (coins ? "🪙 " + coins + " Münzen" + (capped ? " (Tageslimit der Arena erreicht)" : "") : (capped ? "Arena-Münzen für heute sind voll – lerne neue Wörter für mehr" : "Keine Münzen diesmal")) +
       (rw.goalReached ? " · Tagesziel erreicht" : "") +
+      rw.missions.filter(function (x) { return x.type === "arena"; }).map(function (x) { return " · Mission geschafft: +" + x.coins + " 🪙"; }).join("") +
       (run.cleared ? " · " + run.cleared + " aus der Fehlerkartei befreit" : "") + '</p>' +
       (fresh.length ? '<p class="ar-note" style="color:var(--ar-gold)">🏅 Neu: ' + fresh.map(function (b) { return esc(b.n); }).join(", ") + '</p>' : "") +
       '<div class="ar-endbtns"><button class="ar-btn" data-a="again">Noch mal</button>' +
