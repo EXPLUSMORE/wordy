@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.32.0 – 2026-10-07
+
+- Set-Angebot: Am 07.10.2026 kostet jedes Teil des Eis-Sets nur 50 Münzen (zusammen 200). Hinweis oben im Shop, im Reiter „Sets“ ein Knopf „Set kaufen“, die Einzelpreise sind durchgestrichen. Rang-Sperren bleiben bestehen (Eisbär ab Silber II). Weitere Set-Angebote lassen sich in `SET_DEALS` (engine.js) eintragen.
+
 ## 2.31.1 – 2026-10-07
 
 - Lernpfad: Die Truhen sind jetzt gezeichnete Schatztruhen statt Geschenkbox und Pappkarton (grau = noch gesperrt, wackelnd = wartet). Eine schon geholte Truhe sieht geplündert aus: Deckel schief, Schloss abgesprungen, Splitter, eine Münze herausgerollt. Antippen zeigt Staubwölkchen und „Schon geplündert! Die nächste Truhe wartet nach dem nächsten Boss.“

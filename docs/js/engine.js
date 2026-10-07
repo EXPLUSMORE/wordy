@@ -746,7 +746,34 @@
     var it = state.deal.id ? itemById(state.deal.id) : null;
     return it && !owns(it) ? it : null;
   }
-  function priceOf(it) { var d = dealItem(); return d && d.id === it.id ? Math.round(it.cost * 0.8 / 5) * 5 : it.cost; }
+  function priceOf(it) {
+    var d = dealItem(), p = d && d.id === it.id ? Math.round(it.cost * 0.8 / 5) * 5 : it.cost, sd = setDealFor(it);
+    return sd ? Math.min(p, sd.price) : p;
+  }
+  /* Set-Angebote: nur an einem bestimmten Tag, jedes Teil des Sets zum Aktionspreis */
+  var SET_DEALS = [{ set: "eis", day: "2026-10-07", price: 50 }];
+  function setDealFor(it) {
+    if (!it.bundle || owns(it)) return null;
+    var t = today();
+    return SET_DEALS.filter(function (d) { return d.set === it.bundle && d.day === t; })[0] || null;
+  }
+  function activeSetDeal() {
+    var t = today(), d = SET_DEALS.filter(function (x) { return x.day === t; })[0];
+    if (!d) return null;
+    var s = SETS.filter(function (x) { return x.id === d.set; })[0];
+    if (!s) return null;
+    var parts = s.items.map(itemById).filter(function (x) { return x && !owns(x); });
+    return parts.length ? { set: s, price: d.price, parts: parts, total: parts.reduce(function (a, x) { return a + d.price; }, 0) } : null;
+  }
+  /* Komplettes Set zum Aktionspreis: nur wenn alle fehlenden Teile freigeschaltet sind und die Münzen reichen */
+  function buySet() {
+    var d = activeSetDeal(); if (!d) return { error: "Das Angebot gibt es heute nicht mehr." };
+    var open = d.parts.filter(function (x) { return state.xp >= minXp(x); }), locked = d.parts.filter(function (x) { return state.xp < minXp(x); }), sum = open.length * d.price;
+    if (!open.length) return { error: locked[0].label + " gibt es erst ab Rang " + locked[0].rank + "." };
+    if (state.coins < sum) return { error: "Dafür fehlen noch " + (sum - state.coins) + " Münzen." };
+    var got = []; open.forEach(function (x) { var r = buy(x.id); if (r.ok) got.push(x.label); });
+    return { ok: true, items: got, total: sum, locked: locked.map(function (x) { return x.label + " (ab " + x.rank + ")"; }) };
+  }
   /* Preisumstellung: Wurde etwas günstiger, gibt es die Differenz einmalig als Münzen zurück */
   function priceMigrate() {
     var pf = state.profile; if (!pf || pf.priceVer >= 3) return;
@@ -1137,6 +1164,6 @@
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
-    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, boost: boost, coinFactor: coinFactor, avgCoins: avgCoins, dealItem: dealItem, priceOf: priceOf, takeNews: takeNews, SETS: SETS, itemById: itemById, minXp: minXp, defaultOf: defaultOf
+    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, boost: boost, coinFactor: coinFactor, avgCoins: avgCoins, dealItem: dealItem, priceOf: priceOf, activeSetDeal: activeSetDeal, buySet: buySet, takeNews: takeNews, SETS: SETS, itemById: itemById, minXp: minXp, defaultOf: defaultOf
   };
 })(window);

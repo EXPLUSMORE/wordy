@@ -644,7 +644,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.31.1";window.WORDY_BUILD="94e1fb40fa";</script>
+<script>window.WORDY_VERSION="2.32.0";window.WORDY_BUILD="d88f19d79d";</script>
 </head>
 <body>
 <div id="app">
@@ -4755,7 +4755,34 @@ window.VERBS = [
     var it = state.deal.id ? itemById(state.deal.id) : null;
     return it && !owns(it) ? it : null;
   }
-  function priceOf(it) { var d = dealItem(); return d && d.id === it.id ? Math.round(it.cost * 0.8 / 5) * 5 : it.cost; }
+  function priceOf(it) {
+    var d = dealItem(), p = d && d.id === it.id ? Math.round(it.cost * 0.8 / 5) * 5 : it.cost, sd = setDealFor(it);
+    return sd ? Math.min(p, sd.price) : p;
+  }
+  /* Set-Angebote: nur an einem bestimmten Tag, jedes Teil des Sets zum Aktionspreis */
+  var SET_DEALS = [{ set: "eis", day: "2026-10-07", price: 50 }];
+  function setDealFor(it) {
+    if (!it.bundle || owns(it)) return null;
+    var t = today();
+    return SET_DEALS.filter(function (d) { return d.set === it.bundle && d.day === t; })[0] || null;
+  }
+  function activeSetDeal() {
+    var t = today(), d = SET_DEALS.filter(function (x) { return x.day === t; })[0];
+    if (!d) return null;
+    var s = SETS.filter(function (x) { return x.id === d.set; })[0];
+    if (!s) return null;
+    var parts = s.items.map(itemById).filter(function (x) { return x && !owns(x); });
+    return parts.length ? { set: s, price: d.price, parts: parts, total: parts.reduce(function (a, x) { return a + d.price; }, 0) } : null;
+  }
+  /* Komplettes Set zum Aktionspreis: nur wenn alle fehlenden Teile freigeschaltet sind und die Münzen reichen */
+  function buySet() {
+    var d = activeSetDeal(); if (!d) return { error: "Das Angebot gibt es heute nicht mehr." };
+    var open = d.parts.filter(function (x) { return state.xp >= minXp(x); }), locked = d.parts.filter(function (x) { return state.xp < minXp(x); }), sum = open.length * d.price;
+    if (!open.length) return { error: locked[0].label + " gibt es erst ab Rang " + locked[0].rank + "." };
+    if (state.coins < sum) return { error: "Dafür fehlen noch " + (sum - state.coins) + " Münzen." };
+    var got = []; open.forEach(function (x) { var r = buy(x.id); if (r.ok) got.push(x.label); });
+    return { ok: true, items: got, total: sum, locked: locked.map(function (x) { return x.label + " (ab " + x.rank + ")"; }) };
+  }
   /* Preisumstellung: Wurde etwas günstiger, gibt es die Differenz einmalig als Münzen zurück */
   function priceMigrate() {
     var pf = state.profile; if (!pf || pf.priceVer >= 3) return;
@@ -5146,7 +5173,7 @@ window.VERBS = [
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
-    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, boost: boost, coinFactor: coinFactor, avgCoins: avgCoins, dealItem: dealItem, priceOf: priceOf, takeNews: takeNews, SETS: SETS, itemById: itemById, minXp: minXp, defaultOf: defaultOf
+    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, boost: boost, coinFactor: coinFactor, avgCoins: avgCoins, dealItem: dealItem, priceOf: priceOf, activeSetDeal: activeSetDeal, buySet: buySet, takeNews: takeNews, SETS: SETS, itemById: itemById, minXp: minXp, defaultOf: defaultOf
   };
 })(window);
 </script>
@@ -6579,16 +6606,18 @@ window.VERBS = [
         : buyBtn) + '</div>';
   }
   function shopCard() {
-    var st = S.state, wishId = (S.wish() || {}).id, deal = S.dealItem();
+    var st = S.state, wishId = (S.wish() || {}).id, deal = S.dealItem(), sd = S.activeSetDeal();
     var html = '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Shop</div><span class="pill">🪙 ' + st.coins + '</span></div>' +
       '<p class="small muted" style="margin:6px 0 10px">Münzen gibt es nur für Aussehen – nie für Lernvorteile.</p>' +
       (deal ? '<div class="shopitem" style="background:var(--accent-soft);border-radius:12px;padding:8px 10px;margin-bottom:8px"><span class="si">🔥</span><span style="flex:1 1 auto"><b class="small">Tagesangebot: ' + esc(deal.label) + '</b><br><span class="small muted">20 % günstiger · noch ' + untilMidnight() + '</span></span>' +
         (S.minXp(deal) > st.xp ? "" : '<button class="btn soft" data-act="buy" data-id="' + esc(deal.id) + '">🪙 <s style="opacity:.55;font-weight:500">' + deal.cost + '</s> ' + S.priceOf(deal) + '</button>') + '</div>' : "") +
+      (sd ? '<div class="shopitem" style="background:linear-gradient(135deg,#dff3ff,#eaf6ff);border-radius:12px;padding:8px 10px;margin-bottom:8px"><span class="si">❄️</span><span style="flex:1 1 auto"><b class="small">Set-Angebot heute: ' + esc(sd.set.name) + '</b><br><span class="small muted">Jedes Teil nur ' + sd.price + ' 🪙 · noch ' + untilMidnight() + '</span></span><button class="btn soft" data-act="shoptab" data-k="sets">Ansehen</button></div>' : "") +
       '<div class="row wrap" style="gap:6px;margin-bottom:6px">' + SHOP_TABS.map(function (t) {
         return '<button class="chip" data-act="shoptab" data-k="' + t.k + '" aria-pressed="' + (shopTab === t.k) + '">' + t.n + '</button>';
       }).join("") + '</div>';
     if (shopTab === "sticker") html += slotsHtml();
     if (shopTab === "sets") {
+      if (sd) html += '<div style="background:linear-gradient(135deg,#dff3ff,#eaf6ff);border-radius:12px;padding:10px 12px;margin:6px 0 10px"><b>❄️ Nur heute: ' + esc(sd.set.name) + ' für ' + sd.total + ' 🪙</b><div class="small muted" style="margin:2px 0 8px">Jedes fehlende Teil kostet heute ' + sd.price + ' 🪙 (' + sd.parts.length + ' ' + plural(sd.parts.length, "Teil", "Teile") + '). noch ' + untilMidnight() + '.</div><button class="btn" data-act="buyset">' + (sd.parts.some(function (x) { return S.minXp(x) > st.xp; }) ? "Alle freigeschalteten Teile kaufen · " + sd.parts.filter(function (x) { return S.minXp(x) <= st.xp; }).length * sd.price : "Komplettes Set kaufen · " + sd.total) + ' 🪙</button></div>';
       html += S.SETS.map(function (s) {
         var its = s.items.map(S.itemById), have = its.filter(function (x) { return S.owns(x); }).length, rw = S.itemById(s.reward), done = S.owns(rw);
         return '<div style="margin:6px 0 12px"><div class="row" style="gap:8px;align-items:center"><b style="flex:1 1 auto">' + s.icon + ' ' + esc(s.name) + '</b><span class="pill tnum">' + have + ' / ' + its.length + '</span></div>' +
@@ -7839,6 +7868,12 @@ window.VERBS = [
       toast(r.error || ("Gekauft: " + r.item.label));
       if (r.ok) { var nw = S.takeNews(); if (nw && nw.sets.length) { toast("🎉 " + nw.sets.map(function (s) { return s.set + " komplett! Neu: " + s.reward; }).join(" · "), 5200); S.save(true); } }
       if (r.ok) { var rect = act.getBoundingClientRect(); global.VTC.burst("confetti", rect.left + rect.width / 2, rect.top, 26, 1.4); }
+      renderHeader(); render();
+    }
+    else if (a === "buyset") {
+      var bs = S.buySet();
+      toast(bs.error || ("Gekauft: " + bs.items.join(", ") + (bs.locked && bs.locked.length ? ". Noch offen: " + bs.locked.join(", ") : "")), bs.error || (bs.locked && bs.locked.length) ? 5200 : 3200);
+      if (bs.ok) { var rc = act.getBoundingClientRect(); global.VTC.burst("stars", rc.left + rc.width / 2, rc.top, 30, 1.6); var nw2 = S.takeNews(); if (nw2 && nw2.sets.length) { toast("🎉 " + nw2.sets.map(function (s) { return s.set + " komplett! Neu: " + s.reward; }).join(" · "), 5200); S.save(true); } }
       renderHeader(); render();
     }
     else if (a === "buyslot") {

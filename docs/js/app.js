@@ -906,16 +906,18 @@
         : buyBtn) + '</div>';
   }
   function shopCard() {
-    var st = S.state, wishId = (S.wish() || {}).id, deal = S.dealItem();
+    var st = S.state, wishId = (S.wish() || {}).id, deal = S.dealItem(), sd = S.activeSetDeal();
     var html = '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Shop</div><span class="pill">🪙 ' + st.coins + '</span></div>' +
       '<p class="small muted" style="margin:6px 0 10px">Münzen gibt es nur für Aussehen – nie für Lernvorteile.</p>' +
       (deal ? '<div class="shopitem" style="background:var(--accent-soft);border-radius:12px;padding:8px 10px;margin-bottom:8px"><span class="si">🔥</span><span style="flex:1 1 auto"><b class="small">Tagesangebot: ' + esc(deal.label) + '</b><br><span class="small muted">20 % günstiger · noch ' + untilMidnight() + '</span></span>' +
         (S.minXp(deal) > st.xp ? "" : '<button class="btn soft" data-act="buy" data-id="' + esc(deal.id) + '">🪙 <s style="opacity:.55;font-weight:500">' + deal.cost + '</s> ' + S.priceOf(deal) + '</button>') + '</div>' : "") +
+      (sd ? '<div class="shopitem" style="background:linear-gradient(135deg,#dff3ff,#eaf6ff);border-radius:12px;padding:8px 10px;margin-bottom:8px"><span class="si">❄️</span><span style="flex:1 1 auto"><b class="small">Set-Angebot heute: ' + esc(sd.set.name) + '</b><br><span class="small muted">Jedes Teil nur ' + sd.price + ' 🪙 · noch ' + untilMidnight() + '</span></span><button class="btn soft" data-act="shoptab" data-k="sets">Ansehen</button></div>' : "") +
       '<div class="row wrap" style="gap:6px;margin-bottom:6px">' + SHOP_TABS.map(function (t) {
         return '<button class="chip" data-act="shoptab" data-k="' + t.k + '" aria-pressed="' + (shopTab === t.k) + '">' + t.n + '</button>';
       }).join("") + '</div>';
     if (shopTab === "sticker") html += slotsHtml();
     if (shopTab === "sets") {
+      if (sd) html += '<div style="background:linear-gradient(135deg,#dff3ff,#eaf6ff);border-radius:12px;padding:10px 12px;margin:6px 0 10px"><b>❄️ Nur heute: ' + esc(sd.set.name) + ' für ' + sd.total + ' 🪙</b><div class="small muted" style="margin:2px 0 8px">Jedes fehlende Teil kostet heute ' + sd.price + ' 🪙 (' + sd.parts.length + ' ' + plural(sd.parts.length, "Teil", "Teile") + '). noch ' + untilMidnight() + '.</div><button class="btn" data-act="buyset">' + (sd.parts.some(function (x) { return S.minXp(x) > st.xp; }) ? "Alle freigeschalteten Teile kaufen · " + sd.parts.filter(function (x) { return S.minXp(x) <= st.xp; }).length * sd.price : "Komplettes Set kaufen · " + sd.total) + ' 🪙</button></div>';
       html += S.SETS.map(function (s) {
         var its = s.items.map(S.itemById), have = its.filter(function (x) { return S.owns(x); }).length, rw = S.itemById(s.reward), done = S.owns(rw);
         return '<div style="margin:6px 0 12px"><div class="row" style="gap:8px;align-items:center"><b style="flex:1 1 auto">' + s.icon + ' ' + esc(s.name) + '</b><span class="pill tnum">' + have + ' / ' + its.length + '</span></div>' +
@@ -2166,6 +2168,12 @@
       toast(r.error || ("Gekauft: " + r.item.label));
       if (r.ok) { var nw = S.takeNews(); if (nw && nw.sets.length) { toast("🎉 " + nw.sets.map(function (s) { return s.set + " komplett! Neu: " + s.reward; }).join(" · "), 5200); S.save(true); } }
       if (r.ok) { var rect = act.getBoundingClientRect(); global.VTC.burst("confetti", rect.left + rect.width / 2, rect.top, 26, 1.4); }
+      renderHeader(); render();
+    }
+    else if (a === "buyset") {
+      var bs = S.buySet();
+      toast(bs.error || ("Gekauft: " + bs.items.join(", ") + (bs.locked && bs.locked.length ? ". Noch offen: " + bs.locked.join(", ") : "")), bs.error || (bs.locked && bs.locked.length) ? 5200 : 3200);
+      if (bs.ok) { var rc = act.getBoundingClientRect(); global.VTC.burst("stars", rc.left + rc.width / 2, rc.top, 30, 1.6); var nw2 = S.takeNews(); if (nw2 && nw2.sets.length) { toast("🎉 " + nw2.sets.map(function (s) { return s.set + " komplett! Neu: " + s.reward; }).join(" · "), 5200); S.save(true); } }
       renderHeader(); render();
     }
     else if (a === "buyslot") {
