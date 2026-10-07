@@ -28,7 +28,7 @@ Lernfortschritts-Server: https://track.wordy.explusmore.com (eigenständig, Node
 ## Hinweise
 - Sprache der App und Antworten: Deutsch, Magnus ist Kind → motivierend (Shop/Münzen/Wochenziele).
 - Sprachausgabe: `speechClean()` entfernt Abkürzungen wie „sb.“ vor dem Vorlesen.
-- Offene Ideen: „5-Min“-Kacheln in Üben ohne Aufgabenanzahl; eigene Headlight-Sätze statt Klasse 6.
+- Offene Idee: eigene Headlight-Sätze statt Klasse 6. (Erledigt: Üben-Kacheln zeigen die Dauer statt der Aufgabenzahl.)
 - Shop-Preise stehen in `engine.js` (SHOP) in Stufen; `OLD_PRICES` + `priceMigrate()` zahlen bei Preissenkungen einmalig die Differenz zurück (`profile.priceVer`). Bei künftigen Preisänderungen die Version erhöhen und `OLD_PRICES` aktualisieren. Sets: `SETS` (Eis-Set), Belohnung `reward: ...`. Verdienst: `boost()` (erste Woche ×1,5, Eltern-Regler `coinFactor`).
 - Showroom (Reiter `showroom`, `viewShowroom()` in app.js): Logik in engine.js (`collection()`, `medalList()`, `favs()/toggleFav()` max. 3, `CUP_TIERS` mit einmaliger Münzbelohnung über `state.cups`). `profile.seen` steuert die NEU-Marke. Startseite: `viewHome()` schlank: Hero-Bühne (`.hh`, Himmel nach Uhrzeit), Lernpfad, Lernplan (`parentCards("plans")`), Tagesaufgaben. Pass steht im Showroom, Wochenplan/Wochenziele in Fortschritt › Verlauf.
 - Erklärfilme: `js/film.js` (`VTFILM`, Szenenlisten je Modus, live aus Figuren/Emoji/CSS gespielt, kein Video). Karte in `modiHtml()`, Handler `film`. Neuer Modus = neuer Eintrag in `FILMS`.

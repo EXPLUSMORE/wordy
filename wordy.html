@@ -856,7 +856,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.44.0";window.WORDY_BUILD="d975032e68";</script>
+<script>window.WORDY_VERSION="2.44.1";window.WORDY_BUILD="bc7033ecec";</script>
 </head>
 <body>
 <div id="app">
@@ -7424,7 +7424,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   function modiHtml() {
     var st = S.state, p = S.pools(), stt = S.stats(), mins = startMin || S.goalMin(), biz = st.settings.track === "business", few = p.all.length < 8;
     var nW = S.itemsFor(mins), nS = Math.max(5, Math.round(mins * 60 / 16)), nV = Math.max(5, Math.round(mins * 60 / 20));
-    function cnt(n) { return " · ≈ " + n + " " + plural(n, "Aufgabe", "Aufgaben"); }
+    function cnt() { return " · ca. " + mins + " Min"; }   // Zeit statt Aufgabenzahl: die Runde hat kein Zeitlimit, die Zahl der Aufgaben richtet sich nach deinem Tempo
     var W = window.WordySync, plans = (W && W.connected()) ? W.activePlans() : [], aud = audioAvailable();
     var learn = tile("🏆", 'Daily Challenge <span style="color:var(--gold)">★</span>', (S.challengeDone() ? "Bonus heute geholt ✓ · Zusatz-Runde" : "🎁 +10 🪙 Tagesbonus") + " · bunter Mix" + cnt(nW), 'data-act="start" data-min="' + mins + '"') +
       tile("✨", "Neue Wörter", S.newBlocked() ? "Erst die " + S.newBlocked() + " fälligen wiederholen" : p.fresh.length ? p.fresh.length + " warten auf dich" + cnt(Math.min(nW, p.fresh.length)) : "Alles schon gesehen", 'data-act="start" data-mode="new" data-min="' + mins + '"' + (p.fresh.length && !S.newBlocked() ? "" : " disabled")) +
@@ -7455,7 +7455,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       '<details style="margin-top:12px"><summary class="small" style="cursor:pointer;font-weight:700">Wie die Spiele zählen</summary>' +
       '<p class="small muted" style="margin:8px 0 0">Ein Treffer unter Zeitdruck wird als sichere, aber flache Wiederholung gewertet. Er schiebt ein Wort eine Stufe weiter, ersetzt aber nicht das ruhige Training. Ein Fehlgriff landet sofort in der Fehlerkartei. Die Zeit läuft aufs Tagesziel.' + (plays ? ' Bisher ' + plays + ' ' + plural(plays, "Runde", "Runden") + ' gespielt.' : '') + '</p></details></section>' +
       films + '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Gezielt üben</div><span class="pill">neu</span></div>' +
-      '<p class="small muted" style="margin:6px 0 0">Eine Aufgabenform üben, mit Wörtern, die dran sind (≈ ' + nW + ' ' + plural(nW, "Aufgabe", "Aufgaben") + ').</p><div class="tiles">' +
+      '<p class="small muted" style="margin:6px 0 0">Eine Aufgabenform üben, mit Wörtern, die dran sind (ca. ' + mins + ' Min).</p><div class="tiles">' +
       focusT.map(function (f) { return tile(f[0], f[1], f[2], 'data-act="start" data-mode="focus" data-focus="' + f[3] + '" data-min="' + mins + '"' + (f[4] ? " disabled" : "")); }).join("") + '</div></section>';
   }
   function viewUeben() {
