@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.17.0 – 2026-10-07
+
+- Sticker einmalig zurückgesetzt: Beim ersten Start mit dieser Version werden bei allen Profilen alle aufgeklebten Sticker abgenommen, und es gibt wieder genau einen freien Platz. Weitere Plätze schalten Münzen frei (2: 100, 3 bis 5: je 150). Gekaufte Sticker bleiben im Besitz und lassen sich wieder aufkleben.
+
 ## 2.16.0 – 2026-10-07
 
 - Shop → Sticker: Bis zu fünf Sticker gleichzeitig auf dem Profil. Der erste Platz ist gratis, die weiteren werden nacheinander freigeschaltet: Platz 2 für 100, Platz 3, 4 und 5 für je 150 Münzen („Sticker-Plätze auf deinem Profil“ oben im Sticker-Reiter). Bisher waren es drei Sticker kostenlos; bestehende Profile behalten so viele Plätze, wie sie schon aufgeklebt haben (mindestens einen). Bei mehr als drei Stickern werden sie etwas kleiner dargestellt. Der Kauf erscheint im Dashboard bei den Käufen als „Sticker-Platz n“.

@@ -158,6 +158,8 @@
     units = (global.VOCAB_UNITS || []).slice();
     var cfg = state && state.settings;   // einmalig: Schulstoff (Headlight 2) ist die Voreinstellung, die Klassen kommen optional dazu
     if (cfg && (cfg.hl2 || 0) < 2) { cfg.hl2 = 2; cfg.klassen = ["Headlight 2"]; }
+    /* Einmalig mit dem neuen Sticker-System (Version 2.17): alle aufgeklebten Sticker abnehmen, ein Platz frei. Gekaufte Sticker bleiben im Besitz. */
+    if (state && state.profile && !state.profile.stickerReset) { state.profile.stickers = []; state.profile.stickerSlots = 1; state.profile.stickerReset = 1; }
     if (state && state.custom) units = units.concat(state.custom);
     words = []; byId = {};
     units.forEach(function (u) {
