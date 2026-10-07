@@ -289,11 +289,11 @@
   function dance(o) {
     var old = document.getElementById("dnOv"); if (old) old.remove();
     var ov = document.createElement("div"); ov.id = "dnOv"; ov.className = "dn-ov" + (reduce ? " dn-reduce" : "");
-    var conf = "", cols = ["#ff3d9a", "#35e0ff", "#ffd23d", "#7cff6b", "#fff"];
+    var conf = "", cols = ["#ff3d9a", "#35e0ff", "#ffd23d", "#7cff6b", "#fff"], D = { wackler: 1, huepfer: 2, drehung: 3, roboter: 4, moonwalk: 5, sieg: 6 };
     if (!reduce && (o.big || o.dance === "sieg")) for (var i = 0; i < 18; i++) conf += '<i style="left:' + (i * 5.5 + Math.random() * 3).toFixed(1) + '%;background:' + cols[i % 5] + ';animation-delay:' + (Math.random() * 1.6).toFixed(2) + 's"></i>';
-    var fig = o.dance === "moonwalk" ? '<div class="dn-mi">' + o.avatar + '</div>' : o.avatar;
+    var fig = global.VTFIG.figure(o.av, o.outfit, o.avatar).replace('class="fig ', 'class="fig d' + (D[o.dance] || 1) + ' ');
     ov.innerHTML = '<div class="dn-stage"><div class="dn-beam dn-b1"></div><div class="dn-beam dn-b2"></div><div class="dn-floor"></div><div class="dn-conf">' + conf + '</div>' +
-      '<div class="dn-sh"></div><div class="dn-fig dn-' + (o.dance || "wackler") + '">' + fig + '</div>' + (o.title ? '<div class="dn-title">' + o.title + '</div>' : "") + '</div>';
+      '<div class="dn-sh"></div><div class="dn-fw">' + fig + '</div>' + (o.title ? '<div class="dn-title">' + o.title + '</div>' : "") + '</div>';
     document.body.appendChild(ov);
     var done = function () { if (!ov.parentNode) return; ov.classList.add("out"); global.setTimeout(function () { if (ov.parentNode) ov.remove(); }, 300); };
     ov.addEventListener("click", done);

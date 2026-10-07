@@ -522,39 +522,105 @@ details.fold>.fbody{padding:2px 0 14px}
 .nowrap{white-space:nowrap}
 @media (min-width:520px){ .tiles4{grid-template-columns:repeat(4,1fr)} .quick{grid-template-columns:repeat(4,1fr)} }
 
-/* Siegertanz */
+/* Siegertanz: ganze Figur auf einer Bühne (Körperteile werden einzeln bewegt) */
 .dn-ov{position:fixed;inset:0;z-index:300;display:grid;place-items:center;background:rgba(10,8,30,.55);animation:dnIn .25s ease-out}
 .dn-ov.out{opacity:0;transition:opacity .3s}
 @keyframes dnIn{from{opacity:0}}
-.dn-stage{position:relative;width:min(86vw,340px);height:250px;border-radius:20px;overflow:hidden;background:radial-gradient(ellipse at 50% 0,#6a4bd6aa,transparent 65%),#17133a;display:flex;align-items:flex-end;justify-content:center;box-shadow:0 14px 40px rgba(0,0,0,.5)}
+.dn-stage{position:relative;width:min(86vw,340px);height:300px;border-radius:20px;overflow:hidden;background:radial-gradient(ellipse at 50% 0,#6a4bd6aa,transparent 65%),#17133a;box-shadow:0 14px 40px rgba(0,0,0,.5)}
 .dn-floor{position:absolute;left:0;right:0;bottom:0;height:46px;background:repeating-linear-gradient(90deg,#ff3d9a 0 25%,#35e0ff 25% 50%,#ffd23d 50% 75%,#7cff6b 75% 100%);opacity:.55;animation:dnFl 1s steps(4) infinite}
 @keyframes dnFl{to{filter:hue-rotate(180deg)}}
-.dn-beam{position:absolute;top:-10px;width:56px;height:240px;background:linear-gradient(#fff6,transparent);transform-origin:50% 0;opacity:.35}
-.dn-b1{left:20%;animation:dnSw 2s ease-in-out infinite alternate}.dn-b2{right:20%;animation:dnSw 2s ease-in-out infinite alternate-reverse}
+.dn-beam{position:absolute;top:-10px;width:56px;height:260px;background:linear-gradient(#fff6,transparent);transform-origin:50% 0;opacity:.35}
+.dn-b1{left:18%;animation:dnSw 2s ease-in-out infinite alternate}.dn-b2{right:18%;animation:dnSw 2s ease-in-out infinite alternate-reverse}
 @keyframes dnSw{from{transform:rotate(-22deg)}to{transform:rotate(22deg)}}
-.dn-fig{position:relative;z-index:2;font-size:92px;line-height:1;margin-bottom:34px;width:92px;height:92px;transform-origin:50% 100%;display:flex;align-items:center;justify-content:center}
-.dn-fig svg{width:92px;height:92px}
-.dn-sh{position:absolute;bottom:28px;left:50%;width:76px;height:12px;margin-left:-38px;border-radius:50%;background:#0008;z-index:1}
-.dn-title{position:absolute;top:14px;left:0;right:0;text-align:center;font-weight:800;font-size:22px;color:#fff;text-shadow:0 2px 10px #000a;z-index:3;animation:dnT .6s cubic-bezier(.2,1.4,.4,1)}
+.dn-sh{position:absolute;bottom:38px;left:50%;width:90px;height:12px;margin-left:-45px;border-radius:50%;background:#0008}
+.dn-fw{position:absolute;left:50%;bottom:34px;width:100px;height:160px;margin-left:-50px;transform:scale(1.45);transform-origin:50% 100%}
+.dn-title{position:absolute;top:14px;left:0;right:0;text-align:center;font-weight:800;font-size:22px;color:#fff;text-shadow:0 2px 10px #000a;z-index:9;animation:dnT .6s cubic-bezier(.2,1.4,.4,1)}
 @keyframes dnT{from{transform:scale(.3);opacity:0}}
-.dn-wackler{animation:dnWa .5s ease-in-out infinite alternate}
-@keyframes dnWa{0%{transform:rotate(-14deg) translateX(-10px)}100%{transform:rotate(14deg) translateX(10px)}}
-.dn-huepfer{animation:dnHu .6s cubic-bezier(.3,0,.4,1) infinite}
-@keyframes dnHu{0%,100%{transform:translateY(0) scale(1.15,.8)}45%{transform:translateY(-60px) scale(.9,1.15) rotate(8deg)}70%{transform:translateY(-60px) scale(.9,1.15) rotate(-8deg)}}
-.dn-drehung{animation:dnDr 1.4s cubic-bezier(.5,0,.3,1) infinite}
-@keyframes dnDr{0%{transform:translateY(0) rotateY(0)}40%{transform:translateY(-44px) rotateY(360deg) scale(1.1)}60%,100%{transform:translateY(0) rotateY(720deg)}}
-.dn-roboter{animation:dnRo 1.6s steps(1) infinite}
-@keyframes dnRo{0%{transform:rotate(0)}12%{transform:rotate(-18deg) translateX(-14px)}25%{transform:rotate(0) translateY(-14px)}37%{transform:rotate(18deg) translateX(14px)}50%{transform:rotate(0) scaleY(.8)}62%{transform:rotate(-18deg) translateX(-14px) translateY(-14px)}75%{transform:rotate(0)}87%{transform:rotate(18deg) translateX(14px) scaleX(.85)}}
-.dn-moonwalk{animation:dnMo 2.4s linear infinite}
-@keyframes dnMo{0%{transform:translateX(-80px) scaleX(-1) rotate(-6deg)}50%{transform:translateX(80px) scaleX(-1) rotate(6deg)}50.01%{transform:translateX(80px) scaleX(1) rotate(-6deg)}100%{transform:translateX(-80px) scaleX(1) rotate(6deg)}}
-.dn-mi{animation:dnMw .3s ease-in-out infinite alternate;display:flex}@keyframes dnMw{to{transform:translateY(-8px)}}
-.dn-sieg{animation:dnSi 1.8s ease-in-out infinite}
-@keyframes dnSi{0%,100%{transform:translateY(0) rotate(0) scale(1)}15%{transform:translateY(-52px) rotate(-14deg) scale(1.25)}30%{transform:translateY(0) rotate(14deg) scale(1.1,.9)}45%{transform:translateY(-52px) rotate(14deg) scale(1.25)}60%{transform:translateY(0) rotate(-14deg) scale(1.1,.9)}75%{transform:translateY(-76px) rotate(360deg) scale(1.35)}90%{transform:translateY(0) scale(1.15,.85)}}
 .dn-conf i{position:absolute;top:-8px;width:7px;height:12px;opacity:.9;animation:dnCf 2s linear infinite}
-@keyframes dnCf{to{transform:translateY(270px) rotate(540deg)}}
-.dn-reduce .dn-fig,.dn-reduce .dn-beam,.dn-reduce .dn-floor,.dn-reduce .dn-mi{animation:none}
-.dn-reduce .dn-fig{animation:dnHop .5s ease-out 1}
-@keyframes dnHop{50%{transform:translateY(-24px)}}
+@keyframes dnCf{to{transform:translateY(310px) rotate(540deg)}}
+/* Figur: 100 x 160, Füße unten */
+.fig{position:absolute;left:0;bottom:0;width:100px;height:160px;transform-origin:50% 100%;--limb:#9BB0C8;--belly:#EEF3F8;--feet:#5A6B80;--tl:#EEF3F8;--ex:#9BB0C8;--tt:#fff}
+.fig>*{position:absolute}
+.fig .bk{left:0;top:0;width:100px;height:160px;z-index:1}
+.fig .bk>*{position:absolute}
+.fig .hd{left:50%;top:0;width:64px;height:64px;margin-left:-32px;font-size:56px;line-height:64px;text-align:center;z-index:6;transform-origin:50% 100%}
+.fig .hd svg{width:64px;height:64px}
+.fig .to{left:30px;top:58px;width:40px;height:50px;border-radius:14px 14px 10px 10px;background:var(--tc,var(--limb));z-index:3;overflow:hidden}
+.fig .to i{display:none;position:absolute;left:8px;top:6px;width:24px;height:36px;border-radius:50%;background:var(--belly)}
+.fig .to:after{content:attr(data-e);position:absolute;left:0;right:0;top:12px;text-align:center;font:800 15px/1 system-ui;color:#fff}
+.fig.of-natur .to i{display:block}
+.fig .ar,.fig .lg{transform-origin:50% 8%}
+.fig .ar{top:62px;width:13px;height:42px;border-radius:7px;background:linear-gradient(var(--sl,var(--limb)) 0 52%,var(--limb) 52%);z-index:4}
+.fig .ar:after{content:"";position:absolute;left:0;bottom:-6px;width:13px;height:13px;border-radius:50%;background:var(--limb)}
+.fig .al{left:19px}.fig .arr{left:68px}
+.fig .lg{top:102px;width:15px;height:44px;border-radius:7px 7px 3px 3px;background:linear-gradient(var(--pc,var(--limb)) 0 68%,var(--limb) 68%);z-index:2}
+.fig .lg:after{content:"";position:absolute;left:-3px;bottom:-6px;width:22px;height:11px;border-radius:7px 9px 4px 4px;background:var(--feet)}
+.fig .ll{left:33px}.fig .lr{left:53px}.fig .lr:after{left:-4px}
+/* Typen */
+.k-bird .ar{width:20px;height:40px;border-radius:55% 55% 70% 70%/18% 18% 82% 82%;background:var(--limb)}
+.k-bird .al{left:12px}.k-bird .arr{left:68px}.k-bird .ar:after{display:none}
+.k-bird .lg{width:9px;left:36px;background:var(--feet)}.k-bird .lr{left:55px}.k-bird .lg:after{height:7px;width:20px;left:-6px;bottom:-4px;border-radius:3px}
+.k-tent .lg{width:16px;height:52px;border-radius:8px 8px 14px 14px;background:var(--limb)}.k-tent .lg:after{display:none}
+.k-tent .ar{border-radius:7px 7px 13px 13px;background:var(--limb)}.k-tent .ar:after{display:none}
+.k-tent .te{top:100px;width:13px;height:46px;border-radius:7px 7px 13px 13px;background:var(--limb);transform-origin:50% 0;opacity:.9}
+.k-tent .te1{left:24px;transform:rotate(18deg);animation:teS .7s ease-in-out infinite alternate}
+.k-tent .te2{left:62px;transform:rotate(-18deg);animation:teS .7s ease-in-out infinite alternate-reverse}
+@keyframes teS{to{transform:rotate(-14deg)}}
+.k-crys .to{clip-path:polygon(50% 0,100% 28%,86% 100%,14% 100%,0 28%)}
+.k-crys .ar,.k-crys .lg{clip-path:polygon(50% 0,100% 18%,82% 100%,18% 100%,0 18%)}
+.k-crys .ar:after,.k-crys .lg:after{display:none}
+.k-crys .ar,.k-crys .lg,.k-crys .to{background:linear-gradient(135deg,var(--belly),var(--limb))}
+.k-crys .hd{filter:drop-shadow(0 0 8px var(--belly))}
+.stripes .to i{background:repeating-linear-gradient(var(--belly) 0 6px,#2B2B33 6px 11px);border-radius:8px;width:30px;left:5px}
+/* Schwanz, Flügel, Panzer, Flosse, Stacheln */
+.tail{left:60px;top:96px;height:16px;transform-origin:2px 50%;animation:tlW .45s ease-in-out infinite alternate;background:var(--tl)}
+@keyframes tlW{from{transform:rotate(-14deg)}to{transform:rotate(16deg)}}
+.t-fox{width:36px;height:22px;top:92px;border-radius:50% 90% 90% 50%;background:linear-gradient(90deg,var(--tl) 66%,var(--tt) 66%)}
+.t-cat{width:36px;height:8px;border-radius:5px}
+.t-dino{width:46px;height:20px;top:94px;clip-path:polygon(0 0,100% 50%,0 100%)}
+.t-fish{left:62px;width:26px;height:30px;top:90px;clip-path:polygon(0 50%,100% 0,70% 50%,100% 100%)}
+.t-pom{left:62px;top:100px;width:14px;height:14px;border-radius:50%}
+.t-rb{width:40px;height:10px;border-radius:6px;background:linear-gradient(90deg,#ff5aa0,#ffd23d,#58e07d,#35c6ff,#a96cff)}
+.t-tuft{width:32px;height:7px;border-radius:4px}.t-tuft:after{content:"";position:absolute;right:-8px;top:-4px;width:15px;height:15px;border-radius:50%;background:var(--tt)}
+.t-feat{width:30px;height:18px;border-radius:3px 70% 70% 3px}
+.t-sting{width:20px;height:12px;top:104px;clip-path:polygon(0 0,100% 50%,0 100%)}
+.shell{left:22px;top:60px;width:56px;height:50px;border-radius:50%;background:radial-gradient(circle at 50% 40%,var(--ex) 55%,rgba(0,0,0,.25) 56% 60%,var(--ex) 61%)}
+.fin{left:60px;top:58px;width:24px;height:32px;background:var(--ex);clip-path:polygon(0 0,100% 100%,0 100%)}
+.spk{left:20px;top:60px;width:14px;height:44px;background:var(--ex);clip-path:polygon(100% 0,0 12%,100% 25%,0 37%,100% 50%,0 62%,100% 75%,0 87%,100% 100%)}
+.wg{top:56px;width:26px;height:40px;border-radius:50%;background:var(--ex);opacity:.75;transform-origin:50% 100%}
+.wg1{left:22px;transform:rotate(-25deg);animation:wgF .12s ease-in-out infinite alternate}.wg2{left:52px;transform:rotate(25deg);animation:wgF2 .12s ease-in-out infinite alternate}
+@keyframes wgF{to{transform:rotate(-45deg)}}@keyframes wgF2{to{transform:rotate(45deg)}}
+.cape{display:none;left:28px;top:62px;width:44px;height:74px;border-radius:5px 5px 18px 18px;background:linear-gradient(#e53935,#a31515);transform-origin:50% 0;animation:cpF .6s ease-in-out infinite alternate}
+@keyframes cpF{from{transform:skewX(-4deg)}to{transform:skewX(5deg) scaleY(.96)}}
+/* Outfits */
+.of-shirt{--tc:#35c6ff;--sl:#35c6ff}
+.of-hoodie{--tc:#6a5bd6;--sl:#6a5bd6;--pc:#2d2a5e}
+.of-trikot{--tc:#e53935;--sl:#e53935;--pc:#fff}.of-trikot .to{background:repeating-linear-gradient(90deg,#e53935 0 8px,#fff 8px 12px)}
+.of-held{--tc:#2b6fe0;--sl:#2b6fe0;--pc:#c62828}.of-held .cape{display:block}
+.of-raum{--tc:#dfe6ee;--sl:#dfe6ee;--pc:#dfe6ee}
+.of-rock{--tc:#ffd23d;--sl:#ffd23d;--pc:#1d1d1d}.of-rock .to{box-shadow:inset 0 0 10px #fff9}
+/* Tänze */
+.d1{animation:w-b .5s ease-in-out infinite alternate}@keyframes w-b{0%{transform:rotate(-6deg) translateX(-6px)}100%{transform:rotate(6deg) translateX(6px)}}
+.d1 .al{animation:w-al .5s ease-in-out infinite alternate}.d1 .arr{animation:w-ar .5s ease-in-out infinite alternate}.d1 .ll{animation:w-ll .5s ease-in-out infinite alternate}.d1 .lr{animation:w-lr .5s ease-in-out infinite alternate}.d1 .hd{animation:w-h .5s ease-in-out infinite alternate}
+@keyframes w-al{0%{transform:rotate(25deg)}100%{transform:rotate(150deg)}}@keyframes w-ar{0%{transform:rotate(-150deg)}100%{transform:rotate(-25deg)}}@keyframes w-ll{0%{transform:rotate(-6deg)}100%{transform:rotate(10deg)}}@keyframes w-lr{0%{transform:rotate(-10deg)}100%{transform:rotate(6deg)}}@keyframes w-h{0%{transform:rotate(8deg)}100%{transform:rotate(-8deg)}}
+.d2{animation:h-b .6s cubic-bezier(.3,0,.4,1) infinite}@keyframes h-b{0%,100%{transform:translateY(0) scale(1.1,.88)}45%,70%{transform:translateY(-30px) scale(.95,1.08)}}
+.d2 .al{animation:h-al .6s ease-in-out infinite}.d2 .arr{animation:h-ar .6s ease-in-out infinite}.d2 .ll{animation:h-l .6s ease-in-out infinite}.d2 .lr{animation:h-l2 .6s ease-in-out infinite}
+@keyframes h-al{0%,100%{transform:rotate(20deg)}45%,70%{transform:rotate(160deg)}}@keyframes h-ar{0%,100%{transform:rotate(-20deg)}45%,70%{transform:rotate(-160deg)}}@keyframes h-l{0%,100%{transform:rotate(0)}45%,70%{transform:rotate(28deg)}}@keyframes h-l2{0%,100%{transform:rotate(0)}45%,70%{transform:rotate(-28deg)}}
+.d3{animation:r-b 1.4s cubic-bezier(.5,0,.3,1) infinite}@keyframes r-b{0%{transform:translateY(0) rotateY(0)}40%{transform:translateY(-24px) rotateY(360deg)}60%,100%{transform:translateY(0) rotateY(720deg)}}
+.d3 .al{transform:rotate(80deg)}.d3 .arr{transform:rotate(-80deg)}.d3 .ll{animation:r-l 1.4s infinite}.d3 .lr{animation:r-l2 1.4s infinite}
+@keyframes r-l{0%,60%,100%{transform:rotate(0)}40%{transform:rotate(20deg)}}@keyframes r-l2{0%,60%,100%{transform:rotate(0)}40%{transform:rotate(-8deg) translateY(-6px)}}
+.d4,.d4 *{animation-timing-function:steps(1)!important}.d4{animation:b-b 1.6s infinite}@keyframes b-b{0%{transform:translateX(0)}25%{transform:translateX(-8px)}50%{transform:translateX(0) scaleY(.94)}75%{transform:translateX(8px)}}
+.d4 .al{animation:b-al 1.6s infinite}.d4 .arr{animation:b-ar 1.6s infinite}.d4 .hd{animation:b-h 1.6s infinite}.d4 .ll{animation:b-l 1.6s infinite}.d4 .lr{animation:b-l2 1.6s infinite}
+@keyframes b-al{0%{transform:rotate(90deg)}25%{transform:rotate(180deg)}50%{transform:rotate(90deg)}75%{transform:rotate(0)}}@keyframes b-ar{0%{transform:rotate(-90deg)}25%{transform:rotate(0)}50%{transform:rotate(-90deg)}75%{transform:rotate(-180deg)}}@keyframes b-h{0%{transform:rotate(0)}25%{transform:rotate(-14deg)}50%{transform:rotate(0)}75%{transform:rotate(14deg)}}@keyframes b-l{0%{transform:rotate(0)}25%{transform:rotate(14deg)}50%,75%{transform:rotate(0)}}@keyframes b-l2{0%,25%,50%{transform:rotate(0)}75%{transform:rotate(-14deg)}}
+.d5{animation:m-b 2.4s linear infinite}@keyframes m-b{0%{transform:translateX(-52px) scaleX(-1)}50%{transform:translateX(52px) scaleX(-1)}50.01%{transform:translateX(52px) scaleX(1)}100%{transform:translateX(-52px) scaleX(1)}}
+.d5 .to{animation:m-t .3s ease-in-out infinite alternate}.d5 .hd{animation:m-h .3s ease-in-out infinite alternate}.d5 .al{transform:rotate(35deg);animation:m-al .3s ease-in-out infinite alternate}.d5 .arr{transform:rotate(-35deg);animation:m-ar .3s ease-in-out infinite alternate}.d5 .ll{animation:m-l .6s ease-in-out infinite alternate}.d5 .lr{animation:m-l2 .6s ease-in-out infinite alternate}
+@keyframes m-t{to{transform:rotate(-4deg)}}@keyframes m-h{to{transform:translateY(-3px) rotate(4deg)}}@keyframes m-al{to{transform:rotate(55deg)}}@keyframes m-ar{to{transform:rotate(-55deg)}}@keyframes m-l{0%{transform:rotate(-20deg)}100%{transform:rotate(14deg)}}@keyframes m-l2{0%{transform:rotate(14deg)}100%{transform:rotate(-20deg)}}
+.d6{animation:s-b 1.8s ease-in-out infinite}@keyframes s-b{0%,100%{transform:translateY(0) scale(1.05,.92)}15%{transform:translateY(-28px)}30%{transform:translateY(0) scale(1.1,.88)}45%{transform:translateY(-28px)}60%{transform:translateY(0) scale(1.1,.88)}75%{transform:translateY(-44px) rotateY(360deg)}90%{transform:translateY(0) scale(1.12,.86)}}
+.d6 .al{animation:s-al 1.8s ease-in-out infinite}.d6 .arr{animation:s-ar 1.8s ease-in-out infinite}.d6 .ll{animation:s-l 1.8s ease-in-out infinite}.d6 .lr{animation:s-l2 1.8s ease-in-out infinite}.d6 .hd{animation:s-h 1.8s ease-in-out infinite}
+@keyframes s-al{0%,100%{transform:rotate(30deg)}15%,45%{transform:rotate(165deg)}30%,60%{transform:rotate(40deg)}75%{transform:rotate(175deg)}}@keyframes s-ar{0%,100%{transform:rotate(-30deg)}15%,45%{transform:rotate(-165deg)}30%,60%{transform:rotate(-40deg)}75%{transform:rotate(-175deg)}}@keyframes s-l{0%,30%,60%,100%{transform:rotate(0)}15%,45%{transform:rotate(26deg)}75%{transform:rotate(36deg)}}@keyframes s-l2{0%,30%,60%,100%{transform:rotate(0)}15%,45%{transform:rotate(-26deg)}75%{transform:rotate(-36deg)}}@keyframes s-h{15%{transform:rotate(-10deg)}30%{transform:rotate(10deg)}45%{transform:rotate(10deg)}60%{transform:rotate(-10deg)}}
+.dn-reduce .fig,.dn-reduce .fig *,.dn-reduce .dn-beam,.dn-reduce .dn-floor{animation:none!important}
+.dn-reduce .dn-fw{animation:dnHop .5s ease-out 1}
+@keyframes dnHop{50%{transform:scale(1.45) translateY(-20px)}}
 </style>
 
 <div id="app">
@@ -597,6 +663,7 @@ details.fold>.fbody{padding:2px 0 14px}
 <script src="js/engine.js"></script>
 <script src="js/cosmetics.js"></script>
 <script src="js/fortnite.js"></script>
+<script src="js/figur.js"></script>
 <script src="js/app.js"></script>
 <script src="js/arena.js"></script>
 <script src="js/sync.js"></script>

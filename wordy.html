@@ -528,43 +528,109 @@ details.fold>.fbody{padding:2px 0 14px}
 .nowrap{white-space:nowrap}
 @media (min-width:520px){ .tiles4{grid-template-columns:repeat(4,1fr)} .quick{grid-template-columns:repeat(4,1fr)} }
 
-/* Siegertanz */
+/* Siegertanz: ganze Figur auf einer Bühne (Körperteile werden einzeln bewegt) */
 .dn-ov{position:fixed;inset:0;z-index:300;display:grid;place-items:center;background:rgba(10,8,30,.55);animation:dnIn .25s ease-out}
 .dn-ov.out{opacity:0;transition:opacity .3s}
 @keyframes dnIn{from{opacity:0}}
-.dn-stage{position:relative;width:min(86vw,340px);height:250px;border-radius:20px;overflow:hidden;background:radial-gradient(ellipse at 50% 0,#6a4bd6aa,transparent 65%),#17133a;display:flex;align-items:flex-end;justify-content:center;box-shadow:0 14px 40px rgba(0,0,0,.5)}
+.dn-stage{position:relative;width:min(86vw,340px);height:300px;border-radius:20px;overflow:hidden;background:radial-gradient(ellipse at 50% 0,#6a4bd6aa,transparent 65%),#17133a;box-shadow:0 14px 40px rgba(0,0,0,.5)}
 .dn-floor{position:absolute;left:0;right:0;bottom:0;height:46px;background:repeating-linear-gradient(90deg,#ff3d9a 0 25%,#35e0ff 25% 50%,#ffd23d 50% 75%,#7cff6b 75% 100%);opacity:.55;animation:dnFl 1s steps(4) infinite}
 @keyframes dnFl{to{filter:hue-rotate(180deg)}}
-.dn-beam{position:absolute;top:-10px;width:56px;height:240px;background:linear-gradient(#fff6,transparent);transform-origin:50% 0;opacity:.35}
-.dn-b1{left:20%;animation:dnSw 2s ease-in-out infinite alternate}.dn-b2{right:20%;animation:dnSw 2s ease-in-out infinite alternate-reverse}
+.dn-beam{position:absolute;top:-10px;width:56px;height:260px;background:linear-gradient(#fff6,transparent);transform-origin:50% 0;opacity:.35}
+.dn-b1{left:18%;animation:dnSw 2s ease-in-out infinite alternate}.dn-b2{right:18%;animation:dnSw 2s ease-in-out infinite alternate-reverse}
 @keyframes dnSw{from{transform:rotate(-22deg)}to{transform:rotate(22deg)}}
-.dn-fig{position:relative;z-index:2;font-size:92px;line-height:1;margin-bottom:34px;width:92px;height:92px;transform-origin:50% 100%;display:flex;align-items:center;justify-content:center}
-.dn-fig svg{width:92px;height:92px}
-.dn-sh{position:absolute;bottom:28px;left:50%;width:76px;height:12px;margin-left:-38px;border-radius:50%;background:#0008;z-index:1}
-.dn-title{position:absolute;top:14px;left:0;right:0;text-align:center;font-weight:800;font-size:22px;color:#fff;text-shadow:0 2px 10px #000a;z-index:3;animation:dnT .6s cubic-bezier(.2,1.4,.4,1)}
+.dn-sh{position:absolute;bottom:38px;left:50%;width:90px;height:12px;margin-left:-45px;border-radius:50%;background:#0008}
+.dn-fw{position:absolute;left:50%;bottom:34px;width:100px;height:160px;margin-left:-50px;transform:scale(1.45);transform-origin:50% 100%}
+.dn-title{position:absolute;top:14px;left:0;right:0;text-align:center;font-weight:800;font-size:22px;color:#fff;text-shadow:0 2px 10px #000a;z-index:9;animation:dnT .6s cubic-bezier(.2,1.4,.4,1)}
 @keyframes dnT{from{transform:scale(.3);opacity:0}}
-.dn-wackler{animation:dnWa .5s ease-in-out infinite alternate}
-@keyframes dnWa{0%{transform:rotate(-14deg) translateX(-10px)}100%{transform:rotate(14deg) translateX(10px)}}
-.dn-huepfer{animation:dnHu .6s cubic-bezier(.3,0,.4,1) infinite}
-@keyframes dnHu{0%,100%{transform:translateY(0) scale(1.15,.8)}45%{transform:translateY(-60px) scale(.9,1.15) rotate(8deg)}70%{transform:translateY(-60px) scale(.9,1.15) rotate(-8deg)}}
-.dn-drehung{animation:dnDr 1.4s cubic-bezier(.5,0,.3,1) infinite}
-@keyframes dnDr{0%{transform:translateY(0) rotateY(0)}40%{transform:translateY(-44px) rotateY(360deg) scale(1.1)}60%,100%{transform:translateY(0) rotateY(720deg)}}
-.dn-roboter{animation:dnRo 1.6s steps(1) infinite}
-@keyframes dnRo{0%{transform:rotate(0)}12%{transform:rotate(-18deg) translateX(-14px)}25%{transform:rotate(0) translateY(-14px)}37%{transform:rotate(18deg) translateX(14px)}50%{transform:rotate(0) scaleY(.8)}62%{transform:rotate(-18deg) translateX(-14px) translateY(-14px)}75%{transform:rotate(0)}87%{transform:rotate(18deg) translateX(14px) scaleX(.85)}}
-.dn-moonwalk{animation:dnMo 2.4s linear infinite}
-@keyframes dnMo{0%{transform:translateX(-80px) scaleX(-1) rotate(-6deg)}50%{transform:translateX(80px) scaleX(-1) rotate(6deg)}50.01%{transform:translateX(80px) scaleX(1) rotate(-6deg)}100%{transform:translateX(-80px) scaleX(1) rotate(6deg)}}
-.dn-mi{animation:dnMw .3s ease-in-out infinite alternate;display:flex}@keyframes dnMw{to{transform:translateY(-8px)}}
-.dn-sieg{animation:dnSi 1.8s ease-in-out infinite}
-@keyframes dnSi{0%,100%{transform:translateY(0) rotate(0) scale(1)}15%{transform:translateY(-52px) rotate(-14deg) scale(1.25)}30%{transform:translateY(0) rotate(14deg) scale(1.1,.9)}45%{transform:translateY(-52px) rotate(14deg) scale(1.25)}60%{transform:translateY(0) rotate(-14deg) scale(1.1,.9)}75%{transform:translateY(-76px) rotate(360deg) scale(1.35)}90%{transform:translateY(0) scale(1.15,.85)}}
 .dn-conf i{position:absolute;top:-8px;width:7px;height:12px;opacity:.9;animation:dnCf 2s linear infinite}
-@keyframes dnCf{to{transform:translateY(270px) rotate(540deg)}}
-.dn-reduce .dn-fig,.dn-reduce .dn-beam,.dn-reduce .dn-floor,.dn-reduce .dn-mi{animation:none}
-.dn-reduce .dn-fig{animation:dnHop .5s ease-out 1}
-@keyframes dnHop{50%{transform:translateY(-24px)}}
+@keyframes dnCf{to{transform:translateY(310px) rotate(540deg)}}
+/* Figur: 100 x 160, Füße unten */
+.fig{position:absolute;left:0;bottom:0;width:100px;height:160px;transform-origin:50% 100%;--limb:#9BB0C8;--belly:#EEF3F8;--feet:#5A6B80;--tl:#EEF3F8;--ex:#9BB0C8;--tt:#fff}
+.fig>*{position:absolute}
+.fig .bk{left:0;top:0;width:100px;height:160px;z-index:1}
+.fig .bk>*{position:absolute}
+.fig .hd{left:50%;top:0;width:64px;height:64px;margin-left:-32px;font-size:56px;line-height:64px;text-align:center;z-index:6;transform-origin:50% 100%}
+.fig .hd svg{width:64px;height:64px}
+.fig .to{left:30px;top:58px;width:40px;height:50px;border-radius:14px 14px 10px 10px;background:var(--tc,var(--limb));z-index:3;overflow:hidden}
+.fig .to i{display:none;position:absolute;left:8px;top:6px;width:24px;height:36px;border-radius:50%;background:var(--belly)}
+.fig .to:after{content:attr(data-e);position:absolute;left:0;right:0;top:12px;text-align:center;font:800 15px/1 system-ui;color:#fff}
+.fig.of-natur .to i{display:block}
+.fig .ar,.fig .lg{transform-origin:50% 8%}
+.fig .ar{top:62px;width:13px;height:42px;border-radius:7px;background:linear-gradient(var(--sl,var(--limb)) 0 52%,var(--limb) 52%);z-index:4}
+.fig .ar:after{content:"";position:absolute;left:0;bottom:-6px;width:13px;height:13px;border-radius:50%;background:var(--limb)}
+.fig .al{left:19px}.fig .arr{left:68px}
+.fig .lg{top:102px;width:15px;height:44px;border-radius:7px 7px 3px 3px;background:linear-gradient(var(--pc,var(--limb)) 0 68%,var(--limb) 68%);z-index:2}
+.fig .lg:after{content:"";position:absolute;left:-3px;bottom:-6px;width:22px;height:11px;border-radius:7px 9px 4px 4px;background:var(--feet)}
+.fig .ll{left:33px}.fig .lr{left:53px}.fig .lr:after{left:-4px}
+/* Typen */
+.k-bird .ar{width:20px;height:40px;border-radius:55% 55% 70% 70%/18% 18% 82% 82%;background:var(--limb)}
+.k-bird .al{left:12px}.k-bird .arr{left:68px}.k-bird .ar:after{display:none}
+.k-bird .lg{width:9px;left:36px;background:var(--feet)}.k-bird .lr{left:55px}.k-bird .lg:after{height:7px;width:20px;left:-6px;bottom:-4px;border-radius:3px}
+.k-tent .lg{width:16px;height:52px;border-radius:8px 8px 14px 14px;background:var(--limb)}.k-tent .lg:after{display:none}
+.k-tent .ar{border-radius:7px 7px 13px 13px;background:var(--limb)}.k-tent .ar:after{display:none}
+.k-tent .te{top:100px;width:13px;height:46px;border-radius:7px 7px 13px 13px;background:var(--limb);transform-origin:50% 0;opacity:.9}
+.k-tent .te1{left:24px;transform:rotate(18deg);animation:teS .7s ease-in-out infinite alternate}
+.k-tent .te2{left:62px;transform:rotate(-18deg);animation:teS .7s ease-in-out infinite alternate-reverse}
+@keyframes teS{to{transform:rotate(-14deg)}}
+.k-crys .to{clip-path:polygon(50% 0,100% 28%,86% 100%,14% 100%,0 28%)}
+.k-crys .ar,.k-crys .lg{clip-path:polygon(50% 0,100% 18%,82% 100%,18% 100%,0 18%)}
+.k-crys .ar:after,.k-crys .lg:after{display:none}
+.k-crys .ar,.k-crys .lg,.k-crys .to{background:linear-gradient(135deg,var(--belly),var(--limb))}
+.k-crys .hd{filter:drop-shadow(0 0 8px var(--belly))}
+.stripes .to i{background:repeating-linear-gradient(var(--belly) 0 6px,#2B2B33 6px 11px);border-radius:8px;width:30px;left:5px}
+/* Schwanz, Flügel, Panzer, Flosse, Stacheln */
+.tail{left:60px;top:96px;height:16px;transform-origin:2px 50%;animation:tlW .45s ease-in-out infinite alternate;background:var(--tl)}
+@keyframes tlW{from{transform:rotate(-14deg)}to{transform:rotate(16deg)}}
+.t-fox{width:36px;height:22px;top:92px;border-radius:50% 90% 90% 50%;background:linear-gradient(90deg,var(--tl) 66%,var(--tt) 66%)}
+.t-cat{width:36px;height:8px;border-radius:5px}
+.t-dino{width:46px;height:20px;top:94px;clip-path:polygon(0 0,100% 50%,0 100%)}
+.t-fish{left:62px;width:26px;height:30px;top:90px;clip-path:polygon(0 50%,100% 0,70% 50%,100% 100%)}
+.t-pom{left:62px;top:100px;width:14px;height:14px;border-radius:50%}
+.t-rb{width:40px;height:10px;border-radius:6px;background:linear-gradient(90deg,#ff5aa0,#ffd23d,#58e07d,#35c6ff,#a96cff)}
+.t-tuft{width:32px;height:7px;border-radius:4px}.t-tuft:after{content:"";position:absolute;right:-8px;top:-4px;width:15px;height:15px;border-radius:50%;background:var(--tt)}
+.t-feat{width:30px;height:18px;border-radius:3px 70% 70% 3px}
+.t-sting{width:20px;height:12px;top:104px;clip-path:polygon(0 0,100% 50%,0 100%)}
+.shell{left:22px;top:60px;width:56px;height:50px;border-radius:50%;background:radial-gradient(circle at 50% 40%,var(--ex) 55%,rgba(0,0,0,.25) 56% 60%,var(--ex) 61%)}
+.fin{left:60px;top:58px;width:24px;height:32px;background:var(--ex);clip-path:polygon(0 0,100% 100%,0 100%)}
+.spk{left:20px;top:60px;width:14px;height:44px;background:var(--ex);clip-path:polygon(100% 0,0 12%,100% 25%,0 37%,100% 50%,0 62%,100% 75%,0 87%,100% 100%)}
+.wg{top:56px;width:26px;height:40px;border-radius:50%;background:var(--ex);opacity:.75;transform-origin:50% 100%}
+.wg1{left:22px;transform:rotate(-25deg);animation:wgF .12s ease-in-out infinite alternate}.wg2{left:52px;transform:rotate(25deg);animation:wgF2 .12s ease-in-out infinite alternate}
+@keyframes wgF{to{transform:rotate(-45deg)}}@keyframes wgF2{to{transform:rotate(45deg)}}
+.cape{display:none;left:28px;top:62px;width:44px;height:74px;border-radius:5px 5px 18px 18px;background:linear-gradient(#e53935,#a31515);transform-origin:50% 0;animation:cpF .6s ease-in-out infinite alternate}
+@keyframes cpF{from{transform:skewX(-4deg)}to{transform:skewX(5deg) scaleY(.96)}}
+/* Outfits */
+.of-shirt{--tc:#35c6ff;--sl:#35c6ff}
+.of-hoodie{--tc:#6a5bd6;--sl:#6a5bd6;--pc:#2d2a5e}
+.of-trikot{--tc:#e53935;--sl:#e53935;--pc:#fff}.of-trikot .to{background:repeating-linear-gradient(90deg,#e53935 0 8px,#fff 8px 12px)}
+.of-held{--tc:#2b6fe0;--sl:#2b6fe0;--pc:#c62828}.of-held .cape{display:block}
+.of-raum{--tc:#dfe6ee;--sl:#dfe6ee;--pc:#dfe6ee}
+.of-rock{--tc:#ffd23d;--sl:#ffd23d;--pc:#1d1d1d}.of-rock .to{box-shadow:inset 0 0 10px #fff9}
+/* Tänze */
+.d1{animation:w-b .5s ease-in-out infinite alternate}@keyframes w-b{0%{transform:rotate(-6deg) translateX(-6px)}100%{transform:rotate(6deg) translateX(6px)}}
+.d1 .al{animation:w-al .5s ease-in-out infinite alternate}.d1 .arr{animation:w-ar .5s ease-in-out infinite alternate}.d1 .ll{animation:w-ll .5s ease-in-out infinite alternate}.d1 .lr{animation:w-lr .5s ease-in-out infinite alternate}.d1 .hd{animation:w-h .5s ease-in-out infinite alternate}
+@keyframes w-al{0%{transform:rotate(25deg)}100%{transform:rotate(150deg)}}@keyframes w-ar{0%{transform:rotate(-150deg)}100%{transform:rotate(-25deg)}}@keyframes w-ll{0%{transform:rotate(-6deg)}100%{transform:rotate(10deg)}}@keyframes w-lr{0%{transform:rotate(-10deg)}100%{transform:rotate(6deg)}}@keyframes w-h{0%{transform:rotate(8deg)}100%{transform:rotate(-8deg)}}
+.d2{animation:h-b .6s cubic-bezier(.3,0,.4,1) infinite}@keyframes h-b{0%,100%{transform:translateY(0) scale(1.1,.88)}45%,70%{transform:translateY(-30px) scale(.95,1.08)}}
+.d2 .al{animation:h-al .6s ease-in-out infinite}.d2 .arr{animation:h-ar .6s ease-in-out infinite}.d2 .ll{animation:h-l .6s ease-in-out infinite}.d2 .lr{animation:h-l2 .6s ease-in-out infinite}
+@keyframes h-al{0%,100%{transform:rotate(20deg)}45%,70%{transform:rotate(160deg)}}@keyframes h-ar{0%,100%{transform:rotate(-20deg)}45%,70%{transform:rotate(-160deg)}}@keyframes h-l{0%,100%{transform:rotate(0)}45%,70%{transform:rotate(28deg)}}@keyframes h-l2{0%,100%{transform:rotate(0)}45%,70%{transform:rotate(-28deg)}}
+.d3{animation:r-b 1.4s cubic-bezier(.5,0,.3,1) infinite}@keyframes r-b{0%{transform:translateY(0) rotateY(0)}40%{transform:translateY(-24px) rotateY(360deg)}60%,100%{transform:translateY(0) rotateY(720deg)}}
+.d3 .al{transform:rotate(80deg)}.d3 .arr{transform:rotate(-80deg)}.d3 .ll{animation:r-l 1.4s infinite}.d3 .lr{animation:r-l2 1.4s infinite}
+@keyframes r-l{0%,60%,100%{transform:rotate(0)}40%{transform:rotate(20deg)}}@keyframes r-l2{0%,60%,100%{transform:rotate(0)}40%{transform:rotate(-8deg) translateY(-6px)}}
+.d4,.d4 *{animation-timing-function:steps(1)!important}.d4{animation:b-b 1.6s infinite}@keyframes b-b{0%{transform:translateX(0)}25%{transform:translateX(-8px)}50%{transform:translateX(0) scaleY(.94)}75%{transform:translateX(8px)}}
+.d4 .al{animation:b-al 1.6s infinite}.d4 .arr{animation:b-ar 1.6s infinite}.d4 .hd{animation:b-h 1.6s infinite}.d4 .ll{animation:b-l 1.6s infinite}.d4 .lr{animation:b-l2 1.6s infinite}
+@keyframes b-al{0%{transform:rotate(90deg)}25%{transform:rotate(180deg)}50%{transform:rotate(90deg)}75%{transform:rotate(0)}}@keyframes b-ar{0%{transform:rotate(-90deg)}25%{transform:rotate(0)}50%{transform:rotate(-90deg)}75%{transform:rotate(-180deg)}}@keyframes b-h{0%{transform:rotate(0)}25%{transform:rotate(-14deg)}50%{transform:rotate(0)}75%{transform:rotate(14deg)}}@keyframes b-l{0%{transform:rotate(0)}25%{transform:rotate(14deg)}50%,75%{transform:rotate(0)}}@keyframes b-l2{0%,25%,50%{transform:rotate(0)}75%{transform:rotate(-14deg)}}
+.d5{animation:m-b 2.4s linear infinite}@keyframes m-b{0%{transform:translateX(-52px) scaleX(-1)}50%{transform:translateX(52px) scaleX(-1)}50.01%{transform:translateX(52px) scaleX(1)}100%{transform:translateX(-52px) scaleX(1)}}
+.d5 .to{animation:m-t .3s ease-in-out infinite alternate}.d5 .hd{animation:m-h .3s ease-in-out infinite alternate}.d5 .al{transform:rotate(35deg);animation:m-al .3s ease-in-out infinite alternate}.d5 .arr{transform:rotate(-35deg);animation:m-ar .3s ease-in-out infinite alternate}.d5 .ll{animation:m-l .6s ease-in-out infinite alternate}.d5 .lr{animation:m-l2 .6s ease-in-out infinite alternate}
+@keyframes m-t{to{transform:rotate(-4deg)}}@keyframes m-h{to{transform:translateY(-3px) rotate(4deg)}}@keyframes m-al{to{transform:rotate(55deg)}}@keyframes m-ar{to{transform:rotate(-55deg)}}@keyframes m-l{0%{transform:rotate(-20deg)}100%{transform:rotate(14deg)}}@keyframes m-l2{0%{transform:rotate(14deg)}100%{transform:rotate(-20deg)}}
+.d6{animation:s-b 1.8s ease-in-out infinite}@keyframes s-b{0%,100%{transform:translateY(0) scale(1.05,.92)}15%{transform:translateY(-28px)}30%{transform:translateY(0) scale(1.1,.88)}45%{transform:translateY(-28px)}60%{transform:translateY(0) scale(1.1,.88)}75%{transform:translateY(-44px) rotateY(360deg)}90%{transform:translateY(0) scale(1.12,.86)}}
+.d6 .al{animation:s-al 1.8s ease-in-out infinite}.d6 .arr{animation:s-ar 1.8s ease-in-out infinite}.d6 .ll{animation:s-l 1.8s ease-in-out infinite}.d6 .lr{animation:s-l2 1.8s ease-in-out infinite}.d6 .hd{animation:s-h 1.8s ease-in-out infinite}
+@keyframes s-al{0%,100%{transform:rotate(30deg)}15%,45%{transform:rotate(165deg)}30%,60%{transform:rotate(40deg)}75%{transform:rotate(175deg)}}@keyframes s-ar{0%,100%{transform:rotate(-30deg)}15%,45%{transform:rotate(-165deg)}30%,60%{transform:rotate(-40deg)}75%{transform:rotate(-175deg)}}@keyframes s-l{0%,30%,60%,100%{transform:rotate(0)}15%,45%{transform:rotate(26deg)}75%{transform:rotate(36deg)}}@keyframes s-l2{0%,30%,60%,100%{transform:rotate(0)}15%,45%{transform:rotate(-26deg)}75%{transform:rotate(-36deg)}}@keyframes s-h{15%{transform:rotate(-10deg)}30%{transform:rotate(10deg)}45%{transform:rotate(10deg)}60%{transform:rotate(-10deg)}}
+.dn-reduce .fig,.dn-reduce .fig *,.dn-reduce .dn-beam,.dn-reduce .dn-floor{animation:none!important}
+.dn-reduce .dn-fw{animation:dnHop .5s ease-out 1}
+@keyframes dnHop{50%{transform:scale(1.45) translateY(-20px)}}
 </style>
 
 
-<script>window.WORDY_VERSION="2.28.0";window.WORDY_BUILD="534ed876cb";</script>
+<script>window.WORDY_VERSION="2.29.0";window.WORDY_BUILD="fdc3f14a3e";</script>
 </head>
 <body>
 <div id="app">
@@ -4037,6 +4103,14 @@ window.VERBS = [
     { id: "dn:moonwalk", kind: "dance", label: "Moonwalk",     cost: 250, val: "moonwalk" },
     { id: "dn:sieg",    kind: "dance", label: "Epischer Sieg", cost: 400, val: "sieg", rank: "Silber I" },
 
+    { id: "of:natur",  kind: "outfit", label: "Natur pur",       cost: 0,   val: "natur" },
+    { id: "of:shirt",  kind: "outfit", label: "T-Shirt",         cost: 60,  val: "shirt" },
+    { id: "of:hoodie", kind: "outfit", label: "Hoodie",          cost: 90,  val: "hoodie" },
+    { id: "of:trikot", kind: "outfit", label: "Fußball-Trikot",  cost: 110, val: "trikot" },
+    { id: "of:held",   kind: "outfit", label: "Superheld mit Umhang", cost: 160, val: "held" },
+    { id: "of:raum",   kind: "outfit", label: "Raumanzug",       cost: 220, val: "raum" },
+    { id: "of:rock",   kind: "outfit", label: "Rockstar",        cost: 260, val: "rock" },
+
     { id: "sn:none",  kind: "snd", label: "Stumm",     cost: 0,   val: "none" },
     { id: "sn:bell",  kind: "snd", label: "Glöckchen", cost: 80,  val: "bell" },
     { id: "sn:arcade", kind: "snd", label: "Arcade",   cost: 120, val: "arcade" },
@@ -4055,7 +4129,7 @@ window.VERBS = [
   var MAX_STICKERS = 5;
   /* Sticker-Plätze auf dem Profil: der erste ist gratis, die weiteren werden nacheinander freigeschaltet */
   var STICKER_SLOT_COST = [0, 100, 150, 150, 150];
-  var PROFILE_KEY = { avatar: "avatar", frame: "frame", title: "title", bg: "bg", fx: "fx", snd: "snd", theme: "theme", dance: "dance" };
+  var PROFILE_KEY = { avatar: "avatar", frame: "frame", title: "title", bg: "bg", fx: "fx", snd: "snd", theme: "theme", dance: "dance", outfit: "outfit" };
 
   var BADGES = [
     { id: "start",   n: "Erster Schritt",  d: "Die erste Übung abgeschlossen." },
@@ -4776,7 +4850,7 @@ window.VERBS = [
   function stickers() { var l = state.profile.stickers; if (!Array.isArray(l)) l = state.profile.stickers = []; return l; }
   function isActive(it) {
     if (it.kind === "sticker") return stickers().indexOf(it.id) >= 0; var v = state.profile[PROFILE_KEY[it.kind]]; return (v == null ? defaultOf(it.kind) : v) === it.val; }
-  function defaultOf(kind) { return kind === "avatar" ? "🦊" : kind === "theme" ? "paper" : kind === "dance" ? "wackler" : kind === "title" ? "" : "none"; }
+  function defaultOf(kind) { return kind === "avatar" ? "🦊" : kind === "theme" ? "paper" : kind === "dance" ? "wackler" : kind === "outfit" ? "natur" : kind === "title" ? "" : "none"; }
   function equip(id) {
     var it = itemById(id); if (!it || !owns(it)) return { error: "Das gehört dir noch nicht." };
     if (it.kind === "sticker") {            // antippen klebt auf oder löst wieder ab; höchstens so viele wie freigeschaltete Plätze
@@ -5261,11 +5335,11 @@ window.VERBS = [
   function dance(o) {
     var old = document.getElementById("dnOv"); if (old) old.remove();
     var ov = document.createElement("div"); ov.id = "dnOv"; ov.className = "dn-ov" + (reduce ? " dn-reduce" : "");
-    var conf = "", cols = ["#ff3d9a", "#35e0ff", "#ffd23d", "#7cff6b", "#fff"];
+    var conf = "", cols = ["#ff3d9a", "#35e0ff", "#ffd23d", "#7cff6b", "#fff"], D = { wackler: 1, huepfer: 2, drehung: 3, roboter: 4, moonwalk: 5, sieg: 6 };
     if (!reduce && (o.big || o.dance === "sieg")) for (var i = 0; i < 18; i++) conf += '<i style="left:' + (i * 5.5 + Math.random() * 3).toFixed(1) + '%;background:' + cols[i % 5] + ';animation-delay:' + (Math.random() * 1.6).toFixed(2) + 's"></i>';
-    var fig = o.dance === "moonwalk" ? '<div class="dn-mi">' + o.avatar + '</div>' : o.avatar;
+    var fig = global.VTFIG.figure(o.av, o.outfit, o.avatar).replace('class="fig ', 'class="fig d' + (D[o.dance] || 1) + ' ');
     ov.innerHTML = '<div class="dn-stage"><div class="dn-beam dn-b1"></div><div class="dn-beam dn-b2"></div><div class="dn-floor"></div><div class="dn-conf">' + conf + '</div>' +
-      '<div class="dn-sh"></div><div class="dn-fig dn-' + (o.dance || "wackler") + '">' + fig + '</div>' + (o.title ? '<div class="dn-title">' + o.title + '</div>' : "") + '</div>';
+      '<div class="dn-sh"></div><div class="dn-fw">' + fig + '</div>' + (o.title ? '<div class="dn-title">' + o.title + '</div>' : "") + '</div>';
     document.body.appendChild(ov);
     var done = function () { if (!ov.parentNode) return; ov.classList.add("out"); global.setTimeout(function () { if (ov.parentNode) ov.remove(); }, 300); };
     ov.addEventListener("click", done);
@@ -5394,6 +5468,81 @@ window.VERBS = [
       '<path d="M52 12l1.2 2.8 2.8 1.2-2.8 1.2L52 20l-1.2-2.8-2.8-1.2 2.8-1.2z" fill="#fff"/>' + E
   };
   if (global.VTC && global.VTC.ART) { Object.keys(ART).forEach(function (k) { global.VTC.ART[k] = ART[k]; }); }
+})(window);
+</script>
+<script>/* Ganze Figuren: jede Figur hat einen eigenen Körper (Farben, Schwanz, Flügel, Panzer, Flossen …), der Kopf ist ihre bekannte Zeichnung.
+   Arme, Beine und Schwanz sind einzelne Teile und werden von den Tänzen (CSS, index.html) bewegt. Outfits liegen als Kleidung darüber. */
+(function (global) {
+  "use strict";
+  /* Eintrag: [Typ, Gliedmaßen, Bauch, Füße, Schwanz, Schwanzfarbe, Zusatz, Zusatzfarbe]
+     Typ: fur | bird | tent | crys; Schwanz: fox cat dino fish pom rb tuft feat sting – (keiner);  Zusatz: shell fin spikes wings stripes */
+  var S = {
+    "🦊": ["fur", "#F28A30", "#FFF2E0", "#4A3020", "fox", "#F28A30"],
+    "🐼": ["fur", "#2B2B33", "#F6F6F6", "#2B2B33", "pom", "#F6F6F6"],
+    "🐢": ["fur", "#7FBF5A", "#EAD99E", "#6AA84A", "", "", "shell", "#3F8F3A"],
+    "🦉": ["bird", "#A9743F", "#EBCB9C", "#F2A93D", "feat", "#8A5A2C"],
+    "🐙": ["tent", "#B06AD6", "#D9A8EE", "#B06AD6", "", ""],
+    "🦕": ["fur", "#5CC27A", "#DDF3B8", "#4AA865", "dino", "#5CC27A", "spikes", "#3E9B5C"],
+    "🦈": ["fur", "#6C8FAF", "#E8F0F6", "#5A7B99", "fish", "#5A7B99", "fin", "#5A7B99"],
+    "🦄": ["fur", "#F3ECFF", "#FFFFFF", "#C9A7FF", "rb", ""],
+    "🐝": ["fur", "#2B2B33", "#FFD23D", "#2B2B33", "sting", "#2B2B33", "wings", "#CDEEFF"],
+    "🦁": ["fur", "#E5A33B", "#F7D9A0", "#B87A22", "tuft", "#E5A33B", "", "#8A4B14"],
+    "🐧": ["bird", "#2B3A55", "#FFFFFF", "#F59E0B", "pom", "#2B3A55"],
+    "🐨": ["fur", "#A9A9B6", "#E9E9F0", "#8E8E9C", "", ""],
+    "svg:pummel": ["fur", "#FFC9E3", "#FFF4FA", "#F7A8CF", "rb", ""],
+    "svg:pbaer": ["fur", "#D9A877", "#F6E0C2", "#B98557", "pom", "#F6E0C2"],
+    "svg:phase": ["fur", "#F4F2FA", "#FFFFFF", "#DAD6EA", "pom", "#FFFFFF"],
+    "svg:pkatze": ["fur", "#FFD9A8", "#FFF1DC", "#F2B676", "cat", "#FFD9A8"],
+    "svg:pdrache": ["fur", "#9EE6A8", "#E3F9D9", "#6FCB86", "dino", "#9EE6A8", "spikes", "#6FCB86"],
+    "svg:clombo": ["fur", "#B063CC", "#D9A8EE", "#8E48AE", "cat", "#B063CC"],
+    "svg:pphoenix": ["bird", "#FFB36B", "#FFE0B0", "#F28A3D", "feat", "#F28A3D"],
+    "svg:pgold": ["fur", "#FFD65C", "#FFF0B0", "#E8B22B", "pom", "#FFF0B0"],
+    "svg:pregen": ["fur", "#B9A3E8", "#FFFFFF", "#9C86D8", "rb", ""],
+    "svg:pgalaxie": ["fur", "#4B3B8F", "#6C5BC0", "#3A2D73", "pom", "#6C5BC0"],
+    "svg:fnhuhn": ["bird", "#F1E8D0", "#FFFDF5", "#F59E0B", "feat", "#F1E8D0"],
+    "svg:fnschwein": ["fur", "#9A6240", "#E7B197", "#5E361F", "pom", "#E7B197"],
+    "svg:fnfrosch": ["fur", "#5CCB5C", "#C8F5B0", "#3FA83F", "", ""],
+    "svg:fnwolf": ["fur", "#9AA5BA", "#E7ECF4", "#444E63", "tuft", "#9AA5BA", "", "#E7ECF4"],
+    "svg:fnraptor": ["fur", "#86C23A", "#E6F5C0", "#4C7A1C", "dino", "#86C23A", "spikes", "#F97316"],
+    "svg:fnllama": ["fur", "#B05CF0", "#FF7EC7", "#4B2A8A", "pom", "#FF7EC7"],
+    "svg:fnkristall": ["fur", "#BFE9FF", "#FFFFFF", "#7FA8FF", "pom", "#FFFFFF"],
+    "svg:fnelite": ["crys", "#5B8CFF", "#9FE7FF", "#1E2A6B", "", ""],
+    "svg:fnchamp": ["crys", "#CFE9FF", "#FFFFFF", "#5B54C8", "", ""],
+    "svg:fnunreal": ["crys", "#8F7DFF", "#FFD66B", "#C2410C", "", ""]
+  };
+  var EMB = { trikot: "7", held: "★", raum: "★", rock: "♪" };
+  /* Eigene Köpfe für Figuren, deren Emoji/Zeichnung schon ein ganzes Tier zeigt (sonst säße ein Tier auf dem Körper) */
+  var V = '<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">';
+  function eyes(y, dx, r, c) { return '<circle cx="' + (32 - dx) + '" cy="' + y + '" r="' + r + '" fill="' + (c || "#1B1230") + '"/><circle cx="' + (32 + dx) + '" cy="' + y + '" r="' + r + '" fill="' + (c || "#1B1230") + '"/><circle cx="' + (32 - dx + 1.3) + '" cy="' + (y - 1.3) + '" r="' + r * .35 + '" fill="#fff"/><circle cx="' + (32 + dx + 1.3) + '" cy="' + (y - 1.3) + '" r="' + r * .35 + '" fill="#fff"/>'; }
+  var cheeks = '<ellipse cx="17" cy="42" rx="4.5" ry="3" fill="#FF8FA8" opacity=".5"/><ellipse cx="47" cy="42" rx="4.5" ry="3" fill="#FF8FA8" opacity=".5"/>';
+  var smile = '<path d="M26 43q6 6 12 0" fill="none" stroke="#1B1230" stroke-width="2.2" stroke-linecap="round"/>';
+  var HEAD = {
+    "🐢": V + '<ellipse cx="32" cy="36" rx="25" ry="23" fill="#7FBF5A" stroke="#4B8A3A" stroke-width="1.6"/><ellipse cx="32" cy="46" rx="15" ry="9" fill="#B8E08A" opacity=".7"/>' + eyes(30, 10, 4.6) + cheeks + smile + '<circle cx="28" cy="36" r="1" fill="#4B8A3A"/><circle cx="36" cy="36" r="1" fill="#4B8A3A"/></svg>',
+    "🐙": V + '<path d="M6 44C4 14 18 4 32 4s28 10 26 40c-4 8-48 8-52 0z" fill="#B06AD6" stroke="#7E3FA3" stroke-width="1.6"/><circle cx="20" cy="16" r="3" fill="#D9A8EE"/><circle cx="46" cy="20" r="2.4" fill="#D9A8EE"/><circle cx="34" cy="11" r="2" fill="#D9A8EE"/>' + eyes(34, 10, 5.4) + cheeks + '<path d="M27 46q5 4 10 0" fill="none" stroke="#1B1230" stroke-width="2.2" stroke-linecap="round"/></svg>',
+    "🦕": V + '<path d="M12 22l4-12 7 8 9-12 9 12 7-8 4 12z" fill="#3E9B5C"/><ellipse cx="32" cy="38" rx="24" ry="21" fill="#5CC27A" stroke="#2F7D4A" stroke-width="1.6"/><ellipse cx="32" cy="48" rx="15" ry="9" fill="#DDF3B8"/>' + eyes(32, 11, 4.6) + '<circle cx="28" cy="47" r="1.3" fill="#2F7D4A"/><circle cx="36" cy="47" r="1.3" fill="#2F7D4A"/><path d="M25 53q7 4 14 0" fill="none" stroke="#1B1230" stroke-width="2" stroke-linecap="round"/></svg>',
+    "🦈": V + '<path d="M28 18L36 2l6 16z" fill="#5A7B99"/><ellipse cx="32" cy="38" rx="26" ry="21" fill="#6C8FAF" stroke="#44627F" stroke-width="1.6"/><path d="M8 46q24 18 48 0v6q-24 16-48 0z" fill="#E8F0F6"/>' + eyes(32, 12, 4.4) + '<path d="M18 48l3 4 3-4 3 4 3-4 3 4 3-4 3 4 3-4 3 4 3-4" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/><path d="M18 48q14 4 28 0" fill="none" stroke="#1B1230" stroke-width="1.8"/></svg>',
+    "🐧": V + '<ellipse cx="32" cy="36" rx="25" ry="24" fill="#2B3A55" stroke="#161F33" stroke-width="1.6"/><path d="M12 38c2-14 12-16 20-10 8-6 18-4 20 10 -2 12-12 18-20 18s-18-6-20-18z" fill="#fff"/>' + eyes(34, 10, 4.2) + '<path d="M26 42h12l-6 8z" fill="#F59E0B" stroke="#D97706" stroke-width="1" stroke-linejoin="round"/>' + cheeks + '</svg>',
+    "🐝": V + '<path d="M22 14l-7-10M42 14l7-10" stroke="#2B2B33" stroke-width="2.4" stroke-linecap="round"/><circle cx="14.5" cy="4.5" r="2.6" fill="#2B2B33"/><circle cx="49.5" cy="4.5" r="2.6" fill="#2B2B33"/><ellipse cx="32" cy="38" rx="25" ry="22" fill="#FFD23D" stroke="#C99A00" stroke-width="1.6"/><path d="M9 22q23-8 46 0" fill="none" stroke="#2B2B33" stroke-width="4" stroke-linecap="round" opacity=".85"/>' + eyes(36, 10, 5.2) + cheeks + smile + '</svg>',
+    "svg:fnllama": V + '<path d="M16 22L12 2l10 12zM48 22l4-20-10 12z" fill="#C06CF5" stroke="#4B2A8A" stroke-width="1.2" stroke-linejoin="round"/><ellipse cx="32" cy="36" rx="22" ry="25" fill="#B05CF0" stroke="#4B2A8A" stroke-width="1.6"/><ellipse cx="32" cy="46" rx="13" ry="10" fill="#D79BFF" stroke="#4B2A8A" stroke-width="1"/><path d="M18 18q14-9 28 0" fill="none" stroke="#FF7EC7" stroke-width="4" stroke-linecap="round"/>' + eyes(32, 10, 4.2) + '<ellipse cx="28" cy="45" rx="1.5" ry="2" fill="#4B2A8A"/><ellipse cx="36" cy="45" rx="1.5" ry="2" fill="#4B2A8A"/><path d="M27 51q5 3 10 0" fill="none" stroke="#4B2A8A" stroke-width="1.8" stroke-linecap="round"/></svg>',
+    "svg:fnkristall": V + '<path d="M16 22L12 2l10 12zM48 22l4-20-10 12z" fill="#CFF6FF" stroke="#3E5BB8" stroke-width="1.2" stroke-linejoin="round"/><ellipse cx="32" cy="36" rx="22" ry="25" fill="#BFE9FF" stroke="#3E5BB8" stroke-width="1.6"/><ellipse cx="32" cy="46" rx="13" ry="10" fill="#F2FCFF" stroke="#3E5BB8" stroke-width="1"/><path d="M26 16l6 10 6-10z" fill="#fff" opacity=".7"/>' + eyes(32, 10, 4.2) + '<ellipse cx="28" cy="45" rx="1.5" ry="2" fill="#3E5BB8"/><ellipse cx="36" cy="45" rx="1.5" ry="2" fill="#3E5BB8"/><path d="M27 51q5 3 10 0" fill="none" stroke="#3E5BB8" stroke-width="1.8" stroke-linecap="round"/></svg>'
+  };
+  var DEF = ["fur", "#9BB0C8", "#EEF3F8", "#5A6B80", "pom", "#EEF3F8"];
+  function figure(av, outfit, headHtml) {
+    var d = S[av] || DEF, t = d[0], ex = d[6] || "";
+    var st = "--limb:" + d[1] + ";--belly:" + d[2] + ";--feet:" + d[3] + ";--tl:" + d[5] + ";--ex:" + (d[7] || d[1]) + ";--tt:" + (d[7] || "#fff");
+    var back = "";
+    if (d[4]) back += '<div class="tail t-' + d[4] + '"></div>';
+    if (ex === "shell") back += '<div class="shell"></div>';
+    if (ex === "fin") back += '<div class="fin"></div>';
+    if (ex === "spikes") back += '<div class="spk"></div>';
+    if (ex === "wings") back += '<div class="wg wg1"></div><div class="wg wg2"></div>';
+    if (t === "tent") back += '<div class="te te1"></div><div class="te te2"></div>';
+    back += '<div class="cape"></div>';
+    return '<div class="fig k-' + t + (ex === "stripes" ? " stripes" : "") + " of-" + (outfit || "natur") + '" style="' + st + '">' +
+      '<div class="bk">' + back + '</div><div class="ll lg"></div><div class="lr lg"></div><div class="to" data-e="' + (EMB[outfit] || "") + '"><i></i></div>' +
+      '<div class="al ar"></div><div class="arr ar"></div><div class="hd">' + (HEAD[av] || headHtml) + '</div></div>';
+  }
+  global.VTFIG = { figure: figure };
 })(window);
 </script>
 <script>/* Wordbook – Oberfläche, Übungstypen, Session-Ablauf */
@@ -5806,7 +5955,7 @@ window.VERBS = [
   /* Siegertanz der gewählten Figur: bei Boss immer der epische (wenn gekauft), sonst der gewählte */
   function danceWin(big, title) {
     var p = S.state.profile, sieg = S.SHOP.filter(function (x) { return x.id === "dn:sieg"; })[0];
-    global.VTC.dance({ avatar: avatarHtml(p.avatar), dance: big && sieg && S.owns(sieg) ? "sieg" : (p.dance || "wackler"), title: title, big: big });
+    global.VTC.dance({ av: p.avatar, avatar: avatarHtml(p.avatar), outfit: p.outfit, dance: big && sieg && S.owns(sieg) ? "sieg" : (p.dance || "wackler"), title: title, big: big });
   }
   var BOSS_NAMES = { match: "Match-Rausch", blitz: "Blitzrunde", survival: "Letztes Herz" };
   /* Boss-Runde: ein Arena-Modus mit den Wörtern des ganzen Abschnitts; geschafft ab einer Mindestzahl richtiger Antworten */
@@ -6201,9 +6350,9 @@ window.VERBS = [
   /* ---------- Shop und Sammelalbum ---------- */
   var SHOP_TABS = [
     { k: "avatar", n: "Figuren" }, { k: "sticker", n: "Sticker" }, { k: "frame", n: "Rahmen" }, { k: "title", n: "Titel" },
-    { k: "fn", n: "Fortnite" }, { k: "bg", n: "Hintergründe" }, { k: "fx", n: "Effekte" }, { k: "dance", n: "Tänze 💃" }, { k: "snd", n: "Töne" }, { k: "theme", n: "Farben" }
+    { k: "fn", n: "Fortnite" }, { k: "bg", n: "Hintergründe" }, { k: "fx", n: "Effekte" }, { k: "dance", n: "Tänze 💃" }, { k: "outfit", n: "Outfits 👕" }, { k: "snd", n: "Töne" }, { k: "theme", n: "Farben" }
   ];
-  var KIND_NAME = { sticker: "Sticker", avatar: "Figur", frame: "Rahmen", title: "Titel", bg: "Hintergrund", fx: "Effekt", dance: "Tanz", snd: "Ton", theme: "Farbwelt" };
+  var KIND_NAME = { sticker: "Sticker", avatar: "Figur", frame: "Rahmen", title: "Titel", bg: "Hintergrund", fx: "Effekt", dance: "Tanz", outfit: "Outfit", snd: "Ton", theme: "Farbwelt" };
   var shopTab = "avatar";
   var THEME_DOT = { paper: "#1E6273", mint: "#2E7357", plum: "#6A3D70", amber: "#8A5A1B" };
   function shopIcon(it) {
@@ -6217,6 +6366,7 @@ window.VERBS = [
       case "fx": return it.val === "confetti" ? "🎊" : it.val === "stars" ? "⭐" : it.val === "sparks" ? "⚡" : it.val === "firework" ? "🎆" : "▫️";
       case "snd": return it.val === "none" ? "🔇" : "🔔";
       case "dance": return "💃";
+      case "outfit": return "👕";
     }
     return "";
   }
@@ -6285,7 +6435,7 @@ window.VERBS = [
       return '<div class="shopitem"><span class="si">' + shopIcon(it) + '</span>' +
         '<span style="flex:1 1 auto"><b class="small">' + esc(it.label) + '</b><br><span class="small muted">' + KIND_NAME[it.kind] +
         (it.rank && !own ? " · ab " + esc(it.rank) : "") + '</span></span>' +
-        (it.kind === "dance" ? '<button class="chip" data-act="dancetry" data-id="' + esc(it.id) + '" aria-label="Vorschau" style="margin-right:6px">▶︎</button>' : '') +
+        ((it.kind === "dance" || it.kind === "outfit") ? '<button class="chip" data-act="dancetry" data-id="' + esc(it.id) + '" aria-label="Vorschau" style="margin-right:6px">▶︎</button>' : '') +
         (own ? '<button class="chip" data-act="equip" data-id="' + esc(it.id) + '" aria-pressed="' + act + '">' + (act ? "aktiv" : "auswählen") + '</button>'
           : locked ? '<span class="pill" title="Erst ab Rang ' + esc(it.rank) + '">🔒 ' + esc(it.rank) + '</span><button class="chip" data-act="wish" data-id="' + esc(it.id) + '" aria-pressed="' + (wishId === it.id) + '" aria-label="Wunsch" style="margin-left:6px">⭐</button>'
           : '<button class="chip" data-act="wish" data-id="' + esc(it.id) + '" aria-pressed="' + (wishId === it.id) + '" aria-label="Wunsch" style="margin-right:6px">⭐</button><button class="btn soft" data-act="buy" data-id="' + esc(it.id) + '">🪙 ' + it.cost + '</button>') + '</div>';
@@ -7528,7 +7678,7 @@ window.VERBS = [
       if (re.item.kind === "sticker") toast(re.on ? "Aufgeklebt: " + re.item.label : "Abgelöst: " + re.item.label);
       renderHeader(); render();
     }
-    else if (a === "dancetry") { var dit = S.SHOP.filter(function (x) { return x.id === act.getAttribute("data-id"); })[0]; if (dit) global.VTC.dance({ avatar: avatarHtml(S.state.profile.avatar), dance: dit.val, title: dit.label }); }
+    else if (a === "dancetry") { var dit = S.SHOP.filter(function (x) { return x.id === act.getAttribute("data-id"); })[0]; if (dit) { var pf = S.state.profile; global.VTC.dance({ av: pf.avatar, avatar: avatarHtml(pf.avatar), outfit: dit.kind === "outfit" ? dit.val : pf.outfit, dance: dit.kind === "dance" ? dit.val : (pf.dance || "wackler"), title: dit.label }); } }
     else if (a === "shoptab") { shopTab = act.getAttribute("data-k"); render(); }
     else if (a === "checkupdate") {
       if (!navigator.serviceWorker) return toast("Dieses Gerät kennt keine App-Updates. Seite einfach neu laden.");

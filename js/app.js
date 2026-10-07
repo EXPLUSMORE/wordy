@@ -408,7 +408,7 @@
   /* Siegertanz der gewählten Figur: bei Boss immer der epische (wenn gekauft), sonst der gewählte */
   function danceWin(big, title) {
     var p = S.state.profile, sieg = S.SHOP.filter(function (x) { return x.id === "dn:sieg"; })[0];
-    global.VTC.dance({ avatar: avatarHtml(p.avatar), dance: big && sieg && S.owns(sieg) ? "sieg" : (p.dance || "wackler"), title: title, big: big });
+    global.VTC.dance({ av: p.avatar, avatar: avatarHtml(p.avatar), outfit: p.outfit, dance: big && sieg && S.owns(sieg) ? "sieg" : (p.dance || "wackler"), title: title, big: big });
   }
   var BOSS_NAMES = { match: "Match-Rausch", blitz: "Blitzrunde", survival: "Letztes Herz" };
   /* Boss-Runde: ein Arena-Modus mit den Wörtern des ganzen Abschnitts; geschafft ab einer Mindestzahl richtiger Antworten */
@@ -803,9 +803,9 @@
   /* ---------- Shop und Sammelalbum ---------- */
   var SHOP_TABS = [
     { k: "avatar", n: "Figuren" }, { k: "sticker", n: "Sticker" }, { k: "frame", n: "Rahmen" }, { k: "title", n: "Titel" },
-    { k: "fn", n: "Fortnite" }, { k: "bg", n: "Hintergründe" }, { k: "fx", n: "Effekte" }, { k: "dance", n: "Tänze 💃" }, { k: "snd", n: "Töne" }, { k: "theme", n: "Farben" }
+    { k: "fn", n: "Fortnite" }, { k: "bg", n: "Hintergründe" }, { k: "fx", n: "Effekte" }, { k: "dance", n: "Tänze 💃" }, { k: "outfit", n: "Outfits 👕" }, { k: "snd", n: "Töne" }, { k: "theme", n: "Farben" }
   ];
-  var KIND_NAME = { sticker: "Sticker", avatar: "Figur", frame: "Rahmen", title: "Titel", bg: "Hintergrund", fx: "Effekt", dance: "Tanz", snd: "Ton", theme: "Farbwelt" };
+  var KIND_NAME = { sticker: "Sticker", avatar: "Figur", frame: "Rahmen", title: "Titel", bg: "Hintergrund", fx: "Effekt", dance: "Tanz", outfit: "Outfit", snd: "Ton", theme: "Farbwelt" };
   var shopTab = "avatar";
   var THEME_DOT = { paper: "#1E6273", mint: "#2E7357", plum: "#6A3D70", amber: "#8A5A1B" };
   function shopIcon(it) {
@@ -819,6 +819,7 @@
       case "fx": return it.val === "confetti" ? "🎊" : it.val === "stars" ? "⭐" : it.val === "sparks" ? "⚡" : it.val === "firework" ? "🎆" : "▫️";
       case "snd": return it.val === "none" ? "🔇" : "🔔";
       case "dance": return "💃";
+      case "outfit": return "👕";
     }
     return "";
   }
@@ -887,7 +888,7 @@
       return '<div class="shopitem"><span class="si">' + shopIcon(it) + '</span>' +
         '<span style="flex:1 1 auto"><b class="small">' + esc(it.label) + '</b><br><span class="small muted">' + KIND_NAME[it.kind] +
         (it.rank && !own ? " · ab " + esc(it.rank) : "") + '</span></span>' +
-        (it.kind === "dance" ? '<button class="chip" data-act="dancetry" data-id="' + esc(it.id) + '" aria-label="Vorschau" style="margin-right:6px">▶︎</button>' : '') +
+        ((it.kind === "dance" || it.kind === "outfit") ? '<button class="chip" data-act="dancetry" data-id="' + esc(it.id) + '" aria-label="Vorschau" style="margin-right:6px">▶︎</button>' : '') +
         (own ? '<button class="chip" data-act="equip" data-id="' + esc(it.id) + '" aria-pressed="' + act + '">' + (act ? "aktiv" : "auswählen") + '</button>'
           : locked ? '<span class="pill" title="Erst ab Rang ' + esc(it.rank) + '">🔒 ' + esc(it.rank) + '</span><button class="chip" data-act="wish" data-id="' + esc(it.id) + '" aria-pressed="' + (wishId === it.id) + '" aria-label="Wunsch" style="margin-left:6px">⭐</button>'
           : '<button class="chip" data-act="wish" data-id="' + esc(it.id) + '" aria-pressed="' + (wishId === it.id) + '" aria-label="Wunsch" style="margin-right:6px">⭐</button><button class="btn soft" data-act="buy" data-id="' + esc(it.id) + '">🪙 ' + it.cost + '</button>') + '</div>';
@@ -2130,7 +2131,7 @@
       if (re.item.kind === "sticker") toast(re.on ? "Aufgeklebt: " + re.item.label : "Abgelöst: " + re.item.label);
       renderHeader(); render();
     }
-    else if (a === "dancetry") { var dit = S.SHOP.filter(function (x) { return x.id === act.getAttribute("data-id"); })[0]; if (dit) global.VTC.dance({ avatar: avatarHtml(S.state.profile.avatar), dance: dit.val, title: dit.label }); }
+    else if (a === "dancetry") { var dit = S.SHOP.filter(function (x) { return x.id === act.getAttribute("data-id"); })[0]; if (dit) { var pf = S.state.profile; global.VTC.dance({ av: pf.avatar, avatar: avatarHtml(pf.avatar), outfit: dit.kind === "outfit" ? dit.val : pf.outfit, dance: dit.kind === "dance" ? dit.val : (pf.dance || "wackler"), title: dit.label }); } }
     else if (a === "shoptab") { shopTab = act.getAttribute("data-k"); render(); }
     else if (a === "checkupdate") {
       if (!navigator.serviceWorker) return toast("Dieses Gerät kennt keine App-Updates. Seite einfach neu laden.");

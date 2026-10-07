@@ -9,6 +9,11 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.29.0 – 2026-10-07
+
+- Tänze mit ganzer Figur: Jede Figur hat einen eigenen Körper (Farben, Schwanz, Flügel, Panzer, Flossen, Stacheln, Tentakel, Kristallkörper), Arme, Beine und Schwanz bewegen sich einzeln. Neue Datei `js/figur.js` (32 Figuren). Für acht Figuren, deren Emoji schon ein ganzes Tier zeigt (Schildkröte, Krake, Dino, Hai, Pinguin, Biene, beide Lamas), gibt es eigene Köpfe.
+- Neue Shop-Rubrik „Outfits 👕“: Natur pur (gratis), T-Shirt 60, Hoodie 90, Fußball-Trikot 110, Superheld mit Umhang 160, Raumanzug 220, Rockstar 260. Vorschau mit ▶︎ (Outfit und Tänze).
+
 ## 2.28.0 – 2026-10-07
 
 - Neue Shop-Rubrik „Tänze 💃“: Die gewählte Figur (Emoji oder gezeichnet) tanzt bei großen Siegen auf einer Bühne mit Scheinwerfern und Disco-Boden. Sechs Tänze: Wackler (gratis), Hüpfer 120, Drehung 150, Roboter 200, Moonwalk 250, Epischer Sieg 400 (ab Silber I). Jeder Tanz hat im Shop eine Vorschau (▶︎).
