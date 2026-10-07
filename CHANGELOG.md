@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.39.1 – 2026-10-07
+- Gelbe Rahmen um die Favoriten entfernt (Startseite und Showroom). Leere Plätze im Showroom behalten ihren gestrichelten Rand.
+
 ## 2.39.0 – 2026-10-07
 - **Alle Figuren im Fortnite-Cartoon-Stil**: die 8 Emoji-Figuren (Fuchs, Panda, Schildkröte, Eule, Krake, Dino, Hai, Einhorn), alle Pummel-Figuren (Bär, Hase, Katze, Einhorn, Drache, Clombo, Phönix, Gold, Regenbogen, Galaxie) und die Fortnite-Reihe (Huhn, Wildschwein, Frosch, Wolf, Raptor, Beute-Lama, Kristall-Lama, Elite-, Champion-, Unreal-Kristall) sind als ganze Figuren gezeichnet, mit allen Tänzen und Outfits. Neue Datei `js/stilb.js` (ein gemeinsamer Körper, je Tier eigene Ohren, Gesicht, Zusätze).
 - Avatar-Werte und IDs bleiben unverändert, der Lernstand ist nicht betroffen. Emoji-Avatare erscheinen jetzt überall als gezeichnete Figur (Kopfleiste, Sticker, Showroom).
