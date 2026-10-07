@@ -166,7 +166,6 @@
     $("#hAvatar").title = pn ? pn.name : "";
     $("#hRank").textContent = r.rank.n + (st.profile.title ? " · " + st.profile.title : "");
     $("#hXp").textContent = st.xp;
-    var hf = $("#hFavs"); if (hf) hf.innerHTML = favMini();
     $("#hCoins").textContent = st.coins;
     $("#hStreak").textContent = st.streak.count;
     var hEl = $("#hHearts");
@@ -412,7 +411,6 @@
     if (id.indexOf("md:") === 0) { var ms = medalStyle(id); return srIcon({ kind: "medal", val: ms.val, rar: ms.rar }); }
     var it = S.itemById(id); return it ? srIcon({ kind: it.kind, val: it.val, rar: S.rarityOf(it), it: it }) : "";
   }
-  function favMini() { return S.favs().map(function (id) { return '<span class="hf" data-act="gotab" data-t="showroom" title="Favorit">' + favIcon(id) + '</span>'; }).join(""); }
   var srAv = null, srDn = null, hhT = null;
   function heroHtml(av, dn) {
     var o = S.state.profile.outfit;

@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.38.1 – 2026-10-07
+- Favoriten stehen nicht mehr in der Kopfleiste (zu voll). Sie bleiben auf der Startseite und im Showroom.
+
 ## 2.38.0 – 2026-10-07
 - **Daily Challenge** statt „Weiterlernen“: die bunte Mischrunde (auch Startseiten-Empfehlung „Wiederholen“). Die erste Challenge des Tages (mind. 8 Aufgaben) gibt einmalig 10 Bonus-Münzen (mit Booster/Faktor), danach heißt der Knopf „Zusatz-Runde“. Hinweis auf der Kachel und im Abschluss-Bildschirm.
 - „Lieblinge“ heißen jetzt **Favoriten** (Showroom, Startseite, Kopfleiste).
