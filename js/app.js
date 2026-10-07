@@ -412,7 +412,7 @@
     if (id.indexOf("md:") === 0) { var ms = medalStyle(id); return srIcon({ kind: "medal", val: ms.val, rar: ms.rar }); }
     var it = S.itemById(id); return it ? srIcon({ kind: it.kind, val: it.val, rar: S.rarityOf(it), it: it }) : "";
   }
-  function favMini() { return S.favs().map(function (id) { return '<span class="hf" data-act="gotab" data-t="showroom" title="Lieblingsstück">' + favIcon(id) + '</span>'; }).join(""); }
+  function favMini() { return S.favs().map(function (id) { return '<span class="hf" data-act="gotab" data-t="showroom" title="Favorit">' + favIcon(id) + '</span>'; }).join(""); }
   var srAv = null, srDn = null, hhT = null;
   function heroHtml(av, dn) {
     var o = S.state.profile.outfit;
@@ -428,7 +428,7 @@
     var h = '<div class="stack srv"><div><h1 style="font-size:22px">🏆 Mein Showroom</h1><p class="small muted" style="margin:2px 0 0">Alles, was du gesammelt, gekauft und erspielt hast. Tippe auf ein Stück.</p></div>' +
       '<section class="srtop"><div class="srring" style="--p:' + c.pct + '"><b>' + c.pct + '%</b></div><div class="srcups">' + c.cups.map(function (t) { var col = { Bronze: ["#e0975a", "#8a4a1e"], Silber: ["#eef2fa", "#8794ad"], Gold: ["#ffd24a", "#c8780a"], Platin: ["#c9efff", "#7a8fff"] }[t.n]; return '<div class="srcup' + (t.done ? "" : " lock") + '">' + svgCup(col[0], col[1]) + '<b>' + t.n + '</b><small>ab ' + t.pct + '%</small></div>'; }).join("") + '</div></section>' +
       '<div class="srrar">' + ["common", "rare", "epic", "legend"].map(function (r) { return '<span class="' + r + '"><b>' + c.rar[r] + '</b>' + RAR_NAME[r] + '</span>'; }).join("") + '</div>' +
-      '<section class="srstage"><div class="srray"></div><div class="srfloor"></div><div class="srfav">' + favHtml + '</div><div class="srlbl">Lieblingsstücke</div><div class="srpod"><i></i></div><div class="srhero" id="srHero"></div>' +
+      '<section class="srstage"><div class="srray"></div><div class="srfloor"></div><div class="srfav">' + favHtml + '</div><div class="srlbl">Favoriten</div><div class="srpod"><i></i></div><div class="srhero" id="srHero"></div>' +
       '<div class="srname" id="srName"></div><div class="srbtns"><button class="sbtn" data-act="srdance">💃 Tanzen</button><button class="sbtn b2" data-act="srswap">🔄 Wechseln</button></div></section>' +
       '<section class="srcab">' + c.shelves.map(function (s) {
         return '<div class="srshelf"><div class="srhead"><span>' + s.icon + ' ' + esc(s.title) + '</span><span class="c' + (s.own === s.items.length ? " full" : "") + '">' + s.own + ' / ' + s.items.length + '</span></div><div class="sritems">' + s.items.map(function (i) {
@@ -453,7 +453,7 @@
     var c = { kind: it.kind, val: val, rar: rar, it: it.it }, canEq = it.owned && it.kind !== "medal", eq = it.it && S.isActive(it.it);
     var ov = document.createElement("div"); ov.className = "srmd";
     ov.innerHTML = '<div class="srmc" style="--c:' + col[1] + ';--g:' + RAR_GLOW[rar] + '"><div class="eyebrow" style="color:#fff;opacity:.85">' + RAR_NAME[rar] + '</div><div class="big' + (it.owned ? "" : " lock") + '">' + srIcon(c) + '</div><h3>' + esc(it.label) + '</h3><p>' + (it.owned ? "Gehört dir! " : "Noch nicht gesammelt. ") + esc(it.how || "") + '</p><div class="row wrap" style="gap:8px;justify-content:center">' +
-      (it.owned ? '<button class="sbtn" data-m="fav">' + (fav ? "★ Lieblingsstück" : "☆ Als Liebling") + '</button>' : "") +
+      (it.owned ? '<button class="sbtn" data-m="fav">' + (fav ? "★ Favorit" : "☆ Als Favorit") + '</button>' : "") +
       (canEq ? '<button class="sbtn b2" data-m="eq">' + (it.kind === "sticker" ? (eq ? "Ablösen" : "Aufkleben") : eq ? "✓ Aktiv" : "Tragen") + '</button>' : "") +
       (it.owned && (it.kind === "dance" || it.kind === "outfit" || it.kind === "kit") ? '<button class="sbtn b3" data-m="try">▶ Ansehen</button>' : "") +
       (!it.owned && it.it && !it.it.pass && !it.it.reward ? '<button class="sbtn b2" data-m="shop">Zum Shop</button>' : "") +
@@ -463,7 +463,7 @@
     ov.addEventListener("click", function (e) {
       var m = e.target.closest("[data-m]"), mm = m && m.getAttribute("data-m");
       if (e.target === ov || mm === "x") { ov.remove(); render(); return; }
-      if (mm === "fav") { var on = S.toggleFav(id); toast(on ? "Zu deinen Lieblingsstücken gelegt ⭐" : "Aus den Lieblingsstücken genommen"); ov.remove(); render(); }
+      if (mm === "fav") { var on = S.toggleFav(id); toast(on ? "Zu deinen Favoriten gelegt ⭐" : "Aus den Favoriten genommen"); ov.remove(); render(); }
       else if (mm === "eq") { var r = S.equip(it.it.id); if (r.error) return toast(r.error); ov.remove(); toast(it.kind === "sticker" ? (r.on ? "Aufgeklebt" : "Abgelöst") : "Getragen: " + it.label); render(); }
       else if (mm === "try") { global.VTC.dance({ av: S.state.profile.avatar, avatar: avatarHtml(S.state.profile.avatar), outfit: it.kind === "dance" ? S.state.profile.outfit : it.it.val, dance: it.kind === "dance" ? it.it.val : (S.state.profile.dance || "wackler"), title: it.label }); }
       else if (mm === "shop") { ov.remove(); shopTab = it.kind === "kit" ? "kit" : it.it.set === "fn" ? "fn" : it.kind; tab = "shop"; shopSeg = "shop"; render(); view.scrollTop = 0; }
@@ -636,9 +636,9 @@
         opts: { minutes: mins, scope: pl.units, newMax: Math.max(pi.quota, newToday), mode: "plan" } };
     }
     if (p.box.length >= 8) return { icon: "♻️", title: "Fehlerkartei", sub: p.box.length + " Wörter warten darauf, endlich zu sitzen.", opts: { minutes: mins, mode: "box" } };
-    if (p.due.length) return { icon: "🧠", title: "Wiederholen", sub: p.due.length + " " + plural(p.due.length, "Wort ist", "Wörter sind") + " fällig.", opts: { minutes: mins, mode: "mix" } };
+    if (p.due.length) return { icon: "🏆", title: "Daily Challenge", sub: p.due.length + " " + plural(p.due.length, "Wort ist", "Wörter sind") + " fällig.", opts: { minutes: mins, mode: "mix" } };
     if (p.fresh.length) return { icon: "✨", title: "Neue Wörter", sub: "Nichts ist fällig. Zeit für etwas Neues.", opts: { minutes: mins, mode: "new" } };
-    return { icon: "🧠", title: "Weiterlernen", sub: "Eine bunte Runde aus allem.", opts: { minutes: mins, mode: "mix" } };
+    return { icon: "🏆", title: "Daily Challenge", sub: "Eine bunte Runde aus allem.", opts: { minutes: mins, mode: "mix" } };
   }
   function viewHome() {
     var st = S.state, r = S.rankOf(st.xp);
@@ -656,7 +656,7 @@
     var pf = S.state.profile, sky = hour >= 5 && hour < 11 ? "m" : hour < 17 ? "d" : hour < 21 ? "e" : "n";
     var cheer = pct >= 100 ? "Tagesziel geschafft! 🎉" : biz ? "Bereit für die nächste Runde?" : "Tipp mich an – ich tanze!";
     var rn = r.rank ? r.rank.n : "", xpPct = r.next ? Math.min(100, Math.round(r.into * 100 / Math.max(1, r.span))) : 100;
-    var favs = S.favs().map(function (id) { return '<button class="hhf" data-act="gotab" data-t="showroom" aria-label="Lieblingsstück">' + favIcon(id) + '</button>'; }).join("");
+    var favs = S.favs().map(function (id) { return '<button class="hhf" data-act="gotab" data-t="showroom" aria-label="Favorit">' + favIcon(id) + '</button>'; }).join("");
     var html = '<div class="stack">';
     html += '<section class="hh sky-' + sky + '"><div class="hhsky"><i class="hhsun"></i><i class="hhcl c1"></i><i class="hhcl c2"></i><i class="hhst"></i></div>' +
       (S.stickers().length ? '<div class="stk-corner">' + placedStickers(46) + '</div>' : "") +
@@ -668,7 +668,7 @@
       '<div class="hhbar"><div class="hhrank"><b>' + esc(rn) + '</b><div class="hhxp"><i style="width:' + xpPct + '%"></i></div><small class="tnum">' + (r.next ? toNext + ' XP bis ' + esc(r.next.n) : "Höchster Rang") + '</small></div>' +
       '<div class="hhchips"><span class="hhc">🔥 <b class="tnum">' + st.streak.count + '</b></span><span class="hhc">🪙 <b class="tnum">' + st.coins + '</b></span><span class="hhc" title="Streak-Schutz">🛡️ <b class="tnum">' + st.streak.freezes + '</b></span>' +
       (S.weekPlan() ? '<span class="hhc">📅 ' + (S.freeDay() ? "frei" : S.goalMin() + " Min") + '</span>' : "") + '</div></div>' +
-      '<div class="hhfavs"><span class="hhfl">⭐ Lieblinge</span>' + (favs || '<span class="hhfe">Lege im Showroom bis zu 3 Lieblingsstücke aufs Podest</span>') + '<button class="hhsr" data-act="gotab" data-t="showroom">🏆 Showroom</button></div></section>';
+      '<div class="hhfavs"><span class="hhfl">⭐ Favoriten</span>' + (favs || '<span class="hhfe">Lege im Showroom bis zu 3 Favoriten aufs Podest</span>') + '<button class="hhsr" data-act="gotab" data-t="showroom">🏆 Showroom</button></div></section>';
 
     html += '<section class="cta"><div class="ctaglow"></div><div class="eyebrow">Heute für dich</div>' +
       '<h2>' + rec.icon + ' ' + rec.title + '</h2><p class="small" style="margin:0 0 14px;opacity:.85">' + esc(rec.sub) + '</p>' +
@@ -708,7 +708,7 @@
     var nW = S.itemsFor(mins), nS = Math.max(5, Math.round(mins * 60 / 16)), nV = Math.max(5, Math.round(mins * 60 / 20));
     function cnt(n) { return " · ≈ " + n + " " + plural(n, "Aufgabe", "Aufgaben"); }
     var W = window.WordySync, plans = (W && W.connected()) ? W.activePlans() : [], aud = audioAvailable();
-    var learn = tile("🧠", 'Weiterlernen <span style="color:var(--gold)">★</span>', "Mix aus allem, was dran ist" + cnt(nW), 'data-act="start" data-min="' + mins + '"') +
+    var learn = tile("🏆", 'Daily Challenge <span style="color:var(--gold)">★</span>', (S.challengeDone() ? "Bonus heute geholt ✓ · Zusatz-Runde" : "🎁 +10 🪙 Tagesbonus") + " · bunter Mix" + cnt(nW), 'data-act="start" data-min="' + mins + '"') +
       tile("✨", "Neue Wörter", S.newBlocked() ? "Erst die " + S.newBlocked() + " fälligen wiederholen" : p.fresh.length ? p.fresh.length + " warten auf dich" + cnt(Math.min(nW, p.fresh.length)) : "Alles schon gesehen", 'data-act="start" data-mode="new" data-min="' + mins + '"' + (p.fresh.length && !S.newBlocked() ? "" : " disabled")) +
       tile("♻️", "Fehlerkartei", p.box.length ? p.box.length + " " + plural(p.box.length, "Wort", "Wörter") + " üben" + cnt(Math.min(nW, p.box.length)) : "Leer, sehr gut!", 'data-act="start" data-mode="box" data-min="' + mins + '"' + (p.box.length ? "" : " disabled")) +
       tile("💬", "Sätze", stt.sent.total ? stt.sent.seen + " von " + stt.sent.total + " geübt" + cnt(Math.min(nS, stt.sent.total)) : "Für diesen Bereich noch keine", 'data-act="start" data-mode="sent" data-min="' + mins + '"' + (stt.sent.total ? "" : " disabled")) +
@@ -1316,7 +1316,7 @@
   function howToCard() {
     var steps = [
       ["🚀", "Loslegen", "Auf <b>Start</b> schlägt Wordy dir die beste Runde für heute vor (zum Beispiel Fehlerkartei oder Lernplan). Mit <b>Los geht\'s</b> startest du, darunter stellst du die Dauer ein."],
-      ["🎮", "Üben", "Unter <b>Üben → Spielmodi</b> wählst du selbst: <b>Lernen</b> (Weiterlernen, Neue Wörter, Fehlerkartei, Sätze, Verben), <b>Spielen</b> (die Arena) oder <b>Gezielt üben</b> (nur Hören, Tippen, Lücken oder Zuordnen)."],
+      ["🎮", "Üben", "Unter <b>Üben → Spielmodi</b> wählst du selbst: <b>Lernen</b> (Daily Challenge, Neue Wörter, Fehlerkartei, Sätze, Verben), <b>Spielen</b> (die Arena) oder <b>Gezielt üben</b> (nur Hören, Tippen, Lücken oder Zuordnen)."],
       ["📚", "Einheiten", "Unter <b>Üben → Lernbereich</b> wählst du Schule oder Business, Schuljahr oder Stufe und öffnest eine Einheit. Dort kannst du nur diese Einheit üben, anhören oder gezielt eine Aufgabenform trainieren."],
       ["🧩", "Aufgaben", "Wortkarte, Auswahl, Hören, Lückentext, Schreiben, Zuordnen und Satzbau. Eine falsche Antwort kostet ein Herz (unter Setup abschaltbar) und kommt später wieder."],
       ["✍️", "Unregelmäßige Verben", "<b>Üben → Spielmodi → Verben</b> (Einführung, Lückenaufgabe, Tippen). Die Verbenliste mit Beispielsätzen findest du unter <b>Üben → Lernbereich</b>."],
@@ -1591,7 +1591,7 @@
     SS.ended = true;
     var sec = Math.round((Date.now() - SS.start) / 1000);
     if (reason === "done" && SS.planned) S.recordPace(sec, SS.planned);
-    var rw = S.finishSession({ items: SS.items, correct: SS.correct, sec: sec, maxChain: SS.maxChain, newSeen: SS.newSeen, deep: SS.deep || 0, boxSolved: SS.boxSolved, mastered: SS.mastered, sentOk: SS.sentOk });
+    var rw = S.finishSession({ items: SS.items, correct: SS.correct, sec: sec, maxChain: SS.maxChain, newSeen: SS.newSeen, deep: SS.deep || 0, daily: SS.mode === "mix", boxSolved: SS.boxSolved, mastered: SS.mastered, sentOk: SS.sentOk });
     var st = S.state, acc = SS.items ? Math.round(SS.correct * 100 / SS.items) : 0;
     var head = reason === "hearts" ? "Kurze Pause" : SS.correct === SS.items && SS.items > 3 ? "Fehlerfrei!" : "Runde geschafft";
     var msg = reason === "hearts"
@@ -1626,13 +1626,14 @@
         rw.parts.map(function (x) { return '<div class="row small"><span style="flex:1 1 auto">' + esc(x.t) + '</span><b class="tnum">+' + x.c + ' 🪙</b></div>'; }).join("") + '</div>' : "") + '</section>';
     if (SS.sentOk) html += '<section class="card"><div class="eyebrow">Satzbau</div><p style="margin:6px 0 0">' + SS.sentOk + ' ' + plural(SS.sentOk, "Satz", "Sätze") + ' richtig zusammengesetzt.</p></section>';
     if (SS.mastered) html += '<section class="card"><div class="eyebrow" style="color:var(--gold)">Neu gemeistert</div><p style="margin:6px 0 0">' + SS.mastered + ' ' + plural(SS.mastered, "Wort sitzt", "Wörter sitzen") + ' jetzt langfristig.</p></section>';
+    if (rw.challenge) html += '<section class="card" style="border-color:var(--gold)"><div class="eyebrow" style="color:var(--gold)">🎁 Daily Challenge geschafft</div><p style="margin:6px 0 0">Tagesbonus: <b>+' + rw.challenge + ' 🪙</b>. Morgen wartet die nächste Challenge.</p></section>';
     if (rw.goalReached) html += '<section class="card"><div class="eyebrow" style="color:var(--good)">Tagesziel erreicht</div>' + (rw.streakUp ? '<div class="fin-flame">🔥</div>' : "") + '<p style="margin:6px 0 0">' + (rw.streakUp ? "Streak steht bei " + st.streak.count + " " + plural(st.streak.count, "Tag", "Tagen") + "." : "Schon erledigt heute.") + '</p></section>';
     if (rw.missions.length) html += '<section class="card"><div class="eyebrow">Missionen erfüllt</div>' + rw.missions.map(function (m) { return '<div class="mission done"><div class="tick">✓</div><div class="txt small">' + esc(m.n) + '</div><span class="pill">🪙 ' + m.coins + '</span></div>'; }).join("") + '</section>';
     if (rw.badges.length) html += '<section class="card"><div class="eyebrow">Neue Abzeichen</div><div class="badges" style="margin-top:8px">' + rw.badges.map(function (b) { return '<div class="badge"><div class="g">🏅</div><b>' + esc(b.n) + '</b></div>'; }).join("") + '</div></section>';
     if (pr) html += '<section class="card"><div class="eyebrow">Lernpfad</div><p style="margin:6px 0 0"><b>Station geschafft</b> · ' + "★".repeat(stars) + "☆".repeat(3 - stars) + (pr.advanced ? "" : " (Wiederholung)") + '</p>' +
       (pr.chest ? '<p class="small" style="margin:6px 0 0">💰 Abschnitt geschafft – eine Truhe wartet auf dich!</p>' : pr.finished ? '<p class="small" style="margin:6px 0 0">🏆 Du hast den ganzen Pfad geschafft!</p>' : "") + '</section>';
     if (SS.station) html += '<div class="row" style="gap:8px">' + (pr && pr.chest ? '<button class="btn wide lg" data-act="openchest">💰 Truhe öffnen</button>' : '<button class="btn wide lg" data-act="close">' + (pr ? "Weiter auf dem Pfad" : "Zurück zum Pfad") + '</button>') + '</div></div></div>';
-    else html += '<div class="row" style="gap:8px"><button class="btn wide" data-act="again">Noch eine Runde</button>' +
+    else html += '<div class="row" style="gap:8px"><button class="btn wide" data-act="again">' + (SS.mode === "mix" && S.challengeDone() ? "Zusatz-Runde" : "Noch eine Runde") + '</button>' +
       '<button class="btn ghost" data-act="close">Fertig</button></div></div></div>';
     sessionEl.innerHTML = html;
     renderHeader();
@@ -2372,7 +2373,7 @@
         view.appendChild(b); b.click(); b.remove();
       } });
     }
-    else if (a === "srfavhint") { toast("Tippe ein Stück im Schrank an und wähle „Als Liebling“ ⭐"); }
+    else if (a === "srfavhint") { toast("Tippe ein Stück im Schrank an und wähle „Als Favorit“ ⭐"); }
     else if (a === "gotab") { tab = act.getAttribute("data-t"); render(); view.scrollTop = 0; }
     else if (a === "srdance") {
       var owned = S.SHOP.filter(function (x) { return x.kind === "dance" && S.owns(x); }).map(function (x) { return DANCE_NUM[x.val]; }).filter(Boolean), k = owned.indexOf(srDn);

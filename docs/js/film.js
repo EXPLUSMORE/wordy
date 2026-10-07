@@ -7,11 +7,11 @@
 
   /* go: was „Jetzt ausprobieren“ startet */
   var FILMS = [
-    { id: "mix", icon: "🧠", title: "Weiterlernen", go: { mode: "mix" }, scenes: [
+    { id: "mix", icon: "🏆", title: "Daily Challenge", go: { mode: "mix" }, scenes: [
       { bg: "day", cast: [{ av: B, x: 30, dance: 1, say: "Was soll ich üben?!" }], props: [{ e: "🤯", x: 30, y: 24, s: 54, a: "shake" }], nar: "Bruno hat 500 Wörter und null Plan." },
-      { bg: "day", cast: [{ av: P, x: 68, dance: 0, say: "Tipp den Knopf an. Fertig." }, { av: B, x: 28, dance: 0, say: "…das war’s?" }], props: [{ e: "🧠", x: 52, y: 20, s: 60, a: "bob" }], nar: "„Weiterlernen“ mischt alles, was jetzt dran ist: Neues, Fälliges, Fehler." },
+      { bg: "day", cast: [{ av: P, x: 68, dance: 0, say: "Daily Challenge antippen. Fertig." }, { av: B, x: 28, dance: 0, say: "…das war’s?" }], props: [{ e: "🧠", x: 52, y: 20, s: 60, a: "bob" }], nar: "Die Daily Challenge mischt alles, was jetzt dran ist: Neues, Fälliges, Fehler." },
       { bg: "day", cast: [{ av: R, x: 50, dance: 2, say: "Mix wie im Smoothie!" }], props: [{ e: "🍓", x: 25, y: 30, s: 40, a: "spin" }, { e: "🍌", x: 72, y: 36, s: 40, a: "spin" }, { e: "🥝", x: 50, y: 14, s: 40, a: "bob" }], nar: "Es kommt nie zweimal dasselbe hintereinander. Dein Gehirn bleibt wach." },
-      { bg: "gold", cast: [{ av: K, x: 50, dance: 6, say: "Münzen! Für Fortschritt!" }], props: [{ e: "🪙", x: 24, y: 22, s: 44, a: "fly" }, { e: "🪙", x: 76, y: 26, s: 44, a: "fly" }], nar: "Münzen gibt es fürs Behalten. Nicht fürs Durchklicken." }
+      { bg: "gold", cast: [{ av: K, x: 50, dance: 6, say: "Tagesbonus! Und morgen wieder!" }], props: [{ e: "🪙", x: 24, y: 22, s: 44, a: "fly" }, { e: "🪙", x: 76, y: 26, s: 44, a: "fly" }], nar: "Die erste Challenge am Tag gibt 10 Bonus-Münzen. Dazu Münzen fürs Behalten, nicht fürs Durchklicken." }
     ] },
     { id: "new", icon: "✨", title: "Neue Wörter", go: { mode: "new" }, scenes: [
       { bg: "night", cast: [{ av: P, x: 50, dance: 3, say: "Ein neues Wort! Hallo!" }], props: [{ e: "✨", x: 28, y: 22, s: 44, a: "pop" }, { e: "🆕", x: 72, y: 26, s: 50, a: "bob" }], nar: "Neue Wörter kommen erst in Ruhe als Karte." },

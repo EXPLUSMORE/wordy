@@ -844,7 +844,7 @@
   function rarityOf(it) { return it.rar || (it.cost <= 120 ? "common" : it.cost <= 350 ? "rare" : it.cost <= 800 ? "epic" : "legend"); }
   function shopList() { return SHOP.filter(function (x) { return ["avatar", "dance", "outfit", "kit", "fx", "frame"].indexOf(x.kind) >= 0 && x.cost > 0 || x.kind === "dance"; }).map(function (x) { return [x.id, x.label, x.kind]; }); }
 
-  /* ---------- Showroom: alles Gesammelte, Medaillen, Sammler-Pokale, Lieblingsstücke ---------- */
+  /* ---------- Showroom: alles Gesammelte, Medaillen, Sammler-Pokale, Favoriten ---------- */
   function favs() { var f = state.profile.favs; if (!Array.isArray(f)) f = state.profile.favs = []; return f; }
   function toggleFav(id) { var f = favs(), i = f.indexOf(id); if (i >= 0) f.splice(i, 1); else { f.push(id); while (f.length > 3) f.shift(); } save(true); return i < 0; }
   function medalList() {
@@ -982,6 +982,11 @@
     rewards.badges = rewards.badges.concat(checkBadges());
     rewards.missions.forEach(function (m) { rewards.coins += m.coins; });
     rewards.parts = foldParts();
+    /* Daily Challenge: die erste gemischte Runde des Tages (mind. 8 Aufgaben) gibt einmalig einen Bonus */
+    if (res.daily && res.items >= 8 && !d.chal) {
+      d.chal = 1; var bc = boost(10); addCoins(bc); addCl("ziel", bc); rewards.coins += bc; rewards.challenge = bc;
+      rewards.parts.push({ c: bc, t: "Daily-Challenge-Bonus" });
+    }
     progressLog = { neu: 0, stufe: 0, gemeistert: 0, kartei: 0, einheit: 0, serie: 0, parts: [], n: {} };
     save(true);
     return rewards;
@@ -1274,7 +1279,7 @@
     sentences: function () { return sentences; }, activeSentences: activeSentences,
     planSentences: planSentences, gradeSentence: gradeSentence, sentenceStats: sentenceStats,
     srec: srec, groupsOf: groupsOf, setTrack: setTrack,
-    newBlocked: newBlocked, rankOf: rankOf, addXp: addXp, addCoins: addCoins, finishSession: finishSession,
+    newBlocked: newBlocked, challengeDone: function () { return !!(state.daily && state.daily.date === today() && state.daily.chal); }, rankOf: rankOf, addXp: addXp, addCoins: addCoins, finishSession: finishSession,
     stats: stats, today: today, shuffle: shuffle, regenHearts: regenHearts, heartsIn: heartsIn,
     rollDay: rollDay, verbs: function () { return verbs; }, verbPools: verbPools, planVerbs: planVerbs, verbStats: verbStats, parseCsv: parseCsv, removeCustom: removeCustom,
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
