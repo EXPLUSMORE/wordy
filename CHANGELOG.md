@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.16.0 – 2026-10-07
+
+- Shop → Sticker: Bis zu fünf Sticker gleichzeitig auf dem Profil. Der erste Platz ist gratis, die weiteren werden nacheinander freigeschaltet: Platz 2 für 100, Platz 3, 4 und 5 für je 150 Münzen („Sticker-Plätze auf deinem Profil“ oben im Sticker-Reiter). Bisher waren es drei Sticker kostenlos; bestehende Profile behalten so viele Plätze, wie sie schon aufgeklebt haben (mindestens einen). Bei mehr als drei Stickern werden sie etwas kleiner dargestellt. Der Kauf erscheint im Dashboard bei den Käufen als „Sticker-Platz n“.
+
 ## 2.15.2 – 2026-10-07
 
 - Satzbau: Der Knopf „← Wort zurück“ ist weg. Wörter werden angetippt (legen und zurücklegen) oder gezogen (verschieben). Bei der Rechtschreibung bleibt „⌫ Buchstabe löschen“.

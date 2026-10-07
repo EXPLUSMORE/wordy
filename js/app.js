@@ -672,12 +672,13 @@
   function stickerHtml(it, size, tilt) {
     return global.VTC.stickerHtml(it.val, size, tilt || 0, !!it.rank || /clombo/.test(it.val), esc);
   }
-  var TILTS = [-7, 5, -3];
+  var TILTS = [-7, 5, -3, 6, -5];
   function placedStickers(size) {
     var ids = S.stickers(); if (!ids.length) return "";
+    if (ids.length > 3) size = Math.round(size * 0.8);   // mehr als drei: etwas kleiner, damit alle Platz haben
     return '<span class="stk-row">' + ids.map(function (id, i) {
       var it = S.SHOP.filter(function (x) { return x.id === id; })[0];
-      return it ? stickerHtml(it, size, TILTS[i % 3]) : "";
+      return it ? stickerHtml(it, size, TILTS[i % TILTS.length]) : "";
     }).join("") + '</span>';
   }
   function stickerBook(set) {
@@ -690,7 +691,7 @@
         var sub = own ? (act ? "aufgeklebt" : "") : lockNote(it) ? "🔒 " + it.rank : "🪙 " + it.cost;
         return '<button class="album-i' + (own ? "" : " off") + (act ? " on" : "") + '" ' +
           (own ? 'data-act="equip" data-id="' + esc(it.id) + '"' : 'data-act="albuminfo" data-id="' + esc(it.id) + '"') + ' aria-label="' + esc(it.label) + '">' +
-          '<span class="art">' + stickerHtml(it, 58, own ? TILTS[list.indexOf(it) % 3] : 0) + '</span><small>' + esc(own ? it.label.replace("-Sticker", "") : "???") + '</small>' +
+          '<span class="art">' + stickerHtml(it, 58, own ? TILTS[list.indexOf(it) % TILTS.length] : 0) + '</span><small>' + esc(own ? it.label.replace("-Sticker", "") : "???") + '</small>' +
           '<small class="sub">' + esc(sub) + '</small></button>';
       }).join("") + '</div></section>';
   }
@@ -710,6 +711,15 @@
           '<small class="sub">' + esc(sub) + '</small></button>';
       }).join("") + '</div></section>';
   }
+  /* Sticker-Plätze: nacheinander freischalten (Platz 2: 100, Platz 3 bis 5: je 150 Münzen) */
+  function slotsHtml() {
+    var n = S.stickerSlots(), st = S.state, next = n < 5 ? S.SLOT_COST[n] : 0, h = '<div class="shopitem" style="flex-wrap:wrap;gap:8px"><span style="flex:1 1 100%"><b class="small">Sticker-Plätze auf deinem Profil</b><br><span class="small muted">' +
+      n + ' von 5 freigeschaltet. So viele Sticker kannst du gleichzeitig aufkleben.</span></span><span class="row" style="gap:6px;flex:1 1 auto">';
+    for (var i = 1; i <= 5; i++) h += '<span class="pill" style="' + (i <= n ? "background:var(--accent-soft);font-weight:700" : "opacity:.55") + '">' + (i <= n ? "✓ " : "🔒 ") + i + '</span>';
+    h += '</span>';
+    if (n < 5) h += '<button class="btn soft" data-act="buyslot"' + (st.coins < next ? ' aria-disabled="true" style="opacity:.6"' : "") + '>Platz ' + (n + 1) + ' freischalten · 🪙 ' + next + '</button>';
+    return h + '</div>';
+  }
   function shopCard() {
     var st = S.state, wishId = (S.wish() || {}).id;
     var html = '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Shop</div><span class="pill">🪙 ' + st.coins + '</span></div>' +
@@ -717,6 +727,7 @@
       '<div class="row wrap" style="gap:6px;margin-bottom:6px">' + SHOP_TABS.map(function (t) {
         return '<button class="chip" data-act="shoptab" data-k="' + t.k + '" aria-pressed="' + (shopTab === t.k) + '">' + t.n + '</button>';
       }).join("") + '</div>';
+    if (shopTab === "sticker") html += slotsHtml();
     html += S.SHOP.filter(function (it) { return shopTab === "fn" ? it.set === "fn" : it.kind === shopTab && !it.set; }).map(function (it) {
       var own = S.owns(it), act = S.isActive(it), locked = !own && lockNote(it);
       return '<div class="shopitem"><span class="si">' + shopIcon(it) + '</span>' +
@@ -1872,6 +1883,12 @@
       var r = S.buy(act.getAttribute("data-id"));
       toast(r.error || ("Gekauft: " + r.item.label));
       if (r.ok) { var rect = act.getBoundingClientRect(); global.VTC.burst("confetti", rect.left + rect.width / 2, rect.top, 26, 1.4); }
+      renderHeader(); render();
+    }
+    else if (a === "buyslot") {
+      var rs = S.buySlot();
+      toast(rs.error || ("Sticker-Platz " + rs.slots + " freigeschaltet. Jetzt kannst du " + rs.slots + " Sticker aufkleben."));
+      if (rs.ok) { var rc = act.getBoundingClientRect(); global.VTC.burst("confetti", rc.left + rc.width / 2, rc.top, 26, 1.4); }
       renderHeader(); render();
     }
     else if (a === "equip") {

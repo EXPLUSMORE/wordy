@@ -116,7 +116,9 @@
     return { id: "st:" + a.id.slice(3), kind: "sticker", set: a.set, label: a.label + "-Sticker", cost: a.cost ? Math.max(20, Math.round(a.cost / 20) * 10) : 0, val: a.val, rank: a.rank };
   }));
   SHOP.forEach(function (x) { if (x.id === "st:clombo") x.cost = 300; });   // Clombo als Sticker: gleicher Preis und gleicher Mindestrang wie die Figur
-  var MAX_STICKERS = 3;
+  var MAX_STICKERS = 5;
+  /* Sticker-Plätze auf dem Profil: der erste ist gratis, die weiteren werden nacheinander freigeschaltet */
+  var STICKER_SLOT_COST = [0, 100, 150, 150, 150];
   var PROFILE_KEY = { avatar: "avatar", frame: "frame", title: "title", bg: "bg", fx: "fx", snd: "snd", theme: "theme" };
 
   var BADGES = [
@@ -804,15 +806,29 @@
     return r ? r.xp : 0;
   }
   function owns(it) { return it.cost === 0 || state.profile.owned.indexOf(it.id) >= 0; }
+  function stickerSlots() {   // bestehende Profile behalten, was sie schon aufgeklebt haben
+    var p = state.profile;
+    if (typeof p.stickerSlots !== "number") p.stickerSlots = Math.max(1, Array.isArray(p.stickers) ? p.stickers.length : 0);
+    return Math.min(MAX_STICKERS, p.stickerSlots);
+  }
+  function buySlot() {
+    var n = stickerSlots();
+    if (n >= MAX_STICKERS) return { error: "Alle fünf Plätze sind schon freigeschaltet." };
+    var cost = STICKER_SLOT_COST[n];
+    if (state.coins < cost) return { error: "Dafür fehlen noch " + (cost - state.coins) + " Münzen." };
+    state.coins -= cost; state.profile.stickerSlots = n + 1;
+    ev("buy", { id: "slot:" + (n + 1), name: "Sticker-Platz " + (n + 1), cost: cost });
+    save(true); return { ok: true, slots: n + 1, cost: cost };
+  }
   function stickers() { var l = state.profile.stickers; if (!Array.isArray(l)) l = state.profile.stickers = []; return l; }
   function isActive(it) {
     if (it.kind === "sticker") return stickers().indexOf(it.id) >= 0; var v = state.profile[PROFILE_KEY[it.kind]]; return (v == null ? defaultOf(it.kind) : v) === it.val; }
   function defaultOf(kind) { return kind === "avatar" ? "🦊" : kind === "theme" ? "paper" : kind === "title" ? "" : "none"; }
   function equip(id) {
     var it = itemById(id); if (!it || !owns(it)) return { error: "Das gehört dir noch nicht." };
-    if (it.kind === "sticker") {            // antippen klebt auf oder löst wieder ab; höchstens drei
+    if (it.kind === "sticker") {            // antippen klebt auf oder löst wieder ab; höchstens so viele wie freigeschaltete Plätze
       var l = stickers(), i = l.indexOf(it.id);
-      if (i >= 0) l.splice(i, 1); else { l.push(it.id); if (l.length > MAX_STICKERS) l.shift(); }
+      if (i >= 0) l.splice(i, 1); else { l.push(it.id); while (l.length > stickerSlots()) l.shift(); }
       save(true); return { ok: true, item: it, on: i < 0 };
     }
     state.profile[PROFILE_KEY[it.kind]] = it.val; save(true); return { ok: true, item: it };
@@ -846,7 +862,7 @@
     if (state.coins < it.cost) return { error: "Dafür fehlen noch " + (it.cost - state.coins) + " Münzen." };
     state.coins -= it.cost; state.profile.owned.push(id);
     ev("buy", { id: id, name: it.label || it.id, cost: it.cost });
-    if (it.kind === "sticker") { var l = stickers(); l.push(it.id); if (l.length > MAX_STICKERS) l.shift(); }
+    if (it.kind === "sticker") { var l = stickers(); l.push(it.id); while (l.length > stickerSlots()) l.shift(); }
     else state.profile[PROFILE_KEY[it.kind]] = it.val;
     save(true); return { ok: true, item: it };
   }
@@ -868,6 +884,6 @@
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
-    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, owns: owns, isActive: isActive, minXp: minXp, defaultOf: defaultOf
+    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, minXp: minXp, defaultOf: defaultOf
   };
 })(window);

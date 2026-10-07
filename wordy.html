@@ -486,7 +486,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.15.2";window.WORDY_BUILD="84d95dc742";</script>
+<script>window.WORDY_VERSION="2.16.0";window.WORDY_BUILD="eda42c96f3";</script>
 </head>
 <body>
 <div id="app">
@@ -3966,7 +3966,9 @@ window.VERBS = [
     return { id: "st:" + a.id.slice(3), kind: "sticker", set: a.set, label: a.label + "-Sticker", cost: a.cost ? Math.max(20, Math.round(a.cost / 20) * 10) : 0, val: a.val, rank: a.rank };
   }));
   SHOP.forEach(function (x) { if (x.id === "st:clombo") x.cost = 300; });   // Clombo als Sticker: gleicher Preis und gleicher Mindestrang wie die Figur
-  var MAX_STICKERS = 3;
+  var MAX_STICKERS = 5;
+  /* Sticker-Plätze auf dem Profil: der erste ist gratis, die weiteren werden nacheinander freigeschaltet */
+  var STICKER_SLOT_COST = [0, 100, 150, 150, 150];
   var PROFILE_KEY = { avatar: "avatar", frame: "frame", title: "title", bg: "bg", fx: "fx", snd: "snd", theme: "theme" };
 
   var BADGES = [
@@ -4654,15 +4656,29 @@ window.VERBS = [
     return r ? r.xp : 0;
   }
   function owns(it) { return it.cost === 0 || state.profile.owned.indexOf(it.id) >= 0; }
+  function stickerSlots() {   // bestehende Profile behalten, was sie schon aufgeklebt haben
+    var p = state.profile;
+    if (typeof p.stickerSlots !== "number") p.stickerSlots = Math.max(1, Array.isArray(p.stickers) ? p.stickers.length : 0);
+    return Math.min(MAX_STICKERS, p.stickerSlots);
+  }
+  function buySlot() {
+    var n = stickerSlots();
+    if (n >= MAX_STICKERS) return { error: "Alle fünf Plätze sind schon freigeschaltet." };
+    var cost = STICKER_SLOT_COST[n];
+    if (state.coins < cost) return { error: "Dafür fehlen noch " + (cost - state.coins) + " Münzen." };
+    state.coins -= cost; state.profile.stickerSlots = n + 1;
+    ev("buy", { id: "slot:" + (n + 1), name: "Sticker-Platz " + (n + 1), cost: cost });
+    save(true); return { ok: true, slots: n + 1, cost: cost };
+  }
   function stickers() { var l = state.profile.stickers; if (!Array.isArray(l)) l = state.profile.stickers = []; return l; }
   function isActive(it) {
     if (it.kind === "sticker") return stickers().indexOf(it.id) >= 0; var v = state.profile[PROFILE_KEY[it.kind]]; return (v == null ? defaultOf(it.kind) : v) === it.val; }
   function defaultOf(kind) { return kind === "avatar" ? "🦊" : kind === "theme" ? "paper" : kind === "title" ? "" : "none"; }
   function equip(id) {
     var it = itemById(id); if (!it || !owns(it)) return { error: "Das gehört dir noch nicht." };
-    if (it.kind === "sticker") {            // antippen klebt auf oder löst wieder ab; höchstens drei
+    if (it.kind === "sticker") {            // antippen klebt auf oder löst wieder ab; höchstens so viele wie freigeschaltete Plätze
       var l = stickers(), i = l.indexOf(it.id);
-      if (i >= 0) l.splice(i, 1); else { l.push(it.id); if (l.length > MAX_STICKERS) l.shift(); }
+      if (i >= 0) l.splice(i, 1); else { l.push(it.id); while (l.length > stickerSlots()) l.shift(); }
       save(true); return { ok: true, item: it, on: i < 0 };
     }
     state.profile[PROFILE_KEY[it.kind]] = it.val; save(true); return { ok: true, item: it };
@@ -4696,7 +4712,7 @@ window.VERBS = [
     if (state.coins < it.cost) return { error: "Dafür fehlen noch " + (it.cost - state.coins) + " Münzen." };
     state.coins -= it.cost; state.profile.owned.push(id);
     ev("buy", { id: id, name: it.label || it.id, cost: it.cost });
-    if (it.kind === "sticker") { var l = stickers(); l.push(it.id); if (l.length > MAX_STICKERS) l.shift(); }
+    if (it.kind === "sticker") { var l = stickers(); l.push(it.id); while (l.length > stickerSlots()) l.shift(); }
     else state.profile[PROFILE_KEY[it.kind]] = it.val;
     save(true); return { ok: true, item: it };
   }
@@ -4718,7 +4734,7 @@ window.VERBS = [
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
-    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, owns: owns, isActive: isActive, minXp: minXp, defaultOf: defaultOf
+    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, minXp: minXp, defaultOf: defaultOf
   };
 })(window);
 </script>
@@ -5808,12 +5824,13 @@ window.VERBS = [
   function stickerHtml(it, size, tilt) {
     return global.VTC.stickerHtml(it.val, size, tilt || 0, !!it.rank || /clombo/.test(it.val), esc);
   }
-  var TILTS = [-7, 5, -3];
+  var TILTS = [-7, 5, -3, 6, -5];
   function placedStickers(size) {
     var ids = S.stickers(); if (!ids.length) return "";
+    if (ids.length > 3) size = Math.round(size * 0.8);   // mehr als drei: etwas kleiner, damit alle Platz haben
     return '<span class="stk-row">' + ids.map(function (id, i) {
       var it = S.SHOP.filter(function (x) { return x.id === id; })[0];
-      return it ? stickerHtml(it, size, TILTS[i % 3]) : "";
+      return it ? stickerHtml(it, size, TILTS[i % TILTS.length]) : "";
     }).join("") + '</span>';
   }
   function stickerBook(set) {
@@ -5826,7 +5843,7 @@ window.VERBS = [
         var sub = own ? (act ? "aufgeklebt" : "") : lockNote(it) ? "🔒 " + it.rank : "🪙 " + it.cost;
         return '<button class="album-i' + (own ? "" : " off") + (act ? " on" : "") + '" ' +
           (own ? 'data-act="equip" data-id="' + esc(it.id) + '"' : 'data-act="albuminfo" data-id="' + esc(it.id) + '"') + ' aria-label="' + esc(it.label) + '">' +
-          '<span class="art">' + stickerHtml(it, 58, own ? TILTS[list.indexOf(it) % 3] : 0) + '</span><small>' + esc(own ? it.label.replace("-Sticker", "") : "???") + '</small>' +
+          '<span class="art">' + stickerHtml(it, 58, own ? TILTS[list.indexOf(it) % TILTS.length] : 0) + '</span><small>' + esc(own ? it.label.replace("-Sticker", "") : "???") + '</small>' +
           '<small class="sub">' + esc(sub) + '</small></button>';
       }).join("") + '</div></section>';
   }
@@ -5846,6 +5863,15 @@ window.VERBS = [
           '<small class="sub">' + esc(sub) + '</small></button>';
       }).join("") + '</div></section>';
   }
+  /* Sticker-Plätze: nacheinander freischalten (Platz 2: 100, Platz 3 bis 5: je 150 Münzen) */
+  function slotsHtml() {
+    var n = S.stickerSlots(), st = S.state, next = n < 5 ? S.SLOT_COST[n] : 0, h = '<div class="shopitem" style="flex-wrap:wrap;gap:8px"><span style="flex:1 1 100%"><b class="small">Sticker-Plätze auf deinem Profil</b><br><span class="small muted">' +
+      n + ' von 5 freigeschaltet. So viele Sticker kannst du gleichzeitig aufkleben.</span></span><span class="row" style="gap:6px;flex:1 1 auto">';
+    for (var i = 1; i <= 5; i++) h += '<span class="pill" style="' + (i <= n ? "background:var(--accent-soft);font-weight:700" : "opacity:.55") + '">' + (i <= n ? "✓ " : "🔒 ") + i + '</span>';
+    h += '</span>';
+    if (n < 5) h += '<button class="btn soft" data-act="buyslot"' + (st.coins < next ? ' aria-disabled="true" style="opacity:.6"' : "") + '>Platz ' + (n + 1) + ' freischalten · 🪙 ' + next + '</button>';
+    return h + '</div>';
+  }
   function shopCard() {
     var st = S.state, wishId = (S.wish() || {}).id;
     var html = '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Shop</div><span class="pill">🪙 ' + st.coins + '</span></div>' +
@@ -5853,6 +5879,7 @@ window.VERBS = [
       '<div class="row wrap" style="gap:6px;margin-bottom:6px">' + SHOP_TABS.map(function (t) {
         return '<button class="chip" data-act="shoptab" data-k="' + t.k + '" aria-pressed="' + (shopTab === t.k) + '">' + t.n + '</button>';
       }).join("") + '</div>';
+    if (shopTab === "sticker") html += slotsHtml();
     html += S.SHOP.filter(function (it) { return shopTab === "fn" ? it.set === "fn" : it.kind === shopTab && !it.set; }).map(function (it) {
       var own = S.owns(it), act = S.isActive(it), locked = !own && lockNote(it);
       return '<div class="shopitem"><span class="si">' + shopIcon(it) + '</span>' +
@@ -7008,6 +7035,12 @@ window.VERBS = [
       var r = S.buy(act.getAttribute("data-id"));
       toast(r.error || ("Gekauft: " + r.item.label));
       if (r.ok) { var rect = act.getBoundingClientRect(); global.VTC.burst("confetti", rect.left + rect.width / 2, rect.top, 26, 1.4); }
+      renderHeader(); render();
+    }
+    else if (a === "buyslot") {
+      var rs = S.buySlot();
+      toast(rs.error || ("Sticker-Platz " + rs.slots + " freigeschaltet. Jetzt kannst du " + rs.slots + " Sticker aufkleben."));
+      if (rs.ok) { var rc = act.getBoundingClientRect(); global.VTC.burst("confetti", rc.left + rc.width / 2, rc.top, 26, 1.4); }
       renderHeader(); render();
     }
     else if (a === "equip") {
