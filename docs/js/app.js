@@ -993,7 +993,8 @@
     var secBox = '<section class="card"><div class="eyebrow">Fehlerkartei</div>' +
       '<p style="margin:8px 0 0"><b class="tnum">' + s.boxSize + '</b> ' + plural(s.boxSize, "Wort macht", "Wörter machen") + ' noch Probleme. Sie kommen automatisch häufiger dran.</p>' +
       (s.boxSize ? '<button class="btn soft wide" data-act="start" data-mode="box" data-min="5" style="margin-top:12px">Fehlerkartei üben</button>' : '') + '</section>';
-    var html = '<div class="stack">' + segBar("stats", statsSeg, [["ueb", "Übersicht"], ["woerter", "Wörter"], ["verlauf", "Verlauf"]]);
+    var bizT = st.settings.track === "business";
+    var html = '<div class="stack"><div class="row" style="gap:8px"><span class="pill">' + (bizT ? "💼 Business English" : "🎒 Schule") + '</span><span class="small muted">Fortschritt in diesem Lernbereich</span></div>' + segBar("stats", statsSeg, [["ueb", "Übersicht"], ["woerter", "Wörter"], ["verlauf", "Verlauf"]]);
     if (statsSeg === "woerter") html += secDist + wordListCard() + secBox + secVerbs;
     else if (statsSeg === "verlauf") html += secDays + secSent;
     else html += secTiles + secDist + secOverview + secBehind;
