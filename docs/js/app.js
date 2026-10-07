@@ -913,6 +913,8 @@
       '<select id="setNew" style="width:auto">' + [6, 12, 20, 30].map(function (m) {
         return '<option value="' + m + '"' + (st.settings.newPerDay === m ? " selected" : "") + '>' + m + '</option>';
       }).join("") + '</select></label>' +
+      '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Pause nach der Antwort<br><span class="small muted">Die Lösung bleibt kurz stehen. Bei Fehlern wird sie vorgelesen und das Wort einmal abgeschrieben</span></span>' +
+      '<input type="checkbox" id="setPause" ' + (st.settings.pause !== false ? "checked" : "") + ' style="width:auto"></label>' +
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Herzen benutzen<br><span class="small muted">Aus = Üben ohne Abbruch</span></span>' +
       '<input type="checkbox" id="setHearts" ' + (st.settings.hearts ? "checked" : "") + ' style="width:auto"></label>' +
       '<p class="small muted" style="margin:10px 0 0">Gelernt wird als <b>' + esc(playerName()) + '</b>. Den Namen änderst du unter „Spieler“.</p>');
@@ -957,6 +959,7 @@
     $("#setGoal").onchange = function () { st.settings.goalMin = +this.value; S.save(true); renderHeader(); };
     $("#setNew").onchange = function () { st.settings.newPerDay = +this.value; S.save(true); };
     $("#setAudio").onchange = function () { st.settings.audio = this.checked; S.save(true); };
+    if ($("#setPause")) $("#setPause").onchange = function () { st.settings.pause = this.checked; S.save(true); };
     $("#setMode").onchange = function () { st.settings.themeMode = this.value; S.save(true); renderHeader(); };
     $("#setPace").onchange = function () { st.settings.readPace = this.value; S.save(true); };
     $("#setLead").onchange = function () { st.settings.speechLead = +this.value; S.save(true); };
@@ -1332,7 +1335,7 @@
         inlineCheck() +
         '<div id="hintBox" class="small" style="min-height:22px;letter-spacing:.18em;font-weight:700" aria-live="polite"></div>' +
         '<button class="chip" id="hintBtn" type="button" style="align-self:flex-start">💡 Hinweis</button>' +
-        '<p class="small muted" style="margin:0">Kleine Tippfehler zählen halb – die Schreibweise siehst du gleich. Mit Hinweis gibt es keine Münze.</p></div>';
+        '<p class="small muted" style="margin:0">Kleine Tippfehler zählen halb – die Schreibweise siehst du gleich. Mit Hinweis gibt es keine XP.</p></div>';
       foot.innerHTML = "";
       var inp = $("#typeIn"), btn = $("#inlineCheck");
       var first = String(w.en).split(/\s*[\/,]\s*/)[0];
@@ -1423,7 +1426,7 @@
     var hint = !!(extra && extra.hint), res = S.grade(w.id, g, extra);
     SS.items++;
     if (g > 0 && hint) {
-      SS.correct++; SS.chain = 0; S.addXp(3);   // mit Hinweis: gezählt, aber keine Serie und weniger XP
+      SS.correct++; SS.chain = 0;   // mit Hinweis: gezählt, aber keine Serie und keine XP
     } else if (g > 0) {
       SS.correct++; SS.chain++; SS.maxChain = Math.max(SS.maxChain, SS.chain);
       S.addXp(g === 2 ? 10 : 6);
@@ -1458,6 +1461,27 @@
       '</div>' +
       '<button class="btn wide lg" data-act="next" id="mainBtn">Weiter</button>';
     var b = $("#mainBtn"); if (b) b.focus();
+    if (b && pauseOn()) {
+      var copyNeeded = !ok && !w.exHtml, copied = !copyNeeded, timeUp = false;   // Verben haben eigene Formen: dort nur Pause
+      var release = function () { if (timeUp && copied) { b.disabled = false; b.focus(); } };
+      holdButton(b, ok ? 1000 : 3000, function () { timeUp = true; release(); });
+      if (copyNeeded) {
+        var box = document.createElement("div"); box.className = "copybox";
+        box.innerHTML = '<label class="small" for="copyIn">Schreib das Wort richtig ab, dann geht es weiter:</label>' +
+          '<input id="copyIn" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="' + esc(w.en.replace(/[^\s]/g, "·")) + '">';
+        foot.insertBefore(box, b);
+        var ci = $("#copyIn");
+        ci.addEventListener("input", function () { copied = judgeTyped(ci.value, w.en) === 2; ci.classList.toggle("good", copied); release(); });
+        setTimeout(function () { ci.focus(); }, 80);
+      }
+      if (!ok) speak(w.en);   // die richtige Lösung wird vorgelesen
+    }
+  }
+  /* Pause nach der Antwort: der Weiter-Knopf ist kurz gesperrt (Füllbalken), damit die Lösung gesehen wird */
+  function pauseOn() { return S.state.settings.pause !== false; }
+  function holdButton(b, ms, done) {
+    b.disabled = true; b.classList.add("holding"); b.style.setProperty("--hold", ms + "ms");
+    setTimeout(function () { b.classList.remove("holding"); if (done) done(); else b.disabled = false; }, ms);
   }
   /* Effekt und Ton der gewählten Sammelobjekte bei einer Antwort */
   function feedback(ok) {
@@ -1473,8 +1497,9 @@
       '<span class="cmp">Regel: ' + esc(x.rule) + '</span></div>' +
       (audioAvailable() ? '<button class="btn ghost wide" data-act="say" data-text="' + esc(x.en) + '" style="margin-bottom:8px">🔊 Satz anhören</button>' : "") +
       '<button class="btn wide lg" data-act="next" id="mainBtn">Weiter</button>';
-    if (ok) speak(x.en, 0.9);
+    if (ok || pauseOn()) speak(x.en, 0.9);
     var b = $("#mainBtn"); if (b) b.focus();
+    if (b && pauseOn()) holdButton(b, ok ? 1500 : 4000, function () { b.disabled = false; b.focus(); });
   }
   function check() {
     if (!SS || SS.answered) return;
@@ -1508,7 +1533,7 @@
       SS.answered = true;
       var res = applyGrade(w, g, hinted ? { hint: true } : null);
       if (g === 0) SS.retry.push({ type: "mc_en_de", w: w });
-      verdict(g > 0, w, res, hinted ? "mit Hinweis geschafft – das Wort kommt bald wieder, Münzen gibt es dafür nicht" : g === 1 ? "fast – achte auf die Schreibweise" : null);
+      verdict(g > 0, w, res, hinted ? "mit Hinweis geschafft – das Wort kommt bald wieder, XP gibt es dafür nicht" : g === 1 ? "fast – achte auf die Schreibweise" : null);
       var inp = $("#typeIn"); if (inp) inp.disabled = true;
       return;
     }

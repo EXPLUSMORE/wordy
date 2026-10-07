@@ -216,6 +216,11 @@ html[data-bg="stars"] .card,html[data-bg="clouds"] .card,html[data-bg="space"] .
 .btn.soft{background:var(--accent-soft);color:var(--accent);font-weight:700}
 .btn.wide{width:100%}
 .btn.lg{padding:16px 20px;font-size:17px}
+.btn.holding{position:relative;overflow:hidden}
+.btn.holding::after{content:"";position:absolute;inset:0;background:rgba(255,255,255,.3);transform-origin:left center;animation:holdfill var(--hold,1s) linear forwards}
+@keyframes holdfill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.copybox{display:grid;gap:6px;margin:0 0 10px}
+.copybox input.good{border-color:var(--good,#2e7d4f);box-shadow:0 0 0 2px rgba(46,125,79,.25)}
 .chip{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:999px;border:1px solid var(--line);
   background:var(--card);font-size:13px;font-weight:600;color:var(--ink-2)}
 .chip[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:transparent}
@@ -471,7 +476,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.11.0";window.WORDY_BUILD="85433f625f";</script>
+<script>window.WORDY_VERSION="2.12.0";window.WORDY_BUILD="3dd4a1e6ba";</script>
 </head>
 <body>
 <div id="app">
@@ -4221,7 +4226,7 @@ window.VERBS = [
   }
   // grade: 2 = sicher richtig, 1 = richtig mit Hilfe/langsam, 0 = falsch
   function ev(kind, d) { var f = global.WordySync; if (f) { try { f.log(kind, d); } catch (e) {} } }
-  /* o.hint: mit Hinweis gelöst. Das Wort gilt als „gesehen“, aber nicht als sicher: kurzer Abstand, keine Serie, keine Münzen. */
+  /* o.hint: mit Hinweis gelöst. Das Wort gilt als „gesehen“, aber nicht als sicher: kurzer Abstand und keine Serie (Münzen für echten Fortschritt gibt es weiter, XP nicht). */
   function grade(id, g, o) {
     o = o || {};
     var r = rec(id), before = levelOf(id);
@@ -4246,7 +4251,7 @@ window.VERBS = [
     }
     var after = levelOf(id);
     if (after === 4 && before < 4) r.m = Date.now();   // wann das Wort gemeistert wurde (für „diese Woche gemeistert“)
-    if (g > 0 && !o.hint) awardProgress(id, before, after, wasDue, wasBox && !inErrorBox(id));
+    if (g > 0) awardProgress(id, before, after, wasDue, wasBox && !inErrorBox(id));
     var it = byId[id]; ev("a", { id: id, g: g, h: o.hint ? 1 : 0, b: before, a: after, en: it ? it.en : "", de: it ? it.de : "", u: it ? it.unit : "" });
     return { before: before, after: after, rec: r };
   }
@@ -6010,6 +6015,8 @@ window.VERBS = [
       '<select id="setNew" style="width:auto">' + [6, 12, 20, 30].map(function (m) {
         return '<option value="' + m + '"' + (st.settings.newPerDay === m ? " selected" : "") + '>' + m + '</option>';
       }).join("") + '</select></label>' +
+      '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Pause nach der Antwort<br><span class="small muted">Die Lösung bleibt kurz stehen. Bei Fehlern wird sie vorgelesen und das Wort einmal abgeschrieben</span></span>' +
+      '<input type="checkbox" id="setPause" ' + (st.settings.pause !== false ? "checked" : "") + ' style="width:auto"></label>' +
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Herzen benutzen<br><span class="small muted">Aus = Üben ohne Abbruch</span></span>' +
       '<input type="checkbox" id="setHearts" ' + (st.settings.hearts ? "checked" : "") + ' style="width:auto"></label>' +
       '<p class="small muted" style="margin:10px 0 0">Gelernt wird als <b>' + esc(playerName()) + '</b>. Den Namen änderst du unter „Spieler“.</p>');
@@ -6054,6 +6061,7 @@ window.VERBS = [
     $("#setGoal").onchange = function () { st.settings.goalMin = +this.value; S.save(true); renderHeader(); };
     $("#setNew").onchange = function () { st.settings.newPerDay = +this.value; S.save(true); };
     $("#setAudio").onchange = function () { st.settings.audio = this.checked; S.save(true); };
+    if ($("#setPause")) $("#setPause").onchange = function () { st.settings.pause = this.checked; S.save(true); };
     $("#setMode").onchange = function () { st.settings.themeMode = this.value; S.save(true); renderHeader(); };
     $("#setPace").onchange = function () { st.settings.readPace = this.value; S.save(true); };
     $("#setLead").onchange = function () { st.settings.speechLead = +this.value; S.save(true); };
@@ -6429,7 +6437,7 @@ window.VERBS = [
         inlineCheck() +
         '<div id="hintBox" class="small" style="min-height:22px;letter-spacing:.18em;font-weight:700" aria-live="polite"></div>' +
         '<button class="chip" id="hintBtn" type="button" style="align-self:flex-start">💡 Hinweis</button>' +
-        '<p class="small muted" style="margin:0">Kleine Tippfehler zählen halb – die Schreibweise siehst du gleich. Mit Hinweis gibt es keine Münze.</p></div>';
+        '<p class="small muted" style="margin:0">Kleine Tippfehler zählen halb – die Schreibweise siehst du gleich. Mit Hinweis gibt es keine XP.</p></div>';
       foot.innerHTML = "";
       var inp = $("#typeIn"), btn = $("#inlineCheck");
       var first = String(w.en).split(/\s*[\/,]\s*/)[0];
@@ -6520,7 +6528,7 @@ window.VERBS = [
     var hint = !!(extra && extra.hint), res = S.grade(w.id, g, extra);
     SS.items++;
     if (g > 0 && hint) {
-      SS.correct++; SS.chain = 0; S.addXp(3);   // mit Hinweis: gezählt, aber keine Serie und weniger XP
+      SS.correct++; SS.chain = 0;   // mit Hinweis: gezählt, aber keine Serie und keine XP
     } else if (g > 0) {
       SS.correct++; SS.chain++; SS.maxChain = Math.max(SS.maxChain, SS.chain);
       S.addXp(g === 2 ? 10 : 6);
@@ -6555,6 +6563,27 @@ window.VERBS = [
       '</div>' +
       '<button class="btn wide lg" data-act="next" id="mainBtn">Weiter</button>';
     var b = $("#mainBtn"); if (b) b.focus();
+    if (b && pauseOn()) {
+      var copyNeeded = !ok && !w.exHtml, copied = !copyNeeded, timeUp = false;   // Verben haben eigene Formen: dort nur Pause
+      var release = function () { if (timeUp && copied) { b.disabled = false; b.focus(); } };
+      holdButton(b, ok ? 1000 : 3000, function () { timeUp = true; release(); });
+      if (copyNeeded) {
+        var box = document.createElement("div"); box.className = "copybox";
+        box.innerHTML = '<label class="small" for="copyIn">Schreib das Wort richtig ab, dann geht es weiter:</label>' +
+          '<input id="copyIn" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="' + esc(w.en.replace(/[^\s]/g, "·")) + '">';
+        foot.insertBefore(box, b);
+        var ci = $("#copyIn");
+        ci.addEventListener("input", function () { copied = judgeTyped(ci.value, w.en) === 2; ci.classList.toggle("good", copied); release(); });
+        setTimeout(function () { ci.focus(); }, 80);
+      }
+      if (!ok) speak(w.en);   // die richtige Lösung wird vorgelesen
+    }
+  }
+  /* Pause nach der Antwort: der Weiter-Knopf ist kurz gesperrt (Füllbalken), damit die Lösung gesehen wird */
+  function pauseOn() { return S.state.settings.pause !== false; }
+  function holdButton(b, ms, done) {
+    b.disabled = true; b.classList.add("holding"); b.style.setProperty("--hold", ms + "ms");
+    setTimeout(function () { b.classList.remove("holding"); if (done) done(); else b.disabled = false; }, ms);
   }
   /* Effekt und Ton der gewählten Sammelobjekte bei einer Antwort */
   function feedback(ok) {
@@ -6570,8 +6599,9 @@ window.VERBS = [
       '<span class="cmp">Regel: ' + esc(x.rule) + '</span></div>' +
       (audioAvailable() ? '<button class="btn ghost wide" data-act="say" data-text="' + esc(x.en) + '" style="margin-bottom:8px">🔊 Satz anhören</button>' : "") +
       '<button class="btn wide lg" data-act="next" id="mainBtn">Weiter</button>';
-    if (ok) speak(x.en, 0.9);
+    if (ok || pauseOn()) speak(x.en, 0.9);
     var b = $("#mainBtn"); if (b) b.focus();
+    if (b && pauseOn()) holdButton(b, ok ? 1500 : 4000, function () { b.disabled = false; b.focus(); });
   }
   function check() {
     if (!SS || SS.answered) return;
@@ -6605,7 +6635,7 @@ window.VERBS = [
       SS.answered = true;
       var res = applyGrade(w, g, hinted ? { hint: true } : null);
       if (g === 0) SS.retry.push({ type: "mc_en_de", w: w });
-      verdict(g > 0, w, res, hinted ? "mit Hinweis geschafft – das Wort kommt bald wieder, Münzen gibt es dafür nicht" : g === 1 ? "fast – achte auf die Schreibweise" : null);
+      verdict(g > 0, w, res, hinted ? "mit Hinweis geschafft – das Wort kommt bald wieder, XP gibt es dafür nicht" : g === 1 ? "fast – achte auf die Schreibweise" : null);
       var inp = $("#typeIn"); if (inp) inp.disabled = true;
       return;
     }

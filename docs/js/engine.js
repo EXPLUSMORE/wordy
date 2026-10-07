@@ -386,7 +386,7 @@
   }
   // grade: 2 = sicher richtig, 1 = richtig mit Hilfe/langsam, 0 = falsch
   function ev(kind, d) { var f = global.WordySync; if (f) { try { f.log(kind, d); } catch (e) {} } }
-  /* o.hint: mit Hinweis gelöst. Das Wort gilt als „gesehen“, aber nicht als sicher: kurzer Abstand, keine Serie, keine Münzen. */
+  /* o.hint: mit Hinweis gelöst. Das Wort gilt als „gesehen“, aber nicht als sicher: kurzer Abstand und keine Serie (Münzen für echten Fortschritt gibt es weiter, XP nicht). */
   function grade(id, g, o) {
     o = o || {};
     var r = rec(id), before = levelOf(id);
@@ -411,7 +411,7 @@
     }
     var after = levelOf(id);
     if (after === 4 && before < 4) r.m = Date.now();   // wann das Wort gemeistert wurde (für „diese Woche gemeistert“)
-    if (g > 0 && !o.hint) awardProgress(id, before, after, wasDue, wasBox && !inErrorBox(id));
+    if (g > 0) awardProgress(id, before, after, wasDue, wasBox && !inErrorBox(id));
     var it = byId[id]; ev("a", { id: id, g: g, h: o.hint ? 1 : 0, b: before, a: after, en: it ? it.en : "", de: it ? it.de : "", u: it ? it.unit : "" });
     return { before: before, after: after, rec: r };
   }

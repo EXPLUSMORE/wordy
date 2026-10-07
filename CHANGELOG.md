@@ -9,6 +9,11 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.12.0 – 2026-10-07
+
+- Pause nach der Antwort: Der Weiter-Knopf ist nach jeder Antwort kurz gesperrt (mit Füllbalken), damit die Lösung gesehen wird. Richtig: 1 Sekunde, bei Sätzen 1,5. Falsch: 3 Sekunden (Sätze 4), die richtige Lösung wird automatisch vorgelesen. Bei einem falsch beantworteten Wort muss es zusätzlich einmal richtig abgeschrieben werden, erst dann geht es weiter (nicht bei Verben mit mehreren Formen). Ohne Ton bleibt es bei der Pause. Setup → Üben: Schalter „Pause nach der Antwort“ (Standard an).
+- Hinweis beim Tippen: Münzen für echten Fortschritt gibt es jetzt auch mit Hinweis, **XP nicht**. Serie und kurzer Wiederholungsabstand wie bisher.
+
 ## 2.11.0 – 2026-10-07
 
 - Tippen („Schreib das englische Wort“): Neuer Knopf 💡 Hinweis in zwei Stufen. Erster Tipp: Anfangsbuchstabe und Länge (`c _ _ _`). Zweiter Tipp: Das Wort wird 2 Sekunden gezeigt und wieder ausgeblendet. Mit Hinweis gibt es **keine Münzen**, keine Serie und weniger XP; das Wort zählt als „mit Hilfe“ (kurzer Wiederholungsabstand), nicht als sicher gelernt. Falsch bleibt falsch (kein Extra-Abzug). Im Dashboard-Ereignis steht `h:1`.
