@@ -410,11 +410,15 @@
   function startBoss(st) {
     var ws = st.reviewWords.map(function (id) { return S.byId(id); }).filter(Boolean);
     if (ws.length < 8 || !global.ARENA) return false;
-    global.ARENA.start(st.bossMode, { words: ws, boss: { id: st.id, title: st.sectionTitle, mode: st.bossMode, need: st.bossNeed } });
+    var bn = S.bossNeedFor(st);
+    global.ARENA.start(st.bossMode, { words: ws, boss: { id: st.id, title: st.sectionTitle, mode: st.bossMode, need: bn.need, base: bn.base, help: bn.help } });
+    if (bn.help) toast("Boss etwas leichter gemacht: Ziel " + bn.need + " statt " + bn.base + " 💪");
     return true;
   }
   function bossFinish(boss, correct) {
-    var pass = correct >= boss.need, stars = correct >= boss.need * 2 ? 3 : correct >= boss.need * 1.5 ? 2 : 1, res = pass ? S.pathComplete(boss.id, stars) : null;
+    var pass = correct >= boss.need;
+    S.bossRecord(boss, correct, pass);
+    var stars = correct >= boss.need * 2 ? 3 : correct >= boss.need * 1.5 ? 2 : 1, res = pass ? S.pathComplete(boss.id, stars) : null;
     return { pass: pass, stars: stars, chest: res && res.chest, advanced: res && res.advanced, finished: res && res.finished };
   }
   var STEP_NAMES = ["Kennenlernen", "Tippen", "Hören & finden", "Zuordnen"];

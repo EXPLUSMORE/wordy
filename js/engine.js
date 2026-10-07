@@ -857,6 +857,8 @@
     if (!p) p = state.path = { pos: 0, stars: {}, chests: {}, pending: [], boost: { stock: 0, on: false, left: 0 } };
     if (!p.boost) p.boost = { stock: 0, on: false, left: 0 };
     if (!Array.isArray(p.pending)) p.pending = [];
+    if (!Array.isArray(p.bossLog)) p.bossLog = [];
+    if (!p.bossFail) p.bossFail = {};
     return p;
   }
   var BIZ_ORDER = ["Basis", "Aufbau", "Profi", "Smalltalk", "Redewendungen"];
@@ -871,8 +873,13 @@
     return all.filter(function (u) { return g.indexOf(u.k) >= 0; });
   }
   var BOSS_MODES = ["match", "blitz", "survival"], BOSS_NEED = { match: 10, blitz: 12, survival: 7 };
+  /* Boss-Schwierigkeit (Dashboard): leicht 0,7 / normal 1 / schwer 1,3 */
+  function bossFactor() {
+    var r = global.WordySync && global.WordySync.remote ? (global.WordySync.remote() || {}).bossDiff : "";
+    return r === "leicht" ? 0.7 : r === "schwer" ? 1.3 : 1;
+  }
   function pathStations() {
-    var ul = pathUnitList(), key = state.settings.track + ":" + ul.map(function (u) { return u.id; }).join(",");
+    var ul = pathUnitList(), bf = bossFactor(), key = state.settings.track + ":" + bf + ":" + ul.map(function (u) { return u.id; }).join(",");
     if (pathCache && pathCacheKey === key) return pathCache;
     var out = [], secCount = 0;
     ul.forEach(function (u) {
@@ -889,7 +896,7 @@
         }
         if (!sec.length) continue;
         var bs = sec[sec.length - 1]; bs.last = true; bs.reviewWords = secWords;   // die letzte Station jedes Abschnitts ist die Boss-Runde in der Arena
-        bs.bossMode = BOSS_MODES[secCount++ % BOSS_MODES.length]; bs.bossNeed = Math.min(BOSS_NEED[bs.bossMode], Math.max(5, Math.floor(secWords.length * 0.8)));
+        bs.bossMode = BOSS_MODES[secCount++ % BOSS_MODES.length]; bs.bossNeed = Math.max(3, Math.min(Math.round(BOSS_NEED[bs.bossMode] * bf), Math.max(Math.round(5 * bf), Math.floor(secWords.length * 0.8 * bf))));
         sec.forEach(function (s, ix) { s.n = ix + 1; s.of = sec.length; });
         out = out.concat(sec);
       }
@@ -909,6 +916,20 @@
     });
     return secs;
   }
+  /* Sanfte Hilfe: nach zwei verfehlten Versuchen sinkt das Ziel um 1, nach vier um 2 (mindestens 3) */
+  function bossNeedFor(st) {
+    var f = pathState().bossFail[st.id] || 0, help = f >= 4 ? 2 : f >= 2 ? 1 : 0;
+    help = Math.min(help, Math.max(0, st.bossNeed - 3));
+    return { need: st.bossNeed - help, base: st.bossNeed, help: help, tries: f };
+  }
+  function bossRecord(boss, correct, pass) {
+    var p = pathState(), f = p.bossFail[boss.id] || 0;
+    p.bossLog.push({ id: boss.id, t: Date.now(), s: boss.title, m: boss.mode, need: boss.need, base: boss.base || boss.need, c: correct, ok: pass ? 1 : 0, a: f + 1 });
+    if (p.bossLog.length > 40) p.bossLog = p.bossLog.slice(-40);
+    if (pass) delete p.bossFail[boss.id]; else p.bossFail[boss.id] = f + 1;
+    save();
+  }
+  function bossLog() { return pathState().bossLog.slice(-30); }
   function pathProgress() { var p = pathState(), st = pathStations(), d = st.filter(function (s) { return p.stars[s.id]; }).length; return { done: d, total: st.length }; }
   /* Stationen, deren Wörter schon alle „sitzen“, werden übersprungen (Magnus hat Stoff ja schon gelernt) */
   function pathSync() {
@@ -1006,6 +1027,6 @@
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
-    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, minXp: minXp, defaultOf: defaultOf
+    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, minXp: minXp, defaultOf: defaultOf
   };
 })(window);

@@ -91,7 +91,7 @@
   }
 
   /* ---------- Rahmen ---------- */
-  function noteText() { return (run.boss ? "⚔️ Boss " + run.correct + " / " + run.boss.need + " · " : "") + (run.note || ""); }
+  function noteText() { return (run.boss ? "⚔️ Boss " + run.correct + " / " + run.boss.need + (run.boss.help ? " (erleichtert)" : "") + " · " : "") + (run.note || ""); }
   function chrome(inner) {
     var t = run.mode === "survival" ? "" :
       '<div class="ar-time"><i id="arBar" style="width:100%"></i></div>';

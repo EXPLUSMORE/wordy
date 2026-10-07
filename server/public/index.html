@@ -400,9 +400,27 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     var pp = r.meta && r.meta.path, h = "<h2>Lernpfad</h2>";
     h += pp && pp.total ? '<p style="margin:0 0 6px"><b>' + pp.done + " von " + pp.total + '</b> Stationen geschafft</p><div class="mini"><i class="' + (pp.done >= pp.total ? "d" : "") + '" style="width:' + Math.round(pp.done * 100 / pp.total) + '%"></i></div>'
       : '<p class="muted small" style="margin:0">Noch kein Pfad-Fortschritt bekannt. Er erscheint, sobald die App ihn gesendet hat.</p>';
-    h += '<p class="small muted" style="margin:8px 0 0" id="pathSel">Lade Auswahl …</p>' +
+    var bl = (pp && pp.bosses) || [], MN = { match: "Match-Rausch", blitz: "Blitzrunde", survival: "Letztes Herz" };
+    h += '<h3 style="margin:14px 0 6px;font-size:15px">Boss-Runden</h3><div class="row" style="gap:8px;align-items:center;flex-wrap:wrap"><label class="small" for="bossDiff">Schwierigkeit</label>' +
+      '<select id="bossDiff"><option value="leicht">leicht (Ziel × 0,7)</option><option value="normal">normal</option><option value="schwer">schwer (Ziel × 1,3)</option></select><span id="bossMsg" class="small"></span></div>' +
+      '<p class="small muted" style="margin:6px 0 0">Nach zwei verfehlten Versuchen wird das Ziel automatisch um 1 gesenkt, nach vier um 2 (mindestens 3). Das sieht Magnus offen in der App.</p>';
+    if (bl.length) {
+      var by = {};
+      bl.forEach(function (b) { var x = by[b.m] || (by[b.m] = { n: 0, ok: 0, first: 0, firstOk: 0, gap: [] }); x.n++; x.ok += b.ok; if (b.a === 1) { x.first++; x.firstOk += b.ok; } x.gap.push(b.c - (b.base || b.need)); });
+      var med = function (a) { a = a.slice().sort(function (x, y) { return x - y; }); return a[Math.floor(a.length / 2)]; };
+      h += '<table class="small" style="width:100%;margin-top:8px"><tr><th align="left">Modus</th><th>Versuche</th><th>geschafft</th><th>1. Versuch</th><th>Ergebnis zum Ziel</th></tr>' +
+        Object.keys(by).map(function (m) { var x = by[m], g = med(x.gap); return "<tr><td>" + (MN[m] || m) + "</td><td align='center'>" + x.n + "</td><td align='center'>" + Math.round(x.ok * 100 / x.n) + " %</td><td align='center'>" + (x.first ? Math.round(x.firstOk * 100 / x.first) + " %" : "–") + "</td><td align='center'>" + (g > 0 ? "+" : "") + g + "</td></tr>"; }).join("") + '</table>' +
+        '<p class="small muted" style="margin:4px 0 0">Richtwert: beim 1. Versuch etwa 50–70 % geschafft, im 2. Versuch rund 80 %. Wird fast alles sofort geschafft, die Schwierigkeit erhöhen; scheitert er oft knapp, senken.</p>' +
+        '<details style="margin-top:6px"><summary class="small" style="cursor:pointer">Letzte Boss-Runden</summary>' + bl.slice().reverse().slice(0, 15).map(function (b) {
+          var d = new Date(b.t); return '<div class="small">' + (b.ok ? "✅" : "❌") + " " + esc(b.s) + " · " + (MN[b.m] || b.m) + " · " + b.c + "/" + b.need + (b.base && b.base !== b.need ? " (Ziel erleichtert von " + b.base + ")" : "") + " · Versuch " + b.a + " · " + d.getDate() + "." + (d.getMonth() + 1) + ". " + String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0") + "</div>"; }).join("") + '</details>';
+    } else h += '<p class="small muted" style="margin:8px 0 0">Noch keine Boss-Runde gespielt. Die Ergebnisse erscheinen hier, sobald die App sie gesendet hat.</p>';
+    h += '<p class="small muted" style="margin:14px 0 0" id="pathSel">Lade Auswahl …</p>' +
       '<details style="margin-top:10px" id="pathDet"><summary style="cursor:pointer;color:var(--acc);font-weight:600">Einheiten für den Lernpfad wählen</summary><div id="pathPickBox" style="margin-top:10px"></div></details>';
     el.innerHTML = h;
+    api("/api/admin/players/" + p.id + "/bossdiff").then(function (x) {
+      var sl = document.getElementById("bossDiff"); if (!sl) return; sl.value = x.diff || "normal";
+      sl.onchange = function () { post("/api/admin/players/" + p.id + "/bossdiff", { diff: sl.value }).then(function () { var m = document.getElementById("bossMsg"); if (m) { m.className = "small"; m.textContent = "Gespeichert. Die App übernimmt es beim nächsten Öffnen."; } }).catch(function (e) { var m = document.getElementById("bossMsg"); if (m) { m.className = "small err"; m.textContent = e.message; } }); };
+    }).catch(function () {});
     Promise.all([api("/api/admin/players/" + p.id + "/pathunits"), catCache[p.id] ? Promise.resolve(catCache[p.id]) : getCatalog(p.id)]).then(function (res) {
       var cur = res[0] || [], cat = res[1] || [], sel = document.getElementById("pathSel"); if (!sel) return;
       var names = cat.filter(function (u) { return cur.indexOf(u.id) >= 0; }).map(function (u) { return u.title.replace(/^Headlight 2 · /, ""); });
