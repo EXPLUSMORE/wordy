@@ -973,16 +973,29 @@
       '<div class="small muted" style="margin-top:6px">' + vst.mastered + ' sitzen langfristig</div></div></div>' +
       '<button class="btn ghost" data-act="verblist" style="margin-top:10px">Verbenliste öffnen</button></section>';
 
-    var secBehind = '<section class="card"><div class="eyebrow">Einheiten mit dem größten Rückstand</div><p class="small muted" style="margin:4px 0 0">Tippe auf „Üben“, um fünf Minuten genau mit dieser Einheit zu lernen.</p><div style="margin-top:6px">' +
-      (s.perUnit.filter(function (u) { return u.seen > 0; })
-        .sort(function (a, b) { return (a.mastered / a.total) - (b.mastered / b.total); }).slice(0, 6)
-        .map(function (u) {
-          var pc = Math.round(u.mastered * 100 / u.total);
-          return '<div class="mission"><div class="txt"><div class="small" style="font-weight:600">' + esc(u.icon + " " + u.title) + '</div>' +
-            '<div class="bar"><i style="width:' + pc + '%"></i></div></div><span class="pill tnum nowrap">' + pc + '%</span>' +
+    var behindRow = function (u) {
+      var pc = Math.round(u.sure * 100 / u.total);
+      return '<div class="mission"><div class="txt"><div class="small" style="font-weight:600">' + esc(u.icon + " " + u.title) + '</div>' +
+        '<div class="bar"><i style="width:' + pc + '%"></i></div>' +
+        '<div class="small muted" style="margin-top:2px">' + u.seen + ' von ' + u.total + ' geübt · ' + u.sure + ' sicher</div></div><span class="pill tnum nowrap">' + pc + '%</span>' +
+        '<button class="btn soft" data-act="start" data-unit="' + esc(u.id) + '" data-min="5" aria-label="' + esc(u.title) + ' üben">Üben</button></div>';
+    };
+    var startedU = s.perUnit.filter(function (u) { return u.seen > 0 && u.sure < u.total; })
+      .sort(function (a, b) { return (a.sure / a.total) - (b.sure / b.total); });
+    var freshU = s.perUnit.filter(function (u) { return u.seen === 0; });
+    var secBehind = '<section class="card"><div class="eyebrow">Angefangen, noch nicht gefestigt</div>' +
+      '<p class="small muted" style="margin:4px 0 0">Einheiten, in denen du schon geübt hast, sortiert nach dem Anteil sicherer Wörter (Stufe „sicher“ oder höher). „Üben“ startet fünf Minuten genau mit dieser Einheit.</p><div style="margin-top:6px">' +
+      (startedU.slice(0, 6).map(behindRow).join("") || '<p class="small muted">Noch nichts angefangen oder alles gefestigt. Nach der ersten Übungsrunde steht hier etwas.</p>') + '</div>' +
+      (startedU.length > 6 ? '<details style="margin-top:6px"><summary class="small" style="cursor:pointer">Weitere ' + (startedU.length - 6) + ' angefangene Einheiten</summary>' + startedU.slice(6).map(behindRow).join("") + '</details>' : "") +
+      '</section>' +
+      (freshU.length ? '<section class="card"><div class="eyebrow">Noch nicht angefangen</div><p class="small muted" style="margin:4px 0 0">' + freshU.length + ' ' + plural(freshU.length, "Einheit", "Einheiten") + ' ohne eine einzige geübte Vokabel.</p><div style="margin-top:6px">' +
+        freshU.slice(0, 5).map(function (u) {
+          return '<div class="mission"><div class="txt"><div class="small" style="font-weight:600">' + esc(u.icon + " " + u.title) + '</div><div class="small muted">' + u.total + ' Wörter</div></div>' +
             '<button class="btn soft" data-act="start" data-unit="' + esc(u.id) + '" data-min="5" aria-label="' + esc(u.title) + ' üben">Üben</button></div>';
-        }).join("") || '<p class="small muted">Noch keine Daten. Nach der ersten Übungsrunde steht hier etwas.</p>') +
-      '</div></section>';
+        }).join("") + '</div>' +
+        (freshU.length > 5 ? '<details style="margin-top:6px"><summary class="small" style="cursor:pointer">Weitere ' + (freshU.length - 5) + '</summary>' + freshU.slice(5).map(function (u) {
+          return '<div class="mission"><div class="txt"><div class="small" style="font-weight:600">' + esc(u.icon + " " + u.title) + '</div><div class="small muted">' + u.total + ' Wörter</div></div><button class="btn soft" data-act="start" data-unit="' + esc(u.id) + '" data-min="5">Üben</button></div>';
+        }).join("") + '</details>' : "") + '</section>' : "");
     var secOverview = '<section class="card"><div class="eyebrow">Lernstand im Überblick</div>' +
       '<div class="tiles4" style="margin-top:10px">' +
       '<div class="kpi"><b class="tnum">' + Math.round(st.totals.sec / 60) + '</b><span>Minuten gesamt</span></div>' +

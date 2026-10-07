@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.26.1 – 2026-10-07
+
+- Fortschritt: „Einheiten mit dem größten Rückstand“ heißt jetzt „Angefangen, noch nicht gefestigt“, gemessen am Anteil sicherer Wörter (Stufe 3+), mit Angabe „x von y geübt · z sicher“; alle angefangenen Einheiten (sechs sichtbar, Rest aufklappbar). Neu: Gruppe „Noch nicht angefangen“ mit Üben-Knopf.
+
 ## 2.26.0 – 2026-10-07
 
 - Fortschritt › Einheiten mit dem größten Rückstand: Jede Einheit hat einen „Üben“-Knopf (5 Minuten genau mit dieser Einheit).

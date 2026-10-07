@@ -756,9 +756,9 @@
       d14.push({ date: k, label: ["So","Mo","Di","Mi","Do","Fr","Sa"][dt.getDay()], items: h ? h.items : 0, sec: h ? h.sec : 0, correct: h ? h.correct : 0 });
     }
     var perUnit = units.filter(function (u) { return u.track === state.settings.track || u.track === "eigen"; }).map(function (u) {
-      var m = 0, s = 0;
-      u.words.forEach(function (w, i) { var l = levelOf(u.id + "#" + i); if (l === 4) m++; if (l > 0) s++; });
-      return { id: u.id, title: u.title, icon: u.icon || "📘", k: u.k, track: u.track, total: u.words.length, mastered: m, seen: s };
+      var m = 0, s = 0, f = 0;
+      u.words.forEach(function (w, i) { var l = levelOf(u.id + "#" + i); if (l === 4) m++; if (l >= 3) f++; if (l > 0) s++; });
+      return { id: u.id, title: u.title, icon: u.icon || "📘", k: u.k, track: u.track, total: u.words.length, mastered: m, sure: f, seen: s };
     });
     var weak = Object.keys(state.w).filter(function (id) { return byId[id] && state.w[id].no > 0 && levelOf(id) < 3; })
       .map(function (id) { return { w: byId[id], r: state.w[id] }; })
