@@ -887,11 +887,12 @@
     return out;
   }
   /* Abschnitte mit Stand für das Dashboard: [{id, u (Einheit), t (Titel), n (Stationen), d (geschafft), b (Boss geschafft), c (Truhe geholt)}] */
+  function byUnit(id) { return units.filter(function (u) { return u.id === id; })[0]; }
   function pathSections() {
     var p = pathState(), secs = [], by = {};
     pathStations().forEach(function (s) {
       var x = by[s.section];
-      if (!x) { x = by[s.section] = { id: s.section, u: s.unit, t: s.sectionTitle, n: 0, d: 0, b: 0, c: p.chests[s.section] ? 1 : 0 }; secs.push(x); }
+      if (!x) { var un = byUnit(s.unit); x = by[s.section] = { id: s.section, u: s.unit, k: un ? un.k : "", t: s.sectionTitle, n: 0, d: 0, b: 0, c: p.chests[s.section] ? 1 : 0 }; secs.push(x); }
       x.n++; if (p.stars[s.id]) { x.d++; if (s.last) x.b = 1; }
     });
     return secs;

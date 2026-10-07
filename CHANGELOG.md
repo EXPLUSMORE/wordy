@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.21.1 – 2026-10-07
+
+- Dashboard „Fortschritt pro Einheit“: Einheiten im Lernpfad, mit denen noch nicht gelernt wurde, erscheinen grau („noch nicht begonnen“) mit ihren Abschnitten, in Pfad-Reihenfolge. Die App sendet dafür die Gruppe der Abschnitte mit (App-Update und **Server-Update** nötig).
+
 ## 2.21.0 – 2026-10-07
 
 - Dashboard „Fortschritt pro Einheit“ neu gegliedert: Gruppen nach Schuljahr bzw. Business-Stufe (Headlight 2, Klassen, Basis, Aufbau, Profi, Smalltalk, Redewendungen, eigene Listen), aufklappbar; die Gruppe mit laufendem Lernen ist offen. Pro Gruppe Balken, Wörter begonnen/gemeistert und Lernpfad-Stationen, pro Einheit der Stand der Wörter und die Lernpfad-Abschnitte als Chips (✓ geschafft, ▶ begonnen, ⚔️ Boss besiegt, 🎁 Truhe geholt). Gesamtzeile oben. Die App sendet die Abschnitte mit; dafür ist die neue App-Version und ein **Server-Update** nötig.
