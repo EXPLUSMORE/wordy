@@ -356,7 +356,7 @@
       if (state === "done") h += '<span class="pstars" style="left:' + pt.x + '%;top:' + pt.y + 'px">' + "★".repeat(stars) + "☆".repeat(3 - stars) + '</span>';
     });
     var cp = pts[n], ctip = pend ? "Truhe wartet: antippen zum Öffnen" : p.chests[first.section] ? "Schon geplündert – die nächste Truhe wartet nach dem nächsten Boss" : "Truhe nach der Boss-Runde";
-    h += '<button class="pchest' + (pend ? " ready" : p.chests[first.section] ? " got" : "") + '" style="left:' + cp.x + '%;top:' + cp.y + 'px" data-tip="' + esc(ctip) + '" title="' + esc(ctip) + '" data-act="' + (pend ? "openchest" : "pathlocked") + '" aria-label="' + esc(ctip) + '">' + (p.chests[first.section] && !pend ? PCHEST.looted : PCHEST.closed) + '</button>';
+    h += '<button class="pchest' + (pend ? " ready" : p.chests[first.section] ? " got" : "") + '" style="left:' + cp.x + '%;top:' + cp.y + 'px" data-tip="' + esc(ctip) + '" title="' + esc(ctip) + '" data-act="' + (pend ? "openchest" : "pathlocked") + '" aria-label="' + esc(ctip) + '">' + global.VTL.icon(global.VTL.typeFor(secNo - 1), p.chests[first.section] && !pend ? "looted" : "closed") + '</button>';
     if (isCur && p.pos < S.pathStations().length) {
       var cpt = pts[curIdx], side = cpt.x < 50 ? 1 : -1;
       h += '<div class="pme" id="pme" style="left:calc(' + cpt.x + '% + ' + (side * 62) + 'px);top:' + (cpt.y - 4) + 'px">' + avatarHtml(S.state.profile.avatar) + '</div>' +
@@ -412,7 +412,6 @@
     global.VTC.dance({ av: p.avatar, avatar: avatarHtml(p.avatar), outfit: p.outfit, dance: big && sieg && S.owns(sieg) ? "sieg" : (p.dance || "wackler"), title: title, big: big });
   }
   /* Truhen im Lernpfad: zu (wartet oder noch gesperrt) und geplündert (aufgebrochen) */
-  var PCHEST = { closed: '<svg viewBox="0 0 120 104" aria-hidden="true"><rect x="14" y="52" width="92" height="46" rx="6" fill="#8a5a2b"/><rect x="14" y="64" width="92" height="8" fill="#f2b33d"/><path d="M14 52 V38 a46 30 0 0 1 92 0 V52 Z" fill="#a66d33"/><rect x="14" y="44" width="92" height="8" fill="#f2b33d"/><rect x="52" y="54" width="16" height="18" rx="3" fill="#f2b33d" stroke="#8a5a2b" stroke-width="2"/><circle cx="60" cy="63" r="3" fill="#5a3a12"/></svg>', looted: '<svg viewBox="0 0 120 104" aria-hidden="true"><rect x="14" y="52" width="92" height="46" rx="6" fill="#8a5a2b"/><rect x="14" y="64" width="92" height="8" fill="#f2b33d"/><rect x="20" y="52" width="80" height="14" rx="3" fill="#2a1a0a"/><ellipse cx="60" cy="56" rx="34" ry="5" fill="#120a03"/><g style="transform-box:view-box;transform-origin:14px 52px;transform:rotate(-38deg)"><path d="M14 52 V38 a46 30 0 0 1 92 0 V52 Z" fill="#a66d33"/><rect x="14" y="44" width="92" height="8" fill="#f2b33d"/><path d="M40 40l6 8-4 4M78 36l-4 9 5 3" stroke="#5a3a12" stroke-width="1.6" fill="none"/></g><path d="M52 56l-6 12 8 2z" fill="#f2b33d" stroke="#8a5a2b" stroke-width="1.4" transform="rotate(14 52 62)"/><path d="M30 76l8 3M80 80l7-2M44 90l5-3" stroke="#5a3a12" stroke-width="1.3"/><circle cx="104" cy="94" r="5" fill="#e8b830" stroke="#a97f12" stroke-width="1.2"/><path d="M8 88l6-4M10 96l7-1M112 78l5-3" stroke="#a66d33" stroke-width="2" stroke-linecap="round"/></svg>' };
   function dustPuff(el) {
     for (var k = 0; k < 6; k++) {
       var i = document.createElement("i"); i.style.cssText = "position:absolute;width:10px;height:10px;border-radius:50%;background:#cbbd9c;pointer-events:none;left:" + (28 + Math.random() * 40) + "%;top:36%";
@@ -1471,26 +1470,23 @@
     if (rankUp || perfect) setTimeout(function () { danceWin(!!rankUp, rankUp ? "Rangaufstieg!" : "Fehlerfrei!"); }, 1900);
     if (rw.streakUp) { var fl = sessionEl.querySelector(".fin-flame"); if (fl) fl.classList.add("go"); }
   }
-  var CHEST_SVG = '<svg class="chestsvg" viewBox="0 0 120 104" aria-hidden="true"><rect x="14" y="52" width="92" height="46" rx="6" fill="#8a5a2b"/><rect x="14" y="64" width="92" height="8" fill="#f2b33d"/>' +
-    '<g class="lid"><path d="M14 52 V38 a46 30 0 0 1 92 0 V52 Z" fill="#a66d33"/><rect x="14" y="44" width="92" height="8" fill="#f2b33d"/></g>' +
-    '<rect x="52" y="54" width="16" height="18" rx="3" fill="#f2b33d" stroke="#8a5a2b" stroke-width="2"/><circle cx="60" cy="63" r="3" fill="#5a3a12"/></svg>';
   function openChest() {
     var c = S.claimChest(); if (!c) { render(); return; }
-    var pf = S.state.profile, ov = document.createElement("div"); ov.className = "chestov";
-    ov.innerHTML = '<div class="cray"></div><div class="eyebrow" style="color:#d8cfff;position:relative;z-index:2">' + esc(c.title) + ' geschafft</div>' +
-      '<h2 style="position:relative;z-index:2;font-size:26px;margin:0">Deine Truhe</h2>' + CHEST_SVG +
+    var secs = S.pathSections(), idx = 0; secs.forEach(function (x, i) { if (x.id === c.section) idx = i; });
+    var type = global.VTL.typeFor(idx), pf = S.state.profile, ov = document.createElement("div"); ov.className = "chestov";
+    ov.innerHTML = '<div class="eyebrow" style="color:#d8cfff;position:relative;z-index:2">' + esc(c.title) + ' geschafft</div>' +
+      '<h2 style="position:relative;z-index:2;font-size:26px;margin:0">Deine Beute</h2><div id="lootStage" style="position:relative;z-index:2;width:min(86vw,300px);height:250px;border-radius:14px;overflow:visible;cursor:pointer"></div>' +
       '<div class="rwd" id="cr1"><span style="font-size:30px">🪙</span><span><b class="tnum" style="font-size:22px">+' + c.coins + '</b> Münzen</span></div>' +
       (c.boost ? '<div class="rwd" id="cr2"><span style="font-size:30px">⚡</span><span>XP-Booster<br><span style="font-weight:500;font-size:12px;color:#66748a">15 Minuten doppelte XP, im Vorrat</span></span></div>' : "") +
       (c.item ? '<div class="rwd" id="cr3"><span style="font-size:30px">🎁</span><span>Überraschung!<br><span style="font-weight:500;font-size:12px;color:#66748a">' + esc(c.item) + ' – gehört jetzt dir</span></span></div>' : "") +
       '<button class="btn lg" id="cOk" style="position:relative;z-index:2;opacity:0;pointer-events:none;background:var(--gold,#f2b33d);color:#2b1d00;margin-top:8px">Weiter ▶</button>';
     document.body.appendChild(ov);
     var show = function (id, ms) { setTimeout(function () { var e = document.getElementById(id); if (e) e.classList.add("show"); }, ms); };
-    setTimeout(function () {
-      ov.classList.add("open");
-      try { if (S.state.settings.audio) global.VTC.sound(pf.snd, true); global.VTC.burst("confetti", global.innerWidth / 2, global.innerHeight * .4, 44, 1.7); } catch (e) {}
-    }, 1900);
-    show("cr1", 2400); if (c.boost) show("cr2", 3000); if (c.item) show("cr3", c.boost ? 3600 : 3000);
-    setTimeout(function () { var b = $("#cOk"); if (b) { b.style.transition = "opacity .4s"; b.style.opacity = 1; b.style.pointerEvents = "auto"; } }, c.item ? 4300 : c.boost ? 3500 : 2900);
+    global.VTL.mount(document.getElementById("lootStage"), type, function () {
+      try { if (S.state.settings.audio) global.VTC.sound(pf.snd, true); } catch (e) {}
+      show("cr1", 250); if (c.boost) show("cr2", 850); if (c.item) show("cr3", c.boost ? 1450 : 850);
+      setTimeout(function () { var b = $("#cOk"); if (b) { b.style.transition = "opacity .4s"; b.style.opacity = 1; b.style.pointerEvents = "auto"; } }, c.item ? 2000 : c.boost ? 1500 : 900);
+    });
     $("#cOk").addEventListener("click", function () {
       ov.remove(); renderHeader();
       if (SS && !sessionEl.hidden) closeSession(); else render();

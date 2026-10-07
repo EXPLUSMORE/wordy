@@ -9,6 +9,11 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.34.0 – 2026-10-07
+
+- Beute statt Truhe: Die Belohnung am Ende eines Lernpfad-Abschnitts öffnet sich jetzt als Animation. Vier Szenen im Wechsel nach Abschnitt: Piñata, Nachschub-Kiste am Fallschirm, Tresor, Beute-Kapsel (fünfte Szene Eisblock steht für das Eis-Set bereit). Antippen startet, danach kommen Münzen, Booster und Überraschung. Neue Datei `js/loot.js`.
+- Im Lernpfad zeigen die Knoten die passende Beute (zu, wartet, geplündert) statt der Schatztruhe.
+
 ## 2.33.2 – 2026-10-07
 
 - Start: Die Wochenübersicht „Deine Woche“ mit den abgehakten Tagen ist jetzt immer sichtbar. Ohne Wochenzeitplan der Eltern zählt jeder Tag mit dem Tagesziel (vorher fehlte die Karte ganz).

@@ -19,7 +19,7 @@ Lernfortschritts-Server: https://track.wordy.explusmore.com (eigenständig, Node
 - Bestehende Datenstrukturen nur anhängen (Sätze/Wörter-IDs bleiben stabil, sonst geht Lernstand verloren).
 
 ## Struktur
-- `index.html` (CSS, 4 Tabs `home|ueben|stats|shop` + Zahnrad `parent`), `js/engine.js` (Lernlogik, SM-2, Sessions, Pace), `js/app.js` (alle Ansichten), `js/sync.js` (WordySync: Events, Snapshot, Pairing, Backup/Restore), `js/cosmetics.js`, `js/fortnite.js`, `js/figur.js` (ganze Figuren für die Siegertänze, Outfits), `js/arena.js`.
+- `index.html` (CSS, 4 Tabs `home|ueben|stats|shop` + Zahnrad `parent`), `js/engine.js` (Lernlogik, SM-2, Sessions, Pace), `js/app.js` (alle Ansichten), `js/sync.js` (WordySync: Events, Snapshot, Pairing, Backup/Restore), `js/cosmetics.js`, `js/fortnite.js`, `js/figur.js` (ganze Figuren für die Siegertänze, Outfits), `js/loot.js` (Beute-Animationen und Pfad-Symbole), `js/arena.js`.
 - Daten: `data/*.js`. Wörter: `lernbuch.js` (Headlight 2, 17 Units, `k:"Headlight 2"`), Klassen 6/7/8, Business-Gruppen. Sätze: `saetze.js` + angehängt `saetze2.js`, Format `[track, gruppe, en, de, regel]`, ID = „s“+Index. Hinweis: `BOOK_CLASS` mappt Headlight 2 auf Klasse 6.
 - Zustand in localStorage pro Profil (`state.w` Wörter, `state.s` Sätze, `daily/history/pace/goalsDone`, Einstellungen `klassen`, `hl2`, `readPace`).
 - `server/`: `server.js` (Node ≥22.13, `node:sqlite`, Bearer-Tokens, Admin-Dashboard per Basic-Auth, Endpunkte /api/pair, /events, /snapshot, /sync, /state), `mail.js` (Wochenmail über Microsoft Graph oder SMTP), `backup.js` (VACUUM INTO, Cron 03:15, 30 Tage), `test.js`, `README.md` (Deployment: Lightsail Bitnami Apache, systemd `wordy-server`, Node in /opt/node22).
