@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.41.1 – 2026-10-07
+- Eisblock-Szene: Die Figur im Eis passt zum Set. Jedes Set in `SETS` hat ein Feld `fig` (Eis-Set: Eisbär); ohne Angabe bleibt es der Eisbär. Auch die Pass-Wochen nutzen weiter den Eisbär.
+
 ## 2.41.0 – 2026-10-07
 - **Eisblock-Szene**: Wer ein Set komplett hat (Eis-Set), sieht statt der Meldung eine Szene: Der Eisbär steckt im Eisblock, antippen lässt ihn knacken und zersplittern, danach erscheint die Belohnungskarte (Eiskristall-Rahmen). Gilt beim Kauf eines Teils, beim Set-Kauf und für Meldungen, die erst später ankommen (z. B. Rang-Geschenk).
 

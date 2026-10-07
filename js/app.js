@@ -484,7 +484,7 @@
       var e0 = ov.querySelector("#rc0");
       setTimeout(function () { e0.classList.add("show"); try { global.VTC.burst("stars", e0.getBoundingClientRect().left + 40, e0.getBoundingClientRect().top + 20, 14, 1); } catch (x) {} }, 300);
       setTimeout(function () { var b = $("#cOk"); if (b) { b.style.transition = "opacity .4s"; b.style.opacity = 1; b.style.pointerEvents = "auto"; } }, 1100);
-    });
+    }, def && def.fig);
     $("#cOk").addEventListener("click", function () { ov.remove(); renderHeader(); if (sets.length > 1) openSetReveal(sets.slice(1)); else render(); });
   }
   function openPassReward(n) {

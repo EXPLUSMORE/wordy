@@ -33,3 +33,4 @@ Lernfortschritts-Server: https://track.wordy.explusmore.com (eigenständig, Node
 - Showroom (Reiter `showroom`, `viewShowroom()` in app.js): Logik in engine.js (`collection()`, `medalList()`, `favs()/toggleFav()` max. 3, `CUP_TIERS` mit einmaliger Münzbelohnung über `state.cups`). `profile.seen` steuert die NEU-Marke. Startseite: `viewHome()` mit Hero-Bühne (`.hh`, Himmel nach Uhrzeit) und CTA-Karte (`.cta`).
 - Erklärfilme: `js/film.js` (`VTFILM`, Szenenlisten je Modus, live aus Figuren/Emoji/CSS gespielt, kein Video). Karte in `modiHtml()`, Handler `film`. Neuer Modus = neuer Eintrag in `FILMS`.
 - Figuren: `js/stila.js` (Eisbär, Pinguin, Robbe, König) und `js/stilb.js` (alle übrigen, Katalog `D` mit Farben/Ohren/Gesicht/Zusätzen). Neue Figur = Eintrag in `D` bzw. `VTA.register`; `avatarHtml` nimmt gezeichnete Köpfe auch für Emoji-Werte.
+- Neues Set: Eintrag in `SETS` (engine.js) mit `fig` (Figur im Eisblock der Abschluss-Szene `openSetReveal`), `items`, `reward`.

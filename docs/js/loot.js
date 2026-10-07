@@ -16,7 +16,7 @@ rain:function(x,w,n,kinds,cols){for(var i=0;i<n;i++)P.push({x:x+Math.random()*w-
 
 var GOLD=['#ffd21f','#ffb000','#fff3a0'],CONF=['#ff4f9a','#ffd21f','#3fd0ff','#7cff6b','#a855f7','#fff'];
 
-function bearIn(){return global.VTA ? '<svg x="0" y="0" width="120" height="120" viewBox="22 4 176 176">' + global.VTA.inner("svg:eisbaer") + '</svg>' : ''}
+function bearIn(fig){return global.VTA ? '<svg x="0" y="0" width="120" height="120" viewBox="22 4 176 176">' + global.VTA.inner(fig && global.VTA.has(fig) ? fig : "svg:eisbaer") + '</svg>' : ''}
 
 function T(f,ms){setTimeout(f,ms)}
 
@@ -68,10 +68,10 @@ return mk(svg,function(st,fx,done){st.classList.add('st1');T(function(){st.class
 var sh='',pts=[[70,90],[120,70],[170,90],[70,140],[120,130],[170,140],[80,190],[130,190],[170,180]];
 pts.forEach(function(p,i){var x=(p[0]-120)*2.2+(Math.random()*30-15),y=(p[1]-140)*1.8+(Math.random()*40-10)+60;sh+='<g class="shard" style="--x:'+x.toFixed(0)+'px;--y:'+y.toFixed(0)+'px;--r:'+((Math.random()-.5)*540).toFixed(0)+'deg"><path d="M'+(p[0]-24)+' '+(p[1]-14)+'l30 -8l22 22l-10 28l-34 4z" fill="rgba(170,225,255,.85)" stroke="#14213d" stroke-width="4" stroke-linejoin="round"/><path d="M'+(p[0]-14)+' '+(p[1]-12)+'l14 -4" stroke="#fff" stroke-width="4" stroke-linecap="round"/></g>'});
 var svg='<defs><linearGradient id="ltic" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e8fbff" stop-opacity=".95"/><stop offset=".5" stop-color="#8fd8ff" stop-opacity=".75"/><stop offset="1" stop-color="#3b8fe0" stop-opacity=".85"/></linearGradient></defs><ellipse cx="120" cy="226" rx="84" ry="10" fill="#000" opacity=".4"/>'+
-'<g class="freed" style="transform-origin:120px 190px"><g transform="translate(40 60) scale(1.3)">'+bearIn()+'</g></g>'+
+'<g class="freed" style="transform-origin:120px 190px"><g transform="translate(40 60) scale(1.3)">'+'<!--FIG-->'+'</g></g>'+
 '<g class="ice"><path d="M52 90L86 56H188L156 92z" fill="#d9f6ff" stroke="#14213d" stroke-width="7" stroke-linejoin="round"/><path d="M156 92L188 56V170L156 210z" fill="#5da9ec" stroke="#14213d" stroke-width="7" stroke-linejoin="round"/>'+
 '<rect x="52" y="92" width="104" height="118" rx="10" fill="url(#ltic)" stroke="#14213d" stroke-width="7"/>'+
-'<g opacity=".6" transform="translate(52 100) scale(.88)" style="filter:blur(1px) saturate(.7)">'+bearIn()+'</g>'+
+'<g opacity=".6" transform="translate(52 100) scale(.88)" style="filter:blur(1px) saturate(.7)">'+'<!--FIG-->'+'</g>'+
 '<path d="M62 100l18-8M70 190l14 -16M60 150l8-10" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".8"/><path d="M62 104V196" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".45"/>'+
 '<g class="icr"><path d="M104 96l10 26l-14 18l16 24l-8 24" stroke="#14213d" stroke-width="5" fill="none" stroke-linejoin="round"/><path d="M114 122l28 8l10 22" stroke="#14213d" stroke-width="4" fill="none" stroke-linejoin="round"/><path d="M100 140l-26 6l-8 20" stroke="#14213d" stroke-width="4" fill="none" stroke-linejoin="round"/></g></g>'+sh;
 return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake');st.classList.add('icracked');T(function(){st.classList.add('shat');var w=st.clientWidth;fx.burst(w/2,130,80,['snow','snow','star'],['#fff','#bfe9ff','#7fd0ff'],1.4);T(function(){st.querySelectorAll('.shard').forEach(function(s){s.classList.add('go')})},50);done()},1500)},function(st){st.classList.remove('icracked','shat')})
@@ -107,9 +107,9 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   var ORDER = ["pinata", "drop", "vault", "capsule"];
   function typeFor(i) { return ORDER[((i % ORDER.length) + ORDER.length) % ORDER.length]; }
   /* Szene in einen Container setzen; Tippen spielt sie ab, danach cb() */
-  function mount(host, type, cb) {
+  function mount(host, type, cb, fig) {
     var t = S[type] || S.pinata; host.classList.add("ltst"); if (type === "drop") { host.style.overflow = "hidden"; host.style.borderRadius = "16px"; }
-    host.innerHTML = '<div class="rays"></div><svg class="main" viewBox="0 0 240 250" preserveAspectRatio="xMidYMid meet">' + t.svg + '</svg><div class="lthint">TIPPEN!</div>';
+    host.innerHTML = '<div class="rays"></div><svg class="main" viewBox="0 0 240 250" preserveAspectRatio="xMidYMid meet">' + (type === "ice" ? t.svg.split("<!--FIG-->").join(bearIn(fig)) : t.svg) + '</svg><div class="lthint">TIPPEN!</div>';
     var fx = Fx(host), busy = false, hint = host.querySelector(".lthint"), rays = host.querySelector(".rays");
     if (t.pre) t.pre(host, fx);
     host.onclick = function () { if (busy) return; busy = true; hint.style.display = "none"; t.tap(host, fx, function () { rays.classList.add("on"); if (cb) cb(); }); };
