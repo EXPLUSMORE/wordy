@@ -530,7 +530,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.27.0";window.WORDY_BUILD="a6a8707ab7";</script>
+<script>window.WORDY_VERSION="2.27.1";window.WORDY_BUILD="c90991f354";</script>
 </head>
 <body>
 <div id="app">
@@ -5890,7 +5890,7 @@ window.VERBS = [
       '<div class="row wrap" style="margin-top:8px"><span class="small muted">Dauer</span>' + [3, 5, 10, 15].map(function (m2) { return '<button class="chip" data-act="setmin" data-min="' + m2 + '" aria-pressed="' + (mins === m2) + '">' + m2 + ' Min</button>'; }).join("") + '</div>' +
       '<div class="tiles">' + learn + '</div></section>' +
       '<section class="card"><div class="eyebrow">Spielen</div>' +
-      (few ? '<p class="small muted" style="margin:6px 0 0">Für die Spiele brauchst du mindestens acht Wörter im gewählten Bereich. Schalte unter „Einheiten“ ein weiteres Schuljahr dazu.</p>' : '') +
+      (few ? '<p class="small muted" style="margin:6px 0 0">Für die Spiele brauchst du mindestens acht Wörter im gewählten Bereich. Schalte unter „Lernbereich“ ein weiteres Schuljahr dazu.</p>' : '') +
       '<div class="tiles">' + play + '</div>' +
       '<details style="margin-top:12px"><summary class="small" style="cursor:pointer;font-weight:700">Wie die Spiele zählen</summary>' +
       '<p class="small muted" style="margin:8px 0 0">Ein Treffer unter Zeitdruck wird als sichere, aber flache Wiederholung gewertet. Er schiebt ein Wort eine Stufe weiter, ersetzt aber nicht das ruhige Training. Ein Fehlgriff landet sofort in der Fehlerkartei. Die Zeit läuft aufs Tagesziel.' + (plays ? ' Bisher ' + plays + ' ' + plural(plays, "Runde", "Runden") + ' gespielt.' : '') + '</p></details></section>' +
@@ -5901,7 +5901,7 @@ window.VERBS = [
   function viewUeben() {
     if (detailUnit === "__verbs") return viewVerbList();
     if (detailUnit) return viewUnitDetail(detailUnit);
-    view.innerHTML = '<div class="stack">' + segBar("ueben", uebenSeg, [["modi", "🎮 Spielmodi"], ["units", "📚 Einheiten"]]) +
+    view.innerHTML = '<div class="stack">' + segBar("ueben", uebenSeg, [["modi", "🎮 Spielmodi"], ["units", "📚 Lernbereich"]]) +
       (uebenSeg === "units" ? unitsHtml() : modiHtml()) + '</div>';
     $$("details.grp").forEach(function (d) { d.addEventListener("toggle", function () { openGroups[d.getAttribute("data-k")] = d.open; }); });
   }
@@ -5913,6 +5913,7 @@ window.VERBS = [
     var groups = biz ? ["Basis", "Aufbau", "Profi", "Smalltalk", "Redewendungen"] : ["Headlight 2", 6, 7, 8];
     var sel = S.groupsOf();
     var html = '';
+    html += '<section class="card"><div class="eyebrow">Lernbereich</div><div style="margin-top:8px">' + trackSwitch() + '</div></section>';
     html += '<section class="card">' +
       '<div class="eyebrow">' + (biz ? "Stufe" : "Schuljahr") + '</div>' +
       '<div class="row wrap" style="margin-top:8px">' +
@@ -5938,7 +5939,7 @@ window.VERBS = [
     });
     order.sort(function (a, b) { var ia = groups.indexOf(/^\d+$/.test(a) ? +a : a), ib = groups.indexOf(/^\d+$/.test(b) ? +b : b); return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); });
     order.forEach(function (k) {
-      var title = k === "0" ? "Eigene Listen" : groupLabel(byGroup[k][0].k);
+      var title = k === "0" ? "✏️ Eigene Vokabeln" : k === "Headlight 2" ? "📕 Headlight 2 (Schulbuch)" : groupLabel(byGroup[k][0].k);
       var books = [], rest = [];
       byGroup[k].forEach(function (u) { (BOOKS.filter(function (b) { return u.id.indexOf(b.pre) === 0; })[0] ? books : rest).push(u); });
       function unitRow(u) {
@@ -5948,10 +5949,11 @@ window.VERBS = [
             '<span class="bar" style="margin-top:6px;display:block"><i style="width:' + pc + '%"></i></span></span>' +
             '<span class="pill tnum">' + u.mastered + '/' + u.total + '</span></button>';
       }
-      var tot = 0, mas = 0; byGroup[k].forEach(function (u) { tot += u.total; mas += u.mastered; });
+      var tot = 0, sure = 0, seenW = 0, gids = []; byGroup[k].forEach(function (u) { tot += u.total; sure += u.sure; seenW += u.seen; gids.push(u.id); });
       var isOpen = openGroups[k] === undefined ? order.indexOf(k) === 0 : openGroups[k];
       html += '<details class="grp" data-k="' + esc(k) + '"' + (isOpen ? " open" : "") + '><summary><span class="chev">▸</span><span style="flex:1 1 auto;min-width:0"><b>' + esc(title) + '</b>' +
-        '<span class="small muted" style="display:block">' + byGroup[k].length + ' ' + plural(byGroup[k].length, "Einheit", "Einheiten") + ' · ' + mas + ' / ' + tot + ' Wörter gemeistert</span></span></summary>' +
+        '<span class="small muted" style="display:block">' + byGroup[k].length + ' ' + plural(byGroup[k].length, "Einheit", "Einheiten") + ' · ' + Math.round(sure * 100 / Math.max(1, tot)) + ' % sicher · ' + seenW + ' von ' + tot + ' Wörtern geübt</span></span></summary>' +
+        '<button class="btn soft wide" data-act="start" data-scope="' + esc(gids.join(",")) + '" data-min="5" style="margin:4px 0 8px">Gruppe üben (5 Min.)</button>' +
         '<div>' + rest.map(unitRow).join("") + '</div>' +
         (books.length ? bookTile(BOOKS.filter(function (b) { return books[0].id.indexOf(b.pre) === 0; })[0], books) + books.map(unitRow).join("") : "") + '</details>';
     });
@@ -6417,9 +6419,9 @@ window.VERBS = [
     var steps = [
       ["🚀", "Loslegen", "Auf <b>Start</b> schlägt Wordy dir die beste Runde für heute vor (zum Beispiel Fehlerkartei oder Lernplan). Mit <b>Los geht\'s</b> startest du, darunter stellst du die Dauer ein."],
       ["🎮", "Üben", "Unter <b>Üben → Spielmodi</b> wählst du selbst: <b>Lernen</b> (Weiterlernen, Neue Wörter, Fehlerkartei, Sätze, Verben), <b>Spielen</b> (die Arena) oder <b>Gezielt üben</b> (nur Hören, Tippen, Lücken oder Zuordnen)."],
-      ["📚", "Einheiten", "Unter <b>Üben → Einheiten</b> wählst du Schuljahr oder Stufe und öffnest eine Einheit. Dort kannst du nur diese Einheit üben, anhören oder gezielt eine Aufgabenform trainieren."],
+      ["📚", "Einheiten", "Unter <b>Üben → Lernbereich</b> wählst du Schule oder Business, Schuljahr oder Stufe und öffnest eine Einheit. Dort kannst du nur diese Einheit üben, anhören oder gezielt eine Aufgabenform trainieren."],
       ["🧩", "Aufgaben", "Wortkarte, Auswahl, Hören, Lückentext, Schreiben, Zuordnen und Satzbau. Eine falsche Antwort kostet ein Herz (unter Setup abschaltbar) und kommt später wieder."],
-      ["✍️", "Unregelmäßige Verben", "<b>Üben → Spielmodi → Verben</b> (Einführung, Lückenaufgabe, Tippen). Die Verbenliste mit Beispielsätzen findest du unter <b>Üben → Einheiten</b>."],
+      ["✍️", "Unregelmäßige Verben", "<b>Üben → Spielmodi → Verben</b> (Einführung, Lückenaufgabe, Tippen). Die Verbenliste mit Beispielsätzen findest du unter <b>Üben → Lernbereich</b>."],
       ["⚡", "Arena", "Vier Zeitmodi unter <b>Spielen</b>: <b>Match-Rausch</b> (Paare in 60 Sekunden), <b>Blitzrunde</b> (Zeit sammeln), <b>Letztes Herz</b> (ein Fehler beendet), <b>Fehlerjagd</b> (Kartei leeren)."],
       ["📈", "Fortschritt", "Drei Ansichten: <b>Übersicht</b> (Wo stehe ich?), <b>Wörter</b> (schwierigste Wörter, Fehlerkartei, Verben) und <b>Verlauf</b> (die letzten 14 Tage, Satzbau)."],
       ["🪙", "Münzen & Shop", "Münzen gibt es für Fortschritt, Missionen und das Tagesziel. Im <b>Shop</b> kaufst du Figuren, Rahmen, Farben und mehr. Mit dem ⭐ setzt du einen Wunsch, auf den du sparst."],

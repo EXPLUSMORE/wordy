@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.27.1 – 2026-10-07
+
+- Üben: Der Reiter „Einheiten“ heißt jetzt „Lernbereich“. Oben Wahl Schule/Business, darunter Gruppen wie im Fortschritt (Headlight 2 als Schulbuch, Klassen, Eigene Vokabeln bzw. Business-Stufen) mit „x % sicher“, „x von y Wörtern geübt“ und „Gruppe üben (5 Min.)“.
+
 ## 2.27.0 – 2026-10-07
 
 - Einheiten sind überall nach Lernbereich und Gruppe geordnet: Schule (Headlight 2 als Schulbuch zuerst, dann Klasse 6, 7, 8), Business English (Basis bis Redewendungen), Eigene Vokabeln.
