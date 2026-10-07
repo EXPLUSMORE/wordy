@@ -346,7 +346,7 @@
     var t = today();
     if (!state.daily || state.daily.date !== t) {
       if (state.daily && state.daily.items > 0) state.history[state.daily.date] = {
-        items: state.daily.items, correct: state.daily.correct, sec: state.daily.sec, xp: state.daily.xp, newSeen: state.daily.newSeen || 0
+        items: state.daily.items, correct: state.daily.correct, sec: state.daily.sec, xp: state.daily.xp, newSeen: state.daily.newSeen || 0, deep: state.daily.deep || 0
       };
       state.daily = { date: t, items: 0, correct: 0, sec: 0, xp: 0, newSeen: 0, missions: makeMissions(), done: false };
       state.streak.usedToday = false;
@@ -949,7 +949,7 @@
     if (bst && bst.on) { bst.left = Math.max(0, bst.left - (res.sec || 0)); if (bst.left <= 0) bst.on = false; }   // Booster zählt echte Übungszeit
     // res: {items, correct, sec, maxChain, newSeen, boxSolved}
     var d = state.daily;
-    d.items += res.items; d.correct += res.correct; d.sec += res.sec; d.newSeen += res.newSeen || 0;
+    d.items += res.items; d.correct += res.correct; d.sec += res.sec; d.newSeen += res.newSeen || 0; d.deep = (d.deep || 0) + (res.deep || 0);
     state.totals.items += res.items; state.totals.correct += res.correct; state.totals.sec += res.sec;
     var rewards = { coins: 0, missions: [], badges: [], goalReached: false, streakUp: false };
     rewards.missions = rewards.missions

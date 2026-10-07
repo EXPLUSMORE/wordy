@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.36.2 – 2026-10-07
+- Wochenziel „Neue Wörter“ heißt jetzt „Wörter wiedererkennen“ und zählt nur Wörter, die am Folgetag (nach dem Abstand) richtig beantwortet wurden. App (`deep` im Tagesverlauf), Server-Auswertung und Dashboard sind angepasst.
+
 ## 2.36.1 – 2026-10-07
 - **Münzen nur fürs Behalten, nicht fürs Durchklicken**: Das erste Ansehen eines neuen Worts bringt keine Münze und kaum XP (2 statt 10). Die Münzen (jetzt 2) gibt es erst, wenn das Wort nach dem Abstand wirklich wieder erkannt wird.
 - Entdecker-Bonus einer Einheit erst, wenn 5 Wörter wiedererkannt wurden (Stufe „Geübt“), nicht schon beim Ansehen.

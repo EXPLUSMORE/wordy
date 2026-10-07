@@ -4,7 +4,7 @@ Nimmt den Lernverlauf der Wordy-App entgegen und zeigt ihn den Eltern im Dashboa
 Keine Abhängigkeiten: nur **Node.js ab 22.13** (eingebautes SQLite). Daten liegen in einer einzigen Datei.
 
 ## Funktionen im Dashboard
-- **Wochenziele:** Minuten üben, Übungstage (ab 5 Minuten), neue Wörter oder eine Einheit zu x % sicher gelernt (Stufe „Sitzt“ oder höher). Mit Bonusmünzen. Die App holt die Ziele ab und zeigt sie auf der Startseite. Die Münzen werden automatisch gutgeschrieben, genau einmal.
+- **Wochenziele:** Minuten üben, Übungstage (ab 5 Minuten), Wörter wiedererkennen (am Folgetag richtig beantwortet; reines Ansehen zählt nicht) oder eine Einheit zu x % sicher gelernt (Stufe „Sitzt“ oder höher). Mit Bonusmünzen. Die App holt die Ziele ab und zeigt sie auf der Startseite. Die Münzen werden automatisch gutgeschrieben, genau einmal.
 - **Lernplan für Klassenarbeiten:** Datum und Einheiten festlegen. Die App zeigt, wie viele neue Wörter heute dran sind, und übt gezielt nur diese Einheiten. Bonus bei 90 % sicher.
 - **Einzelansicht pro Einheit:** Tippe im Dashboard auf eine Einheit, dann siehst du alle Wörter mit Stand, richtigen und falschen Antworten.
 - **Wochenmail:** siehe unten.

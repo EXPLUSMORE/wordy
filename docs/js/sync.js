@@ -95,7 +95,7 @@
         h = dayStat(addDays(goal.week, i)); if (!h) continue;
         if (goal.kind === "minutes") cur += (h.sec || 0) / 60;
         else if (goal.kind === "days") { if ((h.sec || 0) >= 300) cur++; }
-        else if (goal.kind === "newwords") cur += h.newSeen || 0;
+        else if (goal.kind === "newwords") cur += h.deep || 0;   // wiedererkannte Wörter (nicht nur angesehene)
       }
       cur = Math.round(cur);
     }

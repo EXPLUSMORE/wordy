@@ -801,7 +801,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.36.1";window.WORDY_BUILD="6194f986b9";</script>
+<script>window.WORDY_VERSION="2.36.2";window.WORDY_BUILD="19449b8b4d";</script>
 </head>
 <body>
 <div id="app">
@@ -4514,7 +4514,7 @@ window.VERBS = [
     var t = today();
     if (!state.daily || state.daily.date !== t) {
       if (state.daily && state.daily.items > 0) state.history[state.daily.date] = {
-        items: state.daily.items, correct: state.daily.correct, sec: state.daily.sec, xp: state.daily.xp, newSeen: state.daily.newSeen || 0
+        items: state.daily.items, correct: state.daily.correct, sec: state.daily.sec, xp: state.daily.xp, newSeen: state.daily.newSeen || 0, deep: state.daily.deep || 0
       };
       state.daily = { date: t, items: 0, correct: 0, sec: 0, xp: 0, newSeen: 0, missions: makeMissions(), done: false };
       state.streak.usedToday = false;
@@ -5117,7 +5117,7 @@ window.VERBS = [
     if (bst && bst.on) { bst.left = Math.max(0, bst.left - (res.sec || 0)); if (bst.left <= 0) bst.on = false; }   // Booster zählt echte Übungszeit
     // res: {items, correct, sec, maxChain, newSeen, boxSolved}
     var d = state.daily;
-    d.items += res.items; d.correct += res.correct; d.sec += res.sec; d.newSeen += res.newSeen || 0;
+    d.items += res.items; d.correct += res.correct; d.sec += res.sec; d.newSeen += res.newSeen || 0; d.deep = (d.deep || 0) + (res.deep || 0);
     state.totals.items += res.items; state.totals.correct += res.correct; state.totals.sec += res.sec;
     var rewards = { coins: 0, missions: [], badges: [], goalReached: false, streakUp: false };
     rewards.missions = rewards.missions
@@ -8519,7 +8519,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       if (gl) {
         var gp = window.WordySync.progress(gl), gleft = Math.max(0, gl.target - gp.cur);
         if (gl.kind === "unit") startSession({ minutes: Math.max(5, S.goalMin()), scope: gl.scope, newMax: 10, mode: "unit" });
-        else if (gl.kind === "newwords") startSession({ minutes: 10, mode: "new" });
+        else if (gl.kind === "newwords") startSession({ minutes: 10, mode: "mix" });
         else if (gl.kind === "days") startSession({ minutes: Math.max(5, S.goalMin()), mode: "mix" });
         else startSession({ minutes: Math.min(15, Math.max(5, gleft)), mode: "mix" });
       }
@@ -9237,7 +9237,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
         h = dayStat(addDays(goal.week, i)); if (!h) continue;
         if (goal.kind === "minutes") cur += (h.sec || 0) / 60;
         else if (goal.kind === "days") { if ((h.sec || 0) >= 300) cur++; }
-        else if (goal.kind === "newwords") cur += h.newSeen || 0;
+        else if (goal.kind === "newwords") cur += h.deep || 0;   // wiedererkannte Wörter (nicht nur angesehene)
       }
       cur = Math.round(cur);
     }

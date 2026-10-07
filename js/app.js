@@ -2297,7 +2297,7 @@
       if (gl) {
         var gp = window.WordySync.progress(gl), gleft = Math.max(0, gl.target - gp.cur);
         if (gl.kind === "unit") startSession({ minutes: Math.max(5, S.goalMin()), scope: gl.scope, newMax: 10, mode: "unit" });
-        else if (gl.kind === "newwords") startSession({ minutes: 10, mode: "new" });
+        else if (gl.kind === "newwords") startSession({ minutes: 10, mode: "mix" });
         else if (gl.kind === "days") startSession({ minutes: Math.max(5, S.goalMin()), mode: "mix" });
         else startSession({ minutes: Math.min(15, Math.max(5, gleft)), mode: "mix" });
       }

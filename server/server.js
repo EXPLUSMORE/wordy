@@ -303,7 +303,7 @@ const ymdAdd = (d, n) => { const [y, m, x] = d.split("-").map(Number); return ne
 function mondayOf(d) { const [y, m, x] = d.split("-").map(Number); return ymdAdd(d, -((new Date(Date.UTC(y, m - 1, x)).getUTCDay() + 6) % 7)); }
 const daysBetween = (a, b) => Math.round((Date.parse(b + "T00:00:00Z") - Date.parse(a + "T00:00:00Z")) / 86400000);
 const SAFE_ID = /^[A-Za-z0-9_.\-]{1,30}$/;
-const KINDS = { minutes: "Minuten üben", days: "Tage üben", newwords: "neue Wörter", unit: "Einheit sicher" };
+const KINDS = { minutes: "Minuten üben", days: "Tage üben", newwords: "Wörter wiedererkennen", unit: "Einheit sicher" };
 
 function unitTitles(pid, ids) {
   const cat = snap(pid, "catalog"), by = {};
@@ -313,7 +313,7 @@ function unitTitles(pid, ids) {
 function goalTitle(pid, kind, target, scope) {
   if (kind === "minutes") return target + " Minuten üben";
   if (kind === "days") return "An " + target + " Tagen üben (mindestens 5 Minuten)";
-  if (kind === "newwords") return target + " neue Wörter lernen";
+  if (kind === "newwords") return target + " Wörter wiedererkennen (am Folgetag richtig)";
   return target + " % sicher: " + unitTitles(pid, scope).join(", ");
 }
 /* Fortschritt eines Wochenziels aus den Ereignissen und dem Wörterstand */
@@ -326,7 +326,7 @@ function goalProgress(pid, g, evs) {
     for (const e of evs) {
       if (!inWeek(e)) continue;
       if (e.k === "ss") secDay[dayOf(e.ts)] = (secDay[dayOf(e.ts)] || 0) + (e.d.sec || 0);
-      else if (e.k === "a" && g.kind === "newwords" && (e.d.b || 0) === 0 && e.d.g > 0) cur++;
+      else if (e.k === "a" && g.kind === "newwords" && (e.d.b || 0) === 1 && (e.d.a || 0) >= 2 && e.d.g > 0) cur++;
     }
     if (g.kind === "minutes") cur = Math.round(Object.values(secDay).reduce((a, b) => a + b, 0) / 60);
     if (g.kind === "days") cur = Object.values(secDay).filter(x => x >= 300).length;
