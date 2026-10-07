@@ -263,7 +263,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
       (p.devices.length ? " · " + p.devices.length + " Gerät" + (p.devices.length > 1 ? "e" : "") : " · noch kein Gerät verbunden") + "</div></div>" +
       '<button class="ghost" id="inv">Neuer Code</button><button class="ghost" id="ren">Umbenennen</button><button class="ghost" id="hid">Nur sichern</button><button class="ghost" id="rev">Geräte trennen</button><button class="ghost" id="del">Löschen</button></div></div>';
     h += heuteCard(r, m) + wocheCard(r, m);
-    h += '<div class="card" id="goalsCard"></div><div class="card" id="plansCard"></div>';
+    h += '<div class="card" id="pathCard"></div><div class="card" id="goalsCard"></div><div class="card" id="plansCard"></div>';
     h += '<div class="card"><div class="row"><h2 class="grow" style="margin:0">Übungszeit pro Tag</h2><button class="tab" data-d="14" aria-pressed="' + (days === 14) + '">14 Tage</button><button class="tab" data-d="30" aria-pressed="' + (days === 30) + '">30 Tage</button><button class="tab" data-d="90" aria-pressed="' + (days === 90) + '">90 Tage</button></div>' +
       bars(r.days) + '<div class="legend"><span><i style="background:var(--good)"></i>10 Min. oder mehr</span><span><i style="background:var(--acc2)"></i>weniger</span><span class="muted">Insgesamt ' + fmtMin(t.sec) + ", " + t.items + " Aufgaben, " + t.activeDays + " aktive Tage</span></div></div>";
 
@@ -305,7 +305,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     document.getElementById("hid").onclick = function () { if (confirm(p.name + " nur noch sichern und hier nicht mehr anzeigen? Die Zahlen verschwinden aus Übersicht und Wochenmail, die Sicherung bleibt. Zurückholen kannst du ihn unter „＋ Spieler“.")) post("/api/admin/players/" + p.id + "/hidden", { hidden: true }).then(function () { cur = null; loadPlayers(); }); };
     document.getElementById("rev").onclick = function () { if (confirm("Alle verbundenen Geräte von " + p.name + " trennen? Neu verbinden geht mit einem neuen Code.")) post("/api/admin/players/" + p.id + "/revoke").then(function () { loadPlayers(p.id); }); };
     document.getElementById("del").onclick = function () { if (confirm(p.name + " und alle gespeicherten Lerndaten endgültig löschen?")) api("/api/admin/players/" + p.id, { method: "DELETE" }).then(function () { cur = null; loadPlayers(); }); };
-    drawGoals(p, r); drawPlans(p, r); drawBackups(p, r); drawMail();
+    drawPath(p, r); drawGoals(p, r); drawPlans(p, r); drawBackups(p, r); drawMail();
     var wd = document.getElementById("wdet"); if (wd) wd.addEventListener("toggle", function () { if (wd.open) showWords(p); });
     Array.prototype.forEach.call(view.querySelectorAll("tr[data-u]"), function (tr) { tr.onclick = function () { showUnit(p, tr.getAttribute("data-u")); }; });
   }
@@ -324,6 +324,30 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
   }
   function picked(id) { return Array.prototype.map.call(document.querySelectorAll("#" + id + " input:checked"), function (c) { return c.value; }); }
 
+  /* Lernpfad: Fortschritt und Auswahl der Einheiten, die im Pfad erscheinen */
+  function drawPath(p, r) {
+    var el = document.getElementById("pathCard"); if (!el) return;
+    var pp = r.meta && r.meta.path, h = "<h2>Lernpfad</h2>";
+    h += pp && pp.total ? '<p style="margin:0 0 6px"><b>' + pp.done + " von " + pp.total + '</b> Stationen geschafft</p><div class="mini"><i class="' + (pp.done >= pp.total ? "d" : "") + '" style="width:' + Math.round(pp.done * 100 / pp.total) + '%"></i></div>'
+      : '<p class="muted small" style="margin:0">Noch kein Pfad-Fortschritt bekannt. Er erscheint, sobald die App ihn gesendet hat.</p>';
+    h += '<p class="small muted" style="margin:8px 0 0" id="pathSel">Lade Auswahl …</p>' +
+      '<details style="margin-top:10px" id="pathDet"><summary style="cursor:pointer;color:var(--acc);font-weight:600">Einheiten für den Lernpfad wählen</summary><div id="pathPickBox" style="margin-top:10px"></div></details>';
+    el.innerHTML = h;
+    Promise.all([api("/api/admin/players/" + p.id + "/pathunits"), catCache[p.id] ? Promise.resolve(catCache[p.id]) : getCatalog(p.id)]).then(function (res) {
+      var cur = res[0] || [], cat = res[1] || [], sel = document.getElementById("pathSel"); if (!sel) return;
+      var names = cat.filter(function (u) { return cur.indexOf(u.id) >= 0; }).map(function (u) { return u.title.replace(/^Headlight 2 · /, ""); });
+      sel.textContent = cur.length ? "Im Pfad: " + names.length + " " + (names.length === 1 ? "Einheit" : "Einheiten") + " (von Eltern gewählt)." : "Standard: Schule = Headlight 2, Business = die in der App gewählten Stufen.";
+      var box = document.getElementById("pathPickBox");
+      box.innerHTML = cat.length ? '<p class="small muted" style="margin:0 0 6px">Die Reihenfolge ist fest (Headlight 2, Klassen, dann Business Basis bis Redewendungen). Bereits geschaffte Stationen bleiben geschafft.</p>' + unitPicker(cat, "pathpick") +
+        '<div class="row" style="gap:8px;margin-top:10px"><button id="pathSave">Auswahl speichern</button><button class="ghost" id="pathReset">Standard</button><span id="pathMsg" class="small"></span></div>'
+        : '<p class="small muted">Noch keine Einheiten bekannt. Sie erscheinen, sobald die App einmal gesendet hat.</p>';
+      cur.forEach(function (id) { var c = box.querySelector('#pathpick input[value="' + id + '"]'); if (c) c.checked = true; });
+      var msg = function (t, bad) { var m = document.getElementById("pathMsg"); if (m) { m.className = "small" + (bad ? " err" : ""); m.textContent = t; } };
+      var s = document.getElementById("pathSave"), rs = document.getElementById("pathReset");
+      if (s) s.onclick = function () { post("/api/admin/players/" + p.id + "/pathunits", { units: picked("pathpick") }).then(function (x) { msg("Gespeichert. Die App übernimmt es beim nächsten Öffnen."); sel.textContent = x.units.length ? "Im Pfad: " + x.units.length + (x.units.length === 1 ? " Einheit" : " Einheiten") + " (von Eltern gewählt)." : "Standard"; }).catch(function (e) { msg(e.message, 1); }); };
+      if (rs) rs.onclick = function () { post("/api/admin/players/" + p.id + "/pathunits", { units: [] }).then(function () { Array.prototype.forEach.call(box.querySelectorAll("#pathpick input"), function (c) { c.checked = false; }); msg("Zurück auf Standard."); sel.textContent = "Standard: Schule = Headlight 2, Business = die in der App gewählten Stufen."; }).catch(function (e) { msg(e.message, 1); }); };
+    }).catch(function () { var sel = document.getElementById("pathSel"); if (sel) sel.textContent = ""; });
+  }
   function drawGoals(p, r) {
     var el = document.getElementById("goalsCard"); if (!el) return;
     var list = r.goals || [], h = '<h2>Wochenziele</h2>';

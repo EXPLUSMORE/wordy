@@ -847,11 +847,22 @@
     if (!Array.isArray(p.pending)) p.pending = [];
     return p;
   }
+  var BIZ_ORDER = ["Basis", "Aufbau", "Profi", "Smalltalk", "Redewendungen"];
+  /* Welche Einheiten stehen im Pfad? Die Eltern können das im Dashboard festlegen; sonst Schule = Headlight 2, Business = die gewählten Stufen */
+  function pathUnitList() {
+    var tr = state.settings.track === "business" ? "business" : "schule", r = global.WordySync && global.WordySync.remote ? (global.WordySync.remote() || {}).pathUnits : null;
+    var all = units.filter(function (u) { return u.track === tr; });
+    if (tr === "business") all = all.map(function (u, i) { return { u: u, i: i }; }).sort(function (a, b) { return (BIZ_ORDER.indexOf(a.u.k) - BIZ_ORDER.indexOf(b.u.k)) || (a.i - b.i); }).map(function (x) { return x.u; });
+    if (Array.isArray(r) && r.length) { var chosen = all.filter(function (u) { return r.indexOf(u.id) >= 0; }); if (chosen.length) return chosen; }
+    if (tr === "schule") return all.filter(function (u) { return u.k === "Headlight 2"; });
+    var g = state.settings.bizGroups || ["Basis"];
+    return all.filter(function (u) { return g.indexOf(u.k) >= 0; });
+  }
   function pathStations() {
-    var key = units.length + ":" + (units[0] && units[0].id);
+    var ul = pathUnitList(), key = state.settings.track + ":" + ul.map(function (u) { return u.id; }).join(",");
     if (pathCache && pathCacheKey === key) return pathCache;
     var out = [];
-    units.filter(function (u) { return u.track === "schule" && u.k === "Headlight 2"; }).forEach(function (u) {
+    ul.forEach(function (u) {
       var ids = u.words.map(function (w, i) { return u.id + "#" + i; }), n = ids.length;
       if (n < 4) return;
       var ns = Math.max(1, Math.round(n / STATION_WORDS)), parts = Math.ceil(ns / 5), per = Math.ceil(ns / parts), chunk = Math.ceil(n / ns), k = 0;
@@ -873,26 +884,29 @@
     pathCache = out; pathCacheKey = key;
     return out;
   }
+  function pathProgress() { var p = pathState(), st = pathStations(), d = st.filter(function (s) { return p.stars[s.id]; }).length; return { done: d, total: st.length }; }
   /* Stationen, deren Wörter schon alle „sitzen“, werden übersprungen (Magnus hat Stoff ja schon gelernt) */
   function pathSync() {
-    var p = pathState(), st = pathStations(), moved = false;
-    while (p.pos < st.length) {
-      var s = st[p.pos], all = (s.last ? s.reviewWords : s.words).every(function (id) { return levelOf(id) >= 3; });
+    var p = pathState(), st = pathStations(), pos = 0, moved = false;
+    while (pos < st.length && p.stars[st[pos].id]) pos++;   // Reihenfolge streng: die erste Station ohne Sterne ist dran
+    while (pos < st.length) {
+      var s = st[pos], all = (s.last ? s.reviewWords : s.words).every(function (id) { return levelOf(id) >= 3; });
       if (!all) break;
       p.stars[s.id] = Math.max(p.stars[s.id] || 0, 3); p.auto = (p.auto || 0) + 1;
       if (s.last) p.chests[s.section] = 1;   // übersprungener Abschnitt: keine Truhe
-      p.pos++; moved = true;
+      pos++; moved = true;
     }
+    p.pos = pos;
     if (moved) save();
     return p;
   }
   function pathComplete(id, stars) {
     var p = pathState(), st = pathStations().filter(function (x) { return x.id === id; })[0];
     if (!st) return { error: true };
-    p.stars[id] = Math.max(p.stars[id] || 0, stars);
+    pathSync();
     var adv = st.index === p.pos, chest = null;
+    p.stars[id] = Math.max(p.stars[id] || 0, stars);
     if (adv) {
-      p.pos++;
       if (st.last && !p.chests[st.section]) {
         p.chests[st.section] = 1;
         chest = { section: st.section, title: st.sectionTitle, coins: 15 + Math.floor(Math.random() * 16), boost: Math.random() < 0.4 };
@@ -967,6 +981,6 @@
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
-    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, minXp: minXp, defaultOf: defaultOf
+    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, pathProgress: pathProgress, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, minXp: minXp, defaultOf: defaultOf
   };
 })(window);

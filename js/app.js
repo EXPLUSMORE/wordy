@@ -311,7 +311,7 @@
   var pathShown = null;   // zuletzt gezeigte Position, damit die Figur beim Weiterkommen zur nächsten Station läuft
   function pathPoint(i, n, H) { return { x: i === n ? 50 : (i % 2 ? 74 : 26), y: H - 54 - i * 84 }; }
   function pathCard() {
-    var st = S.state; if (st.settings.track !== "schule") return "";
+    var st = S.state; if (st.settings.pathOn === false) return "";
     var p = S.pathSync(), all = S.pathStations(); if (!all.length) return "";
     var boost = p.boost, secList = [];
     all.forEach(function (s) { if (secList.indexOf(s.section) < 0) secList.push(s.section); });
@@ -1028,6 +1028,8 @@
       }).join("") + '</select></label>' +
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Pause nach der Antwort<br><span class="small muted">Die Lösung bleibt kurz stehen. Bei Fehlern wird sie vorgelesen und das Wort einmal abgeschrieben</span></span>' +
       '<input type="checkbox" id="setPause" ' + (st.settings.pause !== false ? "checked" : "") + ' style="width:auto"></label>' +
+      '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Lernpfad auf dem Start-Tab<br><span class="small muted">Stationen und Truhen. Aus = nur die Empfehlung</span></span>' +
+      '<input type="checkbox" id="setPathOn" ' + (st.settings.pathOn !== false ? "checked" : "") + ' style="width:auto"></label>' +
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Arena als Tagesmission<br><span class="small muted">Ab und zu ist eine Arena-Runde eine der drei Tagesmissionen</span></span>' +
       '<input type="checkbox" id="setArenaM" ' + (st.settings.arenaMissions !== false ? "checked" : "") + ' style="width:auto"></label>' +
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Herzen benutzen<br><span class="small muted">Aus = Üben ohne Abbruch</span></span>' +
@@ -1074,6 +1076,7 @@
     $("#setGoal").onchange = function () { st.settings.goalMin = +this.value; S.save(true); renderHeader(); };
     $("#setNew").onchange = function () { st.settings.newPerDay = +this.value; S.save(true); };
     $("#setAudio").onchange = function () { st.settings.audio = this.checked; S.save(true); };
+    if ($("#setPathOn")) $("#setPathOn").onchange = function () { st.settings.pathOn = this.checked; S.save(true); };
     if ($("#setArenaM")) $("#setArenaM").onchange = function () { st.settings.arenaMissions = this.checked; S.save(true); };
     if ($("#setPause")) $("#setPause").onchange = function () { st.settings.pause = this.checked; S.save(true); };
     $("#setMode").onchange = function () { st.settings.themeMode = this.value; S.save(true); renderHeader(); };

@@ -9,6 +9,12 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.19.0 – 2026-10-07
+
+- **Lernpfad auch für Business:** Wer „Business“ wählt, bekommt den Pfad mit den gewählten Stufen (Basis, Aufbau, Profi, Smalltalk, Redewendungen; je Einheit ein Abschnitt mit 2 Stationen und einer Truhe). Der Fortschritt hängt jetzt an den einzelnen Stationen (erste Station ohne Sterne ist dran), eine geänderte Auswahl kostet also keinen Fortschritt.
+- **Dashboard → Lernpfad:** Fortschritt („X von Y Stationen“) und Auswahl der Einheiten, die im Pfad erscheinen (alle Schul-, Business- und eigenen Einheiten wählbar; Reihenfolge fest). Leer = Standard (Schule: Headlight 2, Business: in der App gewählte Stufen). Die App übernimmt die Auswahl beim nächsten Öffnen. **Server-Update nötig.**
+- Setup → Üben: Schalter „Lernpfad auf dem Start-Tab“ (Standard an). Wochenziele, Lernpläne und Tagesmissionen bleiben unverändert.
+
 ## 2.18.0 – 2026-10-07
 
 - **Lernpfad auf dem Start-Tab** (Headlight 2, streng nacheinander): Jede Unit ist ein Abschnitt (längere Units sind in Teile geteilt) aus Stationen mit je etwa 7 Wörtern, am Ende eine Truhe. Eine Station hat vier Schritte mit den Aufgaben der App: Kennenlernen (neue Wörter mit Einführung und Auswahlaufgaben), Tippen oder Rechtschreibung, Hören & finden (ohne Ton: Lückensatz oder Auswahl), Zuordnen. Die letzte Station jedes Abschnitts wiederholt Wörter des ganzen Abschnitts. Sterne nach Treffern (★ bis ★★★). Die Figur läuft auf der Karte zur nächsten Station. Stationen, deren Wörter schon alle „sitzen“, werden automatisch übersprungen. Falsche Antworten werden wie sonst am Ende der Station wiederholt.

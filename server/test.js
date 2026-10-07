@@ -103,6 +103,10 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     await J("/api/admin/players/" + mk.j.id + "/hidden", { method: "POST", headers: H, body: JSON.stringify({ hidden: true }) });
     assert.equal((await J("/api/ping", { method: "POST", headers: T })).j.hidden, true, "Modus nach Umstellung");
     await J("/api/admin/players/" + mk.j.id + "/hidden", { method: "POST", headers: H, body: JSON.stringify({ hidden: false }) });
+    assert.deepEqual((await J("/api/admin/players/" + mk.j.id + "/pathunits", { headers: H })).j, [], "Pfad: Standard leer");
+    const pu = await J("/api/admin/players/" + mk.j.id + "/pathunits", { method: "POST", headers: H, body: JSON.stringify({ units: ["H2-1a", "nicht-da", "H2-2a"] }) });
+    assert.deepEqual(pu.j.units, ["H2-1a"], "Pfad: nur bekannte Einheiten");
+    const sy2 = await J("/api/sync", { headers: T }); assert.deepEqual(sy2.j.pathUnits, ["H2-1a"], "Pfad-Einheiten kommen in der App an");
     const inf = await J("/api/admin/info", { headers: H });
     assert.equal(inf.s, 200); assert.equal(inf.j.version, require("../package.json").version, "Server-Version"); assert.ok(inf.j.started > 0);
     assert.equal((await J("/api/admin/info")).s, 401, "Info nur für Admin");

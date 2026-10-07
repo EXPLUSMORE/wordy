@@ -390,8 +390,17 @@ function apiSync(pid) {
   return [200, {
     now: Date.now(), today: dayOf(Date.now()),
     goals: q.goals.all(pid, mon).map(g => ({ id: g.id, week: g.week, kind: g.kind, target: g.target, scope: JSON.parse(g.scope), coins: g.coins, title: g.title })),
-    plans: q.plans.all(pid, dayOf(Date.now())).map(p => ({ id: p.id, title: p.title, exam: p.exam, units: JSON.parse(p.units), coins: p.coins }))
+    plans: q.plans.all(pid, dayOf(Date.now())).map(p => ({ id: p.id, title: p.title, exam: p.exam, units: JSON.parse(p.units), coins: p.coins })),
+    pathUnits: pathUnitsOf(pid)
   }];
+}
+/* Welche Einheiten stehen im Lernpfad? Leer = Standard der App (Schule: Headlight 2, Business: gewählte Stufen) */
+function pathUnitsOf(pid) { const r = q.kvGet.get("pathunits:" + pid); try { return r ? JSON.parse(r.val) : []; } catch (e) { return []; } }
+function setPathUnits(pid, body) {
+  const cat = snap(pid, "catalog"), known = new Set(cat ? cat.d.map(u => u.id) : []);
+  const list = (Array.isArray(body.units) ? body.units : []).map(String).filter(id => /^[A-Za-z0-9_.\-]{1,30}$/.test(id) && (!known.size || known.has(id))).slice(0, 200);
+  q.kvSet.run("pathunits:" + pid, JSON.stringify(list));
+  return [200, { ok: true, units: list }];
 }
 /* Einzelne Einheit mit allen Wörtern und ihrem Stand */
 function unitDetail(pid, uid) {
@@ -618,6 +627,8 @@ const server = http.createServer(async (req, res) => {
         if (m[2] === "goals" && req.method === "POST") { const [c, b] = createGoal(pid, await readJson(req)); return send(res, c, b); }
         if (m[2] === "plans" && req.method === "GET") return send(res, 200, plansOf(pid));
         if (m[2] === "plans" && req.method === "POST") { const [c, b] = createPlan(pid, await readJson(req)); return send(res, c, b); }
+        if (m[2] === "pathunits" && req.method === "GET") return send(res, 200, pathUnitsOf(pid));
+        if (m[2] === "pathunits" && req.method === "POST") { const [c, b] = setPathUnits(pid, await readJson(req)); return send(res, c, b); }
         if (m[2] === "catalog" && req.method === "GET") { const c = snap(pid, "catalog"); return send(res, 200, c ? c.d : []); }
         if (m[2] === "invite" && req.method === "POST") return send(res, 200, newInvite(pid));
         if (m[2] === "rename" && req.method === "POST") {

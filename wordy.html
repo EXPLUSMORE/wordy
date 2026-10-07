@@ -521,7 +521,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.18.0";window.WORDY_BUILD="54e5492b34";</script>
+<script>window.WORDY_VERSION="2.19.0";window.WORDY_BUILD="9e7d429d4a";</script>
 </head>
 <body>
 <div id="app">
@@ -4733,11 +4733,22 @@ window.VERBS = [
     if (!Array.isArray(p.pending)) p.pending = [];
     return p;
   }
+  var BIZ_ORDER = ["Basis", "Aufbau", "Profi", "Smalltalk", "Redewendungen"];
+  /* Welche Einheiten stehen im Pfad? Die Eltern können das im Dashboard festlegen; sonst Schule = Headlight 2, Business = die gewählten Stufen */
+  function pathUnitList() {
+    var tr = state.settings.track === "business" ? "business" : "schule", r = global.WordySync && global.WordySync.remote ? (global.WordySync.remote() || {}).pathUnits : null;
+    var all = units.filter(function (u) { return u.track === tr; });
+    if (tr === "business") all = all.map(function (u, i) { return { u: u, i: i }; }).sort(function (a, b) { return (BIZ_ORDER.indexOf(a.u.k) - BIZ_ORDER.indexOf(b.u.k)) || (a.i - b.i); }).map(function (x) { return x.u; });
+    if (Array.isArray(r) && r.length) { var chosen = all.filter(function (u) { return r.indexOf(u.id) >= 0; }); if (chosen.length) return chosen; }
+    if (tr === "schule") return all.filter(function (u) { return u.k === "Headlight 2"; });
+    var g = state.settings.bizGroups || ["Basis"];
+    return all.filter(function (u) { return g.indexOf(u.k) >= 0; });
+  }
   function pathStations() {
-    var key = units.length + ":" + (units[0] && units[0].id);
+    var ul = pathUnitList(), key = state.settings.track + ":" + ul.map(function (u) { return u.id; }).join(",");
     if (pathCache && pathCacheKey === key) return pathCache;
     var out = [];
-    units.filter(function (u) { return u.track === "schule" && u.k === "Headlight 2"; }).forEach(function (u) {
+    ul.forEach(function (u) {
       var ids = u.words.map(function (w, i) { return u.id + "#" + i; }), n = ids.length;
       if (n < 4) return;
       var ns = Math.max(1, Math.round(n / STATION_WORDS)), parts = Math.ceil(ns / 5), per = Math.ceil(ns / parts), chunk = Math.ceil(n / ns), k = 0;
@@ -4759,26 +4770,29 @@ window.VERBS = [
     pathCache = out; pathCacheKey = key;
     return out;
   }
+  function pathProgress() { var p = pathState(), st = pathStations(), d = st.filter(function (s) { return p.stars[s.id]; }).length; return { done: d, total: st.length }; }
   /* Stationen, deren Wörter schon alle „sitzen“, werden übersprungen (Magnus hat Stoff ja schon gelernt) */
   function pathSync() {
-    var p = pathState(), st = pathStations(), moved = false;
-    while (p.pos < st.length) {
-      var s = st[p.pos], all = (s.last ? s.reviewWords : s.words).every(function (id) { return levelOf(id) >= 3; });
+    var p = pathState(), st = pathStations(), pos = 0, moved = false;
+    while (pos < st.length && p.stars[st[pos].id]) pos++;   // Reihenfolge streng: die erste Station ohne Sterne ist dran
+    while (pos < st.length) {
+      var s = st[pos], all = (s.last ? s.reviewWords : s.words).every(function (id) { return levelOf(id) >= 3; });
       if (!all) break;
       p.stars[s.id] = Math.max(p.stars[s.id] || 0, 3); p.auto = (p.auto || 0) + 1;
       if (s.last) p.chests[s.section] = 1;   // übersprungener Abschnitt: keine Truhe
-      p.pos++; moved = true;
+      pos++; moved = true;
     }
+    p.pos = pos;
     if (moved) save();
     return p;
   }
   function pathComplete(id, stars) {
     var p = pathState(), st = pathStations().filter(function (x) { return x.id === id; })[0];
     if (!st) return { error: true };
-    p.stars[id] = Math.max(p.stars[id] || 0, stars);
+    pathSync();
     var adv = st.index === p.pos, chest = null;
+    p.stars[id] = Math.max(p.stars[id] || 0, stars);
     if (adv) {
-      p.pos++;
       if (st.last && !p.chests[st.section]) {
         p.chests[st.section] = 1;
         chest = { section: st.section, title: st.sectionTitle, coins: 15 + Math.floor(Math.random() * 16), boost: Math.random() < 0.4 };
@@ -4853,7 +4867,7 @@ window.VERBS = [
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
-    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, minXp: minXp, defaultOf: defaultOf
+    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, pathProgress: pathProgress, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, minXp: minXp, defaultOf: defaultOf
   };
 })(window);
 </script>
@@ -5582,7 +5596,7 @@ window.VERBS = [
   var pathShown = null;   // zuletzt gezeigte Position, damit die Figur beim Weiterkommen zur nächsten Station läuft
   function pathPoint(i, n, H) { return { x: i === n ? 50 : (i % 2 ? 74 : 26), y: H - 54 - i * 84 }; }
   function pathCard() {
-    var st = S.state; if (st.settings.track !== "schule") return "";
+    var st = S.state; if (st.settings.pathOn === false) return "";
     var p = S.pathSync(), all = S.pathStations(); if (!all.length) return "";
     var boost = p.boost, secList = [];
     all.forEach(function (s) { if (secList.indexOf(s.section) < 0) secList.push(s.section); });
@@ -6299,6 +6313,8 @@ window.VERBS = [
       }).join("") + '</select></label>' +
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Pause nach der Antwort<br><span class="small muted">Die Lösung bleibt kurz stehen. Bei Fehlern wird sie vorgelesen und das Wort einmal abgeschrieben</span></span>' +
       '<input type="checkbox" id="setPause" ' + (st.settings.pause !== false ? "checked" : "") + ' style="width:auto"></label>' +
+      '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Lernpfad auf dem Start-Tab<br><span class="small muted">Stationen und Truhen. Aus = nur die Empfehlung</span></span>' +
+      '<input type="checkbox" id="setPathOn" ' + (st.settings.pathOn !== false ? "checked" : "") + ' style="width:auto"></label>' +
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Arena als Tagesmission<br><span class="small muted">Ab und zu ist eine Arena-Runde eine der drei Tagesmissionen</span></span>' +
       '<input type="checkbox" id="setArenaM" ' + (st.settings.arenaMissions !== false ? "checked" : "") + ' style="width:auto"></label>' +
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Herzen benutzen<br><span class="small muted">Aus = Üben ohne Abbruch</span></span>' +
@@ -6345,6 +6361,7 @@ window.VERBS = [
     $("#setGoal").onchange = function () { st.settings.goalMin = +this.value; S.save(true); renderHeader(); };
     $("#setNew").onchange = function () { st.settings.newPerDay = +this.value; S.save(true); };
     $("#setAudio").onchange = function () { st.settings.audio = this.checked; S.save(true); };
+    if ($("#setPathOn")) $("#setPathOn").onchange = function () { st.settings.pathOn = this.checked; S.save(true); };
     if ($("#setArenaM")) $("#setArenaM").onchange = function () { st.settings.arenaMissions = this.checked; S.save(true); };
     if ($("#setPause")) $("#setPause").onchange = function () { st.settings.pause = this.checked; S.save(true); };
     $("#setMode").onchange = function () { st.settings.themeMode = this.value; S.save(true); renderHeader(); };
@@ -7873,7 +7890,7 @@ window.VERBS = [
     var meta = {
       name: st.profile.name || "", coins: st.coins, xp: st.xp, rank: rk.rank ? rk.rank.n : "", streak: st.streak.count, best: st.streak.best,
       goalMin: st.settings.goalMin, todaySec: d.sec || 0, todayItems: d.items || 0, owned: (st.profile.owned || []).length,
-      wish: (VT.wish && VT.wish()) ? VT.wish().label || VT.wish().id : "", klassen: st.settings.klassen, version: g.WORDY_VERSION || "", totals: st.totals
+      wish: (VT.wish && VT.wish()) ? VT.wish().label || VT.wish().id : "", klassen: st.settings.klassen, version: g.WORDY_VERSION || "", totals: st.totals, path: VT.pathProgress ? VT.pathProgress() : null
     };
     lastSnap = Date.now();
     var cat = Object.keys(units).map(function (k) { return units[k]; });
@@ -7961,7 +7978,7 @@ window.VERBS = [
     lastPull = Date.now();
     return g.fetch(c.url + "/api/sync", { headers: { Authorization: "Bearer " + c.token } })
       .then(function (r) { if (!r.ok) throw new Error(String(r.status)); return r.json(); })
-      .then(function (j) { lsSet("wordy.cfg." + pid(), { goals: j.goals || [], plans: j.plans || [], t: Date.now() }); W.check(); if (g.WordyHooks && g.WordyHooks.onChange) g.WordyHooks.onChange(); return true; })
+      .then(function (j) { lsSet("wordy.cfg." + pid(), { goals: j.goals || [], plans: j.plans || [], pathUnits: j.pathUnits || [], t: Date.now() }); W.check(); if (g.WordyHooks && g.WordyHooks.onChange) g.WordyHooks.onChange(); return true; })
       .catch(function () { return false; });
   };
 
