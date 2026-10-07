@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.15.1 – 2026-10-07
+
+- Satzbau: Das gezogene Wort ist beim Schieben klein (eigenes kleines Element statt einer Kopie der großen Kachel) und schwebt über dem Finger, damit man die rosa Einfügemarke sieht und das Wort genau platzieren kann.
+
 ## 2.15.0 – 2026-10-07
 
 - Satzbau: Wörter lassen sich per Drag and Drop (Finger oder Maus) schieben. Aus der Auswahl in den Satz ziehen fügt das Wort an der Einfügemarke ein, gelegte Wörter lassen sich innerhalb des Satzes verschieben und aus dem Satz heraus zurück in die Auswahl ziehen. Ein einfaches Antippen funktioniert weiter: Wort in der Auswahl = anhängen, gelegtes Wort = zurücklegen.

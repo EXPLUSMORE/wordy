@@ -1713,7 +1713,7 @@
     if (!d.moved) {
       if (Math.abs(e.clientX - d.x0) + Math.abs(e.clientY - d.y0) < 9) return;
       d.moved = true;
-      d.ghost = d.el.cloneNode(true); d.ghost.classList.add("dragghost"); d.ghost.classList.remove("used", "dragging");
+      d.ghost = document.createElement("div"); d.ghost.className = "dragghost"; d.ghost.textContent = d.el.getAttribute("data-ch") || d.el.textContent;   // eigenes kleines Element, nicht die Kachel kopieren
       document.body.appendChild(d.ghost);
     }
     d.ghost.style.left = e.clientX + "px"; d.ghost.style.top = e.clientY + "px";
