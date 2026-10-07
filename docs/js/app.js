@@ -1389,10 +1389,12 @@
       body.innerHTML = '<div class="stack" style="padding-top:8px"><div class="eyebrow">Rechtschreibung</div>' +
         '<div class="row" style="gap:12px">' + (audioAvailable() ? speakBtn(w.en) : "") + '<div class="prompt de">' + esc(w.de) + '</div></div>' +
         '<div class="slot" id="slot" data-len="' + target.length + '"></div>' +
+        '<p class="small muted" style="margin:0">Tipp auf einen Buchstaben, um davor oder danach etwas einzufügen.</p>' +
         '<div class="tiles" id="tiles">' + letters.map(function (l, i) {
           return '<button class="tile" data-tile="' + i + '" data-ch="' + esc(l.ch) + '">' + (l.ch === " " ? "␣" : esc(l.ch)) + '</button>';
         }).join("") + '</div>' +
-        '<button class="chip" data-act="undo" style="align-self:flex-start">← Buchstabe zurück</button></div>';
+        '<button class="chip" data-act="undo" style="align-self:flex-start">⌫ Buchstabe löschen</button></div>';
+      t.cursor = 0;
       foot.innerHTML = footCheck();
       paintSlot(t);
       if (audioAvailable()) setTimeout(function () { speak(w.en); }, 250);
@@ -1440,8 +1442,14 @@
         (rest ? '<span style="color:var(--ink-3);font-size:19px;letter-spacing:.1em"> ' + Array(rest + 1).join("··· ") + '</span>' : "") +
         (t.punct ? '<span style="font-size:19px;color:var(--ink-3)">' + esc(t.punct) + '</span>' : "");
     } else {
-      el.innerHTML = '<span>' + esc(t.built.join("")) + '</span>' +
-        '<span style="color:var(--ink-3);letter-spacing:.18em">' + "·".repeat(rest) + '</span>';
+      /* Buchstaben einzeln antippbar: Tipp auf einen Buchstaben setzt den Cursor davor (linke Hälfte) oder dahinter (rechte Hälfte) */
+      var cur = t.cursor == null ? t.built.length : Math.min(t.cursor, t.built.length), h = "", k;
+      for (k = 0; k < t.built.length; k++) {
+        if (k === cur) h += '<i class="caret"></i>';
+        h += '<span class="sl" data-i="' + k + '">' + (t.built[k] === " " ? "&nbsp;" : esc(t.built[k])) + '</span>';
+      }
+      if (cur >= t.built.length) h += '<i class="caret"></i>';
+      el.innerHTML = h + '<span style="color:var(--ink-3);letter-spacing:.18em">' + "·".repeat(rest) + '</span>';
     }
   }
 
@@ -1615,10 +1623,19 @@
       var mb = $("#mainBtn"); if (mb) mb.disabled = false;
       return;
     }
+    if (t && t.type === "spell" && !SS.answered && e.target.closest("#slot")) {   // Cursor in der Buchstabenreihe setzen
+      var sl = e.target.closest(".sl");
+      if (sl) { var rc = sl.getBoundingClientRect(); t.cursor = +sl.getAttribute("data-i") + (e.clientX - rc.left > rc.width / 2 ? 1 : 0); }
+      else t.cursor = t.built.length;
+      paintSlot(t);
+      return;
+    }
     var tile = e.target.closest(".tile");
     if (tile && t && (t.type === "spell" || t.type === "build") && !SS.answered) {
-      tile.classList.add("used"); t.built.push(tile.getAttribute("data-ch"));
-      t.usedTiles = (t.usedTiles || []); t.usedTiles.push(tile);
+      t.usedTiles = (t.usedTiles || []);
+      var at = t.type === "spell" && t.cursor != null ? Math.min(t.cursor, t.built.length) : t.built.length;
+      tile.classList.add("used"); t.built.splice(at, 0, tile.getAttribute("data-ch")); t.usedTiles.splice(at, 0, tile);
+      if (t.type === "spell") t.cursor = at + 1;
       paintSlot(t);
       $("#mainBtn").disabled = t.built.length !== t.target.length;
       return;
@@ -1634,7 +1651,10 @@
     else if (a === "again") { closeSession(); startSession({ minutes: S.state.settings.goalMin }); }
     else if (a === "undo" && t && (t.type === "spell" || t.type === "build") && !SS.answered) {
       if (!t.built.length) return;
-      t.built.pop(); var el = t.usedTiles.pop(); if (el) el.classList.remove("used");
+      var del = t.type === "spell" && t.cursor != null ? Math.min(t.cursor, t.built.length) - 1 : t.built.length - 1;   // wie die Löschtaste: der Buchstabe vor dem Cursor
+      if (del < 0) return;
+      t.built.splice(del, 1); var el = t.usedTiles.splice(del, 1)[0]; if (el) el.classList.remove("used");
+      if (t.type === "spell") t.cursor = del;
       paintSlot(t); $("#mainBtn").disabled = true;
     }
   });

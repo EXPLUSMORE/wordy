@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.14.0 – 2026-10-07
+
+- Rechtschreibung: Die Buchstaben in der Antwortreihe sind antippbar. Ein Tipp auf einen Buchstaben setzt den Cursor davor (linke Hälfte) oder danach (rechte Hälfte), der nächste Buchstabe wird dort eingefügt. „⌫ Buchstabe löschen“ entfernt den Buchstaben vor dem Cursor (am Ende wie bisher den letzten). Ein Tipp auf die freie Fläche setzt den Cursor ans Ende.
+
 ## 2.13.0 – 2026-10-07
 
 - Tagesmissionen mit Link: Jede offene Mission auf dem Start-Tab hat einen Knopf „Los →“, der direkt den passenden Modus startet (mit kurzer Anleitung darunter): Wörter üben = gemischte Runde, Tagesziel = gemischte Runde bis zum Ziel, Fehlerkartei, Neue Wörter, Sätze, 10 in Folge = gemischte Runde.
