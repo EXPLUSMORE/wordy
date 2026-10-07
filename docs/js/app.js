@@ -342,7 +342,7 @@
     }
     var done = sec.filter(function (s) { return p.stars[s.id]; }).length, pend = p.pending.some(function (c) { return c.section === first.section; });
     var boss = sec[n - 1], h = '<div class="psec' + (isCur ? " cur" : "") + '" data-sec="' + esc(first.section) + '"><div class="psechead"><div><div class="eyebrow">Abschnitt ' + secNo + ' von ' + secCount + '</div><b>' + esc(first.sectionTitle) + '</b></div>' +
-      '<span class="pill tnum">' + done + ' / ' + n + (p.chests[first.section] ? " · 🎁" : "") + '</span></div>' +
+      '<span class="pill tnum">' + done + ' / ' + n + (p.chests[first.section] ? " · 💰" : "") + '</span></div>' +
       '<div class="pmap" style="height:' + H + 'px"><svg viewBox="0 0 100 ' + H + '" preserveAspectRatio="none" aria-hidden="true">' +
       '<path d="' + d + '" fill="none" stroke="#fff" stroke-opacity=".85" stroke-width="16" stroke-linecap="round" vector-effect="non-scaling-stroke"/>' +
       '<path d="' + dDone + '" fill="none" stroke="#2e7d4f" stroke-width="6" stroke-linecap="round" stroke-dasharray="1 12" vector-effect="non-scaling-stroke"/></svg>';
@@ -354,8 +354,8 @@
         (state === "done" ? "✓" : state === "cur" ? (s.last ? "⚔️" : "▶") : s.last ? "⚔️" : "🔒") + '</button>';
       if (state === "done") h += '<span class="pstars" style="left:' + pt.x + '%;top:' + pt.y + 'px">' + "★".repeat(stars) + "☆".repeat(3 - stars) + '</span>';
     });
-    var cp = pts[n], ctip = pend ? "Truhe wartet: antippen zum Öffnen" : p.chests[first.section] ? "Truhe schon geholt" : "Truhe nach der Boss-Runde";
-    h += '<button class="pchest' + (pend ? " ready" : p.chests[first.section] ? " got" : "") + '" style="left:' + cp.x + '%;top:' + cp.y + 'px" data-tip="' + esc(ctip) + '" title="' + esc(ctip) + '" data-act="' + (pend ? "openchest" : "pathlocked") + '" aria-label="' + esc(ctip) + '">' + (p.chests[first.section] && !pend ? "📦" : "🎁") + '</button>';
+    var cp = pts[n], ctip = pend ? "Truhe wartet: antippen zum Öffnen" : p.chests[first.section] ? "Schon geplündert – die nächste Truhe wartet nach dem nächsten Boss" : "Truhe nach der Boss-Runde";
+    h += '<button class="pchest' + (pend ? " ready" : p.chests[first.section] ? " got" : "") + '" style="left:' + cp.x + '%;top:' + cp.y + 'px" data-tip="' + esc(ctip) + '" title="' + esc(ctip) + '" data-act="' + (pend ? "openchest" : "pathlocked") + '" aria-label="' + esc(ctip) + '">' + (p.chests[first.section] && !pend ? PCHEST.looted : PCHEST.closed) + '</button>';
     if (isCur && p.pos < S.pathStations().length) {
       var cpt = pts[curIdx], side = cpt.x < 50 ? 1 : -1;
       h += '<div class="pme" id="pme" style="left:calc(' + cpt.x + '% + ' + (side * 62) + 'px);top:' + (cpt.y - 4) + 'px">' + avatarHtml(S.state.profile.avatar) + '</div>' +
@@ -383,7 +383,7 @@
       blocks += r.html;
     }
     h += '<div class="pscroll" id="pscroll" tabindex="0" aria-label="Lernpfad, scrollbar">' + blocks + '</div>';
-    if (p.pending.length) h += '<button class="btn wide lg" data-act="openchest" style="background:var(--gold,#f2b33d);color:#2b1d00;margin-bottom:8px">🎁 Truhe öffnen' + (p.pending.length > 1 ? ' (' + p.pending.length + ')' : '') + '</button>';
+    if (p.pending.length) h += '<button class="btn wide lg" data-act="openchest" style="background:var(--gold,#f2b33d);color:#2b1d00;margin-bottom:8px">💰 Truhe öffnen' + (p.pending.length > 1 ? ' (' + p.pending.length + ')' : '') + '</button>';
     if (!finished) h += '<button class="btn wide lg" data-act="pathgo" data-id="' + esc(cur.id) + '">' + (cur.last ? "Boss-Runde starten ⚔️" : "Los geht’s – Station " + cur.n + " ▶") + '</button>' +
       '<div class="row" style="justify-content:center;margin-top:8px"><button class="chip" data-act="pathfocus">↧ zur aktuellen Station</button></div>';
     h += bar + '</section>';
@@ -409,6 +409,15 @@
   function danceWin(big, title) {
     var p = S.state.profile, sieg = S.SHOP.filter(function (x) { return x.id === "dn:sieg"; })[0];
     global.VTC.dance({ av: p.avatar, avatar: avatarHtml(p.avatar), outfit: p.outfit, dance: big && sieg && S.owns(sieg) ? "sieg" : (p.dance || "wackler"), title: title, big: big });
+  }
+  /* Truhen im Lernpfad: zu (wartet oder noch gesperrt) und geplündert (aufgebrochen) */
+  var PCHEST = { closed: '<svg viewBox="0 0 120 104" aria-hidden="true"><rect x="14" y="52" width="92" height="46" rx="6" fill="#8a5a2b"/><rect x="14" y="64" width="92" height="8" fill="#f2b33d"/><path d="M14 52 V38 a46 30 0 0 1 92 0 V52 Z" fill="#a66d33"/><rect x="14" y="44" width="92" height="8" fill="#f2b33d"/><rect x="52" y="54" width="16" height="18" rx="3" fill="#f2b33d" stroke="#8a5a2b" stroke-width="2"/><circle cx="60" cy="63" r="3" fill="#5a3a12"/></svg>', looted: '<svg viewBox="0 0 120 104" aria-hidden="true"><rect x="14" y="52" width="92" height="46" rx="6" fill="#8a5a2b"/><rect x="14" y="64" width="92" height="8" fill="#f2b33d"/><rect x="20" y="52" width="80" height="14" rx="3" fill="#2a1a0a"/><ellipse cx="60" cy="56" rx="34" ry="5" fill="#120a03"/><g style="transform-box:view-box;transform-origin:14px 52px;transform:rotate(-38deg)"><path d="M14 52 V38 a46 30 0 0 1 92 0 V52 Z" fill="#a66d33"/><rect x="14" y="44" width="92" height="8" fill="#f2b33d"/><path d="M40 40l6 8-4 4M78 36l-4 9 5 3" stroke="#5a3a12" stroke-width="1.6" fill="none"/></g><path d="M52 56l-6 12 8 2z" fill="#f2b33d" stroke="#8a5a2b" stroke-width="1.4" transform="rotate(14 52 62)"/><path d="M30 76l8 3M80 80l7-2M44 90l5-3" stroke="#5a3a12" stroke-width="1.3"/><circle cx="104" cy="94" r="5" fill="#e8b830" stroke="#a97f12" stroke-width="1.2"/><path d="M8 88l6-4M10 96l7-1M112 78l5-3" stroke="#a66d33" stroke-width="2" stroke-linecap="round"/></svg>' };
+  function dustPuff(el) {
+    for (var k = 0; k < 6; k++) {
+      var i = document.createElement("i"); i.style.cssText = "position:absolute;width:10px;height:10px;border-radius:50%;background:#cbbd9c;pointer-events:none;left:" + (28 + Math.random() * 40) + "%;top:36%";
+      el.appendChild(i);
+      i.animate([{ opacity: .8, transform: "translate(0,0) scale(.6)" }, { opacity: 0, transform: "translate(" + ((Math.random() - .5) * 46) + "px,-34px) scale(1.8)" }], { duration: 800, easing: "ease-out" }).onfinish = (function (n) { return function () { n.remove(); }; })(i);
+    }
   }
   var BOSS_NAMES = { match: "Match-Rausch", blitz: "Blitzrunde", survival: "Letztes Herz" };
   /* Boss-Runde: ein Arena-Modus mit den Wörtern des ganzen Abschnitts; geschafft ab einer Mindestzahl richtiger Antworten */
@@ -1433,8 +1442,8 @@
     if (rw.missions.length) html += '<section class="card"><div class="eyebrow">Missionen erfüllt</div>' + rw.missions.map(function (m) { return '<div class="mission done"><div class="tick">✓</div><div class="txt small">' + esc(m.n) + '</div><span class="pill">🪙 ' + m.coins + '</span></div>'; }).join("") + '</section>';
     if (rw.badges.length) html += '<section class="card"><div class="eyebrow">Neue Abzeichen</div><div class="badges" style="margin-top:8px">' + rw.badges.map(function (b) { return '<div class="badge"><div class="g">🏅</div><b>' + esc(b.n) + '</b></div>'; }).join("") + '</div></section>';
     if (pr) html += '<section class="card"><div class="eyebrow">Lernpfad</div><p style="margin:6px 0 0"><b>Station geschafft</b> · ' + "★".repeat(stars) + "☆".repeat(3 - stars) + (pr.advanced ? "" : " (Wiederholung)") + '</p>' +
-      (pr.chest ? '<p class="small" style="margin:6px 0 0">🎁 Abschnitt geschafft – eine Truhe wartet auf dich!</p>' : pr.finished ? '<p class="small" style="margin:6px 0 0">🏆 Du hast den ganzen Pfad geschafft!</p>' : "") + '</section>';
-    if (SS.station) html += '<div class="row" style="gap:8px">' + (pr && pr.chest ? '<button class="btn wide lg" data-act="openchest">🎁 Truhe öffnen</button>' : '<button class="btn wide lg" data-act="close">' + (pr ? "Weiter auf dem Pfad" : "Zurück zum Pfad") + '</button>') + '</div></div></div>';
+      (pr.chest ? '<p class="small" style="margin:6px 0 0">💰 Abschnitt geschafft – eine Truhe wartet auf dich!</p>' : pr.finished ? '<p class="small" style="margin:6px 0 0">🏆 Du hast den ganzen Pfad geschafft!</p>' : "") + '</section>';
+    if (SS.station) html += '<div class="row" style="gap:8px">' + (pr && pr.chest ? '<button class="btn wide lg" data-act="openchest">💰 Truhe öffnen</button>' : '<button class="btn wide lg" data-act="close">' + (pr ? "Weiter auf dem Pfad" : "Zurück zum Pfad") + '</button>') + '</div></div></div>';
     else html += '<div class="row" style="gap:8px"><button class="btn wide" data-act="again">Noch eine Runde</button>' +
       '<button class="btn ghost" data-act="close">Fertig</button></div></div></div>';
     sessionEl.innerHTML = html;
@@ -2088,7 +2097,7 @@
     else if (a === "startrec") { if (lastRec) startSession(lastRec.opts); }
     else if (a === "pathgo" || a === "pathreplay") startPathStation(act.getAttribute("data-id"));
     else if (a === "pathfocus") { pathScroll = null; render(); }
-    else if (a === "pathlocked") { act.classList.remove("shake"); void act.offsetWidth; act.classList.add("shake"); toast(act.classList.contains("pchest") ? "Erst alle Stationen dieses Abschnitts schaffen, dann geht die Truhe auf." : "Erst die Station davor schaffen."); }
+    else if (a === "pathlocked") { act.classList.remove("shake"); void act.offsetWidth; act.classList.add("shake"); toast(act.classList.contains("pchest") ? (act.classList.contains("got") ? "Schon geplündert! Die nächste Truhe wartet nach dem nächsten Boss." : "Erst alle Stationen dieses Abschnitts schaffen, dann geht die Truhe auf.") : "Erst die Station davor schaffen."); if (act.classList.contains("got") && !global.matchMedia("(prefers-reduced-motion: reduce)").matches) dustPuff(act); }
     else if (a === "openchest") openChest();
     else if (a === "boostgo") { var bg = S.boostStart(); toast(bg.error || "Booster läuft: 15 Minuten doppelte XP beim Üben."); renderHeader(); render(); }
     else if (a === "wfilter") { wFilter = act.getAttribute("data-f"); wMax = 40; render(); }

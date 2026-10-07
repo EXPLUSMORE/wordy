@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.31.1 – 2026-10-07
+
+- Lernpfad: Die Truhen sind jetzt gezeichnete Schatztruhen statt Geschenkbox und Pappkarton (grau = noch gesperrt, wackelnd = wartet). Eine schon geholte Truhe sieht geplündert aus: Deckel schief, Schloss abgesprungen, Splitter, eine Münze herausgerollt. Antippen zeigt Staubwölkchen und „Schon geplündert! Die nächste Truhe wartet nach dem nächsten Boss.“
+
 ## 2.31.0 – 2026-10-07
 
 - Neue Shop-Rubrik „Trikots ⚽“: sechs Fußballtrikots mit den Farben und Streifen von München, Barcelona, Turin, Deutschland, Argentinien und Portugal, je 50 Münzen, Rückennummer immer 7. Ohne Wappen, Sponsoren und Logos. Die Figur trägt das Trikot beim Siegertanz, Vorschau mit ▶︎. Trikot und Outfit schließen sich aus (eins von beiden).
