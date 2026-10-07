@@ -35,3 +35,12 @@ Lernfortschritts-Server: https://track.wordy.explusmore.com (eigenständig, Node
 - Figuren: `js/stila.js` (Eisbär, Pinguin, Robbe, König) und `js/stilb.js` (alle übrigen, Katalog `D` mit Farben/Ohren/Gesicht/Zusätzen). Neue Figur = Eintrag in `D` bzw. `VTA.register`; `avatarHtml` nimmt gezeichnete Köpfe auch für Emoji-Werte.
 - Neues Set: Eintrag in `SETS` (engine.js) mit `fig` (Figur im Eisblock der Abschluss-Szene `openSetReveal`), `items`, `reward`.
 - Film-Stimme: `tools/film-voice.js` erzeugt `audio/film/*.mp3` + `index.json` (Anleitung `tools/README-film-voice.md`); `film.js` spielt sie (Blob, wegen iOS-Range), sonst Gerätestimme. Nie echte Schlüssel einchecken.
+
+## Erzählerstimme der Erklärfilme (Stand: bewusst bei der Gerätestimme geblieben)
+- Aktuell spricht die **Gerätestimme** (`speak(..., "de")`): `narratorVoice()` in app.js bewertet die deutschen Stimmen (natürliche wie Siri/Enhanced/Premium/Neural/Google vorn, Computerstimmen hinten), Setup › Töne: Erzählerstimme Automatisch / Frau / Mann / Nur Gerätestimme, dazu freie Stimmenwahl und „Erzähler testen“. Frau = höher/langsamer, Mann = tiefer/ruhig (`narratorTune()`).
+- **Aufgenommene Stimme (fertig gebaut, aber noch nicht erzeugt):** `film.js` spielt `audio/film/<f|m>-<Prüfsumme>.mp3` (Liste in `audio/film/index.json`, Wiedergabe als Blob wegen iOS), sonst Gerätestimme. Der Ordner `audio/` existiert noch nicht im Repository.
+- Erzeugen: `tools/film-voice.js` (OpenAI `gpt-4o-mini-tts`, Frau = `coral`, Mann = `onyx`; alternativ `PROVIDER=eleven`), Anleitung `tools/README-film-voice.md`, `--dry` zeigt Texte ohne Schlüssel (52 Texte, ca. 5.600 Zeichen je Stimme). Veraltete Dateien werden gelöscht, geänderte Texte neu vertont.
+- GitHub-Workflow `.github/workflows/film-voice.yml` („Film-Stimme erzeugen“, manuell, Eingaben `voice` f/m/both und `voice_name`): braucht das Repository-Secret **`OPENAI_API_KEY`**. Der erste Lauf (Run 37640335127) brach deshalb planmäßig ab. Zum Aktivieren: Secret anlegen, Workflow starten (oder `OPENAI_API_KEY=… node tools/film-voice.js --voice f`, `node build.js`, pushen). Schlüssel nie einchecken und nie im Chat nennen lassen.
+- Ton der Stimme: warm, lässig, selbstbewusst, humorvoll (Magnus ist ein Kind), nicht anzüglich.
+- Neue Filmtexte in `FILMS` (js/film.js) brauchen nach dem Ändern einen neuen Vertonungslauf, sonst fällt die App für diese Szene auf die Gerätestimme zurück.
+
