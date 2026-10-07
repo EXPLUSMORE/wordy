@@ -47,89 +47,100 @@
      rank = Mindestrang (Name aus RANKS), davor ist der Eintrag gesperrt. Gezeichnet wird in cosmetics.js. */
   var SHOP = [
     { id: "av:🦊", kind: "avatar", label: "Fuchs",    cost: 0,   val: "🦊" },
-    { id: "av:🐼", kind: "avatar", label: "Panda",    cost: 40,  val: "🐼" },
-    { id: "av:🐢", kind: "avatar", label: "Schildkröte", cost: 50, val: "🐢" },
+    { id: "av:🐼", kind: "avatar", label: "Panda",    cost: 60,  val: "🐼" },
+    { id: "av:🐢", kind: "avatar", label: "Schildkröte", cost: 60, val: "🐢" },
     { id: "av:🦉", kind: "avatar", label: "Eule",     cost: 60,  val: "🦉" },
-    { id: "av:🐙", kind: "avatar", label: "Krake",    cost: 80,  val: "🐙" },
+    { id: "av:🐙", kind: "avatar", label: "Krake",    cost: 90,  val: "🐙" },
     { id: "av:🦕", kind: "avatar", label: "Dino",     cost: 120, val: "🦕" },
-    { id: "av:🦈", kind: "avatar", label: "Hai",      cost: 160, val: "🦈" },
-    { id: "av:🦄", kind: "avatar", label: "Einhorn",  cost: 220, val: "🦄" },
-    { id: "av:pbaer",    kind: "avatar", label: "Pummelbär",     cost: 150, val: "svg:pbaer" },
-    { id: "av:phase",    kind: "avatar", label: "Pummelhase",    cost: 180, val: "svg:phase" },
+    { id: "av:🦈", kind: "avatar", label: "Hai",      cost: 200, val: "🦈" },
+    { id: "av:🦄", kind: "avatar", label: "Einhorn",  cost: 200, val: "🦄" },
+    { id: "av:eisbaer",   kind: "avatar", label: "Eisbär",        cost: 650, val: "svg:eisbaer", rank: "Silber II", bundle: "eis" },
+    { id: "av:pbaer",    kind: "avatar", label: "Pummelbär",     cost: 120, val: "svg:pbaer" },
+    { id: "av:phase",    kind: "avatar", label: "Pummelhase",    cost: 200, val: "svg:phase" },
     { id: "av:pkatze",   kind: "avatar", label: "Pummelkatze",   cost: 200, val: "svg:pkatze" },
     { id: "av:pummel",   kind: "avatar", label: "Pummeleinhorn", cost: 250, val: "svg:pummel" },
-    { id: "av:pdrache",  kind: "avatar", label: "Pummeldrache",  cost: 300, val: "svg:pdrache" },
-    { id: "av:clombo",    kind: "avatar", label: "Clombo",        cost: 300, val: "svg:clombo", rank: "Gold I" },
-    { id: "av:pphoenix", kind: "avatar", label: "Pummelphönix",  cost: 600,  val: "svg:pphoenix", rank: "Gold I" },
+    { id: "av:pdrache",  kind: "avatar", label: "Pummeldrache",  cost: 350, val: "svg:pdrache" },
+    { id: "av:clombo",    kind: "avatar", label: "Clombo",        cost: 350, val: "svg:clombo", rank: "Gold I" },
+    { id: "av:pphoenix", kind: "avatar", label: "Pummelphönix",  cost: 650,  val: "svg:pphoenix", rank: "Gold I" },
     { id: "av:pgold",    kind: "avatar", label: "Goldpummel",    cost: 800,  val: "svg:pgold", rank: "Platin I" },
-    { id: "av:pregen",   kind: "avatar", label: "Regenbogenpummel", cost: 1200, val: "svg:pregen", rank: "Diamant I" },
+    { id: "av:pregen",   kind: "avatar", label: "Regenbogenpummel", cost: 1500, val: "svg:pregen", rank: "Diamant I" },
     { id: "av:pgalaxie", kind: "avatar", label: "Galaxiepummel", cost: 2000, val: "svg:pgalaxie", rank: "Elite" },
 
     /* Fortnite-Sammlung (eigene Zeichnungen): Tiere ab Gold II, Rang-Kristalle ab ihrem Rang, Unreal-Stücke erst ab Unreal */
-    { id: "av:fnhuhn",     kind: "avatar", set: "fn", label: "Huhn",           cost: 150,  val: "svg:fnhuhn",     rank: "Gold II" },
+    { id: "av:fnhuhn",     kind: "avatar", set: "fn", label: "Huhn",           cost: 120,  val: "svg:fnhuhn",     rank: "Gold II" },
     { id: "av:fnschwein",  kind: "avatar", set: "fn", label: "Wildschwein",    cost: 200,  val: "svg:fnschwein",  rank: "Gold II" },
     { id: "av:fnfrosch",   kind: "avatar", set: "fn", label: "Frosch",         cost: 200,  val: "svg:fnfrosch",   rank: "Gold II" },
     { id: "av:fnwolf",     kind: "avatar", set: "fn", label: "Wolf",           cost: 250,  val: "svg:fnwolf",     rank: "Gold II" },
-    { id: "av:fnraptor",   kind: "avatar", set: "fn", label: "Raptor",         cost: 300,  val: "svg:fnraptor",   rank: "Gold II" },
+    { id: "av:fnraptor",   kind: "avatar", set: "fn", label: "Raptor",         cost: 350,  val: "svg:fnraptor",   rank: "Gold II" },
     { id: "av:fnllama",    kind: "avatar", set: "fn", label: "Beute-Lama",     cost: 350,  val: "svg:fnllama",    rank: "Gold II" },
     { id: "av:fnelite",    kind: "avatar", set: "fn", label: "Elite-Kristall", cost: 800,  val: "svg:fnelite",    rank: "Elite" },
-    { id: "av:fnchamp",    kind: "avatar", set: "fn", label: "Champion-Kristall", cost: 1200, val: "svg:fnchamp", rank: "Champion" },
+    { id: "av:fnchamp",    kind: "avatar", set: "fn", label: "Champion-Kristall", cost: 1500, val: "svg:fnchamp", rank: "Champion" },
     { id: "av:fnkristall", kind: "avatar", set: "fn", label: "Kristall-Lama",  cost: 1500, val: "svg:fnkristall", rank: "Unreal" },
     { id: "av:fnunreal",   kind: "avatar", set: "fn", label: "Unreal-Kristall", cost: 2500, val: "svg:fnunreal",  rank: "Unreal" },
 
+    { id: "fr:eis",     kind: "frame", label: "Eiskristall-Rahmen", cost: 1500, val: "eis", reward: "eis" },
     { id: "fr:none",    kind: "frame", label: "Kein Rahmen", cost: 0,   val: "none" },
     { id: "fr:gold",    kind: "frame", label: "Goldrahmen",  cost: 120, val: "gold" },
-    { id: "fr:rainbow", kind: "frame", label: "Regenbogenrahmen", cost: 220, val: "rainbow" },
-    { id: "fr:fire",    kind: "frame", label: "Flammenrahmen", cost: 300, val: "fire" },
+    { id: "fr:rainbow", kind: "frame", label: "Regenbogenrahmen", cost: 200, val: "rainbow" },
+    { id: "fr:fire",    kind: "frame", label: "Flammenrahmen", cost: 350, val: "fire" },
 
     { id: "ti:none",    kind: "title", label: "Kein Titel",   cost: 0,   val: "" },
-    { id: "ti:wort",    kind: "title", label: "Wortjäger",    cost: 80,  val: "Wortjäger" },
-    { id: "ti:streber", kind: "title", label: "Streber",      cost: 100, val: "Streber" },
+    { id: "ti:wort",    kind: "title", label: "Wortjäger",    cost: 90,  val: "Wortjäger" },
+    { id: "ti:streber", kind: "title", label: "Streber",      cost: 90, val: "Streber" },
     { id: "ti:freund",  kind: "title", label: "Pummelfreund", cost: 120, val: "Pummelfreund" },
-    { id: "ti:profi",   kind: "title", label: "Vokabelprofi", cost: 150, val: "Vokabelprofi" },
-    { id: "ti:genie",   kind: "title", label: "Sprachgenie",  cost: 300, val: "Sprachgenie" },
+    { id: "ti:profi",   kind: "title", label: "Vokabelprofi", cost: 120, val: "Vokabelprofi" },
+    { id: "ti:genie",   kind: "title", label: "Sprachgenie",  cost: 350, val: "Sprachgenie" },
     { id: "ti:champ",   kind: "title", label: "Champion der Wörter", cost: 500, val: "Champion der Wörter", rank: "Champion" },
 
     { id: "bg:none",   kind: "bg", label: "Schlicht", cost: 0,   val: "none" },
-    { id: "bg:stars",  kind: "bg", label: "Sterne",   cost: 150, val: "stars" },
-    { id: "bg:clouds", kind: "bg", label: "Wolken",   cost: 150, val: "clouds" },
+    { id: "bg:stars",  kind: "bg", label: "Sterne",   cost: 120, val: "stars" },
+    { id: "bg:clouds", kind: "bg", label: "Wolken",   cost: 120, val: "clouds" },
     { id: "bg:space",  kind: "bg", label: "Weltall",  cost: 250, val: "space" },
 
     { id: "fx:none",     kind: "fx", label: "Keine Effekte", cost: 0,   val: "none" },
-    { id: "fx:confetti", kind: "fx", label: "Konfetti",      cost: 100, val: "confetti" },
-    { id: "fx:stars",    kind: "fx", label: "Sternenregen",  cost: 150, val: "stars" },
+    { id: "fx:confetti", kind: "fx", label: "Konfetti",      cost: 90, val: "confetti" },
+    { id: "fx:stars",    kind: "fx", label: "Sternenregen",  cost: 120, val: "stars" },
     { id: "fx:sparks",   kind: "fx", label: "Funken",        cost: 200, val: "sparks" },
-    { id: "fx:firework", kind: "fx", label: "Feuerwerk",     cost: 300, val: "firework" },
+    { id: "fx:schnee",  kind: "fx", label: "Schneefall",    cost: 200, val: "snow", bundle: "eis" },
+    { id: "fx:firework", kind: "fx", label: "Feuerwerk",     cost: 350, val: "firework" },
 
     { id: "dn:wackler", kind: "dance", label: "Wackler",       cost: 0,   val: "wackler" },
     { id: "dn:huepfer", kind: "dance", label: "Hüpfer",        cost: 120, val: "huepfer" },
-    { id: "dn:drehung", kind: "dance", label: "Drehung",       cost: 150, val: "drehung" },
+    { id: "dn:drehung", kind: "dance", label: "Drehung",       cost: 120, val: "drehung" },
     { id: "dn:roboter", kind: "dance", label: "Roboter",       cost: 200, val: "roboter" },
     { id: "dn:moonwalk", kind: "dance", label: "Moonwalk",     cost: 250, val: "moonwalk" },
-    { id: "dn:sieg",    kind: "dance", label: "Epischer Sieg", cost: 400, val: "sieg", rank: "Silber I" },
+    { id: "dn:eislauf", kind: "dance", label: "Eislauf",       cost: 350, val: "eislauf", bundle: "eis" },
+    { id: "dn:sieg",    kind: "dance", label: "Epischer Sieg", cost: 500, val: "sieg", rank: "Silber I" },
 
     { id: "of:natur",  kind: "outfit", label: "Natur pur",       cost: 0,   val: "natur" },
     { id: "of:shirt",  kind: "outfit", label: "T-Shirt",         cost: 60,  val: "shirt" },
     { id: "of:hoodie", kind: "outfit", label: "Hoodie",          cost: 90,  val: "hoodie" },
-    { id: "of:trikot", kind: "outfit", label: "Fußball-Trikot",  cost: 110, val: "trikot" },
-    { id: "of:held",   kind: "outfit", label: "Superheld mit Umhang", cost: 160, val: "held" },
-    { id: "of:raum",   kind: "outfit", label: "Raumanzug",       cost: 220, val: "raum" },
-    { id: "of:rock",   kind: "outfit", label: "Rockstar",        cost: 260, val: "rock" },
+    { id: "of:trikot", kind: "outfit", label: "Fußball-Trikot",  cost: 120, val: "trikot" },
+    { id: "of:held",   kind: "outfit", label: "Superheld mit Umhang", cost: 200, val: "held" },
+    { id: "of:raum",   kind: "outfit", label: "Raumanzug",       cost: 200, val: "raum" },
+    { id: "of:polar",   kind: "outfit", label: "Polarjacke",      cost: 350, val: "polar", bundle: "eis" },
+    { id: "of:rock",   kind: "outfit", label: "Rockstar",        cost: 250, val: "rock" },
 
     { id: "sn:none",  kind: "snd", label: "Stumm",     cost: 0,   val: "none" },
-    { id: "sn:bell",  kind: "snd", label: "Glöckchen", cost: 80,  val: "bell" },
+    { id: "sn:bell",  kind: "snd", label: "Glöckchen", cost: 90,  val: "bell" },
     { id: "sn:arcade", kind: "snd", label: "Arcade",   cost: 120, val: "arcade" },
-    { id: "sn:harp",  kind: "snd", label: "Harfe",     cost: 160, val: "harp" },
+    { id: "sn:harp",  kind: "snd", label: "Harfe",     cost: 200, val: "harp" },
 
     { id: "th:paper", kind: "theme", label: "Papier", cost: 0,  val: "paper" },
     { id: "th:mint",  kind: "theme", label: "Minze",  cost: 90,  val: "mint" },
     { id: "th:plum",  kind: "theme", label: "Pflaume",cost: 90,  val: "plum" },
-    { id: "th:amber", kind: "theme", label: "Amber",  cost: 140, val: "amber" }
+    { id: "th:amber", kind: "theme", label: "Amber",  cost: 120, val: "amber" }
   ];
   /* Sticker: jede Figur gibt es zusätzlich als Aufkleber (halber Preis), die man auf Startseite und Profil klebt */
   SHOP = SHOP.concat(SHOP.filter(function (a) { return a.kind === "avatar"; }).map(function (a) {
     return { id: "st:" + a.id.slice(3), kind: "sticker", set: a.set, label: a.label + "-Sticker", cost: a.cost ? Math.max(20, Math.round(a.cost / 20) * 10) : 0, val: a.val, rank: a.rank };
   }));
+
+  /* ---------- Preise, Sets, Belohnungen ---------- */
+  /* Preise bis Version 2.29 (für die einmalige Gutschrift, wenn etwas günstiger wurde) */
+  var OLD_PRICES = {"av:🦊": 0, "av:🐼": 40, "av:🐢": 50, "av:🦉": 60, "av:🐙": 80, "av:🦕": 120, "av:🦈": 160, "av:🦄": 220, "av:pbaer": 150, "av:phase": 180, "av:pkatze": 200, "av:pummel": 250, "av:pdrache": 300, "av:clombo": 300, "av:pphoenix": 600, "av:pgold": 800, "av:pregen": 1200, "av:pgalaxie": 2000, "av:fnhuhn": 150, "av:fnschwein": 200, "av:fnfrosch": 200, "av:fnwolf": 250, "av:fnraptor": 300, "av:fnllama": 350, "av:fnelite": 800, "av:fnchamp": 1200, "av:fnkristall": 1500, "av:fnunreal": 2500, "fr:none": 0, "fr:gold": 120, "fr:rainbow": 220, "fr:fire": 300, "ti:none": 0, "ti:wort": 80, "ti:streber": 100, "ti:freund": 120, "ti:profi": 150, "ti:genie": 300, "ti:champ": 500, "bg:none": 0, "bg:stars": 150, "bg:clouds": 150, "bg:space": 250, "fx:none": 0, "fx:confetti": 100, "fx:stars": 150, "fx:sparks": 200, "fx:firework": 300, "dn:wackler": 0, "dn:huepfer": 120, "dn:drehung": 150, "dn:roboter": 200, "dn:moonwalk": 250, "dn:sieg": 400, "of:natur": 0, "of:shirt": 60, "of:hoodie": 90, "of:trikot": 110, "of:held": 160, "of:raum": 220, "of:rock": 260, "sn:none": 0, "sn:bell": 80, "sn:arcade": 120, "sn:harp": 160, "th:paper": 0, "th:mint": 90, "th:plum": 90, "th:amber": 140};
+  /* Sets: Wer alle Teile hat, bekommt die Belohnung geschenkt */
+  var SETS = [{ id: "eis", name: "Eis-Set", icon: "❄️", items: ["av:eisbaer", "of:polar", "dn:eislauf", "fx:schnee"], reward: "fr:eis" }];
   SHOP.forEach(function (x) { if (x.id === "st:clombo") x.cost = 300; });   // Clombo als Sticker: gleicher Preis und gleicher Mindestrang wie die Figur
   var MAX_STICKERS = 5;
   /* Sticker-Plätze auf dem Profil: der erste ist gratis, die weiteren werden nacheinander freigeschaltet */
@@ -249,6 +260,7 @@
     if (raw) { try { var p = JSON.parse(raw); if (p && p.v === 2) { state = Object.assign(freshState(), p); ok = true; } } catch (e) {} }
     if (!ok && readBackup("auto")) { state = Object.assign(freshState(), readBackup("auto").s); restored = true; }
     buildCatalogue(state);
+    priceMigrate();
     rollDay();
     regenHearts();
     return state;
@@ -358,7 +370,7 @@
   var ARENA_NAMES = { match: "Match-Rausch", blitz: "Blitzrunde", survival: "Letztes Herz", hunt: "Fehlerjagd" };
   /* Aus einer Vorlage wird die Tagesmission; die Arena-Mission bekommt einen Spielmodus */
   function instMission(def) {
-    var m = { id: def.id, n: def.n, goal: def.goal, type: def.type, coins: def.coins, p: 0, done: false };
+    var m = { id: def.id, n: def.n, goal: def.goal, type: def.type, coins: boost(def.coins), p: 0, done: false };
     if (def.type === "arena") {
       var ids = ["match", "blitz", "survival"]; if (pools().box.length >= 5) ids.push("hunt");
       m.mode = ids[Math.floor(Math.random() * ids.length)]; m.n = "Eine Runde " + ARENA_NAMES[m.mode] + " spielen";
@@ -478,6 +490,7 @@
   var PART_TEXT = { neu: "neue Wörter", stufe: "Stufen aufgestiegen", gemeistert: "Wörter gemeistert", kartei: "aus der Fehlerkartei" };
   function addCl(cat, c) { var d = state.daily; if (!d || c <= 0) return; if (!d.cl) d.cl = {}; d.cl[cat] = (d.cl[cat] || 0) + c; }
   function logCoins(kind, c, label) {
+    c = boost(c);
     if (c <= 0) return; addCoins(c); addCl(kind === "serie" ? "serie" : "fortschritt", c); progressLog[kind] = (progressLog[kind] || 0) + c;
     progressLog.n = progressLog.n || {}; progressLog.n[kind] = (progressLog.n[kind] || 0) + 1;
     if (label) progressLog.parts.push({ c: c, t: label });
@@ -678,9 +691,75 @@
     for (var i = 0; i < RANKS.length; i++) { if (xp >= RANKS[i].xp) { r = RANKS[i]; next = RANKS[i + 1] || null; } }
     return { rank: r, next: next, into: xp - r.xp, span: next ? next.xp - r.xp : 0 };
   }
-  function addXp(v) { if (boostActive()) v *= 2; state.xp += v; state.daily.xp += v; }
+  function rankIdx(xp) { var k = 0; RANKS.forEach(function (r, i) { if (xp >= r.xp) k = i; }); return k; }
+  function addXp(v) {
+    if (boostActive()) v *= 2;
+    var r0 = rankIdx(state.xp); state.xp += v; state.daily.xp += v;
+    for (var i = r0 + 1, r1 = rankIdx(state.xp); i <= r1; i++) rankGift(i);
+  }
+  /* Rangaufstieg: Münzen (50 + 10 je Rangstufe) und das günstigste Stück, das genau mit diesem Rang frei wird */
+  function rankGift(i) {
+    var rn = RANKS[i].n, c = 50 + 10 * i, gift = null;
+    addCoins(c); addCl("fortschritt", c);
+    SHOP.filter(function (x) { return x.rank === rn && x.kind !== "sticker" && !x.reward && !owns(x); }).sort(function (a, b) { return a.cost - b.cost; }).slice(0, 1).forEach(function (x) { state.profile.owned.push(x.id); gift = x.label; });
+    (state.news || (state.news = { ranks: [], sets: [] })).ranks.push({ rank: rn, coins: c, item: gift });
+    checkSets();
+  }
+  function checkSets() {
+    SETS.forEach(function (s) {
+      var rw = itemById(s.reward);
+      if (rw && !owns(rw) && s.items.every(function (id) { var x = itemById(id); return x && owns(x); })) {
+        state.profile.owned.push(rw.id);
+        (state.news || (state.news = { ranks: [], sets: [] })).sets.push({ set: s.name, reward: rw.label });
+      }
+    });
+  }
+  function takeNews() { var n = state.news; state.news = null; return n && (n.ranks.length || n.sets.length) ? n : null; }
+  /* Münzfaktor: erste Woche ×1,5, dazu der Regler der Eltern (Dashboard) */
+  function coinFactor() {
+    var f = 1;
+    if (state && state.created && Date.now() - state.created < 7 * 86400000) f *= 1.5;
+    var r = global.WordySync && global.WordySync.remote ? (global.WordySync.remote() || {}).coinFactor : 1;
+    if (typeof r === "number" && r > 0) f *= r;
+    return f;
+  }
+  function boost(c) { return c > 0 ? Math.max(1, Math.round(c * coinFactor())) : c; }
+  function avgCoins() {
+    var h = (state && state.coinHist) || {}, ks = Object.keys(h).sort().slice(-14), sum = 0;
+    ks.forEach(function (k) { sum += h[k]; });
+    return ks.length >= 2 ? Math.max(20, Math.round(sum / ks.length)) : 50;
+  }
+  /* Tagesangebot: ein Stück täglich 20 % günstiger */
+  function dealItem() {
+    var t = today();
+    if (!state.deal || state.deal.day !== t) {
+      var c = SHOP.filter(function (x) { return x.kind !== "sticker" && !x.reward && x.cost >= 90 && !owns(x) && state.xp >= minXp(x); }), h = 0;
+      for (var i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) >>> 0;
+      state.deal = { day: t, id: c.length ? c[h % c.length].id : null };
+    }
+    var it = state.deal.id ? itemById(state.deal.id) : null;
+    return it && !owns(it) ? it : null;
+  }
+  function priceOf(it) { var d = dealItem(); return d && d.id === it.id ? Math.round(it.cost * 0.8 / 5) * 5 : it.cost; }
+  /* Preisumstellung: Wurde etwas günstiger, gibt es die Differenz einmalig als Münzen zurück */
+  function priceMigrate() {
+    var pf = state.profile; if (!pf || pf.priceVer >= 3) return;
+    var refund = 0;
+    (pf.owned || []).forEach(function (id) {
+      var it = itemById(id); if (!it) return;
+      var o = OLD_PRICES[id];
+      if (o == null && id.indexOf("st:") === 0) { var oa = OLD_PRICES["av:" + id.slice(3)]; o = oa ? Math.max(20, Math.round(oa / 20) * 10) : null; }
+      if (o != null && o > it.cost) refund += o - it.cost;
+    });
+    if (refund > 0) { state.coins += refund; state.priceNote = refund; }
+    pf.priceVer = 3;
+  }
+
   function boostActive() { var b = state.path && state.path.boost; return !!(b && b.on && b.left > 0); }
-  function addCoins(v) { state.coins += v; }
+  function addCoins(v) {
+    state.coins += v;
+    if (v > 0) { var h = state.coinHist || (state.coinHist = {}), t = today(); h[t] = (h[t] || 0) + v; var ks = Object.keys(h).sort(); while (ks.length > 21) delete h[ks.shift()]; }
+  }
 
   function bumpMission(type, amount) {
     var hit = [];
@@ -735,7 +814,7 @@
       .concat(bumpMission("arena", res.arena ? 1 : 0));
     var goalSec = goalMin() * 60;
     if (d.sec >= goalSec && !d.done) {
-      d.done = true; rewards.goalReached = true; addCoins(20); addCl("ziel", 20); rewards.coins += 20;
+      d.done = true; rewards.goalReached = true; var zc = boost(20); addCoins(zc); addCl("ziel", zc); rewards.coins += zc;
       rewards.missions = rewards.missions.concat(bumpMission("goal", 1));
       if (state.streak.last !== d.date) {
         state.streak.count += 1; state.streak.last = d.date;
@@ -973,7 +1052,7 @@
     if (adv) {
       if (st.last && !p.chests[st.section]) {
         p.chests[st.section] = 1;
-        chest = { section: st.section, title: st.sectionTitle, coins: 15 + Math.floor(Math.random() * 16), boost: Math.random() < 0.4 };
+        chest = { section: st.section, title: st.sectionTitle, coins: boost(30 + Math.floor(Math.random() * 31)), boost: Math.random() < 0.4 };
         p.pending.push(chest);
       }
     }
@@ -985,6 +1064,10 @@
     if (!c) return null;
     addCoins(c.coins); addCl("fortschritt", c.coins);
     if (c.boost) p.boost.stock++;
+    if (Math.random() < 0.12) {   // Überraschung: ein Stück, das er noch nicht hat
+      var cand = SHOP.filter(function (x) { return x.kind !== "sticker" && !x.reward && x.cost <= 350 && !owns(x) && state.xp >= minXp(x); });
+      if (cand.length) { var g = cand[Math.floor(Math.random() * cand.length)]; state.profile.owned.push(g.id); c.item = g.label; checkSets(); }
+    }
     save(true); return c;
   }
   function boostStart() {
@@ -1020,11 +1103,14 @@
     if (!it) return { error: "Unbekannt." };
     if (owns(it)) return { error: "Gehört dir schon." };
     if (state.xp < minXp(it)) return { error: "Das gibt es erst ab dem Rang " + it.rank + "." };
-    if (state.coins < it.cost) return { error: "Dafür fehlen noch " + (it.cost - state.coins) + " Münzen." };
-    state.coins -= it.cost; state.profile.owned.push(id);
-    ev("buy", { id: id, name: it.label || it.id, cost: it.cost });
+    if (it.reward) return { error: "Diese Belohnung gibt es nur für das komplette Set." };
+    var price = priceOf(it);
+    if (state.coins < price) return { error: "Dafür fehlen noch " + (price - state.coins) + " Münzen." };
+    state.coins -= price; state.profile.owned.push(id);
+    ev("buy", { id: id, name: it.label || it.id, cost: price });
     if (it.kind === "sticker") { var l = stickers(); l.push(it.id); while (l.length > stickerSlots()) l.shift(); }
     else state.profile[PROFILE_KEY[it.kind]] = it.val;
+    checkSets();
     save(true); return { ok: true, item: it };
   }
 
@@ -1045,6 +1131,6 @@
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
-    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, minXp: minXp, defaultOf: defaultOf
+    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, boost: boost, coinFactor: coinFactor, avgCoins: avgCoins, dealItem: dealItem, priceOf: priceOf, takeNews: takeNews, SETS: SETS, itemById: itemById, minXp: minXp, defaultOf: defaultOf
   };
 })(window);

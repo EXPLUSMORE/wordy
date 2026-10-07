@@ -112,6 +112,11 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     assert.equal((await J("/api/sync", { headers: T })).j.bossDiff, "leicht", "Boss-Schwierigkeit kommt in der App an");
     await J("/api/admin/players/" + mk.j.id + "/bossdiff", { method: "POST", headers: H, body: JSON.stringify({ diff: "quatsch" }) });
     assert.equal((await J("/api/sync", { headers: T })).j.bossDiff, "normal", "Boss: ungültiger Wert wird normal");
+    assert.equal((await J("/api/admin/players/" + mk.j.id + "/coinfactor", { headers: H })).j.factor, 1, "Münzfaktor: Standard 1");
+    await J("/api/admin/players/" + mk.j.id + "/coinfactor", { method: "POST", headers: H, body: JSON.stringify({ factor: 1.5 }) });
+    assert.equal((await J("/api/sync", { headers: T })).j.coinFactor, 1.5, "Münzfaktor kommt in der App an");
+    await J("/api/admin/players/" + mk.j.id + "/coinfactor", { method: "POST", headers: H, body: JSON.stringify({ factor: 7 }) });
+    assert.equal((await J("/api/sync", { headers: T })).j.coinFactor, 1, "Münzfaktor: ungültig wird 1");
     assert.equal((await J("/api/admin/players/" + mk.j.id + "/weekplan", { headers: H })).j, null, "Wochenplan: Standard leer");
     assert.equal((await J("/api/admin/players/" + mk.j.id + "/weekplan", { method: "POST", headers: H, body: JSON.stringify({ min: [10, 10] }) })).s, 400, "Wochenplan braucht sieben Werte");
     const wpost = await J("/api/admin/players/" + mk.j.id + "/weekplan", { method: "POST", headers: H, body: JSON.stringify({ min: [10, 10, 15, 10, 10, 0, 999], bonus: 30 }) });

@@ -412,6 +412,8 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     var bl = (pp && pp.bosses) || [], MN = { match: "Match-Rausch", blitz: "Blitzrunde", survival: "Letztes Herz" };
     h += '<h3 style="margin:14px 0 6px;font-size:15px">Boss-Runden</h3><div class="row" style="gap:8px;align-items:center;flex-wrap:wrap"><label class="small" for="bossDiff">Schwierigkeit</label>' +
       '<select id="bossDiff"><option value="leicht">leicht (Ziel × 0,7)</option><option value="normal">normal</option><option value="schwer">schwer (Ziel × 1,3)</option></select><span id="bossMsg" class="small"></span></div>' +
+      '<div class="row" style="gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px"><label class="small" for="coinF">Münzfaktor</label><select id="coinF"><option value="0.5">0,5 (langsamer)</option><option value="1">1 (normal)</option><option value="1.5">1,5</option><option value="2">2 (doppelt)</option></select><span id="coinMsg" class="small"></span></div>' +
+      '<p class="small muted" style="margin:4px 0 0">Verdienst von Magnus im Shop (Missionen, Tagesziel, Truhen, Fortschritt). In der ersten Woche gibt es zusätzlich ×1,5.</p>' +
       '<p class="small muted" style="margin:6px 0 0">Nach zwei verfehlten Versuchen wird das Ziel automatisch um 1 gesenkt, nach vier um 2 (mindestens 3). Das sieht Magnus offen in der App.</p>';
     if (bl.length) {
       var by = {};
@@ -426,6 +428,10 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     h += '<p class="small muted" style="margin:14px 0 0" id="pathSel">Lade Auswahl …</p>' +
       '<details style="margin-top:10px" id="pathDet"><summary style="cursor:pointer;color:var(--acc);font-weight:600">Einheiten für den Lernpfad wählen</summary><div id="pathPickBox" style="margin-top:10px"></div></details>';
     el.innerHTML = h;
+    api("/api/admin/players/" + p.id + "/coinfactor").then(function (x) {
+      var sl = document.getElementById("coinF"); if (!sl) return; sl.value = String(x.factor || 1);
+      sl.onchange = function () { post("/api/admin/players/" + p.id + "/coinfactor", { factor: +sl.value }).then(function () { var m = document.getElementById("coinMsg"); if (m) { m.className = "small"; m.textContent = "Gespeichert. Die App übernimmt es beim nächsten Öffnen."; } }).catch(function (e) { var m = document.getElementById("coinMsg"); if (m) { m.className = "small err"; m.textContent = e.message; } }); };
+    }).catch(function () {});
     api("/api/admin/players/" + p.id + "/bossdiff").then(function (x) {
       var sl = document.getElementById("bossDiff"); if (!sl) return; sl.value = x.diff || "normal";
       sl.onchange = function () { post("/api/admin/players/" + p.id + "/bossdiff", { diff: sl.value }).then(function () { var m = document.getElementById("bossMsg"); if (m) { m.className = "small"; m.textContent = "Gespeichert. Die App übernimmt es beim nächsten Öffnen."; } }).catch(function (e) { var m = document.getElementById("bossMsg"); if (m) { m.className = "small err"; m.textContent = e.message; } }); };

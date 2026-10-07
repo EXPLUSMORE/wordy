@@ -199,14 +199,14 @@
     if (!it) return '<section class="card"><div class="row" style="gap:12px;align-items:center"><div style="font-size:30px">⭐</div>' +
       '<div style="flex:1 1 auto"><b>Was wünschst du dir?</b><p class="small muted" style="margin:2px 0 0">Wähle im Shop einen Wunsch, auf den du Münzen sammelst. Hier siehst du, wie weit du schon bist.</p></div></div>' +
       '<button class="btn soft wide" data-act="goshop" style="margin-top:10px">Zum Shop</button></section>';
-    var have = Math.min(st.coins, it.cost), pc = it.cost ? Math.round(have * 100 / it.cost) : 100, left = Math.max(0, it.cost - st.coins);
+    var cost = S.priceOf(it), have = Math.min(st.coins, cost), pc = cost ? Math.round(have * 100 / cost) : 100, left = Math.max(0, cost - st.coins);
     var needXp = Math.max(0, S.minXp(it) - st.xp);
     var icon = wishFigure(it, pc, needXp > 0);
     var line = needXp ? "Du brauchst noch " + needXp + " XP bis Rang " + esc(it.rank) + (left ? " und " + left + " 🪙." : ".")
-      : left ? "Noch " + left + " 🪙 – das schaffst du." : "Genug Münzen! Jetzt im Shop holen.";
+      : left ? "Noch " + left + " 🪙 – etwa " + Math.max(1, Math.ceil(left / S.avgCoins())) + " " + plural(Math.max(1, Math.ceil(left / S.avgCoins())), "Lerntag", "Lerntage") + "." : "Genug Münzen! Jetzt im Shop holen.";
     return '<section class="card"><div class="eyebrow">Dein Wunsch</div><div class="row" style="gap:12px;align-items:center;margin-top:8px"><div style="width:50px;display:grid;place-items:center">' + icon + '</div>' +
       '<div style="flex:1 1 auto;min-width:0"><b>' + esc(it.label) + '</b><div class="bar" style="margin:6px 0 4px"><i style="width:' + pc + '%"></i></div>' +
-      '<div class="small muted tnum">' + have + ' / ' + it.cost + ' 🪙 · ' + line + '</div></div></div>' +
+      '<div class="small muted tnum">' + have + ' / ' + cost + ' 🪙 · ' + line + '</div></div></div>' +
       '<div class="row" style="gap:8px;margin-top:10px">' + (!needXp && !left ? '<button class="btn" data-act="buy" data-id="' + esc(it.id) + '">Jetzt kaufen</button>' : "") +
       '<button class="btn ghost" data-act="goshop">Anderen Wunsch wählen</button></div></section>';
   }
@@ -772,6 +772,8 @@
       '• <b>Neue Einheit entdeckt</b> +8 (fünf Wörter angefangen), <b>Einheit geschafft</b> +30 (Verben +60)<br>' +
       '• <b>Missionen</b> 10 bis 18, <b>Tagesziel</b> +20, <b>Serien</b> bei 3, 7, 14, 30, 60, 100 Tagen<br>' +
       '• <b>Arena</b> bis 30 pro Tag, +10 bei Rekord<br>' +
+      '• <b>Boss-Truhen</b> 30 bis 60, manchmal mit Überraschung · <b>Rangaufstieg</b> 50 plus 10 je Rang und ein Geschenk<br>' +
+      '• <b>Erste Woche</b> ×1,5 Münzen · jeden Tag ein <b>Tagesangebot</b> mit 20 % Rabatt<br>' +
       '<span class="muted">Jedes Wort zahlt höchstens einmal pro Tag und nur, wenn es zur Wiederholung dran war. Immer dieselben Wörter zu üben bringt nichts – neue Einheiten und fällige Wörter schon. Missionen, Tagesziel und Serien werden am Ende der Runde gutgeschrieben.</span></div></details></section>';
   }
   /* ---------- Ränge und XP: Übersicht ---------- */
@@ -803,7 +805,7 @@
   /* ---------- Shop und Sammelalbum ---------- */
   var SHOP_TABS = [
     { k: "avatar", n: "Figuren" }, { k: "sticker", n: "Sticker" }, { k: "frame", n: "Rahmen" }, { k: "title", n: "Titel" },
-    { k: "fn", n: "Fortnite" }, { k: "bg", n: "Hintergründe" }, { k: "fx", n: "Effekte" }, { k: "dance", n: "Tänze 💃" }, { k: "outfit", n: "Outfits 👕" }, { k: "snd", n: "Töne" }, { k: "theme", n: "Farben" }
+    { k: "fn", n: "Fortnite" }, { k: "bg", n: "Hintergründe" }, { k: "fx", n: "Effekte" }, { k: "dance", n: "Tänze 💃" }, { k: "outfit", n: "Outfits 👕" }, { k: "sets", n: "Sets ⭐" }, { k: "snd", n: "Töne" }, { k: "theme", n: "Farben" }
   ];
   var KIND_NAME = { sticker: "Sticker", avatar: "Figur", frame: "Rahmen", title: "Titel", bg: "Hintergrund", fx: "Effekt", dance: "Tanz", outfit: "Outfit", snd: "Ton", theme: "Farbwelt" };
   var shopTab = "avatar";
@@ -816,7 +818,7 @@
       case "frame": return '<span class="avatar fr-' + it.val + '" style="width:26px;height:26px;font-size:14px">' + (it.val === "none" ? "—" : "🙂") + '</span>';
       case "title": return "🏷️";
       case "bg": return it.val === "stars" ? "✨" : it.val === "clouds" ? "☁️" : it.val === "space" ? "🌌" : "▫️";
-      case "fx": return it.val === "confetti" ? "🎊" : it.val === "stars" ? "⭐" : it.val === "sparks" ? "⚡" : it.val === "firework" ? "🎆" : "▫️";
+      case "fx": return it.val === "confetti" ? "🎊" : it.val === "stars" ? "⭐" : it.val === "sparks" ? "⚡" : it.val === "firework" ? "🎆" : it.val === "snow" ? "❄️" : "▫️";
       case "snd": return it.val === "none" ? "🔇" : "🔔";
       case "dance": return "💃";
       case "outfit": return "👕";
@@ -875,25 +877,58 @@
     if (n < 5) h += '<button class="btn soft" data-act="buyslot"' + (st.coins < next ? ' aria-disabled="true" style="opacity:.6"' : "") + '>Platz ' + (n + 1) + ' freischalten · 🪙 ' + next + '</button>';
     return h + '</div>';
   }
+  function tierOf(c) { return c <= 120 ? "Gewöhnlich" : c <= 350 ? "Selten" : c <= 800 ? "Episch" : "Legendär"; }
+  function untilMidnight() {
+    var n = new Date(), m = new Date(n.getFullYear(), n.getMonth(), n.getDate() + 1), mins = Math.max(1, Math.round((m - n) / 60000));
+    return Math.floor(mins / 60) + " Std. " + (mins % 60) + " Min.";
+  }
+  function shopRow(it, wishId) {
+    var own = S.owns(it), act = S.isActive(it), locked = !own && lockNote(it), price = S.priceOf(it), deal = price !== it.cost;
+    var setName = it.reward ? (S.SETS.filter(function (s) { return s.reward === it.id; })[0] || {}).name : "";
+    var buyBtn = it.reward ? '<span class="pill" title="Gibt es nur für das komplette Set">🎁 ' + esc(setName) + '</span>'
+      : '<button class="chip" data-act="wish" data-id="' + esc(it.id) + '" aria-pressed="' + (wishId === it.id) + '" aria-label="Wunsch" style="margin-right:6px">⭐</button><button class="btn soft" data-act="buy" data-id="' + esc(it.id) + '">🪙 ' + (deal ? '<s style="opacity:.55;font-weight:500">' + it.cost + '</s> ' : "") + price + '</button>';
+    return '<div class="shopitem"><span class="si">' + shopIcon(it) + '</span>' +
+      '<span style="flex:1 1 auto"><b class="small">' + esc(it.label) + '</b><br><span class="small muted">' + KIND_NAME[it.kind] + (it.cost > 0 ? " · " + tierOf(it.cost) : "") +
+      (it.rank && !own ? " · ab " + esc(it.rank) : "") + (it.bundle ? " · ❄️ Eis-Set" : "") + '</span></span>' +
+      ((it.kind === "dance" || it.kind === "outfit") ? '<button class="chip" data-act="dancetry" data-id="' + esc(it.id) + '" aria-label="Vorschau" style="margin-right:6px">▶︎</button>' : '') +
+      (own ? '<button class="chip" data-act="equip" data-id="' + esc(it.id) + '" aria-pressed="' + act + '">' + (act ? "aktiv" : "auswählen") + '</button>'
+        : locked && !it.reward ? '<span class="pill" title="Erst ab Rang ' + esc(it.rank) + '">🔒 ' + esc(it.rank) + '</span><button class="chip" data-act="wish" data-id="' + esc(it.id) + '" aria-pressed="' + (wishId === it.id) + '" aria-label="Wunsch" style="margin-left:6px">⭐</button>'
+        : buyBtn) + '</div>';
+  }
   function shopCard() {
-    var st = S.state, wishId = (S.wish() || {}).id;
+    var st = S.state, wishId = (S.wish() || {}).id, deal = S.dealItem();
     var html = '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Shop</div><span class="pill">🪙 ' + st.coins + '</span></div>' +
       '<p class="small muted" style="margin:6px 0 10px">Münzen gibt es nur für Aussehen – nie für Lernvorteile.</p>' +
+      (deal ? '<div class="shopitem" style="background:var(--accent-soft);border-radius:12px;padding:8px 10px;margin-bottom:8px"><span class="si">🔥</span><span style="flex:1 1 auto"><b class="small">Tagesangebot: ' + esc(deal.label) + '</b><br><span class="small muted">20 % günstiger · noch ' + untilMidnight() + '</span></span>' +
+        (S.minXp(deal) > st.xp ? "" : '<button class="btn soft" data-act="buy" data-id="' + esc(deal.id) + '">🪙 <s style="opacity:.55;font-weight:500">' + deal.cost + '</s> ' + S.priceOf(deal) + '</button>') + '</div>' : "") +
       '<div class="row wrap" style="gap:6px;margin-bottom:6px">' + SHOP_TABS.map(function (t) {
         return '<button class="chip" data-act="shoptab" data-k="' + t.k + '" aria-pressed="' + (shopTab === t.k) + '">' + t.n + '</button>';
       }).join("") + '</div>';
     if (shopTab === "sticker") html += slotsHtml();
-    html += S.SHOP.filter(function (it) { return shopTab === "fn" ? it.set === "fn" : it.kind === shopTab && !it.set; }).map(function (it) {
-      var own = S.owns(it), act = S.isActive(it), locked = !own && lockNote(it);
-      return '<div class="shopitem"><span class="si">' + shopIcon(it) + '</span>' +
-        '<span style="flex:1 1 auto"><b class="small">' + esc(it.label) + '</b><br><span class="small muted">' + KIND_NAME[it.kind] +
-        (it.rank && !own ? " · ab " + esc(it.rank) : "") + '</span></span>' +
-        ((it.kind === "dance" || it.kind === "outfit") ? '<button class="chip" data-act="dancetry" data-id="' + esc(it.id) + '" aria-label="Vorschau" style="margin-right:6px">▶︎</button>' : '') +
-        (own ? '<button class="chip" data-act="equip" data-id="' + esc(it.id) + '" aria-pressed="' + act + '">' + (act ? "aktiv" : "auswählen") + '</button>'
-          : locked ? '<span class="pill" title="Erst ab Rang ' + esc(it.rank) + '">🔒 ' + esc(it.rank) + '</span><button class="chip" data-act="wish" data-id="' + esc(it.id) + '" aria-pressed="' + (wishId === it.id) + '" aria-label="Wunsch" style="margin-left:6px">⭐</button>'
-          : '<button class="chip" data-act="wish" data-id="' + esc(it.id) + '" aria-pressed="' + (wishId === it.id) + '" aria-label="Wunsch" style="margin-right:6px">⭐</button><button class="btn soft" data-act="buy" data-id="' + esc(it.id) + '">🪙 ' + it.cost + '</button>') + '</div>';
-    }).join("");
+    if (shopTab === "sets") {
+      html += S.SETS.map(function (s) {
+        var its = s.items.map(S.itemById), have = its.filter(function (x) { return S.owns(x); }).length, rw = S.itemById(s.reward), done = S.owns(rw);
+        return '<div style="margin:6px 0 12px"><div class="row" style="gap:8px;align-items:center"><b style="flex:1 1 auto">' + s.icon + ' ' + esc(s.name) + '</b><span class="pill tnum">' + have + ' / ' + its.length + '</span></div>' +
+          '<div class="bar" style="margin:6px 0"><i style="width:' + Math.round(have * 100 / its.length) + '%"></i></div>' +
+          '<p class="small muted" style="margin:0 0 6px">' + (done ? "Komplett! Belohnung: " + esc(rw.label) + " ✓" : "Hol alle vier Teile und bekomm den " + esc(rw.label) + " geschenkt.") + '</p>' +
+          its.map(function (x) { return shopRow(x, wishId); }).join("") + shopRow(rw, wishId) + '</div>';
+      }).join("");
+      return html + '</section>';
+    }
+    html += S.SHOP.filter(function (it) { return shopTab === "fn" ? it.set === "fn" : it.kind === shopTab && !it.set; }).map(function (it) { return shopRow(it, wishId); }).join("");
     return html + '</section>';
+  }
+  /* Rang- und Set-Geschenke sowie die einmalige Preisgutschrift ansagen */
+  function flushNews() {
+    var parts = [], pn = S.state.priceNote;
+    if (pn) { parts.push("Neue Preise: " + pn + " 🪙 zurück für schon gekaufte Sachen"); S.state.priceNote = 0; S.save(true); }
+    var n = S.takeNews();
+    if (n) {
+      n.ranks.forEach(function (r) { parts.push("Rang " + r.rank + ": +" + r.coins + " 🪙" + (r.item ? " und " + r.item + " geschenkt" : "")); });
+      n.sets.forEach(function (s) { parts.push(s.set + " komplett! Neu: " + s.reward); });
+      S.save(true);
+    }
+    if (parts.length) toast("🎉 " + parts.join(" · "), 5200);
   }
 
   /* ================= FORTSCHRITT ================= */
@@ -1405,6 +1440,7 @@
     renderHeader();
     global.VTC.runFinale(sessionEl, { pct0: pct(r0), pct1: pct(r1), rankUp: rankUp, coins: coinGain, perfect: perfect,
       ok: good && acc >= 70, fx: st.profile.fx, snd: st.profile.snd, audio: st.settings.audio });
+    setTimeout(flushNews, 2500);
     if (rankUp || perfect) setTimeout(function () { danceWin(!!rankUp, rankUp ? "Rangaufstieg!" : "Fehlerfrei!"); }, 1900);
     if (rw.streakUp) { var fl = sessionEl.querySelector(".fin-flame"); if (fl) fl.classList.add("go"); }
   }
@@ -1418,6 +1454,7 @@
       '<h2 style="position:relative;z-index:2;font-size:26px;margin:0">Deine Truhe</h2>' + CHEST_SVG +
       '<div class="rwd" id="cr1"><span style="font-size:30px">🪙</span><span><b class="tnum" style="font-size:22px">+' + c.coins + '</b> Münzen</span></div>' +
       (c.boost ? '<div class="rwd" id="cr2"><span style="font-size:30px">⚡</span><span>XP-Booster<br><span style="font-weight:500;font-size:12px;color:#66748a">15 Minuten doppelte XP, im Vorrat</span></span></div>' : "") +
+      (c.item ? '<div class="rwd" id="cr3"><span style="font-size:30px">🎁</span><span>Überraschung!<br><span style="font-weight:500;font-size:12px;color:#66748a">' + esc(c.item) + ' – gehört jetzt dir</span></span></div>' : "") +
       '<button class="btn lg" id="cOk" style="position:relative;z-index:2;opacity:0;pointer-events:none;background:var(--gold,#f2b33d);color:#2b1d00;margin-top:8px">Weiter ▶</button>';
     document.body.appendChild(ov);
     var show = function (id, ms) { setTimeout(function () { var e = document.getElementById(id); if (e) e.classList.add("show"); }, ms); };
@@ -1425,8 +1462,8 @@
       ov.classList.add("open");
       try { if (S.state.settings.audio) global.VTC.sound(pf.snd, true); global.VTC.burst("confetti", global.innerWidth / 2, global.innerHeight * .4, 44, 1.7); } catch (e) {}
     }, 1900);
-    show("cr1", 2400); if (c.boost) show("cr2", 3000);
-    setTimeout(function () { var b = $("#cOk"); if (b) { b.style.transition = "opacity .4s"; b.style.opacity = 1; b.style.pointerEvents = "auto"; } }, c.boost ? 3500 : 2900);
+    show("cr1", 2400); if (c.boost) show("cr2", 3000); if (c.item) show("cr3", c.boost ? 3600 : 3000);
+    setTimeout(function () { var b = $("#cOk"); if (b) { b.style.transition = "opacity .4s"; b.style.opacity = 1; b.style.pointerEvents = "auto"; } }, c.item ? 4300 : c.boost ? 3500 : 2900);
     $("#cOk").addEventListener("click", function () {
       ov.remove(); renderHeader();
       if (SS && !sessionEl.hidden) closeSession(); else render();
@@ -2117,6 +2154,7 @@
     else if (a === "buy") {
       var r = S.buy(act.getAttribute("data-id"));
       toast(r.error || ("Gekauft: " + r.item.label));
+      if (r.ok) { var nw = S.takeNews(); if (nw && nw.sets.length) { toast("🎉 " + nw.sets.map(function (s) { return s.set + " komplett! Neu: " + s.reward; }).join(" · "), 5200); S.save(true); } }
       if (r.ok) { var rect = act.getBoundingClientRect(); global.VTC.burst("confetti", rect.left + rect.width / 2, rect.top, 26, 1.4); }
       renderHeader(); render();
     }
@@ -2222,6 +2260,7 @@
 
   function render() {
     S.rollDay();
+    if (!SS) flushNews();
     $$("#tabs button, #hGear").forEach(function (b) { b.setAttribute("aria-current", b.getAttribute("data-tab") === tab); });
     renderHeader();
     if (tab === "home") viewHome();

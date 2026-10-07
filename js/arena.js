@@ -317,6 +317,7 @@
     var left = Math.max(0, 30 - (S.state.daily.arenaCoins || 0));   // Tageslimit, damit dieselben Wörter nicht endlos Münzen bringen
     var capped = coins > left; coins = Math.min(coins, left);
     S.state.daily.arenaCoins = (S.state.daily.arenaCoins || 0) + coins;
+    coins = S.boost(coins);
     S.addCoins(coins);
     S.addXp(Math.min(60, Math.round(score / 8)));
     var boss = run.boss && global.VTUI && global.VTUI.bossFinish ? global.VTUI.bossFinish(run.boss, run.correct) : null;

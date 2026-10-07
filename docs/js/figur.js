@@ -18,6 +18,7 @@
     "🐧": ["bird", "#2B3A55", "#FFFFFF", "#F59E0B", "pom", "#2B3A55"],
     "🐨": ["fur", "#A9A9B6", "#E9E9F0", "#8E8E9C", "", ""],
     "svg:pummel": ["fur", "#FFC9E3", "#FFF4FA", "#F7A8CF", "rb", ""],
+    "svg:eisbaer": ["fur", "#F4F8FC", "#FFFFFF", "#BFD3E6", "pom", "#FFFFFF"],
     "svg:pbaer": ["fur", "#D9A877", "#F6E0C2", "#B98557", "pom", "#F6E0C2"],
     "svg:phase": ["fur", "#F4F2FA", "#FFFFFF", "#DAD6EA", "pom", "#FFFFFF"],
     "svg:pkatze": ["fur", "#FFD9A8", "#FFF1DC", "#F2B676", "cat", "#FFD9A8"],
@@ -38,7 +39,7 @@
     "svg:fnchamp": ["crys", "#CFE9FF", "#FFFFFF", "#5B54C8", "", ""],
     "svg:fnunreal": ["crys", "#8F7DFF", "#FFD66B", "#C2410C", "", ""]
   };
-  var EMB = { trikot: "7", held: "★", raum: "★", rock: "♪" };
+  var EMB = { trikot: "7", held: "★", raum: "★", rock: "♪", polar: "❄" };
   /* Eigene Köpfe für Figuren, deren Emoji/Zeichnung schon ein ganzes Tier zeigt (sonst säße ein Tier auf dem Körper) */
   var V = '<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">';
   function eyes(y, dx, r, c) { return '<circle cx="' + (32 - dx) + '" cy="' + y + '" r="' + r + '" fill="' + (c || "#1B1230") + '"/><circle cx="' + (32 + dx) + '" cy="' + y + '" r="' + r + '" fill="' + (c || "#1B1230") + '"/><circle cx="' + (32 - dx + 1.3) + '" cy="' + (y - 1.3) + '" r="' + r * .35 + '" fill="#fff"/><circle cx="' + (32 + dx + 1.3) + '" cy="' + (y - 1.3) + '" r="' + r * .35 + '" fill="#fff"/>'; }

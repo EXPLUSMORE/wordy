@@ -159,7 +159,7 @@
     lastPull = Date.now();
     return g.fetch(c.url + "/api/sync", { headers: { Authorization: "Bearer " + c.token } })
       .then(function (r) { if (!r.ok) throw new Error(String(r.status)); return r.json(); })
-      .then(function (j) { lsSet("wordy.cfg." + pid(), { goals: j.goals || [], plans: j.plans || [], pathUnits: j.pathUnits || [], weekPlan: j.weekPlan || null, bossDiff: j.bossDiff || "normal", t: Date.now() }); W.check(); if (g.WordyHooks && g.WordyHooks.onChange) g.WordyHooks.onChange(); return true; })
+      .then(function (j) { lsSet("wordy.cfg." + pid(), { goals: j.goals || [], plans: j.plans || [], pathUnits: j.pathUnits || [], weekPlan: j.weekPlan || null, bossDiff: j.bossDiff || "normal", coinFactor: j.coinFactor || 1, t: Date.now() }); W.check(); if (g.WordyHooks && g.WordyHooks.onChange) g.WordyHooks.onChange(); return true; })
       .catch(function () { return false; });
   };
 

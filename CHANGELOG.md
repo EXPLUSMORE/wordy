@@ -9,6 +9,14 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.30.0 – 2026-10-07
+
+- Preise neu in vier Stufen (Gewöhnlich 60–120, Selten 200–350, Episch 500–800, Legendär 1500–2500; die Stufe steht im Shop). Wurde etwas günstiger, gibt es die Differenz für schon Gekauftes einmalig als Münzen zurück.
+- Neu: Eisbär (episch, ab Silber II) mit ganzem Körper, dazu Polarjacke, Tanz „Eislauf“, Effekt „Schneefall“ und die Rubrik „Sets ⭐“. Wer das Eis-Set komplett hat, bekommt den Eiskristall-Rahmen geschenkt.
+- Mehr Belohnung: erste Woche ×1,5 Münzen, Rangaufstieg (50 + 10 je Rang plus ein passendes Geschenk), Boss-Truhen 30–60 Münzen mit 12 % Überraschungs-Stück.
+- Tagesangebot (ein Stück täglich 20 % günstiger, mit Restzeit), Wunsch zeigt „etwa x Lerntage“.
+- Dashboard: Münzfaktor 0,5 / 1 / 1,5 / 2 pro Profil (Lernpfad-Karte). Server: Endpunkt `coinfactor`, `/api/sync` liefert `coinFactor`.
+
 ## 2.29.0 – 2026-10-07
 
 - Tänze mit ganzer Figur: Jede Figur hat einen eigenen Körper (Farben, Schwanz, Flügel, Panzer, Flossen, Stacheln, Tentakel, Kristallkörper), Arme, Beine und Schwanz bewegen sich einzeln. Neue Datei `js/figur.js` (32 Figuren). Für acht Figuren, deren Emoji schon ein ganzes Tier zeigt (Schildkröte, Krake, Dino, Hai, Pinguin, Biene, beide Lamas), gibt es eigene Köpfe.

@@ -393,7 +393,8 @@ function apiSync(pid) {
     plans: q.plans.all(pid, dayOf(Date.now())).map(p => ({ id: p.id, title: p.title, exam: p.exam, units: JSON.parse(p.units), coins: p.coins })),
     pathUnits: pathUnitsOf(pid),
     weekPlan: weekPlanOf(pid),
-    bossDiff: bossDiffOf(pid)
+    bossDiff: bossDiffOf(pid),
+    coinFactor: coinFactorOf(pid)
   }];
 }
 /* Wochenzeitplan: Minuten pro Wochentag (Mo bis So), gilt jede Woche gleich, dazu Wochenbonus in Münzen */
@@ -412,6 +413,13 @@ function setBossDiff(pid, body) {
   const v = body && (body.diff === "leicht" || body.diff === "schwer") ? body.diff : "normal";
   q.kvSet.run("bossdiff:" + pid, v);
   return [200, { ok: true, diff: v }];
+}
+/* Münzfaktor: Eltern können Verdienst und damit das Tempo im Shop anpassen (0,5 bis 2) */
+function coinFactorOf(pid) { const r = q.kvGet.get("coinfactor:" + pid); const v = r ? parseFloat(r.val) : 1; return [0.5, 1, 1.5, 2].includes(v) ? v : 1; }
+function setCoinFactor(pid, body) {
+  const v = [0.5, 1, 1.5, 2].includes(+body.factor) ? +body.factor : 1;
+  q.kvSet.run("coinfactor:" + pid, String(v));
+  return [200, { ok: true, factor: v }];
 }
 /* Welche Einheiten stehen im Lernpfad? Leer = Standard der App (Schule: Headlight 2, Business: gewählte Stufen) */
 function pathUnitsOf(pid) { const r = q.kvGet.get("pathunits:" + pid); try { return r ? JSON.parse(r.val) : []; } catch (e) { return []; } }
@@ -648,6 +656,8 @@ const server = http.createServer(async (req, res) => {
         if (m[2] === "plans" && req.method === "POST") { const [c, b] = createPlan(pid, await readJson(req)); return send(res, c, b); }
         if (m[2] === "weekplan" && req.method === "GET") return send(res, 200, weekPlanOf(pid));
         if (m[2] === "weekplan" && req.method === "POST") { const [c, b] = setWeekPlan(pid, await readJson(req)); return send(res, c, b); }
+        if (m[2] === "coinfactor" && req.method === "GET") return send(res, 200, { factor: coinFactorOf(pid) });
+        if (m[2] === "coinfactor" && req.method === "POST") { const [c, b] = setCoinFactor(pid, await readJson(req)); return send(res, c, b); }
         if (m[2] === "bossdiff" && req.method === "GET") return send(res, 200, { diff: bossDiffOf(pid) });
         if (m[2] === "bossdiff" && req.method === "POST") { const [c, b] = setBossDiff(pid, await readJson(req)); return send(res, c, b); }
         if (m[2] === "pathunits" && req.method === "GET") return send(res, 200, pathUnitsOf(pid));

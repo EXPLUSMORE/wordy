@@ -35,6 +35,13 @@
       ears: '<circle cx="16" cy="21" r="7" fill="#FFC9E3"/><circle cx="48" cy="21" r="7" fill="#FFC9E3"/><circle cx="16" cy="22" r="3.5" fill="#FF9CC6"/><circle cx="48" cy="22" r="3.5" fill="#FF9CC6"/>',
       front: HORN + '<circle cx="22" cy="23" r="5" fill="#8ED8F8"/><circle cx="32" cy="21" r="5" fill="#B9F0B4"/><circle cx="42" cy="23" r="5" fill="#C9A7F5"/>'
     }),
+    eisbaer: pummel({
+      body: "#F4F8FC", shade: "#C9DCEE",
+      ears: '<circle cx="14" cy="21" r="7" fill="#F4F8FC"/><circle cx="50" cy="21" r="7" fill="#F4F8FC"/><circle cx="14" cy="22" r="3.4" fill="#BFD6EC"/><circle cx="50" cy="22" r="3.4" fill="#BFD6EC"/>',
+      front: '<ellipse cx="32" cy="46" rx="10.5" ry="7.5" fill="#FFFFFF"/><ellipse cx="32" cy="42.6" rx="3.6" ry="2.5" fill="#2B2F45"/><path d="M12 30q-2-6 2-8M52 30q2-6-2-8" fill="none" stroke="#DCEBF8" stroke-width="2" stroke-linecap="round"/>',
+      face: '<path d="M28 48.5q4 3.5 8 0" fill="none" stroke="#2B2F45" stroke-width="1.8" stroke-linecap="round"/>',
+      eye: "#2B2F45"
+    }),
     pbaer: pummel({
       body: "#D9A877", shade: "#B98557",
       ears: '<circle cx="14" cy="19" r="8" fill="#D9A877"/><circle cx="50" cy="19" r="8" fill="#D9A877"/><circle cx="14" cy="20" r="4" fill="#F1C9A0"/><circle cx="50" cy="20" r="4" fill="#F1C9A0"/>',
@@ -137,12 +144,13 @@
     var size = 6 + Math.random() * 6, life = 650 + Math.random() * 500;
     var css = "position:absolute;left:" + x + "px;top:" + y + "px;display:block;";
     if (kind === "stars") { el.textContent = "★"; css += "color:#FFC94D;font-size:" + (size + 8) + "px;line-height:1;"; }
+    else if (kind === "snow") { css += "width:" + (size * .8) + "px;height:" + (size * .8) + "px;border-radius:50%;background:#fff;box-shadow:0 0 6px #bfe9ff;"; }
     else if (kind === "sparks") { css += "width:3px;height:" + (size + 6) + "px;border-radius:2px;background:" + c + ";transform:rotate(" + (a * 57.3 + 90) + "deg);"; }
     else { css += "width:" + size + "px;height:" + (size * .6) + "px;background:" + c + ";border-radius:1px;"; }
     el.style.cssText = css;
     getLayer().appendChild(el);
     var rot = (Math.random() - .5) * 720;
-    var fall = kind === "confetti" || kind === "stars" ? 60 * power : 0;
+    var fall = kind === "confetti" || kind === "stars" ? 60 * power : kind === "snow" ? 90 * power : 0;
     var an = el.animate([
       { transform: "translate(0,0) rotate(0deg)", opacity: 1 },
       { transform: "translate(" + dx + "px," + (dy + fall) + "px) rotate(" + rot + "deg)", opacity: 0 }
@@ -289,7 +297,7 @@
   function dance(o) {
     var old = document.getElementById("dnOv"); if (old) old.remove();
     var ov = document.createElement("div"); ov.id = "dnOv"; ov.className = "dn-ov" + (reduce ? " dn-reduce" : "");
-    var conf = "", cols = ["#ff3d9a", "#35e0ff", "#ffd23d", "#7cff6b", "#fff"], D = { wackler: 1, huepfer: 2, drehung: 3, roboter: 4, moonwalk: 5, sieg: 6 };
+    var conf = "", cols = ["#ff3d9a", "#35e0ff", "#ffd23d", "#7cff6b", "#fff"], D = { wackler: 1, huepfer: 2, drehung: 3, roboter: 4, moonwalk: 5, sieg: 6, eislauf: 7 };
     if (!reduce && (o.big || o.dance === "sieg")) for (var i = 0; i < 18; i++) conf += '<i style="left:' + (i * 5.5 + Math.random() * 3).toFixed(1) + '%;background:' + cols[i % 5] + ';animation-delay:' + (Math.random() * 1.6).toFixed(2) + 's"></i>';
     var fig = global.VTFIG.figure(o.av, o.outfit, o.avatar).replace('class="fig ', 'class="fig d' + (D[o.dance] || 1) + ' ');
     ov.innerHTML = '<div class="dn-stage"><div class="dn-beam dn-b1"></div><div class="dn-beam dn-b2"></div><div class="dn-floor"></div><div class="dn-conf">' + conf + '</div>' +

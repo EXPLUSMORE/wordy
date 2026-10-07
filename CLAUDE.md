@@ -29,3 +29,4 @@ Lernfortschritts-Server: https://track.wordy.explusmore.com (eigenständig, Node
 - Sprache der App und Antworten: Deutsch, Magnus ist Kind → motivierend (Shop/Münzen/Wochenziele).
 - Sprachausgabe: `speechClean()` entfernt Abkürzungen wie „sb.“ vor dem Vorlesen.
 - Offene Ideen: „5-Min“-Kacheln in Üben ohne Aufgabenanzahl; eigene Headlight-Sätze statt Klasse 6.
+- Shop-Preise stehen in `engine.js` (SHOP) in Stufen; `OLD_PRICES` + `priceMigrate()` zahlen bei Preissenkungen einmalig die Differenz zurück (`profile.priceVer`). Bei künftigen Preisänderungen die Version erhöhen und `OLD_PRICES` aktualisieren. Sets: `SETS` (Eis-Set), Belohnung `reward: ...`. Verdienst: `boost()` (erste Woche ×1,5, Eltern-Regler `coinFactor`).
