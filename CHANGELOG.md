@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.41.0 – 2026-10-07
+- **Eisblock-Szene**: Wer ein Set komplett hat (Eis-Set), sieht statt der Meldung eine Szene: Der Eisbär steckt im Eisblock, antippen lässt ihn knacken und zersplittern, danach erscheint die Belohnungskarte (Eiskristall-Rahmen). Gilt beim Kauf eines Teils, beim Set-Kauf und für Meldungen, die erst später ankommen (z. B. Rang-Geschenk).
+
 ## 2.40.0 – 2026-10-07
 - **Seltenheits-Karten im Shop**: Figuren, Sticker, Rahmen, Tänze, Outfits, Trikots, Sets usw. erscheinen als Karten im Zweierraster statt als Liste. Farbe, Etikett (Gewöhnlich/Selten/Episch/Legendär), Leuchten bei Episch und Legendär, großes Symbol, Wunsch-Stern, Vorschau ▶ bei Tänzen und Outfits, „✓ aktiv“, Preis (mit durchgestrichenem Altpreis), 🔒 Rang, 🎁 Pass/Set. Die Aktionen (Kaufen, Auswählen, Wunsch, Vorschau) sind unverändert.
 

@@ -856,7 +856,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.40.0";window.WORDY_BUILD="adb2552d45";</script>
+<script>window.WORDY_VERSION="2.41.0";window.WORDY_BUILD="d0c8b16a4a";</script>
 </head>
 <body>
 <div id="app">
@@ -7128,6 +7128,24 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     });
   }
 
+  /* Set komplett: Eisblock-Szene (Figur im Eis, Risse, Splittern), dann die Belohnung */
+  function openSetReveal(sets) {
+    var sd = sets[0], def = S.SETS.filter(function (x) { return x.name === sd.set; })[0], rw = def && S.itemById(def.reward);
+    var ov = document.createElement("div"); ov.className = "chestov";
+    var card = rw ? '<div class="rcard big" id="rc0" style="--c1:#7fd0ff;--c2:#2f8cff">' + itemIcon(rw, true) + '<b>' + esc(rw.label) + '</b></div>' : '<div class="rcard big" id="rc0" style="--c1:#7fd0ff;--c2:#2f8cff"><span class="ri em">🎁</span><b>' + esc(sd.reward) + '</b></div>';
+    ov.innerHTML = '<div class="eyebrow" style="color:#bfe9ff;position:relative;z-index:2">❄️ Alle Teile gesammelt</div><h2 style="position:relative;z-index:2;font-size:26px;margin:0">' + esc(sd.set) + ' komplett!</h2>' +
+      '<div id="lootStage" style="position:relative;z-index:2;width:min(86vw,300px);height:250px;border-radius:14px;overflow:visible;cursor:pointer"></div>' +
+      '<div class="rcards bigrow" style="position:relative;z-index:2">' + card + '</div>' +
+      '<button class="btn lg" id="cOk" style="position:relative;z-index:2;opacity:0;pointer-events:none;background:var(--gold,#f2b33d);color:#2b1d00;margin-top:8px">Weiter ▶</button>';
+    document.body.appendChild(ov);
+    global.VTL.mount(document.getElementById("lootStage"), "ice", function () {
+      try { if (S.state.settings.audio) global.VTC.sound(S.state.profile.snd, true); } catch (e) {}
+      var e0 = ov.querySelector("#rc0");
+      setTimeout(function () { e0.classList.add("show"); try { global.VTC.burst("stars", e0.getBoundingClientRect().left + 40, e0.getBoundingClientRect().top + 20, 14, 1); } catch (x) {} }, 300);
+      setTimeout(function () { var b = $("#cOk"); if (b) { b.style.transition = "opacity .4s"; b.style.opacity = 1; b.style.pointerEvents = "auto"; } }, 1100);
+    });
+    $("#cOk").addEventListener("click", function () { ov.remove(); renderHeader(); if (sets.length > 1) openSetReveal(sets.slice(1)); else render(); });
+  }
   function openPassReward(n) {
     var r = n === "fin" ? S.claimPassFinale() : S.claimPassWeek(+n);
     if (r.error) return toast(r.error);
@@ -7795,7 +7813,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var n = S.takeNews();
     if (n) {
       n.ranks.forEach(function (r) { parts.push("Rang " + r.rank + ": +" + r.coins + " 🪙" + (r.item ? " und " + r.item + " geschenkt" : "")); });
-      n.sets.forEach(function (s) { parts.push(s.set + " komplett! Neu: " + s.reward); });
+      if (n.sets.length) setTimeout(function () { openSetReveal(n.sets); }, 300);
       (n.cups || []).forEach(function (c) { parts.push("Sammler-Pokal " + c.cup + "! +" + c.coins + " 🪙"); });
       S.save(true);
     }
@@ -9024,7 +9042,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     else if (a === "buy") {
       var r = S.buy(act.getAttribute("data-id"));
       toast(r.error || ("Gekauft: " + r.item.label));
-      if (r.ok) { var nw = S.takeNews(); if (nw && nw.sets.length) { toast("🎉 " + nw.sets.map(function (s) { return s.set + " komplett! Neu: " + s.reward; }).join(" · "), 5200); S.save(true); } }
+      if (r.ok) { var nw = S.takeNews(); if (nw && nw.sets.length) { S.save(true); openSetReveal(nw.sets); } }
       if (r.ok) { var rect = act.getBoundingClientRect(); global.VTC.burst("confetti", rect.left + rect.width / 2, rect.top, 26, 1.4); }
       renderHeader(); render();
     }
@@ -9059,7 +9077,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     else if (a === "buyset") {
       var bs = S.buySet();
       toast(bs.error || ("Gekauft: " + bs.items.join(", ") + (bs.locked && bs.locked.length ? ". Noch offen: " + bs.locked.join(", ") : "")), bs.error || (bs.locked && bs.locked.length) ? 5200 : 3200);
-      if (bs.ok) { var rc = act.getBoundingClientRect(); global.VTC.burst("stars", rc.left + rc.width / 2, rc.top, 30, 1.6); var nw2 = S.takeNews(); if (nw2 && nw2.sets.length) { toast("🎉 " + nw2.sets.map(function (s) { return s.set + " komplett! Neu: " + s.reward; }).join(" · "), 5200); S.save(true); } }
+      if (bs.ok) { var rc = act.getBoundingClientRect(); global.VTC.burst("stars", rc.left + rc.width / 2, rc.top, 30, 1.6); var nw2 = S.takeNews(); if (nw2 && nw2.sets.length) { S.save(true); openSetReveal(nw2.sets); } }
       renderHeader(); render();
     }
     else if (a === "buyslot") {
