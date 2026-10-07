@@ -295,6 +295,16 @@
     } catch (e) { if (cb) cb(null); }
   }
 
+  /* ---------- Wochenzeitplan (Eltern legen pro Wochentag Minuten fest; gilt jede Woche gleich) ---------- */
+  function weekPlan() {
+    var r = global.WordySync && global.WordySync.remote ? (global.WordySync.remote() || {}).weekPlan : null;
+    return r && Array.isArray(r.min) && r.min.length === 7 ? r : null;
+  }
+  function wdIndex(dateStr) { var a = dateStr.split("-").map(Number); return (new Date(Date.UTC(a[0], a[1] - 1, a[2])).getUTCDay() + 6) % 7; }   // Montag = 0
+  function planMin(dateStr) { var wp = weekPlan(); return wp ? (+wp.min[wdIndex(dateStr || today())] || 0) : null; }   // null = kein Plan
+  function freeDay(dateStr) { return planMin(dateStr) === 0; }
+  function goalMin(dateStr) { var m = planMin(dateStr); return m > 0 ? m : state.settings.goalMin; }   // freier Tag: wer übt, hat das normale Ziel
+
   /* ---------- Tageswechsel, Streak, Herzen ---------- */
   function rollDay() {
     var t = today();
@@ -309,7 +319,9 @@
         var gap = dayDiff(last, t);
         if (gap > 1) {
           var missed = gap - 1;
-          if (state.streak.freezes >= missed) { state.streak.freezes -= missed; state.streak.usedToday = true; }
+          for (var fd = 1; fd <= gap - 1; fd++) { if (freeDay(today(new Date(Date.parse(t + "T12:00:00") - fd * 86400000)))) missed--; }   // freie Tage im Wochenplan unterbrechen die Serie nicht
+          if (missed <= 0) { /* nur freie Tage dazwischen */ }
+          else if (state.streak.freezes >= missed) { state.streak.freezes -= missed; state.streak.usedToday = true; }
           else { state.streak.best = Math.max(state.streak.best, state.streak.count); state.streak.count = 0; }
         }
       }
@@ -706,7 +718,7 @@
       .concat(bumpMission("master", res.mastered || 0))
       .concat(bumpMission("sent", res.sentOk || 0))
       .concat(bumpMission("arena", res.arena ? 1 : 0));
-    var goalSec = state.settings.goalMin * 60;
+    var goalSec = goalMin() * 60;
     if (d.sec >= goalSec && !d.done) {
       d.done = true; rewards.goalReached = true; addCoins(20); addCl("ziel", 20); rewards.coins += 20;
       rewards.missions = rewards.missions.concat(bumpMission("goal", 1));
@@ -994,6 +1006,6 @@
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
-    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, pathProgress: pathProgress, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, minXp: minXp, defaultOf: defaultOf
+    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, minXp: minXp, defaultOf: defaultOf
   };
 })(window);

@@ -61,7 +61,7 @@
     var rk = VT.rankOf(st.xp), d = st.daily || {};
     var meta = {
       name: st.profile.name || "", coins: st.coins, xp: st.xp, rank: rk.rank ? rk.rank.n : "", streak: st.streak.count, best: st.streak.best,
-      goalMin: st.settings.goalMin, todaySec: d.sec || 0, todayItems: d.items || 0, owned: (st.profile.owned || []).length,
+      goalMin: VT.goalMin ? VT.goalMin() : st.settings.goalMin, todaySec: d.sec || 0, todayItems: d.items || 0, owned: (st.profile.owned || []).length,
       wish: (VT.wish && VT.wish()) ? VT.wish().label || VT.wish().id : "", klassen: st.settings.klassen, version: g.WORDY_VERSION || "", totals: st.totals, path: VT.pathProgress ? Object.assign(VT.pathProgress(), { sections: VT.pathSections() }) : null
     };
     lastSnap = Date.now();
@@ -123,6 +123,15 @@
       var key = "p" + pl.id; if (st.goalsDone[key]) return;
       if (W.planInfo(pl).pct >= 90) { st.goalsDone[key] = 1; VT.parentCoins(pl.coins); W.log("plan", { id: pl.id, done: 1 }); got.push({ title: pl.title, coins: pl.coins, kind: "plan" }); }
     });
+    var wp = VT.weekPlan && VT.weekPlan();   // Wochenzeitplan: Bonus, wenn genug Plan-Tage geschafft sind (mindestens 80 %, aufgerundet)
+    if (wp && wp.bonus > 0) {
+      var wkey = "wp" + monday(VT.today());
+      if (!st.goalsDone[wkey]) {
+        var pd = 0, ok = 0, hh, i2;
+        for (i2 = 0; i2 < 7; i2++) { if (wp.min[i2] > 0) { pd++; hh = dayStat(addDays(monday(VT.today()), i2)); if (hh && (hh.sec || 0) >= wp.min[i2] * 60) ok++; } }
+        if (pd && ok >= Math.max(1, Math.ceil(pd * 0.8))) { st.goalsDone[wkey] = 1; VT.parentCoins(wp.bonus); W.log("goal", { id: "wp", done: 1 }); got.push({ title: "Plan-Tage der Woche", coins: wp.bonus, kind: "week" }); }
+      }
+    }
     if (got.length) { VT.save(true); if (g.WordyHooks && g.WordyHooks.onReward) g.WordyHooks.onReward(got); }
   };
 
@@ -150,7 +159,7 @@
     lastPull = Date.now();
     return g.fetch(c.url + "/api/sync", { headers: { Authorization: "Bearer " + c.token } })
       .then(function (r) { if (!r.ok) throw new Error(String(r.status)); return r.json(); })
-      .then(function (j) { lsSet("wordy.cfg." + pid(), { goals: j.goals || [], plans: j.plans || [], pathUnits: j.pathUnits || [], t: Date.now() }); W.check(); if (g.WordyHooks && g.WordyHooks.onChange) g.WordyHooks.onChange(); return true; })
+      .then(function (j) { lsSet("wordy.cfg." + pid(), { goals: j.goals || [], plans: j.plans || [], pathUnits: j.pathUnits || [], weekPlan: j.weekPlan || null, t: Date.now() }); W.check(); if (g.WordyHooks && g.WordyHooks.onChange) g.WordyHooks.onChange(); return true; })
       .catch(function () { return false; });
   };
 

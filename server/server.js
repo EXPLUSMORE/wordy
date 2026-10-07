@@ -391,8 +391,19 @@ function apiSync(pid) {
     now: Date.now(), today: dayOf(Date.now()),
     goals: q.goals.all(pid, mon).map(g => ({ id: g.id, week: g.week, kind: g.kind, target: g.target, scope: JSON.parse(g.scope), coins: g.coins, title: g.title })),
     plans: q.plans.all(pid, dayOf(Date.now())).map(p => ({ id: p.id, title: p.title, exam: p.exam, units: JSON.parse(p.units), coins: p.coins })),
-    pathUnits: pathUnitsOf(pid)
+    pathUnits: pathUnitsOf(pid),
+    weekPlan: weekPlanOf(pid)
   }];
+}
+/* Wochenzeitplan: Minuten pro Wochentag (Mo bis So), gilt jede Woche gleich, dazu Wochenbonus in Münzen */
+function weekPlanOf(pid) { const r = q.kvGet.get("weekplan:" + pid); try { const v = r ? JSON.parse(r.val) : null; return v && Array.isArray(v.min) ? v : null; } catch (e) { return null; } }
+function setWeekPlan(pid, body) {
+  if (body.clear) { q.kvSet.run("weekplan:" + pid, "null"); return [200, { ok: true, plan: null }]; }
+  const min = Array.isArray(body.min) ? body.min.slice(0, 7).map(x => Math.max(0, Math.min(180, Math.round(+x) || 0))) : null;
+  if (!min || min.length !== 7) return [400, { error: "Bitte sieben Werte (Montag bis Sonntag) angeben." }];
+  const bonus = Math.max(0, Math.min(200, Math.round(+body.bonus) || 0)), plan = { min, bonus };
+  q.kvSet.run("weekplan:" + pid, JSON.stringify(plan));
+  return [200, { ok: true, plan }];
 }
 /* Welche Einheiten stehen im Lernpfad? Leer = Standard der App (Schule: Headlight 2, Business: gewählte Stufen) */
 function pathUnitsOf(pid) { const r = q.kvGet.get("pathunits:" + pid); try { return r ? JSON.parse(r.val) : []; } catch (e) { return []; } }
@@ -627,6 +638,8 @@ const server = http.createServer(async (req, res) => {
         if (m[2] === "goals" && req.method === "POST") { const [c, b] = createGoal(pid, await readJson(req)); return send(res, c, b); }
         if (m[2] === "plans" && req.method === "GET") return send(res, 200, plansOf(pid));
         if (m[2] === "plans" && req.method === "POST") { const [c, b] = createPlan(pid, await readJson(req)); return send(res, c, b); }
+        if (m[2] === "weekplan" && req.method === "GET") return send(res, 200, weekPlanOf(pid));
+        if (m[2] === "weekplan" && req.method === "POST") { const [c, b] = setWeekPlan(pid, await readJson(req)); return send(res, c, b); }
         if (m[2] === "pathunits" && req.method === "GET") return send(res, 200, pathUnitsOf(pid));
         if (m[2] === "pathunits" && req.method === "POST") { const [c, b] = setPathUnits(pid, await readJson(req)); return send(res, c, b); }
         if (m[2] === "catalog" && req.method === "GET") { const c = snap(pid, "catalog"); return send(res, 200, c ? c.d : []); }

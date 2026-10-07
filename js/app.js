@@ -283,9 +283,9 @@
     sent: "Satzbau: Sätze richtig legen.", arena: "Ein Spiel aus der Arena."
   };
   function missionGo(m) {
-    var st = S.state, left = Math.max(5, Math.min(15, Math.ceil((st.settings.goalMin * 60 - ((st.daily && st.daily.sec) || 0)) / 60)));
+    var st = S.state, left = Math.max(5, Math.min(15, Math.ceil((S.goalMin() * 60 - ((st.daily && st.daily.sec) || 0)) / 60)));
     switch (m.type) {
-      case "items": return 'data-act="start" data-mode="mix" data-min="' + st.settings.goalMin + '"';
+      case "items": return 'data-act="start" data-mode="mix" data-min="' + S.goalMin() + '"';
       case "goal": return 'data-act="start" data-mode="mix" data-min="' + left + '"';
       case "box": return 'data-act="start" data-mode="box" data-min="5"';
       case "chain": return 'data-act="start" data-mode="mix" data-min="5"';
@@ -305,6 +305,26 @@
   }
   function tile(icon, title, desc, attrs, extra, cls) {
     return '<button class="tile' + (cls ? " " + cls : "") + '" ' + attrs + '><span class="ti">' + icon + '</span><span class="tt"><b>' + title + '</b><span class="d">' + desc + '</span>' + (extra || "") + '</span></button>';
+  }
+
+  /* ---------- Wochenzeitplan (von den Eltern im Dashboard festgelegt) ---------- */
+  function weekPlanCard() {
+    var wp = S.weekPlan(); if (!wp) return "";
+    var st = S.state, t = S.today(), d0 = new Date(t + "T00:00:00Z"), wd = (d0.getUTCDay() + 6) % 7, names = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"], planDays = 0, ok = 0, cells = "";
+    wp.min.forEach(function (m, i) {
+      var k = new Date(d0.getTime() + (i - wd) * 86400000).toISOString().slice(0, 10), sec = k === t ? ((st.daily && st.daily.sec) || 0) : ((st.history[k] && st.history[k].sec) || 0), done = m > 0 && sec >= m * 60, sym, color = "var(--ink-3,#8896ab)";
+      if (m > 0) { planDays++; if (done) ok++; }
+      if (m === 0) sym = "frei";
+      else if (done) { sym = "✓"; color = "var(--good,#2e7d4f)"; }
+      else if (k === t) { sym = "▶"; color = "var(--accent,#1e6273)"; }
+      else if (k > t) sym = "○";
+      else sym = "·";
+      cells += '<div style="text-align:center;font-size:12px;border-radius:8px;padding:3px 0' + (k === t ? ';background:var(--accent-soft,#ddeef2)' : '') + '">' + names[i] + '<br><b style="font-size:' + (sym === "frei" ? 12 : 18) + 'px;color:' + color + '">' + sym + '</b>' + (m > 0 ? '<br><span class="muted" style="font-size:11px">' + m + '′</span>' : '') + '</div>';
+    });
+    var need = Math.max(1, Math.ceil(planDays * 0.8)), got = st.goalsDone && st.goalsDone["wp" + (function () { var m0 = new Date(d0.getTime() - wd * 86400000); return m0.toISOString().slice(0, 10); })()];
+    return '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Deine Woche</div><span class="pill tnum">' + ok + ' von ' + planDays + ' Plan-Tagen</span></div>' +
+      '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:10px">' + cells + '</div>' +
+      (wp.bonus > 0 ? '<p class="small muted" style="margin:10px 0 0">' + (got ? "🎉 Wochenbonus geholt: 🪙 " + wp.bonus : "Bonus: 🪙 " + wp.bonus + ", wenn mindestens " + need + " von " + planDays + " Plan-Tagen geschafft sind.") + '</p>' : "") + '</section>';
   }
 
   /* ---------- Lernpfad ---------- */
@@ -395,7 +415,7 @@
 
   /* ---------- Start: eine Empfehlung, ein Knopf ---------- */
   function recommend() {
-    var st = S.state, p = S.pools(), W = window.WordySync, mins = startMin || st.settings.goalMin;
+    var st = S.state, p = S.pools(), W = window.WordySync, mins = startMin || S.goalMin();
     var plans = (W && W.connected()) ? W.activePlans().filter(function (pl) { var d = W.planInfo(pl).days; return d >= 0 && d <= 14; }) : [];
     if (plans.length) {
       plans.sort(function (a, b) { return a.exam < b.exam ? -1 : 1; });
@@ -411,7 +431,7 @@
   }
   function viewHome() {
     var st = S.state, r = S.rankOf(st.xp);
-    var goalSec = st.settings.goalMin * 60, pct = Math.min(100, Math.round(st.daily.sec * 100 / goalSec));
+    var goalSec = S.goalMin() * 60, pct = Math.min(100, Math.round(st.daily.sec * 100 / goalSec));
     var toNext = r.next ? (r.next.xp - st.xp) : 0;
     var pn = playerName(), greet = pn && !/^Spieler \d+$/.test(pn) ? "Hallo " + esc(pn) : "Willkommen zurück";
     var hour = new Date().getHours();
@@ -420,7 +440,7 @@
       : st.daily.sec > 0 ? "Noch " + fmtMin(goalSec - st.daily.sec) + " bis zum Tagesziel."
       : biz ? (hour < 12 ? "Fünf Minuten vor dem ersten Termin?" : "Eine kurze Runde zwischen zwei Meetings.")
       : hour < 12 ? "Eine kurze Runde vor der Schule?" : "Fünf Minuten reichen für heute.";
-    var rec = lastRec = recommend(), mins = startMin || st.settings.goalMin;
+    var rec = lastRec = recommend(), mins = startMin || S.goalMin();
 
     var html = '<div class="stack">';
     html += '<section class="card hero" style="position:relative">' + (S.stickers().length ? '<div class="stk-corner">' + placedStickers(54) + '</div>' : "") + '<div class="inner"><div class="row" style="align-items:flex-start">' +
@@ -431,10 +451,11 @@
       '<div class="row wrap small muted" style="margin-top:12px;gap:14px">' +
       '<span>🔥 ' + st.streak.count + ' ' + plural(st.streak.count, "Tag", "Tage") + (st.streak.best > st.streak.count ? ' · Bestwert ' + st.streak.best : '') + '</span>' +
       '<span>🛡️ ' + st.streak.freezes + ' Streak-Schutz</span>' +
+      (S.weekPlan() ? '<span>📅 ' + (S.freeDay() ? "Heute frei" : "Heute laut Plan: " + S.goalMin() + " Min.") + '</span>' : '') +
       (r.next ? '<span>Noch ' + toNext + ' XP bis ' + esc(r.next.n) + '</span>' : '<span>Höchster Rang erreicht</span>') +
       '</div></div></section>';
 
-    html += pathCard();
+    html += weekPlanCard() + pathCard();
     html += '<section class="card rec-card"><div class="eyebrow">Heute für dich</div>' +
       '<h2>' + rec.icon + ' ' + rec.title + '</h2>' +
       '<p class="small muted" style="margin:0 0 12px">' + esc(rec.sub) + '</p>' +
@@ -468,7 +489,7 @@
 
   /* ================= ÜBEN: Spielmodi und Einheiten ================= */
   function modiHtml() {
-    var st = S.state, p = S.pools(), stt = S.stats(), mins = startMin || st.settings.goalMin, biz = st.settings.track === "business", few = p.all.length < 8;
+    var st = S.state, p = S.pools(), stt = S.stats(), mins = startMin || S.goalMin(), biz = st.settings.track === "business", few = p.all.length < 8;
     var nW = S.itemsFor(mins), nS = Math.max(5, Math.round(mins * 60 / 16)), nV = Math.max(5, Math.round(mins * 60 / 20));
     function cnt(n) { return " · ≈ " + n + " " + plural(n, "Aufgabe", "Aufgaben"); }
     var W = window.WordySync, plans = (W && W.connected()) ? W.activePlans() : [], aud = audioAvailable();
@@ -635,7 +656,7 @@
     };
     window.WordyHooks.onReward = function (list) {
       var c = list.reduce(function (a, x) { return a + (x.coins || 0); }, 0);
-      toast("🎉 " + (list[0].kind === "plan" ? "Lernplan geschafft" : "Wochenziel geschafft") + ": " + list[0].title + (c ? " · +" + c + " Münzen" : ""), 6000);
+      toast("🎉 " + (list[0].kind === "plan" ? "Lernplan geschafft" : list[0].kind === "week" ? "Wochenplan geschafft" : "Wochenziel geschafft") + ": " + list[0].title + (c ? " · +" + c + " Münzen" : ""), 6000);
       try { if (window.VTC && S.state.settings.audio) window.VTC.sound(S.state.profile.snd, true); window.VTC.burst(S.state.profile.fx, window.innerWidth / 2, window.innerHeight * .4, 24, 1); } catch (e) {}
       if (tab === "home" && sessionEl.hidden) render();
     };
@@ -701,7 +722,7 @@
       '<div style="font-family:Newsreader,serif;font-size:30px;font-weight:600;margin:6px 0 4px" class="tnum">+' + total + ' <span class="small muted" style="font-family:Karla,sans-serif;font-weight:400">heute verdient</span></div>' +
       row("Lernfortschritt", "neue Wörter, höhere Stufen, Fehlerkartei, Einheiten", "+" + c.fortschritt) +
       row("Missionen", c.missionenDone + " von " + c.missionenAll + " erfüllt", "+" + c.missionen, c.missionenDone === c.missionenAll && c.missionenAll > 0) +
-      row("Tagesziel", c.zielDone ? "geschafft" : "noch offen: " + st.settings.goalMin + " Minuten üben", c.zielDone ? "+" + c.ziel : "+20 möglich", c.zielDone) +
+      row("Tagesziel", c.zielDone ? "geschafft" : "noch offen: " + S.goalMin() + " Minuten üben", c.zielDone ? "+" + c.ziel : "+20 möglich", c.zielDone) +
       row("Arena", "Tageslimit 30", c.arena + " / 30", c.arena >= 30) +
       (c.eltern ? row("Ziele der Eltern", "Wochenziel oder Lernplan geschafft", "+" + c.eltern, true) : "") +
       (c.streakNext ? row("Serien-Bonus", "noch " + c.streakDays + " " + plural(c.streakDays, "Tag", "Tage") + " bis zum " + c.streakNext + ". Tag", "+" + c.streakBonus + " möglich") : "") +
@@ -1812,7 +1833,7 @@
     else if (a === "quit") { if (SS && SS.items) endSession("quit"); else closeSession(); }
     else if (a === "close") closeSession();
     else if (a === "openchest") openChest();
-    else if (a === "again") { closeSession(); startSession({ minutes: S.state.settings.goalMin }); }
+    else if (a === "again") { closeSession(); startSession({ minutes: S.goalMin() }); }
     else if (a === "undo" && t && (t.type === "spell" || t.type === "build") && !SS.answered) {
       if (!t.built.length) return;
       var del = t.type === "spell" && t.cursor != null ? Math.min(t.cursor, t.built.length) - 1 : t.built.length - 1;   // wie die Löschtaste: der Buchstabe vor dem Cursor
@@ -1936,7 +1957,7 @@
     if (a === "arena") { if (global.ARENA) global.ARENA.start(act.getAttribute("data-id")); return; }
     if (a === "start") {
       var fc = act.getAttribute("data-focus") || null;
-      startSession({ minutes: +(act.getAttribute("data-min") || st.settings.goalMin), mode: act.getAttribute("data-mode") || (fc ? "focus" : "mix"), unit: act.getAttribute("data-unit") || null,
+      startSession({ minutes: +(act.getAttribute("data-min") || S.goalMin()), mode: act.getAttribute("data-mode") || (fc ? "focus" : "mix"), unit: act.getAttribute("data-unit") || null,
         vtype: act.getAttribute("data-vtype") === "1", verb: act.getAttribute("data-verb") || null, focus: fc });
     } else if (a === "track") {
       var nt = act.getAttribute("data-t");
@@ -1974,15 +1995,15 @@
       var gl = window.WordySync.currentGoals().filter(function (x) { return String(x.id) === act.getAttribute("data-id"); })[0];
       if (gl) {
         var gp = window.WordySync.progress(gl), gleft = Math.max(0, gl.target - gp.cur);
-        if (gl.kind === "unit") startSession({ minutes: Math.max(5, st.settings.goalMin), scope: gl.scope, newMax: 10, mode: "unit" });
+        if (gl.kind === "unit") startSession({ minutes: Math.max(5, S.goalMin()), scope: gl.scope, newMax: 10, mode: "unit" });
         else if (gl.kind === "newwords") startSession({ minutes: 10, mode: "new" });
-        else if (gl.kind === "days") startSession({ minutes: Math.max(5, st.settings.goalMin), mode: "mix" });
+        else if (gl.kind === "days") startSession({ minutes: Math.max(5, S.goalMin()), mode: "mix" });
         else startSession({ minutes: Math.min(15, Math.max(5, gleft)), mode: "mix" });
       }
     }
     else if (a === "startplan") {
       var pl = window.WordySync.activePlans().filter(function (x) { return String(x.id) === act.getAttribute("data-id"); })[0];
-      if (pl) { var pi = window.WordySync.planInfo(pl); startSession({ minutes: st.settings.goalMin, scope: pl.units, newMax: Math.max(pi.quota, (st.daily && st.daily.newSeen) || 0), mode: "plan" }); }
+      if (pl) { var pi = window.WordySync.planInfo(pl); startSession({ minutes: S.goalMin(), scope: pl.units, newMax: Math.max(pi.quota, (st.daily && st.daily.newSeen) || 0), mode: "plan" }); }
     }
     else if (a === "syncpair") {
       var inp = $("#syncCode"), txt = inp ? inp.value : ""; act.disabled = true; act.textContent = "Verbinde …";

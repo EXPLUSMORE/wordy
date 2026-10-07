@@ -9,6 +9,12 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.22.0 – 2026-10-07
+
+- **Wochenzeitplan:** Im Dashboard (Karte „Wochenzeitplan“) legen die Eltern pro Wochentag fest, wie viele Minuten geübt werden sollen (0 = freier Tag), mit Schnellauswahl (Schultage, täglich, Wochenende frei). Der Plan gilt jede Woche gleich. Das Dashboard zeigt pro Tag geplant gegen geübt, Soll und Ist der Woche und die geschafften Plan-Tage. Dazu ein **Wochenbonus** in Münzen (0, 20, 30, 50; Standard 30) bei mindestens 80 % der Plan-Tage (aufgerundet, z. B. 4 von 5).
+- App: Das Tagesziel richtet sich nach dem Plan des Tages („Heute laut Plan: 15 Min.“), Ring, Empfehlung und Tagesziel-Münzen eingeschlossen. Neue Karte „Deine Woche“ mit ✓ / ▶ / ○ / frei. Freie Tage unterbrechen die Serie nicht (kein Streak-Schutz nötig); wer an einem freien Tag übt, bekommt das normale Tagesziel. Ohne Plan bleibt alles wie bisher.
+- Server: `GET/POST /api/admin/players/:id/weekplan`, der Plan kommt über `/api/sync` in die App. **Server-Update nötig.**
+
 ## 2.21.1 – 2026-10-07
 
 - Dashboard „Fortschritt pro Einheit“: Einheiten im Lernpfad, mit denen noch nicht gelernt wurde, erscheinen grau („noch nicht begonnen“) mit ihren Abschnitten, in Pfad-Reihenfolge. Die App sendet dafür die Gruppe der Abschnitte mit (App-Update und **Server-Update** nötig).

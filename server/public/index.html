@@ -304,7 +304,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
       '<div class="small muted">Zuletzt aktiv: ' + fmtAgo(p.lastEvent) + (p.lastEvent ? " (" + fmtAt(p.lastEvent) + ")" : "") + (r.metaTs ? " · Übersicht von " + fmtAt(r.metaTs) : "") + (m.rank ? " · " + esc(m.rank) : "") + (m.streak ? " · 🔥 " + m.streak + " Tage Serie" : "") +
       (p.devices.length ? " · " + p.devices.length + " Gerät" + (p.devices.length > 1 ? "e" : "") : " · noch kein Gerät verbunden") + "</div></div>" +
       '<button class="ghost" id="inv">Neuer Code</button><button class="ghost" id="ren">Umbenennen</button><button class="ghost" id="hid">Nur sichern</button><button class="ghost" id="rev">Geräte trennen</button><button class="ghost" id="del">Löschen</button></div></div>';
-    h += heuteCard(r, m) + wocheCard(r, m);
+    h += heuteCard(r, m) + wocheCard(r, m) + '<div class="card" id="wpCard"></div>';
     h += '<div class="card" id="pathCard"></div><div class="card" id="goalsCard"></div><div class="card" id="plansCard"></div>';
     h += '<div class="card"><div class="row"><h2 class="grow" style="margin:0">Übungszeit pro Tag</h2><button class="tab" data-d="14" aria-pressed="' + (days === 14) + '">14 Tage</button><button class="tab" data-d="30" aria-pressed="' + (days === 30) + '">30 Tage</button><button class="tab" data-d="90" aria-pressed="' + (days === 90) + '">90 Tage</button></div>' +
       bars(r.days) + '<div class="legend"><span><i style="background:var(--good)"></i>10 Min. oder mehr</span><span><i style="background:var(--acc2)"></i>weniger</span><span class="muted">Insgesamt ' + fmtMin(t.sec) + ", " + t.items + " Aufgaben, " + t.activeDays + " aktive Tage</span></div></div>";
@@ -337,7 +337,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     document.getElementById("hid").onclick = function () { if (confirm(p.name + " nur noch sichern und hier nicht mehr anzeigen? Die Zahlen verschwinden aus Übersicht und Wochenmail, die Sicherung bleibt. Zurückholen kannst du ihn unter „＋ Spieler“.")) post("/api/admin/players/" + p.id + "/hidden", { hidden: true }).then(function () { cur = null; loadPlayers(); }); };
     document.getElementById("rev").onclick = function () { if (confirm("Alle verbundenen Geräte von " + p.name + " trennen? Neu verbinden geht mit einem neuen Code.")) post("/api/admin/players/" + p.id + "/revoke").then(function () { loadPlayers(p.id); }); };
     document.getElementById("del").onclick = function () { if (confirm(p.name + " und alle gespeicherten Lerndaten endgültig löschen?")) api("/api/admin/players/" + p.id, { method: "DELETE" }).then(function () { cur = null; loadPlayers(); }); };
-    drawPath(p, r); drawGoals(p, r); drawPlans(p, r); drawBackups(p, r); drawMail();
+    drawWeekPlan(p, r); drawPath(p, r); drawGoals(p, r); drawPlans(p, r); drawBackups(p, r); drawMail();
     var wd = document.getElementById("wdet"); if (wd) wd.addEventListener("toggle", function () { if (wd.open) showWords(p); });
     Array.prototype.forEach.call(view.querySelectorAll("tr[data-u]"), function (tr) { tr.onclick = function () { showUnit(p, tr.getAttribute("data-u")); }; });
   }
@@ -356,6 +356,44 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
   }
   function picked(id) { return Array.prototype.map.call(document.querySelectorAll("#" + id + " input:checked"), function (c) { return c.value; }); }
 
+  /* Wochenzeitplan: Minuten pro Wochentag, gilt jede Woche gleich; Vergleich mit dem, was in dieser Woche geübt wurde */
+  function drawWeekPlan(p, r) {
+    var el = document.getElementById("wpCard"); if (!el) return;
+    el.innerHTML = "<h2>Wochenzeitplan</h2><p class='muted small'>Lade …</p>";
+    api("/api/admin/players/" + p.id + "/weekplan").then(function (plan) {
+      var g = (r.meta && r.meta.goalMin) || 10, vals = plan ? plan.min.slice() : [g, g, g, g, g, g, g], bonus = plan ? plan.bonus : 30, days = r.calWeek.days, todayK = r.today.date, names = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
+      function paint() {
+        var soll = 0, ist = 0, pd = 0, ok = 0, h = "<h2>Wochenzeitplan</h2><div class='t' style='font-size:16px;margin:0 0 6px'>" + dLong(r.calWeek.from) + " bis " + dLong(r.calWeek.to) + "</div>" +
+          (plan ? "" : '<p class="small muted" style="margin:0 0 8px">Noch kein Plan: Magnus hat jeden Tag das Tagesziel der App (' + g + " Min.). Mit „Plan speichern“ gilt der Plan unten jede Woche gleich.</p>") +
+          '<div class="row" style="gap:6px;flex-wrap:wrap;margin-bottom:8px"><button class="ghost sm" data-pre="school">Schultage ' + g + ' Min</button><button class="ghost sm" data-pre="all">Täglich ' + g + ' Min</button><button class="ghost sm" data-pre="free">Wochenende frei</button></div>' +
+          '<div style="display:grid;grid-template-columns:44px 124px 1fr 84px;gap:8px;align-items:center;font-size:13px" id="wpGrid">' +
+          "<b class='small muted'>Tag</b><b class='small muted'>Geplant (Min.)</b><b class='small muted'>Geübt</b><b class='small muted' style='text-align:right'>Stand</b>";
+        days.forEach(function (d, i) {
+          var m = vals[i], sec = d.sec, isToday = d.date === todayK, fut = d.date > todayK, done = m > 0 && sec >= m * 60;
+          soll += m; ist += sec; if (m > 0) { pd++; if (done) ok++; }
+          var pc = m > 0 ? Math.min(100, Math.round(sec * 100 / (m * 60))) : (sec ? 100 : 0);
+          var st = m === 0 ? (sec ? "frei · " + fmtMin(sec) : '<span class="muted">frei</span>') : fut ? '<span class="muted">offen</span>' : done ? '<span class="ok" style="color:var(--good)">✓ ' + fmtMin(sec) + "</span>" : isToday ? Math.round(sec / 60) + " von " + m : '<span class="err">✗ ' + fmtMin(sec) + "</span>";
+          h += "<b" + (isToday ? ' style="color:var(--acc)"' : "") + ">" + names[i] + "</b>" +
+            '<span style="display:flex;align-items:center;gap:6px"><button class="ghost sm" data-wp="' + i + '" data-d="-5" style="padding:2px 9px">−</button><b class="tnum" style="min-width:26px;text-align:center">' + m + '</b><button class="ghost sm" data-wp="' + i + '" data-d="5" style="padding:2px 9px">+</button></span>' +
+            '<div class="mini" style="margin:0"><i class="' + (done ? "d" : "") + '" style="width:' + pc + '%"></i></div><span style="text-align:right;font-size:12px">' + st + "</span>";
+        });
+        var need = pd ? Math.max(1, Math.ceil(pd * 0.8)) : 0;
+        h += "</div>" + '<div class="kpis" style="margin-top:12px">' + kpi(soll + " Min.", "Soll pro Woche") + kpi(fmtMin(ist), "Ist bisher" + (soll ? " (" + Math.round(ist / 60 * 100 / soll) + " %)" : "")) + kpi(ok + " von " + pd, "Plan-Tage geschafft") + "</div>" +
+          '<div class="row" style="gap:10px;margin-top:12px;align-items:center;flex-wrap:wrap"><label class="small">Wochenbonus 🪙 <select id="wpBonus" style="width:auto"><option value="0">kein Bonus</option><option value="20">20</option><option value="30">30</option><option value="50">50</option></select></label>' +
+          '<span class="small muted">bei mindestens ' + need + " von " + pd + ' Plan-Tagen</span></div>' +
+          '<div class="row" style="gap:8px;margin-top:12px;align-items:center;flex-wrap:wrap"><button id="wpSave">Plan speichern</button>' + (plan ? '<button class="ghost" id="wpClear">Plan löschen</button>' : "") + '<span id="wpMsg" class="small"></span></div>';
+        el.innerHTML = h;
+        var sel = document.getElementById("wpBonus"); sel.value = String(bonus); if (sel.value !== String(bonus)) { sel.insertAdjacentHTML("beforeend", '<option value="' + bonus + '">' + bonus + "</option>"); sel.value = String(bonus); }
+        sel.onchange = function () { bonus = +sel.value; };
+        Array.prototype.forEach.call(el.querySelectorAll("[data-wp]"), function (b) { b.onclick = function () { var i = +b.getAttribute("data-wp"); vals[i] = Math.max(0, Math.min(180, vals[i] + +b.getAttribute("data-d"))); paint(); }; });
+        Array.prototype.forEach.call(el.querySelectorAll("[data-pre]"), function (b) { b.onclick = function () { var k = b.getAttribute("data-pre"); vals = vals.map(function (v, i) { return k === "school" ? (i < 5 ? g : 0) : k === "all" ? g : (i < 5 ? (v || g) : 0); }); paint(); }; });
+        var msg = function (t, bad) { var m = document.getElementById("wpMsg"); if (m) { m.className = "small" + (bad ? " err" : ""); m.textContent = t; } };
+        document.getElementById("wpSave").onclick = function () { post("/api/admin/players/" + p.id + "/weekplan", { min: vals, bonus: bonus }).then(function (x) { plan = x.plan; paint(); msg("Gespeichert. Die App übernimmt den Plan beim nächsten Öffnen."); }).catch(function (e) { msg(e.message, 1); }); };
+        var cl = document.getElementById("wpClear"); if (cl) cl.onclick = function () { if (confirm("Plan löschen? Magnus hat dann wieder jeden Tag das Tagesziel der App.")) post("/api/admin/players/" + p.id + "/weekplan", { clear: true }).then(function () { plan = null; paint(); msg("Plan gelöscht."); }).catch(function (e) { msg(e.message, 1); }); };
+      }
+      paint();
+    }).catch(function (e) { el.innerHTML = "<h2>Wochenzeitplan</h2><p class='err small'>" + esc(e.message) + "</p>"; });
+  }
   /* Lernpfad: Fortschritt und Auswahl der Einheiten, die im Pfad erscheinen */
   function drawPath(p, r) {
     var el = document.getElementById("pathCard"); if (!el) return;
