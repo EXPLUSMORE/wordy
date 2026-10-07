@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.42.0 – 2026-10-07
+- **Startseite aufgeräumt**: nur noch Begrüßung (kleinere Bühne mit Figur, Tagesziel, Rang, Streak, Münzen), Lernpfad, Lernplan für die Klassenarbeit (nur wenn die Eltern einen angelegt haben) und die Tagesaufgaben mit Links zu den Übungen. Die Daily Challenge ist die erste Tagesaufgabe.
+- Umgezogen: Battle-Pass → Showroom (oben), Wochenplan und Wochenziele der Eltern → Fortschritt › Verlauf. Entfallen sind Favoriten-Leiste und große Start-Karte (Daily Challenge steht unter Üben und in den Tagesaufgaben).
+
 ## 2.41.1 – 2026-10-07
 - Eisblock-Szene: Die Figur im Eis passt zum Set. Jedes Set in `SETS` hat ein Feld `fig` (Eis-Set: Eisbär); ohne Angabe bleibt es der Eisbär. Auch die Pass-Wochen nutzen weiter den Eisbär.
 

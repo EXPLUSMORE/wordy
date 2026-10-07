@@ -753,7 +753,7 @@ details.fold>.fbody{padding:2px 0 14px}
 .srmc .sbtn{margin:3px}
 #hRank{white-space:nowrap}
 /* Startseite: Hero-Bühne + Start-Karte */
-.hh{position:relative;overflow:hidden;border-radius:22px;border:3px solid #14213d;color:#fff;min-height:392px;box-shadow:0 6px 0 rgba(20,33,61,.25);background:linear-gradient(#5db8ff,#c9ecff)}
+.hh{position:relative;overflow:hidden;border-radius:22px;border:3px solid #14213d;color:#fff;min-height:340px;box-shadow:0 6px 0 rgba(20,33,61,.25);background:linear-gradient(#5db8ff,#c9ecff)}
 .hh.sky-m{background:linear-gradient(#ffb36b,#ffe2a8 55%,#bfe6ff)}.hh.sky-d{background:linear-gradient(#3fa4ff,#bfe8ff)}.hh.sky-e{background:linear-gradient(#5a3fa8,#ff7a5c 70%,#ffc27a)}.hh.sky-n{background:linear-gradient(#0b1033,#2a2a7a 70%,#4a3a8f)}
 .hhsky{position:absolute;inset:0;pointer-events:none}
 .hhsun{position:absolute;right:26px;top:70px;width:46px;height:46px;border-radius:50%;background:#fff3a0;box-shadow:0 0 40px 14px rgba(255,236,140,.7)}
@@ -775,12 +775,12 @@ details.fold>.fbody{padding:2px 0 14px}
 .hhgoal small{display:block;margin-top:6px;font-size:11px;font-weight:800;text-shadow:0 1px 0 #14213d}
 .hhbubble{position:absolute;z-index:4;left:106px;top:164px;max-width:112px;background:#fff;color:#14213d;border:3px solid #14213d;border-radius:14px;padding:6px 10px;font-size:12px;font-weight:800;line-height:1.2;box-shadow:0 3px 0 rgba(20,33,61,.3)}
 .hhbubble:after{content:"";position:absolute;right:-9px;top:50%;margin-top:-7px;width:14px;height:14px;background:#fff;border-right:3px solid #14213d;border-bottom:3px solid #14213d;transform:rotate(-45deg)}
-.hhpod{position:absolute;z-index:1;right:12px;bottom:112px;width:170px;height:46px}
+.hhpod{position:absolute;z-index:1;right:12px;bottom:66px;width:170px;height:46px}
 .hhpod i{position:absolute;inset:0;border-radius:50%;background:linear-gradient(#ffd98a,#e8a43a);border:3px solid #14213d;box-shadow:0 10px 0 #a8641c,0 10px 0 3px #14213d}
 .hh.sky-n .hhpod i,.hh.sky-e .hhpod i{background:linear-gradient(#8f7bff,#4a3ab8);box-shadow:0 10px 0 #2a1f78,0 10px 0 3px #14213d}
-.hhfig{position:absolute;z-index:2;right:40px;bottom:128px;width:112px;height:150px;border:0;background:none;padding:0;cursor:pointer;color:inherit;-webkit-tap-highlight-color:transparent}
+.hhfig{position:absolute;z-index:2;right:40px;bottom:82px;width:112px;height:150px;border:0;background:none;padding:0;cursor:pointer;color:inherit;-webkit-tap-highlight-color:transparent}
 .hhfig .srleg{font-size:72px}
-.hhbar{position:absolute;z-index:3;left:10px;right:10px;bottom:52px;display:flex;flex-direction:column;gap:6px;background:rgba(20,33,61,.82);border:2px solid rgba(255,255,255,.25);border-radius:14px;padding:8px 10px}
+.hhbar{position:absolute;z-index:3;left:10px;right:10px;bottom:10px;display:flex;flex-direction:column;gap:6px;background:rgba(20,33,61,.82);border:2px solid rgba(255,255,255,.25);border-radius:14px;padding:8px 10px}
 .hhrank{display:flex;align-items:center;gap:8px;font-size:12px}.hhrank b{font-size:13px;white-space:nowrap}.hhrank small{font-size:10px;opacity:.8;white-space:nowrap}
 .hhxp{flex:1;height:9px;border-radius:6px;background:rgba(255,255,255,.2);overflow:hidden}.hhxp i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,#78e65c,#ffd21f)}
 .hhchips{display:flex;gap:6px;flex-wrap:wrap}.hhc{background:rgba(255,255,255,.14);border-radius:10px;padding:2px 9px;font-size:12px;font-weight:700}
@@ -856,7 +856,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.41.1";window.WORDY_BUILD="7a1ce9de4f";</script>
+<script>window.WORDY_VERSION="2.42.0";window.WORDY_BUILD="55fee54885";</script>
 </head>
 <body>
 <div id="app">
@@ -6910,7 +6910,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   function parentCards(skipPlans) {
     var W = window.WordySync; if (!W || !W.connected()) return "";
     var h = "", goals = W.currentGoals(), plans = W.activePlans(), st = S.state;
-    (skipPlans ? [] : plans).forEach(function (pl) {
+    (skipPlans || skipPlans === "goals" ? [] : plans).forEach(function (pl) {
       var i = W.planInfo(pl), done = st.goalsDone && st.goalsDone["p" + pl.id];
       var when = i.days > 1 ? "in " + i.days + " Tagen" : i.days === 1 ? "morgen" : "heute";
       var newToday = (st.daily && st.daily.newSeen) || 0, left = Math.max(0, i.quota - newToday);
@@ -6922,7 +6922,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
         (i.total - i.ok > 0 ? '<p class="small" style="margin:0 0 10px">Heute dran: ' + (left > 0 ? '<b>' + left + ' neue ' + plural(left, "Wort", "Wörter") + '</b> und ' : '') + 'Wiederholung.</p>' : '') +
         '<button class="btn wide" data-act="startplan" data-id="' + esc(pl.id) + '">Lernplan üben</button></section>';
     });
-    if (goals.length) {
+    if (goals.length && skipPlans !== "plans") {
       h += '<section class="card"><div class="eyebrow">🎯 Deine persönlichen Wochenziele</div><div style="margin-top:8px">' + goals.map(function (g) {
         var pr = W.progress(g), done = st.goalsDone && st.goalsDone["g" + g.id];
         return '<div style="padding:8px 0;border-top:1px solid var(--line)"><div class="row"><b class="small" style="flex:1 1 auto">' + (done ? "✅ " : "") + esc(g.title) + '</b>' +
@@ -7082,7 +7082,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (!pf.seen) { seen = pf.seen = {}; c.shelves.forEach(function (s) { s.items.forEach(function (i) { if (i.owned) seen[i.id] = 1; }); }); S.save(); }
     var favHtml = [0, 1, 2].map(function (i) { var id = S.favs()[i]; return id ? '<button class="fslot" data-act="sritem" data-id="' + esc(id) + '">' + favIcon(id) + '</button>' : '<button class="fslot e" data-act="srfavhint">＋</button>'; }).join("");
     if (!srAv) srAv = pf.avatar;
-    var h = '<div class="stack srv"><div><h1 style="font-size:22px">🏆 Mein Showroom</h1><p class="small muted" style="margin:2px 0 0">Alles, was du gesammelt, gekauft und erspielt hast. Tippe auf ein Stück.</p></div>' +
+    var h = '<div class="stack srv"><div><h1 style="font-size:22px">🏆 Mein Showroom</h1><p class="small muted" style="margin:2px 0 0">Alles, was du gesammelt, gekauft und erspielt hast. Tippe auf ein Stück.</p></div>' + passCard() +
       '<section class="srtop"><div class="srring" style="--p:' + c.pct + '"><b>' + c.pct + '%</b></div><div class="srcups">' + c.cups.map(function (t) { var col = { Bronze: ["#e0975a", "#8a4a1e"], Silber: ["#eef2fa", "#8794ad"], Gold: ["#ffd24a", "#c8780a"], Platin: ["#c9efff", "#7a8fff"] }[t.n]; return '<div class="srcup' + (t.done ? "" : " lock") + '">' + svgCup(col[0], col[1]) + '<b>' + t.n + '</b><small>ab ' + t.pct + '%</small></div>'; }).join("") + '</div></section>' +
       '<div class="srrar">' + ["common", "rare", "epic", "legend"].map(function (r) { return '<span class="' + r + '"><b>' + c.rar[r] + '</b>' + RAR_NAME[r] + '</span>'; }).join("") + '</div>' +
       '<section class="srstage"><div class="srray"></div><div class="srfloor"></div><div class="srfav">' + favHtml + '</div><div class="srlbl">Favoriten</div><div class="srpod"><i></i></div><div class="srhero" id="srHero"></div>' +
@@ -7331,7 +7331,6 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var pf = S.state.profile, sky = hour >= 5 && hour < 11 ? "m" : hour < 17 ? "d" : hour < 21 ? "e" : "n";
     var cheer = pct >= 100 ? "Tagesziel geschafft! 🎉" : biz ? "Bereit für die nächste Runde?" : "Tipp mich an – ich tanze!";
     var rn = r.rank ? r.rank.n : "", xpPct = r.next ? Math.min(100, Math.round(r.into * 100 / Math.max(1, r.span))) : 100;
-    var favs = S.favs().map(function (id) { return '<button class="hhf" data-act="gotab" data-t="showroom" aria-label="Favorit">' + favIcon(id) + '</button>'; }).join("");
     var html = '<div class="stack">';
     html += '<section class="hh sky-' + sky + '"><div class="hhsky"><i class="hhsun"></i><i class="hhcl c1"></i><i class="hhcl c2"></i><i class="hhst"></i></div>' +
       (S.stickers().length ? '<div class="stk-corner">' + placedStickers(46) + '</div>' : "") +
@@ -7341,24 +7340,19 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       '<div class="hhbubble" id="hhBub">' + esc(cheer) + '</div>' +
       '<div class="hhpod"><i></i></div><button class="hhfig" id="hhFig" data-act="hhdance" aria-label="Figur antippen">' + heroHtml(pf.avatar, 0) + '</button>' +
       '<div class="hhbar"><div class="hhrank"><b>' + esc(rn) + '</b><div class="hhxp"><i style="width:' + xpPct + '%"></i></div><small class="tnum">' + (r.next ? toNext + ' XP bis ' + esc(r.next.n) : "Höchster Rang") + '</small></div>' +
-      '<div class="hhchips"><span class="hhc">🔥 <b class="tnum">' + st.streak.count + '</b></span><span class="hhc">🪙 <b class="tnum">' + st.coins + '</b></span><span class="hhc" title="Streak-Schutz">🛡️ <b class="tnum">' + st.streak.freezes + '</b></span>' +
-      (S.weekPlan() ? '<span class="hhc">📅 ' + (S.freeDay() ? "frei" : S.goalMin() + " Min") + '</span>' : "") + '</div></div>' +
-      '<div class="hhfavs"><span class="hhfl">⭐ Favoriten</span>' + (favs || '<span class="hhfe">Lege im Showroom bis zu 3 Favoriten aufs Podest</span>') + '<button class="hhsr" data-act="gotab" data-t="showroom">🏆 Showroom</button></div></section>';
+      '<div class="hhchips"><span class="hhc">🔥 <b class="tnum">' + st.streak.count + '</b></span><span class="hhc">🪙 <b class="tnum">' + st.coins + '</b></span></div></div>' +
+      '</section>';
 
-    html += '<section class="cta"><div class="ctaglow"></div><div class="eyebrow">Heute für dich</div>' +
-      '<h2>' + rec.icon + ' ' + rec.title + '</h2><p class="small" style="margin:0 0 14px;opacity:.85">' + esc(rec.sub) + '</p>' +
-      '<button class="ctabtn" data-act="startrec">Los geht\'s ▶</button>' +
-      '<div class="row" style="gap:6px;margin-top:14px;justify-content:space-between;align-items:center"><span class="small" style="opacity:.8">Dauer</span><span class="row" style="gap:6px">' +
-      [3, 5, 10, 15].map(function (m) { return '<button class="chip ctachip" data-act="setmin" data-min="' + m + '" aria-pressed="' + (mins === m) + '">' + m + ' Min</button>'; }).join("") +
-      '</span></div>' +
-      '<p class="small" style="margin:10px 0 0;opacity:.7">≈ ' + S.itemsFor(mins) + ' ' + plural(S.itemsFor(mins), "Aufgabe", "Aufgaben") + ' · ' + (S.secPerItem() === 11 && !(st.pace && st.pace.n >= 50) ? 'geschätzt, ohne Zeitlimit' : 'nach deinem Tempo (ca. ' + S.secPerItem() + ' Sek. pro Wort), ohne Zeitlimit') + '</p></section>';
+    html += pathCard();
 
-    html += passCard() + weekPlanCard() + pathCard();
-
-    html += parentCards(rec.plan);
+    html += parentCards("plans");
 
     var wish = S.wish();
+    var chDone = S.challengeDone();
     html += '<section class="card"><div class="eyebrow">Heute</div><div style="margin-top:6px">' +
+      '<div class="mission' + (chDone ? " done" : "") + '"><div class="tick">' + (chDone ? "✓" : "🏆") + '</div><div class="txt"><div class="small" style="font-weight:600">Daily Challenge</div>' +
+      '<div class="row" style="margin-top:4px;gap:8px"><span class="small muted" style="flex:1 1 auto">' + (chDone ? "Bonus geholt. Weitere Runden sind Zusatz-Runden." : "Bunte Runde aus allem, was dran ist.") + '</span><button class="chip" style="white-space:nowrap" data-act="start" data-mode="mix" data-min="' + S.goalMin() + '">' + (chDone ? "Zusatz →" : "Los →") + '</button></div></div>' +
+      '<div class="pill nowrap">' + (chDone ? "✓" : "🪙 10") + '</div></div>' +
       st.daily.missions.map(function (m) {
         var pc = Math.min(100, Math.round(m.p * 100 / m.goal)), go = m.done ? "" : missionGo(m);
         return '<div class="mission' + (m.done ? " done" : "") + '"><div class="tick">✓</div>' +
@@ -7946,7 +7940,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       (s.boxSize ? '<button class="btn soft wide" data-act="start" data-mode="box" data-min="5" style="margin-top:12px">Fehlerkartei üben</button>' : '') + '</section>';
     var html = '<div class="stack"><div class="row" style="gap:8px"><span class="pill">' + (bizT ? "💼 Business English" : "🎒 Schule") + '</span><span class="small muted">Fortschritt in diesem Lernbereich</span></div>' + segBar("stats", statsSeg, [["ueb", "Übersicht"], ["woerter", "Wörter"], ["verlauf", "Verlauf"]]);
     if (statsSeg === "woerter") html += secDist + wordListCard() + secBox + secVerbs;
-    else if (statsSeg === "verlauf") html += secDays + secSent;
+    else if (statsSeg === "verlauf") html += weekPlanCard() + parentCards("goals") + secDays + secSent;
     else html += secTiles + secDist + secOverview + secBehind;
     view.innerHTML = html + '</div>';
     var ws = $("#wSearch");

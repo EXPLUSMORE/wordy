@@ -251,7 +251,7 @@
   function parentCards(skipPlans) {
     var W = window.WordySync; if (!W || !W.connected()) return "";
     var h = "", goals = W.currentGoals(), plans = W.activePlans(), st = S.state;
-    (skipPlans ? [] : plans).forEach(function (pl) {
+    (skipPlans || skipPlans === "goals" ? [] : plans).forEach(function (pl) {
       var i = W.planInfo(pl), done = st.goalsDone && st.goalsDone["p" + pl.id];
       var when = i.days > 1 ? "in " + i.days + " Tagen" : i.days === 1 ? "morgen" : "heute";
       var newToday = (st.daily && st.daily.newSeen) || 0, left = Math.max(0, i.quota - newToday);
@@ -263,7 +263,7 @@
         (i.total - i.ok > 0 ? '<p class="small" style="margin:0 0 10px">Heute dran: ' + (left > 0 ? '<b>' + left + ' neue ' + plural(left, "Wort", "Wörter") + '</b> und ' : '') + 'Wiederholung.</p>' : '') +
         '<button class="btn wide" data-act="startplan" data-id="' + esc(pl.id) + '">Lernplan üben</button></section>';
     });
-    if (goals.length) {
+    if (goals.length && skipPlans !== "plans") {
       h += '<section class="card"><div class="eyebrow">🎯 Deine persönlichen Wochenziele</div><div style="margin-top:8px">' + goals.map(function (g) {
         var pr = W.progress(g), done = st.goalsDone && st.goalsDone["g" + g.id];
         return '<div style="padding:8px 0;border-top:1px solid var(--line)"><div class="row"><b class="small" style="flex:1 1 auto">' + (done ? "✅ " : "") + esc(g.title) + '</b>' +
@@ -423,7 +423,7 @@
     if (!pf.seen) { seen = pf.seen = {}; c.shelves.forEach(function (s) { s.items.forEach(function (i) { if (i.owned) seen[i.id] = 1; }); }); S.save(); }
     var favHtml = [0, 1, 2].map(function (i) { var id = S.favs()[i]; return id ? '<button class="fslot" data-act="sritem" data-id="' + esc(id) + '">' + favIcon(id) + '</button>' : '<button class="fslot e" data-act="srfavhint">＋</button>'; }).join("");
     if (!srAv) srAv = pf.avatar;
-    var h = '<div class="stack srv"><div><h1 style="font-size:22px">🏆 Mein Showroom</h1><p class="small muted" style="margin:2px 0 0">Alles, was du gesammelt, gekauft und erspielt hast. Tippe auf ein Stück.</p></div>' +
+    var h = '<div class="stack srv"><div><h1 style="font-size:22px">🏆 Mein Showroom</h1><p class="small muted" style="margin:2px 0 0">Alles, was du gesammelt, gekauft und erspielt hast. Tippe auf ein Stück.</p></div>' + passCard() +
       '<section class="srtop"><div class="srring" style="--p:' + c.pct + '"><b>' + c.pct + '%</b></div><div class="srcups">' + c.cups.map(function (t) { var col = { Bronze: ["#e0975a", "#8a4a1e"], Silber: ["#eef2fa", "#8794ad"], Gold: ["#ffd24a", "#c8780a"], Platin: ["#c9efff", "#7a8fff"] }[t.n]; return '<div class="srcup' + (t.done ? "" : " lock") + '">' + svgCup(col[0], col[1]) + '<b>' + t.n + '</b><small>ab ' + t.pct + '%</small></div>'; }).join("") + '</div></section>' +
       '<div class="srrar">' + ["common", "rare", "epic", "legend"].map(function (r) { return '<span class="' + r + '"><b>' + c.rar[r] + '</b>' + RAR_NAME[r] + '</span>'; }).join("") + '</div>' +
       '<section class="srstage"><div class="srray"></div><div class="srfloor"></div><div class="srfav">' + favHtml + '</div><div class="srlbl">Favoriten</div><div class="srpod"><i></i></div><div class="srhero" id="srHero"></div>' +
@@ -672,7 +672,6 @@
     var pf = S.state.profile, sky = hour >= 5 && hour < 11 ? "m" : hour < 17 ? "d" : hour < 21 ? "e" : "n";
     var cheer = pct >= 100 ? "Tagesziel geschafft! 🎉" : biz ? "Bereit für die nächste Runde?" : "Tipp mich an – ich tanze!";
     var rn = r.rank ? r.rank.n : "", xpPct = r.next ? Math.min(100, Math.round(r.into * 100 / Math.max(1, r.span))) : 100;
-    var favs = S.favs().map(function (id) { return '<button class="hhf" data-act="gotab" data-t="showroom" aria-label="Favorit">' + favIcon(id) + '</button>'; }).join("");
     var html = '<div class="stack">';
     html += '<section class="hh sky-' + sky + '"><div class="hhsky"><i class="hhsun"></i><i class="hhcl c1"></i><i class="hhcl c2"></i><i class="hhst"></i></div>' +
       (S.stickers().length ? '<div class="stk-corner">' + placedStickers(46) + '</div>' : "") +
@@ -682,24 +681,19 @@
       '<div class="hhbubble" id="hhBub">' + esc(cheer) + '</div>' +
       '<div class="hhpod"><i></i></div><button class="hhfig" id="hhFig" data-act="hhdance" aria-label="Figur antippen">' + heroHtml(pf.avatar, 0) + '</button>' +
       '<div class="hhbar"><div class="hhrank"><b>' + esc(rn) + '</b><div class="hhxp"><i style="width:' + xpPct + '%"></i></div><small class="tnum">' + (r.next ? toNext + ' XP bis ' + esc(r.next.n) : "Höchster Rang") + '</small></div>' +
-      '<div class="hhchips"><span class="hhc">🔥 <b class="tnum">' + st.streak.count + '</b></span><span class="hhc">🪙 <b class="tnum">' + st.coins + '</b></span><span class="hhc" title="Streak-Schutz">🛡️ <b class="tnum">' + st.streak.freezes + '</b></span>' +
-      (S.weekPlan() ? '<span class="hhc">📅 ' + (S.freeDay() ? "frei" : S.goalMin() + " Min") + '</span>' : "") + '</div></div>' +
-      '<div class="hhfavs"><span class="hhfl">⭐ Favoriten</span>' + (favs || '<span class="hhfe">Lege im Showroom bis zu 3 Favoriten aufs Podest</span>') + '<button class="hhsr" data-act="gotab" data-t="showroom">🏆 Showroom</button></div></section>';
+      '<div class="hhchips"><span class="hhc">🔥 <b class="tnum">' + st.streak.count + '</b></span><span class="hhc">🪙 <b class="tnum">' + st.coins + '</b></span></div></div>' +
+      '</section>';
 
-    html += '<section class="cta"><div class="ctaglow"></div><div class="eyebrow">Heute für dich</div>' +
-      '<h2>' + rec.icon + ' ' + rec.title + '</h2><p class="small" style="margin:0 0 14px;opacity:.85">' + esc(rec.sub) + '</p>' +
-      '<button class="ctabtn" data-act="startrec">Los geht\'s ▶</button>' +
-      '<div class="row" style="gap:6px;margin-top:14px;justify-content:space-between;align-items:center"><span class="small" style="opacity:.8">Dauer</span><span class="row" style="gap:6px">' +
-      [3, 5, 10, 15].map(function (m) { return '<button class="chip ctachip" data-act="setmin" data-min="' + m + '" aria-pressed="' + (mins === m) + '">' + m + ' Min</button>'; }).join("") +
-      '</span></div>' +
-      '<p class="small" style="margin:10px 0 0;opacity:.7">≈ ' + S.itemsFor(mins) + ' ' + plural(S.itemsFor(mins), "Aufgabe", "Aufgaben") + ' · ' + (S.secPerItem() === 11 && !(st.pace && st.pace.n >= 50) ? 'geschätzt, ohne Zeitlimit' : 'nach deinem Tempo (ca. ' + S.secPerItem() + ' Sek. pro Wort), ohne Zeitlimit') + '</p></section>';
+    html += pathCard();
 
-    html += passCard() + weekPlanCard() + pathCard();
-
-    html += parentCards(rec.plan);
+    html += parentCards("plans");
 
     var wish = S.wish();
+    var chDone = S.challengeDone();
     html += '<section class="card"><div class="eyebrow">Heute</div><div style="margin-top:6px">' +
+      '<div class="mission' + (chDone ? " done" : "") + '"><div class="tick">' + (chDone ? "✓" : "🏆") + '</div><div class="txt"><div class="small" style="font-weight:600">Daily Challenge</div>' +
+      '<div class="row" style="margin-top:4px;gap:8px"><span class="small muted" style="flex:1 1 auto">' + (chDone ? "Bonus geholt. Weitere Runden sind Zusatz-Runden." : "Bunte Runde aus allem, was dran ist.") + '</span><button class="chip" style="white-space:nowrap" data-act="start" data-mode="mix" data-min="' + S.goalMin() + '">' + (chDone ? "Zusatz →" : "Los →") + '</button></div></div>' +
+      '<div class="pill nowrap">' + (chDone ? "✓" : "🪙 10") + '</div></div>' +
       st.daily.missions.map(function (m) {
         var pc = Math.min(100, Math.round(m.p * 100 / m.goal)), go = m.done ? "" : missionGo(m);
         return '<div class="mission' + (m.done ? " done" : "") + '"><div class="tick">✓</div>' +
@@ -1287,7 +1281,7 @@
       (s.boxSize ? '<button class="btn soft wide" data-act="start" data-mode="box" data-min="5" style="margin-top:12px">Fehlerkartei üben</button>' : '') + '</section>';
     var html = '<div class="stack"><div class="row" style="gap:8px"><span class="pill">' + (bizT ? "💼 Business English" : "🎒 Schule") + '</span><span class="small muted">Fortschritt in diesem Lernbereich</span></div>' + segBar("stats", statsSeg, [["ueb", "Übersicht"], ["woerter", "Wörter"], ["verlauf", "Verlauf"]]);
     if (statsSeg === "woerter") html += secDist + wordListCard() + secBox + secVerbs;
-    else if (statsSeg === "verlauf") html += secDays + secSent;
+    else if (statsSeg === "verlauf") html += weekPlanCard() + parentCards("goals") + secDays + secSent;
     else html += secTiles + secDist + secOverview + secBehind;
     view.innerHTML = html + '</div>';
     var ws = $("#wSearch");
