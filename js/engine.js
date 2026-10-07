@@ -54,7 +54,10 @@
     { id: "av:🦕", kind: "avatar", label: "Dino",     cost: 120, val: "🦕" },
     { id: "av:🦈", kind: "avatar", label: "Hai",      cost: 200, val: "🦈" },
     { id: "av:🦄", kind: "avatar", label: "Einhorn",  cost: 200, val: "🦄" },
-    { id: "av:eisbaer",   kind: "avatar", label: "Eisbär",        cost: 650, val: "svg:eisbaer", rank: "Silber II", bundle: "eis" },
+    { id: "av:eisbaer",   kind: "avatar", label: "Eisbär",        cost: 650, val: "svg:eisbaer", rank: "Silber II", bundle: "eis", rar: "epic" },
+    { id: "av:eispingu",  kind: "avatar", label: "Eis-Pinguin",   cost: 350, val: "svg:eispingu",  pass: "Eiswelt", rar: "epic" },
+    { id: "av:eisrobbe",  kind: "avatar", label: "Eis-Robbe",     cost: 350, val: "svg:eisrobbe",  pass: "Eiswelt", rar: "epic" },
+    { id: "av:eiskoenig", kind: "avatar", label: "Eiskönig",      cost: 2000, val: "svg:eiskoenig", pass: "Eiswelt", rar: "legend" },
     { id: "av:pbaer",    kind: "avatar", label: "Pummelbär",     cost: 120, val: "svg:pbaer" },
     { id: "av:phase",    kind: "avatar", label: "Pummelhase",    cost: 200, val: "svg:phase" },
     { id: "av:pkatze",   kind: "avatar", label: "Pummelkatze",   cost: 200, val: "svg:pkatze" },
@@ -139,7 +142,7 @@
   ];
   /* Sticker: jede Figur gibt es zusätzlich als Aufkleber (halber Preis), die man auf Startseite und Profil klebt */
   SHOP = SHOP.concat(SHOP.filter(function (a) { return a.kind === "avatar"; }).map(function (a) {
-    return { id: "st:" + a.id.slice(3), kind: "sticker", set: a.set, label: a.label + "-Sticker", cost: a.cost ? Math.max(20, Math.round(a.cost / 20) * 10) : 0, val: a.val, rank: a.rank };
+    return { id: "st:" + a.id.slice(3), kind: "sticker", set: a.set, label: a.label + "-Sticker", cost: a.cost ? Math.max(20, Math.round(a.cost / 20) * 10) : 0, val: a.val, rank: a.rank, pass: a.pass, rar: a.rar };
   }));
 
   /* ---------- Preise, Sets, Belohnungen ---------- */
@@ -774,6 +777,69 @@
     var got = []; open.forEach(function (x) { var r = buy(x.id); if (r.ok) got.push(x.label); });
     return { ok: true, items: got, total: sum, locked: locked.map(function (x) { return x.label + " (ab " + x.rank + ")"; }) };
   }
+
+  /* ---------- Pass: ein Monat aus Wochen-Sets ---------- */
+  var PASS_DEFAULT = { id: "eiswelt1", title: "Eiswelt", theme: "ice", weeks: [
+    { title: "Der Eisbär", need: 5, items: ["av:eisbaer", "dn:eislauf"], slot: 1, coins: 50 },
+    { title: "Pinguin-Party", need: 5, items: ["av:eispingu", "dn:moonwalk"], slot: 1, coins: 50 },
+    { title: "Robben-Rutsche", need: 5, items: ["av:eisrobbe", "dn:drehung"], slot: 1, coins: 50 },
+    { title: "Der Eiskönig", need: 6, items: ["av:eiskoenig", "dn:sieg"], slot: 1, coins: 100 }],
+    finale: { title: "Eiskönigs Schatz", items: ["fr:eis", "of:polar", "fx:schnee"], slot: 0, coins: 200 } };
+  function passSeason() {
+    var r = global.WordySync && global.WordySync.remote ? (global.WordySync.remote() || {}).season : null;
+    return r && Array.isArray(r.weeks) && r.weeks.length ? r : PASS_DEFAULT;
+  }
+  function passState() {
+    var s = passSeason(), p = state.pass;
+    if (!p || p.sid !== s.id) p = state.pass = { sid: s.id, start: s.start || today(), claimed: {}, fin: 0 };
+    if (s.start && p.start !== s.start && !Object.keys(p.claimed).length) p.start = s.start;   // Startdatum der Eltern übernehmen, solange noch nichts abgeholt ist
+    return p;
+  }
+  function dayAdd(k, n) { var d = new Date(k + "T00:00:00Z"); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); }
+  function daySecOf(k) { return k === today() ? ((state.daily && state.daily.sec) || 0) : ((state.history[k] && state.history[k].sec) || 0); }
+  function dayDone(k) { return k <= today() && (planMin(k) === 0 || daySecOf(k) >= goalMin(k) * 60); }
+  function passInfo() {
+    var s = passSeason(), p = passState(), t = today(), idx = Math.floor(dayDiff(p.start, t) / 7), weeks = [];
+    s.weeks.forEach(function (w, n) {
+      var ws = dayAdd(p.start, n * 7), days = [], cnt = 0;
+      for (var i = 0; i < 7; i++) { var k = dayAdd(ws, i), ok = dayDone(k); if (ok) cnt++; days.push({ k: k, ok: ok, today: k === t, future: k > t }); }
+      var claimed = !!p.claimed[n + 1], ready = cnt >= w.need;
+      weeks.push({ n: n + 1, title: w.title, need: w.need, cnt: cnt, days: days, items: w.items || [], slot: w.slot || 0, coins: w.coins || 0, claimed: claimed, ready: ready && !claimed,
+        state: claimed ? "claimed" : ready ? "ready" : n === idx ? "cur" : n < idx ? "missed" : "future", left: n === idx ? 7 - dayDiff(ws, t) : null });
+    });
+    var all = weeks.every(function (w) { return w.claimed; });
+    return { season: s, start: p.start, idx: idx, started: idx >= 0, over: idx >= s.weeks.length, weeks: weeks, fin: { ready: all && !p.fin && !!s.finale, claimed: !!p.fin, def: s.finale || null } };
+  }
+  function passGrant(rw) {
+    var got = [], slot = 0, extra = 0;
+    (rw.items || []).forEach(function (id) {
+      var it = itemById(id); if (!it || owns(it)) return;
+      state.profile.owned.push(id); got.push({ id: id, label: it.label, kind: it.kind, val: it.val, rar: rarityOf(it) });
+      if (it.kind === "avatar") { var st = itemById("st:" + id.slice(3)); if (st && !owns(st)) { state.profile.owned.push(st.id); got.push({ id: st.id, label: st.label, kind: "sticker", val: st.val, rar: rarityOf(st) }); } }
+    });
+    if (rw.slot) { var n = stickerSlots(); if (n < MAX_STICKERS) { state.profile.stickerSlots = n + 1; slot = 1; } else extra = 25; }
+    var c = Math.max(0, Math.round(+rw.coins || 0)) + extra; if (c) parentCoins(c);
+    checkSets();
+    return { items: got, slot: slot, coins: c };
+  }
+  function claimPassWeek(n) {
+    var info = passInfo(), w = info.weeks[n - 1];
+    if (!w || w.claimed) return { error: "Schon abgeholt." };
+    if (w.cnt < w.need) return { error: "Noch " + (w.need - w.cnt) + " Tage fehlen." };
+    passState().claimed[n] = 1;
+    var r = passGrant(w); r.ok = true; r.week = w; save(true); return r;
+  }
+  function claimPassFinale() {
+    var info = passInfo(); if (!info.fin.ready) return { error: "Erst alle Wochen abholen." };
+    passState().fin = 1;
+    var r = passGrant(info.fin.def); r.ok = true; save(true); return r;
+  }
+  function passMeta() {
+    var i = passInfo();
+    return { id: i.season.id, title: i.season.title, start: i.start, idx: i.idx, weeks: i.weeks.map(function (w) { return { n: w.n, cnt: w.cnt, need: w.need, c: w.claimed ? 1 : 0 }; }), fin: i.fin.claimed ? 1 : 0 };
+  }
+  function rarityOf(it) { return it.rar || (it.cost <= 120 ? "common" : it.cost <= 350 ? "rare" : it.cost <= 800 ? "epic" : "legend"); }
+  function shopList() { return SHOP.filter(function (x) { return ["avatar", "dance", "outfit", "kit", "fx", "frame"].indexOf(x.kind) >= 0 && x.cost > 0 || x.kind === "dance"; }).map(function (x) { return [x.id, x.label, x.kind]; }); }
   /* Preisumstellung: Wurde etwas günstiger, gibt es die Differenz einmalig als Münzen zurück */
   function priceMigrate() {
     var pf = state.profile; if (!pf || pf.priceVer >= 3) return;
@@ -1137,6 +1203,7 @@
     if (owns(it)) return { error: "Gehört dir schon." };
     if (state.xp < minXp(it)) return { error: "Das gibt es erst ab dem Rang " + it.rank + "." };
     if (it.reward) return { error: "Diese Belohnung gibt es nur für das komplette Set." };
+    if (it.pass) return { error: "Das gibt es nur im " + it.pass + "-Pass." };
     var price = priceOf(it);
     if (state.coins < price) return { error: "Dafür fehlen noch " + (price - state.coins) + " Münzen." };
     state.coins -= price; state.profile.owned.push(id);
@@ -1164,6 +1231,6 @@
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
-    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, boost: boost, coinFactor: coinFactor, avgCoins: avgCoins, dealItem: dealItem, priceOf: priceOf, activeSetDeal: activeSetDeal, buySet: buySet, takeNews: takeNews, SETS: SETS, itemById: itemById, minXp: minXp, defaultOf: defaultOf
+    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, boost: boost, coinFactor: coinFactor, avgCoins: avgCoins, dealItem: dealItem, priceOf: priceOf, passInfo: passInfo, claimPassWeek: claimPassWeek, claimPassFinale: claimPassFinale, passMeta: passMeta, rarityOf: rarityOf, shopList: shopList, activeSetDeal: activeSetDeal, buySet: buySet, takeNews: takeNews, SETS: SETS, itemById: itemById, minXp: minXp, defaultOf: defaultOf
   };
 })(window);

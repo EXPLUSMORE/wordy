@@ -9,6 +9,12 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.35.0 – 2026-10-07
+
+- Pass „Eiswelt“: ein Monat aus vier Wochen-Sets plus Finale. Jede Woche gibt es eine Aufgabe (Tage mit Tagesziel in 7 Tagen); wer sie schafft, holt das Set ab: Figur mit passendem Sticker, Tanz, +1 Stickerplatz und Münzen. Abholen läuft als Beute-Animation (Eisblock bzw. Tresor beim Finale) mit Seltenheits-Karten. Karte „Eiswelt“ auf der Startseite.
+- Neue Figuren im Stil „Fortnite-Cartoon“ (Dicke Konturen, Verläufe, Glanzlichter), ganze Figuren mit Armen, Beinen und Kopf: Eisbär (neu gezeichnet), Eis-Pinguin, Eis-Robbe, Eiskönig mit Krone, Umhang und Zepter. Sie tanzen mit allen sieben Tänzen. Neue Datei `js/stila.js`.
+- Dashboard: Karte „Pass: Wochen-Sets zusammenbauen“ (Titel, Start, je Woche Aufgabe, bis zu vier Belohnungen, Stickerplatz, Münzen, Finale). Server: Endpunkt `season`, `/api/sync` liefert `season`. Die Figuren Pinguin, Robbe und Eiskönig gibt es nur im Pass.
+
 ## 2.34.0 – 2026-10-07
 
 - Beute statt Truhe: Die Belohnung am Ende eines Lernpfad-Abschnitts öffnet sich jetzt als Animation. Vier Szenen im Wechsel nach Abschnitt: Piñata, Nachschub-Kiste am Fallschirm, Tresor, Beute-Kapsel (fünfte Szene Eisblock steht für das Eis-Set bereit). Antippen startet, danach kommen Münzen, Booster und Überraschung. Neue Datei `js/loot.js`.

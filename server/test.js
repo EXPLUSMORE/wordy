@@ -112,6 +112,15 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     assert.equal((await J("/api/sync", { headers: T })).j.bossDiff, "leicht", "Boss-Schwierigkeit kommt in der App an");
     await J("/api/admin/players/" + mk.j.id + "/bossdiff", { method: "POST", headers: H, body: JSON.stringify({ diff: "quatsch" }) });
     assert.equal((await J("/api/sync", { headers: T })).j.bossDiff, "normal", "Boss: ungültiger Wert wird normal");
+    assert.equal((await J("/api/admin/players/" + mk.j.id + "/season", { headers: H })).j, null, "Pass: Standard leer");
+    assert.equal((await J("/api/admin/players/" + mk.j.id + "/season", { method: "POST", headers: H, body: JSON.stringify({ weeks: [] }) })).s, 400, "Pass braucht Wochen");
+    const se = await J("/api/admin/players/" + mk.j.id + "/season", { method: "POST", headers: H, body: JSON.stringify({ title: "Test", weeks: [{ title: "W1", need: 9, items: ["av:eisbaer", "böse id", "dn:eislauf"], slot: 1, coins: 999 }], finale: { title: "F", items: ["fr:eis"], coins: 10 } }) });
+    assert.equal(se.j.season.weeks[0].need, 7, "Pass: Tage begrenzt"); assert.equal(se.j.season.weeks[0].coins, 500, "Pass: Münzen begrenzt"); assert.deepEqual(se.j.season.weeks[0].items, ["av:eisbaer", "dn:eislauf"], "Pass: nur gültige Artikel");
+    const se2 = await J("/api/admin/players/" + mk.j.id + "/season", { method: "POST", headers: H, body: JSON.stringify({ title: "Test2", weeks: [{ title: "W1", need: 3, items: [], coins: 5 }] }) });
+    assert.equal(se2.j.season.id, se.j.season.id, "Pass: Bearbeiten behält die Kennung");
+    assert.equal((await J("/api/sync", { headers: T })).j.season.title, "Test2", "Pass kommt in der App an");
+    await J("/api/admin/players/" + mk.j.id + "/season", { method: "POST", headers: H, body: JSON.stringify({ clear: true }) });
+    assert.equal((await J("/api/sync", { headers: T })).j.season, null, "Pass entfernt");
     assert.equal((await J("/api/admin/players/" + mk.j.id + "/gifts", { method: "POST", headers: H, body: JSON.stringify({ coins: 0 }) })).s, 400, "Geschenk: 0 Münzen abgelehnt");
     const gf = await J("/api/admin/players/" + mk.j.id + "/gifts", { method: "POST", headers: H, body: JSON.stringify({ coins: 25, note: "Tolle Woche!" }) });
     assert.equal(gf.j.gift.coins, 25, "Geschenk gespeichert");

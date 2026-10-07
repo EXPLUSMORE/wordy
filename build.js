@@ -6,7 +6,7 @@ const fs = require('fs'), path = require('path');
 const DATA = ['data/klasse6.js','data/klasse7.js','data/klasse8.js','data/business.js',
   'data/business-basis2.js','data/business-aufbau2.js','data/business-profi2.js',
   'data/smalltalk.js','data/idioms.js','data/saetze.js','data/saetze2.js','data/lernbuch.js','data/verben.js'];
-const CODE = ['js/engine.js','js/cosmetics.js','js/fortnite.js','js/figur.js','js/loot.js','js/app.js','js/arena.js','js/sync.js'];
+const CODE = ['js/engine.js','js/cosmetics.js','js/fortnite.js','js/figur.js','js/stila.js','js/loot.js','js/app.js','js/arena.js','js/sync.js'];
 const ICONS = ['icons/icon-192.png','icons/icon-512.png','icons/icon-maskable-512.png',
   'icons/apple-touch-icon.png','icons/favicon-32.png'];
 

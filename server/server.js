@@ -395,7 +395,8 @@ function apiSync(pid) {
     weekPlan: weekPlanOf(pid),
     bossDiff: bossDiffOf(pid),
     coinFactor: coinFactorOf(pid),
-    gifts: giftsOf(pid).slice(-20)
+    gifts: giftsOf(pid).slice(-20),
+    season: seasonOf(pid)
   }];
 }
 /* Wochenzeitplan: Minuten pro Wochentag (Mo bis So), gilt jede Woche gleich, dazu Wochenbonus in Münzen */
@@ -424,6 +425,18 @@ function addGift(pid, body) {
   const gift = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), coins, note, ts: Date.now() };
   list.push(gift); q.kvSet.run("gifts:" + pid, JSON.stringify(list.slice(-50)));
   return [200, { ok: true, gift, list: list.slice(-50) }];
+}
+/* Pass: Monat aus Wochen-Sets (Aufgabe + Belohnungen), von den Eltern im Dashboard zusammengestellt */
+function seasonOf(pid) { const r = q.kvGet.get("season:" + pid); try { const v = r ? JSON.parse(r.val) : null; return v && Array.isArray(v.weeks) ? v : null; } catch (e) { return null; } }
+function setSeason(pid, body) {
+  if (body.clear) { q.kvSet.run("season:" + pid, "null"); return [200, { ok: true, season: null }]; }
+  const idOk = s => /^[a-z]{2}:[^\s"<>]{1,40}$/.test(s), cl = (v, a, b) => Math.max(a, Math.min(b, Math.round(+v) || a));
+  const clean = w => ({ title: String(w.title || "").replace(/[<>]/g, "").trim().slice(0, 40), need: cl(w.need, 1, 7), items: (Array.isArray(w.items) ? w.items : []).map(String).filter(idOk).slice(0, 8), slot: w.slot ? 1 : 0, coins: cl(w.coins, 0, 500) });
+  if (!Array.isArray(body.weeks) || !body.weeks.length) return [400, { error: "Mindestens eine Woche angeben." }];
+  const old = seasonOf(pid), id = body.newId ? "s" + Date.now().toString(36) : old ? old.id : /^[a-z0-9]{3,20}$/.test(body.id || "") ? body.id : "s" + Date.now().toString(36);
+  const season = { id, title: String(body.title || "Pass").replace(/[<>]/g, "").trim().slice(0, 30) || "Pass", theme: "ice", start: /^\d{4}-\d{2}-\d{2}$/.test(body.start || "") ? body.start : "", weeks: body.weeks.slice(0, 6).map(clean), finale: body.finale ? clean(body.finale) : null };
+  q.kvSet.run("season:" + pid, JSON.stringify(season));
+  return [200, { ok: true, season }];
 }
 /* Münzfaktor: Eltern können Verdienst und damit das Tempo im Shop anpassen (0,5 bis 2) */
 function coinFactorOf(pid) { const r = q.kvGet.get("coinfactor:" + pid); const v = r ? parseFloat(r.val) : 1; return [0.5, 1, 1.5, 2].includes(v) ? v : 1; }
@@ -667,6 +680,8 @@ const server = http.createServer(async (req, res) => {
         if (m[2] === "plans" && req.method === "POST") { const [c, b] = createPlan(pid, await readJson(req)); return send(res, c, b); }
         if (m[2] === "weekplan" && req.method === "GET") return send(res, 200, weekPlanOf(pid));
         if (m[2] === "weekplan" && req.method === "POST") { const [c, b] = setWeekPlan(pid, await readJson(req)); return send(res, c, b); }
+        if (m[2] === "season" && req.method === "GET") return send(res, 200, seasonOf(pid));
+        if (m[2] === "season" && req.method === "POST") { const [c, b] = setSeason(pid, await readJson(req)); return send(res, c, b); }
         if (m[2] === "gifts" && req.method === "GET") return send(res, 200, giftsOf(pid).slice(-20));
         if (m[2] === "gifts" && req.method === "POST") { const [c, b] = addGift(pid, await readJson(req)); return send(res, c, b); }
         if (m[2] === "coinfactor" && req.method === "GET") return send(res, 200, { factor: coinFactorOf(pid) });

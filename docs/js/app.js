@@ -328,6 +328,73 @@
       (wp.bonus > 0 ? '<p class="small muted" style="margin:10px 0 0">' + (got ? "🎉 Wochenbonus geholt: 🪙 " + wp.bonus : "Bonus: 🪙 " + wp.bonus + ", wenn mindestens " + need + " von " + planDays + " Plan-Tagen geschafft sind.") + '</p>' : "") + '</section>';
   }
 
+  /* ---------- Pass: Monat aus Wochen-Sets ---------- */
+  var passSel = null;
+  var RAR_COL = { common: ["#7a9a6a", "#4f6f46"], rare: ["#2f8cff", "#1b57c9"], epic: ["#a855f7", "#6d28d9"], legend: ["#ffb61e", "#e8730c"] };
+  function itemIcon(it, big) {
+    if (!it) return "";
+    if (it.kind === "avatar") return '<span class="ri">' + avatarHtml(it.val) + '</span>';
+    if (it.kind === "sticker") return '<span class="ri">' + stickerHtml(it, big ? 44 : 34) + '</span>';
+    if (it.kind === "frame") return '<span class="ri"><span class="avatar fr-' + esc(it.val) + '" style="width:30px;height:30px;font-size:16px">🙂</span></span>';
+    return '<span class="ri em">' + (it.kind === "dance" ? "💃" : it.kind === "outfit" ? "👕" : it.kind === "kit" ? "⚽" : it.kind === "fx" ? "✨" : "🎁") + '</span>';
+  }
+  function rcard(id, locked) {
+    var it = S.itemById(id); if (!it) return "";
+    var r = S.rarityOf(it), c = RAR_COL[r];
+    return '<div class="rcard' + (locked ? " lock" : "") + '" style="--c1:' + c[0] + ';--c2:' + c[1] + '">' + itemIcon(it) + '<b>' + esc(it.label) + '</b></div>';
+  }
+  function passCard() {
+    var info = S.passInfo(), s = info.season, st = S.state, sel = passSel;
+    var cur = info.weeks.filter(function (w) { return w.state === "ready" || w.state === "cur"; })[0];
+    if (sel == null) sel = cur ? cur.n : info.fin.ready ? "fin" : info.weeks.length;
+    var done = info.weeks.filter(function (w) { return w.claimed; }).length;
+    var head = !info.started ? "Startet am " + info.start.split("-").reverse().slice(0, 2).join(".") + "." : info.over ? "Pass beendet" : "Woche " + Math.min(info.idx + 1, info.weeks.length) + " von " + info.weeks.length;
+    var tiles = info.weeks.map(function (w) {
+      var firstAv = w.items.map(S.itemById).filter(function (x) { return x && x.kind === "avatar"; })[0] || S.itemById(w.items[0]);
+      var future = w.state === "future" || w.state === "missed" && false, pc = Math.round(Math.min(1, w.cnt / w.need) * 100);
+      return '<button class="ptile ' + w.state + (sel === w.n ? " sel" : "") + '" data-act="passsel" data-n="' + w.n + '" style="--p:' + pc + '%" aria-label="Woche ' + w.n + '">' +
+        '<span class="pring">' + (w.state === "future" ? '<span class="sil">' + itemIcon(firstAv) + '</span><span class="q">?</span>' : itemIcon(firstAv)) + '</span>' +
+        '<span class="pl">' + (w.claimed ? "✓" : w.state === "ready" ? "Abholen!" : "Woche " + w.n) + '</span></button>';
+    }).join("");
+    if (s.finale) tiles += '<button class="ptile pfin ' + (info.fin.claimed ? "claimed" : info.fin.ready ? "ready" : "future") + (sel === "fin" ? " sel" : "") + '" data-act="passsel" data-n="fin"><span class="pring"><span class="em">👑</span></span><span class="pl">' + (info.fin.claimed ? "✓" : info.fin.ready ? "Abholen!" : "Finale") + '</span></button>';
+    var det = "";
+    if (sel === "fin" && s.finale) {
+      det = '<div class="pdet"><b>' + esc(s.finale.title || "Finale") + '</b><p class="small muted" style="margin:2px 0 8px">Hol alle Wochen ab, dann gehört dir der Schatz.</p><div class="rcards">' + (s.finale.items || []).map(function (id) { return rcard(id, !info.fin.ready && !info.fin.claimed); }).join("") + '</div>' +
+        '<div class="small" style="margin:8px 0 0">' + (s.finale.coins ? "+" + s.finale.coins + " 🪙 " : "") + (s.finale.slot ? "· +1 Stickerplatz" : "") + '</div>' +
+        (info.fin.ready ? '<button class="btn wide lg" data-act="passclaim" data-n="fin" style="margin-top:10px">🎁 Finale abholen</button>' : info.fin.claimed ? '<p class="small muted" style="margin:10px 0 0">Schon abgeholt. Stark!</p>' : '') + '</div>';
+    } else {
+      var w = info.weeks[sel - 1] || info.weeks[0];
+      var dayDots = w.days.map(function (d, i) { return '<span class="dd ' + (d.ok ? "ok" : d.today ? "now" : d.future ? "fut" : "miss") + '"><i>' + (d.ok ? "✓" : d.today ? "▶" : d.future ? "○" : "·") + '</i>' + ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"][(new Date(d.k + "T00:00:00Z").getUTCDay() + 6) % 7] + '</span>'; }).join("");
+      det = '<div class="pdet"><b>Woche ' + w.n + ': ' + esc(w.title) + '</b><p class="small" style="margin:4px 0 6px">Schaffe an <b>' + w.need + ' Tagen</b> dein Tagesziel: <b class="tnum">' + w.cnt + ' / ' + w.need + '</b>' +
+        (w.state === "cur" && w.left != null ? ' · noch ' + w.left + ' ' + plural(w.left, "Tag", "Tage") : w.state === "missed" ? ' · Zeit abgelaufen' : "") + '</p>' +
+        '<div class="ddays">' + dayDots + '</div><div class="rcards" style="margin-top:10px">' + w.items.map(function (id) { var it = S.itemById(id), x = rcard(id, !w.claimed && w.state !== "ready"); return x + (it && it.kind === "avatar" && S.itemById("st:" + id.slice(3)) ? rcard("st:" + id.slice(3), !w.claimed && w.state !== "ready") : ""); }).join("") +
+        (w.slot ? '<div class="rcard extra"><span class="ri em">🏷️</span><b>+1 Sticker-Platz</b></div>' : "") + (w.coins ? '<div class="rcard extra"><span class="ri em">🪙</span><b>+' + w.coins + ' Münzen</b></div>' : "") + '</div>' +
+        (w.state === "ready" ? '<button class="btn wide lg" data-act="passclaim" data-n="' + w.n + '" style="margin-top:10px">🎁 Set abholen</button>' : w.claimed ? '<p class="small muted" style="margin:10px 0 0">Schon abgeholt. 🎉</p>' : "") + '</div>';
+    }
+    return '<section class="card passc"><div class="row"><div class="eyebrow" style="flex:1 1 auto">❄️ ' + esc(s.title) + '</div><span class="pill tnum">' + head + '</span></div>' +
+      '<div class="ptiles">' + tiles + '</div>' + det + '</section>';
+  }
+  function openPassReward(n) {
+    var r = n === "fin" ? S.claimPassFinale() : S.claimPassWeek(+n);
+    if (r.error) return toast(r.error);
+    var pf = S.state.profile, ov = document.createElement("div"); ov.className = "chestov";
+    var type = n === "fin" ? "vault" : "ice", title = n === "fin" ? (S.passInfo().season.finale.title || "Finale") : "Woche " + n + " geschafft";
+    var cards = r.items.map(function (x, i) { var c = RAR_COL[x.rar] || RAR_COL.rare; return '<div class="rcard big" id="rc' + i + '" style="--c1:' + c[0] + ';--c2:' + c[1] + '">' + itemIcon(x, true) + '<b>' + esc(x.label) + '</b></div>'; }).join("") +
+      (r.slot ? '<div class="rcard big extra" id="rcs"><span class="ri em">🏷️</span><b>+1 Sticker-Platz</b></div>' : "") + (r.coins ? '<div class="rcard big extra" id="rcc"><span class="ri em">🪙</span><b>+' + r.coins + ' Münzen</b></div>' : "");
+    ov.innerHTML = '<div class="eyebrow" style="color:#d8cfff;position:relative;z-index:2">❄️ ' + esc(S.passInfo().season.title) + '</div><h2 style="position:relative;z-index:2;font-size:26px;margin:0">' + esc(title) + '</h2>' +
+      '<div id="lootStage" style="position:relative;z-index:2;width:min(86vw,300px);height:250px;border-radius:14px;overflow:visible;cursor:pointer"></div>' +
+      '<div class="rcards bigrow" style="position:relative;z-index:2">' + cards + '</div>' +
+      '<button class="btn lg" id="cOk" style="position:relative;z-index:2;opacity:0;pointer-events:none;background:var(--gold,#f2b33d);color:#2b1d00;margin-top:8px">Weiter ▶</button>';
+    document.body.appendChild(ov);
+    global.VTL.mount(document.getElementById("lootStage"), type, function () {
+      try { if (S.state.settings.audio) global.VTC.sound(pf.snd, true); } catch (e) {}
+      var els = ov.querySelectorAll(".rcard.big"), k = 0;
+      Array.prototype.forEach.call(els, function (e, i) { setTimeout(function () { e.classList.add("show"); try { global.VTC.burst("stars", e.getBoundingClientRect().left + 40, e.getBoundingClientRect().top + 20, 8, .8); } catch (x) {} }, 300 + i * 450); k = i; });
+      setTimeout(function () { var b = $("#cOk"); if (b) { b.style.transition = "opacity .4s"; b.style.opacity = 1; b.style.pointerEvents = "auto"; } }, 600 + els.length * 450);
+    });
+    $("#cOk").addEventListener("click", function () { ov.remove(); renderHeader(); passSel = null; render(); });
+  }
+
   /* ---------- Lernpfad ---------- */
   var pathShown = null, pathScroll = null;   // zuletzt gezeigte Position (Figur läuft weiter) und Scrollstand der Pfadkarte
   function pathPoint(i, n, H) { return { x: i === n ? 50 : (i % 2 ? 74 : 26), y: H - 74 - i * 84 }; }
@@ -502,7 +569,7 @@
       (r.next ? '<span>Noch ' + toNext + ' XP bis ' + esc(r.next.n) + '</span>' : '<span>Höchster Rang erreicht</span>') +
       '</div></div></section>';
 
-    html += weekPlanCard() + pathCard();
+    html += passCard() + weekPlanCard() + pathCard();
     html += '<section class="card rec-card"><div class="eyebrow">Heute für dich</div>' +
       '<h2>' + rec.icon + ' ' + rec.title + '</h2>' +
       '<p class="small muted" style="margin:0 0 12px">' + esc(rec.sub) + '</p>' +
@@ -909,7 +976,7 @@
   function shopRow(it, wishId) {
     var own = S.owns(it), act = S.isActive(it), locked = !own && lockNote(it), price = S.priceOf(it), deal = price !== it.cost;
     var setName = it.reward ? (S.SETS.filter(function (s) { return s.reward === it.id; })[0] || {}).name : "";
-    var buyBtn = it.reward ? '<span class="pill" title="Gibt es nur für das komplette Set">🎁 ' + esc(setName) + '</span>'
+    var buyBtn = it.pass ? '<span class="pill" title="Gibt es nur im Pass">🎁 ' + esc(it.pass) + '-Pass</span>' : it.reward ? '<span class="pill" title="Gibt es nur für das komplette Set">🎁 ' + esc(setName) + '</span>'
       : '<button class="chip" data-act="wish" data-id="' + esc(it.id) + '" aria-pressed="' + (wishId === it.id) + '" aria-label="Wunsch" style="margin-right:6px">⭐</button><button class="btn soft" data-act="buy" data-id="' + esc(it.id) + '">🪙 ' + (deal ? '<s style="opacity:.55;font-weight:500">' + it.cost + '</s> ' : "") + price + '</button>';
     return '<div class="shopitem"><span class="si">' + shopIcon(it) + '</span>' +
       '<span style="flex:1 1 auto"><b class="small">' + esc(it.label) + '</b><br><span class="small muted">' + KIND_NAME[it.kind] + (it.cost > 0 ? " · " + tierOf(it.cost) : "") +
@@ -2181,6 +2248,8 @@
       if (r.ok) { var rect = act.getBoundingClientRect(); global.VTC.burst("confetti", rect.left + rect.width / 2, rect.top, 26, 1.4); }
       renderHeader(); render();
     }
+    else if (a === "passsel") { var pn = act.getAttribute("data-n"); passSel = pn === "fin" ? "fin" : +pn; render(); }
+    else if (a === "passclaim") { openPassReward(act.getAttribute("data-n")); }
     else if (a === "buyset") {
       var bs = S.buySet();
       toast(bs.error || ("Gekauft: " + bs.items.join(", ") + (bs.locked && bs.locked.length ? ". Noch offen: " + bs.locked.join(", ") : "")), bs.error || (bs.locked && bs.locked.length) ? 5200 : 3200);

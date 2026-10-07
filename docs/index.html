@@ -645,6 +645,56 @@ details.fold>.fbody{padding:2px 0 14px}
 .avatar.fr-eis{box-shadow:0 0 0 2.5px #9FE7FF,0 0 12px 2px rgba(120,200,255,.8);animation:frEis 1.6s ease-in-out infinite alternate}
 @keyframes frEis{to{box-shadow:0 0 0 2.5px #FFFFFF,0 0 18px 4px rgba(160,225,255,.95)}}
 @media (prefers-reduced-motion:reduce){.avatar.fr-eis{animation:none}}
+/* Stil-A-Figuren (js/stila.js): Tänze bewegen die Gruppen bodyG, armL, armR, headG */
+.afig{position:absolute;left:0;bottom:0;width:100%;height:100%;transform-origin:50% 100%}
+.afig svg{width:100%;height:100%;overflow:visible}.afig svg *{transform-box:view-box}
+.afig .bodyG{transform-origin:110px 285px}.afig .armL{transform-origin:70px 168px}.afig .armR{transform-origin:150px 168px}.afig .headG{transform-origin:110px 150px}
+.afig .aura{animation:afAu 1.6s ease-in-out infinite alternate;transform-origin:110px 170px}@keyframes afAu{from{opacity:.55;transform:scale(.94)}to{opacity:1;transform:scale(1.04)}}
+.a1 .bodyG{animation:af1b .5s ease-in-out infinite alternate}.a1 .armL{animation:af1l .5s ease-in-out infinite alternate}.a1 .armR{animation:af1r .5s ease-in-out infinite alternate}.a1 .headG{animation:af1h .5s ease-in-out infinite alternate}
+@keyframes af1b{from{transform:rotate(-5deg) translateX(-6px)}to{transform:rotate(5deg) translateX(6px)}}@keyframes af1l{from{transform:rotate(22deg)}to{transform:rotate(150deg)}}@keyframes af1r{from{transform:rotate(-150deg)}to{transform:rotate(-22deg)}}@keyframes af1h{from{transform:rotate(8deg)}to{transform:rotate(-8deg)}}
+.a2 .bodyG{animation:af2b .6s cubic-bezier(.3,0,.4,1) infinite}.a2 .armL{animation:af2l .6s ease-in-out infinite}.a2 .armR{animation:af2r .6s ease-in-out infinite}
+@keyframes af2b{0%,100%{transform:translateY(0) scale(1.07,.9)}45%,70%{transform:translateY(-38px) scale(.95,1.07)}}@keyframes af2l{0%,100%{transform:rotate(20deg)}45%,70%{transform:rotate(165deg)}}@keyframes af2r{0%,100%{transform:rotate(-20deg)}45%,70%{transform:rotate(-165deg)}}
+.a3 .bodyG{animation:af3b 1.4s cubic-bezier(.5,0,.3,1) infinite}.a3 .armL{transform:rotate(80deg)}.a3 .armR{transform:rotate(-80deg)}
+@keyframes af3b{0%{transform:translateY(0) rotateY(0)}40%{transform:translateY(-30px) rotateY(360deg)}60%,100%{transform:translateY(0) rotateY(720deg)}}
+.a4 .bodyG,.a4 .armL,.a4 .armR,.a4 .headG{animation-timing-function:steps(1)!important}.a4 .bodyG{animation:af4b 1.6s infinite}.a4 .armL{animation:af4l 1.6s infinite}.a4 .armR{animation:af4r 1.6s infinite}.a4 .headG{animation:af4h 1.6s infinite}
+@keyframes af4b{0%{transform:translateX(0)}25%{transform:translateX(-8px)}50%{transform:translateX(0) scaleY(.95)}75%{transform:translateX(8px)}}@keyframes af4l{0%{transform:rotate(90deg)}25%{transform:rotate(180deg)}50%{transform:rotate(90deg)}75%{transform:rotate(0)}}@keyframes af4r{0%{transform:rotate(-90deg)}25%{transform:rotate(0)}50%{transform:rotate(-90deg)}75%{transform:rotate(-180deg)}}@keyframes af4h{0%{transform:rotate(0)}25%{transform:rotate(-14deg)}50%{transform:rotate(0)}75%{transform:rotate(14deg)}}
+.a5{animation:af5 2.4s linear infinite}.a5 .bodyG{animation:af5b .3s ease-in-out infinite alternate}.a5 .armL{transform:rotate(36deg)}.a5 .armR{transform:rotate(-36deg)}
+@keyframes af5{0%{transform:translateX(-60px) scaleX(-1)}50%{transform:translateX(60px) scaleX(-1)}50.01%{transform:translateX(60px) scaleX(1)}100%{transform:translateX(-60px) scaleX(1)}}@keyframes af5b{to{transform:translateY(-6px) rotate(-2deg)}}
+.a6 .bodyG{animation:af6b 1.8s ease-in-out infinite}.a6 .armL{animation:af6l 1.8s ease-in-out infinite}.a6 .armR{animation:af6r 1.8s ease-in-out infinite}.a6 .headG{animation:af6h 1.8s ease-in-out infinite}
+@keyframes af6b{0%,100%{transform:translateY(0) scale(1.05,.92)}15%{transform:translateY(-32px)}30%{transform:translateY(0) scale(1.1,.88)}45%{transform:translateY(-32px)}60%{transform:translateY(0) scale(1.1,.88)}75%{transform:translateY(-52px) rotateY(360deg)}90%{transform:translateY(0) scale(1.12,.86)}}@keyframes af6l{0%,100%{transform:rotate(30deg)}15%,45%{transform:rotate(165deg)}30%,60%{transform:rotate(40deg)}75%{transform:rotate(175deg)}}@keyframes af6r{0%,100%{transform:rotate(-30deg)}15%,45%{transform:rotate(-165deg)}30%,60%{transform:rotate(-40deg)}75%{transform:rotate(-175deg)}}@keyframes af6h{15%{transform:rotate(-10deg)}30%{transform:rotate(10deg)}45%{transform:rotate(10deg)}60%{transform:rotate(-10deg)}}
+.a7{animation:af7 2.2s ease-in-out infinite}.a7 .bodyG{animation:af7b 2.2s ease-in-out infinite}.a7 .armL{transform:rotate(70deg)}.a7 .armR{transform:rotate(-70deg)}
+@keyframes af7{0%{transform:translateX(-56px) rotate(-5deg)}40%{transform:translateX(56px) rotate(4deg)}50%,70%{transform:translateX(0)}100%{transform:translateX(-56px) rotate(-5deg)}}@keyframes af7b{0%,40%,100%{transform:none}50%{transform:translateY(-12px) rotateY(360deg)}70%{transform:translateY(-16px) rotateY(1080deg)}85%{transform:none}}
+.dn-fwa{width:132px;height:180px;margin-left:-66px;transform:scale(1.25)}
+.dn-reduce .afig,.dn-reduce .afig *{animation:none!important}
+/* Pass */
+.passc{background:linear-gradient(160deg,#17306b,#0d1b45)!important;color:#fff;border:2px solid #7fd0ff!important;box-shadow:0 6px 0 rgba(0,0,0,.25),0 0 22px rgba(100,200,255,.35)!important}
+.passc .eyebrow{color:#bfe9ff!important}.passc .pill{background:rgba(255,255,255,.18);color:#fff}.passc .muted{color:#b9c9ee!important}
+.ptiles{display:flex;gap:6px;margin-top:10px}
+.ptile{flex:1 1 0;min-width:0;border:0;background:none;color:#fff;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-family:inherit}
+.pring{position:relative;width:100%;aspect-ratio:1;border-radius:14px;border:3px solid #14213d;background:radial-gradient(circle at 50% 35%,#4b86ff,#1b3a8a);display:grid;place-items:center;overflow:hidden;box-shadow:0 3px 0 #0a1230}
+.ptile.cur .pring{background:radial-gradient(circle at 50% 35%,#7bd0ff,#2a6fd0);outline:3px solid rgba(255,255,255,.0)}
+.ptile.cur .pring:after{content:"";position:absolute;left:0;bottom:0;width:100%;height:6px;background:linear-gradient(90deg,#ffd21f var(--p),rgba(0,0,0,.35) var(--p))}
+.ptile.ready .pring{background:radial-gradient(circle at 50% 35%,#ffe58a,#ff9a1a);animation:ptp 1s ease-in-out infinite alternate;box-shadow:0 0 18px rgba(255,200,60,.9),0 3px 0 #0a1230}
+@keyframes ptp{to{transform:scale(1.07)}}
+.ptile.claimed .pring{background:radial-gradient(circle at 50% 35%,#6fe08a,#1f9a4a)}
+.ptile.future .pring,.ptile.missed .pring{background:radial-gradient(circle at 50% 35%,#5a5f86,#2a2e55)}
+.ptile.sel .pring{box-shadow:0 0 0 3px #fff,0 3px 0 #0a1230}
+.ptile.pfin .pring{background:radial-gradient(circle at 50% 35%,#c07bff,#5a1fb0)}.ptile.pfin.ready .pring{background:radial-gradient(circle at 50% 35%,#ffe58a,#ff9a1a)}
+.pring .ri{display:block;width:78%;height:78%}.pring .ri svg{width:100%!important;height:100%!important}
+.pring .sil{display:block;width:78%;height:78%;filter:brightness(0);opacity:.35}.pring .sil .ri{width:100%;height:100%}
+.pring .q{position:absolute;font-size:26px;font-weight:900;text-shadow:0 2px 0 #000}.pring .em{font-size:30px}
+.pl{font-size:11px;font-weight:800;text-shadow:0 1px 0 #000;white-space:nowrap}
+.ptile.claimed .pl{color:#8cf0a6}.ptile.ready .pl{color:#ffe08a}
+.pdet{margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,.2)}
+.ddays{display:flex;gap:4px}.dd{flex:1;text-align:center;font-size:11px;border-radius:8px;padding:3px 0;background:rgba(255,255,255,.08)}.dd i{display:block;font-style:normal;font-size:16px;font-weight:900}
+.dd.ok i{color:#6ff09a}.dd.now{background:rgba(255,255,255,.22)}.dd.fut i{opacity:.5}.dd.miss i{opacity:.5}
+.rcards{display:flex;flex-wrap:wrap;gap:8px}
+.rcard{width:84px;border-radius:12px;border:3px solid #14213d;background:radial-gradient(circle at 50% 30%,var(--c1),var(--c2));padding:6px 4px 5px;text-align:center;box-shadow:0 3px 0 #0a1230}
+.rcard .ri{display:block;width:44px;height:44px;margin:0 auto 2px}.rcard .ri svg{width:100%!important;height:100%!important}.rcard .ri.em{font-size:30px;line-height:44px}
+.rcard b{display:block;font-size:11px;line-height:1.15;text-shadow:0 1px 0 #000;color:#fff}
+.rcard.lock{filter:grayscale(.6) brightness(.8)}.rcard.lock .ri{filter:brightness(0);opacity:.4}.rcard.extra{--c1:#4b86ff;--c2:#1b3a8a}
+.rcard.big{width:96px;opacity:0;transform:scale(.3) translateY(24px);transition:.5s cubic-bezier(.2,1.8,.4,1)}.rcard.big.show{opacity:1;transform:none}.rcard.big .ri{width:56px;height:56px}
+.bigrow{justify-content:center;max-width:360px;margin-top:10px}
 .dn-reduce .fig,.dn-reduce .fig *,.dn-reduce .dn-beam,.dn-reduce .dn-floor{animation:none!important}
 .dn-reduce .dn-fw{animation:dnHop .5s ease-out 1}
 @keyframes dnHop{50%{transform:scale(1.45) translateY(-20px)}}
@@ -654,7 +704,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.34.0";window.WORDY_BUILD="7dab8fc131";</script>
+<script>window.WORDY_VERSION="2.35.0";window.WORDY_BUILD="08dc0f4992";</script>
 </head>
 <body>
 <div id="app">
@@ -681,27 +731,28 @@ details.fold>.fbody{padding:2px 0 14px}
   <div id="session" hidden></div>
 </div>
 <div id="arena" hidden></div>
-<script src="data/klasse6.js?v=7dab8fc131"></script>
-<script src="data/klasse7.js?v=7dab8fc131"></script>
-<script src="data/klasse8.js?v=7dab8fc131"></script>
-<script src="data/business.js?v=7dab8fc131"></script>
-<script src="data/business-basis2.js?v=7dab8fc131"></script>
-<script src="data/business-aufbau2.js?v=7dab8fc131"></script>
-<script src="data/business-profi2.js?v=7dab8fc131"></script>
-<script src="data/smalltalk.js?v=7dab8fc131"></script>
-<script src="data/idioms.js?v=7dab8fc131"></script>
-<script src="data/saetze.js?v=7dab8fc131"></script>
-<script src="data/saetze2.js?v=7dab8fc131"></script>
-<script src="data/lernbuch.js?v=7dab8fc131"></script>
-<script src="data/verben.js?v=7dab8fc131"></script>
-<script src="js/engine.js?v=7dab8fc131"></script>
-<script src="js/cosmetics.js?v=7dab8fc131"></script>
-<script src="js/fortnite.js?v=7dab8fc131"></script>
-<script src="js/figur.js?v=7dab8fc131"></script>
-<script src="js/loot.js?v=7dab8fc131"></script>
-<script src="js/app.js?v=7dab8fc131"></script>
-<script src="js/arena.js?v=7dab8fc131"></script>
-<script src="js/sync.js?v=7dab8fc131"></script>
+<script src="data/klasse6.js?v=08dc0f4992"></script>
+<script src="data/klasse7.js?v=08dc0f4992"></script>
+<script src="data/klasse8.js?v=08dc0f4992"></script>
+<script src="data/business.js?v=08dc0f4992"></script>
+<script src="data/business-basis2.js?v=08dc0f4992"></script>
+<script src="data/business-aufbau2.js?v=08dc0f4992"></script>
+<script src="data/business-profi2.js?v=08dc0f4992"></script>
+<script src="data/smalltalk.js?v=08dc0f4992"></script>
+<script src="data/idioms.js?v=08dc0f4992"></script>
+<script src="data/saetze.js?v=08dc0f4992"></script>
+<script src="data/saetze2.js?v=08dc0f4992"></script>
+<script src="data/lernbuch.js?v=08dc0f4992"></script>
+<script src="data/verben.js?v=08dc0f4992"></script>
+<script src="js/engine.js?v=08dc0f4992"></script>
+<script src="js/cosmetics.js?v=08dc0f4992"></script>
+<script src="js/fortnite.js?v=08dc0f4992"></script>
+<script src="js/figur.js?v=08dc0f4992"></script>
+<script src="js/stila.js?v=08dc0f4992"></script>
+<script src="js/loot.js?v=08dc0f4992"></script>
+<script src="js/app.js?v=08dc0f4992"></script>
+<script src="js/arena.js?v=08dc0f4992"></script>
+<script src="js/sync.js?v=08dc0f4992"></script>
 
 <script>
 if ('serviceWorker' in navigator) {

@@ -16,7 +16,7 @@ rain:function(x,w,n,kinds,cols){for(var i=0;i<n;i++)P.push({x:x+Math.random()*w-
 
 var GOLD=['#ffd21f','#ffb000','#fff3a0'],CONF=['#ff4f9a','#ffd21f','#3fd0ff','#7cff6b','#a855f7','#fff'];
 
-function bearIn(){return '<circle cx="60" cy="62" r="52" fill="#fff" opacity=".18"/><g stroke="#14213d" stroke-width="5" stroke-linejoin="round"><circle cx="28" cy="34" r="15" fill="#fff"/><circle cx="92" cy="34" r="15" fill="#fff"/><circle cx="29" cy="36" r="7" fill="#ffa6c6" stroke-width="3"/><circle cx="91" cy="36" r="7" fill="#ffa6c6" stroke-width="3"/><circle cx="60" cy="64" r="42" fill="#fff"/><ellipse cx="60" cy="78" rx="20" ry="15" fill="#e8f3ff"/></g><path d="M52 66q8-6 16 0q1 8-8 10q-9-2-8-10z" fill="#1c2a55" stroke="#14213d" stroke-width="3"/><ellipse cx="44" cy="54" rx="6" ry="8" fill="#14213d"/><ellipse cx="76" cy="54" rx="6" ry="8" fill="#14213d"/><circle cx="46" cy="50" r="2.6" fill="#fff"/><circle cx="78" cy="50" r="2.6" fill="#fff"/><path d="M52 82q8 8 16 0" stroke="#14213d" stroke-width="3.4" fill="none" stroke-linecap="round"/><ellipse cx="34" cy="70" rx="7" ry="4.5" fill="#ff8fb0" opacity=".7"/><ellipse cx="86" cy="70" rx="7" ry="4.5" fill="#ff8fb0" opacity=".7"/>'}
+function bearIn(){return global.VTA ? '<svg x="0" y="0" width="120" height="120" viewBox="22 4 176 176">' + global.VTA.inner("svg:eisbaer") + '</svg>' : ''}
 
 function T(f,ms){setTimeout(f,ms)}
 
