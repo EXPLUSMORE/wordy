@@ -647,7 +647,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.33.1";window.WORDY_BUILD="9ebed9e032";</script>
+<script>window.WORDY_VERSION="2.33.2";window.WORDY_BUILD="7efbf46d08";</script>
 </head>
 <body>
 <div id="app">
@@ -6012,7 +6012,8 @@ window.VERBS = [
 
   /* ---------- Wochenzeitplan (von den Eltern im Dashboard festgelegt) ---------- */
   function weekPlanCard() {
-    var wp = S.weekPlan(); if (!wp) return "";
+    var gm = S.goalMin(), wp = S.weekPlan(), auto = !wp;   // ohne Wochenzeitplan der Eltern: jeder Tag mit dem Tagesziel
+    if (!wp) wp = { min: [gm, gm, gm, gm, gm, gm, gm], bonus: 0 };
     var st = S.state, t = S.today(), d0 = new Date(t + "T00:00:00Z"), wd = (d0.getUTCDay() + 6) % 7, names = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"], planDays = 0, ok = 0, cells = "";
     wp.min.forEach(function (m, i) {
       var k = new Date(d0.getTime() + (i - wd) * 86400000).toISOString().slice(0, 10), sec = k === t ? ((st.daily && st.daily.sec) || 0) : ((st.history[k] && st.history[k].sec) || 0), done = m > 0 && sec >= m * 60, sym, color = "var(--ink-3,#8896ab)";
@@ -6025,7 +6026,7 @@ window.VERBS = [
       cells += '<div style="text-align:center;font-size:12px;border-radius:8px;padding:3px 0' + (k === t ? ';background:var(--accent-soft,#ddeef2)' : '') + '">' + names[i] + '<br><b style="font-size:' + (sym === "frei" ? 12 : 18) + 'px;color:' + color + '">' + sym + '</b>' + (m > 0 ? '<br><span class="muted" style="font-size:11px">' + m + '′</span>' : '') + '</div>';
     });
     var need = Math.max(1, Math.ceil(planDays * 0.8)), got = st.goalsDone && st.goalsDone["wp" + (function () { var m0 = new Date(d0.getTime() - wd * 86400000); return m0.toISOString().slice(0, 10); })()];
-    return '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Deine Woche</div><span class="pill tnum">' + ok + ' von ' + planDays + ' Plan-Tagen</span></div>' +
+    return '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Deine Woche</div><span class="pill tnum">' + ok + ' von ' + planDays + (auto ? ' Tagen' : ' Plan-Tagen') + '</span></div>' +
       '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:10px">' + cells + '</div>' +
       (wp.bonus > 0 ? '<p class="small muted" style="margin:10px 0 0">' + (got ? "🎉 Wochenbonus geholt: 🪙 " + wp.bonus : "Bonus: 🪙 " + wp.bonus + ", wenn mindestens " + need + " von " + planDays + " Plan-Tagen geschafft sind.") + '</p>' : "") + '</section>';
   }

@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.33.2 – 2026-10-07
+
+- Start: Die Wochenübersicht „Deine Woche“ mit den abgehakten Tagen ist jetzt immer sichtbar. Ohne Wochenzeitplan der Eltern zählt jeder Tag mit dem Tagesziel (vorher fehlte die Karte ganz).
+
 ## 2.33.1 – 2026-10-07
 
 - Extramünzen: freie Nachricht bis 240 Zeichen (mehrzeilig) mit Textvorschlägen und Zeichenzähler im Dashboard. In der App erscheint das Geschenk als Karte „Post von den Eltern“ mit der Nachricht (statt nur als kurzer Hinweis), erst wenn gerade keine Runde läuft.
