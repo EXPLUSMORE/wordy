@@ -1716,7 +1716,16 @@
   function pauseOn() { return S.state.settings.pause !== false; }
   function holdButton(b, ms, done) {
     b.disabled = true; b.classList.add("holding"); b.style.setProperty("--hold", ms + "ms");
-    setTimeout(function () { b.classList.remove("holding"); if (done) done(); else b.disabled = false; }, ms);
+    setTimeout(function () {
+      /* erst weiter, wenn die Sprachausgabe fertig ist (höchstens 10 s warten) */
+      var t0 = Date.now(), quiet = 0, synth = window.speechSynthesis;
+      (function poll() {
+        var busy = false; try { busy = !!(synth && (synth.speaking || synth.pending)); } catch (e) {}
+        quiet = busy ? 0 : quiet + 1;
+        if (quiet < 2 && Date.now() - t0 < 10000) return setTimeout(poll, 120);
+        b.classList.remove("holding"); if (done) done(); else b.disabled = false;
+      })();
+    }, ms);
   }
   /* Effekt und Ton der gewählten Sammelobjekte bei einer Antwort */
   function feedback(ok) {

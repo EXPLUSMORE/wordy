@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.23.1 – 2026-10-07
+
+- Weiter-Knopf nach der Antwort bleibt gesperrt, bis die Sprachausgabe fertig ist (höchstens 10 s), damit die Lösung wirklich gehört wird.
+
 ## 2.23.0 – 2026-10-07
 
 - **Lernpfad zum Scrollen:** Auf dem Start-Tab zeigt der Pfad jetzt **alle Abschnitte** in einer scrollbaren Karte (der erste unten, der letzte oben). Beim Öffnen steht die aktuelle Station in der Mitte; „↧ zur aktuellen Station“ springt zurück. Jeder Abschnitt hat eine Kopfzeile mit Titel und Stand, die beim Scrollen oben kleben bleibt. Mit der Maus zeigt ein Hinweis beim Darüberfahren Station, Abschnitt, Sterne beziehungsweise bei der Boss-Runde Modus und Ziel; am Handy genügt das Antippen.
