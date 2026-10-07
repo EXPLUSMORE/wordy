@@ -386,7 +386,9 @@
   }
   // grade: 2 = sicher richtig, 1 = richtig mit Hilfe/langsam, 0 = falsch
   function ev(kind, d) { var f = global.WordySync; if (f) { try { f.log(kind, d); } catch (e) {} } }
-  function grade(id, g) {
+  /* o.hint: mit Hinweis gelöst. Das Wort gilt als „gesehen“, aber nicht als sicher: kurzer Abstand, keine Serie, keine Münzen. */
+  function grade(id, g, o) {
+    o = o || {};
     var r = rec(id), before = levelOf(id);
     var wasDue = !r.reps || r.due <= Date.now(), wasBox = inErrorBox(id);   // Münzen nur für fällige Wörter: Wiederholen ohne Abstand bringt nichts
     r.last = Date.now();
@@ -396,16 +398,21 @@
       r.ef = clamp(r.ef - 0.2, 1.3, 2.8);
       r.due = Date.now() + 60000;
     } else {
-      r.ok++; r.chain++;
-      r.ef = clamp(r.ef + (g === 2 ? 0.08 : -0.06), 1.3, 2.8);
-      r.iv = r.reps === 0 ? 1 : r.reps === 1 ? 3 : Math.min(400, Math.round(r.iv * r.ef));
-      r.reps++;
+      r.ok++; r.chain = o.hint ? 0 : r.chain + 1;
+      if (o.hint) {
+        r.ef = clamp(r.ef - 0.06, 1.3, 2.8);
+        r.iv = Math.max(1, Math.min(r.iv || 1, 3)); r.reps = Math.max(1, r.reps);
+      } else {
+        r.ef = clamp(r.ef + (g === 2 ? 0.08 : -0.06), 1.3, 2.8);
+        r.iv = r.reps === 0 ? 1 : r.reps === 1 ? 3 : Math.min(400, Math.round(r.iv * r.ef));
+        r.reps++;
+      }
       r.due = Date.now() + r.iv * 86400000;
     }
     var after = levelOf(id);
     if (after === 4 && before < 4) r.m = Date.now();   // wann das Wort gemeistert wurde (für „diese Woche gemeistert“)
-    if (g > 0) awardProgress(id, before, after, wasDue, wasBox && !inErrorBox(id));
-    var it = byId[id]; ev("a", { id: id, g: g, b: before, a: after, en: it ? it.en : "", de: it ? it.de : "", u: it ? it.unit : "" });
+    if (g > 0 && !o.hint) awardProgress(id, before, after, wasDue, wasBox && !inErrorBox(id));
+    var it = byId[id]; ev("a", { id: id, g: g, h: o.hint ? 1 : 0, b: before, a: after, en: it ? it.en : "", de: it ? it.de : "", u: it ? it.unit : "" });
     return { before: before, after: after, rec: r };
   }
 

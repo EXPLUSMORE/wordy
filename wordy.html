@@ -471,7 +471,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.10.1";window.WORDY_BUILD="2d3407e7ac";</script>
+<script>window.WORDY_VERSION="2.11.0";window.WORDY_BUILD="85433f625f";</script>
 </head>
 <body>
 <div id="app">
@@ -4221,7 +4221,9 @@ window.VERBS = [
   }
   // grade: 2 = sicher richtig, 1 = richtig mit Hilfe/langsam, 0 = falsch
   function ev(kind, d) { var f = global.WordySync; if (f) { try { f.log(kind, d); } catch (e) {} } }
-  function grade(id, g) {
+  /* o.hint: mit Hinweis gelöst. Das Wort gilt als „gesehen“, aber nicht als sicher: kurzer Abstand, keine Serie, keine Münzen. */
+  function grade(id, g, o) {
+    o = o || {};
     var r = rec(id), before = levelOf(id);
     var wasDue = !r.reps || r.due <= Date.now(), wasBox = inErrorBox(id);   // Münzen nur für fällige Wörter: Wiederholen ohne Abstand bringt nichts
     r.last = Date.now();
@@ -4231,16 +4233,21 @@ window.VERBS = [
       r.ef = clamp(r.ef - 0.2, 1.3, 2.8);
       r.due = Date.now() + 60000;
     } else {
-      r.ok++; r.chain++;
-      r.ef = clamp(r.ef + (g === 2 ? 0.08 : -0.06), 1.3, 2.8);
-      r.iv = r.reps === 0 ? 1 : r.reps === 1 ? 3 : Math.min(400, Math.round(r.iv * r.ef));
-      r.reps++;
+      r.ok++; r.chain = o.hint ? 0 : r.chain + 1;
+      if (o.hint) {
+        r.ef = clamp(r.ef - 0.06, 1.3, 2.8);
+        r.iv = Math.max(1, Math.min(r.iv || 1, 3)); r.reps = Math.max(1, r.reps);
+      } else {
+        r.ef = clamp(r.ef + (g === 2 ? 0.08 : -0.06), 1.3, 2.8);
+        r.iv = r.reps === 0 ? 1 : r.reps === 1 ? 3 : Math.min(400, Math.round(r.iv * r.ef));
+        r.reps++;
+      }
       r.due = Date.now() + r.iv * 86400000;
     }
     var after = levelOf(id);
     if (after === 4 && before < 4) r.m = Date.now();   // wann das Wort gemeistert wurde (für „diese Woche gemeistert“)
-    if (g > 0) awardProgress(id, before, after, wasDue, wasBox && !inErrorBox(id));
-    var it = byId[id]; ev("a", { id: id, g: g, b: before, a: after, en: it ? it.en : "", de: it ? it.de : "", u: it ? it.unit : "" });
+    if (g > 0 && !o.hint) awardProgress(id, before, after, wasDue, wasBox && !inErrorBox(id));
+    var it = byId[id]; ev("a", { id: id, g: g, h: o.hint ? 1 : 0, b: before, a: after, en: it ? it.en : "", de: it ? it.de : "", u: it ? it.unit : "" });
     return { before: before, after: after, rec: r };
   }
 
@@ -6420,9 +6427,24 @@ window.VERBS = [
         '<div class="prompt de">' + esc(w.de) + '</div>' +
         '<input id="typeIn" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="englisches Wort">' +
         inlineCheck() +
-        '<p class="small muted" style="margin:0">Kleine Tippfehler zählen halb – die Schreibweise siehst du gleich.</p></div>';
+        '<div id="hintBox" class="small" style="min-height:22px;letter-spacing:.18em;font-weight:700" aria-live="polite"></div>' +
+        '<button class="chip" id="hintBtn" type="button" style="align-self:flex-start">💡 Hinweis</button>' +
+        '<p class="small muted" style="margin:0">Kleine Tippfehler zählen halb – die Schreibweise siehst du gleich. Mit Hinweis gibt es keine Münze.</p></div>';
       foot.innerHTML = "";
       var inp = $("#typeIn"), btn = $("#inlineCheck");
+      var first = String(w.en).split(/\s*[\/,]\s*/)[0];
+      var pattern = first.split(" ").map(function (wd) { return wd.split("").map(function (c, k) { return k === 0 ? c : /[A-Za-z]/.test(c) ? "_" : c; }).join(" "); }).join("   ");
+      var hb = $("#hintBtn"), hbox = $("#hintBox");
+      hb.addEventListener("click", function () {
+        if (SS.answered) return;
+        if (!t.hint) {
+          t.hint = 1; hbox.textContent = pattern; hb.textContent = "👁 Wort kurz zeigen";
+        } else if (t.hint === 1) {
+          t.hint = 2; hb.disabled = true; hb.textContent = "Hinweis benutzt";
+          hbox.textContent = first; setTimeout(function () { if (hbox) hbox.textContent = pattern; }, 2000);
+        }
+        inp.focus();
+      });
       inp.addEventListener("input", function () { btn.disabled = !inp.value.trim(); });
       inp.addEventListener("keydown", function (e) { if (e.key === "Enter" && inp.value.trim()) check(); });
       inp.addEventListener("focus", function () { setTimeout(function () { btn.scrollIntoView({ block: "nearest" }); }, 300); });
@@ -6495,9 +6517,11 @@ window.VERBS = [
   /* ---------- Antwort prüfen ---------- */
   function applyGrade(w, g, extra) {
     var before = S.levelOf(w.id), wasBox = S.inErrorBox(w.id);
-    var res = S.grade(w.id, g);
+    var hint = !!(extra && extra.hint), res = S.grade(w.id, g, extra);
     SS.items++;
-    if (g > 0) {
+    if (g > 0 && hint) {
+      SS.correct++; SS.chain = 0; S.addXp(3);   // mit Hinweis: gezählt, aber keine Serie und weniger XP
+    } else if (g > 0) {
       SS.correct++; SS.chain++; SS.maxChain = Math.max(SS.maxChain, SS.chain);
       S.addXp(g === 2 ? 10 : 6);
       if (wasBox) SS.boxSolved++;   // zählt für die Mission "Fehlerkartei-Wörter richtig beantworten"
@@ -6576,11 +6600,12 @@ window.VERBS = [
       return;
     }
     if (t.type === "type") {
-      var val = $("#typeIn").value, g = judgeTyped(val, w.en);
+      var val = $("#typeIn").value, g = judgeTyped(val, w.en), hinted = !!t.hint && g > 0;
+      if (hinted) g = 1;
       SS.answered = true;
-      var res = applyGrade(w, g);
+      var res = applyGrade(w, g, hinted ? { hint: true } : null);
       if (g === 0) SS.retry.push({ type: "mc_en_de", w: w });
-      verdict(g > 0, w, res, g === 1 ? "fast – achte auf die Schreibweise" : null);
+      verdict(g > 0, w, res, hinted ? "mit Hinweis geschafft – das Wort kommt bald wieder, Münzen gibt es dafür nicht" : g === 1 ? "fast – achte auf die Schreibweise" : null);
       var inp = $("#typeIn"); if (inp) inp.disabled = true;
       return;
     }

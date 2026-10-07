@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.11.0 – 2026-10-07
+
+- Tippen („Schreib das englische Wort“): Neuer Knopf 💡 Hinweis in zwei Stufen. Erster Tipp: Anfangsbuchstabe und Länge (`c _ _ _`). Zweiter Tipp: Das Wort wird 2 Sekunden gezeigt und wieder ausgeblendet. Mit Hinweis gibt es **keine Münzen**, keine Serie und weniger XP; das Wort zählt als „mit Hilfe“ (kurzer Wiederholungsabstand), nicht als sicher gelernt. Falsch bleibt falsch (kein Extra-Abzug). Im Dashboard-Ereignis steht `h:1`.
+
 ## 2.10.1 – 2026-10-06
 
 - Dashboard: Beim letzten Stand steht jetzt die Uhrzeit dabei: „Zuletzt aktiv: vor 5 Min. (heute 14:32 Uhr) · Übersicht von heute 14:30 Uhr“ (gestern und ältere Tage mit Wochentag und Datum), ebenso bei „Letzte Sicherung“ in der Liste der verborgenen Spieler. **Server-Update nötig** (läuft automatisch).
