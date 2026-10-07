@@ -305,6 +305,11 @@ hr.sep{border:0;border-top:1px solid var(--line);margin:4px 0}
 .slot .caret{display:inline-block;width:2px;height:1.25em;background:var(--accent);margin:0 1px;vertical-align:text-bottom;animation:caretblink 1s steps(1) infinite}
 @keyframes caretblink{50%{opacity:0}}
 @media (prefers-reduced-motion:reduce){.slot .caret{animation:none}}
+.tile.word,.slot .sw{touch-action:none;-webkit-user-select:none;user-select:none}
+.slot .sw{font:inherit;font-size:16px;font-weight:600;padding:8px 12px;margin:2px 3px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:inherit;cursor:grab}
+.slot .sw.dragging{opacity:.3}
+.slot .dropbar{display:inline-block;width:3px;height:34px;border-radius:2px;background:var(--accent);margin:0 1px;vertical-align:middle}
+.dragghost{position:fixed;z-index:200;pointer-events:none;transform:translate(-50%,-60%) scale(1.06);box-shadow:0 8px 20px rgba(0,0,0,.28);font-weight:600;padding:10px 13px;border-radius:9px;border:1px solid var(--accent);background:var(--card);font-size:16px;margin:0!important}
 .slot.build{min-height:58px;align-items:flex-end;font-size:19px;letter-spacing:0;line-height:1.5;padding-bottom:8px}
 .slot{min-height:52px;border-bottom:2px dashed var(--rule);display:flex;align-items:center;gap:4px;flex-wrap:wrap;
   font-size:22px;font-weight:700;letter-spacing:.04em;padding:6px 2px}
@@ -488,7 +493,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.14.0";window.WORDY_BUILD="8c48e0df4f";</script>
+<script>window.WORDY_VERSION="2.15.0";window.WORDY_BUILD="75f24d2166";</script>
 </head>
 <body>
 <div id="app">
@@ -514,25 +519,25 @@ details.fold>.fbody{padding:2px 0 14px}
   <div id="session" hidden></div>
 </div>
 <div id="arena" hidden></div>
-<script src="data/klasse6.js?v=8c48e0df4f"></script>
-<script src="data/klasse7.js?v=8c48e0df4f"></script>
-<script src="data/klasse8.js?v=8c48e0df4f"></script>
-<script src="data/business.js?v=8c48e0df4f"></script>
-<script src="data/business-basis2.js?v=8c48e0df4f"></script>
-<script src="data/business-aufbau2.js?v=8c48e0df4f"></script>
-<script src="data/business-profi2.js?v=8c48e0df4f"></script>
-<script src="data/smalltalk.js?v=8c48e0df4f"></script>
-<script src="data/idioms.js?v=8c48e0df4f"></script>
-<script src="data/saetze.js?v=8c48e0df4f"></script>
-<script src="data/saetze2.js?v=8c48e0df4f"></script>
-<script src="data/lernbuch.js?v=8c48e0df4f"></script>
-<script src="data/verben.js?v=8c48e0df4f"></script>
-<script src="js/engine.js?v=8c48e0df4f"></script>
-<script src="js/cosmetics.js?v=8c48e0df4f"></script>
-<script src="js/fortnite.js?v=8c48e0df4f"></script>
-<script src="js/app.js?v=8c48e0df4f"></script>
-<script src="js/arena.js?v=8c48e0df4f"></script>
-<script src="js/sync.js?v=8c48e0df4f"></script>
+<script src="data/klasse6.js?v=75f24d2166"></script>
+<script src="data/klasse7.js?v=75f24d2166"></script>
+<script src="data/klasse8.js?v=75f24d2166"></script>
+<script src="data/business.js?v=75f24d2166"></script>
+<script src="data/business-basis2.js?v=75f24d2166"></script>
+<script src="data/business-aufbau2.js?v=75f24d2166"></script>
+<script src="data/business-profi2.js?v=75f24d2166"></script>
+<script src="data/smalltalk.js?v=75f24d2166"></script>
+<script src="data/idioms.js?v=75f24d2166"></script>
+<script src="data/saetze.js?v=75f24d2166"></script>
+<script src="data/saetze2.js?v=75f24d2166"></script>
+<script src="data/lernbuch.js?v=75f24d2166"></script>
+<script src="data/verben.js?v=75f24d2166"></script>
+<script src="js/engine.js?v=75f24d2166"></script>
+<script src="js/cosmetics.js?v=75f24d2166"></script>
+<script src="js/fortnite.js?v=75f24d2166"></script>
+<script src="js/app.js?v=75f24d2166"></script>
+<script src="js/arena.js?v=75f24d2166"></script>
+<script src="js/sync.js?v=75f24d2166"></script>
 
 <script>
 if ('serviceWorker' in navigator) {

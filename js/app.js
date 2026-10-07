@@ -1414,6 +1414,7 @@
         '<div class="tiles" id="tiles">' + S.shuffle(parts.slice()).map(function (wd, i) {
           return '<button class="tile word" data-tile="' + i + '" data-ch="' + esc(wd) + '">' + esc(wd) + '</button>';
         }).join("") + '</div>' +
+        '<p class="small muted" style="margin:0">Tippe ein Wort an, um es zu legen oder zurückzulegen. Ziehen mit dem Finger schiebt es an eine andere Stelle.</p>' +
         '<button class="chip" data-act="undo" style="align-self:flex-start">← Wort zurück</button></div>';
       foot.innerHTML = footCheck();
       paintSlot(t, true);
@@ -1434,11 +1435,18 @@
     }
   };
 
-  function paintSlot(t, words) {
+  function paintSlot(t, words, dropIdx, dragIdx) {
     var el = $("#slot"); if (!el) return;
     var rest = Math.max(0, t.target.length - t.built.length);
     if (words || t.type === "build") {
-      el.innerHTML = '<span style="font-size:19px">' + esc(t.built.join(" ")) + '</span>' +
+      /* Gelegte Wörter sind eigene Knöpfe: antippen legt zurück, ziehen verschiebt (dropIdx = Einfügemarke beim Ziehen) */
+      var h = "", k;
+      for (k = 0; k < t.built.length; k++) {
+        if (k === dropIdx) h += '<i class="dropbar"></i>';
+        h += '<button type="button" class="sw' + (k === dragIdx ? " dragging" : "") + '" data-i="' + k + '">' + esc(t.built[k]) + '</button>';
+      }
+      if (dropIdx != null && dropIdx >= t.built.length) h += '<i class="dropbar"></i>';
+      el.innerHTML = h +
         (rest ? '<span style="color:var(--ink-3);font-size:19px;letter-spacing:.1em"> ' + Array(rest + 1).join("··· ") + '</span>' : "") +
         (t.punct ? '<span style="font-size:19px;color:var(--ink-3)">' + esc(t.punct) + '</span>' : "");
     } else {
@@ -1630,6 +1638,13 @@
       paintSlot(t);
       return;
     }
+    var sw = e.target.closest(".sw");
+    if (sw && t && t.type === "build" && !SS.answered) {   // gelegtes Wort zurück in die Auswahl
+      var si = +sw.getAttribute("data-i");
+      t.built.splice(si, 1); var ret = t.usedTiles.splice(si, 1)[0]; if (ret) ret.classList.remove("used");
+      paintSlot(t, true); $("#mainBtn").disabled = true;
+      return;
+    }
     var tile = e.target.closest(".tile");
     if (tile && t && (t.type === "spell" || t.type === "build") && !SS.answered) {
       t.usedTiles = (t.usedTiles || []);
@@ -1658,6 +1673,62 @@
       paintSlot(t); $("#mainBtn").disabled = true;
     }
   });
+  /* ---------- Satzbau: Wörter ziehen ---------- */
+  var drag = null, swallowClick = false;
+  function dropIndex(x, y) {
+    var chips = $$("#slot .sw");
+    for (var i = 0; i < chips.length; i++) {
+      var r = chips[i].getBoundingClientRect();
+      if (y < r.top || (y <= r.bottom && x < r.left + r.width / 2)) return i;
+    }
+    return chips.length;
+  }
+  function inSlot(x, y) {
+    var s = $("#slot"); if (!s) return false;
+    var r = s.getBoundingClientRect();
+    return x >= r.left - 12 && x <= r.right + 12 && y >= r.top - 24 && y <= r.bottom + 24;
+  }
+  function dragEnd(commit, e) {
+    if (!drag) return;
+    var d = drag, t = d.t; drag = null;
+    document.removeEventListener("pointermove", dragMove); document.removeEventListener("pointerup", dragUp); document.removeEventListener("pointercancel", dragCancel);
+    if (d.ghost) { d.ghost.remove(); swallowClick = true; setTimeout(function () { swallowClick = false; }, 350); }
+    if (!d.moved) return;
+    if (commit && SS && !SS.answered && SS.tasks[SS.i] === t) {
+      var over = inSlot(e.clientX, e.clientY), at = dropIndex(e.clientX, e.clientY);
+      if (d.fromSlot) {
+        var wd = t.built.splice(d.idx, 1)[0], tl = t.usedTiles.splice(d.idx, 1)[0];
+        if (over) { if (at > d.idx) at--; t.built.splice(at, 0, wd); t.usedTiles.splice(at, 0, tl); }
+        else if (tl) tl.classList.remove("used");   // aus der Reihe gezogen: zurück in die Auswahl
+      } else if (over) {
+        t.built.splice(at, 0, d.el.getAttribute("data-ch")); t.usedTiles.splice(at, 0, d.el); d.el.classList.add("used");
+      }
+      $("#mainBtn").disabled = t.built.length !== t.target.length;
+    }
+    if (SS && SS.tasks[SS.i] === t) paintSlot(t, true);
+  }
+  function dragMove(e) {
+    if (!drag) return;
+    var d = drag;
+    if (!d.moved) {
+      if (Math.abs(e.clientX - d.x0) + Math.abs(e.clientY - d.y0) < 9) return;
+      d.moved = true;
+      d.ghost = d.el.cloneNode(true); d.ghost.classList.add("dragghost"); d.ghost.classList.remove("used", "dragging");
+      document.body.appendChild(d.ghost);
+    }
+    d.ghost.style.left = e.clientX + "px"; d.ghost.style.top = e.clientY + "px";
+    var over = inSlot(e.clientX, e.clientY);
+    paintSlot(d.t, true, over ? dropIndex(e.clientX, e.clientY) : null, d.fromSlot ? d.idx : null);
+  }
+  function dragUp(e) { dragEnd(true, e); }
+  function dragCancel(e) { dragEnd(false, e); }
+  sessionEl.addEventListener("pointerdown", function (e) {
+    var t = SS && SS.tasks[SS.i]; if (!t || t.type !== "build" || SS.answered || e.button > 0) return;
+    var el = e.target.closest(".sw, .tile.word"); if (!el || el.classList.contains("used")) return;
+    drag = { el: el, t: t, fromSlot: el.classList.contains("sw"), idx: +(el.getAttribute("data-i") || 0), x0: e.clientX, y0: e.clientY, moved: false, ghost: null };
+    document.addEventListener("pointermove", dragMove); document.addEventListener("pointerup", dragUp); document.addEventListener("pointercancel", dragCancel);
+  });
+  sessionEl.addEventListener("click", function (e) { if (swallowClick) { swallowClick = false; e.stopPropagation(); e.preventDefault(); } }, true);   // nach dem Ziehen kein Antippen auslösen
   function matchTap(t, btn) {
     var side = btn.getAttribute("data-side"), wid = btn.getAttribute("data-wid");
     if (side === "en") {
