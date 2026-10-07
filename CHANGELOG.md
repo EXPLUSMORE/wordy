@@ -9,6 +9,11 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.33.0 – 2026-10-07
+
+- Dashboard: Im Kopf der Spielerkarte stehen jetzt Münzen und XP (Stand der letzten Übertragung). Neue Karte „Extramünzen schenken“ (1 bis 500 Münzen, mit Nachricht): kommt beim nächsten Abgleich der App genau einmal als Münzgeschenk an, Magnus sieht die Nachricht. Der Verlauf zeigt ⏳ wartet oder ✅ angekommen.
+- Server: Endpunkt `gifts`, `/api/sync` liefert `gifts`. Die App meldet angekommene Geschenke im Übersichts-Snapshot (`meta.gifts`).
+
 ## 2.32.0 – 2026-10-07
 
 - Set-Angebot: Am 07.10.2026 kostet jedes Teil des Eis-Sets nur 50 Münzen (zusammen 200). Hinweis oben im Shop, im Reiter „Sets“ ein Knopf „Set kaufen“, die Einzelpreise sind durchgestrichen. Rang-Sperren bleiben bestehen (Eisbär ab Silber II). Weitere Set-Angebote lassen sich in `SET_DEALS` (engine.js) eintragen.

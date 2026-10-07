@@ -394,7 +394,8 @@ function apiSync(pid) {
     pathUnits: pathUnitsOf(pid),
     weekPlan: weekPlanOf(pid),
     bossDiff: bossDiffOf(pid),
-    coinFactor: coinFactorOf(pid)
+    coinFactor: coinFactorOf(pid),
+    gifts: giftsOf(pid).slice(-20)
   }];
 }
 /* Wochenzeitplan: Minuten pro Wochentag (Mo bis So), gilt jede Woche gleich, dazu Wochenbonus in Münzen */
@@ -413,6 +414,16 @@ function setBossDiff(pid, body) {
   const v = body && (body.diff === "leicht" || body.diff === "schwer") ? body.diff : "normal";
   q.kvSet.run("bossdiff:" + pid, v);
   return [200, { ok: true, diff: v }];
+}
+/* Extramünzen von den Eltern: werden von der App beim nächsten Abgleich genau einmal gutgeschrieben */
+function giftsOf(pid) { const r = q.kvGet.get("gifts:" + pid); try { return r ? JSON.parse(r.val) : []; } catch (e) { return []; } }
+function addGift(pid, body) {
+  const coins = Math.round(+body.coins);
+  if (!(coins >= 1 && coins <= 500)) return [400, { error: "Münzen müssen zwischen 1 und 500 liegen." }];
+  const note = String(body.note || "").trim().slice(0, 80), list = giftsOf(pid);
+  const gift = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), coins, note, ts: Date.now() };
+  list.push(gift); q.kvSet.run("gifts:" + pid, JSON.stringify(list.slice(-50)));
+  return [200, { ok: true, gift, list: list.slice(-50) }];
 }
 /* Münzfaktor: Eltern können Verdienst und damit das Tempo im Shop anpassen (0,5 bis 2) */
 function coinFactorOf(pid) { const r = q.kvGet.get("coinfactor:" + pid); const v = r ? parseFloat(r.val) : 1; return [0.5, 1, 1.5, 2].includes(v) ? v : 1; }
@@ -656,6 +667,8 @@ const server = http.createServer(async (req, res) => {
         if (m[2] === "plans" && req.method === "POST") { const [c, b] = createPlan(pid, await readJson(req)); return send(res, c, b); }
         if (m[2] === "weekplan" && req.method === "GET") return send(res, 200, weekPlanOf(pid));
         if (m[2] === "weekplan" && req.method === "POST") { const [c, b] = setWeekPlan(pid, await readJson(req)); return send(res, c, b); }
+        if (m[2] === "gifts" && req.method === "GET") return send(res, 200, giftsOf(pid).slice(-20));
+        if (m[2] === "gifts" && req.method === "POST") { const [c, b] = addGift(pid, await readJson(req)); return send(res, c, b); }
         if (m[2] === "coinfactor" && req.method === "GET") return send(res, 200, { factor: coinFactorOf(pid) });
         if (m[2] === "coinfactor" && req.method === "POST") { const [c, b] = setCoinFactor(pid, await readJson(req)); return send(res, c, b); }
         if (m[2] === "bossdiff" && req.method === "GET") return send(res, 200, { diff: bossDiffOf(pid) });

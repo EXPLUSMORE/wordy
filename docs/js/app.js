@@ -705,7 +705,7 @@
     };
     window.WordyHooks.onReward = function (list) {
       var c = list.reduce(function (a, x) { return a + (x.coins || 0); }, 0);
-      toast("🎉 " + (list[0].kind === "plan" ? "Lernplan geschafft" : list[0].kind === "week" ? "Wochenplan geschafft" : "Wochenziel geschafft") + ": " + list[0].title + (c ? " · +" + c + " Münzen" : ""), 6000);
+      toast("🎉 " + (list[0].kind === "gift" ? "Extramünzen von den Eltern" : list[0].kind === "plan" ? "Lernplan geschafft" : list[0].kind === "week" ? "Wochenplan geschafft" : "Wochenziel geschafft") + ": " + list[0].title + (c ? " · +" + c + " Münzen" : ""), 6000);
       try { if (window.VTC && S.state.settings.audio) window.VTC.sound(S.state.profile.snd, true); window.VTC.burst(S.state.profile.fx, window.innerWidth / 2, window.innerHeight * .4, 24, 1); } catch (e) {}
       if (tab === "home" && sessionEl.hidden) render();
     };

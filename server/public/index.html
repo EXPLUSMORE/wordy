@@ -308,10 +308,10 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     var m = r.meta || {}, t = r.totals, wk = r.week, h = "";
     var today = r.days[r.days.length - 1];
     h += '<div class="card"><div class="row"><div class="grow"><b style="font-size:18px">' + esc(p.name) + "</b>" +
-      '<div class="small muted">Zuletzt aktiv: ' + fmtAgo(p.lastEvent) + (p.lastEvent ? " (" + fmtAt(p.lastEvent) + ")" : "") + (r.metaTs ? " · Übersicht von " + fmtAt(r.metaTs) : "") + (m.rank ? " · " + esc(m.rank) : "") + (m.streak ? " · 🔥 " + m.streak + " Tage Serie" : "") +
+      '<div class="small muted">Zuletzt aktiv: ' + fmtAgo(p.lastEvent) + (p.lastEvent ? " (" + fmtAt(p.lastEvent) + ")" : "") + (r.metaTs ? " · Übersicht von " + fmtAt(r.metaTs) : "") + (m.rank ? " · " + esc(m.rank) : "") + (m.coins != null ? " · <b>🪙 " + m.coins + "</b> · <b>" + (m.xp || 0).toLocaleString("de-DE") + " XP</b>" : "") + (m.streak ? " · 🔥 " + m.streak + " Tage Serie" : "") +
       (p.devices.length ? " · " + p.devices.length + " Gerät" + (p.devices.length > 1 ? "e" : "") : " · noch kein Gerät verbunden") + "</div></div>" +
       '<button class="ghost" id="inv">Neuer Code</button><button class="ghost" id="ren">Umbenennen</button><button class="ghost" id="hid">Nur sichern</button><button class="ghost" id="rev">Geräte trennen</button><button class="ghost" id="del">Löschen</button></div></div>';
-    h += heuteCard(r, m) + wocheCard(r, m) + '<div class="card" id="wpCard"></div>';
+    h += heuteCard(r, m) + wocheCard(r, m) + '<div class="card" id="giftCard"></div><div class="card" id="wpCard"></div>';
     h += '<div class="card" id="pathCard"></div><div class="card" id="goalsCard"></div><div class="card" id="plansCard"></div>';
     h += '<div class="card"><div class="row"><h2 class="grow" style="margin:0">Übungszeit pro Tag</h2><button class="tab" data-d="14" aria-pressed="' + (days === 14) + '">14 Tage</button><button class="tab" data-d="30" aria-pressed="' + (days === 30) + '">30 Tage</button><button class="tab" data-d="90" aria-pressed="' + (days === 90) + '">90 Tage</button></div>' +
       bars(r.days) + '<div class="legend"><span><i style="background:var(--good)"></i>10 Min. oder mehr</span><span><i style="background:var(--acc2)"></i>weniger</span><span class="muted">Insgesamt ' + fmtMin(t.sec) + ", " + t.items + " Aufgaben, " + t.activeDays + " aktive Tage</span></div></div>";
@@ -344,7 +344,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     document.getElementById("hid").onclick = function () { if (confirm(p.name + " nur noch sichern und hier nicht mehr anzeigen? Die Zahlen verschwinden aus Übersicht und Wochenmail, die Sicherung bleibt. Zurückholen kannst du ihn unter „＋ Spieler“.")) post("/api/admin/players/" + p.id + "/hidden", { hidden: true }).then(function () { cur = null; loadPlayers(); }); };
     document.getElementById("rev").onclick = function () { if (confirm("Alle verbundenen Geräte von " + p.name + " trennen? Neu verbinden geht mit einem neuen Code.")) post("/api/admin/players/" + p.id + "/revoke").then(function () { loadPlayers(p.id); }); };
     document.getElementById("del").onclick = function () { if (confirm(p.name + " und alle gespeicherten Lerndaten endgültig löschen?")) api("/api/admin/players/" + p.id, { method: "DELETE" }).then(function () { cur = null; loadPlayers(); }); };
-    drawWeekPlan(p, r); drawPath(p, r); drawGoals(p, r); drawPlans(p, r); drawBackups(p, r); drawMail();
+    drawGifts(p, r); drawWeekPlan(p, r); drawPath(p, r); drawGoals(p, r); drawPlans(p, r); drawBackups(p, r); drawMail();
     var wd = document.getElementById("wdet"); if (wd) wd.addEventListener("toggle", function () { if (wd.open) showWords(p); });
     Array.prototype.forEach.call(view.querySelectorAll("tr[data-u]"), function (tr) { tr.onclick = function () { showUnit(p, tr.getAttribute("data-u")); }; });
   }
@@ -366,6 +366,30 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
   function picked(id) { return Array.prototype.map.call(document.querySelectorAll("#" + id + " input:checked"), function (c) { return c.value; }); }
 
   /* Wochenzeitplan: Minuten pro Wochentag, gilt jede Woche gleich; Vergleich mit dem, was in dieser Woche geübt wurde */
+  /* Extramünzen "überweisen": kommen beim nächsten Abgleich der App auf Magnus' Konto */
+  function drawGifts(p, r) {
+    var el = document.getElementById("giftCard"); if (!el) return;
+    var m = r.meta || {};
+    el.innerHTML = "<h2>Extramünzen schenken</h2><p class='small muted' style='margin:0 0 8px'>Für besondere Leistungen. Die Münzen werden beim nächsten Öffnen der App gutgeschrieben, Magnus sieht deine Nachricht." +
+      (m.coins != null ? " Aktueller Stand laut App: <b>🪙 " + m.coins + "</b>, " + (m.xp || 0).toLocaleString("de-DE") + " XP." : "") + "</p>" +
+      '<div class="row" style="gap:6px;flex-wrap:wrap;align-items:center">' + [10, 20, 50, 100].map(function (c) { return '<button class="ghost gamt" data-c="' + c + '">+' + c + '</button>'; }).join("") +
+      '<input id="gAmt" type="number" min="1" max="500" value="20" style="width:80px"><input id="gNote" placeholder="Nachricht, z. B. Tolle Woche!" maxlength="80" style="flex:1 1 180px"><button id="gSend">Überweisen</button><span id="gMsg" class="small"></span></div><div id="gList" style="margin-top:10px"></div>';
+    var msg = function (t, bad) { var e = document.getElementById("gMsg"); if (e) { e.className = "small" + (bad ? " err" : ""); e.textContent = t; } };
+    var done = (m.gifts || []);
+    var list = function (arr) {
+      var e = document.getElementById("gList"); if (!e) return;
+      e.innerHTML = arr.length ? arr.slice().reverse().slice(0, 6).map(function (g) {
+        return '<div class="small">' + (done.indexOf(g.id) >= 0 ? "✅" : "⏳") + " +" + g.coins + " 🪙 · " + fmtAt(g.ts) + (g.note ? " · „" + esc(g.note) + "“" : "") + (done.indexOf(g.id) >= 0 ? " · angekommen" : " · kommt beim nächsten Öffnen der App") + "</div>"; }).join("") : '<div class="small muted">Noch keine Geschenke.</div>';
+    };
+    api("/api/admin/players/" + p.id + "/gifts").then(list).catch(function () {});
+    Array.prototype.forEach.call(el.querySelectorAll(".gamt"), function (b) { b.onclick = function () { document.getElementById("gAmt").value = b.getAttribute("data-c"); }; });
+    document.getElementById("gSend").onclick = function () {
+      var c = +document.getElementById("gAmt").value, note = document.getElementById("gNote").value;
+      if (!(c >= 1 && c <= 500)) return msg("Bitte 1 bis 500 Münzen.", 1);
+      if (!confirm("Wirklich " + c + " Münzen an " + p.name + " überweisen?")) return;
+      post("/api/admin/players/" + p.id + "/gifts", { coins: c, note: note }).then(function (x) { msg("Gesendet."); document.getElementById("gNote").value = ""; list(x.list); }).catch(function (e) { msg(e.message, 1); });
+    };
+  }
   function drawWeekPlan(p, r) {
     var el = document.getElementById("wpCard"); if (!el) return;
     el.innerHTML = "<h2>Wochenzeitplan</h2><p class='muted small'>Lade …</p>";
