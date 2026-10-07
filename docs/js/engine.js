@@ -858,10 +858,11 @@
     var g = state.settings.bizGroups || ["Basis"];
     return all.filter(function (u) { return g.indexOf(u.k) >= 0; });
   }
+  var BOSS_MODES = ["match", "blitz", "survival"], BOSS_NEED = { match: 10, blitz: 12, survival: 7 };
   function pathStations() {
     var ul = pathUnitList(), key = state.settings.track + ":" + ul.map(function (u) { return u.id; }).join(",");
     if (pathCache && pathCacheKey === key) return pathCache;
-    var out = [];
+    var out = [], secCount = 0;
     ul.forEach(function (u) {
       var ids = u.words.map(function (w, i) { return u.id + "#" + i; }), n = ids.length;
       if (n < 4) return;
@@ -875,7 +876,8 @@
           sec.push({ id: "S" + u.id + "." + k, unit: u.id, section: secId, sectionTitle: name + (parts > 1 ? " (Teil " + (part + 1) + ")" : ""), words: w, last: false });
         }
         if (!sec.length) continue;
-        sec[sec.length - 1].last = true; sec[sec.length - 1].reviewWords = secWords;
+        var bs = sec[sec.length - 1]; bs.last = true; bs.reviewWords = secWords;   // die letzte Station jedes Abschnitts ist die Boss-Runde in der Arena
+        bs.bossMode = BOSS_MODES[secCount++ % BOSS_MODES.length]; bs.bossNeed = Math.min(BOSS_NEED[bs.bossMode], Math.max(5, Math.floor(secWords.length * 0.8)));
         sec.forEach(function (s, ix) { s.n = ix + 1; s.of = sec.length; });
         out = out.concat(sec);
       }

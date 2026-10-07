@@ -329,14 +329,14 @@
       d += seg; if (i <= curIdx) dDone += seg;
     }
     var h = '<section class="card path"><div class="eyebrow">Dein Lernpfad · Abschnitt ' + secNo + ' von ' + secList.length + '</div><h2 style="margin:4px 0 2px">' + esc(cur.sectionTitle) + '</h2>' +
-      '<div class="small muted">' + (p.pos >= all.length ? "Truhe wartet" : "Station " + cur.n + " von " + cur.of + (cur.last && cur.n > 1 ? " · Abschlussrunde" : "")) + '</div>' +
+      '<div class="small muted">' + (p.pos >= all.length ? "Truhe wartet" : "Station " + cur.n + " von " + cur.of + (cur.last ? " · Boss-Runde: " + BOSS_NAMES[cur.bossMode] : "")) + '</div>' +
       '<div class="pmap" id="pmap" style="height:' + H + 'px"><svg viewBox="0 0 100 ' + H + '" preserveAspectRatio="none" aria-hidden="true">' +
       '<path d="' + d + '" fill="none" stroke="#fff" stroke-opacity=".85" stroke-width="16" stroke-linecap="round" vector-effect="non-scaling-stroke"/>' +
       '<path d="' + dDone + '" fill="none" stroke="#2e7d4f" stroke-width="6" stroke-linecap="round" stroke-dasharray="1 12" vector-effect="non-scaling-stroke"/></svg>';
     sec.forEach(function (s, k) {
       var pt = pts[k], state = s.index < p.pos ? "done" : s.index === p.pos ? "cur" : "lock", stars = p.stars[s.id] || 0;
-      h += '<button class="pnode ' + state + '" style="left:' + pt.x + '%;top:' + pt.y + 'px" data-act="' + (state === "done" ? "pathreplay" : state === "cur" ? "pathgo" : "pathlocked") + '" data-id="' + esc(s.id) + '" aria-label="Station ' + s.n + '">' +
-        (state === "done" ? "✓" : state === "cur" ? "▶" : "🔒") + '</button>';
+      h += '<button class="pnode ' + state + (s.last ? " boss" : "") + '" style="left:' + pt.x + '%;top:' + pt.y + 'px" data-act="' + (state === "done" ? "pathreplay" : state === "cur" ? "pathgo" : "pathlocked") + '" data-id="' + esc(s.id) + '" aria-label="Station ' + s.n + '">' +
+        (state === "done" ? "✓" : state === "cur" ? (s.last ? "⚔️" : "▶") : "🔒") + '</button>';
       if (state === "done") h += '<span class="pstars" style="left:' + pt.x + '%;top:' + pt.y + 'px">' + "★".repeat(stars) + "☆".repeat(3 - stars) + '</span>';
     });
     var cp = pts[n];
@@ -346,7 +346,7 @@
     if (p.pos < all.length) fig += '<div class="pbubble" style="left:calc(' + cpt.x + '% + ' + (side * 62) + 'px);top:' + (cpt.y - 46) + 'px;transform:translateX(-50%)">Los geht’s!</div>';
     h += fig + '</div>';
     if (p.pending.length) h += '<button class="btn wide lg" data-act="openchest" style="background:var(--gold,#f2b33d);color:#2b1d00;margin-bottom:8px">🎁 Truhe öffnen' + (p.pending.length > 1 ? ' (' + p.pending.length + ')' : '') + '</button>';
-    if (p.pos < all.length) h += '<button class="btn wide lg" data-act="pathgo" data-id="' + esc(cur.id) + '">Los geht’s – Station ' + cur.n + ' ▶</button>';
+    if (p.pos < all.length) h += '<button class="btn wide lg" data-act="pathgo" data-id="' + esc(cur.id) + '">' + (cur.last ? "Boss-Runde starten ⚔️" : "Los geht’s – Station " + cur.n + " ▶") + '</button>';
     h += bar + '</section>';
     // Figur läuft zur neuen Station, wenn sie seit dem letzten Anzeigen weitergekommen ist
     if (pathShown && pathShown.section === cur.section && pathShown.pos < p.pos && pathShown.k < n) {
@@ -359,6 +359,18 @@
     }
     pathShown = { section: cur.section, pos: p.pos, k: curIdx };
     return h;
+  }
+  var BOSS_NAMES = { match: "Match-Rausch", blitz: "Blitzrunde", survival: "Letztes Herz" };
+  /* Boss-Runde: ein Arena-Modus mit den Wörtern des ganzen Abschnitts; geschafft ab einer Mindestzahl richtiger Antworten */
+  function startBoss(st) {
+    var ws = st.reviewWords.map(function (id) { return S.byId(id); }).filter(Boolean);
+    if (ws.length < 8 || !global.ARENA) return false;
+    global.ARENA.start(st.bossMode, { words: ws, boss: { id: st.id, title: st.sectionTitle, mode: st.bossMode, need: st.bossNeed } });
+    return true;
+  }
+  function bossFinish(boss, correct) {
+    var pass = correct >= boss.need, stars = correct >= boss.need * 2 ? 3 : correct >= boss.need * 1.5 ? 2 : 1, res = pass ? S.pathComplete(boss.id, stars) : null;
+    return { pass: pass, stars: stars, chest: res && res.chest, advanced: res && res.advanced, finished: res && res.finished };
   }
   var STEP_NAMES = ["Kennenlernen", "Tippen", "Hören & finden", "Zuordnen"];
   function pathTasks(st) {
@@ -1248,6 +1260,7 @@
   function startPathStation(id) {
     S.rollDay(); S.regenHearts();
     var st = S.pathStations().filter(function (x) { return x.id === id; })[0]; if (!st) return;
+    if (st.last && startBoss(st)) return;   // Boss-Runde läuft in der Arena
     if (S.state.settings.hearts && S.state.hearts <= 0) { toast("Die Herzen sind alle. Sie füllen sich bald wieder auf."); return; }
     var tasks = pathTasks(st); if (!tasks.length) { toast("Für diese Station gibt es gerade nichts zu üben."); return; }
     SS = { tasks: tasks, i: 0, chain: 0, maxChain: 0, items: 0, correct: 0, newSeen: 0, boxSolved: 0, mastered: 0, sentOk: 0, start: Date.now(), answered: false,
@@ -2129,7 +2142,9 @@
     speechText: speechClean,
     toast: toast,
     refreshHeader: renderHeader,
-    afterArena: function () { render(); }
+    afterArena: function () { render(); },
+    bossFinish: bossFinish,
+    openChest: openChest
   };
 
   S.load();

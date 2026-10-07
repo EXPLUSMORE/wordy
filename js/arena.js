@@ -49,7 +49,7 @@
     });
   }
   function nextWord() {
-    if (!run.queue.length) run.queue = pool(run.mode);
+    if (!run.queue.length) run.queue = run.opts && run.opts.words ? S.shuffle(run.opts.words.slice()) : pool(run.mode);
     return run.queue.shift();
   }
   function distractors(w, n) {
@@ -64,6 +64,7 @@
     var mult = Math.min(3, 1 + run.combo * 0.1);
     var pts = Math.round(10 * mult * (weight || 1));
     run.score += pts; run.correct++; run.items++;
+    var bn = $("#arNote"); if (bn && run.boss) bn.textContent = noteText();
     if (w) { if (global.WordySync) global.WordySync.ctx = { mode: "arena" }; S.grade(w.id, 1); }            // Tempo zählt als sichere, nicht als tiefe Wiederholung
     S.addXp(2);
     flash("+" + pts, run.combo >= 5 ? "combo" : "ok");
@@ -90,6 +91,7 @@
   }
 
   /* ---------- Rahmen ---------- */
+  function noteText() { return (run.boss ? "⚔️ Boss " + run.correct + " / " + run.boss.need + " · " : "") + (run.note || ""); }
   function chrome(inner) {
     var t = run.mode === "survival" ? "" :
       '<div class="ar-time"><i id="arBar" style="width:100%"></i></div>';
@@ -98,7 +100,7 @@
       '<div class="ar-clock tnum" id="arClock">' + fmt(run.left) + '</div>' +
       '<div class="ar-score"><b class="tnum" id="arScore">0</b><span>Punkte</span></div>' +
       '</div>' + t +
-      '<div class="ar-sub"><span id="arCombo" class="ar-combo"></span><span id="arNote">' + esc(run.note || "") + '</span></div>' +
+      '<div class="ar-sub"><span id="arCombo" class="ar-combo"></span><span id="arNote">' + esc(noteText()) + '</span></div>' +
       '<div class="ar-board" id="arBoard">' + inner + '</div>' +
       '<div class="ar-flash" id="arFlash"></div>';
   }
@@ -107,6 +109,7 @@
     return s >= 10 ? s.toFixed(0) : s.toFixed(1);
   }
   function paintHud() {
+    var nt = $("#arNote"); if (nt && run.boss) nt.textContent = noteText();
     var c = $("#arClock"); if (c) c.textContent = fmt(run.left);
     var sc = $("#arScore"); if (sc) sc.textContent = run.score;
     var cb = $("#arCombo");
@@ -273,17 +276,17 @@
   }
 
   /* ---------- Start & Ende ---------- */
-  function start(mode) {
+  function start(mode, opts) {
     var p = S.pools();
-    if (p.all.length < 8) return global.VTUI.toast("Für die Arena brauchst du mindestens acht Wörter im gewählten Bereich.");
+    if (!(opts && opts.words) && p.all.length < 8) return global.VTUI.toast("Für die Arena brauchst du mindestens acht Wörter im gewählten Bereich.");
     if (mode === "hunt" && !p.box.length) global.VTUI.toast("Fehlerkartei ist leer – gespielt wird mit deinen wackeligsten Wörtern.");
     S.rollDay();
     run = {
       mode: mode, score: 0, combo: 0, maxCombo: 0, items: 0, correct: 0, wrong: 0,
-      start: Date.now(), left: 0, total: 0, queue: [], all: p.all, locked: false,
+      start: Date.now(), left: 0, total: 0, queue: [], all: opts && opts.words ? opts.words.concat(p.all.filter(function (x) { return opts.words.indexOf(x) < 0; })) : p.all, locked: false, opts: opts || null, boss: opts && opts.boss || null,
       qTotal: 7000, qLeft: 7000, targets: [], hits: {}, cleared: 0, note: ""
     };
-    run.queue = pool(mode);
+    run.queue = opts && opts.words ? S.shuffle(opts.words.slice()) : pool(mode);
     el.hidden = false;
     document.documentElement.classList.add("ar-open");
     if (mode === "match") return renderMatch();
@@ -316,6 +319,7 @@
     S.state.daily.arenaCoins = (S.state.daily.arenaCoins || 0) + coins;
     S.addCoins(coins);
     S.addXp(Math.min(60, Math.round(score / 8)));
+    var boss = run.boss && global.VTUI && global.VTUI.bossFinish ? global.VTUI.bossFinish(run.boss, run.correct) : null;
     var rw = S.finishSession({ items: run.items, correct: run.correct, sec: sec, maxChain: run.maxCombo, newSeen: 0, boxSolved: run.cleared, mastered: 0, sentOk: 0, arena: true });
     var fresh = [];
     function give(id) {
@@ -328,7 +332,8 @@
     give("arena1");
     if (run.maxCombo >= 15) give("combo15");
     var acc = run.items ? Math.round(run.correct * 100 / run.items) : 0;
-    var head = reason === "cleared" ? "Kartei leer geräumt!"
+    var head = boss ? (boss.pass ? "Boss besiegt!" : "Knapp daneben – noch ein Versuch")
+      : reason === "cleared" ? "Kartei leer geräumt!"
       : isRecord ? "Neuer Bestwert!"
       : reason === "dead" ? "Erwischt."
       : reason === "timeout" ? "Zeit abgelaufen."
@@ -347,12 +352,13 @@
       '<div><b class="tnum">' + Math.max(rec.best, score) + '</b><span>Bestwert</span></div>' +
       '</div>' +
       '<p class="ar-note">' + (coins ? "🪙 " + coins + " Münzen" + (capped ? " (Tageslimit der Arena erreicht)" : "") : (capped ? "Arena-Münzen für heute sind voll – lerne neue Wörter für mehr" : "Keine Münzen diesmal")) +
+      (boss ? " · Boss: " + run.correct + " von " + run.boss.need + " richtig nötig" + (boss.pass ? " " + "★".repeat(boss.stars) : "") : "") +
       (rw.goalReached ? " · Tagesziel erreicht" : "") +
       rw.missions.filter(function (x) { return x.type === "arena"; }).map(function (x) { return " · Mission geschafft: +" + x.coins + " 🪙"; }).join("") +
       (run.cleared ? " · " + run.cleared + " aus der Fehlerkartei befreit" : "") + '</p>' +
       (fresh.length ? '<p class="ar-note" style="color:var(--ar-gold)">🏅 Neu: ' + fresh.map(function (b) { return esc(b.n); }).join(", ") + '</p>' : "") +
-      '<div class="ar-endbtns"><button class="ar-btn" data-a="again">Noch mal</button>' +
-      '<button class="ar-btn ghost" data-a="quit">Zurück</button></div></div>';
+      '<div class="ar-endbtns">' + (boss && boss.pass ? (boss.chest ? '<button class="ar-btn" data-a="chest">🎁 Truhe öffnen</button>' : '<button class="ar-btn" data-a="quit">Weiter auf dem Pfad</button>')
+        : '<button class="ar-btn" data-a="again">' + (boss ? "Nochmal versuchen" : "Noch mal") + '</button><button class="ar-btn ghost" data-a="quit">Zurück</button>') + '</div></div>';
     S.save(true);
     if (global.VTUI && global.VTUI.refreshHeader) global.VTUI.refreshHeader();
   }
@@ -373,7 +379,8 @@
     if (t) {
       var a = t.getAttribute("data-a");
       if (a === "quit") { if (!run.done) finish("quit"); else close(); return; }
-      if (a === "again") { var m = run.mode; close(); return start(m); }
+      if (a === "again") { var m = run.mode, o = run.opts; close(); return start(m, o); }
+      if (a === "chest") { close(); return global.VTUI.openChest(); }
     }
     if (run.done) return;
     var l = e.target.closest("[data-l]"), r = e.target.closest("[data-r]");

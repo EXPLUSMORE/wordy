@@ -306,6 +306,7 @@ hr.sep{border:0;border-top:1px solid var(--line);margin:4px 0}
 .pnode{position:absolute;width:56px;height:56px;margin:-28px 0 0 -28px;border-radius:50%;display:grid;place-items:center;font-size:22px;font-weight:800;border:4px solid var(--card,#fff);box-shadow:0 4px 0 rgba(0,0,0,.18);padding:0;color:#fff;cursor:pointer;font-family:inherit}
 .pnode.done{background:var(--good,#2e7d4f)}
 .pnode.cur{background:var(--accent,#1e6273);animation:ppulse 1.6s ease-in-out infinite}
+.pnode.boss.cur,.pnode.boss.done{background:#7a4bc8}.pnode.boss.done{background:var(--good,#2e7d4f)}
 .pnode.lock{background:#cfd7e3;color:#8896ab;cursor:default;box-shadow:0 3px 0 rgba(0,0,0,.1)}
 .pnode.shake{animation:pshake .4s}
 .pstars{position:absolute;margin:30px 0 0 -29px;width:58px;text-align:center;font-size:12px;letter-spacing:1px;color:var(--gold,#f2b33d);pointer-events:none}
@@ -521,7 +522,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.19.0";window.WORDY_BUILD="9e7d429d4a";</script>
+<script>window.WORDY_VERSION="2.20.0";window.WORDY_BUILD="fa9d932c23";</script>
 </head>
 <body>
 <div id="app">
@@ -4744,10 +4745,11 @@ window.VERBS = [
     var g = state.settings.bizGroups || ["Basis"];
     return all.filter(function (u) { return g.indexOf(u.k) >= 0; });
   }
+  var BOSS_MODES = ["match", "blitz", "survival"], BOSS_NEED = { match: 10, blitz: 12, survival: 7 };
   function pathStations() {
     var ul = pathUnitList(), key = state.settings.track + ":" + ul.map(function (u) { return u.id; }).join(",");
     if (pathCache && pathCacheKey === key) return pathCache;
-    var out = [];
+    var out = [], secCount = 0;
     ul.forEach(function (u) {
       var ids = u.words.map(function (w, i) { return u.id + "#" + i; }), n = ids.length;
       if (n < 4) return;
@@ -4761,7 +4763,8 @@ window.VERBS = [
           sec.push({ id: "S" + u.id + "." + k, unit: u.id, section: secId, sectionTitle: name + (parts > 1 ? " (Teil " + (part + 1) + ")" : ""), words: w, last: false });
         }
         if (!sec.length) continue;
-        sec[sec.length - 1].last = true; sec[sec.length - 1].reviewWords = secWords;
+        var bs = sec[sec.length - 1]; bs.last = true; bs.reviewWords = secWords;   // die letzte Station jedes Abschnitts ist die Boss-Runde in der Arena
+        bs.bossMode = BOSS_MODES[secCount++ % BOSS_MODES.length]; bs.bossNeed = Math.min(BOSS_NEED[bs.bossMode], Math.max(5, Math.floor(secWords.length * 0.8)));
         sec.forEach(function (s, ix) { s.n = ix + 1; s.of = sec.length; });
         out = out.concat(sec);
       }
@@ -5614,14 +5617,14 @@ window.VERBS = [
       d += seg; if (i <= curIdx) dDone += seg;
     }
     var h = '<section class="card path"><div class="eyebrow">Dein Lernpfad · Abschnitt ' + secNo + ' von ' + secList.length + '</div><h2 style="margin:4px 0 2px">' + esc(cur.sectionTitle) + '</h2>' +
-      '<div class="small muted">' + (p.pos >= all.length ? "Truhe wartet" : "Station " + cur.n + " von " + cur.of + (cur.last && cur.n > 1 ? " · Abschlussrunde" : "")) + '</div>' +
+      '<div class="small muted">' + (p.pos >= all.length ? "Truhe wartet" : "Station " + cur.n + " von " + cur.of + (cur.last ? " · Boss-Runde: " + BOSS_NAMES[cur.bossMode] : "")) + '</div>' +
       '<div class="pmap" id="pmap" style="height:' + H + 'px"><svg viewBox="0 0 100 ' + H + '" preserveAspectRatio="none" aria-hidden="true">' +
       '<path d="' + d + '" fill="none" stroke="#fff" stroke-opacity=".85" stroke-width="16" stroke-linecap="round" vector-effect="non-scaling-stroke"/>' +
       '<path d="' + dDone + '" fill="none" stroke="#2e7d4f" stroke-width="6" stroke-linecap="round" stroke-dasharray="1 12" vector-effect="non-scaling-stroke"/></svg>';
     sec.forEach(function (s, k) {
       var pt = pts[k], state = s.index < p.pos ? "done" : s.index === p.pos ? "cur" : "lock", stars = p.stars[s.id] || 0;
-      h += '<button class="pnode ' + state + '" style="left:' + pt.x + '%;top:' + pt.y + 'px" data-act="' + (state === "done" ? "pathreplay" : state === "cur" ? "pathgo" : "pathlocked") + '" data-id="' + esc(s.id) + '" aria-label="Station ' + s.n + '">' +
-        (state === "done" ? "✓" : state === "cur" ? "▶" : "🔒") + '</button>';
+      h += '<button class="pnode ' + state + (s.last ? " boss" : "") + '" style="left:' + pt.x + '%;top:' + pt.y + 'px" data-act="' + (state === "done" ? "pathreplay" : state === "cur" ? "pathgo" : "pathlocked") + '" data-id="' + esc(s.id) + '" aria-label="Station ' + s.n + '">' +
+        (state === "done" ? "✓" : state === "cur" ? (s.last ? "⚔️" : "▶") : "🔒") + '</button>';
       if (state === "done") h += '<span class="pstars" style="left:' + pt.x + '%;top:' + pt.y + 'px">' + "★".repeat(stars) + "☆".repeat(3 - stars) + '</span>';
     });
     var cp = pts[n];
@@ -5631,7 +5634,7 @@ window.VERBS = [
     if (p.pos < all.length) fig += '<div class="pbubble" style="left:calc(' + cpt.x + '% + ' + (side * 62) + 'px);top:' + (cpt.y - 46) + 'px;transform:translateX(-50%)">Los geht’s!</div>';
     h += fig + '</div>';
     if (p.pending.length) h += '<button class="btn wide lg" data-act="openchest" style="background:var(--gold,#f2b33d);color:#2b1d00;margin-bottom:8px">🎁 Truhe öffnen' + (p.pending.length > 1 ? ' (' + p.pending.length + ')' : '') + '</button>';
-    if (p.pos < all.length) h += '<button class="btn wide lg" data-act="pathgo" data-id="' + esc(cur.id) + '">Los geht’s – Station ' + cur.n + ' ▶</button>';
+    if (p.pos < all.length) h += '<button class="btn wide lg" data-act="pathgo" data-id="' + esc(cur.id) + '">' + (cur.last ? "Boss-Runde starten ⚔️" : "Los geht’s – Station " + cur.n + " ▶") + '</button>';
     h += bar + '</section>';
     // Figur läuft zur neuen Station, wenn sie seit dem letzten Anzeigen weitergekommen ist
     if (pathShown && pathShown.section === cur.section && pathShown.pos < p.pos && pathShown.k < n) {
@@ -5644,6 +5647,18 @@ window.VERBS = [
     }
     pathShown = { section: cur.section, pos: p.pos, k: curIdx };
     return h;
+  }
+  var BOSS_NAMES = { match: "Match-Rausch", blitz: "Blitzrunde", survival: "Letztes Herz" };
+  /* Boss-Runde: ein Arena-Modus mit den Wörtern des ganzen Abschnitts; geschafft ab einer Mindestzahl richtiger Antworten */
+  function startBoss(st) {
+    var ws = st.reviewWords.map(function (id) { return S.byId(id); }).filter(Boolean);
+    if (ws.length < 8 || !global.ARENA) return false;
+    global.ARENA.start(st.bossMode, { words: ws, boss: { id: st.id, title: st.sectionTitle, mode: st.bossMode, need: st.bossNeed } });
+    return true;
+  }
+  function bossFinish(boss, correct) {
+    var pass = correct >= boss.need, stars = correct >= boss.need * 2 ? 3 : correct >= boss.need * 1.5 ? 2 : 1, res = pass ? S.pathComplete(boss.id, stars) : null;
+    return { pass: pass, stars: stars, chest: res && res.chest, advanced: res && res.advanced, finished: res && res.finished };
   }
   var STEP_NAMES = ["Kennenlernen", "Tippen", "Hören & finden", "Zuordnen"];
   function pathTasks(st) {
@@ -6533,6 +6548,7 @@ window.VERBS = [
   function startPathStation(id) {
     S.rollDay(); S.regenHearts();
     var st = S.pathStations().filter(function (x) { return x.id === id; })[0]; if (!st) return;
+    if (st.last && startBoss(st)) return;   // Boss-Runde läuft in der Arena
     if (S.state.settings.hearts && S.state.hearts <= 0) { toast("Die Herzen sind alle. Sie füllen sich bald wieder auf."); return; }
     var tasks = pathTasks(st); if (!tasks.length) { toast("Für diese Station gibt es gerade nichts zu üben."); return; }
     SS = { tasks: tasks, i: 0, chain: 0, maxChain: 0, items: 0, correct: 0, newSeen: 0, boxSolved: 0, mastered: 0, sentOk: 0, start: Date.now(), answered: false,
@@ -7414,7 +7430,9 @@ window.VERBS = [
     speechText: speechClean,
     toast: toast,
     refreshHeader: renderHeader,
-    afterArena: function () { render(); }
+    afterArena: function () { render(); },
+    bossFinish: bossFinish,
+    openChest: openChest
   };
 
   S.load();
@@ -7481,7 +7499,7 @@ window.VERBS = [
     });
   }
   function nextWord() {
-    if (!run.queue.length) run.queue = pool(run.mode);
+    if (!run.queue.length) run.queue = run.opts && run.opts.words ? S.shuffle(run.opts.words.slice()) : pool(run.mode);
     return run.queue.shift();
   }
   function distractors(w, n) {
@@ -7496,6 +7514,7 @@ window.VERBS = [
     var mult = Math.min(3, 1 + run.combo * 0.1);
     var pts = Math.round(10 * mult * (weight || 1));
     run.score += pts; run.correct++; run.items++;
+    var bn = $("#arNote"); if (bn && run.boss) bn.textContent = noteText();
     if (w) { if (global.WordySync) global.WordySync.ctx = { mode: "arena" }; S.grade(w.id, 1); }            // Tempo zählt als sichere, nicht als tiefe Wiederholung
     S.addXp(2);
     flash("+" + pts, run.combo >= 5 ? "combo" : "ok");
@@ -7522,6 +7541,7 @@ window.VERBS = [
   }
 
   /* ---------- Rahmen ---------- */
+  function noteText() { return (run.boss ? "⚔️ Boss " + run.correct + " / " + run.boss.need + " · " : "") + (run.note || ""); }
   function chrome(inner) {
     var t = run.mode === "survival" ? "" :
       '<div class="ar-time"><i id="arBar" style="width:100%"></i></div>';
@@ -7530,7 +7550,7 @@ window.VERBS = [
       '<div class="ar-clock tnum" id="arClock">' + fmt(run.left) + '</div>' +
       '<div class="ar-score"><b class="tnum" id="arScore">0</b><span>Punkte</span></div>' +
       '</div>' + t +
-      '<div class="ar-sub"><span id="arCombo" class="ar-combo"></span><span id="arNote">' + esc(run.note || "") + '</span></div>' +
+      '<div class="ar-sub"><span id="arCombo" class="ar-combo"></span><span id="arNote">' + esc(noteText()) + '</span></div>' +
       '<div class="ar-board" id="arBoard">' + inner + '</div>' +
       '<div class="ar-flash" id="arFlash"></div>';
   }
@@ -7539,6 +7559,7 @@ window.VERBS = [
     return s >= 10 ? s.toFixed(0) : s.toFixed(1);
   }
   function paintHud() {
+    var nt = $("#arNote"); if (nt && run.boss) nt.textContent = noteText();
     var c = $("#arClock"); if (c) c.textContent = fmt(run.left);
     var sc = $("#arScore"); if (sc) sc.textContent = run.score;
     var cb = $("#arCombo");
@@ -7705,17 +7726,17 @@ window.VERBS = [
   }
 
   /* ---------- Start & Ende ---------- */
-  function start(mode) {
+  function start(mode, opts) {
     var p = S.pools();
-    if (p.all.length < 8) return global.VTUI.toast("Für die Arena brauchst du mindestens acht Wörter im gewählten Bereich.");
+    if (!(opts && opts.words) && p.all.length < 8) return global.VTUI.toast("Für die Arena brauchst du mindestens acht Wörter im gewählten Bereich.");
     if (mode === "hunt" && !p.box.length) global.VTUI.toast("Fehlerkartei ist leer – gespielt wird mit deinen wackeligsten Wörtern.");
     S.rollDay();
     run = {
       mode: mode, score: 0, combo: 0, maxCombo: 0, items: 0, correct: 0, wrong: 0,
-      start: Date.now(), left: 0, total: 0, queue: [], all: p.all, locked: false,
+      start: Date.now(), left: 0, total: 0, queue: [], all: opts && opts.words ? opts.words.concat(p.all.filter(function (x) { return opts.words.indexOf(x) < 0; })) : p.all, locked: false, opts: opts || null, boss: opts && opts.boss || null,
       qTotal: 7000, qLeft: 7000, targets: [], hits: {}, cleared: 0, note: ""
     };
-    run.queue = pool(mode);
+    run.queue = opts && opts.words ? S.shuffle(opts.words.slice()) : pool(mode);
     el.hidden = false;
     document.documentElement.classList.add("ar-open");
     if (mode === "match") return renderMatch();
@@ -7748,6 +7769,7 @@ window.VERBS = [
     S.state.daily.arenaCoins = (S.state.daily.arenaCoins || 0) + coins;
     S.addCoins(coins);
     S.addXp(Math.min(60, Math.round(score / 8)));
+    var boss = run.boss && global.VTUI && global.VTUI.bossFinish ? global.VTUI.bossFinish(run.boss, run.correct) : null;
     var rw = S.finishSession({ items: run.items, correct: run.correct, sec: sec, maxChain: run.maxCombo, newSeen: 0, boxSolved: run.cleared, mastered: 0, sentOk: 0, arena: true });
     var fresh = [];
     function give(id) {
@@ -7760,7 +7782,8 @@ window.VERBS = [
     give("arena1");
     if (run.maxCombo >= 15) give("combo15");
     var acc = run.items ? Math.round(run.correct * 100 / run.items) : 0;
-    var head = reason === "cleared" ? "Kartei leer geräumt!"
+    var head = boss ? (boss.pass ? "Boss besiegt!" : "Knapp daneben – noch ein Versuch")
+      : reason === "cleared" ? "Kartei leer geräumt!"
       : isRecord ? "Neuer Bestwert!"
       : reason === "dead" ? "Erwischt."
       : reason === "timeout" ? "Zeit abgelaufen."
@@ -7779,12 +7802,13 @@ window.VERBS = [
       '<div><b class="tnum">' + Math.max(rec.best, score) + '</b><span>Bestwert</span></div>' +
       '</div>' +
       '<p class="ar-note">' + (coins ? "🪙 " + coins + " Münzen" + (capped ? " (Tageslimit der Arena erreicht)" : "") : (capped ? "Arena-Münzen für heute sind voll – lerne neue Wörter für mehr" : "Keine Münzen diesmal")) +
+      (boss ? " · Boss: " + run.correct + " von " + run.boss.need + " richtig nötig" + (boss.pass ? " " + "★".repeat(boss.stars) : "") : "") +
       (rw.goalReached ? " · Tagesziel erreicht" : "") +
       rw.missions.filter(function (x) { return x.type === "arena"; }).map(function (x) { return " · Mission geschafft: +" + x.coins + " 🪙"; }).join("") +
       (run.cleared ? " · " + run.cleared + " aus der Fehlerkartei befreit" : "") + '</p>' +
       (fresh.length ? '<p class="ar-note" style="color:var(--ar-gold)">🏅 Neu: ' + fresh.map(function (b) { return esc(b.n); }).join(", ") + '</p>' : "") +
-      '<div class="ar-endbtns"><button class="ar-btn" data-a="again">Noch mal</button>' +
-      '<button class="ar-btn ghost" data-a="quit">Zurück</button></div></div>';
+      '<div class="ar-endbtns">' + (boss && boss.pass ? (boss.chest ? '<button class="ar-btn" data-a="chest">🎁 Truhe öffnen</button>' : '<button class="ar-btn" data-a="quit">Weiter auf dem Pfad</button>')
+        : '<button class="ar-btn" data-a="again">' + (boss ? "Nochmal versuchen" : "Noch mal") + '</button><button class="ar-btn ghost" data-a="quit">Zurück</button>') + '</div></div>';
     S.save(true);
     if (global.VTUI && global.VTUI.refreshHeader) global.VTUI.refreshHeader();
   }
@@ -7805,7 +7829,8 @@ window.VERBS = [
     if (t) {
       var a = t.getAttribute("data-a");
       if (a === "quit") { if (!run.done) finish("quit"); else close(); return; }
-      if (a === "again") { var m = run.mode; close(); return start(m); }
+      if (a === "again") { var m = run.mode, o = run.opts; close(); return start(m, o); }
+      if (a === "chest") { close(); return global.VTUI.openChest(); }
     }
     if (run.done) return;
     var l = e.target.closest("[data-l]"), r = e.target.closest("[data-r]");
