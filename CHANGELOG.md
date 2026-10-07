@@ -9,6 +9,11 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.23.0 – 2026-10-07
+
+- **Lernpfad zum Scrollen:** Auf dem Start-Tab zeigt der Pfad jetzt **alle Abschnitte** in einer scrollbaren Karte (der erste unten, der letzte oben). Beim Öffnen steht die aktuelle Station in der Mitte; „↧ zur aktuellen Station“ springt zurück. Jeder Abschnitt hat eine Kopfzeile mit Titel und Stand, die beim Scrollen oben kleben bleibt. Mit der Maus zeigt ein Hinweis beim Darüberfahren Station, Abschnitt, Sterne beziehungsweise bei der Boss-Runde Modus und Ziel; am Handy genügt das Antippen.
+- **Alte Stationen und Bosse nochmal spielen:** Erledigte Stationen (auch Boss-Runden) lassen sich jederzeit antippen und wiederholen. Sterne verbessern sich, Fortschritt und Truhen bleiben unverändert (keine zweite Truhe). Gesperrte Stationen wackeln und sagen, was zuerst fehlt.
+
 ## 2.22.0 – 2026-10-07
 
 - **Wochenzeitplan:** Im Dashboard (Karte „Wochenzeitplan“) legen die Eltern pro Wochentag fest, wie viele Minuten geübt werden sollen (0 = freier Tag), mit Schnellauswahl (Schultage, täglich, Wochenende frei). Der Plan gilt jede Woche gleich. Das Dashboard zeigt pro Tag geplant gegen geübt, Soll und Ist der Woche und die geschafften Plan-Tage. Dazu ein **Wochenbonus** in Münzen (0, 20, 30, 50; Standard 30) bei mindestens 80 % der Plan-Tage (aufgerundet, z. B. 4 von 5).
