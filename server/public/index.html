@@ -6,26 +6,27 @@
 <meta name="robots" content="noindex">
 <title>Wordy Lernfortschritt</title>
 <style>
-:root{--bg:#F4F6F8;--card:#fff;--ink:#16222B;--ink2:#52606B;--line:#E1E6EA;--acc:#1E6273;--acc2:#2E8BA0;--good:#2E8B57;--bad:#C0392B;--warn:#D9962B;--l1:#E2B93B;--l2:#E69A3A;--l3:#4FA6B8;--l4:#2E8B57}
-@media (prefers-color-scheme:dark){:root{--bg:#10171C;--card:#18222A;--ink:#E8EEF2;--ink2:#9AA9B4;--line:#26333D;--acc:#5BB6CA;--acc2:#7CC8D9;--good:#58C48B;--bad:#EF6F62;--warn:#E8B054;--l1:#C9A233;--l2:#D18A33;--l3:#4698AA;--l4:#4DB380}}
+:root{--bg:#F6F1E6;--card:#fff;--ink:#10151F;--ink2:#3B4656;--line:#E9E1CD;--acc:#1E6273;--acc2:#2E8BA0;--good:#2C7A57;--bad:#B8403B;--warn:#A9781F;--on-acc:#fff;--btn-sh:#134552;--l1:#E2B93B;--l2:#E69A3A;--l3:#4FA6B8;--l4:#2E8B57}
+@media (prefers-color-scheme:dark){:root{--bg:#0E1320;--card:#171F30;--ink:#F6EFE0;--ink2:#B9C0CE;--line:#243049;--acc:#E9BD62;--acc2:#F4C45E;--good:#63C79A;--bad:#E7817B;--warn:#E9BD62;--on-acc:#2a1c00;--btn-sh:#9b6f1c;--l1:#C9A233;--l2:#D18A33;--l3:#4698AA;--l4:#4DB380}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 main{max-width:980px;margin:0 auto;padding:16px}
-h1{font-size:22px;margin:4px 0 14px}
-h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2);margin:0 0 10px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:0 0 14px;overflow-x:auto}
+h1{font-size:24px;font-weight:800;letter-spacing:-.015em;margin:4px 0 14px;font-family:ui-rounded,"SF Pro Rounded","Nunito","DM Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+h2{font-size:12.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);margin:0 0 10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 1px 2px rgba(16,21,31,.05),0 8px 22px rgba(60,45,10,.06);padding:16px;margin:0 0 14px;overflow-x:auto}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .grow{flex:1 1 auto}
 .muted{color:var(--ink2)}.small{font-size:13px}
 button,input{font:inherit}
-button{background:var(--acc);color:#fff;border:0;border-radius:10px;padding:9px 14px;cursor:pointer}
-button.ghost{background:transparent;color:var(--acc);border:1px solid var(--line)}
-button.tab{background:var(--card);color:var(--ink);border:1px solid var(--line)}
-button.ghost[aria-pressed=true]{background:var(--acc);color:#fff;border-color:var(--acc)}
-button.tab[aria-pressed=true]{background:var(--acc);color:#fff;border-color:var(--acc)}
+button{background:var(--acc);color:var(--on-acc);border:0;border-radius:12px;padding:9px 14px;cursor:pointer;font-weight:700;box-shadow:0 3px 0 var(--btn-sh)}
+button:active{transform:translateY(2px);box-shadow:0 1px 0 var(--btn-sh)}
+button.ghost{background:transparent;color:var(--acc);border:1px solid var(--line);box-shadow:none;font-weight:600}
+button.tab{background:var(--card);color:var(--ink);border:1px solid var(--line);box-shadow:none;font-weight:600}
+button.ghost[aria-pressed=true]{background:var(--acc);color:var(--on-acc);border-color:var(--acc)}
+button.tab[aria-pressed=true]{background:var(--acc);color:var(--on-acc);border-color:var(--acc);box-shadow:0 3px 0 var(--btn-sh)}
 input{border:1px solid var(--line);border-radius:10px;padding:9px 12px;background:var(--bg);color:var(--ink)}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
-.kpi{background:var(--bg);border-radius:12px;padding:12px}
+.kpi{background:var(--bg);border-radius:14px;padding:12px}
 .kpi b{display:block;font-size:26px;font-variant-numeric:tabular-nums}
 .kpi span{font-size:13px;color:var(--ink2)}
 .bar{height:10px;border-radius:5px;background:var(--line);overflow:hidden;display:flex}
@@ -55,6 +56,7 @@ input[type=checkbox]{width:auto;padding:0;margin:0;flex:none}
 button.sm{padding:5px 10px;font-size:13px}
 tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
 .pill.l0{color:var(--ink2)}.pill.l1{border-color:var(--l1)}.pill.l2{border-color:var(--l2)}.pill.l3{border-color:var(--l3)}.pill.l4{border-color:var(--l4);color:var(--good)}
+@media (prefers-color-scheme:dark){.card{border-color:rgba(233,189,98,.16)}}
 </style>
 </head>
 <body>
@@ -132,7 +134,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
         view.innerHTML = '<div class="card"><h2>Mein Konto</h2><p style="margin:0 0 8px">Angemeldet als <b>' + esc(m.email) + '</b>.' + (window.WT ? " Lehrkraft-Konto." : " Kinder: <b>" + m.children + " von " + m.max + "</b>.") + '</p>' +
           '<label class="row" style="gap:8px;margin-top:10px"><input type="checkbox" id="fw"' + (m.weekly ? " checked" : "") + '><span>Wochenzusammenfassung per Mail (' + ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"][m.day] + " um " + m.hour + ' Uhr)</span></label><p id="fmsg" class="small muted" style="margin:8px 0 0"></p></div>' +
           '<div class="card"><h2>Meine Daten</h2><p class="small muted" style="margin:0 0 10px">Du kannst alle gespeicherten Daten ' + (window.WT ? "deines Kontos (Klassen und Aufgaben)" : "deiner Familie") + ' als Datei herunterladen oder das Konto ' + (window.WT ? "samt aller Klassen" : "samt aller Kinder und Lernstände") + ' endgültig löschen.</p>' +
-          '<div class="row" style="gap:8px"><a class="ghost sm" href="/api/fam/me/export" download style="padding:8px 12px;border-radius:8px;text-decoration:none">Daten herunterladen</a><button class="ghost sm" id="flo">Abmelden</button><button class="ghost sm" id="fdel" style="color:#b8403b">Konto löschen …</button></div>' +
+          '<div class="row" style="gap:8px"><a class="ghost sm" href="/api/fam/me/export" download style="padding:8px 12px;border-radius:8px;text-decoration:none">Daten herunterladen</a><button class="ghost sm" id="flo">Abmelden</button><button class="ghost sm" id="fdel" style="color:var(--bad)">Konto löschen …</button></div>' +
           '<p class="small muted" style="margin:10px 0 0"><a href="/f/datenschutz" target="_blank">Datenschutzerklärung</a></p></div>';
         document.getElementById("fw").onchange = function () { post("/api/admin/me", { weekly: this.checked }).then(function () { document.getElementById("fmsg").textContent = "Gespeichert."; }); };
         document.getElementById("flo").onclick = function () { post("/api/family/logout").then(function () { location.href = "/f/"; }); };
@@ -144,8 +146,8 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
       var fs = r[0], inv = r[1].filter(function (i) { return i.expires > Date.now() && i.uses < i.max; });
       view.innerHTML = '<div class="card"><h2>Einladungslink erstellen</h2><p class="small muted" style="margin:0 0 10px">Wer den Link bekommt, kann sich mit seiner E-Mail-Adresse registrieren und danach seine Kinder selbst verwalten (Eltern) oder Klassen mit Wochenaufgaben anlegen (Lehrkraft). Jeder Link gilt für eine bestimmte Zahl Familien.</p>' +
         '<div class="row" style="gap:8px"><input id="in" class="grow" maxlength="60" placeholder="Notiz, z. B. Familie Meier"><select id="iu"><option value="1">1 Familie</option><option value="3">3</option><option value="10">10</option></select><select id="ir"><option value="parent">Eltern</option><option value="teacher">Lehrkraft</option></select><button id="imk">Link erstellen</button></div><div id="iout"></div></div>' +
-        '<div class="card"><h2>Offene Einladungen</h2>' + (inv.length ? inv.map(function (i) { return '<div class="row" style="gap:8px;padding:6px 0;border-top:1px solid #e3e8f0"><span class="grow small"><b>' + (i.role === "teacher" ? "🏫 " : "") + esc(i.note || "ohne Notiz") + '</b> · ' + i.uses + "/" + i.max + ' benutzt<br><span class="muted">' + esc(i.url) + '</span></span><button class="ghost sm" data-cp="' + esc(i.url) + '">Kopieren</button><button class="ghost sm" data-di="' + esc(i.code) + '">Löschen</button></div>'; }).join("") : '<p class="small muted" style="margin:0">Keine offenen Einladungen.</p>') + "</div>" +
-        '<div class="card"><h2>Familien (' + fs.length + ')</h2>' + (fs.length ? fs.map(function (f) { return '<div class="row" style="gap:8px;padding:6px 0;border-top:1px solid #e3e8f0"><span class="grow small"><b>' + (f.role === "teacher" ? "🏫 " : "") + esc(f.email) + '</b> ' + (f.status === "blocked" ? '<span class="err">gesperrt</span>' : "") + '<br><span class="muted">' + f.children + ' Kinder · zuletzt angemeldet ' + fmtAgo(f.lastLogin) + '</span></span><button class="ghost sm" data-bl="' + f.id + '" data-b="' + (f.status === "blocked" ? 0 : 1) + '">' + (f.status === "blocked" ? "Entsperren" : "Sperren") + '</button><button class="ghost sm" data-df="' + f.id + '" data-n="' + esc(f.email) + '">Löschen</button></div>'; }).join("") : '<p class="small muted" style="margin:0">Noch keine Familien registriert.</p>') +
+        '<div class="card"><h2>Offene Einladungen</h2>' + (inv.length ? inv.map(function (i) { return '<div class="row" style="gap:8px;padding:6px 0;border-top:1px solid var(--line)"><span class="grow small"><b>' + (i.role === "teacher" ? "🏫 " : "") + esc(i.note || "ohne Notiz") + '</b> · ' + i.uses + "/" + i.max + ' benutzt<br><span class="muted">' + esc(i.url) + '</span></span><button class="ghost sm" data-cp="' + esc(i.url) + '">Kopieren</button><button class="ghost sm" data-di="' + esc(i.code) + '">Löschen</button></div>'; }).join("") : '<p class="small muted" style="margin:0">Keine offenen Einladungen.</p>') + "</div>" +
+        '<div class="card"><h2>Familien (' + fs.length + ')</h2>' + (fs.length ? fs.map(function (f) { return '<div class="row" style="gap:8px;padding:6px 0;border-top:1px solid var(--line)"><span class="grow small"><b>' + (f.role === "teacher" ? "🏫 " : "") + esc(f.email) + '</b> ' + (f.status === "blocked" ? '<span class="err">gesperrt</span>' : "") + '<br><span class="muted">' + f.children + ' Kinder · zuletzt angemeldet ' + fmtAgo(f.lastLogin) + '</span></span><button class="ghost sm" data-bl="' + f.id + '" data-b="' + (f.status === "blocked" ? 0 : 1) + '">' + (f.status === "blocked" ? "Entsperren" : "Sperren") + '</button><button class="ghost sm" data-df="' + f.id + '" data-n="' + esc(f.email) + '">Löschen</button></div>'; }).join("") : '<p class="small muted" style="margin:0">Noch keine Familien registriert.</p>') +
         '<p class="small muted" style="margin:10px 0 0">Aus Datenschutzgründen siehst du hier nur Konten, nicht die Lernstände fremder Kinder.</p></div>';
       document.getElementById("imk").onclick = function () { post("/api/admin/families/invites", { note: document.getElementById("in").value, uses: +document.getElementById("iu").value, role: document.getElementById("ir").value }).then(function (i) { viewFam().then(function () { document.getElementById("iout").innerHTML = '<p style="margin:10px 0 0"><b>Link:</b> <input readonly class="grow" style="width:100%" value="' + esc(i.url) + '" onclick="this.select()"></p>'; }); }).catch(function (e) { alert(e.message); }); };
       Array.prototype.forEach.call(view.querySelectorAll("[data-cp]"), function (b) { b.onclick = function () { navigator.clipboard.writeText(b.getAttribute("data-cp")); b.textContent = "Kopiert"; }; });

@@ -36,7 +36,7 @@ let inline = src.replace('</head>', `<script>window.WORDY_VERSION="${VERSION}";w
 const iHead = inline.slice(0, inline.indexOf('<div id="app">')) + `\n<script>window.WORDY_VERSION="${VERSION}";window.WORDY_BUILD="${stamp}";</script>`;
 const iBody = inline.slice(inline.indexOf('<div id="app">'));
 fs.writeFileSync('wordy.html',
-  '<!doctype html>\n<html lang="de">\n<head>\n<meta charset="utf-8">\n' +
+  '<!doctype html>\n<html lang="de" data-design="gold" data-x="1">\n<head>\n<meta charset="utf-8">\n' +
   '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n' +
   `<meta name="theme-color" content="${THEME}">\n` + iHead + '\n</head>\n<body>\n' + iBody + '\n</body>\n</html>\n');
 
@@ -91,7 +91,7 @@ self.addEventListener('fetch', e => {
 `);
 
 const siteHead = `<!doctype html>
-<html lang="de">
+<html lang="de" data-design="gold" data-x="1">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">

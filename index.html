@@ -1,6 +1,6 @@
 <title>Wordy</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Karla:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Karla:wght@400;500;600;700&family=DM+Sans:wght@500;700;800&family=Nunito:wght@600;800;900&family=Fredoka:wght@500;600&display=swap">
 <style>
 :root{
   --paper:#EEF2F8; --card:#FFFFFF; --card-2:#F7F9FC;
@@ -47,7 +47,7 @@ html,body{height:100%}
 body{margin:0;background:var(--paper);color:var(--ink);
   font-family:Karla,"Segoe UI",system-ui,sans-serif;font-size:16px;line-height:1.5;
   -webkit-text-size-adjust:100%;overflow:hidden}
-h1,h2,h3{font-family:Newsreader,Georgia,serif;font-weight:600;margin:0;text-wrap:balance;letter-spacing:-.01em}
+h1,h2,h3{font-family:var(--font-h,Newsreader,Georgia,serif);font-weight:600;margin:0;text-wrap:balance;letter-spacing:-.01em}
 button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
 input,textarea,select{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%}
@@ -880,6 +880,117 @@ details.fold>.fbody{padding:2px 0 14px}
 .crt.rdy{background:linear-gradient(#ffe58a,#ffb61e);color:#3a2500;cursor:pointer;animation:rtpl 1.4s ease-in-out infinite alternate;--g:rgba(255,200,70,.9);box-shadow:0 0 14px var(--g)}
 .crdot{width:10px;height:28px;border-radius:5px;flex:none}
 .crpick{border:3px solid transparent;background:var(--card-2);border-radius:12px;font-size:26px;padding:4px 8px;cursor:pointer}.crpick.on{border-color:var(--accent);background:var(--accent-soft)}
+/* =====================================================================
+   DESIGNS (Einstellungen › Aussehen): gold = Nachtgold (Standard), sun = Sonnenschein, aurora = Aurora.
+   "klassisch" = das bisherige Papier-Design (kein data-design-Wert, die Farbwelten des Shops greifen dort).
+   Alles läuft über Farb-Variablen, dazu ein paar Bausteine (Knöpfe, Karten, Leiste).
+   ===================================================================== */
+:root[data-design]{--btn-bg:var(--accent);--btn-ink:var(--accent-ink);--btn-sh:rgba(0,0,0,.25);--eyebrow:var(--ink-3);
+  --cta-bg:linear-gradient(165deg,#1a2233,#10151f);--cta-bd:rgba(216,164,69,.45);--cta-ring:rgba(216,164,69,.08);--cta-glow:rgba(216,164,69,.34);--cta-ink:#F6EFE0;--cta-sub:#B9C0CE;--cta-eb:#E9BD62;
+  --cta-btn:linear-gradient(#F4C45E,#D8A445);--cta-btn-ink:#2a1c00;--cta-btn-sh:#9b6f1c;--cta-box:rgba(255,255,255,.05);--cta-box-bd:rgba(216,164,69,.55);--cta-day:rgba(255,255,255,.06);--cta-day-ink:#aab3c4;--cta-day-ok:rgba(216,164,69,.15);--cta-day-ok-ink:#FFD98A;--cta-day-now:#E9BD62}
+:root[data-design] h1,:root[data-design] h2,:root[data-design] h3,:root[data-design] .prompt{font-family:var(--font-h)}
+:root[data-design] .eyebrow{color:var(--eyebrow)}
+:root[data-design] .hero{background:var(--card)}:root[data-design] .hero:before{display:none}
+:root[data-design] .btn:not(.ghost):not(.soft){background:var(--btn-bg);color:var(--btn-ink);box-shadow:0 4px 0 var(--btn-sh);border-radius:14px}
+:root[data-design] .btn:not(.ghost):not(.soft):active{transform:translateY(3px);box-shadow:0 1px 0 var(--btn-sh)}
+:root[data-design] .btn[disabled]{box-shadow:none}
+:root[data-design] .btn.ghost{border-radius:14px}
+:root[data-design] .bar>i{background:var(--bar,var(--accent))}
+:root[data-design] .cta{background:var(--cta-bg);border-color:var(--cta-bd);box-shadow:0 0 0 4px var(--cta-ring),0 18px 34px rgba(0,0,0,.25);color:var(--cta-ink)}
+:root[data-design] .cta .eyebrow{color:var(--cta-eb)}:root[data-design] .cta h2{color:var(--cta-ink)}
+:root[data-design] .ctaglow{background:radial-gradient(var(--cta-glow),transparent 66%)}
+:root[data-design] .ctap,:root[data-design] .ctarew small{color:var(--cta-sub)}
+:root[data-design] .ctarew{background:var(--cta-box);border-color:var(--cta-box-bd)}
+:root[data-design] .ctabtn{background:var(--cta-btn);color:var(--cta-btn-ink);box-shadow:0 5px 0 var(--cta-btn-sh)}
+:root[data-design] .ctad{background:var(--cta-day);color:var(--cta-day-ink)}:root[data-design] .ctad.ok{background:var(--cta-day-ok);color:var(--cta-day-ok-ink)}:root[data-design] .ctad.now{outline-color:var(--cta-day-now)}
+:root[data-design] .ctablitz{border-color:var(--cta-box-bd);color:var(--cta-eb)}
+:root[data-design] .ctafl{background:var(--cta-day-ok);border-color:var(--cta-box-bd);color:var(--cta-day-ok-ink)}
+:root[data-design] .dsh{background:var(--cta-bg);border-color:var(--cta-bd);color:var(--cta-ink)}
+:root[data-design] .dsh .eyebrow{color:var(--cta-eb)}:root[data-design] .dsh h3{color:var(--cta-ink)}:root[data-design] .dsh p{color:var(--cta-sub)}
+:root[data-design] .dshb{background:var(--cta-btn);color:var(--cta-btn-ink);box-shadow:0 5px 0 var(--cta-btn-sh)}
+:root[data-design] .duelcard{border-color:var(--cta-bd)}
+.dsgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dstile{display:flex;flex-direction:column;gap:6px;padding:10px;border-radius:14px;border:2px solid var(--line);background:var(--card);text-align:left}
+.dstile[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.dstile i{display:block;height:44px;border-radius:9px}.dstile b{font-size:14px}.dstile small{font-size:12px;color:var(--ink-3)}
+
+/* ---- A · Nachtgold: dunkel (Standard) und hell (cremefarben, petrol und gold) ---- */
+:root[data-design="gold"]{--font-h:'DM Sans',Karla,system-ui,sans-serif;--r:18px;
+  --paper:#F6F1E6;--card:#FFFFFF;--card-2:#FBF8F0;--ink:#10151F;--ink-2:#3B4656;--ink-3:#6B7280;--rule:#DDD3BC;--line:#E9E1CD;
+  --shadow:0 1px 2px rgba(16,21,31,.06),0 10px 24px rgba(60,45,10,.08);--accent:#1E6273;--accent-ink:#fff;--accent-soft:#DCEDF1;
+  --good:#2C7A57;--good-soft:#DCF0E6;--bad:#B8403B;--bad-soft:#FAE3E1;--gold:#A9781F;--margin:#C2413A;--btn-sh:#134552;--eyebrow:#1E6273}
+@media (prefers-color-scheme:dark){:root[data-design="gold"]:not([data-theme="light"]){
+  --paper:#0E1320;--card:#171F30;--card-2:#1D2639;--ink:#F6EFE0;--ink-2:#B9C0CE;--ink-3:#8F98A9;--rule:#2B3550;--line:#243049;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 26px rgba(0,0,0,.32);--accent:#E9BD62;--accent-ink:#2a1c00;--accent-soft:#2D2A22;
+  --good:#63C79A;--good-soft:#152F26;--bad:#E7817B;--bad-soft:#331C1B;--gold:#E9BD62;--margin:#E07A73;
+  --btn-bg:linear-gradient(#F4C45E,#D8A445);--btn-sh:#9b6f1c;--eyebrow:#E9BD62}}
+:root[data-design="gold"][data-theme="dark"]{
+  --paper:#0E1320;--card:#171F30;--card-2:#1D2639;--ink:#F6EFE0;--ink-2:#B9C0CE;--ink-3:#8F98A9;--rule:#2B3550;--line:#243049;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 26px rgba(0,0,0,.32);--accent:#E9BD62;--accent-ink:#2a1c00;--accent-soft:#2D2A22;
+  --good:#63C79A;--good-soft:#152F26;--bad:#E7817B;--bad-soft:#331C1B;--gold:#E9BD62;--margin:#E07A73;
+  --btn-bg:linear-gradient(#F4C45E,#D8A445);--btn-sh:#9b6f1c;--eyebrow:#E9BD62}
+:root[data-design="gold"] h1,:root[data-design="gold"] h2,:root[data-design="gold"] h3{font-weight:800;letter-spacing:-.015em}
+:root[data-design="gold"] header#top{border-bottom-color:var(--line)}
+:root[data-design="gold"] nav#tabs{border-top:2px solid var(--line)}
+:root[data-design="gold"] nav#tabs button{border-radius:14px}
+@media (prefers-color-scheme:dark){:root[data-design="gold"]:not([data-theme="light"]) nav#tabs{background:#10162A;border-top-color:rgba(233,189,98,.28)}
+  :root[data-design="gold"]:not([data-theme="light"]) .card{border-color:rgba(233,189,98,.14)}
+  :root[data-design="gold"]:not([data-theme="light"]) .pmap{background:linear-gradient(#1b2740,#141c2e)}}
+:root[data-design="gold"][data-theme="dark"] nav#tabs{background:#10162A;border-top-color:rgba(233,189,98,.28)}
+:root[data-design="gold"][data-theme="dark"] .card{border-color:rgba(233,189,98,.14)}
+:root[data-design="gold"][data-theme="dark"] .pmap{background:linear-gradient(#1b2740,#141c2e)}
+
+/* ---- B · Sonnenschein: hell, warm, bunt, mit dicken Knöpfen ---- */
+:root[data-design="sun"]{--font-h:Nunito,Karla,system-ui,sans-serif;--r:22px;color-scheme:light;
+  --paper:#FFF4DC;--card:#FFFFFF;--card-2:#FFF9EC;--ink:#2B2A4C;--ink-2:#55547A;--ink-3:#85849F;--rule:#EAD9AE;--line:#F3E6C6;
+  --shadow:0 3px 0 #F1DFB4;--accent:#D9480F;--accent-ink:#fff;--accent-soft:#FFE3D1;--good:#2B8A5C;--good-soft:#DCF3E6;--bad:#C92A2A;--bad-soft:#FFE0E0;
+  --gold:#B87A00;--margin:#E8590C;--bar:linear-gradient(90deg,#FFB300,#FF6B2C);--eyebrow:#B8470E;
+  --btn-bg:linear-gradient(#FF8A3D,#E8590C);--btn-sh:#A63D05;
+  --cta-bg:linear-gradient(160deg,#F57F24,#E4531A 65%,#CC3524);--cta-bd:#fff;--cta-ring:rgba(255,107,44,.25);--cta-glow:rgba(255,255,255,.55);--cta-ink:#fff;--cta-sub:#FFF4E6;--cta-eb:#FFF1C9;
+  --cta-btn:linear-gradient(#FFFFFF,#FFF1DC);--cta-btn-ink:#B8390A;--cta-btn-sh:#C9440A;--cta-box:rgba(255,255,255,.22);--cta-box-bd:rgba(255,255,255,.75);--cta-day:rgba(255,255,255,.2);--cta-day-ink:#FFF4E6;--cta-day-ok:rgba(255,255,255,.95);--cta-day-ok-ink:#B8390A;--cta-day-now:#fff}
+:root[data-design="sun"] body{background-color:var(--paper);background-image:radial-gradient(circle at 12% 8%,rgba(255,196,64,.35) 0,transparent 180px),radial-gradient(circle at 92% 30%,rgba(255,120,60,.16) 0,transparent 220px),radial-gradient(rgba(217,72,15,.07) 1.6px,transparent 1.8px);background-size:auto,auto,26px 26px;background-attachment:fixed}
+:root[data-design="sun"] h1,:root[data-design="sun"] h2,:root[data-design="sun"] h3{font-weight:900;letter-spacing:-.01em}
+:root[data-design="sun"] header#top{background:rgba(255,244,220,.92);border-bottom:2px solid var(--rule)}
+:root[data-design="sun"] nav#tabs{background:#fff;border-top:2px solid var(--rule);box-shadow:0 -4px 0 rgba(243,230,198,.6)}
+:root[data-design="sun"] nav#tabs button{border-radius:16px;color:#85849F;font-weight:800}
+:root[data-design="sun"] nav#tabs button[aria-current="true"]{background:#FFE3D1;color:#B8390A}
+:root[data-design="sun"] .card{border:2px solid var(--line)}
+:root[data-design="sun"] .btn{font-weight:800}
+:root[data-design="sun"] .btn:not(.ghost):not(.soft){text-shadow:0 1px 0 rgba(120,40,0,.35)}
+:root[data-design="sun"] .chip[aria-pressed="true"],:root[data-design="sun"] .seg button[aria-pressed="true"]{background:linear-gradient(#FF8A3D,#E8590C)}
+:root[data-design="sun"] .pmap{background:linear-gradient(#FFF0C9,#FFE4B0)}
+:root[data-design="sun"] .opt{border-width:2px}
+:root[data-design="sun"] .opt[aria-pressed="true"]{border-color:#FF8A3D}
+:root[data-design="sun"] .ctabtn{text-shadow:none}
+:root[data-design="sun"] .ctap,:root[data-design="sun"] .ctarew small{font-weight:600}
+
+/* ---- C · Aurora: Nachthimmel mit Polarlicht, glasige Karten ---- */
+:root[data-design="aurora"]{--font-h:Fredoka,Nunito,Karla,system-ui,sans-serif;--r:22px;color-scheme:dark;
+  --paper:#0A0F2C;--card:#161C45;--card-2:#1C2354;--ink:#EEF2FF;--ink-2:#B4BCE8;--ink-3:#8790C4;--rule:#323C7A;--line:#262F66;
+  --shadow:0 10px 30px rgba(3,6,30,.45);--accent:#5CF2C0;--accent-ink:#04231A;--accent-soft:#17415A;--good:#7CF29A;--good-soft:#123D34;--bad:#FF7A9A;--bad-soft:#44152E;
+  --gold:#FFD166;--margin:#FF6FB5;--bar:linear-gradient(90deg,#5CF2C0,#6EA8FF);--eyebrow:#8CF7DA;
+  --btn-bg:linear-gradient(#7BFFD6,#2BD9A0);--btn-sh:#0F8A66;
+  --cta-bg:linear-gradient(160deg,#243A8F,#4B2A9A 60%,#7A2F9E);--cta-bd:rgba(160,190,255,.55);--cta-ring:rgba(92,242,192,.14);--cta-glow:rgba(92,242,192,.4);--cta-ink:#fff;--cta-sub:#D4DBFF;--cta-eb:#8CF7DA;
+  --cta-btn:linear-gradient(#7BFFD6,#2BD9A0);--cta-btn-ink:#04231A;--cta-btn-sh:#0F8A66;--cta-box:rgba(255,255,255,.1);--cta-box-bd:rgba(140,247,218,.6);--cta-day:rgba(255,255,255,.1);--cta-day-ink:#C6CEF5;--cta-day-ok:rgba(92,242,192,.22);--cta-day-ok-ink:#9CFBE2;--cta-day-now:#5CF2C0}
+:root[data-design="aurora"][data-bg="none"] body,:root[data-design="aurora"][data-bg="stars"] body,:root[data-design="aurora"][data-bg="clouds"] body{background-color:#0A0F2C;background-image:radial-gradient(ellipse 80% 40% at 10% -5%,rgba(92,242,192,.30),transparent 60%),radial-gradient(ellipse 70% 40% at 100% 8%,rgba(150,100,255,.38),transparent 60%),radial-gradient(ellipse 70% 35% at 50% 105%,rgba(255,111,181,.22),transparent 60%),radial-gradient(1.6px 1.6px at 20% 30%,rgba(255,255,255,.8) 50%,transparent 55%),radial-gradient(1.4px 1.4px at 70% 22%,rgba(255,255,255,.7) 50%,transparent 55%),radial-gradient(1.8px 1.8px at 45% 70%,rgba(255,255,255,.6) 50%,transparent 55%);background-size:auto,auto,auto,240px 240px,300px 300px,260px 260px;background-attachment:fixed}
+:root[data-design="aurora"] h1,:root[data-design="aurora"] h2,:root[data-design="aurora"] h3{font-weight:600;letter-spacing:0}
+:root[data-design="aurora"] header#top{background:rgba(10,15,44,.7);border-bottom:1px solid rgba(160,190,255,.2)}
+:root[data-design="aurora"] nav#tabs{background:rgba(10,15,44,.88);border-top:1px solid rgba(160,190,255,.25);backdrop-filter:blur(10px)}
+:root[data-design="aurora"] nav#tabs button{border-radius:16px}
+:root[data-design="aurora"] nav#tabs button[aria-current="true"]{color:#5CF2C0;background:rgba(92,242,192,.14)}
+:root[data-design="aurora"] .card{background:rgba(22,28,69,.74);border:1px solid rgba(160,190,255,.2);backdrop-filter:blur(8px)}
+:root[data-design="aurora"] .btn:not(.ghost):not(.soft){box-shadow:0 4px 0 var(--btn-sh),0 0 22px rgba(92,242,192,.35)}
+:root[data-design="aurora"] .pmap{background:linear-gradient(#1b2a6b,#141a4d)}
+:root[data-design="aurora"] .opt{border-width:2px}
+:root[data-design="aurora"] .opt[aria-pressed="true"]{border-color:#5CF2C0}
+
+/* ---- Spielbausteine (Arena, Shop, Filme, Crew) im Ton des gewählten Designs ---- */
+:root[data-design] .sbtn,:root[data-design] .fmbtn,:root[data-design] .rbtn,:root[data-design] .hhsr{background:var(--cta-btn);color:var(--cta-btn-ink);border:0;text-shadow:none;box-shadow:0 4px 0 var(--cta-btn-sh)}
+:root[data-design] .sbtn.b4{background:transparent;color:var(--ink-2);border:1px solid var(--line);box-shadow:none}
+:root[data-design] .fmcard{background:var(--card-2);color:var(--ink);border:1px solid var(--line);box-shadow:var(--shadow)}
+:root[data-design] .fmcard i{background:var(--accent);color:var(--accent-ink)}
+:root[data-design] .crewhero{background:var(--cta-bg);border-color:var(--cta-bd)}
+:root[data-design] .crt{border-width:2px;border-color:var(--line)}
 </style>
 
 <div id="app">

@@ -6,17 +6,18 @@
 <meta name="robots" content="noindex">
 <title>Wordy · Eltern</title>
 <style>
-:root{--bg:#F4F6F8;--card:#fff;--ink:#16222B;--ink2:#52606B;--line:#E1E6EA;--acc:#1E6273;--bad:#b8403b;--good:#2E8B57}
-@media (prefers-color-scheme:dark){:root{--bg:#10171C;--card:#18222A;--ink:#E8EEF2;--ink2:#9AA9B4;--line:#26333D;--acc:#4FA8BE}}
+:root{--bg:#F6F1E6;--card:#fff;--ink:#10151F;--ink2:#3B4656;--line:#E9E1CD;--acc:#1E6273;--acc2:#2E8BA0;--good:#2C7A57;--bad:#B8403B;--warn:#A9781F;--on-acc:#fff;--btn-sh:#134552;--l1:#E2B93B;--l2:#E69A3A;--l3:#4FA6B8;--l4:#2E8B57}
+@media (prefers-color-scheme:dark){:root{--bg:#0E1320;--card:#171F30;--ink:#F6EFE0;--ink2:#B9C0CE;--line:#243049;--acc:#E9BD62;--acc2:#F4C45E;--good:#63C79A;--bad:#E7817B;--warn:#E9BD62;--on-acc:#2a1c00;--btn-sh:#9b6f1c;--l1:#C9A233;--l2:#D18A33;--l3:#4698AA;--l4:#4DB380}}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:grid;place-items:center;min-height:100vh;padding:16px}
-.card{width:100%;max-width:440px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;box-shadow:0 8px 30px rgba(0,0,0,.08)}
-h1{margin:0 0 6px;font-size:22px}p{margin:0 0 14px;color:var(--ink2)}
+.card{width:100%;max-width:440px;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:26px;box-shadow:0 10px 34px rgba(16,21,31,.12)}
+h1{margin:0 0 6px;font-size:24px;font-weight:800;letter-spacing:-.015em;font-family:ui-rounded,"SF Pro Rounded","Nunito","DM Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}p{margin:0 0 14px;color:var(--ink2)}
 label{display:block;font-size:14px;margin:12px 0 4px;font-weight:600}
 input[type=email]{width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit}
 .chk{display:flex;gap:10px;align-items:flex-start;font-weight:400;font-size:14px;margin-top:14px}.chk input{margin-top:4px}
-button{width:100%;margin-top:16px;padding:13px;border:0;border-radius:12px;background:var(--acc);color:#fff;font:inherit;font-weight:700;cursor:pointer}
+button{width:100%;margin-top:16px;padding:13px;border:0;border-radius:14px;background:var(--acc);color:var(--on-acc);font:inherit;font-weight:800;cursor:pointer;box-shadow:0 4px 0 var(--btn-sh)}
 button:disabled{opacity:.6}.msg{margin-top:14px;font-size:14px}.err{color:var(--bad)}.ok{color:var(--good)}
 a{color:var(--acc)}.small{font-size:13px}
+@media (prefers-color-scheme:dark){.card{border-color:rgba(233,189,98,.16)}}
 </style>
 </head>
 <body>

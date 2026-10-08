@@ -196,7 +196,7 @@
     var hEl = $("#hHearts");
     if (!st.settings.hearts) { hEl.textContent = "∞"; hEl.title = "Ohne Herzen"; }
     else { S.regenHearts(); hEl.innerHTML = "<span style='color:var(--bad)'>" + "♥".repeat(st.hearts) + "</span><span style='color:var(--line)'>" + "♥".repeat(5 - st.hearts) + "</span>"; }
-    global.VTC.applyLook(st.profile, st.settings.themeMode);
+    global.VTC.applyLook(st.profile, st.settings.themeMode, st.settings.design);
     var hb = $("#hBoost");
     if (hb) {
       var bs = st.path && st.path.boost, on = !!(bs && bs.on && bs.left > 0);
@@ -996,7 +996,7 @@
       '<button class="ctabtn" data-act="start" data-mode="mix" data-min="' + mins + '">' + label + '</button>' +
       '<div class="ctadays">' + dots + '</div>' +
       (done ? '' : '<button class="ctablitz" data-act="start" data-mode="mix" data-min="4">⚡ Keine Zeit? Blitz-Challenge (4 Min)</button>') +
-      '<p class="small" style="margin:12px 0 0;color:#8f98a9">Serienboni gibt es bei 3, 7, 14 und 30 Tagen in Folge' + (ci.best > 1 ? '. Bestserie: ' + ci.best + ' Tage' : '') + '.</p></section>' + kl.bottom;
+      '<p class="small ctap" style="margin:12px 0 0;opacity:.8">Serienboni gibt es bei 3, 7, 14 und 30 Tagen in Folge' + (ci.best > 1 ? '. Bestserie: ' + ci.best + ' Tage' : '') + '.</p></section>' + kl.bottom;
   }
   function viewSpielen() {
     var top = segBar("spielen", spielSeg, [["challenge", "🏆 Challenge"], ["arena", "🕹️ Arena"], ["freunde", "👥 Freunde"], ["crew", "🛡️ Crew"], ["rang", "🥇 Liga"]]);
@@ -1658,6 +1658,9 @@
       '<input type="checkbox" id="setHearts" ' + (st.settings.hearts ? "checked" : "") + ' style="width:auto"></label>' +
       '<p class="small muted" style="margin:10px 0 0">Gelernt wird als <b>' + esc(playerName()) + '</b>. Den Namen änderst du unter „Spieler“.</p>');
     html += fold("ton", "🔊", "Ton &amp; Aussehen", "Vorlesen, Hell oder Dunkel",
+      '<div style="margin:4px 0 12px"><div style="font-weight:700;margin-bottom:8px">Design</div><div class="dsgrid">' + global.VTC.DESIGNS.map(function (d) {
+        return '<button class="dstile" data-act="setdesign" data-d="' + d[0] + '" aria-pressed="' + ((st.settings.design || "gold") === d[0]) + '"><i style="background:' + d[3] + '"></i><b>' + d[1] + '</b><small>' + d[2] + '</small></button>';
+      }).join("") + '</div><p class="small muted" style="margin:8px 0 0">Die Farbwelten aus dem Shop gelten im Design „Klassisch“.</p></div>' +
       '<label class="row" style="margin-top:4px"><span style="flex:1 1 auto">Aussprache vorlesen<br><span class="small muted">Nutzt die englische Stimme des Geräts</span></span>' +
       '<input type="checkbox" id="setAudio" ' + (st.settings.audio ? "checked" : "") + ' style="width:auto"></label>' +
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Erscheinungsbild<br><span class="small muted">Automatisch folgt der Einstellung des Geräts</span></span>' +
@@ -2694,6 +2697,7 @@
     else if (a === "crewcheer") { crewDo("/crew/cheer", { to: +act.getAttribute("data-id"), emoji: act.getAttribute("data-e") }, function () { toast("Angefeuert " + act.getAttribute("data-e")); }); }
     else if (a === "clsjoin") { var cc = $("#clsCode"); if (cc && cc.value.trim()) clsDo("/class/join", { code: cc.value }, function (r) { toast("Anfrage an " + r.name + " gesendet. Jetzt müssen deine Eltern zustimmen."); }); }
     else if (a === "clsleave") { if (confirm("Wirklich aus der Klasse austreten?")) clsDo("/class/leave", {}, function () { toast("Du bist nicht mehr in der Klasse."); }); }
+    else if (a === "setdesign") { st.settings.design = act.getAttribute("data-d"); S.save(true); global.VTC.applyLook(st.profile, st.settings.themeMode, st.settings.design); render(); }
     else if (a === "crewleave") { if (confirm("Crew wirklich verlassen?")) crewDo("/crew/leave", {}, function () { toast("Du hast die Crew verlassen."); }); }
     else if (a === "crewclaim") {
       var rect = act.getBoundingClientRect();

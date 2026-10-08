@@ -119,8 +119,18 @@
   /* ---------- Rahmen und Hintergründe: Aussehen steht als CSS in index.html, hier nur die Auswahl ---------- */
   function frameClass(p) { var f = (p && p.frame) || "none"; return f === "none" ? "" : "fr-" + f; }
   /* mode: "auto" (folgt dem Gerät), "light" oder "dark" */
-  function applyLook(p, mode) {
+  var DESIGNS = [["gold", "Nachtgold", "Dunkelblau mit Gold, hell auch cremefarben", "linear-gradient(135deg,#0E1320 40%,#E9BD62)"], ["sun", "Sonnenschein", "Warm, hell und bunt", "linear-gradient(135deg,#FFE9B8,#FF7A3D)"], ["aurora", "Aurora", "Nachthimmel mit Polarlicht", "linear-gradient(135deg,#0A0F2C 30%,#5CF2C0 75%,#9A64FF)"], ["klassisch", "Klassisch", "Das bisherige Papier-Design", "linear-gradient(135deg,#EEF2F8,#1E6273)"]];
+  var BAR = { gold: ["#10162A", "#F6F1E6"], sun: ["#FFF4DC"], aurora: ["#0A0F2C"], klassisch: ["#EEF2F8"] };
+  function applyLook(p, mode, design) {
     var root = document.documentElement;
+    design = design || "gold";
+    if (design === "klassisch") { root.removeAttribute("data-design"); root.removeAttribute("data-x"); }
+    else { root.setAttribute("data-design", design); root.setAttribute("data-x", "1"); }
+    try {   // Farbe der Browserleiste
+      var dark = design === "aurora" || (design === "gold" && (mode === "dark" || (mode !== "light" && global.matchMedia && global.matchMedia("(prefers-color-scheme: dark)").matches)));
+      var m = document.querySelector('meta[name="theme-color"]'); if (!m) { m = document.createElement("meta"); m.setAttribute("name", "theme-color"); document.head.appendChild(m); }
+      m.setAttribute("content", design === "gold" ? (dark ? BAR.gold[0] : BAR.gold[1]) : (BAR[design] || BAR.klassisch)[0]);
+    } catch (e) {}
     if (mode === "light" || mode === "dark") root.setAttribute("data-theme", mode); else root.removeAttribute("data-theme");
     root.setAttribute("data-accent", (p && p.theme) || "paper");
     root.setAttribute("data-bg", (p && p.bg) || "none");
@@ -308,5 +318,5 @@
     ov.addEventListener("click", done);
     global.setTimeout(done, reduce ? 1800 : 4200);
   }
-  global.VTC = { dance: dance, stickerHtml: stickerHtml, runFinale: runFinale, avatarHtml: avatarHtml, frameClass: frameClass, applyLook: applyLook, burst: burst, finale: finale, sound: sound, ART: ART };
+  global.VTC = { dance: dance, stickerHtml: stickerHtml, runFinale: runFinale, avatarHtml: avatarHtml, frameClass: frameClass, applyLook: applyLook, DESIGNS: DESIGNS, burst: burst, finale: finale, sound: sound, ART: ART };
 })(window);
