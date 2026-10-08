@@ -1075,7 +1075,7 @@ const server = http.createServer(async (req, res) => {
       const f = p.slice(5);
       if (f === "manifest.webmanifest" || f === "family.webmanifest") {
         const fam = f === "family.webmanifest", ic = (n, sz, pu) => ({ src: "/app/" + n, sizes: sz, type: "image/png", purpose: pu });
-        const man = { name: fam ? "Wordy Eltern" : "Wordy Dashboard", short_name: fam ? "Eltern" : "Dashboard", lang: "de", start_url: fam ? "/f/" : "/", scope: fam ? "/f/" : "/", id: fam ? "/f/" : "/", display: "standalone",
+        const man = { name: fam ? "Track Wordy Eltern" : "Track Wordy", short_name: "Track Wordy", lang: "de", start_url: fam ? "/f/" : "/", scope: fam ? "/f/" : "/", id: fam ? "/f/" : "/", display: "standalone",
           background_color: "#0E1320", theme_color: "#0E1320", categories: ["education"], icons: [ic("icon-192.png", "192x192", "any"), ic("icon-512.png", "512x512", "any"), ic("icon-maskable-512.png", "512x512", "maskable")] };
         return send(res, 200, JSON.stringify(man), { "Content-Type": "application/manifest+json; charset=utf-8", "Cache-Control": "public, max-age=3600" });
       }
@@ -1128,7 +1128,7 @@ const server = http.createServer(async (req, res) => {
     if ((p === "/f/join" || p === "/f/login") && req.method === "GET") return send(res, 200, fs.readFileSync(path.join(PUBLIC, "family.html"), "utf8"), { "Content-Security-Policy": FCSP });
     if ((p === "/f" || p === "/f/") && req.method === "GET") {
       if (!famAuth(req)) return send(res, 200, fs.readFileSync(path.join(PUBLIC, "family.html"), "utf8"), { "Content-Security-Policy": FCSP });
-      const html = fs.readFileSync(path.join(PUBLIC, "index.html"), "utf8").replace(/\/api\/admin/g, "/api/fam").replace("/app/manifest.webmanifest", "/app/family.webmanifest").replace("content=\"Dashboard\"", "content=\"Eltern\"").replace("<head>", "<head><script>window.WF=1" + (famAuth(req).role === "teacher" ? ";window.WT=1" : "") + "</script>");
+      const html = fs.readFileSync(path.join(PUBLIC, "index.html"), "utf8").replace(/\/api\/admin/g, "/api/fam").replace("/app/manifest.webmanifest", "/app/family.webmanifest").replace("content=\"Track Wordy\"", "content=\"Track Wordy Eltern\"").replace("<head>", "<head><script>window.WF=1" + (famAuth(req).role === "teacher" ? ";window.WT=1" : "") + "</script>");
       return send(res, 200, html, { "Content-Security-Policy": FCSP });
     }
     if (p === "/api/family/login" && req.method === "POST") {

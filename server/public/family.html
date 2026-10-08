@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex"><link rel="manifest" href="/app/family.webmanifest"><link rel="icon" href="/app/favicon-32.png" sizes="32x32"><link rel="apple-touch-icon" href="/app/apple-touch-icon.png"><meta name="theme-color" content="#0E1320"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Eltern"><meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="robots" content="noindex"><link rel="manifest" href="/app/family.webmanifest"><link rel="icon" href="/app/favicon-32.png" sizes="32x32"><link rel="apple-touch-icon" href="/app/apple-touch-icon.png"><meta name="theme-color" content="#0E1320"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Track Wordy Eltern"><meta name="apple-mobile-web-app-status-bar-style" content="black">
 
-<title>Wordy · Eltern</title>
+<title>Track Wordy · Eltern</title>
 <style>
 :root{--bg:#F6F1E6;--card:#fff;--ink:#10151F;--ink2:#3B4656;--line:#E9E1CD;--acc:#1E6273;--acc2:#2E8BA0;--good:#2C7A57;--bad:#B8403B;--warn:#A9781F;--on-acc:#fff;--btn-sh:#134552;--l1:#E2B93B;--l2:#E69A3A;--l3:#4FA6B8;--l4:#2E8B57}
 @media (prefers-color-scheme:dark){:root{--bg:#0E1320;--card:#171F30;--ink:#F6EFE0;--ink2:#B9C0CE;--line:#243049;--acc:#E9BD62;--acc2:#F4C45E;--good:#63C79A;--bad:#E7817B;--warn:#E9BD62;--on-acc:#2a1c00;--btn-sh:#9b6f1c;--l1:#C9A233;--l2:#D18A33;--l3:#4698AA;--l4:#4DB380}}
@@ -31,14 +31,14 @@ a{color:var(--acc)}.small{font-size:13px}
   function done(msg) { document.getElementById("m").className = "msg ok"; document.getElementById("m").textContent = msg; }
   function fail(e) { var m = document.getElementById("m"); m.className = "msg err"; m.textContent = e.message; var b = c.querySelector("button"); if (b) b.disabled = false; }
   if (path === "/f/login" && q.get("t")) {
-    c.innerHTML = '<h1>📚 Wordy · Eltern</h1><p>Schön, dass du da bist. Tippe auf den Knopf, um dich anzumelden.</p><button id="go">Jetzt anmelden</button><div id="m" class="msg"></div>';
+    c.innerHTML = '<h1><img src="/app/icon-192.png" alt="" width="34" height="34" style="border-radius:9px;vertical-align:-9px;margin-right:8px">Track Wordy · Eltern</h1><p>Schön, dass du da bist. Tippe auf den Knopf, um dich anzumelden.</p><button id="go">Jetzt anmelden</button><div id="m" class="msg"></div>';
     document.getElementById("go").onclick = function () { this.disabled = true; post("/api/family/session", { t: q.get("t") }).then(function () { location.replace("/f/"); }).catch(function (e) { fail(e); c.insertAdjacentHTML("beforeend", '<p class="small" style="margin-top:12px"><a href="/f/">Neuen Link anfordern</a></p>'); }); };
     return;
   }
   var join = path === "/f/join", code = q.get("i") || "";
   if (join && !code) { c.innerHTML = '<h1>Einladung</h1><p>Dieser Link ist unvollständig. Bitte öffne den Link aus deiner Einladung noch einmal.</p>'; return; }
   var teach = join && q.get("l") === "1";
-  c.innerHTML = '<h1>📚 Wordy · ' + (teach ? "Lehrkräfte" : "Eltern") + '</h1><p>' + (teach ? "Du wurdest als Lehrkraft eingeladen! Mit deiner E-Mail-Adresse legst du dein Konto an, erstellst eine Klasse und stellst die Wochenaufgabe ein. Die Teilnahme ist für Kinder freiwillig und braucht die Zustimmung der Eltern." : join ? "Du wurdest eingeladen! Mit deiner E-Mail-Adresse legst du dein Elternkonto an und verwaltest danach die Kinder selbst." : "Melde dich mit deiner E-Mail-Adresse an. Wir schicken dir einen Anmeldelink, ein Passwort brauchst du nicht.") + '</p>' +
+  c.innerHTML = '<h1><img src="/app/icon-192.png" alt="" width="34" height="34" style="border-radius:9px;vertical-align:-9px;margin-right:8px">Track Wordy · ' + (teach ? "Lehrkräfte" : "Eltern") + '</h1><p>' + (teach ? "Du wurdest als Lehrkraft eingeladen! Mit deiner E-Mail-Adresse legst du dein Konto an, erstellst eine Klasse und stellst die Wochenaufgabe ein. Die Teilnahme ist für Kinder freiwillig und braucht die Zustimmung der Eltern." : join ? "Du wurdest eingeladen! Mit deiner E-Mail-Adresse legst du dein Elternkonto an und verwaltest danach die Kinder selbst." : "Melde dich mit deiner E-Mail-Adresse an. Wir schicken dir einen Anmeldelink, ein Passwort brauchst du nicht.") + '</p>' +
     '<label for="e">E-Mail-Adresse</label><input id="e" type="email" autocomplete="email" inputmode="email" placeholder="name@beispiel.de">' +
     (join ? '<label class="chk"><input type="checkbox" id="k"><span>' + (teach ? "Ich bin Lehrkraft und stimme der" : "Ich bin erziehungsberechtigt und stimme der") + ' <a href="/f/datenschutz" target="_blank">Datenschutzerklärung</a> zu. ' + (teach ? "Gespeichert werden diese E-Mail-Adresse, meine Klassen und Aufgaben." : "Gespeichert werden nur Lerndaten meiner Kinder (Wörter, Zeiten, Käufe) und diese E-Mail-Adresse.") + '</span></label>' : '') +
     '<button id="go">' + (join ? "Konto anlegen" : "Anmeldelink senden") + '</button><div id="m" class="msg"></div>' + (join ? "" : '<p class="small" style="margin-top:14px">Noch kein Konto? Du brauchst einen Einladungslink.</p>');

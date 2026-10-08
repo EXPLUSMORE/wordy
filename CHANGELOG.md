@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.52.1 – 2026-10-08
+- **Dashboard heißt „Track Wordy“** (Server-Update nötig): Name der installierbaren App, Seitentitel und Kopfzeile von Dashboard und Elternbereich („Track Wordy Eltern“), dazu das Dashboard-Symbol statt des Bücher-Emojis in der Kopfzeile.
+
 ## 2.52.0 – 2026-10-08
 - **Neue App-Symbole und Startbild im Nachtgold-Stil:** Wordy mit goldenen Buchstaben-Kacheln und Clombo im goldenen Ring auf Dunkelblau (192, 512, maskierbar, Apple-Symbol, Favicon). Das Startbild der installierten App nutzt jetzt dasselbe Dunkelblau (Manifest `background_color`/`theme_color`), das Symbol verschmilzt mit dem Hintergrund statt als bunte Kachel auf Lila zu stehen; dazu ein kurzer Startbildschirm in der App, der nach dem Aufbau ausblendet.
 - **Eigenes Symbol fürs Dashboard** (Server-Update nötig): Petrol mit goldenem W und Balkendiagramm, „ähnlich wie Wordy, aber anders“. Dashboard und Elternbereich sind als eigene App installierbar („Wordy Dashboard“ bzw. „Wordy Eltern“), Symbole und Manifest liegen öffentlich unter `/app/`. Erzeugt von `tools/make-icons.js`.
