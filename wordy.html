@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#1E6273">
+<meta name="theme-color" content="#0E1320">
 <title>Wordy</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Karla:wght@400;500;600;700&family=DM+Sans:wght@500;700;800&family=Nunito:wght@600;800;900&family=Fredoka:wght@500;600&display=swap">
@@ -997,13 +997,20 @@ details.fold>.fbody{padding:2px 0 14px}
 :root[data-design] .fmcard i{background:var(--accent);color:var(--accent-ink)}
 :root[data-design] .crewhero{background:var(--cta-bg);border-color:var(--cta-bd)}
 :root[data-design] .crt{border-width:2px;border-color:var(--line)}
+/* Startbild: gleiches Dunkelblau wie das App-Symbol, blendet nach dem ersten Aufbau aus */
+#boot{position:fixed;inset:0;z-index:2000;display:grid;place-items:center;background:#0E1320;transition:opacity .45s ease,visibility .45s}
+#boot img{border-radius:30px;box-shadow:0 18px 40px rgba(0,0,0,.5);animation:bootpop .6s cubic-bezier(.2,1.5,.4,1) both}
+#boot.off{opacity:0;visibility:hidden}
+@keyframes bootpop{from{transform:scale(.7);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){#boot img{animation:none}}
 </style>
 
 
-<script>window.WORDY_VERSION="2.51.2";window.WORDY_BUILD="1093f5a5af";</script>
+<script>window.WORDY_VERSION="2.52.0";window.WORDY_BUILD="318f69d096";</script>
 </head>
 <body>
 <div id="app">
+  <div id="boot" aria-hidden="true"><img src="icons/icon-192.png" alt="" width="132" height="132"></div>
   <header id="top">
     <div class="avatar" id="hAvatar">🦊</div>
     <div>
@@ -9756,6 +9763,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (nm) { S.state.profile.name = ""; S.save(true); }
   })();
   render();
+  (function () { var bt = document.getElementById("boot"); if (bt) setTimeout(function () { bt.classList.add("off"); setTimeout(function () { if (bt.parentNode) bt.parentNode.removeChild(bt); }, 600); }, 350); })();
   pickPlayer();
   S.keepStorage(function () { if (tab === "parent") render(); });
   setInterval(function () { if (sessionEl.hidden) { S.regenHearts(); renderHeader(); } }, 30000);

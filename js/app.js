@@ -2866,6 +2866,7 @@
     if (nm) { S.state.profile.name = ""; S.save(true); }
   })();
   render();
+  (function () { var bt = document.getElementById("boot"); if (bt) setTimeout(function () { bt.classList.add("off"); setTimeout(function () { if (bt.parentNode) bt.parentNode.removeChild(bt); }, 600); }, 350); })();
   pickPlayer();
   S.keepStorage(function () { if (tab === "parent") render(); });
   setInterval(function () { if (sessionEl.hidden) { S.regenHearts(); renderHeader(); } }, 30000);

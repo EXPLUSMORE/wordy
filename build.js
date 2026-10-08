@@ -11,7 +11,7 @@ const ICONS = ['icons/icon-192.png','icons/icon-512.png','icons/icon-maskable-51
   'icons/apple-touch-icon.png','icons/favicon-32.png'];
 
 const APP = 'Wordy';
-const THEME = '#1E6273';
+const THEME = '#0E1320';   // Nachtgold: Browserleiste und Startbild im selben Dunkelblau wie das Symbol
 const src = fs.readFileSync('index.html', 'utf8');
 /* Version aus dem Inhalt: ändert sich der Code, ändert sich auch diese Kennung (Setup zeigt sie, der Offline-Cache nutzt sie) */
 const VERSION = JSON.parse(fs.readFileSync('package.json', 'utf8')).version;   // Versionsnummer: nur in package.json pflegen
@@ -49,7 +49,7 @@ const manifest = {
   name: APP, short_name: APP, lang: 'de', dir: 'ltr',
   description: 'Englisch-Vokabeltrainer für Schule und Beruf – mit Spaced Repetition, Satzbau und Arena auf Zeit.',
   start_url: './', scope: './', id: '/', display: 'standalone', orientation: 'portrait',
-  background_color: '#6A5CF0', theme_color: THEME,
+  background_color: '#0E1320', theme_color: THEME,
   categories: ['education'],
   icons: [
     { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
@@ -101,7 +101,7 @@ const siteHead = `<!doctype html>
 <link rel="icon" href="icons/favicon-32.png" sizes="32x32">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="${APP}">
 ${head}
 <script>window.WORDY_VERSION="${VERSION}";window.WORDY_BUILD="${stamp}";</script>

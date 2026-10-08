@@ -201,6 +201,12 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     await J("/api/admin/players/" + mk.j.id + "/revoke", { method: "POST", headers: H });
     assert.equal((await J("/api/events", { method: "POST", headers: T, body: "{}" })).s, 401, "nach Trennen gesperrt");
 
+    /* ---------- App-Symbole des Dashboards (öffentlich, ohne Anmeldung) ---------- */
+    const mf = await fetch(base + "/app/manifest.webmanifest"); assert.equal(mf.status, 200); assert.equal((await mf.json()).icons.length, 3, "Manifest mit drei Symbolen");
+    assert.equal((await (await fetch(base + "/app/family.webmanifest")).json()).start_url, "/f/", "Elternbereich startet unter /f/");
+    const ico = await fetch(base + "/app/icon-512.png"); assert.equal(ico.status, 200); assert.equal(ico.headers.get("content-type"), "image/png");
+    assert.equal((await fetch(base + "/app/../server.js")).status, 404, "nur die Symbole, keine anderen Dateien");
+
     /* ---------- Elternkonten ---------- */
     const decMail = () => (mailGot.match(/^[A-Za-z0-9+\/=]{20,}$/gm) || []).map(x => Buffer.from(x, "base64").toString("utf8")).join("");
     const linkOf = () => { const m = decMail().match(/https?:\/\/[^\s"<]+\/f\/login\?t=([0-9a-f]{64})/); return m && m[1]; };

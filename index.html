@@ -991,9 +991,16 @@ details.fold>.fbody{padding:2px 0 14px}
 :root[data-design] .fmcard i{background:var(--accent);color:var(--accent-ink)}
 :root[data-design] .crewhero{background:var(--cta-bg);border-color:var(--cta-bd)}
 :root[data-design] .crt{border-width:2px;border-color:var(--line)}
+/* Startbild: gleiches Dunkelblau wie das App-Symbol, blendet nach dem ersten Aufbau aus */
+#boot{position:fixed;inset:0;z-index:2000;display:grid;place-items:center;background:#0E1320;transition:opacity .45s ease,visibility .45s}
+#boot img{border-radius:30px;box-shadow:0 18px 40px rgba(0,0,0,.5);animation:bootpop .6s cubic-bezier(.2,1.5,.4,1) both}
+#boot.off{opacity:0;visibility:hidden}
+@keyframes bootpop{from{transform:scale(.7);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){#boot img{animation:none}}
 </style>
 
 <div id="app">
+  <div id="boot" aria-hidden="true"><img src="icons/icon-192.png" alt="" width="132" height="132"></div>
   <header id="top">
     <div class="avatar" id="hAvatar">🦊</div>
     <div>

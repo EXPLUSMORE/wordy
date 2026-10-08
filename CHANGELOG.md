@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.52.0 – 2026-10-08
+- **Neue App-Symbole und Startbild im Nachtgold-Stil:** Wordy mit goldenen Buchstaben-Kacheln und Clombo im goldenen Ring auf Dunkelblau (192, 512, maskierbar, Apple-Symbol, Favicon). Das Startbild der installierten App nutzt jetzt dasselbe Dunkelblau (Manifest `background_color`/`theme_color`), das Symbol verschmilzt mit dem Hintergrund statt als bunte Kachel auf Lila zu stehen; dazu ein kurzer Startbildschirm in der App, der nach dem Aufbau ausblendet.
+- **Eigenes Symbol fürs Dashboard** (Server-Update nötig): Petrol mit goldenem W und Balkendiagramm, „ähnlich wie Wordy, aber anders“. Dashboard und Elternbereich sind als eigene App installierbar („Wordy Dashboard“ bzw. „Wordy Eltern“), Symbole und Manifest liegen öffentlich unter `/app/`. Erzeugt von `tools/make-icons.js`.
+
 ## 2.51.2 – 2026-10-08
 - **Fehlerwörter im Dashboard mit Klartext statt Nummern** (Server-Update nötig): Bei Sätzen („s123“) und unregelmäßigen Verben („v#7“) kam bisher nur die interne ID im Ereignis an. Die App schickt jetzt Englisch und Deutsch mit (Verben als „be, was, been“), und der Server löst alte Ereignisse über den Katalog der Datendateien (Wörter, Sätze, Verben) nach. Dadurch zeigen auch die bisherigen Fehler sofort Texte. Gilt ebenso für die Stolperwörter der Klasse.
 

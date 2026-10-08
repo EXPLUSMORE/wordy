@@ -9,8 +9,8 @@
   "id": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#6A5CF0",
-  "theme_color": "#1E6273",
+  "background_color": "#0E1320",
+  "theme_color": "#0E1320",
   "categories": [
     "education"
   ],
