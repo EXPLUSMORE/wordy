@@ -1426,7 +1426,10 @@
       }).join("");
       return html + '</section>';
     }
-    html += '<div class="rgrid">' + S.SHOP.filter(function (it) { return shopTab === "fn" ? it.set === "fn" : it.kind === shopTab && !it.set; }).map(function (it) { return shopTile(it, wishId); }).join("") + '</div>';
+    var RO = { common: 0, rare: 1, epic: 2, legend: 3 };   // Sortierung immer: gewöhnlich, selten, episch, legendär, danach nach Preis
+    html += '<div class="rgrid">' + S.SHOP.filter(function (it) { return shopTab === "fn" ? it.set === "fn" : it.kind === shopTab && !it.set; })
+      .map(function (it, i) { return { it: it, i: i }; }).sort(function (a, b) { return (RO[S.rarityOf(a.it)] - RO[S.rarityOf(b.it)]) || (a.it.cost - b.it.cost) || (a.i - b.i); })
+      .map(function (x) { return shopTile(x.it, wishId); }).join("") + '</div>';
     return html + '</section>';
   }
   /* Rang- und Set-Geschenke sowie die einmalige Preisgutschrift ansagen */

@@ -1,6 +1,6 @@
 {
   "name": "wordy",
-  "version": "2.53.5",
+  "version": "2.53.6",
   "private": true,
   "description": "Wordy – Englisch-Vokabeltrainer",
   "dependencies": {

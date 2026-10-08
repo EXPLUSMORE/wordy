@@ -872,6 +872,7 @@
     var i = passInfo();
     return { id: i.season.id, title: i.season.title, start: i.start, idx: i.idx, weeks: i.weeks.map(function (w) { return { n: w.n, cnt: w.cnt, need: w.need, c: w.claimed ? 1 : 0 }; }), fin: i.fin.claimed ? 1 : 0 };
   }
+  var RAR_ORDER = { common: 0, rare: 1, epic: 2, legend: 3 };
   function rarityOf(it) { return it.rar || (it.cost <= 120 ? "common" : it.cost <= 350 ? "rare" : it.cost <= 800 ? "epic" : "legend"); }
   function shopList() { return SHOP.filter(function (x) { return ["avatar", "dance", "outfit", "kit", "fx", "frame"].indexOf(x.kind) >= 0 && x.cost > 0 || x.kind === "dance"; }).map(function (x) { return [x.id, x.label, x.kind]; }); }
 
@@ -911,7 +912,7 @@
   var CUP_TIERS = [{ n: "Bronze", pct: 25, coins: 30 }, { n: "Silber", pct: 50, coins: 60 }, { n: "Gold", pct: 75, coins: 120 }, { n: "Platin", pct: 100, coins: 300 }];
   function collection(award) {
     function mk(x) { return { id: x.id, label: x.label, kind: x.kind, val: x.val, rar: rarityOf(x), owned: owns(x), how: howText(x), it: x }; }
-    var vis = SHOP.filter(function (x) { return !(x.val === "none" || x.val === ""); }), by = function (kinds) { return vis.filter(function (x) { return kinds.indexOf(x.kind) >= 0; }).map(mk); };
+    var vis = SHOP.filter(function (x) { return !(x.val === "none" || x.val === ""); }), by = function (kinds) { return vis.filter(function (x) { return kinds.indexOf(x.kind) >= 0; }).map(mk).map(function (m, i) { m.o = i; return m; }).sort(function (p, q) { return (RAR_ORDER[p.rar] - RAR_ORDER[q.rar]) || (p.it.cost - q.it.cost) || (p.o - q.o); }); };   // immer: gewöhnlich, selten, episch, legendär
     var shelves = [
       { id: "medal", title: "Pokale & Medaillen", icon: "🏆", items: medalList() },
       { id: "fig", title: "Figuren", icon: "🦊", items: by(["avatar"]) },

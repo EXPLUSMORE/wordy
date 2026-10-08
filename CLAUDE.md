@@ -50,3 +50,11 @@ Lernfortschritts-Server: https://track.wordy.explusmore.com (eigenständig, Node
 - Fahrplan Fremdsprachen (nicht gebaut): Sprache je Wortschatz, Sprachausgabe je Sprache, Verben/Grammatik englischspezifisch.
 - Designs (v2.51): `html[data-design]` = `gold` (Standard), `sun`, `aurora`; `klassisch` = kein Attribut (Shop-Farbwelten greifen nur dort, sonst `data-x`). Variablen und Bausteine am Ende von `<style>` in `index.html` („DESIGNS“); `VTC.applyLook(profile, mode, design)` und `VTC.DESIGNS` in cosmetics.js, Einstellung `settings.design`. Neues Design = Variablenblock + Eintrag in `DESIGNS`. Dashboard/`family.html`/`datenschutz.html` folgen Nachtgold (Hell/Dunkel nach Gerät); dort keine Webfonts (CSP).
 - App-Symbole (v2.52): `tools/make-icons.js` (Playwright, braucht gebautes `docs/`) erzeugt `icons/*` (Wordy) und `server/public/app/*` (Dashboard); Server liefert `/app/*` öffentlich (`manifest.webmanifest` Betreiber, `family.webmanifest` Eltern). Startbild: `#boot` in index.html, Manifest-Hintergrund = Dunkelblau `#0E1320`.
+
+## Shop und Belohnungen: Vorgaben des Betreibers (MERKEN, verbindlich)
+- **Vier Stufen in jedem Bereich** (gewöhnlich, selten, episch, legendär), **gleich viele Artikel je Stufe**, besonders in den oberen zwei Stufen.
+- **Sortierung immer:** gewöhnlich → selten → episch → legendär (dann nach Preis). Gilt im Shop und im Showroom (`RAR_ORDER` in engine.js, Sortierung in `shopCard()`).
+- **Kleiner Start-Shop, danach laufend Nachschub:** pro Woche/Monat neue Figuren, Rahmen, Tänze oder ganz neue Bereiche; Drop-Tag Montag.
+- **Vor dem Go-live planen:** Plan steht in `PLAN-Belohnungen.md` (Zielkatalog 44 Artikel, Preise je Stufe, Drop-Kalender). Seltenheit soll künftig fest je Artikel gesetzt werden (`rar`), nicht aus dem Preis abgeleitet (`rarityOf`).
+- **Extramünzen, Münzfaktor, Bonusmünzen und Wochenpass-Zusammenstellung nur beim Betreiber**, nicht in Elternkonten.
+- Wochenverdienst (Rechnung, 2.53.5): schwach ca. 140, mittel ca. 610, top ca. 1.380 🪙. Bei Preisänderungen die Version erhöhen und `OLD_PRICES` pflegen.

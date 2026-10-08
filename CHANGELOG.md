@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.53.6 – 2026-10-08
+- **Shop:** Die Sticker-Kacheln sitzen wieder über dem Namen statt in der Schrift. Der Shop und die Sammlung im Showroom sind immer nach Seltenheit sortiert (gewöhnlich, selten, episch, legendär), danach nach Preis.
+- **Plan:** `PLAN-Belohnungen.md` mit Zielkatalog, Preisen je Stufe und Nachschub-Kalender (noch nicht umgesetzt).
+
 ## 2.53.5 – 2026-10-08
 - **Dashboard nennt den Spieler beim Namen** (Server-Update nötig): Statt „das Kind“ steht in den Texten der Name des gewählten Spielers (Wochenpass, Lernplan, Ziele, Geschenke, Klassen-Hinweis); ohne Namen bleibt „das Kind“ als Rückfall. Pronomen sind dabei vermieden.
 
