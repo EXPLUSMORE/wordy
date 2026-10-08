@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.53.7 – 2026-10-08
+- **Grauer Halbkreis am Kopf weg:** Der weiße Glanzstrich links am Kopf (wirkte auf hellen Figuren wie ein grauer Halbkreis) ist bei allen Figuren und Stickern entfernt. App-Symbole neu erzeugt.
+
 ## 2.53.6 – 2026-10-08
 - **Shop:** Die Sticker-Kacheln sitzen wieder über dem Namen statt in der Schrift. Der Shop und die Sammlung im Showroom sind immer nach Seltenheit sortiert (gewöhnlich, selten, episch, legendär), danach nach Preis.
 - **Plan:** `PLAN-Belohnungen.md` mit Zielkatalog, Preisen je Stufe und Nachschub-Kalender (noch nicht umgesetzt).

@@ -127,7 +127,7 @@
       '<g class="headG">' + hback + ear(sp.ears, "url(#" + i + "f)", sp.earIn || "#f6b7cc") +
       '<ellipse cx="110" cy="100" rx="66" ry="60" fill="url(#' + i + 'f)" stroke="' + L + '" stroke-width="5"/>' +
       (sp.under || "") +
-      '<path d="M52 78q10-30 44-40" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".85" fill="none"/><path d="M172 92q-4 34-34 52" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".28" fill="none"/>' +
+      '<path d="M172 92q-4 34-34 52" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".28" fill="none"/>' +
       (sp.cheek === false ? "" : '<ellipse cx="62" cy="118" rx="11" ry="7" fill="#ff8fb0" opacity=".55"/><ellipse cx="158" cy="118" rx="11" ry="7" fill="#ff8fb0" opacity=".55"/>') +
       (FACE[sp.face || "muzzle"](sp)) + eyes(sp) + hfront +
       '</g></g></g></svg>';

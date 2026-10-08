@@ -37,7 +37,7 @@ return '<svg class="afs" viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg
  '<g class="earL"><circle cx="62" cy="52" r="22" fill="url(#'+i+'f)" stroke="#14213d" stroke-width="5"/><circle cx="64" cy="55" r="11" fill="#f6b7cc" stroke="#14213d" stroke-width="3"/></g>'+
  '<g class="earR"><circle cx="158" cy="52" r="22" fill="url(#'+i+'f)" stroke="#14213d" stroke-width="5"/><circle cx="156" cy="55" r="11" fill="#f6b7cc" stroke="#14213d" stroke-width="3"/></g>'+
  '<ellipse cx="110" cy="100" rx="66" ry="60" fill="url(#'+i+'f)" stroke="#14213d" stroke-width="5"/>'+
- '<path d="M52 78q10-30 44-40" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".9" fill="none"/>'+
+ ''+
  '<path d="M172 92q-4 34-34 52" stroke="#8fd3ff" stroke-width="7" stroke-linecap="round" opacity=".6" fill="none"/>'+
  '<ellipse cx="66" cy="116" rx="12" ry="8" fill="#ff8fb0" opacity=".6"/><ellipse cx="154" cy="116" rx="12" ry="8" fill="#ff8fb0" opacity=".6"/>'+
  '<ellipse cx="110" cy="122" rx="34" ry="25" fill="#fff" stroke="#14213d" stroke-width="4"/>'+
@@ -68,7 +68,7 @@ return '<svg class="afs" viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg
       '<path d="M58 150q52 26 104 0q8 14-4 22q-48 20-96 0q-12-8-4-22z" fill="url(#' + i + 's)" ' + O + '/><path d="M138 168q20 8 22 44q-12 8-24 0q6-20 2-44z" fill="url(#' + i + 's)" ' + O + '/><path d="M66 158q20 8 44 8" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".5" fill="none"/>' +
       '<g class="headG">' +
       '<ellipse cx="110" cy="96" rx="66" ry="58" fill="url(#' + i + 'n)" ' + O + '/>' +
-      '<path d="M58 90q10-28 42-36" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".4" fill="none"/>' +
+      '' +
       '<path d="M58 106q-2-34 30-36q14 4 22 16q8-12 22-16q32 2 30 36q0 38-52 42q-52-4-52-42z" fill="url(#' + i + 'w)" stroke="#14213d" stroke-width="4" stroke-linejoin="round"/>' +
       '<ellipse cx="86" cy="102" rx="11" ry="15" fill="#14213d"/><ellipse cx="134" cy="102" rx="11" ry="15" fill="#14213d"/><ellipse cx="90" cy="96" rx="5" ry="6" fill="#fff"/><ellipse cx="138" cy="96" rx="5" ry="6" fill="#fff"/><circle cx="82" cy="109" r="2.2" fill="#fff"/><circle cx="130" cy="109" r="2.2" fill="#fff"/>' +
       '<ellipse cx="66" cy="124" rx="11" ry="7" fill="#ff8fb0" opacity=".6"/><ellipse cx="154" cy="124" rx="11" ry="7" fill="#ff8fb0" opacity=".6"/>' +
@@ -93,7 +93,7 @@ return '<svg class="afs" viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg
       '<path d="M58 154q52 26 104 0q8 14-4 22q-48 20-96 0q-12-8-4-22z" fill="url(#' + i + 's)" ' + O + '/><path d="M64 160l18 8M88 164l16 6M112 166l16 4M136 164l16-4" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".7"/>' +
       '<g class="headG">' +
       '<ellipse cx="110" cy="100" rx="66" ry="58" fill="url(#' + i + 'b)" ' + O + '/>' +
-      '<path d="M54 84q10-30 44-38" stroke="#fff" stroke-width="9" stroke-linecap="round" opacity=".55" fill="none"/>' +
+      '' +
       '<ellipse cx="110" cy="126" rx="38" ry="26" fill="url(#' + i + 'l)" stroke="#14213d" stroke-width="4"/>' +
       '<path d="M96 108q14-9 28 0q2 12-14 16q-16-4-14-16z" fill="#1b2447" stroke="#14213d" stroke-width="3.5" stroke-linejoin="round"/><ellipse cx="104" cy="109" rx="5" ry="2.5" fill="#fff" opacity=".85"/>' +
       '<path d="M110 123v6M96 132q14 14 28 0" stroke="#14213d" stroke-width="4" stroke-linecap="round" fill="none"/><path d="M104 140q6 9 12 0z" fill="#ff7a9a" stroke="#14213d" stroke-width="3"/>' +
