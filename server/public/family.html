@@ -35,9 +35,10 @@ a{color:var(--acc)}.small{font-size:13px}
   }
   var join = path === "/f/join", code = q.get("i") || "";
   if (join && !code) { c.innerHTML = '<h1>Einladung</h1><p>Dieser Link ist unvollständig. Bitte öffne den Link aus deiner Einladung noch einmal.</p>'; return; }
-  c.innerHTML = '<h1>📚 Wordy · Eltern</h1><p>' + (join ? "Du wurdest eingeladen! Mit deiner E-Mail-Adresse legst du dein Elternkonto an und verwaltest danach die Kinder selbst." : "Melde dich mit deiner E-Mail-Adresse an. Wir schicken dir einen Anmeldelink, ein Passwort brauchst du nicht.") + '</p>' +
+  var teach = join && q.get("l") === "1";
+  c.innerHTML = '<h1>📚 Wordy · ' + (teach ? "Lehrkräfte" : "Eltern") + '</h1><p>' + (teach ? "Du wurdest als Lehrkraft eingeladen! Mit deiner E-Mail-Adresse legst du dein Konto an, erstellst eine Klasse und stellst die Wochenaufgabe ein. Die Teilnahme ist für Kinder freiwillig und braucht die Zustimmung der Eltern." : join ? "Du wurdest eingeladen! Mit deiner E-Mail-Adresse legst du dein Elternkonto an und verwaltest danach die Kinder selbst." : "Melde dich mit deiner E-Mail-Adresse an. Wir schicken dir einen Anmeldelink, ein Passwort brauchst du nicht.") + '</p>' +
     '<label for="e">E-Mail-Adresse</label><input id="e" type="email" autocomplete="email" inputmode="email" placeholder="name@beispiel.de">' +
-    (join ? '<label class="chk"><input type="checkbox" id="k"><span>Ich bin erziehungsberechtigt und stimme der <a href="/f/datenschutz" target="_blank">Datenschutzerklärung</a> zu. Gespeichert werden nur Lerndaten meiner Kinder (Wörter, Zeiten, Käufe) und diese E-Mail-Adresse.</span></label>' : '') +
+    (join ? '<label class="chk"><input type="checkbox" id="k"><span>' + (teach ? "Ich bin Lehrkraft und stimme der" : "Ich bin erziehungsberechtigt und stimme der") + ' <a href="/f/datenschutz" target="_blank">Datenschutzerklärung</a> zu. ' + (teach ? "Gespeichert werden diese E-Mail-Adresse, meine Klassen und Aufgaben." : "Gespeichert werden nur Lerndaten meiner Kinder (Wörter, Zeiten, Käufe) und diese E-Mail-Adresse.") + '</span></label>' : '') +
     '<button id="go">' + (join ? "Konto anlegen" : "Anmeldelink senden") + '</button><div id="m" class="msg"></div>' + (join ? "" : '<p class="small" style="margin-top:14px">Noch kein Konto? Du brauchst einen Einladungslink.</p>');
   document.getElementById("go").onclick = function () {
     var e = document.getElementById("e").value.trim(); if (!e) return;

@@ -159,3 +159,7 @@ systemctl list-timers wordy-deploy.timer
 **Pausieren / abschalten:** `sudo systemctl stop wordy-deploy.timer` (wieder starten mit `start`, dauerhaft aus mit `disable --now`).
 
 **Nicht automatisch:** Änderungen an den systemd-Dateien (`wordy-server.service`, `wordy-deploy.*`), der Apache-Konfiguration und der `.env` bleiben Handarbeit. Der Dienst-Benutzer `wordy` braucht kein sudo, denn der Zeitgeber läuft als root und führt Git-Befehle als `wordy` aus.
+
+## Klassen-Modus (v2.49)
+
+Lehrkräfte: Betreiber erstellt im Dashboard (Familien) einen Einladungslink mit Rolle „Lehrkraft“. Die Lehrkraft legt Klassen und Wochenaufgaben an (`/api/fam/classes…`), sieht nur Klassen-Zahlen. Kinder treten über `/api/social/class/join` bei, die Eltern bestätigen im Dashboard. Keine neuen Umgebungsvariablen; neue Tabellen werden beim Start angelegt. Datenschutz: Abschnitt 7a, `CONSENT_VER` auf 2026-10c.

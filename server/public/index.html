@@ -93,7 +93,12 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
   function pct(a, b) { return b ? Math.round(a * 100 / b) + " %" : "–"; }
   var MODE = { mix: "Gemischt", new: "Neue Wörter", box: "Fehlerkartei", sent: "Sätze", verbs: "Verben", arena: "Arena", unit: "Einheit", plan: "Lernplan", focus: "Gezielt üben", master: "Meistern", path: "Lernpfad" };
 
+  var classes = [], unitCat = null;
   function loadPlayers(keep) {
+    if (window.WT) return api("/api/admin/classes").then(function (l) {
+      classes = l; if (keep) cur = keep; else if (!cur || cur === "new" || (cur.charAt(0) === "c" && !classes.some(function (c) { return "c" + c.id === cur; }) && cur !== "newc" && cur !== "fam")) cur = classes[0] ? "c" + classes[0].id : "newc";
+      drawTabs(); return show();
+    }).catch(function (e) { view.innerHTML = '<div class="card err">' + esc(e.message) + "</div>"; });
     return api("/api/admin/players").then(function (l) {
       players = l; if (!cur || !players.some(function (p) { return p.id === cur; })) cur = players[0] ? players[0].id : "new";
       if (keep) cur = keep;
@@ -101,13 +106,16 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     }).catch(function (e) { view.innerHTML = '<div class="card err">' + esc(e.message) + "</div>"; });
   }
   function drawTabs() {
+    if (window.WT) { tabs.innerHTML = classes.map(function (c) { return '<button class="tab" data-p="c' + c.id + '" aria-pressed="' + (cur === "c" + c.id) + '">🏫 ' + esc(c.name) + (c.pending ? " (" + c.pending + ")" : "") + "</button>"; }).join("") +
+      '<button class="tab" data-p="newc" aria-pressed="' + (cur === "newc") + '">＋ Klasse</button><button class="tab" data-p="fam" aria-pressed="' + (cur === "fam") + '">⚙️ Konto</button>'; return; }
     tabs.innerHTML = players.map(function (p) { return '<button class="tab" data-p="' + p.id + '" aria-pressed="' + (cur === p.id) + '">' + esc(p.name) + "</button>"; }).join("") +
       '<button class="tab" data-p="new" aria-pressed="' + (cur === "new") + '">＋ Spieler</button>' +
       '<button class="tab" data-p="fam" aria-pressed="' + (cur === "fam") + '">' + (window.WF ? "⚙️ Konto" : "👪 Familien") + '</button>';
   }
-  tabs.onclick = function (e) { var b = e.target.closest("button[data-p]"); if (!b) return; var v = b.getAttribute("data-p"); cur = v === "new" || v === "fam" ? v : +v; drawTabs(); show(); };
+  tabs.onclick = function (e) { var b = e.target.closest("button[data-p]"); if (!b) return; var v = b.getAttribute("data-p"); cur = v === "new" || v === "fam" || v === "newc" || (window.WT && v.charAt(0) === "c") ? v : +v; drawTabs(); show(); };
 
   function show() {
+    if (window.WT) { if (cur === "fam") return Promise.resolve(viewFam()); if (cur === "newc" || !classes.length) return Promise.resolve(viewNewClass()); return viewClass(+String(cur).slice(1)); }
     if (cur === "fam") return Promise.resolve(viewFam());
     if (cur === "new" || !players.length) return Promise.resolve(viewNew());
     var p = players.filter(function (x) { return x.id === cur; })[0];
@@ -121,9 +129,9 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     if (window.WF) {
       view.innerHTML = '<div class="card muted">Lade …</div>';
       return api("/api/admin/me").then(function (m) {
-        view.innerHTML = '<div class="card"><h2>Mein Konto</h2><p style="margin:0 0 8px">Angemeldet als <b>' + esc(m.email) + '</b>. Kinder: <b>' + m.children + ' von ' + m.max + '</b>.</p>' +
+        view.innerHTML = '<div class="card"><h2>Mein Konto</h2><p style="margin:0 0 8px">Angemeldet als <b>' + esc(m.email) + '</b>.' + (window.WT ? " Lehrkraft-Konto." : " Kinder: <b>" + m.children + " von " + m.max + "</b>.") + '</p>' +
           '<label class="row" style="gap:8px;margin-top:10px"><input type="checkbox" id="fw"' + (m.weekly ? " checked" : "") + '><span>Wochenzusammenfassung per Mail (' + ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"][m.day] + " um " + m.hour + ' Uhr)</span></label><p id="fmsg" class="small muted" style="margin:8px 0 0"></p></div>' +
-          '<div class="card"><h2>Meine Daten</h2><p class="small muted" style="margin:0 0 10px">Du kannst alle gespeicherten Daten deiner Familie als Datei herunterladen oder das Konto samt aller Kinder und Lernstände endgültig löschen.</p>' +
+          '<div class="card"><h2>Meine Daten</h2><p class="small muted" style="margin:0 0 10px">Du kannst alle gespeicherten Daten ' + (window.WT ? "deines Kontos (Klassen und Aufgaben)" : "deiner Familie") + ' als Datei herunterladen oder das Konto ' + (window.WT ? "samt aller Klassen" : "samt aller Kinder und Lernstände") + ' endgültig löschen.</p>' +
           '<div class="row" style="gap:8px"><a class="ghost sm" href="/api/fam/me/export" download style="padding:8px 12px;border-radius:8px;text-decoration:none">Daten herunterladen</a><button class="ghost sm" id="flo">Abmelden</button><button class="ghost sm" id="fdel" style="color:#b8403b">Konto löschen …</button></div>' +
           '<p class="small muted" style="margin:10px 0 0"><a href="/f/datenschutz" target="_blank">Datenschutzerklärung</a></p></div>';
         document.getElementById("fw").onchange = function () { post("/api/admin/me", { weekly: this.checked }).then(function () { document.getElementById("fmsg").textContent = "Gespeichert."; }); };
@@ -134,12 +142,12 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     view.innerHTML = '<div class="card muted">Lade …</div>';
     return Promise.all([api("/api/admin/families"), api("/api/admin/families/invites")]).then(function (r) {
       var fs = r[0], inv = r[1].filter(function (i) { return i.expires > Date.now() && i.uses < i.max; });
-      view.innerHTML = '<div class="card"><h2>Einladungslink erstellen</h2><p class="small muted" style="margin:0 0 10px">Wer den Link bekommt, kann sich mit seiner E-Mail-Adresse registrieren und danach seine Kinder selbst verwalten. Jeder Link gilt für eine bestimmte Zahl Familien.</p>' +
-        '<div class="row" style="gap:8px"><input id="in" class="grow" maxlength="60" placeholder="Notiz, z. B. Familie Meier"><select id="iu"><option value="1">1 Familie</option><option value="3">3</option><option value="10">10</option></select><button id="imk">Link erstellen</button></div><div id="iout"></div></div>' +
-        '<div class="card"><h2>Offene Einladungen</h2>' + (inv.length ? inv.map(function (i) { return '<div class="row" style="gap:8px;padding:6px 0;border-top:1px solid #e3e8f0"><span class="grow small"><b>' + esc(i.note || "ohne Notiz") + '</b> · ' + i.uses + "/" + i.max + ' benutzt<br><span class="muted">' + esc(i.url) + '</span></span><button class="ghost sm" data-cp="' + esc(i.url) + '">Kopieren</button><button class="ghost sm" data-di="' + esc(i.code) + '">Löschen</button></div>'; }).join("") : '<p class="small muted" style="margin:0">Keine offenen Einladungen.</p>') + "</div>" +
-        '<div class="card"><h2>Familien (' + fs.length + ')</h2>' + (fs.length ? fs.map(function (f) { return '<div class="row" style="gap:8px;padding:6px 0;border-top:1px solid #e3e8f0"><span class="grow small"><b>' + esc(f.email) + '</b> ' + (f.status === "blocked" ? '<span class="err">gesperrt</span>' : "") + '<br><span class="muted">' + f.children + ' Kinder · zuletzt angemeldet ' + fmtAgo(f.lastLogin) + '</span></span><button class="ghost sm" data-bl="' + f.id + '" data-b="' + (f.status === "blocked" ? 0 : 1) + '">' + (f.status === "blocked" ? "Entsperren" : "Sperren") + '</button><button class="ghost sm" data-df="' + f.id + '" data-n="' + esc(f.email) + '">Löschen</button></div>'; }).join("") : '<p class="small muted" style="margin:0">Noch keine Familien registriert.</p>') +
+      view.innerHTML = '<div class="card"><h2>Einladungslink erstellen</h2><p class="small muted" style="margin:0 0 10px">Wer den Link bekommt, kann sich mit seiner E-Mail-Adresse registrieren und danach seine Kinder selbst verwalten (Eltern) oder Klassen mit Wochenaufgaben anlegen (Lehrkraft). Jeder Link gilt für eine bestimmte Zahl Familien.</p>' +
+        '<div class="row" style="gap:8px"><input id="in" class="grow" maxlength="60" placeholder="Notiz, z. B. Familie Meier"><select id="iu"><option value="1">1 Familie</option><option value="3">3</option><option value="10">10</option></select><select id="ir"><option value="parent">Eltern</option><option value="teacher">Lehrkraft</option></select><button id="imk">Link erstellen</button></div><div id="iout"></div></div>' +
+        '<div class="card"><h2>Offene Einladungen</h2>' + (inv.length ? inv.map(function (i) { return '<div class="row" style="gap:8px;padding:6px 0;border-top:1px solid #e3e8f0"><span class="grow small"><b>' + (i.role === "teacher" ? "🏫 " : "") + esc(i.note || "ohne Notiz") + '</b> · ' + i.uses + "/" + i.max + ' benutzt<br><span class="muted">' + esc(i.url) + '</span></span><button class="ghost sm" data-cp="' + esc(i.url) + '">Kopieren</button><button class="ghost sm" data-di="' + esc(i.code) + '">Löschen</button></div>'; }).join("") : '<p class="small muted" style="margin:0">Keine offenen Einladungen.</p>') + "</div>" +
+        '<div class="card"><h2>Familien (' + fs.length + ')</h2>' + (fs.length ? fs.map(function (f) { return '<div class="row" style="gap:8px;padding:6px 0;border-top:1px solid #e3e8f0"><span class="grow small"><b>' + (f.role === "teacher" ? "🏫 " : "") + esc(f.email) + '</b> ' + (f.status === "blocked" ? '<span class="err">gesperrt</span>' : "") + '<br><span class="muted">' + f.children + ' Kinder · zuletzt angemeldet ' + fmtAgo(f.lastLogin) + '</span></span><button class="ghost sm" data-bl="' + f.id + '" data-b="' + (f.status === "blocked" ? 0 : 1) + '">' + (f.status === "blocked" ? "Entsperren" : "Sperren") + '</button><button class="ghost sm" data-df="' + f.id + '" data-n="' + esc(f.email) + '">Löschen</button></div>'; }).join("") : '<p class="small muted" style="margin:0">Noch keine Familien registriert.</p>') +
         '<p class="small muted" style="margin:10px 0 0">Aus Datenschutzgründen siehst du hier nur Konten, nicht die Lernstände fremder Kinder.</p></div>';
-      document.getElementById("imk").onclick = function () { post("/api/admin/families/invites", { note: document.getElementById("in").value, uses: +document.getElementById("iu").value }).then(function (i) { viewFam().then(function () { document.getElementById("iout").innerHTML = '<p style="margin:10px 0 0"><b>Link:</b> <input readonly class="grow" style="width:100%" value="' + esc(i.url) + '" onclick="this.select()"></p>'; }); }).catch(function (e) { alert(e.message); }); };
+      document.getElementById("imk").onclick = function () { post("/api/admin/families/invites", { note: document.getElementById("in").value, uses: +document.getElementById("iu").value, role: document.getElementById("ir").value }).then(function (i) { viewFam().then(function () { document.getElementById("iout").innerHTML = '<p style="margin:10px 0 0"><b>Link:</b> <input readonly class="grow" style="width:100%" value="' + esc(i.url) + '" onclick="this.select()"></p>'; }); }).catch(function (e) { alert(e.message); }); };
       Array.prototype.forEach.call(view.querySelectorAll("[data-cp]"), function (b) { b.onclick = function () { navigator.clipboard.writeText(b.getAttribute("data-cp")); b.textContent = "Kopiert"; }; });
       Array.prototype.forEach.call(view.querySelectorAll("[data-di]"), function (b) { b.onclick = function () { api("/api/admin/families/invites/" + b.getAttribute("data-di"), { method: "DELETE" }).then(viewFam); }; });
       Array.prototype.forEach.call(view.querySelectorAll("[data-bl]"), function (b) { b.onclick = function () { post("/api/admin/families/" + b.getAttribute("data-bl") + "/block", { blocked: b.getAttribute("data-b") === "1" }).then(viewFam); }; });
@@ -345,7 +353,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
       '<div class="small muted">Zuletzt aktiv: ' + fmtAgo(p.lastEvent) + (p.lastEvent ? " (" + fmtAt(p.lastEvent) + ")" : "") + (r.metaTs ? " · Übersicht von " + fmtAt(r.metaTs) : "") + (m.rank ? " · " + esc(m.rank) : "") + (m.coins != null ? " · <b>🪙 " + m.coins + "</b> · <b>" + (m.xp || 0).toLocaleString("de-DE") + " XP</b>" : "") + (m.streak ? " · 🔥 " + m.streak + " Tage Serie" : "") +
       (p.devices.length ? " · " + p.devices.length + " Gerät" + (p.devices.length > 1 ? "e" : "") : " · noch kein Gerät verbunden") + "</div></div>" +
       '<button class="ghost" id="inv">Neuer Code</button><button class="ghost" id="ren">Umbenennen</button><button class="ghost" id="hid">Nur sichern</button><button class="ghost" id="rev">Geräte trennen</button><button class="ghost" id="del">Löschen</button></div></div>';
-    h += heuteCard(r, m) + wocheCard(r, m) + '<div class="card" id="friendCard"></div><div class="card" id="giftCard"></div><div class="card" id="passCard"></div><div class="card" id="wpCard"></div>';
+    h += heuteCard(r, m) + wocheCard(r, m) + '<div class="card" id="friendCard"></div><div class="card" id="classCard"></div><div class="card" id="giftCard"></div><div class="card" id="passCard"></div><div class="card" id="wpCard"></div>';
     h += '<div class="card" id="pathCard"></div><div class="card" id="goalsCard"></div><div class="card" id="plansCard"></div>';
     h += '<div class="card"><div class="row"><h2 class="grow" style="margin:0">Übungszeit pro Tag</h2><button class="tab" data-d="14" aria-pressed="' + (days === 14) + '">14 Tage</button><button class="tab" data-d="30" aria-pressed="' + (days === 30) + '">30 Tage</button><button class="tab" data-d="90" aria-pressed="' + (days === 90) + '">90 Tage</button></div>' +
       bars(r.days) + '<div class="legend"><span><i style="background:var(--good)"></i>10 Min. oder mehr</span><span><i style="background:var(--acc2)"></i>weniger</span><span class="muted">Insgesamt ' + fmtMin(t.sec) + ", " + t.items + " Aufgaben, " + t.activeDays + " aktive Tage</span></div></div>";
@@ -378,7 +386,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     document.getElementById("hid").onclick = function () { if (confirm(p.name + " nur noch sichern und hier nicht mehr anzeigen? Die Zahlen verschwinden aus Übersicht und Wochenmail, die Sicherung bleibt. Zurückholen kannst du ihn unter „＋ Spieler“.")) post("/api/admin/players/" + p.id + "/hidden", { hidden: true }).then(function () { cur = null; loadPlayers(); }); };
     document.getElementById("rev").onclick = function () { if (confirm("Alle verbundenen Geräte von " + p.name + " trennen? Neu verbinden geht mit einem neuen Code.")) post("/api/admin/players/" + p.id + "/revoke").then(function () { loadPlayers(p.id); }); };
     document.getElementById("del").onclick = function () { if (confirm(p.name + " und alle gespeicherten Lerndaten endgültig löschen?")) api("/api/admin/players/" + p.id, { method: "DELETE" }).then(function () { cur = null; loadPlayers(); }); };
-    drawFriends(p); drawGifts(p, r); drawPass(p, r); drawWeekPlan(p, r); drawPath(p, r); drawGoals(p, r); drawPlans(p, r); drawBackups(p, r); drawMail();
+    drawFriends(p); drawClass(p); drawGifts(p, r); drawPass(p, r); drawWeekPlan(p, r); drawPath(p, r); drawGoals(p, r); drawPlans(p, r); drawBackups(p, r); drawMail();
     var wd = document.getElementById("wdet"); if (wd) wd.addEventListener("toggle", function () { if (wd.open) showWords(p); });
     Array.prototype.forEach.call(view.querySelectorAll("tr[data-u]"), function (tr) { tr.onclick = function () { showUnit(p, tr.getAttribute("data-u")); }; });
   }
@@ -488,6 +496,62 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
       Array.prototype.forEach.call(el.querySelectorAll("[data-fa]"), function (b) { b.onclick = function () { post("/api/admin/players/" + p.id + "/friends/" + b.getAttribute("data-fa"), { action: "approve" }).then(function () { drawFriends(p); }); }; });
       Array.prototype.forEach.call(el.querySelectorAll("[data-fr]"), function (b) { b.onclick = function () { if (confirm("Diesen Freund entfernen?")) post("/api/admin/players/" + p.id + "/friends/" + b.getAttribute("data-fr"), { action: "remove" }).then(function () { drawFriends(p); }); }; });
     }).catch(function (e) { el.innerHTML = "<h2>Freunde &amp; Duelle</h2><p class='err small'>" + esc(e.message) + "</p>"; });
+  }
+
+  /* Eltern: Klassen-Anfrage des Kindes bestätigen */
+  function drawClass(p) {
+    var el = document.getElementById("classCard"); if (!el) return;
+    api("/api/admin/players/" + p.id + "/class").then(function (c) {
+      var head = "<h2>Klasse &amp; Wochenaufgabe</h2>";
+      if (c.state === "none") { el.innerHTML = head + "<p class='small muted' style='margin:0'>" + esc(p.name) + " ist in keiner Klasse. Eine Lehrkraft kann Wochenaufgaben einstellen; das Kind tritt mit einem Klassencode bei (App: Spielen › Challenge), und du bestätigst es hier. Die Teilnahme ist freiwillig.</p>"; return; }
+      el.innerHTML = head + (c.state === "pending"
+        ? "<p style='margin:0 0 10px'><b>" + esc(p.name) + "</b> möchte der Klasse <b>" + esc(c.name) + "</b> (" + esc(c.teacher) + ") beitreten.</p><p class='small muted' style='margin:0 0 10px'>Die Lehrkraft sieht dann den Vornamen, die Übungsminuten, aktive Tage und die erkannten Wörter der Wochenaufgabe sowie klassenweit die häufigsten schwierigen Wörter, keine Einzelfehler und keine Kontaktdaten. Du kannst jederzeit austreten lassen.</p><div class='row' style='gap:8px'><button class='sm' data-ca='approve'>Zustimmen</button><button class='ghost sm' data-ca='decline'>Ablehnen</button></div>"
+        : "<p style='margin:0 0 10px'>" + esc(p.name) + " ist in der Klasse <b>" + esc(c.name) + "</b> (" + esc(c.teacher) + ").</p><button class='ghost sm' data-ca='leave'>Aus der Klasse nehmen</button>");
+      Array.prototype.forEach.call(el.querySelectorAll("[data-ca]"), function (b) { b.onclick = function () { post("/api/admin/players/" + p.id + "/class", { action: b.getAttribute("data-ca") }).then(function () { drawClass(p); }); }; });
+    }).catch(function (e) { el.innerHTML = "<h2>Klasse &amp; Wochenaufgabe</h2><p class='err small'>" + esc(e.message) + "</p>"; });
+  }
+
+  /* Lehrkraft: Klassen, Wochenaufgabe, Übersicht */
+  function dIso(add) { var d = new Date(Date.now() + add * 86400000); return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2); }
+  function dDe(k) { var x = k.split("-"); return +x[2] + "." + +x[1] + "."; }
+  function viewNewClass() {
+    view.innerHTML = '<div class="card"><h2>Neue Klasse</h2><p class="small muted" style="margin:0 0 10px">Du bekommst einen Klassencode. Kinder geben ihn in der Wordy-App ein (Spielen › Challenge); die Eltern müssen zustimmen. Die Teilnahme ist freiwillig.</p>' +
+      '<div class="row" style="gap:8px;flex-wrap:wrap"><input id="cn" class="grow" maxlength="40" placeholder="Klasse, z. B. 6b Englisch"><input id="ct" class="grow" maxlength="40" placeholder="Dein Name, z. B. Frau Meier"><button id="cmk">Klasse anlegen</button></div></div>';
+    document.getElementById("cmk").onclick = function () { post("/api/admin/classes", { name: document.getElementById("cn").value, teacher: document.getElementById("ct").value }).then(function (r) { cur = "c" + r.id; return loadPlayers(cur); }).catch(function (e) { alert(e.message); }); };
+  }
+  function viewClass(id) {
+    view.innerHTML = '<div class="card muted">Lade …</div>';
+    return Promise.all([api("/api/admin/classes/" + id), unitCat ? Promise.resolve(unitCat) : api("/api/admin/units")]).then(function (r) {
+      var o = r[0]; unitCat = r[1];
+      var cur_ = o.current, g = o.goal, pc = g.target ? Math.min(100, Math.round(g.total * 100 / g.target)) : 0;
+      var h = '<div class="card"><h2>🏫 ' + esc(o.name) + ' · ' + esc(o.teacher) + '</h2><div class="row" style="gap:12px;flex-wrap:wrap;align-items:center"><span>Klassencode: <b style="font-family:ui-monospace,monospace;font-size:22px;letter-spacing:.1em">' + esc(o.code) + '</b></span><button class="ghost sm" id="ccp">Kopieren</button></div>' +
+        '<p class="small muted" style="margin:8px 0 0">Kinder geben den Code in der App unter Spielen › Challenge ein. Danach müssen ihre Eltern zustimmen' + (o.pending ? " – <b>" + o.pending + " Anfrage" + (o.pending > 1 ? "n warten" : " wartet") + " noch auf die Zustimmung der Eltern</b>" : "") + '.</p></div>';
+      h += '<div class="card"><h2>Aktuelle Wochenaufgabe</h2>' + (cur_ ? '<p style="margin:0 0 6px"><b>' + esc(cur_.title) + '</b> · ' + dDe(cur_.from) + ' bis ' + dDe(cur_.to) + '</p><p class="small muted" style="margin:0 0 8px">Daily Challenge fragt genau diese Einheiten ab: ' + esc(o.units.map(function (u) { return u.title; }).join(", ")) + '</p>' +
+        '<p style="margin:0 0 4px">Klassenziel: <b>' + g.total + ' von ' + g.target + '</b> erkannten Wörtern (' + cur_.goal + ' je Kind)</p><div style="height:12px;background:var(--bg);border-radius:6px;overflow:hidden"><div style="width:' + pc + '%;height:100%;background:var(--good)"></div></div>' +
+        '<div style="margin-top:12px">' + o.units.map(function (u) { return '<div class="row small" style="gap:8px;margin:4px 0"><span style="width:42%">' + esc(u.title) + '</span><span class="grow" style="height:8px;background:var(--bg);border-radius:4px;overflow:hidden"><span style="display:block;width:' + u.pct + '%;height:100%;background:var(--acc2)"></span></span><b style="width:44px;text-align:right">' + u.pct + ' %</b></div>'; }).join("") + '<p class="small muted" style="margin:4px 0 0">Balken: Anteil der Wörter, die die Kinder der Klasse sicher können (Durchschnitt).</p></div>'
+        : '<p class="muted" style="margin:0">Derzeit ist keine Aufgabe aktiv. Lege unten eine an.</p>') + '</div>';
+      var groups = {}, order = []; unitCat.forEach(function (u) { if (!groups[u.k]) { groups[u.k] = []; order.push(u.k); } groups[u.k].push(u); });
+      h += '<div class="card"><details id="tkd"><summary style="cursor:pointer"><b>＋ Neue Wochenaufgabe einstellen</b></summary><div style="margin-top:10px">' +
+        '<div class="row" style="gap:8px;flex-wrap:wrap"><input id="tkT" class="grow" maxlength="60" placeholder="Titel, z. B. Unit 3 – Vokabeln"><label class="small">von <input type="date" id="tkF" value="' + dIso(0) + '"></label><label class="small">bis <input type="date" id="tkE" value="' + dIso(6) + '"></label><label class="small">Ziel je Kind <input type="number" id="tkG" min="3" max="100" value="15" style="width:70px"></label></div>' +
+        '<p class="small muted" style="margin:10px 0 4px">Einheiten wählen (bis zu 12):</p><div style="max-height:260px;overflow:auto;border:1px solid var(--line);border-radius:10px;padding:8px">' +
+        order.map(function (k) { return '<div style="font-weight:600;margin:6px 0 2px">' + esc(/^\d+$/.test(k) ? "Klasse " + k : k) + '</div>' + groups[k].map(function (u) { return '<label class="row small" style="gap:6px;padding:2px 0"><input type="checkbox" data-u="' + esc(u.id) + '"><span>' + esc(u.icon) + ' ' + esc(u.title) + ' <span class="muted">(' + u.count + ' Wörter)</span></span></label>'; }).join(""); }).join("") +
+        '</div><div class="row" style="gap:8px;margin-top:10px"><button id="tkGo">Aufgabe starten</button><span id="tkMsg" class="small err"></span></div></div></details></div>';
+      h += '<div class="card"><h2>Kinder (' + o.members.length + ')</h2>' + (o.members.length ? '<table><tr><th>Name</th><th class="n">Min. (Woche)</th><th class="n">Wörter</th><th class="n">Tage</th><th class="n">Aufgabe</th><th></th></tr>' + o.members.map(function (m) { return '<tr><td>' + esc(m.name) + (m.active ? "" : ' <span class="muted small">noch nicht aktiv</span>') + '</td><td class="n">' + m.min + '</td><td class="n">' + m.words + '</td><td class="n">' + m.days + '</td><td class="n"><b>' + m.taskWords + '</b></td><td><button class="ghost sm" data-k="' + m.id + '" data-n="' + esc(m.name) + '">Entfernen</button></td></tr>'; }).join("") + '</table>' : '<p class="muted" style="margin:0">Noch keine Kinder. Gib den Klassencode weiter.</p>') +
+        '<p class="small muted" style="margin:10px 0 0">Du siehst nur Vornamen und Zahlen (Minuten, erkannte Wörter, aktive Tage), keine Einzelergebnisse und kein Ranking.</p></div>';
+      h += '<div class="card"><h2>Häufige Stolpersteine der Klasse</h2>' + (o.problems.length ? '<table><tr><th>Wort</th><th>Bedeutung</th><th class="n">Fehler</th></tr>' + o.problems.map(function (x) { return '<tr><td><b>' + esc(x.en) + '</b></td><td>' + esc(x.de) + '</td><td class="n">' + x.n + '×</td></tr>'; }).join("") + '</table><p class="small muted" style="margin:8px 0 0">Wörter, an denen mehrere Fehler in der Klasse passiert sind. Gut für die Wiederholung im Unterricht.</p>' : '<p class="muted small" style="margin:0">Noch nichts Auffälliges.</p>') + '</div>';
+      h += '<div class="card"><h2>Alle Aufgaben</h2>' + (o.tasks.length ? o.tasks.map(function (t) { return '<div class="row" style="gap:8px;padding:6px 0;border-top:1px solid var(--line)"><span class="grow small"><b>' + esc(t.title) + '</b><br><span class="muted">' + dDe(t.from) + ' bis ' + dDe(t.to) + ' · ' + t.units.length + ' Einheiten · Ziel ' + t.goal + '</span></span><button class="ghost sm" data-dt="' + t.id + '">Löschen</button></div>'; }).join("") : '<p class="muted small" style="margin:0">Keine.</p>') +
+        '<div style="margin-top:12px"><button class="ghost sm" id="cdel" style="color:var(--bad)">Klasse löschen …</button></div></div>';
+      view.innerHTML = h;
+      document.getElementById("ccp").onclick = function () { (navigator.clipboard ? navigator.clipboard.writeText(o.code) : Promise.reject()).then(function () { document.getElementById("ccp").textContent = "Kopiert ✓"; }, function () {}); };
+      document.getElementById("tkGo").onclick = function () {
+        var us = Array.prototype.map.call(view.querySelectorAll("[data-u]:checked"), function (x) { return x.getAttribute("data-u"); });
+        post("/api/admin/classes/" + id + "/task", { title: document.getElementById("tkT").value, from: document.getElementById("tkF").value, to: document.getElementById("tkE").value, goal: +document.getElementById("tkG").value, units: us })
+          .then(function () { viewClass(id); }).catch(function (e) { document.getElementById("tkMsg").textContent = e.message; });
+      };
+      Array.prototype.forEach.call(view.querySelectorAll("[data-k]"), function (b) { b.onclick = function () { if (confirm(b.getAttribute("data-n") + " aus der Klasse entfernen?")) post("/api/admin/classes/" + id + "/kick/" + b.getAttribute("data-k")).then(function () { loadPlayers(cur); }); }; });
+      Array.prototype.forEach.call(view.querySelectorAll("[data-dt]"), function (b) { b.onclick = function () { if (confirm("Aufgabe löschen?")) api("/api/admin/classes/" + id + "/task/" + b.getAttribute("data-dt"), { method: "DELETE" }).then(function () { viewClass(id); }); }; });
+      document.getElementById("cdel").onclick = function () { if (confirm("Klasse " + o.name + " mit allen Aufgaben löschen? Die Kinder bleiben bestehen.")) api("/api/admin/classes/" + id, { method: "DELETE" }).then(function () { cur = null; loadPlayers(); }); };
+    }).catch(function (e) { view.innerHTML = '<div class="card err">' + esc(e.message) + "</div>"; });
   }
   function drawWeekPlan(p, r) {
     var el = document.getElementById("wpCard"); if (!el) return;
@@ -705,7 +769,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
   function kpi(v, l) { return '<div class="kpi"><b>' + v + "</b><span>" + l + "</span></div>"; }
 
   loadPlayers();
-  setInterval(function () { if (cur !== "new" && !document.hidden && !document.getElementById("nn") && !document.getElementById("ic") && !document.querySelector("details[open]:not(.ugrp)") && !document.getElementById("unitdetail").innerHTML) show(); }, 120000);
+  setInterval(function () { if (cur !== "new" && cur !== "newc" && cur !== "fam" && !document.hidden && !document.getElementById("nn") && !document.getElementById("ic") && !document.querySelector("details[open]:not(.ugrp)") && !document.getElementById("unitdetail").innerHTML) show(); }, 120000);
 })();
 </script>
 </body>

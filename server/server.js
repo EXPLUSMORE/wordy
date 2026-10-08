@@ -77,11 +77,12 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS family_invites (code TEXT PRIMARY KEY, created INTEGER NOT NULL, expires INTEGER NOT NULL, max_uses INTEGER NOT NULL DEFAULT 1, uses INTEGER NOT NULL DEFAULT 0, note TEXT);
 `);
 if (!db.prepare("PRAGMA table_info(players)").all().some(c => c.name === "family")) db.exec("ALTER TABLE players ADD COLUMN family INTEGER REFERENCES families(id) ON DELETE CASCADE");
+for (const [tab, col, ddl] of [["families", "role", "TEXT NOT NULL DEFAULT 'parent'"], ["family_invites", "role", "TEXT NOT NULL DEFAULT 'parent'"]]) if (!db.prepare("PRAGMA table_info(" + tab + ")").all().some(c => c.name === col)) db.exec("ALTER TABLE " + tab + " ADD COLUMN " + col + " " + ddl);
 const fq = {
   byId: db.prepare("SELECT * FROM families WHERE id = ?"),
   byEmail: db.prepare("SELECT * FROM families WHERE email = ?"),
   all: db.prepare("SELECT f.*, (SELECT COUNT(*) FROM players p WHERE p.family = f.id) AS children FROM families f ORDER BY f.id"),
-  add: db.prepare("INSERT INTO families(email, created, consent_ts, consent_ver) VALUES (?, ?, ?, ?)"),
+  add: db.prepare("INSERT INTO families(email, created, consent_ts, consent_ver, role) VALUES (?, ?, ?, ?, ?)"),
   setStatus: db.prepare("UPDATE families SET status = ? WHERE id = ?"),
   setWeekly: db.prepare("UPDATE families SET weekly = ? WHERE id = ?"),
   touchLogin: db.prepare("UPDATE families SET last_login = ? WHERE id = ?"),
@@ -94,7 +95,7 @@ const fq = {
   touchSess: db.prepare("UPDATE family_sessions SET last_seen = ? WHERE hash = ?"),
   delSess: db.prepare("DELETE FROM family_sessions WHERE hash = ?"),
   delSessOf: db.prepare("DELETE FROM family_sessions WHERE family = ?"),
-  addInv: db.prepare("INSERT INTO family_invites(code, created, expires, max_uses, note) VALUES (?, ?, ?, ?, ?)"),
+  addInv: db.prepare("INSERT INTO family_invites(code, created, expires, max_uses, note, role) VALUES (?, ?, ?, ?, ?, ?)"),
   inv: db.prepare("SELECT * FROM family_invites WHERE code = ?"),
   invs: db.prepare("SELECT * FROM family_invites ORDER BY created DESC LIMIT 50"),
   useInv: db.prepare("UPDATE family_invites SET uses = uses + 1 WHERE code = ?"),
@@ -167,7 +168,21 @@ const sq = {
   score: db.prepare("SELECT best FROM scores WHERE player = ? AND mode = ? AND week = ?"),
   pruneScores: db.prepare("DELETE FROM scores WHERE week < ?")
 };
-const MAX_KIDS = 6, LINK_MIN = 20, SESSION_DAYS = 30, CONSENT_VER = "2026-10b";   // Version der Datenschutzerklärung, der zugestimmt wird
+/* Klassen-Modus (freiwillig): Lehrkräfte legen eine Klasse an, die Wochenaufgabe (Einheiten, Zeitraum) erscheint bei den Kindern, die mit Zustimmung ihrer Eltern beigetreten sind. */
+db.exec(`
+  CREATE TABLE IF NOT EXISTS classes (id INTEGER PRIMARY KEY, teacher INTEGER NOT NULL REFERENCES families(id) ON DELETE CASCADE, name TEXT NOT NULL, tname TEXT NOT NULL, code TEXT NOT NULL UNIQUE, created INTEGER NOT NULL);
+  CREATE TABLE IF NOT EXISTS class_members (class INTEGER NOT NULL REFERENCES classes(id) ON DELETE CASCADE, player INTEGER NOT NULL UNIQUE REFERENCES players(id) ON DELETE CASCADE, status TEXT NOT NULL DEFAULT 'pending', created INTEGER NOT NULL, PRIMARY KEY(class, player));
+  CREATE TABLE IF NOT EXISTS class_tasks (id INTEGER PRIMARY KEY, class INTEGER NOT NULL REFERENCES classes(id) ON DELETE CASCADE, title TEXT NOT NULL, units TEXT NOT NULL, d_from TEXT NOT NULL, d_to TEXT NOT NULL, goal INTEGER NOT NULL DEFAULT 15, created INTEGER NOT NULL);
+`);
+const kq = {
+  cls: db.prepare("SELECT * FROM classes WHERE id = ?"), byCode: db.prepare("SELECT * FROM classes WHERE code = ?"), ofTeacher: db.prepare("SELECT * FROM classes WHERE teacher = ? ORDER BY id"),
+  addCls: db.prepare("INSERT INTO classes(teacher, name, tname, code, created) VALUES (?, ?, ?, ?, ?)"), delCls: db.prepare("DELETE FROM classes WHERE id = ?"),
+  members: db.prepare("SELECT player, status FROM class_members WHERE class = ? ORDER BY created, player"), memberOf: db.prepare("SELECT cm.*, c.name, c.tname FROM class_members cm JOIN classes c ON c.id = cm.class WHERE cm.player = ?"),
+  addMember: db.prepare("INSERT INTO class_members(class, player, status, created) VALUES (?, ?, 'pending', ?)"), setStatus: db.prepare("UPDATE class_members SET status = ? WHERE player = ?"), delMember: db.prepare("DELETE FROM class_members WHERE player = ?"),
+  tasks: db.prepare("SELECT * FROM class_tasks WHERE class = ? ORDER BY d_from DESC, id DESC"), active: db.prepare("SELECT * FROM class_tasks WHERE class = ? AND d_from <= ? AND d_to >= ? ORDER BY d_to, id"), task: db.prepare("SELECT * FROM class_tasks WHERE id = ?"),
+  addTask: db.prepare("INSERT INTO class_tasks(class, title, units, d_from, d_to, goal, created) VALUES (?, ?, ?, ?, ?, ?, ?)"), delTask: db.prepare("DELETE FROM class_tasks WHERE id = ?")
+};
+const MAX_KIDS = 6, LINK_MIN = 20, SESSION_DAYS = 30, CONSENT_VER = "2026-10c";   // Version der Datenschutzerklärung, der zugestimmt wird
 const q = {
   player: db.prepare("SELECT * FROM players WHERE id = ?"),
   players: db.prepare("SELECT * FROM players ORDER BY id"),
@@ -490,7 +505,7 @@ function apiSync(pid) {
   return [200, {
     now: Date.now(), today: dayOf(Date.now()),
     goals: q.goals.all(pid, mon).map(g => ({ id: g.id, week: g.week, kind: g.kind, target: g.target, scope: JSON.parse(g.scope), coins: g.coins, title: g.title })),
-    plans: q.plans.all(pid, dayOf(Date.now())).map(p => ({ id: p.id, title: p.title, exam: p.exam, units: JSON.parse(p.units), coins: p.coins })),
+    plans: q.plans.all(pid, dayOf(Date.now())).map(p => ({ id: p.id, title: p.title, exam: p.exam, units: JSON.parse(p.units), coins: p.coins })).concat(classPlansFor(pid)),
     pathUnits: pathUnitsOf(pid),
     weekPlan: weekPlanOf(pid),
     bossDiff: bossDiffOf(pid),
@@ -787,6 +802,7 @@ async function apiSocial(pid, method, p, url, req, ip) {
   const g = socialGuard(pid);
   if (p === "/api/social/profile" && method === "POST") { const av = clean((await readJson(req)).avatar, 40); if (av && AVATAR_RE.test(av)) sq.setAvatar.run(av, pid); return [200, { ok: true }]; }
   if (p === "/api/social/me" && method === "GET") { const me = sq.me.get(pid); return [200, me.social ? { enabled: true, code: fcodeOf(pid), name: me.name, friends: friendsOf(pid) } : { enabled: false, name: me.name }]; }
+  if (p === "/api/social/class" || p.startsWith("/api/social/class/")) return apiClassKid(pid, method, p, req);
   if (g) return g;
   if (p === "/api/social/friends" && method === "POST") {
     if (limited("p" + pid, "friend", 20, 3600000)) return [429, { error: "Zu viele Anfragen. Bitte später noch einmal." }];
@@ -944,6 +960,84 @@ function crewLeave(pid) {
   if (!rest.length) cq.delCrew.run(c.id); else if (c.owner === pid) cq.setOwner.run(rest[0].player, c.id);
 }
 
+
+/* ---------- Klassen-Modus ---------- */
+const UNITS = (() => {   // Einheiten der Schule (Headlight 2 und Klassen 6 bis 8) aus den Datendateien der App
+  try {
+    const vm = require("node:vm"), ctx = { window: {} }; vm.createContext(ctx);
+    for (const f of ["klasse6", "klasse7", "klasse8", "lernbuch"]) vm.runInContext(fs.readFileSync(path.join(__dirname, "..", "data", f + ".js"), "utf8"), ctx);
+    return (ctx.window.VOCAB_UNITS || []).map(u => ({ id: String(u.id), k: u.k, title: String(u.title), icon: u.icon || "", words: u.words.map(w => [w[0], w[1]]) }));
+  } catch (e) { console.error("Einheiten-Katalog nicht geladen:", e.message); return []; }
+})();
+const UNIT_BY = Object.fromEntries(UNITS.map(u => [u.id, u]));
+const GOAL_DEFAULT = 15;   // wiedererkannte Wörter je Kind im Zeitraum der Aufgabe
+function classCode() { for (let i = 0; i < 20; i++) { const c = "K" + newCode().replace("-", "").slice(0, 5); if (!kq.byCode.get(c)) return c; } throw new Error("Kein Klassencode"); }
+const taskView = t => ({ id: t.id, title: t.title, units: JSON.parse(t.units), from: t.d_from, to: t.d_to, goal: t.goal });
+const classMembers = cid => kq.members.all(cid).filter(m => m.status === "ok").map(m => m.player);
+function taskStats(pid, t) {   // Beitrag eines Kindes zur Aufgabe (nur Zahlen): wiedererkannte Wörter der Einheiten im Zeitraum
+  const units = new Set(JSON.parse(t.units)); let words = 0;
+  for (const e of q.events.all(pid, Date.parse(t.d_from + "T00:00:00Z") - 86400000)) {
+    if (e.k !== "a") continue; const d = dayOf(e.ts); if (d < t.d_from || d > t.d_to) continue;
+    const j = JSON.parse(e.d); if (units.has(j.u) && (j.b || 0) === 1 && (j.a || 0) >= 2 && j.g > 0) words++;
+  }
+  return words;
+}
+function classOverview(cid) {
+  const c = kq.cls.get(cid), mon = weekKey(), today = dayOf(Date.now()), ids = classMembers(cid), pending = kq.members.all(cid).filter(m => m.status === "pending").length;
+  const tasks = kq.active.all(cid, today, today), t = tasks[0] || null;
+  const rows = ids.map(id => { const o = sq.me.get(id), w = memberWeek(id, mon); return { id, name: o.name, min: w.min, words: w.words, days: w.days, taskWords: t ? taskStats(id, t) : 0, active: w.min > 0 }; });
+  const total = rows.reduce((a, r) => a + r.taskWords, 0), target = t ? t.goal * Math.max(1, rows.length) : 0;
+  const units = t ? JSON.parse(t.units).map(uid => {
+    const u = UNIT_BY[uid]; if (!u) return { id: uid, title: uid, pct: 0 };
+    const ids2 = u.words.map((_, i) => u.id + "#" + i); let sum = 0, n = 0;
+    for (const id of ids) { const sn = snap(id, "words"); if (!sn) continue; n++; sum += ids2.filter(x => sn.d[x] && sn.d[x][0] >= 3).length / ids2.length; }
+    return { id: uid, title: u.title, pct: n ? Math.round(sum * 100 / n) : 0 };
+  }) : [];
+  const hard = {};
+  if (t) { const us = new Set(JSON.parse(t.units)); for (const id of ids) for (const e of q.events.all(id, Date.parse(t.d_from + "T00:00:00Z") - 86400000)) { if (e.k !== "a") continue; const d = dayOf(e.ts); if (d < t.d_from || d > t.d_to) continue; const j = JSON.parse(e.d); if (us.has(j.u) && j.g === 0 && j.en) { const k = j.en + "|" + (j.de || ""); hard[k] = (hard[k] || 0) + 1; } } }
+  const problems = Object.entries(hard).filter(x => x[1] >= 2).sort((a, b) => b[1] - a[1]).slice(0, 10).map(([k, n]) => ({ en: k.split("|")[0], de: k.split("|")[1], n }));
+  return { id: c.id, name: c.name, teacher: c.tname, code: c.code, members: rows, pending, active: rows.filter(r => r.active).length, tasks: kq.tasks.all(cid).map(taskView), current: t ? taskView(t) : null, goal: { total, target }, units, problems };
+}
+function crewLeague(cid, mon) {   // Crews der Klasse, Wertung je Mitglied (fair bei unterschiedlicher Größe)
+  const ids = new Set(classMembers(cid)), seen = {};
+  for (const id of ids) { const cr = cq.crewOf.get(id); if (cr && !seen[cr.id]) seen[cr.id] = { crew: cr, ids: [] }; if (cr) seen[cr.id].ids.push(id); }
+  return Object.values(seen).map(x => { const sc = x.ids.map(id => { const w = memberWeek(id, mon); return w.min + w.words * 2 + w.days * 10; }); return { id: x.crew.id, name: x.crew.name, emoji: x.crew.emoji, kids: x.ids.length, score: Math.round(sc.reduce((a, b) => a + b, 0) / sc.length) }; }).sort((a, b) => b.score - a.score);
+}
+function classKidView(pid) {
+  const m = kq.memberOf.get(pid); if (!m) return { state: "none" };
+  if (m.status !== "ok") return { state: "pending", name: m.name, teacher: m.tname };
+  const o = classOverview(m.class), mine = o.members.find(r => r.id === pid) || {}, mon = weekKey(), lg = crewLeague(m.class, mon), cr = cq.crewOf.get(pid), rank = cr ? lg.findIndex(x => x.id === cr.id) + 1 : 0;
+  return { state: "member", name: m.name, teacher: m.tname, kids: o.members.length, active: o.active, task: o.current && { ...o.current, unitTitles: o.current.units.map(u => (UNIT_BY[u] || { title: u }).title) }, goal: o.goal, mine: { taskWords: mine.taskWords || 0, goal: o.current ? o.current.goal : 0 },
+    league: lg.slice(0, 3).map((x, i) => ({ ...x, rank: i + 1, mine: !!(cr && cr.id === x.id) })), myCrew: cr && rank > 3 ? { name: cr.name, emoji: cr.emoji, rank } : null, leagueSize: lg.length };
+}
+async function apiClassKid(pid, method, p, req) {
+  if (p === "/api/social/class" && method === "GET") return [200, classKidView(pid)];
+  if (p === "/api/social/class/join" && method === "POST") {
+    if (limited("p" + pid, "classjoin", 8, 3600000)) return [429, { error: "Zu viele Versuche. Bitte später noch einmal." }];
+    const code = clean((await readJson(req)).code, 12).toUpperCase().replace(/[^A-Z0-9]/g, ""), c = code ? kq.byCode.get(code) : null;
+    if (!c) return [400, { error: "Diesen Klassencode gibt es nicht." }];
+    if (kq.memberOf.get(pid)) return [400, { error: "Du bist schon in einer Klasse oder die Anfrage läuft." }];
+    kq.addMember.run(c.id, pid, Date.now()); return [200, { ok: true, name: c.name, teacher: c.tname }];
+  }
+  if (p === "/api/social/class/leave" && method === "POST") { kq.delMember.run(pid); return [200, { ok: true }]; }
+  return [404, { error: "Nicht gefunden." }];
+}
+/* Wochenaufgaben der Klasse als Lernpläne der Kinder: die App zeigt sie wie einen Lernplan (Start, Karte, Fortschritt) */
+function classPlansFor(pid) {
+  const m = kq.memberOf.get(pid); if (!m || m.status !== "ok") return [];
+  const today = dayOf(Date.now());
+  return kq.active.all(m.class, today, today).map(t => ({ id: "c" + t.id, title: "🏫 " + m.name + ": " + t.title, exam: t.d_to, units: JSON.parse(t.units), coins: 0, cls: true, teacher: m.tname }));
+}
+function taskCreate(cid, b) {
+  const title = clean(b.title, 60) || "Wochenaufgabe", from = String(b.from || dayOf(Date.now())), to = String(b.to || ""), goal = Math.min(100, Math.max(3, Math.round(+b.goal || GOAL_DEFAULT)));
+  if (!/^\d{4}-\d\d-\d\d$/.test(from) || !/^\d{4}-\d\d-\d\d$/.test(to) || to < from) return [400, { error: "Bitte einen gültigen Zeitraum wählen." }];
+  if (to < dayOf(Date.now())) return [400, { error: "Das Ende liegt in der Vergangenheit." }];
+  const units = (Array.isArray(b.units) ? b.units : []).map(String).filter(u => UNIT_BY[u]).slice(0, 12);
+  if (!units.length) return [400, { error: "Bitte mindestens eine Einheit wählen." }];
+  if (kq.tasks.all(cid).length >= 30) return [400, { error: "Zu viele Aufgaben. Bitte alte löschen." }];
+  return [200, { id: +kq.addTask.run(cid, title, JSON.stringify(units), from, to, goal, Date.now()).lastInsertRowid }];
+}
+
 /* ---------- Routing ---------- */
 const PUBLIC = path.join(__dirname, "public");
 const server = http.createServer(async (req, res) => {
@@ -997,7 +1091,7 @@ const server = http.createServer(async (req, res) => {
     if ((p === "/f/join" || p === "/f/login") && req.method === "GET") return send(res, 200, fs.readFileSync(path.join(PUBLIC, "family.html"), "utf8"), { "Content-Security-Policy": FCSP });
     if ((p === "/f" || p === "/f/") && req.method === "GET") {
       if (!famAuth(req)) return send(res, 200, fs.readFileSync(path.join(PUBLIC, "family.html"), "utf8"), { "Content-Security-Policy": FCSP });
-      const html = fs.readFileSync(path.join(PUBLIC, "index.html"), "utf8").replace(/\/api\/admin/g, "/api/fam").replace("<head>", "<head><script>window.WF=1</script>");
+      const html = fs.readFileSync(path.join(PUBLIC, "index.html"), "utf8").replace(/\/api\/admin/g, "/api/fam").replace("<head>", "<head><script>window.WF=1" + (famAuth(req).role === "teacher" ? ";window.WT=1" : "") + "</script>");
       return send(res, 200, html, { "Content-Security-Policy": FCSP });
     }
     if (p === "/api/family/login" && req.method === "POST") {
@@ -1020,7 +1114,7 @@ const server = http.createServer(async (req, res) => {
       const inv = fq.inv.get(code);
       if (!inv || inv.expires < Date.now() || inv.uses >= inv.max_uses) return send(res, 400, { error: "Dieser Einladungslink ist ungültig oder abgelaufen." });
       let f = fq.byEmail.get(email);
-      if (!f) { const id = +fq.add.run(email, Date.now(), Date.now(), CONSENT_VER).lastInsertRowid; fq.useInv.run(code); f = fq.byId.get(id); }
+      if (!f) { const id = +fq.add.run(email, Date.now(), Date.now(), CONSENT_VER, inv.role || "parent").lastInsertRowid; fq.useInv.run(code); f = fq.byId.get(id); }
       if (f.status === "active" && !limited(email, "fmail", 3, 3600000)) { try { await sendLoginLink(f); } catch (e) { console.error("Anmeldelink:", e.message); return send(res, 502, { error: "Die Mail konnte nicht gesendet werden." }); } }
       return send(res, 200, { ok: true });
     }
@@ -1057,6 +1151,25 @@ const server = http.createServer(async (req, res) => {
           { "Content-Security-Policy": "default-src 'self'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'self'; img-src 'self' data:" });
       }
       if (p === "/api/admin/info" && req.method === "GET") return send(res, 200, SERVER_INFO);
+      const isT = !!(scope && scope.role === "teacher");
+      if (scope && !isT && (p === "/api/admin/classes" || p.startsWith("/api/admin/classes/") || p === "/api/admin/units")) return send(res, 403, { error: "Nur für Lehrkräfte." });
+      if (isT && p === "/api/admin/units" && req.method === "GET") return send(res, 200, UNITS.map(u => ({ id: u.id, k: u.k, title: u.title, icon: u.icon, count: u.words.length })));
+      if (isT && p === "/api/admin/classes" && req.method === "GET") return send(res, 200, kq.ofTeacher.all(scope.id).map(c => ({ id: c.id, name: c.name, code: c.code, members: classMembers(c.id).length, pending: kq.members.all(c.id).filter(m => m.status === "pending").length })));
+      if (isT && p === "/api/admin/classes" && req.method === "POST") {
+        const b = await readJson(req), name = clean(b.name, 40), tname = clean(b.teacher, 40);
+        if (!name || !tname) return send(res, 400, { error: "Bitte Klasse (z. B. 6b Englisch) und deinen Namen (z. B. Frau Meier) eintragen." });
+        if (kq.ofTeacher.all(scope.id).length >= 8) return send(res, 400, { error: "Es sind höchstens 8 Klassen pro Konto möglich." });
+        const id = +kq.addCls.run(scope.id, name, tname, classCode(), Date.now()).lastInsertRowid; return send(res, 200, { id, code: kq.cls.get(id).code });
+      }
+      const mcl = p.match(/^\/api\/admin\/classes\/(\d+)(?:\/(\w+))?(?:\/(\d+))?$/);
+      if (isT && mcl) {
+        const c = kq.cls.get(+mcl[1]); if (!c || c.teacher !== scope.id) return send(res, 404, { error: "Unbekannt." });
+        if (!mcl[2] && req.method === "GET") return send(res, 200, classOverview(c.id));
+        if (!mcl[2] && req.method === "DELETE") { kq.delCls.run(c.id); return send(res, 200, { ok: true }); }
+        if (mcl[2] === "task" && req.method === "POST") { const [cd, bd] = taskCreate(c.id, await readJson(req)); return send(res, cd, bd); }
+        if (mcl[2] === "task" && mcl[3] && req.method === "DELETE") { const t = kq.task.get(+mcl[3]); if (!t || t.class !== c.id) return send(res, 404, { error: "Unbekannt." }); kq.delTask.run(t.id); return send(res, 200, { ok: true }); }
+        if (mcl[2] === "kick" && mcl[3] && req.method === "POST") { const cm = kq.memberOf.get(+mcl[3]); if (cm && cm.class === c.id) kq.delMember.run(+mcl[3]); return send(res, 200, { ok: true }); }
+      }
       if (scope && p === "/api/admin/me" && req.method === "GET") return send(res, 200, { email: scope.email, created: scope.created, weekly: !!scope.weekly, children: fq.kids.all(scope.id).length, max: MAX_KIDS, mail: transportOn(), day: MAIL.day, hour: MAIL.hour });
       if (scope && p === "/api/admin/me" && req.method === "POST") { const b = await readJson(req); fq.setWeekly.run(b.weekly ? 1 : 0, scope.id); return send(res, 200, { ok: true }); }
       if (scope && p === "/api/admin/me/export" && req.method === "GET") {
@@ -1068,12 +1181,12 @@ const server = http.createServer(async (req, res) => {
         fq.del.run(scope.id); return send(res, 200, { ok: true }, { "Set-Cookie": cookieHdr("", 0) });   // löscht Konto, Kinder, Lernstände (ON DELETE CASCADE)
       }
       if (scope && p.startsWith("/api/admin/families")) return send(res, 403, { error: "Nicht erlaubt." });
-      if (!scope && p === "/api/admin/families" && req.method === "GET") return send(res, 200, fq.all.all().map(f => ({ id: f.id, email: f.email, created: f.created, status: f.status, children: f.children, lastLogin: f.last_login, weekly: !!f.weekly, consent: f.consent_ts })));
-      if (!scope && p === "/api/admin/families/invites" && req.method === "GET") return send(res, 200, fq.invs.all().map(i => ({ code: i.code, created: i.created, expires: i.expires, max: i.max_uses, uses: i.uses, note: i.note, url: DASH_URL + "/f/join?i=" + i.code })));
+      if (!scope && p === "/api/admin/families" && req.method === "GET") return send(res, 200, fq.all.all().map(f => ({ id: f.id, email: f.email, created: f.created, status: f.status, children: f.children, role: f.role, lastLogin: f.last_login, weekly: !!f.weekly, consent: f.consent_ts })));
+      if (!scope && p === "/api/admin/families/invites" && req.method === "GET") return send(res, 200, fq.invs.all().map(i => ({ code: i.code, created: i.created, expires: i.expires, max: i.max_uses, uses: i.uses, note: i.note, url: DASH_URL + "/f/join?i=" + i.code + (i.role === "teacher" ? "&l=1" : ""), role: i.role })));
       if (!scope && p === "/api/admin/families/invites" && req.method === "POST") {
         const b = await readJson(req), code = (rand(5)).toUpperCase(), days = Math.min(60, Math.max(1, +b.days || 14)), uses = Math.min(50, Math.max(1, +b.uses || 1));
-        fq.addInv.run(code, Date.now(), Date.now() + days * 86400000, uses, clean(b.note, 60));
-        return send(res, 200, { code, url: DASH_URL + "/f/join?i=" + code, expires: Date.now() + days * 86400000, max: uses });
+        fq.addInv.run(code, Date.now(), Date.now() + days * 86400000, uses, clean(b.note, 60), b.role === "teacher" ? "teacher" : "parent");
+        return send(res, 200, { code, url: DASH_URL + "/f/join?i=" + code + (b.role === "teacher" ? "&l=1" : ""), expires: Date.now() + days * 86400000, max: uses, role: b.role === "teacher" ? "teacher" : "parent" });
       }
       const mfi = p.match(/^\/api\/admin\/families\/invites\/([A-Z0-9]{4,20})$/);
       if (!scope && mfi && req.method === "DELETE") { fq.delInv.run(mfi[1]); return send(res, 200, { ok: true }); }
@@ -1095,6 +1208,7 @@ const server = http.createServer(async (req, res) => {
       if (p === "/api/admin/players" && req.method === "POST") {
         const b = await readJson(req), name = clean(b.name, 20);
         if (!name) return send(res, 400, { error: "Name fehlt." });
+        if (isT) return send(res, 403, { error: "Lehrkraft-Konten haben keine Kinder." });
         if (scope && fq.kids.all(scope.id).length >= MAX_KIDS) return send(res, 400, { error: "Es sind höchstens " + MAX_KIDS + " Kinder pro Konto möglich." });
         const id = scope ? +fq.addKid.run(name, Date.now(), scope.id).lastInsertRowid : +q.addPlayer.run(name, Date.now(), b.hidden ? 1 : 0).lastInsertRowid;
         return send(res, 200, { id, name, hidden: !!b.hidden, invite: newInvite(id) });
@@ -1129,6 +1243,13 @@ const server = http.createServer(async (req, res) => {
           return res.end(r.d);
         }
         if (m[2] === "social" && req.method === "GET") { const me = sq.me.get(pid), cr = cq.crewOf.get(pid); return send(res, 200, { enabled: !!me.social, code: me.social ? fcodeOf(pid) : null, friends: friendsOf(pid), crew: cr ? { name: cr.name, emoji: cr.emoji, members: cq.members.all(cr.id).map(x => sq.me.get(x.player).name) } : null }); }
+        if (m[2] === "class" && req.method === "GET") { const cm = kq.memberOf.get(pid); return send(res, 200, cm ? { state: cm.status === "ok" ? "member" : "pending", name: cm.name, teacher: cm.tname } : { state: "none" }); }
+        if (m[2] === "class" && req.method === "POST") {
+          const act = clean((await readJson(req)).action, 10), cm = kq.memberOf.get(pid); if (!cm) return send(res, 404, { error: "Keine Klasse." });
+          if (act === "approve" && cm.status === "pending") { kq.setStatus.run("ok", pid); return send(res, 200, { ok: true }); }
+          if (act === "decline" || act === "leave") { kq.delMember.run(pid); return send(res, 200, { ok: true }); }
+          return send(res, 400, { error: "Unbekannte Aktion." });
+        }
         if (m[2] === "crewleave" && req.method === "POST") { crewLeave(pid); return send(res, 200, { ok: true }); }
         if (m[2] === "social" && req.method === "POST") { const on = !!(await readJson(req)).enabled; sq.setSocial.run(on ? 1 : 0, pid); if (on) fcodeOf(pid); return send(res, 200, { ok: true }); }
         if (m[2] === "goals" && req.method === "GET") return send(res, 200, weekGoals(pid));
