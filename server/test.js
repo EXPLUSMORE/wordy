@@ -200,6 +200,9 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     const inv = await J("/api/admin/families/invites", { method: "POST", headers: H, body: JSON.stringify({ note: "Test", uses: 2 }) });
     assert.equal(inv.s, 200); assert.ok(/\/f\/join\?i=/.test(inv.j.url));
     assert.equal((await fetch(base + "/f/join?i=" + inv.j.code)).status, 200, "Registrierungsseite");
+    const dp = await (await fetch(base + "/f/datenschutz")).text();
+    assert.ok(/Datenschutzerklärung/.test(dp) && /Art\. 6 Abs\. 1 lit\. a/.test(dp) && !/\{\{[A-Z]+\}\}/.test(dp), "Datenschutzerklärung ohne offene Platzhalter");
+    assert.ok(/<mark>\[Name des Verantwortlichen eintragen\]/.test(dp) && /Entwurf, bitte vervollständigen/.test(dp), "fehlende Betreiber-Angaben werden markiert");
     assert.equal((await J("/api/family/join", { method: "POST", body: JSON.stringify({ email: "mama@example.org", invite: inv.j.code }) })).s, 400, "ohne Einwilligung keine Registrierung");
     mailGot = "";
     assert.equal((await J("/api/family/join", { method: "POST", body: JSON.stringify({ email: "Mama@Example.org", invite: inv.j.code, consent: true }) })).s, 200);
@@ -282,6 +285,37 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     assert.equal((await J("/api/social/board?mode=nix", { headers: jt })).s, 400);
     await J("/api/social/profile", { method: "POST", headers: lt, body: JSON.stringify({ avatar: "svg:fnwolf" }) });
     assert.equal((await J("/api/social/me", { headers: jt })).j.friends[0].avatar, "svg:fnwolf", "Figur des Freundes");
+
+    /* ---------- Crew-Wochenziele ---------- */
+    assert.equal((await J("/api/social/crew", { method: "POST", headers: jt, body: JSON.stringify({ adj: 0, noun: 99, emoji: 1 }) })).s, 400, "Crew-Name nur aus der Liste");
+    assert.equal((await J("/api/social/crew", { method: "POST", headers: jt, body: JSON.stringify({ adj: 0, noun: 1, emoji: 1 }) })).s, 200);
+    const cv0 = (await J("/api/social/crew", { headers: jt })).j.crew; assert.equal(cv0.name, "Turbo Wölfe"); assert.equal(cv0.members.length, 1);
+    assert.equal((await J("/api/social/crew/invite", { method: "POST", headers: jt, body: JSON.stringify({ to: kid.j.id }) })).s, 200, "Freund in die Crew einladen");
+    assert.equal((await J("/api/social/crew", { headers: lt })).j.invites.length, 1, "Einladung kommt an");
+    assert.equal((await J("/api/social/crew/answer", { method: "POST", headers: lt, body: JSON.stringify({ crew: cv0.id, accept: true }) })).s, 200);
+    assert.equal((await J("/api/social/crew", { headers: jt })).j.crew.members.length, 2, "zwei Mitglieder");
+    const nowT = Date.now(), ev = (k, d, i) => ({ i: "c" + i + nowT, t: nowT - i, k, d });
+    await J("/api/events", { method: "POST", headers: jt, body: JSON.stringify({ events: [ev("ss", { sec: 3600, items: 10, correct: 9 }, 1), ...Array.from({ length: 12 }, (_, i) => ev("a", { id: "H2-1a#" + i, g: 2, b: 1, a: 2 }, 10 + i))] }) });
+    await J("/api/events", { method: "POST", headers: lt, body: JSON.stringify({ events: [ev("ss", { sec: 1200, items: 5, correct: 5 }, 2)] }) });
+    let cv = (await J("/api/social/crew", { headers: jt })).j.crew, qm = cv.quests.find(x => x.id === "min"), qw = cv.quests.find(x => x.id === "words");
+    assert.equal(qm.total, 80); assert.deepEqual(qm.targets, [60, 120, 180]); assert.equal(qm.tier, 1, "Bronze bei Übungszeit"); assert.equal(qw.total, 12); assert.equal(qw.tier, 0);
+    assert.equal(cv.members.find(m => m.you).mvp, true, "Jonas ist MVP"); assert.equal(cv.members.find(m => !m.you).name, "Lena");
+    assert.equal((await J("/api/social/crew/claim", { method: "POST", headers: jt, body: JSON.stringify({ quest: "min", tier: 2 }) })).s, 400, "Silber noch nicht erreicht");
+    const cl = await J("/api/social/crew/claim", { method: "POST", headers: jt, body: JSON.stringify({ quest: "min", tier: 1 }) }); assert.equal(cl.s, 200); assert.equal(cl.j.coins, 3);
+    assert.equal((await J("/api/social/crew/claim", { method: "POST", headers: jt, body: JSON.stringify({ quest: "min", tier: 1 }) })).s, 400, "nur einmal abholen");
+    assert.equal((await J("/api/social/crew/claim", { method: "POST", headers: lt, body: JSON.stringify({ quest: "words", tier: 1 }) })).s, 400, "Wörter-Ziel nicht erreicht");
+    await J("/api/events", { method: "POST", headers: jt, body: JSON.stringify({ events: [ev("ss", { sec: 3600, items: 10, correct: 9 }, 3)] }) });
+    assert.equal((await J("/api/social/crew/claim", { method: "POST", headers: lt, body: JSON.stringify({ quest: "min", tier: 2 }) })).s, 200, "Lena darf Silber holen, sie hat mitgeübt");
+    assert.equal((await J("/api/social/crew/cheer", { method: "POST", headers: lt, body: JSON.stringify({ to: jm.j.id, emoji: "💪" }) })).s, 200, "Anfeuern");
+    assert.equal((await J("/api/social/crew/cheer", { method: "POST", headers: lt, body: JSON.stringify({ to: jm.j.id, emoji: "💪" }) })).s, 429, "nicht dauernd anfeuern");
+    assert.equal((await J("/api/social/crew/cheer", { method: "POST", headers: lt, body: JSON.stringify({ to: kid.j.id, emoji: "💪" }) })).s, 403, "nicht sich selbst");
+    assert.equal((await J("/api/social/crew/cheer", { method: "POST", headers: lt, body: JSON.stringify({ to: jm.j.id, emoji: "💩" }) })).s, 400, "nur feste Emojis");
+    assert.equal((await J("/api/social/crew", { headers: jt })).j.crew.cheers[0].from, "Lena", "Jonas sieht das Anfeuern");
+    assert.equal((await J("/api/fam/players/" + kid.j.id + "/social", { headers: F })).j.crew.name, "Turbo Wölfe", "Eltern sehen die Crew");
+    assert.equal((await J("/api/fam/players/" + kid.j.id + "/crewleave", { method: "POST", headers: F, body: "{}" })).s, 200, "Eltern nehmen das Kind aus der Crew");
+    assert.equal((await J("/api/social/crew", { headers: jt })).j.crew.members.length, 1, "Crew besteht weiter");
+    assert.equal((await J("/api/social/crew/leave", { method: "POST", headers: jt, body: "{}" })).s, 200);
+    assert.equal((await J("/api/social/crew", { headers: jt })).j.crew, null, "leere Crew ist weg");
     assert.equal((await J("/api/social/friends/" + kid.j.id, { method: "DELETE", headers: jt })).s, 200);
     assert.equal((await J("/api/social/challenges", { method: "POST", headers: jt, body: JSON.stringify({ to: kid.j.id, mode: "blitz", words: WORDS, seed: 5, score: 10 }) })).s, 403, "nach dem Entfernen keine Duelle mehr");
     await J("/api/admin/players/" + jm.j.id, { method: "DELETE", headers: H });

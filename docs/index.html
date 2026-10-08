@@ -870,10 +870,21 @@ details.fold>.fbody{padding:2px 0 14px}
 .reacts{display:flex;gap:2px;flex:none}.rea{border:0;background:var(--card-2);border-radius:8px;font-size:16px;padding:3px 5px;cursor:pointer}.rea.on{background:var(--accent-soft);outline:2px solid var(--accent)}
 #tabs button.dot{position:relative}#tabs button.dot:after{content:"";position:absolute;top:6px;right:22%;width:10px;height:10px;border-radius:50%;background:#ff3d6e;border:2px solid var(--card,#fff)}
 .ar-duel{margin:10px 0 0;padding:10px 14px;border-radius:12px;background:rgba(255,255,255,.12);font-size:15px;text-align:center}
+/* Crew */
+.crewhero{background:linear-gradient(150deg,#2b2f8f,#6a2fc0 55%,#c83fa0);color:#fff;border:3px solid #14213d;position:relative;overflow:hidden}
+.crbadge{display:grid;place-items:center;width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,.18);font-size:26px;flex:none}.crbadge.big{width:62px;height:62px;font-size:38px;border:3px solid #14213d;background:rgba(255,255,255,.22)}
+.crmem{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}.crm{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;opacity:.55}.crm.on{opacity:1}.crm .fav{border:3px solid var(--c);background:rgba(255,255,255,.2)!important}.crm small{font-size:10px;font-weight:700}
+.crm.on:after{content:"🔥";position:absolute;right:-6px;top:-8px;font-size:15px}.mvp{position:absolute;left:-6px;top:-12px;font-style:normal;font-size:16px;transform:rotate(-18deg)}
+.crq .crbar{position:relative;height:16px;border-radius:9px;background:var(--card-2);border:2px solid #14213d;overflow:hidden;display:flex;margin-top:10px}.crbar i{display:block;height:100%}.crbar s{position:absolute;top:0;bottom:0;width:2px;background:#14213d;opacity:.6}
+.crtiers{display:flex;gap:8px}.crt{flex:1;border:3px solid #14213d;border-radius:12px;padding:6px 4px;text-align:center;font-family:inherit;color:var(--ink);background:var(--card-2);cursor:default;display:flex;flex-direction:column;align-items:center;gap:1px}.crt span{font-size:20px}.crt b{font-size:14px}.crt small{font-size:10px;font-weight:800}
+.crt.lock{opacity:.5}.crt.got{background:var(--good-soft);border-color:var(--good)}.crt.need{background:var(--accent-soft)}
+.crt.rdy{background:linear-gradient(#ffe58a,#ffb61e);color:#3a2500;cursor:pointer;animation:rtpl 1.4s ease-in-out infinite alternate;--g:rgba(255,200,70,.9);box-shadow:0 0 14px var(--g)}
+.crdot{width:10px;height:28px;border-radius:5px;flex:none}
+.crpick{border:3px solid transparent;background:var(--card-2);border-radius:12px;font-size:26px;padding:4px 8px;cursor:pointer}.crpick.on{border-color:var(--accent);background:var(--accent-soft)}
 </style>
 
 
-<script>window.WORDY_VERSION="2.47.0";window.WORDY_BUILD="f10e9bb60e";</script>
+<script>window.WORDY_VERSION="2.48.0";window.WORDY_BUILD="0e73e8726a";</script>
 </head>
 <body>
 <div id="app">
@@ -900,30 +911,30 @@ details.fold>.fbody{padding:2px 0 14px}
   <div id="session" hidden></div>
 </div>
 <div id="arena" hidden></div>
-<script src="data/klasse6.js?v=f10e9bb60e"></script>
-<script src="data/klasse7.js?v=f10e9bb60e"></script>
-<script src="data/klasse8.js?v=f10e9bb60e"></script>
-<script src="data/business.js?v=f10e9bb60e"></script>
-<script src="data/business-basis2.js?v=f10e9bb60e"></script>
-<script src="data/business-aufbau2.js?v=f10e9bb60e"></script>
-<script src="data/business-profi2.js?v=f10e9bb60e"></script>
-<script src="data/smalltalk.js?v=f10e9bb60e"></script>
-<script src="data/idioms.js?v=f10e9bb60e"></script>
-<script src="data/saetze.js?v=f10e9bb60e"></script>
-<script src="data/saetze2.js?v=f10e9bb60e"></script>
-<script src="data/lernbuch.js?v=f10e9bb60e"></script>
-<script src="data/verben.js?v=f10e9bb60e"></script>
-<script src="js/engine.js?v=f10e9bb60e"></script>
-<script src="js/cosmetics.js?v=f10e9bb60e"></script>
-<script src="js/fortnite.js?v=f10e9bb60e"></script>
-<script src="js/figur.js?v=f10e9bb60e"></script>
-<script src="js/stila.js?v=f10e9bb60e"></script>
-<script src="js/stilb.js?v=f10e9bb60e"></script>
-<script src="js/loot.js?v=f10e9bb60e"></script>
-<script src="js/film.js?v=f10e9bb60e"></script>
-<script src="js/app.js?v=f10e9bb60e"></script>
-<script src="js/arena.js?v=f10e9bb60e"></script>
-<script src="js/sync.js?v=f10e9bb60e"></script>
+<script src="data/klasse6.js?v=0e73e8726a"></script>
+<script src="data/klasse7.js?v=0e73e8726a"></script>
+<script src="data/klasse8.js?v=0e73e8726a"></script>
+<script src="data/business.js?v=0e73e8726a"></script>
+<script src="data/business-basis2.js?v=0e73e8726a"></script>
+<script src="data/business-aufbau2.js?v=0e73e8726a"></script>
+<script src="data/business-profi2.js?v=0e73e8726a"></script>
+<script src="data/smalltalk.js?v=0e73e8726a"></script>
+<script src="data/idioms.js?v=0e73e8726a"></script>
+<script src="data/saetze.js?v=0e73e8726a"></script>
+<script src="data/saetze2.js?v=0e73e8726a"></script>
+<script src="data/lernbuch.js?v=0e73e8726a"></script>
+<script src="data/verben.js?v=0e73e8726a"></script>
+<script src="js/engine.js?v=0e73e8726a"></script>
+<script src="js/cosmetics.js?v=0e73e8726a"></script>
+<script src="js/fortnite.js?v=0e73e8726a"></script>
+<script src="js/figur.js?v=0e73e8726a"></script>
+<script src="js/stila.js?v=0e73e8726a"></script>
+<script src="js/stilb.js?v=0e73e8726a"></script>
+<script src="js/loot.js?v=0e73e8726a"></script>
+<script src="js/film.js?v=0e73e8726a"></script>
+<script src="js/app.js?v=0e73e8726a"></script>
+<script src="js/arena.js?v=0e73e8726a"></script>
+<script src="js/sync.js?v=0e73e8726a"></script>
 
 <script>
 if ('serviceWorker' in navigator) {

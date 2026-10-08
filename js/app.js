@@ -427,7 +427,7 @@
     return '<span class="srem">' + (c.it ? shopIcon(c.it) : "🎁") + '</span>';
   }
   function medalStyle(id) {
-    var m = /^md:(\w+?)(?:p(\d)|cup)?$/.exec(id) || [], k = id.slice(3), T = { boss1: ["common", "⚔"], boss5: ["rare", "⚔"], boss10: ["epic", "⚔"], serie7: ["rare", "7"], serie30: ["epic", "30"], serie100: ["legend", "100"], duel1: ["common", "⚔"], duel5: ["rare", "5"], duel20: ["epic", "20"], chal7: ["rare", "7"], chal30: ["legend", "30"], w25: ["rare", "25"], w100: ["epic", "100"] };
+    var m = /^md:(\w+?)(?:p(\d)|cup)?$/.exec(id) || [], k = id.slice(3), T = { boss1: ["common", "⚔"], boss5: ["rare", "⚔"], boss10: ["epic", "⚔"], serie7: ["rare", "7"], serie30: ["epic", "30"], serie100: ["legend", "100"], crew1: ["common", "★"], crewgold: ["epic", "★"], duel1: ["common", "⚔"], duel5: ["rare", "5"], duel20: ["epic", "20"], chal7: ["rare", "7"], chal30: ["legend", "30"], w25: ["rare", "25"], w100: ["epic", "100"] };
     if (T[k]) return { rar: T[k][0], val: T[k][1] };
     var pm = /p(\d)$/.exec(k); if (pm) return { rar: +pm[1] >= S.passInfo().weeks.length ? "legend" : "epic", val: pm[1] };
     return { rar: "legend", val: "cup" };
@@ -778,22 +778,22 @@
 
 
   /* ================= Freunde, Duelle, Ranglisten ================= */
-  var soc = { me: null, inbox: null, err: "", loading: false, ts: 0, board: {}, boardMode: "blitz" };
+  var soc = { me: null, inbox: null, crew: null, err: "", loading: false, ts: 0, board: {}, boardMode: "blitz" };
   var DUEL_MODES = [["match", "⚡ Match-Rausch"], ["blitz", "🔥 Blitzrunde"], ["survival", "💠 Letztes Herz"]], MODE_NAME = { match: "Match-Rausch", blitz: "Blitzrunde", survival: "Letztes Herz" };
   var REACTS = ["👏", "😮", "🔥", "😅", "💪", "🤝"];
   function socOn() { return !!(global.WordySync && global.WordySync.connected()); }
-  function socViewing() { return tab === "spielen" && (spielSeg === "freunde" || spielSeg === "rang") && sessionEl.hidden; }
+  function socViewing() { return tab === "spielen" && (spielSeg === "freunde" || spielSeg === "rang" || spielSeg === "crew") && sessionEl.hidden; }
   function socLoad(force) {
     if (!socOn() || soc.loading || (!force && Date.now() - soc.ts < 4000)) return;
     var W = global.WordySync; soc.loading = true;
     W.social("POST", "/profile", { avatar: S.state.profile.avatar }).catch(function () {})
       .then(function () { return W.social("GET", "/me"); })
-      .then(function (me) { soc.me = me; soc.err = ""; return me.enabled ? W.social("GET", "/inbox").then(function (ib) { soc.inbox = ib; }) : null; })
+      .then(function (me) { soc.me = me; soc.err = ""; return me.enabled ? W.social("GET", "/inbox").then(function (ib) { soc.inbox = ib; return W.social("GET", "/crew").then(function (cr) { soc.crew = cr; }); }) : null; })
       .catch(function (e) { soc.err = e.message; })
       .then(function () {
         soc.loading = false; soc.ts = Date.now();
         if (soc.inbox) { var gained = 0, wins = 0; soc.inbox.recent.forEach(function (c) { var r = duelResult(c), o = S.duelDone(c.id, r.win && !r.tie); if (o.fresh) { gained += o.coins; if (o.win) wins++; } }); if (wins) { toast("🏆 " + (wins === 1 ? "Duell gewonnen" : wins + " Duelle gewonnen") + (gained ? "! +" + gained + " 🪙" : "!"), 3600); renderHeader(); } }
-        var n = soc.inbox ? soc.inbox.open.length : 0, b = $('#tabs [data-tab="spielen"]'); if (b) b.classList.toggle("dot", n > 0);
+        var n = soc.inbox ? soc.inbox.open.length : 0, b = $('#tabs [data-tab="spielen"]'); if (b) b.classList.toggle("dot", n > 0 || crewDot());
         if (socViewing()) render();
       });
   }
@@ -847,6 +847,52 @@
     var body = !c || !c.rows ? '<p class="small muted">' + (c && c.err ? esc(c.err) : "Lade …") + '</p>' : c.rows.length < 2 ? '<p class="small muted">Noch keine Freunde auf der Liste. Hol dir welche und überhol sie!</p>' + c.rows.map(rankRow).join("") : c.rows.map(rankRow).join("");
     function rankRow(r, i) { return '<div class="drow' + (r.me ? " me" : "") + '"><span class="medal">' + (r.score ? (MED[i] || (i + 1)) : "·") + '</span>' + who(r, 34) + '<div class="grow"><b>' + esc(r.name) + (r.me ? " (du)" : "") + '</b></div><b class="tnum">' + r.score + '</b></div>'; }
     return tabs + '<section class="card"><div class="eyebrow">Diese Woche · beste Runde</div>' + body + '<p class="small muted" style="margin:10px 0 0">Jede Arena-Runde zählt. Nur du und deine bestätigten Freunde stehen auf der Liste. Am Montag geht es von vorn los.</p></section>';
+  }
+
+  /* ---------- Crew: gemeinsame Wochenziele ---------- */
+  var crewUi = { adj: 0, noun: 0, emoji: 0 }, CREW_COL = ["#ff5e7e", "#ffb61e", "#3fd0ff", "#7cff6b", "#b58cff", "#ff8a4c"];
+  function crewDot() { var c = soc.crew; if (!c) return false; if (c.invites.length) return true; return !!(c.crew && c.crew.quests.some(function (q) { return q.tiers.some(function (t) { return t.reached && t.eligible && !t.claimed; }); })); }
+  function crewHtml() {
+    var gate = socGate(); if (gate) return gate;
+    socLoad(); var d = soc.crew; if (!d) return infoCard("🛡️ Crew", "Lade …");
+    var me = soc.me, h = "";
+    if (!d.crew) {
+      h += d.invites.map(function (i) { return '<section class="card duelcard"><div class="eyebrow">🛡️ Crew-Einladung</div><div class="drow"><span class="crbadge">' + esc(i.emoji) + '</span><div class="grow"><b>' + esc(i.name) + '</b><div class="small muted">von ' + esc(i.from) + '</div></div><button class="btn" data-act="crewjoin" data-id="' + i.crew + '" data-a="1">Beitreten</button><button class="chip" data-act="crewjoin" data-id="' + i.crew + '" data-a="0">✕</button></div></section>'; }).join("");
+      h += '<section class="card crewhero"><div class="eyebrow" style="color:#ffe58a">Neu: Crew-Wochenziele</div><h2 style="margin:4px 0 6px;color:#fff">Gemeinsam stärker 💪</h2><p class="small" style="margin:0;opacity:.9">Schließe dich mit deinen Freunden zu einer Crew zusammen. Jede Woche warten drei Ziele: Übungszeit, wiedererkannte Wörter und aktive Tage. Je mehr ihr schafft, desto mehr Bronze, Silber und Gold gibt es für alle. Anfeuern, Serie und MVP-Krone inklusive.</p></section>';
+      h += '<section class="card"><div class="eyebrow">Eigene Crew gründen</div><div class="row" style="gap:8px;margin-top:8px"><select id="crAdj" class="grow">' + d.names.adj.map(function (x, i) { return '<option value="' + i + '"' + (crewUi.adj === i ? " selected" : "") + '>' + esc(x) + '</option>'; }).join("") + '</select><select id="crNoun" class="grow">' + d.names.noun.map(function (x, i) { return '<option value="' + i + '"' + (crewUi.noun === i ? " selected" : "") + '>' + esc(x) + '</option>'; }).join("") + '</select></div>' +
+        '<div class="row" style="gap:6px;margin-top:10px;flex-wrap:wrap">' + d.names.emoji.map(function (x, i) { return '<button class="crpick' + (crewUi.emoji === i ? " on" : "") + '" data-act="crewpick" data-i="' + i + '">' + esc(x) + '</button>'; }).join("") + '</div>' +
+        '<button class="btn wide" style="margin-top:12px" data-act="crewmake">🛡️ Crew gründen</button><p class="small muted" style="margin:8px 0 0">Danach lädst du bestätigte Freunde ein. Bis zu 6 in einer Crew.</p></section>';
+      return h;
+    }
+    var c = d.crew, mine = c.members.filter(function (m) { return m.you; })[0] || {};
+    S.crewJoined();
+    var end = c.end.split("-").reverse().slice(0, 2).join(".");
+    if (c.cheers.length) h += '<section class="card duelcard"><div class="eyebrow">📣 Angefeuert</div>' + c.cheers.slice(0, 3).map(function (x) { return '<div class="small" style="padding:3px 0"><b>' + esc(x.from) + '</b> ' + esc(x.emoji) + '</div>'; }).join("") + '</section>';
+    h += '<section class="card crewhero"><div class="row" style="gap:12px;align-items:center"><span class="crbadge big">' + esc(c.emoji) + '</span><div class="grow"><div class="eyebrow" style="color:#ffe58a">Crew-Woche bis So ' + esc(end) + '</div><h2 style="margin:2px 0;color:#fff">' + esc(c.name) + '</h2>' +
+      (c.streak ? '<div class="small" style="color:#ffe58a">🔥 ' + c.streak + (c.streak === 1 ? " Woche" : " Wochen") + ' in Folge stark</div>' : '<div class="small" style="opacity:.85">Schafft 2 Ziele, dann startet eure Serie</div>') + '</div></div>' +
+      '<div class="crmem">' + c.members.map(function (m, i) { return '<span class="crm' + (m.today ? " on" : "") + '" title="' + esc(m.name) + '" style="--c:' + CREW_COL[i % 6] + '">' + who(m, 38) + (m.mvp ? '<i class="mvp">👑</i>' : '') + '<small>' + esc(m.name) + '</small></span>'; }).join("") + '</div></section>';
+    c.quests.forEach(function (qs) {
+      var gold = qs.targets[2], nextT = qs.targets.filter(function (t) { return qs.total < t; })[0], key = qs.id === "min" ? "min" : qs.id;
+      var segs = c.members.map(function (m, i) { var v = m[key], w = Math.min(100, v * 100 / gold); return w > 0 ? '<i style="width:' + w + '%;background:' + CREW_COL[i % 6] + '"></i>' : ''; }).join("");
+      var msg = nextT ? 'Noch <b>' + (nextT - qs.total) + ' ' + esc(qs.unit) + '</b> bis ' + ["Bronze", "Silber", "Gold"][qs.tier] : '🏆 Gold geschafft!';
+      h += '<section class="card crq"><div class="row"><span style="font-size:26px">' + qs.icon + '</span><div class="grow"><b>' + esc(qs.name) + '</b><div class="small muted">Du ' + qs.mine + ' · Crew <b class="tnum">' + qs.total + '</b> von ' + gold + ' ' + esc(qs.unit) + '</div></div></div>' +
+        '<div class="crbar">' + segs + '<s style="left:33.3%"></s><s style="left:66.6%"></s></div><div class="small" style="margin:6px 0 8px">' + msg + '</div><div class="crtiers">' +
+        qs.tiers.map(function (t, i) { var cls = t.claimed ? "got" : t.reached ? (t.eligible ? "rdy" : "need") : "lock", ic = ["🥉", "🥈", "🥇"][i];
+          return '<button class="crt ' + cls + '" ' + (t.reached && t.eligible && !t.claimed ? 'data-act="crewclaim" data-q="' + qs.id + '" data-t="' + (i + 1) + '"' : 'disabled') + '><span>' + ic + '</span><b>' + t.target + '</b><small>' + (t.claimed ? "✓ geholt" : t.reached ? (t.eligible ? "🪙 +" + t.coins + " holen" : "übe mit!") : "🔒 " + t.n) + '</small></button>'; }).join("") + '</div></section>';
+    });
+    h += '<section class="card"><div class="eyebrow">Crew-Mitglieder</div>' + c.members.map(function (m, i) {
+      return '<div class="drow"><span class="crdot" style="background:' + CREW_COL[i % 6] + '"></span>' + who(m, 36) + '<div class="grow"><b>' + esc(m.name) + (m.you ? " (du)" : "") + (m.mvp ? " 👑" : "") + '</b><div class="small muted tnum">' + m.min + ' Min · ' + m.words + ' Wörter · ' + m.days + ' Tage</div></div>' +
+        (m.you ? '' : (m.today ? '<span class="pill">🔥 heute dabei</span>' : '<span class="reacts">' + d.cheers.slice(0, 3).map(function (e) { return '<button class="rea" data-act="crewcheer" data-id="' + m.id + '" data-e="' + e + '" title="Anfeuern">' + e + '</button>'; }).join("") + '</span>')) + '</div>';
+    }).join("") +
+      (c.pending.length ? '<p class="small muted" style="margin:8px 0 0">Eingeladen: ' + c.pending.map(function (p) { return esc(p.name); }).join(", ") + '</p>' : '') + '</section>';
+    var inviteable = c.canInvite ? me.friends.filter(function (f) { return f.state === "ok" && !c.members.some(function (m) { return m.id === f.id; }) && !c.pending.some(function (p) { return p.id === f.id; }); }) : [];
+    if (inviteable.length) h += '<section class="card"><div class="eyebrow">Freunde einladen</div><div class="row" style="gap:6px;flex-wrap:wrap;margin-top:8px">' + inviteable.map(function (f) { return '<button class="chip" data-act="crewinvite" data-id="' + f.id + '">＋ ' + esc(f.name) + '</button>'; }).join("") + '</div></section>';
+    var lw = c.last.quests.map(function (x) { var q = c.quests.filter(function (y) { return y.id === x.id; })[0]; return q.icon + " " + ["–", "🥉", "🥈", "🥇"][x.tier]; }).join("  ");
+    h += '<section class="card"><div class="eyebrow">Letzte Woche</div><p style="margin:6px 0 0">' + lw + '</p><div class="row" style="margin-top:12px"><button class="chip" data-act="crewleave" style="margin-left:auto">Crew verlassen</button></div></section>';
+    return h;
+  }
+  function crewDo(path, body, ok) {
+    return global.WordySync.social("POST", path, body).then(function (r) { soc.ts = 0; socLoad(true); if (ok) ok(r); }).catch(function (e) { toast(e.message); });
   }
   function duelSheet(friend) {
     var ov = document.createElement("div"); ov.className = "srmd";
@@ -917,8 +963,8 @@
       '<p class="small muted" style="margin:6px 0 0">Serienboni gibt es bei 3, 7, 14 und 30 Tagen in Folge.</p></section>';
   }
   function viewSpielen() {
-    var top = segBar("spielen", spielSeg, [["challenge", "🏆 Challenge"], ["arena", "🕹️ Arena"], ["freunde", "👥 Freunde"], ["rang", "🥇 Liga"]]);
-    view.innerHTML = '<div class="stack">' + top + (spielSeg === "arena" ? modiHtml("spiel") : spielSeg === "freunde" ? friendsHtml() : spielSeg === "rang" ? boardHtml() : challengeHtml()) + '</div>';
+    var top = segBar("spielen", spielSeg, [["challenge", "🏆 Challenge"], ["arena", "🕹️ Arena"], ["freunde", "👥 Freunde"], ["crew", "🛡️ Crew"], ["rang", "🥇 Liga"]]);
+    view.innerHTML = '<div class="stack">' + top + (spielSeg === "arena" ? modiHtml("spiel") : spielSeg === "freunde" ? friendsHtml() : spielSeg === "crew" ? crewHtml() : spielSeg === "rang" ? boardHtml() : challengeHtml()) + '</div>';
   }
   function viewBeute() {
     var top = segBar("beute", beuteSeg, [["pass", "❄️ Monatspass"], ["shop", "🛍️ Shop"], ["showroom", "🏆 Showroom"]]);
@@ -1617,7 +1663,8 @@
       '<br>© ' + new Date().getFullYear() + ' Magnus, Pummel &amp; Christian</div>' +
       '<div class="row wrap" style="gap:8px;justify-content:center;margin-top:10px"><button class="btn ghost" data-act="checkupdate">Nach Updates suchen</button>' +
       '<button class="btn ghost" data-act="clearcache" title="Lernstand bleibt erhalten">App-Cache leeren</button></div>';
-    html += fold("about", "ℹ️", "Über Wordy", "Version " + esc(global.WORDY_VERSION || "–") + ", Updates, Installieren", unCard(installCard()) + '<hr class="sep" style="margin:14px 0">' + aboutHtml);
+    html += fold("about", "ℹ️", "Über Wordy", "Version " + esc(global.WORDY_VERSION || "–") + ", Updates, Installieren", unCard(installCard()) + '<hr class="sep" style="margin:14px 0">' + aboutHtml +
+      '<hr class="sep" style="margin:14px 0"><div class="eyebrow">Datenschutz</div><p class="small muted" style="margin:6px 0 8px">Wordy speichert den Lernstand nur auf diesem Gerät. Nur wenn deine Eltern es verbinden, geht der Lernfortschritt an den Wordy-Server. Keine Werbung, kein Tracking.</p><a class="chip" target="_blank" rel="noopener" href="' + esc(((global.WordySync && global.WordySync.info().url) || "https://track.wordy.explusmore.com").replace(/\/+$/, "") + "/f/datenschutz") + '">Datenschutzerklärung lesen</a>');
     html += '</div>';
     view.innerHTML = html;
     $$("details.fold").forEach(function (d) { d.addEventListener("toggle", function () { openFolds[d.getAttribute("data-f")] = d.open; }); });
@@ -2602,6 +2649,16 @@
     else if (a === "socchallenge") { var fr = (soc.me.friends || []).filter(function (f) { return String(f.id) === act.getAttribute("data-id"); })[0]; if (fr) duelSheet(fr); }
     else if (a === "socaccept") { var ch = (soc.inbox.open || []).filter(function (c) { return String(c.id) === act.getAttribute("data-id"); })[0]; if (ch) acceptDuel(ch); }
     else if (a === "socreact") { global.WordySync.social("POST", "/challenges/" + act.getAttribute("data-id") + "/react", { emoji: act.getAttribute("data-e") }).then(function () { socLoad(true); }).catch(function (e) { toast(e.message); }); }
+    else if (a === "crewpick") { crewUi.emoji = +act.getAttribute("data-i"); crewUi.adj = +(($("#crAdj") || {}).value || crewUi.adj); crewUi.noun = +(($("#crNoun") || {}).value || crewUi.noun); render(); }
+    else if (a === "crewmake") { crewUi.adj = +$("#crAdj").value; crewUi.noun = +$("#crNoun").value; crewDo("/crew", { adj: crewUi.adj, noun: crewUi.noun, emoji: crewUi.emoji }, function () { toast("Deine Crew steht! Lade jetzt Freunde ein."); }); }
+    else if (a === "crewjoin") { crewDo("/crew/answer", { crew: +act.getAttribute("data-id"), accept: act.getAttribute("data-a") === "1" }, function () { if (act.getAttribute("data-a") === "1") toast("Willkommen in der Crew! 🛡️"); }); }
+    else if (a === "crewinvite") { crewDo("/crew/invite", { to: +act.getAttribute("data-id") }, function () { toast("Einladung ist raus."); }); }
+    else if (a === "crewcheer") { crewDo("/crew/cheer", { to: +act.getAttribute("data-id"), emoji: act.getAttribute("data-e") }, function () { toast("Angefeuert " + act.getAttribute("data-e")); }); }
+    else if (a === "crewleave") { if (confirm("Crew wirklich verlassen?")) crewDo("/crew/leave", {}, function () { toast("Du hast die Crew verlassen."); }); }
+    else if (a === "crewclaim") {
+      var rect = act.getBoundingClientRect();
+      crewDo("/crew/claim", { quest: act.getAttribute("data-q"), tier: +act.getAttribute("data-t") }, function (r) { var got = S.crewReward(r.coins, r.tier); renderHeader(); toast("🥇 " + r.tier + " bei " + r.quest + "! +" + got + " 🪙", 3600); try { global.VTC.burst("stars", rect.left + rect.width / 2, rect.top, 22, 1.2); } catch (e) {} });
+    }
     else if (a === "socmode") { soc.boardMode = act.getAttribute("data-m"); render(); }
     else if (a === "film") {
       global.VTFILM.play(act.getAttribute("data-id"), { audio: S.state.settings.audio, speak: function (t) { speak(t, null, "de"); }, voice: function () { var n = S.state.settings.narrator || "auto"; return n === "dev" ? null : n === "m" ? "m" : "f"; }, onGo: function (g) {

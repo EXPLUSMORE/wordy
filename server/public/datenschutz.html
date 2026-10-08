@@ -1,14 +1,117 @@
 <!doctype html>
-<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>Wordy · Datenschutz</title>
-<style>body{margin:0;font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#F4F6F8;color:#16222B;padding:18px}main{max-width:720px;margin:0 auto;background:#fff;border:1px solid #E1E6EA;border-radius:16px;padding:24px}h1{font-size:24px}h2{font-size:17px;margin:22px 0 6px}.box{background:#fff4d6;border:1px solid #e8c766;border-radius:10px;padding:10px 14px;font-size:14px}@media (prefers-color-scheme:dark){body{background:#10171C;color:#E8EEF2}main{background:#18222A;border-color:#26333D}.box{background:#3a3112;border-color:#6a5a1c}}</style></head>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>Wordy · Datenschutzerklärung</title>
+<style>
+:root{--bg:#F4F6F8;--card:#fff;--ink:#16222B;--ink2:#52606B;--line:#E1E6EA;--acc:#1E6273}
+@media (prefers-color-scheme:dark){:root{--bg:#10171C;--card:#18222A;--ink:#E8EEF2;--ink2:#9AA9B4;--line:#26333D;--acc:#4FA8BE}}
+*{box-sizing:border-box}body{margin:0;font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);padding:16px}
+main{max-width:780px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px 24px}
+h1{font-size:26px;margin:0 0 4px}h2{font-size:18px;margin:30px 0 8px;padding-top:6px;border-top:1px solid var(--line)}h3{font-size:15px;margin:18px 0 4px}
+p{margin:0 0 10px}ul{margin:0 0 10px;padding-left:22px}li{margin:3px 0}.muted{color:var(--ink2);font-size:14px}
+table{border-collapse:collapse;width:100%;font-size:14px;margin:8px 0 14px}th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}th{background:var(--bg)}
+.box{background:#fff4d6;border:1px solid #e8c766;border-radius:10px;padding:12px 16px;font-size:14px;margin:14px 0;color:#3b2f00}
+mark{background:#ffe58a;color:#3b2f00;padding:0 3px;border-radius:3px}.toc{font-size:14px;columns:2}.toc a{color:var(--acc)}
+a{color:var(--acc)}
+@media (max-width:560px){.toc{columns:1}main{padding:20px 16px}}
+</style></head>
 <body><main>
-<h1>Datenschutz bei Wordy</h1>
-<p class="box"><b>Entwurf.</b> Dieser Text beschreibt, was der Server technisch tut. Bitte vor dem Einladen fremder Familien von dir (Betreiber) um Name, Anschrift und Kontakt ergänzen und rechtlich prüfen lassen.</p>
-<h2>Wer ist verantwortlich?</h2><p>Betreiber dieses Servers: <i>[Name, Anschrift und E-Mail des Betreibers hier eintragen]</i>.</p>
-<h2>Welche Daten werden gespeichert?</h2>
-<p><b>Elternkonto:</b> deine E-Mail-Adresse, Zeitpunkt deiner Einwilligung, Zeitpunkt der letzten Anmeldung. <b>Kinder:</b> ein frei wählbarer Vorname oder Spitzname, Lerndaten (geübte Wörter und Sätze, Antworten, Übungszeiten, Käufe, Spielstände) und, wenn du es nutzt, die Sicherung des Lernstands. Es werden keine Nachnamen, Fotos, Standorte oder Chat-Nachrichten gespeichert.</p>
-<h2>Wofür?</h2><p>Nur um dir als Elternteil den Lernfortschritt zu zeigen, Wochenziele zu setzen und die Lernstände zu sichern. Keine Werbung, keine Weitergabe an Dritte, kein Tracking.</p>
-<h2>Anmeldung</h2><p>Du meldest dich ohne Passwort mit einem Einmal-Link an, der per E-Mail kommt. Dafür speichert der Server ein Sitzungs-Cookie, das nur zur Anmeldung dient.</p>
-<h2>Deine Rechte</h2><p>Im Elternkonto unter „Konto“ kannst du alle Daten deiner Familie herunterladen und das Konto samt aller Kinder und Lernstände sofort endgültig löschen. Außerdem hast du das Recht auf Auskunft, Berichtigung und Beschwerde bei einer Aufsichtsbehörde.</p>
-<h2>Speicherdauer</h2><p>Bis du das Konto löschst. Sicherungskopien des Servers werden nach 30 Tagen überschrieben.</p>
+<h1>Datenschutzerklärung</h1>
+<p class="muted">Wordy – Vokabeltrainer mit Eltern-Dashboard · Stand: {{STAND}}</p>
+{{HINWEIS}}
+<div class="toc"><a href="#v">1. Verantwortlicher</a><br><a href="#g">2. Grundsätze</a><br><a href="#k">3. Kinder und Eltern</a><br><a href="#app">4. Die App auf dem Gerät</a><br><a href="#srv">5. Verbindung mit dem Server</a><br><a href="#fam">6. Elternkonto</a><br><a href="#soz">7. Freunde, Crews, Duelle</a><br><a href="#log">8. Technische Protokolle</a><br><a href="#emp">9. Empfänger und Dienstleister</a><br><a href="#dri">10. Drittländer</a><br><a href="#dau">11. Speicherdauer</a><br><a href="#sic">12. Sicherheit</a><br><a href="#aut">13. Automatisierte Entscheidungen</a><br><a href="#rec">14. Ihre Rechte</a><br><a href="#ber">15. Freiwilligkeit</a><br><a href="#aen">16. Änderungen</a></div>
+
+<h2 id="v">1. Verantwortlicher</h2>
+<p>Verantwortlich im Sinne der Datenschutz-Grundverordnung (DSGVO) für den Betrieb des Wordy-Servers und des Eltern-Dashboards ist:</p>
+<p>{{VERANTWORTLICHER}}<br>{{ADRESSE}}<br>E-Mail: {{EMAIL}}</p>
+<p class="muted">Ein Datenschutzbeauftragter ist nicht benannt, da die Voraussetzungen des Art. 37 DSGVO und des § 38 BDSG nicht vorliegen. Für alle Fragen zum Datenschutz genügt die oben genannte E-Mail-Adresse.</p>
+
+<h2 id="g">2. Grundsätze</h2>
+<ul>
+<li><b>Datenminimierung:</b> Es werden nur Daten verarbeitet, die für das Lernen, die Eltern-Übersicht und die gewählten Zusatzfunktionen nötig sind.</li>
+<li><b>Keine Werbung, kein Tracking, keine Analyse-Dienste, kein Verkauf von Daten.</b> Wordy bindet keine Werbenetzwerke, Social-Media-Plugins oder Statistik-Tools ein und lädt keine Schriften oder Skripte von Drittanbietern nach.</li>
+<li><b>Freiwilligkeit:</b> Die App funktioniert vollständig ohne Konto und ohne Server. Alle Server-Funktionen sind optional.</li>
+<li><b>Kinderschutz:</b> Kinder werden nicht mit Klarnamen, Fotos oder freien Texten sichtbar. Soziale Funktionen sind standardmäßig aus und nur mit Freigabe der Eltern nutzbar (siehe Abschnitt 7).</li>
+</ul>
+
+<h2 id="k">3. Kinder und Eltern</h2>
+<p>Wordy richtet sich an Schülerinnen und Schüler. Ein <b>Elternkonto</b> darf nur von Erwachsenen (Sorgeberechtigten) angelegt werden. Sie legen die Kinder an, vergeben den angezeigten Namen (ein Vorname oder Spitzname genügt) und entscheiden über die Server-Verbindung und die sozialen Funktionen. Die Einwilligung zur Verarbeitung der Daten eines Kindes unter 16 Jahren erteilen die Sorgeberechtigten (Art. 6 Abs. 1 lit. a, Art. 8 DSGVO). Sie können sie jederzeit widerrufen.</p>
+
+<h2 id="app">4. Die App auf dem Gerät</h2>
+<h3>4.1 Lokale Speicherung</h3>
+<p>Der Lernstand (geübte Wörter und Sätze, Einstellungen, Münzen, Käufe, Favoriten, Fortschritt) wird <b>nur im Browserspeicher des Geräts</b> (localStorage, Service-Worker-Cache) gespeichert. Es handelt sich um technisch erforderliche Speicherungen für die ausdrücklich gewünschte Funktion (§ 25 Abs. 2 Nr. 2 TDDDG); eine Einwilligung per Banner ist dafür nicht nötig. Ohne Server-Verbindung verlassen diese Daten das Gerät nicht. Das Löschen der Website-Daten im Browser entfernt sie.</p>
+<h3>4.2 Aufruf der Website (Hosting der App)</h3>
+<p>Die App wird als statische Website über <b>GitHub Pages</b> ausgeliefert (GitHub Inc., eine Tochter der Microsoft Corporation, USA). Beim Aufruf übermittelt der Browser technisch notwendige Daten (IP-Adresse, Zeitpunkt, angefragte Datei, Browser-Kennung) an GitHub, die dort in Server-Protokollen verarbeitet werden können. Auf diese Verarbeitung hat der Verantwortliche keinen Einfluss. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (sichere, stabile Bereitstellung der App). Weitere Informationen: Datenschutzhinweise von GitHub.</p>
+<h3>4.3 Sprachausgabe</h3>
+<p>Das Vorlesen nutzt die Sprachausgabe des Geräts bzw. Browsers. Es werden keine Texte an den Verantwortlichen übertragen. Je nach Gerät kann der Hersteller der Sprachausgabe eigene Verarbeitungen vornehmen, die nicht Teil von Wordy sind. Optionale vorab aufgenommene Erzählerstimmen sind reine Audiodateien der App.</p>
+
+<h2 id="srv">5. Optionale Verbindung mit dem Wordy-Server</h2>
+<p>Verbinden die Eltern ein Gerät mit dem Server (Code aus dem Dashboard), werden folgende Daten an den Server übertragen und dort gespeichert:</p>
+<table><tr><th>Daten</th><th>Zweck</th></tr>
+<tr><td>vom Elternteil vergebener Name des Kindes</td><td>Zuordnung im Dashboard</td></tr>
+<tr><td>Geräte-Angabe (gekürzte Browserkennung), Zeitpunkt der letzten Nutzung, zufälliger Zugangsschlüssel (nur als Hash gespeichert)</td><td>Anmeldung des Geräts, Trennen einzelner Geräte</td></tr>
+<tr><td>Lernereignisse: Wort-Kennung, Ergebnis, Zeitpunkt, Übungsart, Übungsdauer, Münzen, Käufe im Shop, Spielergebnisse</td><td>Lernfortschritt und Wochenübersicht für die Eltern, Wochenziele</td></tr>
+<tr><td>Zusammenfassung (Rang, Münzen, Serie, Tagesziel, Einheiten-Katalog)</td><td>Dashboard</td></tr>
+<tr><td>Sicherung des Lernstands (täglicher Stand, die letzten 30 Tage)</td><td>Wiederherstellung bei Gerätewechsel oder -verlust</td></tr>
+<tr><td>von den Eltern eingestellte Ziele, Lernpläne, Wochenzeitplan, Geschenke, Pass-Einstellungen, Münzfaktor, Boss-Schwierigkeit</td><td>Steuerung der App durch die Eltern</td></tr></table>
+<p><b>Rechtsgrundlage:</b> Einwilligung der Sorgeberechtigten (Art. 6 Abs. 1 lit. a, Art. 8 DSGVO), die mit dem Verbinden des Geräts erteilt wird, sowie die Erfüllung des gewünschten Nutzungsverhältnisses (Art. 6 Abs. 1 lit. b DSGVO). Der Betreiber nutzt die Daten ausschließlich für diese Zwecke und nicht für eigene Auswertungen, Werbung oder Profile.</p>
+<p>Wird ein Spieler im Dashboard auf „nur sichern“ gestellt, werden keine Lernereignisse gespeichert, sondern nur die Sicherung des Lernstands.</p>
+
+<h2 id="fam">6. Elternkonto und Eltern-Dashboard</h2>
+<ul>
+<li><b>Registrierung:</b> nur mit einem Einladungslink des Betreibers. Verarbeitet werden die E-Mail-Adresse, Zeitpunkt und Version der Einwilligung, Zeitpunkt der Registrierung und der letzten Anmeldung.</li>
+<li><b>Anmeldung ohne Passwort:</b> Es wird ein Einmal-Link per E-Mail versandt (20 Minuten gültig, nur einmal nutzbar; nur als Hash gespeichert, nach 24 Stunden gelöscht). Danach wird ein <b>Sitzungs-Cookie</b> („wf“, HttpOnly, SameSite=Lax, bei https mit Secure, 30 Tage) gesetzt. Es dient ausschließlich der Anmeldung und ist technisch erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG).</li>
+<li><b>Wochenzusammenfassung per E-Mail:</b> Sie ist im Konto abschaltbar. Sie enthält Lernzeiten, Ziele und Problemwörter der eigenen Kinder.</li>
+<li><b>Rechtsgrundlagen:</b> Art. 6 Abs. 1 lit. b (Nutzung des Elternkontos), lit. a (Einwilligung bei der Registrierung) und lit. f DSGVO (Sicherheit der Anmeldung).</li>
+<li><b>Trennung:</b> Jede Familie sieht ausschließlich ihre eigenen Kinder. Der Betreiber sieht in der Konto-Übersicht nur Konten (E-Mail, Zahl der Kinder, Status), nicht die Lerndaten der Kinder fremder Familien.</li>
+</ul>
+
+<h2 id="soz">7. Freunde, Crews, Duelle und Liga (optional)</h2>
+<p>Diese Funktionen sind <b>standardmäßig ausgeschaltet</b> und können nur von den Eltern pro Kind eingeschaltet werden. Eine Freundschaft kommt erst zustande, wenn die Eltern <b>beider</b> Kinder zugestimmt haben.</p>
+<ul>
+<li><b>Sichtbar für bestätigte Freunde bzw. Crew-Mitglieder:</b> der von den Eltern vergebene Name, die gewählte Spielfigur, Punktzahlen aus Spielen, Wochenbeiträge zu Crew-Zielen (Übungsminuten, wiedererkannte Wörter, aktive Tage) und ob heute geübt wurde.</li>
+<li><b>Nicht übertragen:</b> Nachnamen, Fotos, Standorte, freie Texte oder Chats. Reaktionen und Anfeuern sind auf eine feste Auswahl von Emojis beschränkt; Crew-Namen entstehen aus einer festen Auswahl.</li>
+<li><b>Freundescode:</b> Nur wer den Code kennt, kann eine Anfrage senden. Anfragen und Freundschaften können von den Eltern jederzeit abgelehnt oder entfernt werden.</li>
+<li><b>Rechtsgrundlage:</b> Einwilligung der Sorgeberechtigten (Art. 6 Abs. 1 lit. a, Art. 8 DSGVO), jederzeit widerrufbar durch Ausschalten der Funktion oder Entfernen der Freunde.</li>
+</ul>
+
+<h2 id="log">8. Technische Protokolle und Missbrauchsschutz</h2>
+<p>Der Wordy-Server speichert keine Zugriffsprotokolle mit IP-Adressen in seiner Datenbank. Zur Abwehr von Missbrauch (z. B. zu vielen Anmeldeversuchen) wird die IP-Adresse kurzzeitig nur im Arbeitsspeicher gezählt. Der vorgeschaltete Webserver kann technisch notwendige Zugriffsprotokolle führen (Rechtsgrundlage Art. 6 Abs. 1 lit. f DSGVO, Zweck: Sicherheit und Fehlersuche, Speicherdauer {{LOGDAUER}}).</p>
+
+<h2 id="emp">9. Empfänger und Dienstleister</h2>
+<p>Daten werden nicht verkauft und nicht für fremde Zwecke weitergegeben. Technische Dienstleister, die in unserem Auftrag Daten verarbeiten (Auftragsverarbeiter nach Art. 28 DSGVO, jeweils mit Vertrag):</p>
+<ul><li>Server-Hosting (Wordy-Server und Datenbank): {{HOSTER}}</li><li>E-Mail-Versand (Anmeldelinks, Wochenzusammenfassung): {{MAILANBIETER}}</li><li>Auslieferung der App-Website: GitHub Pages (siehe 4.2)</li></ul>
+<p>Eine Weitergabe an Behörden erfolgt nur bei gesetzlicher Verpflichtung.</p>
+
+<h2 id="dri">10. Übermittlung in Drittländer</h2>
+<p>Die Auslieferung der App über GitHub (USA) kann eine Übermittlung der beim Seitenaufruf anfallenden Daten in die USA bedeuten. Grundlage sind der Angemessenheitsbeschluss der EU-Kommission zum EU-US Data Privacy Framework bzw. Standardvertragsklauseln (Art. 45, 46 DSGVO), soweit der Anbieter zertifiziert ist. Lern- und Kontodaten werden auf dem Wordy-Server am oben genannten Hosting-Standort verarbeitet: {{HOSTORT}}.</p>
+
+<h2 id="dau">11. Speicherdauer</h2>
+<table><tr><th>Daten</th><th>Dauer</th></tr>
+<tr><td>Lernereignisse und Zusammenfassungen</td><td>bis zur Löschung des Kindes oder des Kontos</td></tr>
+<tr><td>Sicherung des Lernstands</td><td>die letzten 30 Tagesstände, ältere werden überschrieben</td></tr>
+<tr><td>Server-Datensicherung (technisches Backup der Datenbank)</td><td>30 Tage, danach überschrieben</td></tr>
+<tr><td>Anmelde-Links</td><td>20 Minuten gültig, nach 24 Stunden gelöscht</td></tr>
+<tr><td>Sitzung im Elternkonto</td><td>30 Tage ab Anmeldung, jederzeit durch Abmelden beendbar</td></tr>
+<tr><td>Elternkonto (E-Mail, Einwilligung)</td><td>bis zur Löschung des Kontos</td></tr>
+<tr><td>Duelle: offene Herausforderungen</td><td>7 Tage Antwortfrist; Ergebnisse bis zur Löschung der Beteiligten</td></tr>
+<tr><td>Wochen-Ranglisten</td><td>aktuelle Woche plus etwa 5 Wochen</td></tr>
+<tr><td>Crew-Wochenstände, Anfeuern</td><td>werden aus den Lernereignissen berechnet; Anfeuern 7 Tage</td></tr></table>
+<p>Mit dem Löschen eines Kindes, eines Elternkontos oder dem Entfernen einer Freundschaft werden die zugehörigen Daten sofort aus der Datenbank gelöscht. Datensicherungen enthalten sie bis zu 30 Tage länger.</p>
+
+<h2 id="sic">12. Sicherheit</h2>
+<ul><li>verschlüsselte Übertragung (HTTPS/TLS)</li><li>Zugangsschlüssel und Anmelde-Links nur als Hash gespeichert; Einmal-Links, kurze Gültigkeit</li><li>Begrenzung von Anfragen und Fehlversuchen, Schutz vor fremden Formularen</li><li>strikte Trennung der Familien, Besitzprüfung bei jedem Zugriff</li><li>Zugriff auf Server und Datenbank nur für den Betreiber</li><li>regelmäßige, begrenzt aufbewahrte Datensicherungen</li></ul>
+
+<h2 id="aut">13. Keine automatisierten Entscheidungen</h2>
+<p>Es findet keine automatisierte Entscheidungsfindung einschließlich Profiling im Sinne des Art. 22 DSGVO statt. Der Wiederholungsalgorithmus plant lediglich die Abstände der Wortabfragen und hat keine rechtliche oder vergleichbar erhebliche Wirkung.</p>
+
+<h2 id="rec">14. Ihre Rechte</h2>
+<p>Betroffene haben nach der DSGVO folgende Rechte: Auskunft (Art. 15), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18), Datenübertragbarkeit (Art. 20), Widerspruch gegen Verarbeitungen auf Grundlage berechtigter Interessen (Art. 21) und Widerruf einer Einwilligung mit Wirkung für die Zukunft (Art. 7 Abs. 3). Die Rechtmäßigkeit der bis zum Widerruf erfolgten Verarbeitung bleibt unberührt. Für Kinder üben die Sorgeberechtigten die Rechte aus.</p>
+<ul><li><b>Selbst erledigen:</b> Im Elternkonto unter „Konto“ lassen sich alle Daten der Familie herunterladen (Auskunft/Datenübertragbarkeit) und das Konto samt Kindern endgültig löschen. Einzelne Kinder, Geräte und Freundschaften lassen sich im Dashboard entfernen.</li>
+<li><b>Per E-Mail:</b> {{EMAIL}}. Wir antworten innerhalb eines Monats.</li></ul>
+<p><b>Beschwerderecht:</b> Sie können sich bei einer Datenschutz-Aufsichtsbehörde beschweren (Art. 77 DSGVO), zum Beispiel bei: {{BEHOERDE}}.</p>
+
+<h2 id="ber">15. Freiwilligkeit</h2>
+<p>Die Bereitstellung personenbezogener Daten ist weder gesetzlich noch vertraglich vorgeschrieben. Ohne Verbindung zum Server stehen alle Lernfunktionen der App weiter zur Verfügung; es entfallen nur Eltern-Dashboard, Sicherung, Eltern-Ziele sowie Freunde, Crews, Duelle und Liga.</p>
+
+<h2 id="aen">16. Änderungen</h2>
+<p>Wir passen diese Erklärung an, wenn sich Funktionen oder Rechtslage ändern. Bei wesentlichen Änderungen, die eine neue Einwilligung erfordern, werden die Eltern gefragt. Es gilt die jeweils hier veröffentlichte Fassung.</p>
 </main></body></html>

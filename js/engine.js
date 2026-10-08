@@ -614,6 +614,13 @@
     if (win) { d.w++; var day = state.daily; day.duelWins = (day.duelWins || 0) + 1; if (day.duelWins <= 3) { c = boost(5); addCoins(c); addCl("ziel", c); } }
     save(true); return { coins: c, fresh: true, win: !!win };
   }
+  /* Crew-Belohnung abgeholt (der Server hat Ziel und Beitrag geprüft): Münzen mit Booster, Zähler für Medaillen */
+  function crewReward(coins, tier) {
+    var c = boost(coins); addCoins(c); addCl("ziel", c);
+    var cr = state.crew || (state.crew = { joined: 0, gold: 0 }); cr.joined = 1; if (tier === "Gold") cr.gold = (cr.gold || 0) + 1;
+    save(true); return c;
+  }
+  function crewJoined() { var cr = state.crew || (state.crew = { joined: 0, gold: 0 }); if (!cr.joined) { cr.joined = 1; save(true); } }
   var CHAL_BONUS = { 3: 10, 7: 30, 14: 60, 30: 150 };
   /* Challenge-Serie für die Anzeige: Streak (zählt nur, wenn gestern oder heute geschafft), letzte 7 Tage */
   function chalInfo() {
@@ -881,6 +888,9 @@
     M("duel1", "Erstes Duell", "common", du.p >= 1, "Ein Duell gegen einen Freund spielen", "⚔");
     M("duel5", "Duell-Held", "rare", du.w >= 5, "5 Duelle gewinnen (" + Math.min(du.w, 5) + "/5)", "5");
     M("duel20", "Duell-König", "epic", du.w >= 20, "20 Duelle gewinnen (" + Math.min(du.w, 20) + "/20)", "20");
+    var crw = state.crew || { joined: 0, gold: 0 };
+    M("crew1", "Crew-Mitglied", "common", crw.joined, "Einer Crew beitreten", "★");
+    M("crewgold", "Team-Gold", "epic", crw.gold >= 1, "Mit deiner Crew ein Gold-Ziel schaffen", "★");
     M("chal7", "Challenge 7", "rare", chBest >= 7, "Die Daily Challenge 7 Tage am Stück schaffen (Bestwert " + chBest + ")", "7");
     M("chal30", "Challenge 30", "legend", chBest >= 30, "Die Daily Challenge 30 Tage am Stück schaffen", "30");
     info.weeks.forEach(function (w) { M(sid + "p" + w.n, "Woche " + w.n, w.n === info.weeks.length ? "legend" : "epic", w.claimed, info.season.title + "-Pass, Woche " + w.n, String(w.n)); });
@@ -1313,7 +1323,7 @@
     sentences: function () { return sentences; }, activeSentences: activeSentences,
     planSentences: planSentences, gradeSentence: gradeSentence, sentenceStats: sentenceStats,
     srec: srec, groupsOf: groupsOf, setTrack: setTrack,
-    newBlocked: newBlocked, duelDone: duelDone, chalInfo: chalInfo, challengeDone: function () { return !!(state.daily && state.daily.date === today() && state.daily.chal); }, rankOf: rankOf, addXp: addXp, addCoins: addCoins, finishSession: finishSession,
+    newBlocked: newBlocked, crewReward: crewReward, crewJoined: crewJoined, duelDone: duelDone, chalInfo: chalInfo, challengeDone: function () { return !!(state.daily && state.daily.date === today() && state.daily.chal); }, rankOf: rankOf, addXp: addXp, addCoins: addCoins, finishSession: finishSession,
     stats: stats, today: today, shuffle: shuffle, regenHearts: regenHearts, heartsIn: heartsIn,
     rollDay: rollDay, verbs: function () { return verbs; }, verbPools: verbPools, planVerbs: planVerbs, verbStats: verbStats, parseCsv: parseCsv, removeCustom: removeCustom,
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },

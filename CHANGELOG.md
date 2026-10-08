@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.48.0 – 2026-10-08
+- **Crew-Wochenziele** (Server-Update nötig; Spielen › Crew): Freunde gründen eine Crew (Name und Zeichen aus fester Auswahl) und schaffen jede Woche drei gemeinsame Ziele: Übungszeit, wiedererkannte Wörter, aktive Tage. Bronze/Silber/Gold mit leuchtenden Belohnungsfeldern, farbiger Fortschrittsbalken mit Beitrag jedes Mitglieds, MVP-Krone, Crew-Serie in Wochen, Anfeuern mit Emojis, Rückblick auf die letzte Woche, roter Punkt am Reiter. Münzen (3/6/12) nur mit eigenem Beitrag. Medaillen „Crew-Mitglied“ und „Team-Gold“. Eltern sehen die Crew im Dashboard und können das Kind herausnehmen.
+- **Datenschutzerklärung** nach Art. 13 DSGVO neu geschrieben (Verantwortlicher, Zwecke und Rechtsgrundlagen, Kinder und Einwilligung der Sorgeberechtigten, Empfänger, Drittländer, Speicherdauer, Sicherheit, Betroffenenrechte). Die Angaben des Betreibers kommen aus `.env` (`PRIVACY_*`), fehlende werden gelb markiert. Verlinkt in der App (Profil › Über Wordy) und bei der Registrierung. Hinweis: rechtlich prüfen lassen.
+
 ## 2.47.0 – 2026-10-08
 - **Freunde, Duelle und Liga** (Server-Update nötig; Spielen › Freunde / Liga): Freundescode, Anfragen, Herausforderungen in Match-Rausch, Blitzrunde und Letztes Herz mit denselben Wörtern in derselben Reihenfolge, Antwort bis zu 7 Tage, Revanche, Emoji-Reaktionen, roter Punkt am Reiter bei neuen Herausforderungen, Wochen-Rangliste je Spiel unter Freunden.
 - **Eltern behalten die Kontrolle**: Funktion pro Kind im Dashboard (Karte „Freunde & Duelle“) ein-/ausschaltbar, jede Freundschaft braucht die Zustimmung beider Eltern, sichtbar sind nur Name, Figur und Punkte.

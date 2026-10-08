@@ -115,6 +115,12 @@ Optional und **aus**, bis die Eltern es im Dashboard beim Kind einschalten („F
 - **Liga:** Wochen-Rangliste je Spiel (Montag bis Sonntag, bester Wert) nur unter bestätigten Freunden.
 - Tabellen `friends`, `challenges`, `scores`, Spalten `players.social/fcode/avatar`. Schnittstellen (Gerät, Bearer): `/api/social/me|friends|challenges|inbox|score|board|profile`. Eltern: `/api/admin/players/:id/social` (an/aus, Code, Freunde) und `/friends/:fid` (approve/remove).
 
+### Crew-Wochenziele
+Bestätigte Freunde bilden eine **Crew** (bis zu 6, ein Kind gehört zu höchstens einer Crew; Name aus fester Auswahl wie „Turbo Pinguine“, kein Freitext). Jede Woche (Montag bis Sonntag) gibt es drei gemeinsame Ziele, berechnet aus den Lernereignissen: **Übungszeit** (60 Min je Mitglied), **wiedererkannte Wörter** (20 je Mitglied) und **aktive Tage** (4 je Mitglied, Tag mit mind. 5 Min.). Bronze 50 %, Silber 100 %, Gold 150 % des Ziels. Wer mindestens ein Drittel seines Anteils beigetragen hat, kann pro Stufe einmal 3/6/12 Münzen abholen (Server prüft). Dazu: Crew-Serie (Wochen in Folge mit mind. 2 erreichten Zielen), MVP-Krone, Anfeuern (feste Emojis, höchstens alle 6 Stunden je Mitglied), Rückblick auf die Vorwoche. Eltern sehen die Crew im Dashboard und können das Kind herausnehmen. Tabellen `crews`, `crew_members`, `crew_invites`, `crew_claims`, `crew_cheers`; Schnittstellen `/api/social/crew[/invite|/answer|/leave|/cheer|/claim]`.
+
+## Datenschutzerklärung
+`server/public/datenschutz.html` ist nach Art. 13 DSGVO gegliedert und wird unter `/f/datenschutz` ausgeliefert (die App verlinkt sie unter Profil › Über Wordy). Die Angaben des Betreibers kommen aus `.env` (`PRIVACY_NAME`, `PRIVACY_ADDRESS`, `PRIVACY_EMAIL`, `PRIVACY_HOSTER`, `PRIVACY_HOSTORT`, `PRIVACY_MAIL_PROVIDER`, `PRIVACY_AUTHORITY`, `PRIVACY_LOG_DAYS`, siehe `.env.example`). Fehlende Angaben erscheinen gelb markiert mit Entwurfshinweis. **Vor dem Einladen fremder Familien:** Angaben setzen, Auftragsverarbeitungsverträge mit Hoster und Mail-Anbieter abschließen, ein Verzeichnis von Verarbeitungstätigkeiten (Art. 30) führen, Impressum bereitstellen und den Text rechtlich prüfen lassen. Ändert sich der Text wesentlich, `CONSENT_VER` in `server.js` erhöhen.
+
 ## Schnittstellen (zur Information)
 App: `POST /api/pair`, `/api/events`, `/api/snapshot`, `/api/ping` · Eltern: `GET /`, `/api/admin/players`, `/api/admin/players/:id/report?days=30` u. a.
 

@@ -114,6 +114,36 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS ch_b ON challenges(b, b_score);
   CREATE TABLE IF NOT EXISTS scores (player INTEGER NOT NULL REFERENCES players(id) ON DELETE CASCADE, mode TEXT NOT NULL, week TEXT NOT NULL, best INTEGER NOT NULL, PRIMARY KEY(player, mode, week));
 `);
+db.exec(`
+  CREATE TABLE IF NOT EXISTS crews (id INTEGER PRIMARY KEY, name TEXT NOT NULL, emoji TEXT NOT NULL, owner INTEGER NOT NULL REFERENCES players(id) ON DELETE CASCADE, created INTEGER NOT NULL);
+  CREATE TABLE IF NOT EXISTS crew_members (crew INTEGER NOT NULL REFERENCES crews(id) ON DELETE CASCADE, player INTEGER NOT NULL UNIQUE REFERENCES players(id) ON DELETE CASCADE, joined INTEGER NOT NULL, PRIMARY KEY(crew, player));
+  CREATE TABLE IF NOT EXISTS crew_invites (crew INTEGER NOT NULL REFERENCES crews(id) ON DELETE CASCADE, player INTEGER NOT NULL REFERENCES players(id) ON DELETE CASCADE, inviter INTEGER NOT NULL, created INTEGER NOT NULL, PRIMARY KEY(crew, player));
+  CREATE TABLE IF NOT EXISTS crew_claims (player INTEGER NOT NULL REFERENCES players(id) ON DELETE CASCADE, week TEXT NOT NULL, quest TEXT NOT NULL, tier INTEGER NOT NULL, coins INTEGER NOT NULL, PRIMARY KEY(player, week, quest, tier));
+  CREATE TABLE IF NOT EXISTS crew_cheers (id INTEGER PRIMARY KEY, crew INTEGER NOT NULL REFERENCES crews(id) ON DELETE CASCADE, frm INTEGER NOT NULL REFERENCES players(id) ON DELETE CASCADE, tto INTEGER NOT NULL REFERENCES players(id) ON DELETE CASCADE, emoji TEXT NOT NULL, ts INTEGER NOT NULL);
+`);
+const cq = {
+  crewOf: db.prepare("SELECT c.* FROM crews c JOIN crew_members m ON m.crew = c.id WHERE m.player = ?"),
+  crew: db.prepare("SELECT * FROM crews WHERE id = ?"),
+  members: db.prepare("SELECT player, joined FROM crew_members WHERE crew = ? ORDER BY joined, player"),
+  addCrew: db.prepare("INSERT INTO crews(name, emoji, owner, created) VALUES (?, ?, ?, ?)"),
+  addMember: db.prepare("INSERT INTO crew_members(crew, player, joined) VALUES (?, ?, ?)"),
+  delMember: db.prepare("DELETE FROM crew_members WHERE player = ?"),
+  delCrew: db.prepare("DELETE FROM crews WHERE id = ?"),
+  setOwner: db.prepare("UPDATE crews SET owner = ? WHERE id = ?"),
+  invite: db.prepare("SELECT * FROM crew_invites WHERE crew = ? AND player = ?"),
+  addInvite: db.prepare("INSERT OR REPLACE INTO crew_invites(crew, player, inviter, created) VALUES (?, ?, ?, ?)"),
+  delInvite: db.prepare("DELETE FROM crew_invites WHERE crew = ? AND player = ?"),
+  delInvitesOf: db.prepare("DELETE FROM crew_invites WHERE player = ?"),
+  invitesFor: db.prepare("SELECT i.*, c.name, c.emoji FROM crew_invites i JOIN crews c ON c.id = i.crew WHERE i.player = ? AND i.created > ? ORDER BY i.created DESC"),
+  invitesOfCrew: db.prepare("SELECT * FROM crew_invites WHERE crew = ? AND created > ?"),
+  claim: db.prepare("SELECT 1 FROM crew_claims WHERE player = ? AND week = ? AND quest = ? AND tier = ?"),
+  addClaim: db.prepare("INSERT INTO crew_claims(player, week, quest, tier, coins) VALUES (?, ?, ?, ?, ?)"),
+  claimsOf: db.prepare("SELECT quest, tier FROM crew_claims WHERE player = ? AND week = ?"),
+  cheer: db.prepare("SELECT 1 FROM crew_cheers WHERE frm = ? AND tto = ? AND ts > ?"),
+  addCheer: db.prepare("INSERT INTO crew_cheers(crew, frm, tto, emoji, ts) VALUES (?, ?, ?, ?, ?)"),
+  cheersFor: db.prepare("SELECT frm, emoji, ts FROM crew_cheers WHERE tto = ? AND ts > ? ORDER BY ts DESC LIMIT 10"),
+  pruneCheers: db.prepare("DELETE FROM crew_cheers WHERE ts < ?")
+};
 const sq = {
   me: db.prepare("SELECT * FROM players WHERE id = ?"),
   byCode: db.prepare("SELECT * FROM players WHERE fcode = ?"),
@@ -137,7 +167,7 @@ const sq = {
   score: db.prepare("SELECT best FROM scores WHERE player = ? AND mode = ? AND week = ?"),
   pruneScores: db.prepare("DELETE FROM scores WHERE week < ?")
 };
-const MAX_KIDS = 6, LINK_MIN = 20, SESSION_DAYS = 30, CONSENT_VER = "2026-10";
+const MAX_KIDS = 6, LINK_MIN = 20, SESSION_DAYS = 30, CONSENT_VER = "2026-10b";   // Version der Datenschutzerklärung, der zugestimmt wird
 const q = {
   player: db.prepare("SELECT * FROM players WHERE id = ?"),
   players: db.prepare("SELECT * FROM players ORDER BY id"),
@@ -704,6 +734,16 @@ function famAuth(req) {   // Familie aus dem Sitzungs-Cookie, nur aktive Konten
   return f;
 }
 const cookieHdr = (v, maxAge) => "wf=" + v + "; Path=/; HttpOnly; SameSite=Lax; Max-Age=" + maxAge + (DASH_URL.startsWith("https") ? "; Secure" : "");
+/* Datenschutzerklärung: Angaben des Betreibers kommen aus .env (PRIVACY_*), fehlende werden gelb markiert */
+const PRIVACY = { name: process.env.PRIVACY_NAME || "", addr: process.env.PRIVACY_ADDRESS || "", email: process.env.PRIVACY_EMAIL || "", host: process.env.PRIVACY_HOSTER || "", hostort: process.env.PRIVACY_HOSTORT || "", mail: process.env.PRIVACY_MAIL_PROVIDER || "", auth: process.env.PRIVACY_AUTHORITY || "", log: process.env.PRIVACY_LOG_DAYS || "" };
+const PRIVACY_STAND = "8. Oktober 2026";
+function privacyPage() {
+  const miss = [], v = (x, label) => x ? esc(x) : (miss.push(label), "<mark>[" + esc(label) + " eintragen]</mark>");
+  const map = { VERANTWORTLICHER: v(PRIVACY.name, "Name des Verantwortlichen"), ADRESSE: v(PRIVACY.addr, "Anschrift"), EMAIL: v(PRIVACY.email, "E-Mail-Adresse"), HOSTER: v(PRIVACY.host, "Hosting-Anbieter"), HOSTORT: v(PRIVACY.hostort, "Standort des Servers"),
+    MAILANBIETER: v(PRIVACY.mail, "Mail-Anbieter"), BEHOERDE: v(PRIVACY.auth, "zuständige Aufsichtsbehörde"), LOGDAUER: v(PRIVACY.log ? PRIVACY.log + " Tage" : "", "Dauer der Server-Logs"), STAND: esc(PRIVACY_STAND) };
+  map.HINWEIS = miss.length ? '<p class="box"><b>Entwurf, bitte vervollständigen.</b> Auf dem Server fehlen noch Angaben des Betreibers (gelb markiert): ' + miss.map(esc).join(", ") + '. Sie werden in der Datei <code>.env</code> über die Variablen <code>PRIVACY_*</code> gesetzt (siehe README). Der Text wurde nach Art. 13 DSGVO verfasst, ersetzt aber keine Rechtsberatung. Bitte vor dem Einladen fremder Familien rechtlich prüfen lassen.</p>' : "";
+  return fs.readFileSync(path.join(PUBLIC, "datenschutz.html"), "utf8").replace(/\{\{([A-Z]+)\}\}/g, (m, k) => map[k] != null ? map[k] : m);
+}
 const famPlayer = (pl, scope) => !!pl && (scope ? pl.family === scope.id : pl.family == null);   // Besitzprüfung: Familie nur eigene Kinder, Betreiber nur eigene Spieler
 function famExport(f) {
   return { exportedAt: new Date().toISOString(), email: f.email, created: f.created, consent: { ts: f.consent_ts, version: f.consent_ver }, children: fq.kids.all(f.id).map(p => ({
@@ -791,6 +831,7 @@ async function apiSocial(pid, method, p, url, req, ip) {
     if (c.b_score == null) return [400, { error: "Erst nach dem Spiel." }];
     (c.a === pid ? sq.reactA : sq.reactB).run(e, c.id, pid); return [200, { ok: true }];
   }
+  if (p === "/api/social/crew" || p.startsWith("/api/social/crew/")) return apiCrew(pid, method, p, req);
   if (p === "/api/social/score" && method === "POST") {
     const b = await readJson(req), mode = String(b.mode), score = Math.round(+b.score);
     if (!SOCIAL_MAX[mode] || !(score >= 0 && score <= SOCIAL_MAX[mode])) return [400, { error: "Ungültig." }];
@@ -803,6 +844,104 @@ async function apiSocial(pid, method, p, url, req, ip) {
     return [200, { mode, week: wk, rows }];
   }
   return [404, { error: "Nicht gefunden." }];
+}
+
+
+/* ---------- Crews: gemeinsame Wochenziele unter bestätigten Freunden ---------- */
+const CREW_ADJ = ["Turbo", "Blitz", "Mega", "Eis", "Pixel", "Cosmic", "Power", "Nitro"], CREW_NOUN = ["Pinguine", "Wölfe", "Drachen", "Füchse", "Bären", "Haie", "Eulen", "Pandas"], CREW_EMOJI = ["🐧", "🐺", "🐲", "🦊", "🐻", "🦈", "🦉", "🐼"];
+const CREW_MAX = 6;
+/* Aufgaben je Woche; Ziel = Basis × Mitglieder × Stufe */
+const QUESTS = [{ id: "min", icon: "⏱️", name: "Übungszeit", unit: "Min.", base: 60 }, { id: "words", icon: "🧠", name: "Wörter wiedererkannt", unit: "Wörter", base: 20 }, { id: "days", icon: "📅", name: "Aktive Tage", unit: "Tage", base: 4 }];
+const TIERS = [{ n: "Bronze", f: 0.5, coins: 3 }, { n: "Silber", f: 1, coins: 6 }, { n: "Gold", f: 1.5, coins: 12 }];
+const CHEERS = ["💪", "🔥", "📣", "⏰", "👏", "🚀"];
+function memberWeek(pid, mon) {   // Beitrag eines Kindes in der Woche ab mon (Montag bis Sonntag, Europe/Berlin), aus den Lernereignissen
+  const end = ymdAdd(mon, 6), secDay = {}; let words = 0, today = 0; const t = dayOf(Date.now());
+  for (const e of q.events.all(pid, Date.parse(mon + "T00:00:00Z") - 86400000)) {
+    const d = dayOf(e.ts); if (d < mon || d > end) continue;
+    const j = JSON.parse(e.d);
+    if (e.k === "ss") { secDay[d] = (secDay[d] || 0) + (j.sec || 0); }
+    else if (e.k === "a" && (j.b || 0) === 1 && (j.a || 0) >= 2 && j.g > 0) words++;
+  }
+  today = (secDay[t] || 0) >= 300 ? 1 : 0;
+  return { min: Math.round(Object.values(secDay).reduce((a, b) => a + b, 0) / 60), words, days: Object.values(secDay).filter(x => x >= 300).length, today };
+}
+function crewWeek(crewId, mon) {
+  const ms = cq.members.all(crewId).map(m => m.player), n = Math.max(1, ms.length), per = {};
+  for (const id of ms) per[id] = memberWeek(id, mon);
+  const quests = QUESTS.map(qs => {
+    const total = ms.reduce((a, id) => a + per[id][qs.id === "min" ? "min" : qs.id], 0), targets = TIERS.map(t => Math.round(qs.base * n * t.f));
+    return { id: qs.id, icon: qs.icon, name: qs.name, unit: qs.unit, total, targets, tier: targets.filter(x => total >= x).length };
+  });
+  return { n, ms, per, quests };
+}
+function crewStreak(crewId, monNow) {   // Wochen in Folge mit mindestens zwei erreichten Aufgaben (laufende Woche zählt, sobald erreicht)
+  let streak = 0;
+  for (let k = 0; k < 8; k++) { const w = crewWeek(crewId, ymdAdd(monNow, -7 * k)), ok = w.quests.filter(x => x.tier >= 1).length >= 2; if (ok) streak++; else if (k > 0) break; else if (k === 0) continue; }
+  return streak;
+}
+function crewView(pid) {
+  const c = cq.crewOf.get(pid); if (!c) return null;
+  const mon = weekKey(), w = crewWeek(c.id, mon), myClaims = new Set(cq.claimsOf.all(pid, mon).map(x => x.quest + ":" + x.tier));
+  const members = w.ms.map(id => { const o = sq.me.get(id), s = w.per[id]; return { id, name: o.name, avatar: o.avatar || "", min: s.min, words: s.words, days: s.days, today: !!s.today, score: s.min + s.words * 2 + s.days * 10, you: id === pid, owner: id === c.owner }; });
+  const best = Math.max(0, ...members.map(m => m.score)); members.forEach(m => { m.mvp = best > 0 && m.score === best; });
+  const mine = w.per[pid];
+  const quests = w.quests.map(x => ({ ...x, tiers: TIERS.map((t, i) => { const per = x.targets[i] / w.n, my = mine[x.id === "min" ? "min" : x.id]; return { n: t.n, target: x.targets[i], coins: t.coins, reached: x.total >= x.targets[i], claimed: myClaims.has(x.id + ":" + (i + 1)), eligible: x.total >= x.targets[i] && my >= per / 3 }; }), mine: mine[x.id === "min" ? "min" : x.id] }));
+  const last = crewWeek(c.id, ymdAdd(mon, -7));
+  return { id: c.id, name: c.name, emoji: c.emoji, week: mon, end: ymdAdd(mon, 6), members, quests, streak: crewStreak(c.id, mon), canInvite: w.ms.length + cq.invitesOfCrew.all(c.id, Date.now() - 7 * 86400000).length < CREW_MAX,
+    pending: cq.invitesOfCrew.all(c.id, Date.now() - 7 * 86400000).map(i => { const o = sq.me.get(i.player); return o ? { id: o.id, name: o.name } : null; }).filter(Boolean),
+    cheers: cq.cheersFor.all(pid, Date.now() - 86400000).map(x => { const o = sq.me.get(x.frm); return { from: o ? o.name : "?", emoji: x.emoji, ts: x.ts }; }),
+    last: { quests: last.quests.map(x => ({ id: x.id, tier: x.tier })) } };
+}
+async function apiCrew(pid, method, p, req) {
+  if (p === "/api/social/crew" && method === "GET") {
+    const v = crewView(pid), inv = cq.invitesFor.all(pid, Date.now() - 7 * 86400000).map(i => { const o = sq.me.get(i.inviter); return { crew: i.crew, name: i.name, emoji: i.emoji, from: o ? o.name : "?" }; });
+    return [200, { crew: v, invites: inv, names: { adj: CREW_ADJ, noun: CREW_NOUN, emoji: CREW_EMOJI }, cheers: CHEERS, tiers: TIERS.map(t => ({ n: t.n, coins: t.coins })) }];
+  }
+  const b = method === "POST" ? await readJson(req) : {};
+  if (p === "/api/social/crew" && method === "POST") {
+    if (cq.crewOf.get(pid)) return [400, { error: "Du bist schon in einer Crew." }];
+    const a = CREW_ADJ[+b.adj], nn = CREW_NOUN[+b.noun], em = CREW_EMOJI[+b.emoji]; if (!a || !nn || !em) return [400, { error: "Bitte Namen und Zeichen aus der Liste wählen." }];
+    const id = +cq.addCrew.run(a + " " + nn, em, pid, Date.now()).lastInsertRowid; cq.addMember.run(id, pid, Date.now()); cq.delInvitesOf.run(pid);
+    return [200, { id }];
+  }
+  if (p === "/api/social/crew/invite" && method === "POST") {
+    const c = cq.crewOf.get(pid); if (!c) return [400, { error: "Du bist in keiner Crew." }];
+    const to = +b.to, o = sq.me.get(to); if (!o || !o.social || !areFriends(pid, to)) return [403, { error: "Nur bestätigte Freunde können eingeladen werden." }];
+    if (cq.crewOf.get(to)) return [400, { error: "Dein Freund ist schon in einer Crew." }];
+    if (cq.members.all(c.id).length + cq.invitesOfCrew.all(c.id, Date.now() - 7 * 86400000).length >= CREW_MAX) return [400, { error: "Die Crew ist voll." }];
+    cq.addInvite.run(c.id, to, pid, Date.now()); return [200, { ok: true }];
+  }
+  if (p === "/api/social/crew/answer" && method === "POST") {
+    const cid = +b.crew, inv = cq.invite.get(cid, pid); if (!inv || Date.now() - inv.created > 7 * 86400000) return [404, { error: "Einladung nicht gefunden." }];
+    if (!b.accept) { cq.delInvite.run(cid, pid); return [200, { ok: true }]; }
+    if (cq.crewOf.get(pid)) return [400, { error: "Du bist schon in einer Crew." }];
+    if (cq.members.all(cid).length >= CREW_MAX) return [400, { error: "Die Crew ist voll." }];
+    cq.addMember.run(cid, pid, Date.now()); cq.delInvitesOf.run(pid); return [200, { ok: true }];
+  }
+  if (p === "/api/social/crew/leave" && method === "POST") { crewLeave(pid); return [200, { ok: true }]; }
+  if (p === "/api/social/crew/cheer" && method === "POST") {
+    const c = cq.crewOf.get(pid), to = +b.to, em = String(b.emoji); if (!c) return [400, { error: "Du bist in keiner Crew." }];
+    if (!CHEERS.includes(em)) return [400, { error: "Unbekannte Reaktion." }];
+    const m = cq.members.all(c.id).map(x => x.player); if (to === pid || !m.includes(to)) return [403, { error: "Nur für Crew-Mitglieder." }];
+    if (cq.cheer.get(pid, to, Date.now() - 6 * 3600000)) return [429, { error: "Du hast gerade schon angefeuert. Später wieder!" }];
+    cq.addCheer.run(c.id, pid, to, em, Date.now()); cq.pruneCheers.run(Date.now() - 7 * 86400000); return [200, { ok: true }];
+  }
+  if (p === "/api/social/crew/claim" && method === "POST") {
+    const c = cq.crewOf.get(pid); if (!c) return [400, { error: "Du bist in keiner Crew." }];
+    const v = crewView(pid), qs = v.quests.filter(x => x.id === String(b.quest))[0], ti = +b.tier - 1, t = qs && qs.tiers[ti];
+    if (!t) return [400, { error: "Unbekannte Belohnung." }];
+    if (t.claimed) return [400, { error: "Schon abgeholt." }];
+    if (!t.reached) return [400, { error: "Das Ziel ist noch nicht erreicht." }];
+    if (!t.eligible) return [400, { error: "Übe selbst ein bisschen mit, dann kannst du die Belohnung holen." }];
+    cq.addClaim.run(pid, v.week, qs.id, ti + 1, t.coins); return [200, { ok: true, coins: t.coins, tier: t.n, quest: qs.name }];
+  }
+  return [404, { error: "Nicht gefunden." }];
+}
+function crewLeave(pid) {
+  const c = cq.crewOf.get(pid); if (!c) return;
+  cq.delMember.run(pid);
+  const rest = cq.members.all(c.id);
+  if (!rest.length) cq.delCrew.run(c.id); else if (c.owner === pid) cq.setOwner.run(rest[0].player, c.id);
 }
 
 /* ---------- Routing ---------- */
@@ -854,7 +993,7 @@ const server = http.createServer(async (req, res) => {
 
     /* ---------- Elternkonto: Seiten, Anmeldung per E-Mail-Link ---------- */
     const FCSP = "default-src 'self'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'self'; img-src 'self' data:; form-action 'self'; frame-ancestors 'none'";
-    if (p === "/f/datenschutz" && req.method === "GET") return send(res, 200, fs.readFileSync(path.join(PUBLIC, "datenschutz.html"), "utf8"), { "Content-Security-Policy": FCSP });
+    if (p === "/f/datenschutz" && req.method === "GET") return send(res, 200, privacyPage(), { "Content-Security-Policy": FCSP });
     if ((p === "/f/join" || p === "/f/login") && req.method === "GET") return send(res, 200, fs.readFileSync(path.join(PUBLIC, "family.html"), "utf8"), { "Content-Security-Policy": FCSP });
     if ((p === "/f" || p === "/f/") && req.method === "GET") {
       if (!famAuth(req)) return send(res, 200, fs.readFileSync(path.join(PUBLIC, "family.html"), "utf8"), { "Content-Security-Policy": FCSP });
@@ -989,7 +1128,8 @@ const server = http.createServer(async (req, res) => {
           res.writeHead(200, { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store", "Content-Disposition": 'attachment; filename="wordy-lernstand-' + String(pl.name).replace(/[^A-Za-z0-9_-]/g, "_") + "-" + r.day + '.json"' });
           return res.end(r.d);
         }
-        if (m[2] === "social" && req.method === "GET") { const me = sq.me.get(pid); return send(res, 200, { enabled: !!me.social, code: me.social ? fcodeOf(pid) : null, friends: friendsOf(pid) }); }
+        if (m[2] === "social" && req.method === "GET") { const me = sq.me.get(pid), cr = cq.crewOf.get(pid); return send(res, 200, { enabled: !!me.social, code: me.social ? fcodeOf(pid) : null, friends: friendsOf(pid), crew: cr ? { name: cr.name, emoji: cr.emoji, members: cq.members.all(cr.id).map(x => sq.me.get(x.player).name) } : null }); }
+        if (m[2] === "crewleave" && req.method === "POST") { crewLeave(pid); return send(res, 200, { ok: true }); }
         if (m[2] === "social" && req.method === "POST") { const on = !!(await readJson(req)).enabled; sq.setSocial.run(on ? 1 : 0, pid); if (on) fcodeOf(pid); return send(res, 200, { ok: true }); }
         if (m[2] === "goals" && req.method === "GET") return send(res, 200, weekGoals(pid));
         if (m[2] === "goals" && req.method === "POST") { const [c, b] = createGoal(pid, await readJson(req)); return send(res, c, b); }
