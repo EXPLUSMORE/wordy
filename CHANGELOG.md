@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.52.2 – 2026-10-08
+- **Track-Wordy-Symbol:** goldene WORDY-Kacheln über einer Wochenstatistik „4 von 7 Tagen“ (vier Balken mit Stern, drei offene) statt des einzelnen W.
+
 ## 2.52.1 – 2026-10-08
 - **Dashboard heißt „Track Wordy“** (Server-Update nötig): Name der installierbaren App, Seitentitel und Kopfzeile von Dashboard und Elternbereich („Track Wordy Eltern“), dazu das Dashboard-Symbol statt des Bücher-Emojis in der Kopfzeile.
 
