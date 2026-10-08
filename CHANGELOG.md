@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.53.9 – 2026-10-08
+- Wordy-Symbol wieder mit bunten Buchstaben (rosa, orange, grün, blau, lila) auf dem bunten Verlauf, dazu der ganze Clombo-Sticker. Das Dashboard-Symbol bleibt unverändert.
+
 ## 2.53.8 – 2026-10-08
 - Clombo wieder wie vorher (Stacheln, großes Maul, Schwanz) statt mit rundem Gesicht, überall (Kopf, Sticker, Bühne, Tänze).
 - Wordy-Symbol zeigt den ganzen Clombo als Sticker unter den goldenen WORDY-Kacheln, kein runder Ring mehr.
