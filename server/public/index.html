@@ -712,11 +712,15 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     var el = document.getElementById("mailCard"); if (!el) return;
     api("/api/admin/mail").then(function (m) {
       var days = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
+      var fam = m.family;
       el.innerHTML = "<h2>Wochenzusammenfassung per Mail</h2>" + (m.configured
         ? '<p style="margin:0 0 10px">Geht jeden <b>' + days[m.day] + " um " + m.hour + " Uhr</b> an <b>" + esc(m.to) + "</b>." + (m.lastWeek ? ' <span class="muted small">Zuletzt für die Woche ab ' + m.lastWeek.split("-").reverse().join(".") + " gesendet.</span>" : "") + '</p><button class="ghost" id="mtest">Testmail jetzt senden</button> <span id="mmsg" class="small"></span>'
-        : '<p class="muted small" style="margin:0">Noch nicht eingerichtet. Auf dem Server in der Datei .env die Mail-Zugangsdaten eintragen (siehe README, Abschnitt „Wochenmail“).</p>');
+        : (m.transport === false ? '<p class="muted small" style="margin:0">Mailversand ist auf dem Server noch nicht eingerichtet (siehe README, Abschnitt „Wochenmail“).</p>' : '<p class="muted small" style="margin:0 0 6px">Noch keine Empfänger-Adresse hinterlegt.</p>'))
+        + (fam || m.transport === false ? "" : '<div class="row" style="gap:8px;margin-top:12px;flex-wrap:wrap"><input id="mto" type="text" inputmode="email" placeholder="name@example.de (mehrere mit Komma)" value="' + esc(m.to || "") + '" style="flex:1;min-width:200px"><button class="ghost" id="msave">Speichern</button></div><p class="small muted" style="margin:6px 0 0">Leer lassen und speichern = Adresse aus der Server-Einstellung verwenden.</p><span id="mmsg2" class="small"></span>');
       var b = document.getElementById("mtest");
       if (b) b.onclick = function () { b.disabled = true; document.getElementById("mmsg").textContent = "Sende …"; post("/api/admin/mail/test").then(function (r) { b.disabled = false; var s = document.getElementById("mmsg"); s.className = "small " + (r.ok ? "" : "err"); s.textContent = r.ok ? "Gesendet. Bitte Postfach prüfen." : "Fehler: " + r.error; }); };
+      var sv = document.getElementById("msave");
+      if (sv) sv.onclick = function () { post("/api/admin/mail", { to: document.getElementById("mto").value }).then(function (r) { if (r && r.error) { var s = document.getElementById("mmsg2"); s.className = "small err"; s.textContent = r.error; } else drawMail(); }); };
     }).catch(function () {});
   }
 

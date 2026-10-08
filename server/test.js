@@ -144,6 +144,10 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     assert.equal(plr.j[0].daysLeft, 3);
     const ml = await J("/api/admin/mail/test", { method: "POST", headers: H });
     assert.equal(ml.j.ok, true, "Testmail: " + (ml.j.error || ""));
+    const mt = await J("/api/admin/mail", { method: "POST", headers: { ...H, "Content-Type": "application/json" }, body: JSON.stringify({ to: "eltern@example.de, oma@example.de" }) });
+    assert.equal(mt.s, 200, "Empfänger speichern");
+    assert.equal((await J("/api/admin/mail", { headers: H })).j.to, "eltern@example.de,oma@example.de", "Empfänger aus Dashboard");
+    assert.equal((await J("/api/admin/mail", { method: "POST", headers: { ...H, "Content-Type": "application/json" }, body: JSON.stringify({ to: "kaputt" }) })).s, 400, "ungültige Adresse");
     const decoded = (mailGot.match(/^[A-Za-z0-9+\/=]{20,}$/gm) || []).map(x => Buffer.from(x, "base64").toString("utf8")).join("\n");
     assert.ok(/Magnus/.test(decoded) && /Übungszeit/.test(decoded) && /Wochenziele/.test(decoded) && /Lernplan/.test(decoded), "Mail enthält Spieler, Zeit, Ziele, Lernplan");
     assert.ok(decoded.includes("https://track.wordy.explusmore.com"), "Mail enthält den Dashboard-Link");

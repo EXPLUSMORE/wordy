@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.53.10 – 2026-10-08
+- Dashboard: Empfänger-Adresse(n) der Sonntagsmail direkt unter „Wochenzusammenfassung per Mail“ eintragen (mehrere mit Komma). Hat Vorrang vor `MAIL_TO` in der `.env`; leer speichern = `.env` gilt wieder. Server-Update nötig.
+
 ## 2.53.9 – 2026-10-08
 - Wordy-Symbol wieder mit bunten Buchstaben (rosa, orange, grün, blau, lila) auf dem bunten Verlauf, dazu der ganze Clombo-Sticker. Das Dashboard-Symbol bleibt unverändert.
 

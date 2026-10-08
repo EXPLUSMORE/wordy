@@ -33,9 +33,10 @@ const MAIL = {
   day: process.env.MAIL_DAY === undefined ? 0 : +process.env.MAIL_DAY, hour: process.env.MAIL_HOUR === undefined ? 18 : +process.env.MAIL_HOUR
 };
 const GRAPH = { tenant: process.env.GRAPH_TENANT || "", clientId: process.env.GRAPH_CLIENT_ID || "", clientSecret: process.env.GRAPH_CLIENT_SECRET || "" };
-const graphOn = () => !!(GRAPH.tenant && GRAPH.clientId && GRAPH.clientSecret && MAIL.from && MAIL.to);
+const mailTo = () => { try { const r = q.kvGet.get("mail_to"); if (r && r.val) return r.val; } catch (e) {} return MAIL.to; };   // Dashboard-Eintrag vor .env
+const graphOn = () => !!(GRAPH.tenant && GRAPH.clientId && GRAPH.clientSecret && MAIL.from && mailTo());
 const DASH_URL = (process.env.DASHBOARD_URL || "https://track.wordy.explusmore.com").replace(/\/+$/, "");
-const mailOn = () => graphOn() || !!(MAIL.host && MAIL.from && MAIL.to);
+const mailOn = () => graphOn() || !!(MAIL.host && MAIL.from && mailTo());
 
 if (!ADMIN_PASSWORD || ADMIN_PASSWORD.length < 10) {
   console.error("ADMIN_PASSWORD fehlt oder ist kürzer als 10 Zeichen. Siehe .env.example.");
@@ -642,8 +643,8 @@ function mailContent(list, link) {
 async function sendWeekly() {
   if (!mailOn()) throw new Error("Mailversand ist nicht eingerichtet (siehe README).");
   const c = mailContent();
-  if (graphOn()) return sendGraph({ tenant: GRAPH.tenant, clientId: GRAPH.clientId, clientSecret: GRAPH.clientSecret, from: MAIL.from, to: MAIL.to, subject: c.subject, html: c.html });
-  await sendMail({ host: MAIL.host, port: MAIL.port, secure: MAIL.secure, user: MAIL.user, pass: MAIL.pass, from: MAIL.from, to: MAIL.to, subject: c.subject, text: c.text, html: c.html });
+  if (graphOn()) return sendGraph({ tenant: GRAPH.tenant, clientId: GRAPH.clientId, clientSecret: GRAPH.clientSecret, from: MAIL.from, to: mailTo(), subject: c.subject, html: c.html });
+  await sendMail({ host: MAIL.host, port: MAIL.port, secure: MAIL.secure, user: MAIL.user, pass: MAIL.pass, from: MAIL.from, to: mailTo(), subject: c.subject, text: c.text, html: c.html });
 }
 const localNow = () => {
   const f = new Intl.DateTimeFormat("en-GB", { timeZone: TZ, weekday: "short", hour: "2-digit", hourCycle: "h23" }).formatToParts(new Date());
@@ -1237,7 +1238,13 @@ const server = http.createServer(async (req, res) => {
       if (p === "/api/admin/mail/test" && req.method === "POST" && scope) {
         try { const c = mailContent(fq.kids.all(scope.id).filter(x => !x.hidden), DASH_URL + "/f/"); await deliver({ to: scope.email, subject: c.subject, html: c.html, text: c.text }); return send(res, 200, { ok: true }); } catch (e) { return send(res, 200, { ok: false, error: String(e.message).slice(0, 200) }); }
       }
-      if (p === "/api/admin/mail" && req.method === "GET") { const sent = q.kvGet.get("mail_sent"); return send(res, 200, { configured: mailOn(), to: mailOn() ? MAIL.to : "", day: MAIL.day, hour: MAIL.hour, lastWeek: sent ? sent.val : null }); }
+      if (p === "/api/admin/mail" && req.method === "POST") {
+        const b = await readJson(req), list = String(b.to || "").split(/[,;\s]+/).filter(Boolean);
+        if (list.length > 5 || list.some(a => !/^[^@\s]+@[^@\s.]+(\.[^@\s.]+)+$/.test(a) || a.length > 120)) return send(res, 400, { error: "Bitte gültige Mail-Adressen eintragen (höchstens 5, mit Komma getrennt)." });
+        if (list.length) q.kvSet.run("mail_to", list.join(",")); else db.prepare("DELETE FROM kv WHERE key = 'mail_to'").run();
+        return send(res, 200, { ok: true });
+      }
+      if (p === "/api/admin/mail" && req.method === "GET") { const sent = q.kvGet.get("mail_sent"); return send(res, 200, { configured: mailOn(), transport: transportOn(), to: mailTo(), day: MAIL.day, hour: MAIL.hour, lastWeek: sent ? sent.val : null }); }
       if (p === "/api/admin/mail/test" && req.method === "POST") {
         try { await sendWeekly(); return send(res, 200, { ok: true }); } catch (e) { return send(res, 200, { ok: false, error: String(e.message).replace(MAIL.pass || "\u0000", "***").replace(GRAPH.clientSecret || "\u0000", "***").slice(0, 300) }); }
       }

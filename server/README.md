@@ -10,7 +10,7 @@ Keine Abhängigkeiten: nur **Node.js ab 22.13** (eingebautes SQLite). Daten lieg
 - **Wochenmail:** siehe unten.
 
 ## Wochenmail
-Im Dashboard unten steht danach „Geht jeden Sonntag um 18 Uhr an …“ und die Schaltfläche **Testmail jetzt senden**. Nach jeder Änderung an `.env`: `sudo systemctl restart wordy-server`.
+Im Dashboard unten steht danach „Geht jeden Sonntag um 18 Uhr an …“ und die Schaltfläche **Testmail jetzt senden**. Die **Empfänger-Adresse** (auch mehrere, mit Komma) lässt sich im Dashboard direkt unter „Wochenzusammenfassung per Mail“ eintragen; sie hat Vorrang vor `MAIL_TO` in der `.env`. Leer speichern = wieder `MAIL_TO`. Nach jeder Änderung an `.env`: `sudo systemctl restart wordy-server`.
 Wenn der Versand an einem Tag dreimal scheitert, wird er bis zur nächsten Woche nicht erneut versucht. Die Ursache steht im Protokoll: `sudo journalctl -u wordy-server -n 30`.
 
 ### Microsoft 365 (empfohlen): Versand über Microsoft Graph
