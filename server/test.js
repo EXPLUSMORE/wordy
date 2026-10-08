@@ -244,6 +244,11 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     assert.equal((await J("/api/fam/families", { headers: F })).s, 403, "Betreiber-Funktionen gesperrt");
     assert.equal((await J("/api/fam/players/" + kid.j.id + "/season", { method: "POST", headers: F, body: JSON.stringify({ title: "Eigener Pass" }) })).s, 403, "Eltern stellen den Wochenpass nicht zusammen");
     assert.equal((await J("/api/fam/players/" + kid.j.id + "/season", { headers: F })).s, 403, "und lesen ihn im Dashboard auch nicht");
+    assert.equal((await J("/api/fam/players/" + kid.j.id + "/gifts", { method: "POST", headers: F, body: JSON.stringify({ coins: 50 }) })).s, 403, "Eltern schenken keine Extramünzen");
+    assert.equal((await J("/api/fam/players/" + kid.j.id + "/coinfactor", { method: "POST", headers: F, body: JSON.stringify({ factor: 2 }) })).s, 403, "Eltern stellen den Münzfaktor nicht um");
+    const gq = await J("/api/fam/players/" + kid.j.id + "/goals", { method: "POST", headers: F, body: JSON.stringify({ kind: "days", target: 3, coins: 400 }) }); assert.equal(gq.s, 200);
+    assert.ok((await J("/api/fam/players/" + kid.j.id + "/goals", { headers: F })).j.every(x => !x.coins), "Ziele aus Elternkonten haben keine Bonusmünzen");
+    const og = await J("/api/admin/players/" + mk.j.id + "/gifts", { method: "POST", headers: H, body: JSON.stringify({ coins: 20 }) }); assert.equal(og.s, 200, "Betreiber darf weiter schenken");
     assert.equal((await J("/api/fam/info", { headers: F })).s, 200);
     // zweite Familie darf die Kinder der ersten nicht sehen
     const inv2 = await J("/api/admin/families/invites", { method: "POST", headers: H, body: JSON.stringify({}) });

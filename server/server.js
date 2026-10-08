@@ -1291,14 +1291,15 @@ const server = http.createServer(async (req, res) => {
         if (m[2] === "crewleave" && req.method === "POST") { crewLeave(pid); return send(res, 200, { ok: true }); }
         if (m[2] === "social" && req.method === "POST") { const on = !!(await readJson(req)).enabled; sq.setSocial.run(on ? 1 : 0, pid); if (on) fcodeOf(pid); return send(res, 200, { ok: true }); }
         if (m[2] === "goals" && req.method === "GET") return send(res, 200, weekGoals(pid));
-        if (m[2] === "goals" && req.method === "POST") { const [c, b] = createGoal(pid, await readJson(req)); return send(res, c, b); }
+        if (m[2] === "goals" && req.method === "POST") { const gb = await readJson(req); if (scope) gb.coins = 0; const [c, b] = createGoal(pid, gb); return send(res, c, b); }
         if (m[2] === "plans" && req.method === "GET") return send(res, 200, plansOf(pid));
-        if (m[2] === "plans" && req.method === "POST") { const [c, b] = createPlan(pid, await readJson(req)); return send(res, c, b); }
+        if (m[2] === "plans" && req.method === "POST") { const pb = await readJson(req); if (scope) pb.coins = 0; const [c, b] = createPlan(pid, pb); return send(res, c, b); }
         if (m[2] === "weekplan" && req.method === "GET") return send(res, 200, weekPlanOf(pid));
         if (m[2] === "weekplan" && req.method === "POST") { const [c, b] = setWeekPlan(pid, await readJson(req)); return send(res, c, b); }
         if (m[2] === "season" && scope) return send(res, 403, { error: "Der Wochenpass wird vom Betreiber zusammengestellt." });
         if (m[2] === "season" && req.method === "GET") return send(res, 200, seasonOf(pid));
         if (m[2] === "season" && req.method === "POST") { const [c, b] = setSeason(pid, await readJson(req)); return send(res, c, b); }
+        if ((m[2] === "gifts" || m[2] === "coinfactor") && scope) return send(res, 403, { error: "Extramünzen und der Münzfaktor sind dem Betreiber vorbehalten." });
         if (m[2] === "gifts" && req.method === "GET") return send(res, 200, giftsOf(pid).slice(-20));
         if (m[2] === "gifts" && req.method === "POST") { const [c, b] = addGift(pid, await readJson(req)); return send(res, c, b); }
         if (m[2] === "coinfactor" && req.method === "GET") return send(res, 200, { factor: coinFactorOf(pid) });

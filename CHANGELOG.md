@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.53.3 – 2026-10-08
+- **Extramünzen nur für den Betreiber** (Server-Update nötig): Im Elternbereich entfallen „Extramünzen schenken“, der Münzfaktor und die Bonusmünzen bei Zielen und Lernplänen. Der Server lehnt Geschenke und Münzfaktor über Elternkonten ab und setzt Bonusmünzen bei Zielen und Plänen aus Elternkonten auf 0. Der Betreiber behält alles; die Münzen, die Kinder durch Lernen verdienen, bleiben unverändert.
+
 ## 2.53.2 – 2026-10-08
 - **Wochenpass nur für den Betreiber** (Server-Update nötig): Die Karte „Pass: Wochen-Sets zusammenbauen“ erscheint im Eltern-Dashboard nicht mehr, und der Server lehnt das Zusammenstellen und Lesen des Wochenpasses über Elternkonten ab. Der Betreiber stellt ihn wie bisher ein; Kinder sehen den Pass unverändert in der App. Lehrkräfte haben keine Kinder und damit keinen Zugriff; ob es Belohnungen für Klassenaufgaben geben soll, ist noch offen.
 
