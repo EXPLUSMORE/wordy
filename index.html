@@ -847,6 +847,7 @@ details.fold>.fbody{padding:2px 0 14px}
 .rbtn.buy{background:linear-gradient(#ffe58a,#ffb61e);color:#3a2500;text-shadow:none}.rbtn.buy s{opacity:.55;font-weight:600}.rbtn.on{background:linear-gradient(#78e65c,#2fae2a)}
 .rpill{display:block;width:100%;background:rgba(20,33,61,.55);border-radius:10px;padding:7px 4px;font-size:11px;font-weight:800}
 @media (prefers-reduced-motion:reduce){.rtile.legend,.rtile:after{animation:none!important}}
+.chdots{display:flex;gap:6px;margin-top:10px}.chd{flex:1;text-align:center;font-size:11px;font-weight:700;border-radius:10px;padding:4px 0;background:var(--card-2);color:var(--ink-3)}.chd i{display:block;font-style:normal;font-size:18px;opacity:.5}.chd.ok i{opacity:1}.chd.ok{background:var(--accent-soft);color:var(--ink)}.chd.now{outline:2px solid var(--accent)}
 </style>
 
 <div id="app">
@@ -861,15 +862,14 @@ details.fold>.fbody{padding:2px 0 14px}
     <div class="stat" title="Münzen">🪙 <b id="hCoins" class="tnum">0</b></div>
     <div class="stat" title="Streak">🔥 <b id="hStreak" class="tnum">0</b></div>
     <div class="stat hearts" id="hHearts" title="Herzen">♥♥♥♥♥</div>
-    <button id="hGear" class="gear" data-tab="parent" aria-label="Setup" title="Setup">⚙️</button>
   </header>
   <main id="view"></main>
   <nav id="tabs">
     <button data-tab="home"><span class="ic">🏠</span>Start</button>
-    <button data-tab="ueben"><span class="ic">🎮</span>Üben</button>
-    <button data-tab="stats"><span class="ic">📈</span>Fortschritt</button>
-    <button data-tab="showroom"><span class="ic">🏆</span>Showroom</button>
-    <button data-tab="shop"><span class="ic">🛍️</span>Shop</button>
+    <button data-tab="lernen"><span class="ic">📚</span>Lernen</button>
+    <button data-tab="spielen"><span class="ic">⚔️</span>Spielen</button>
+    <button data-tab="beute"><span class="ic">🎁</span>Beute</button>
+    <button data-tab="parent"><span class="ic">👤</span>Profil</button>
   </nav>
   <div id="session" hidden></div>
 </div>

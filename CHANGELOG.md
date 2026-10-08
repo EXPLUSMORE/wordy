@@ -9,6 +9,15 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.45.0 – 2026-10-08
+- **Neues Hauptmenü** (Start · Lernen · Spielen · Beute · Profil): 
+  - **Lernen**: Üben (Modi, Erklärfilme, Gezielt üben), Lernbereich, Fortschritt.
+  - **Spielen**: **Challenge** (Daily Challenge groß, mit Tagesbonus) und **Arena** (die vier Spiele).
+  - **Beute**: **Monatspass**, Shop, Showroom.
+  - **Profil**: Spielerkarte mit Rang und Favoriten, darunter wie bisher Setup und Eltern-Bereiche (Zahnrad im Kopf entfällt).
+- **Challenge-Serie** (neu): Tage in Folge mit geschaffener Daily Challenge, Wochenleiste mit Flammen, Serienbonus bei 3, 7, 14 und 30 Tagen (+10, +30, +60, +150 Münzen), Anzeige im Abschluss-Bildschirm.
+- Der Pass heißt in der App „Monatspass“ und hat eine eigene Seite mit Erklärung. Der Showroom enthält ihn nicht mehr.
+
 ## 2.44.1 – 2026-10-07
 - Üben: Die Kacheln zeigen die gewählte Dauer („ca. 5 Min“) statt einer Aufgabenzahl, denn die Runde hat kein Zeitlimit und die Anzahl richtet sich nach dem Tempo.
 

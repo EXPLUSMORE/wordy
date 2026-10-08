@@ -604,6 +604,15 @@
     act.forEach(function (x) { var r = state.s[x.id]; if (r && r.reps) { seen++; if (r.iv >= 21) mastered++; } });
     return { total: act.length, seen: seen, mastered: mastered, ok: state.totals.sentOk };
   }
+  var CHAL_BONUS = { 3: 10, 7: 30, 14: 60, 30: 150 };
+  /* Challenge-Serie für die Anzeige: Streak (zählt nur, wenn gestern oder heute geschafft), letzte 7 Tage */
+  function chalInfo() {
+    var ch = state.chal || { last: "", streak: 0, best: 0, days: {} }, t = today(), days = [], i;
+    for (i = 6; i >= 0; i--) { var dd = new Date(t + "T12:00:00"); dd.setDate(dd.getDate() - i); var k = dd.getFullYear() + "-" + ("0" + (dd.getMonth() + 1)).slice(-2) + "-" + ("0" + dd.getDate()).slice(-2); days.push({ date: k, ok: !!ch.days[k], today: i === 0, wd: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"][dd.getDay()] }); }
+    var yd = new Date(t + "T12:00:00"); yd.setDate(yd.getDate() - 1); var ys = yd.getFullYear() + "-" + ("0" + (yd.getMonth() + 1)).slice(-2) + "-" + ("0" + yd.getDate()).slice(-2);
+    var alive = ch.last === t || ch.last === ys, streak = alive ? ch.streak : 0, next = [3, 7, 14, 30].filter(function (x) { return x > streak; })[0];
+    return { streak: streak, best: ch.best || 0, days: days, doneToday: ch.last === t, next: next || null, nextCoins: next ? CHAL_BONUS[next] : 0 };
+  }
   /* Zu viel Fälliges: erst wiederholen, bevor neue Wörter dazukommen (sonst wächst nur der Berg) */
   function newBlocked() { var p = pools(); return p.due.length + p.box.length >= 30 ? p.due.length + p.box.length : 0; }
   function pools(scope) {
@@ -986,6 +995,15 @@
     if (res.daily && res.items >= 8 && !d.chal) {
       d.chal = 1; var bc = boost(10); addCoins(bc); addCl("ziel", bc); rewards.coins += bc; rewards.challenge = bc;
       rewards.parts.push({ c: bc, t: "Daily-Challenge-Bonus" });
+      /* Challenge-Serie: Tage in Folge mit geschaffener Daily Challenge, Zusatzbonus bei 3, 7, 14 und 30 */
+      var ch = state.chal || (state.chal = { last: "", streak: 0, best: 0, days: {} });
+      if (ch.last !== d.date) {
+        var yest = new Date(d.date + "T12:00:00"); yest.setDate(yest.getDate() - 1); var ys = yest.getFullYear() + "-" + ("0" + (yest.getMonth() + 1)).slice(-2) + "-" + ("0" + yest.getDate()).slice(-2);
+        ch.streak = ch.last === ys ? ch.streak + 1 : 1; ch.last = d.date; ch.best = Math.max(ch.best || 0, ch.streak); ch.days[d.date] = 1;
+        Object.keys(ch.days).sort().slice(0, -21).forEach(function (k) { delete ch.days[k]; });
+        var sb2 = CHAL_BONUS[ch.streak];
+        if (sb2) { var sc2 = boost(sb2); addCoins(sc2); addCl("ziel", sc2); rewards.coins += sc2; rewards.challengeStreak = { n: ch.streak, coins: sc2 }; rewards.parts.push({ c: sc2, t: ch.streak + " Challenge-Tage in Folge!" }); }
+      }
     }
     progressLog = { neu: 0, stufe: 0, gemeistert: 0, kartei: 0, einheit: 0, serie: 0, parts: [], n: {} };
     save(true);
@@ -1279,7 +1297,7 @@
     sentences: function () { return sentences; }, activeSentences: activeSentences,
     planSentences: planSentences, gradeSentence: gradeSentence, sentenceStats: sentenceStats,
     srec: srec, groupsOf: groupsOf, setTrack: setTrack,
-    newBlocked: newBlocked, challengeDone: function () { return !!(state.daily && state.daily.date === today() && state.daily.chal); }, rankOf: rankOf, addXp: addXp, addCoins: addCoins, finishSession: finishSession,
+    newBlocked: newBlocked, chalInfo: chalInfo, challengeDone: function () { return !!(state.daily && state.daily.date === today() && state.daily.chal); }, rankOf: rankOf, addXp: addXp, addCoins: addCoins, finishSession: finishSession,
     stats: stats, today: today, shuffle: shuffle, regenHearts: regenHearts, heartsIn: heartsIn,
     rollDay: rollDay, verbs: function () { return verbs; }, verbPools: verbPools, planVerbs: planVerbs, verbStats: verbStats, parseCsv: parseCsv, removeCustom: removeCustom,
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },

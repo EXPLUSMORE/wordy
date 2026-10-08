@@ -448,7 +448,7 @@
     if (!pf.seen) { seen = pf.seen = {}; c.shelves.forEach(function (s) { s.items.forEach(function (i) { if (i.owned) seen[i.id] = 1; }); }); S.save(); }
     var favHtml = [0, 1, 2].map(function (i) { var id = S.favs()[i]; return id ? '<button class="fslot" data-act="sritem" data-id="' + esc(id) + '">' + favIcon(id) + '</button>' : '<button class="fslot e" data-act="srfavhint">＋</button>'; }).join("");
     if (!srAv) srAv = pf.avatar;
-    var h = '<div class="stack srv"><div><h1 style="font-size:22px">🏆 Mein Showroom</h1><p class="small muted" style="margin:2px 0 0">Alles, was du gesammelt, gekauft und erspielt hast. Tippe auf ein Stück.</p></div>' + passCard() +
+    var h = '<div class="stack srv"><div><h1 style="font-size:22px">🏆 Mein Showroom</h1><p class="small muted" style="margin:2px 0 0">Alles, was du gesammelt, gekauft und erspielt hast. Tippe auf ein Stück.</p></div>' +
       '<section class="srtop"><div class="srring" style="--p:' + c.pct + '"><b>' + c.pct + '%</b></div><div class="srcups">' + c.cups.map(function (t) { var col = { Bronze: ["#e0975a", "#8a4a1e"], Silber: ["#eef2fa", "#8794ad"], Gold: ["#ffd24a", "#c8780a"], Platin: ["#c9efff", "#7a8fff"] }[t.n]; return '<div class="srcup' + (t.done ? "" : " lock") + '">' + svgCup(col[0], col[1]) + '<b>' + t.n + '</b><small>ab ' + t.pct + '%</small></div>'; }).join("") + '</div></section>' +
       '<div class="srrar">' + ["common", "rare", "epic", "legend"].map(function (r) { return '<span class="' + r + '"><b>' + c.rar[r] + '</b>' + RAR_NAME[r] + '</span>'; }).join("") + '</div>' +
       '<section class="srstage"><div class="srray"></div><div class="srfloor"></div><div class="srfav">' + favHtml + '</div><div class="srlbl">Favoriten</div><div class="srpod"><i></i></div><div class="srhero" id="srHero"></div>' +
@@ -490,7 +490,7 @@
       else if (mm === "eq") { var r = S.equip(it.it.id); if (r.error) return toast(r.error); ov.remove(); toast(it.kind === "sticker" ? (r.on ? "Aufgeklebt" : "Abgelöst") : "Getragen: " + it.label); render(); }
       else if (mm === "try") { global.VTC.dance({ av: S.state.profile.avatar, avatar: avatarHtml(S.state.profile.avatar), outfit: it.kind === "dance" ? S.state.profile.outfit : it.it.val, dance: it.kind === "dance" ? it.it.val : (S.state.profile.dance || "wackler"), title: it.label }); }
       else if (mm === "shop") { ov.remove(); shopTab = it.kind === "kit" ? "kit" : it.it.set === "fn" ? "fn" : it.kind; tab = "shop"; shopSeg = "shop"; render(); view.scrollTop = 0; }
-      else if (mm === "pass") { ov.remove(); tab = "home"; render(); view.scrollTop = 0; }
+      else if (mm === "pass") { ov.remove(); tab = "beute"; beuteSeg = "pass"; render(); view.scrollTop = 0; }
     });
   }
 
@@ -738,13 +738,12 @@
   }
 
   /* ================= ÜBEN: Spielmodi und Einheiten ================= */
-  function modiHtml() {
+  function modiHtml(part) {
     var st = S.state, p = S.pools(), stt = S.stats(), mins = startMin || S.goalMin(), biz = st.settings.track === "business", few = p.all.length < 8;
     var nW = S.itemsFor(mins), nS = Math.max(5, Math.round(mins * 60 / 16)), nV = Math.max(5, Math.round(mins * 60 / 20));
     function cnt() { return " · ca. " + mins + " Min"; }   // Zeit statt Aufgabenzahl: die Runde hat kein Zeitlimit, die Zahl der Aufgaben richtet sich nach deinem Tempo
     var W = window.WordySync, plans = (W && W.connected()) ? W.activePlans() : [], aud = audioAvailable();
-    var learn = tile("🏆", 'Daily Challenge <span style="color:var(--gold)">★</span>', (S.challengeDone() ? "Bonus heute geholt ✓ · Zusatz-Runde" : "🎁 +10 🪙 Tagesbonus") + " · bunter Mix" + cnt(nW), 'data-act="start" data-min="' + mins + '"') +
-      tile("✨", "Neue Wörter", S.newBlocked() ? "Erst die " + S.newBlocked() + " fälligen wiederholen" : p.fresh.length ? p.fresh.length + " warten auf dich" + cnt(Math.min(nW, p.fresh.length)) : "Alles schon gesehen", 'data-act="start" data-mode="new" data-min="' + mins + '"' + (p.fresh.length && !S.newBlocked() ? "" : " disabled")) +
+    var learn = tile("✨", "Neue Wörter", S.newBlocked() ? "Erst die " + S.newBlocked() + " fälligen wiederholen" : p.fresh.length ? p.fresh.length + " warten auf dich" + cnt(Math.min(nW, p.fresh.length)) : "Alles schon gesehen", 'data-act="start" data-mode="new" data-min="' + mins + '"' + (p.fresh.length && !S.newBlocked() ? "" : " disabled")) +
       tile("♻️", "Fehlerkartei", p.box.length ? p.box.length + " " + plural(p.box.length, "Wort", "Wörter") + " üben" + cnt(Math.min(nW, p.box.length)) : "Leer, sehr gut!", 'data-act="start" data-mode="box" data-min="' + mins + '"' + (p.box.length ? "" : " disabled")) +
       tile("💬", "Sätze", stt.sent.total ? stt.sent.seen + " von " + stt.sent.total + " geübt" + cnt(Math.min(nS, stt.sent.total)) : "Für diesen Bereich noch keine", 'data-act="start" data-mode="sent" data-min="' + mins + '"' + (stt.sent.total ? "" : " disabled")) +
       (biz ? "" : tile("🔀", "Verben", "Unregelmäßige Verben" + cnt(nV), 'data-act="start" data-mode="verbs" data-min="' + mins + '"')) +
@@ -763,17 +762,68 @@
     var films = global.VTFILM ? '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">🎬 Erklärfilme</div><span class="pill">neu</span></div>' +
       '<p class="small muted" style="margin:6px 0 10px">Bruno, Pingo, Robbi und Eisi erklären jeden Modus in 30 Sekunden.</p><div class="fmlist">' +
       global.VTFILM.list.map(function (f) { return '<button class="fmcard" data-act="film" data-id="' + f.id + '"><span>' + f.icon + '</span><b>' + esc(f.title) + '</b><i>▶</i></button>'; }).join("") + '</div></section>' : "";
-    return '<section class="card"><div class="eyebrow">Lernen</div>' +
-      '<div class="row wrap" style="margin-top:8px"><span class="small muted">Dauer</span>' + [3, 5, 10, 15].map(function (m2) { return '<button class="chip" data-act="setmin" data-min="' + m2 + '" aria-pressed="' + (mins === m2) + '">' + m2 + ' Min</button>'; }).join("") + '</div>' +
-      '<div class="tiles">' + learn + '</div></section>' +
-      '<section class="card"><div class="eyebrow">Spielen</div>' +
+    var playCard = '<section class="card"><div class="eyebrow">Arena</div>' +
       (few ? '<p class="small muted" style="margin:6px 0 0">Für die Spiele brauchst du mindestens acht Wörter im gewählten Bereich. Schalte unter „Lernbereich“ ein weiteres Schuljahr dazu.</p>' : '') +
       '<div class="tiles">' + play + '</div>' +
       '<details style="margin-top:12px"><summary class="small" style="cursor:pointer;font-weight:700">Wie die Spiele zählen</summary>' +
-      '<p class="small muted" style="margin:8px 0 0">Ein Treffer unter Zeitdruck wird als sichere, aber flache Wiederholung gewertet. Er schiebt ein Wort eine Stufe weiter, ersetzt aber nicht das ruhige Training. Ein Fehlgriff landet sofort in der Fehlerkartei. Die Zeit läuft aufs Tagesziel.' + (plays ? ' Bisher ' + plays + ' ' + plural(plays, "Runde", "Runden") + ' gespielt.' : '') + '</p></details></section>' +
+      '<p class="small muted" style="margin:8px 0 0">Ein Treffer unter Zeitdruck wird als sichere, aber flache Wiederholung gewertet. Er schiebt ein Wort eine Stufe weiter, ersetzt aber nicht das ruhige Training. Ein Fehlgriff landet sofort in der Fehlerkartei. Die Zeit läuft aufs Tagesziel.' + (plays ? ' Bisher ' + plays + ' ' + plural(plays, "Spiel", "Spiele") + ' gespielt.' : '') + '</p></details></section>';
+    if (part === "spiel") return playCard;
+    return '<section class="card"><div class="eyebrow">Lernen</div>' +
+      '<div class="row wrap" style="margin-top:8px"><span class="small muted">Dauer</span>' + [3, 5, 10, 15].map(function (m2) { return '<button class="chip" data-act="setmin" data-min="' + m2 + '" aria-pressed="' + (mins === m2) + '">' + m2 + ' Min</button>'; }).join("") + '</div>' +
+      '<div class="tiles">' + learn + '</div></section>' +
       films + '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Gezielt üben</div><span class="pill">neu</span></div>' +
       '<p class="small muted" style="margin:6px 0 0">Eine Aufgabenform üben, mit Wörtern, die dran sind (ca. ' + mins + ' Min).</p><div class="tiles">' +
       focusT.map(function (f) { return tile(f[0], f[1], f[2], 'data-act="start" data-mode="focus" data-focus="' + f[3] + '" data-min="' + mins + '"' + (f[4] ? " disabled" : "")); }).join("") + '</div></section>';
+  }
+
+  /* ================= Hauptmenü: Start · Lernen · Spielen · Beute · Profil ================= */
+  function topSegs(html) { var st = view.querySelector(".stack"); if (st) st.insertAdjacentHTML("afterbegin", html); else view.insertAdjacentHTML("afterbegin", html); }
+  function viewLernen() {
+    var seg = detailUnit ? "units" : lernSeg;
+    var top = segBar("lernen", seg, [["ueben", "🎮 Üben"], ["units", "📚 Lernbereich"], ["stats", "📈 Fortschritt"]]);
+    if (detailUnit === "__verbs") return viewVerbList();
+    if (detailUnit) return viewUnitDetail(detailUnit);
+    if (seg === "stats") viewStats();
+    else {
+      view.innerHTML = '<div class="stack">' + (seg === "units" ? unitsHtml() : modiHtml("lern")) + '</div>';
+      $$("details.grp").forEach(function (d) { d.addEventListener("toggle", function () { openGroups[d.getAttribute("data-k")] = d.open; }); });
+    }
+    topSegs(top);
+  }
+  function challengeHtml() {
+    var ci = S.chalInfo(), mins = startMin || S.goalMin(), done = ci.doneToday, st = S.state;
+    var dots = ci.days.map(function (d) { return '<span class="chd' + (d.ok ? " ok" : "") + (d.today ? " now" : "") + '"><i>' + (d.ok ? "🔥" : d.today ? "⭐" : "·") + '</i>' + d.wd + '</span>'; }).join("");
+    return '<section class="cta"><div class="ctaglow"></div><div class="eyebrow">Daily Challenge</div>' +
+      '<h2>' + (done ? "✓ Heute geschafft" : "🏆 Heute bunt gemischt") + '</h2>' +
+      '<p class="small" style="margin:0 0 14px;opacity:.85">' + (done ? "Bonus ist abgeholt. Weitere Runden sind Zusatz-Runden und zählen normal." : "Eine Runde aus allem, was dran ist: Neues, Fälliges, Fehler. Die erste am Tag gibt <b>+10 🪙</b>.") + '</p>' +
+      '<button class="ctabtn" data-act="start" data-mode="mix" data-min="' + mins + '">' + (done ? "Zusatz-Runde ▶" : "Challenge starten ▶") + '</button>' +
+      '<div class="row" style="gap:6px;margin-top:14px;justify-content:space-between;align-items:center"><span class="small" style="opacity:.8">Dauer</span><span class="row" style="gap:6px">' +
+      [3, 5, 10, 15].map(function (m) { return '<button class="chip ctachip" data-act="setmin" data-min="' + m + '" aria-pressed="' + (mins === m) + '">' + m + ' Min</button>'; }).join("") + '</span></div></section>' +
+      '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Challenge-Serie</div><span class="pill tnum">🔥 ' + ci.streak + (ci.streak === 1 ? " Tag" : " Tage") + '</span></div>' +
+      '<div class="chdots">' + dots + '</div>' +
+      '<p class="small muted" style="margin:10px 0 0">' + (ci.next ? "Noch " + (ci.next - ci.streak) + " " + (ci.next - ci.streak === 1 ? "Tag" : "Tage") + " bis zum Serienbonus <b>+" + ci.nextCoins + " 🪙</b> (bei " + ci.next + " Tagen)." : "Alle Serienboni erreicht. Stark!") + (ci.best > 1 ? " Bestserie: " + ci.best + " Tage." : "") + '</p>' +
+      '<p class="small muted" style="margin:6px 0 0">Serienboni gibt es bei 3, 7, 14 und 30 Tagen in Folge.</p></section>';
+  }
+  function viewSpielen() {
+    var top = segBar("spielen", spielSeg, [["challenge", "🏆 Challenge"], ["arena", "🕹️ Arena"]]);
+    view.innerHTML = '<div class="stack">' + top + (spielSeg === "arena" ? modiHtml("spiel") : challengeHtml()) + '</div>';
+  }
+  function viewBeute() {
+    var top = segBar("beute", beuteSeg, [["pass", "❄️ Monatspass"], ["shop", "🛍️ Shop"], ["showroom", "🏆 Showroom"]]);
+    if (beuteSeg === "shop") { viewShop(); topSegs(top); }
+    else if (beuteSeg === "showroom") { viewShowroom(); topSegs(top); }
+    else {
+      view.innerHTML = '<div class="stack">' + top + passCard() +
+        '<section class="card"><div class="eyebrow">So funktioniert der Monatspass</div><p class="small muted" style="margin:6px 0 0">Der Pass läuft einen Monat in vier Wochen plus Finale. Jede Woche zählt, an wie vielen Tagen du dein Tagesziel schaffst. Sind genug Tage zusammen, öffnest du die Wochen-Beute mit Figur, Tanz, Sticker und Münzen. Alle vier Wochen geschafft? Dann wartet das Finale.</p></section></div>';
+    }
+  }
+  function profileCard() {
+    var st = S.state, r = S.rankOf(st.xp), pn = playerName(), pf = st.profile, xpPct = r.next ? Math.min(100, Math.round(r.into * 100 / Math.max(1, r.span))) : 100;
+    var favs = S.favs().map(function (id) { return '<button class="hhf" data-act="gotab" data-t="showroom" aria-label="Favorit">' + favIcon(id) + '</button>'; }).join("");
+    return '<section class="card"><div class="row" style="gap:14px;align-items:center"><div class="avatar ' + global.VTC.frameClass(pf) + '" style="width:64px;height:64px;font-size:34px;flex:none">' + avatarHtml(pf.avatar) + '</div>' +
+      '<div style="flex:1 1 auto;min-width:0"><b style="font-size:18px">' + esc(pn || "Spieler") + '</b><div class="small muted">' + esc(r.rank.n) + ' · <span class="tnum">' + st.xp + '</span> XP</div>' +
+      '<div class="bar" style="margin-top:6px"><i style="width:' + xpPct + '%"></i></div></div></div>' +
+      '<div class="row" style="gap:8px;margin-top:12px;align-items:center"><span class="small muted">⭐ Favoriten</span>' + (favs || '<span class="small muted">noch keine</span>') + '<button class="chip" style="margin-left:auto" data-act="gotab" data-t="showroom">🏆 Showroom</button></div></section>';
   }
   function viewUeben() {
     if (detailUnit === "__verbs") return viewVerbList();
@@ -1037,7 +1087,8 @@
     { k: "fn", n: "Fortnite" }, { k: "bg", n: "Hintergründe" }, { k: "fx", n: "Effekte" }, { k: "dance", n: "Tänze 💃" }, { k: "outfit", n: "Outfits 👕" }, { k: "kit", n: "Trikots ⚽" }, { k: "sets", n: "Sets ⭐" }, { k: "snd", n: "Töne" }, { k: "theme", n: "Farben" }
   ];
   var KIND_NAME = { sticker: "Sticker", avatar: "Figur", frame: "Rahmen", title: "Titel", bg: "Hintergrund", fx: "Effekt", dance: "Tanz", outfit: "Outfit", kit: "Trikot", snd: "Ton", theme: "Farbwelt" };
-  var shopTab = "avatar";
+  var shopTab = "avatar", lernSeg = "ueben", spielSeg = "challenge", beuteSeg = "pass";
+  var TABMAP = { ueben: "lernen", stats: "lernen", shop: "beute", showroom: "beute" };
   var THEME_DOT = { paper: "#1E6273", mint: "#2E7357", plum: "#6A3D70", amber: "#8A5A1B" };
   function shopIcon(it) {
     switch (it.kind) {
@@ -1385,7 +1436,7 @@
   function viewParent() {
     var st = S.state, s = S.stats();
     var html = '<div class="stack">';
-    html += howToCard();
+    html += profileCard() + howToCard();
     function unCard(h) { return h.replace(/^<section class="card"[^>]*>(<div class="eyebrow"[^>]*>[^<]*<\/div>)?/, "").replace(/<\/section>$/, ""); }
     function fold(key, icon, title, sub, inner) {
       return '<details class="fold" data-f="' + key + '"' + (openFolds[key] ? " open" : "") + '><summary><span class="chev">▸</span><span style="flex:1 1 auto;min-width:0"><b>' + icon + " " + title + '</b>' +
@@ -1688,7 +1739,7 @@
         rw.parts.map(function (x) { return '<div class="row small"><span style="flex:1 1 auto">' + esc(x.t) + '</span><b class="tnum">+' + x.c + ' 🪙</b></div>'; }).join("") + '</div>' : "") + '</section>';
     if (SS.sentOk) html += '<section class="card"><div class="eyebrow">Satzbau</div><p style="margin:6px 0 0">' + SS.sentOk + ' ' + plural(SS.sentOk, "Satz", "Sätze") + ' richtig zusammengesetzt.</p></section>';
     if (SS.mastered) html += '<section class="card"><div class="eyebrow" style="color:var(--gold)">Neu gemeistert</div><p style="margin:6px 0 0">' + SS.mastered + ' ' + plural(SS.mastered, "Wort sitzt", "Wörter sitzen") + ' jetzt langfristig.</p></section>';
-    if (rw.challenge) html += '<section class="card" style="border-color:var(--gold)"><div class="eyebrow" style="color:var(--gold)">🎁 Daily Challenge geschafft</div><p style="margin:6px 0 0">Tagesbonus: <b>+' + rw.challenge + ' 🪙</b>. Morgen wartet die nächste Challenge.</p></section>';
+    if (rw.challenge) html += '<section class="card" style="border-color:var(--gold)"><div class="eyebrow" style="color:var(--gold)">🎁 Daily Challenge geschafft</div><p style="margin:6px 0 0">Tagesbonus: <b>+' + rw.challenge + ' 🪙</b>. Morgen wartet die nächste Challenge.' + (rw.challengeStreak ? '<br>🔥 <b>' + rw.challengeStreak.n + ' Tage in Folge!</b> Serienbonus +' + rw.challengeStreak.coins + ' 🪙' : '') + '</p></section>';
     if (rw.goalReached) html += '<section class="card"><div class="eyebrow" style="color:var(--good)">Tagesziel erreicht</div>' + (rw.streakUp ? '<div class="fin-flame">🔥</div>' : "") + '<p style="margin:6px 0 0">' + (rw.streakUp ? "Streak steht bei " + st.streak.count + " " + plural(st.streak.count, "Tag", "Tagen") + "." : "Schon erledigt heute.") + '</p></section>';
     if (rw.missions.length) html += '<section class="card"><div class="eyebrow">Missionen erfüllt</div>' + rw.missions.map(function (m) { return '<div class="mission done"><div class="tick">✓</div><div class="txt small">' + esc(m.n) + '</div><span class="pill">🪙 ' + m.coins + '</span></div>'; }).join("") + '</section>';
     if (rw.badges.length) html += '<section class="card"><div class="eyebrow">Neue Abzeichen</div><div class="badges" style="margin-top:8px">' + rw.badges.map(function (b) { return '<div class="badge"><div class="g">🏅</div><b>' + esc(b.n) + '</b></div>'; }).join("") + '</div></section>';
@@ -2341,6 +2392,7 @@
     else if (a === "seg") {
       var sg = act.getAttribute("data-g"), sv = act.getAttribute("data-v");
       if (sg === "ueben") uebenSeg = sv; else if (sg === "stats") statsSeg = sv; else if (sg === "shop") shopSeg = sv;
+      else if (sg === "lernen") { lernSeg = sv; uebenSeg = sv === "units" ? "units" : "modi"; detailUnit = null; } else if (sg === "spielen") spielSeg = sv; else if (sg === "beute") beuteSeg = sv;
       render(); view.scrollTop = 0;
     }
     else if (a === "startrec") { if (lastRec) startSession(lastRec.opts); }
@@ -2555,13 +2607,16 @@
   function render() {
     S.rollDay();
     if (!SS) flushNews();
-    $$("#tabs button, #hGear").forEach(function (b) { b.setAttribute("aria-current", b.getAttribute("data-tab") === tab); });
+    if (TABMAP[tab]) {   // frühere Reiter leben als Unterbereiche der neuen Hauptreiter weiter
+      if (tab === "ueben") lernSeg = uebenSeg === "units" ? "units" : "ueben"; else if (tab === "stats") lernSeg = "stats"; else beuteSeg = tab;
+      tab = TABMAP[tab];
+    }
+    $$("#tabs button").forEach(function (b) { b.setAttribute("aria-current", b.getAttribute("data-tab") === tab); });
     renderHeader();
     if (tab === "home") viewHome();
-    else if (tab === "ueben") viewUeben();
-    else if (tab === "stats") viewStats();
-    else if (tab === "showroom") viewShowroom();
-    else if (tab === "shop") viewShop();
+    else if (tab === "lernen") viewLernen();
+    else if (tab === "spielen") viewSpielen();
+    else if (tab === "beute") viewBeute();
     else viewParent();
   }
 
