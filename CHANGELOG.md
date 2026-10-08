@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.46.0 – 2026-10-08
+- **Elternkonten für mehrere Familien** (Server-Update nötig): Einladungslink vom Betreiber → Registrierung mit E-Mail und Einwilligung → Anmeldung per Einmal-Link aus der Mail (ohne Passwort). Jede Familie verwaltet nur ihre eigenen Kinder (bis zu 6) im bekannten Dashboard unter `/f/`. Konto-Seite: Wochenmail an/aus, Daten herunterladen, Konto samt Kindern löschen. Betreiber-Dashboard: Reiter „👪 Familien“ mit Einladungen, Sperren und Löschen. Fremde Kinder sind für den Betreiber nicht sichtbar. Wochenmail pro Familie. Datenschutzerklärung als Entwurf unter `/f/datenschutz`.
+- Neue Server-Tests: Registrierung, Einmal-Link, Isolation zwischen Familien und Betreiber, Sperren, Export, Löschen.
+
 ## 2.45.0 – 2026-10-08
 - **Neues Hauptmenü** (Start · Lernen · Spielen · Beute · Profil): 
   - **Lernen**: Üben (Modi, Erklärfilme, Gezielt üben), Lernbereich, Fortschritt.

@@ -190,6 +190,73 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     assert.ok((await J("/api/admin/players", { headers: H })).j.some(x => x.name === "Christian"), "nach Umschalten sichtbar");
     await J("/api/admin/players/" + mk.j.id + "/revoke", { method: "POST", headers: H });
     assert.equal((await J("/api/events", { method: "POST", headers: T, body: "{}" })).s, 401, "nach Trennen gesperrt");
+
+    /* ---------- Elternkonten ---------- */
+    const decMail = () => (mailGot.match(/^[A-Za-z0-9+\/=]{20,}$/gm) || []).map(x => Buffer.from(x, "base64").toString("utf8")).join("");
+    const linkOf = () => { const m = decMail().match(/https?:\/\/[^\s"<]+\/f\/login\?t=([0-9a-f]{64})/); return m && m[1]; };
+    assert.equal((await J("/api/admin/families", { headers: H })).j.length, 0, "noch keine Familien");
+    assert.equal((await J("/api/fam/players")).s, 401, "Familien-Schnittstelle ohne Anmeldung gesperrt");
+    assert.equal((await J("/api/family/join", { method: "POST", body: JSON.stringify({ email: "a@example.org", invite: "NOPE", consent: true }) })).s, 400, "falscher Einladungslink");
+    const inv = await J("/api/admin/families/invites", { method: "POST", headers: H, body: JSON.stringify({ note: "Test", uses: 2 }) });
+    assert.equal(inv.s, 200); assert.ok(/\/f\/join\?i=/.test(inv.j.url));
+    assert.equal((await fetch(base + "/f/join?i=" + inv.j.code)).status, 200, "Registrierungsseite");
+    assert.equal((await J("/api/family/join", { method: "POST", body: JSON.stringify({ email: "mama@example.org", invite: inv.j.code }) })).s, 400, "ohne Einwilligung keine Registrierung");
+    mailGot = "";
+    assert.equal((await J("/api/family/join", { method: "POST", body: JSON.stringify({ email: "Mama@Example.org", invite: inv.j.code, consent: true }) })).s, 200);
+    await wait(300);
+    const t1 = linkOf(); assert.ok(t1, "Anmeldelink kommt per Mail");
+    const ss = await fetch(base + "/api/family/session", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ t: t1 }) });
+    assert.equal(ss.status, 200); const cookie = (ss.headers.get("set-cookie") || "").split(";")[0];
+    assert.ok(/^wf=[0-9a-f]{64}$/.test(cookie), "Sitzungs-Cookie");
+    assert.ok(/HttpOnly/i.test(ss.headers.get("set-cookie")) && /SameSite=Lax/i.test(ss.headers.get("set-cookie")), "Cookie HttpOnly und SameSite");
+    assert.equal((await J("/api/family/session", { method: "POST", body: JSON.stringify({ t: t1 }) })).s, 400, "Link nur einmal nutzbar");
+    const F = { Cookie: cookie, "Content-Type": "application/json", "X-Wordy": "1" };
+    assert.equal((await J("/api/fam/players", { headers: { Cookie: cookie } })).j.length, 0, "Familie startet ohne Kinder");
+    assert.equal((await J("/api/fam/players", { method: "POST", headers: { Cookie: cookie, "Content-Type": "application/json" }, body: JSON.stringify({ name: "Lena" }) })).s, 403, "ohne X-Wordy-Kopf kein Schreiben");
+    const kid = await J("/api/fam/players", { method: "POST", headers: F, body: JSON.stringify({ name: "Lena" }) });
+    assert.equal(kid.s, 200); assert.ok(kid.j.invite.code);
+    const kp = await J("/api/pair", { method: "POST", body: JSON.stringify({ code: kid.j.invite.code, device: "Lena-Handy" }) });
+    assert.equal(kp.s, 200, "Kind lässt sich koppeln"); assert.equal((await J("/api/ping", { method: "POST", headers: T2(kp.j.token), body: "{}" })).s, 200);
+    assert.deepEqual((await J("/api/fam/players", { headers: F })).j.map(x => x.name), ["Lena"], "Familie sieht ihr Kind");
+    assert.ok(!(await J("/api/admin/players", { headers: H })).j.some(x => x.name === "Lena"), "Betreiber sieht fremde Kinder nicht");
+    assert.equal((await J("/api/admin/players/" + kid.j.id + "/report", { headers: H })).s, 404, "Betreiber kommt nicht an fremde Berichte");
+    assert.equal((await J("/api/fam/players/" + mk.j.id + "/report", { headers: F })).s, 404, "Familie kommt nicht an Spieler des Betreibers");
+    assert.equal((await J("/api/fam/players/" + kid.j.id + "/goals", { method: "POST", headers: F, body: JSON.stringify({ kind: "minutes", target: 20 }) })).s, 200, "Familie setzt Ziele für ihr Kind");
+    assert.equal((await J("/api/fam/families", { headers: F })).s, 403, "Betreiber-Funktionen gesperrt");
+    assert.equal((await J("/api/fam/info", { headers: F })).s, 200);
+    // zweite Familie darf die Kinder der ersten nicht sehen
+    const inv2 = await J("/api/admin/families/invites", { method: "POST", headers: H, body: JSON.stringify({}) });
+    mailGot = ""; await J("/api/family/join", { method: "POST", body: JSON.stringify({ email: "papa@example.org", invite: inv2.j.code, consent: true }) }); await wait(300);
+    const ss2 = await fetch(base + "/api/family/session", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ t: linkOf() }) });
+    const F2 = { Cookie: (ss2.headers.get("set-cookie") || "").split(";")[0], "Content-Type": "application/json", "X-Wordy": "1" };
+    assert.equal((await J("/api/fam/players/" + kid.j.id + "/report", { headers: F2 })).s, 404, "fremde Familie sieht das Kind nicht");
+    assert.equal((await J("/api/fam/players/" + kid.j.id, { method: "DELETE", headers: F2 })).s, 404, "und kann es nicht löschen");
+    // Einladungslink ist verbraucht (1 Nutzung)
+    assert.equal((await J("/api/family/join", { method: "POST", body: JSON.stringify({ email: "x@example.org", invite: inv2.j.code, consent: true }) })).s, 400, "Einladung nur einmal nutzbar");
+    // Anmeldung für unbekannte Adresse: gleiche Antwort, keine Mail
+    mailGot = ""; assert.equal((await J("/api/family/login", { method: "POST", body: JSON.stringify({ email: "niemand@example.org" }) })).s, 200); await wait(200);
+    assert.ok(!linkOf(), "unbekannte Adresse bekommt keine Mail");
+    // Wochenmail an die Familie
+    mailGot = ""; assert.equal((await J("/api/fam/mail/test", { method: "POST", headers: F })).j.ok, true); const fm = decMail();
+    assert.ok(/Lena/.test(fm) && !/Magnus|Christian/.test(fm), "Familien-Wochenmail zeigt nur eigene Kinder");
+    // Export
+    const ex = await J("/api/fam/me/export", { headers: F }); assert.equal(ex.j.children[0].name, "Lena"); assert.equal(ex.j.email, "mama@example.org");
+    // Sperren und wieder anmelden
+    const fams = (await J("/api/admin/families", { headers: H })).j, mama = fams.find(x => x.email === "mama@example.org");
+    assert.equal(mama.children, 1);
+    await J("/api/admin/families/" + mama.id + "/block", { method: "POST", headers: H, body: JSON.stringify({ blocked: true }) });
+    assert.equal((await J("/api/fam/players", { headers: F })).s, 401, "gesperrte Familie ist draußen");
+    await J("/api/admin/families/" + mama.id + "/block", { method: "POST", headers: H, body: JSON.stringify({ blocked: false }) });
+    mailGot = ""; await J("/api/family/login", { method: "POST", body: JSON.stringify({ email: "mama@example.org" }) }); await wait(300);
+    const ss3 = await fetch(base + "/api/family/session", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ t: linkOf() }) });
+    const F3 = { Cookie: (ss3.headers.get("set-cookie") || "").split(";")[0], "Content-Type": "application/json", "X-Wordy": "1" };
+    assert.equal((await J("/api/fam/players", { headers: F3 })).j.length, 1, "nach Entsperren wieder drin");
+    // Konto löschen: Kinder, Token und Daten verschwinden
+    assert.equal((await J("/api/fam/me", { method: "DELETE", headers: F3, body: JSON.stringify({ confirm: "falsch@example.org" }) })).s, 400);
+    assert.equal((await J("/api/fam/me", { method: "DELETE", headers: F3, body: JSON.stringify({ confirm: "mama@example.org" }) })).s, 200);
+    assert.equal((await J("/api/fam/players", { headers: F3 })).s, 401, "Konto gelöscht");
+    assert.equal((await J("/api/ping", { method: "POST", headers: T2(kp.j.token), body: "{}" })).s, 401, "Gerät des Kindes ist getrennt");
+    assert.equal((await J("/api/admin/families", { headers: H })).j.length, 1, "nur die zweite Familie bleibt");
     console.log("Alle Prüfungen bestanden.");
   } catch (e) { console.error("FEHLER:", e.message); process.exitCode = 1; }
   srv.kill(); fake.close(); fs.rmSync(dir, { recursive: true, force: true });

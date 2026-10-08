@@ -59,17 +59,19 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
 </head>
 <body>
 <main>
-  <h1>📚 Wordy · Lernfortschritt</h1>
+  <h1>📚 Wordy · <span id="ttl">Lernfortschritt</span></h1>
   <div id="tabs" class="row" style="margin-bottom:12px"></div>
   <div id="view"></div>
 </main>
 <script>
 (function () {
   var view = document.getElementById("view"), tabs = document.getElementById("tabs");
+  if (window.WF) document.getElementById("ttl").textContent = "Eltern";
   var players = [], cur = null, days = 14;
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   function api(path, opt) {
-    return fetch(path, Object.assign({ credentials: "same-origin" }, opt || {})).then(function (r) {
+    opt = Object.assign({}, opt || {}); opt.headers = Object.assign({ "X-Wordy": "1" }, opt.headers || {});
+    return fetch(path, Object.assign({ credentials: "same-origin" }, opt)).then(function (r) {
       return r.json().then(function (j) { if (!r.ok) throw new Error(j.error || r.status); return j; });
     });
   }
@@ -100,11 +102,13 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
   }
   function drawTabs() {
     tabs.innerHTML = players.map(function (p) { return '<button class="tab" data-p="' + p.id + '" aria-pressed="' + (cur === p.id) + '">' + esc(p.name) + "</button>"; }).join("") +
-      '<button class="tab" data-p="new" aria-pressed="' + (cur === "new") + '">＋ Spieler</button>';
+      '<button class="tab" data-p="new" aria-pressed="' + (cur === "new") + '">＋ Spieler</button>' +
+      '<button class="tab" data-p="fam" aria-pressed="' + (cur === "fam") + '">' + (window.WF ? "⚙️ Konto" : "👪 Familien") + '</button>';
   }
-  tabs.onclick = function (e) { var b = e.target.closest("button[data-p]"); if (!b) return; cur = b.getAttribute("data-p") === "new" ? "new" : +b.getAttribute("data-p"); drawTabs(); show(); };
+  tabs.onclick = function (e) { var b = e.target.closest("button[data-p]"); if (!b) return; var v = b.getAttribute("data-p"); cur = v === "new" || v === "fam" ? v : +v; drawTabs(); show(); };
 
   function show() {
+    if (cur === "fam") return Promise.resolve(viewFam());
     if (cur === "new" || !players.length) return Promise.resolve(viewNew());
     var p = players.filter(function (x) { return x.id === cur; })[0];
     view.innerHTML = '<div class="card muted">Lade …</div>';
@@ -112,6 +116,36 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
       .catch(function (e) { view.innerHTML = '<div class="card err">' + esc(e.message) + "</div>"; });
   }
 
+  /* Betreiber: Familien und Einladungslinks. Eltern: eigenes Konto (E-Mail, Wochenmail, Daten exportieren, Konto löschen). */
+  function viewFam() {
+    if (window.WF) {
+      view.innerHTML = '<div class="card muted">Lade …</div>';
+      return api("/api/admin/me").then(function (m) {
+        view.innerHTML = '<div class="card"><h2>Mein Konto</h2><p style="margin:0 0 8px">Angemeldet als <b>' + esc(m.email) + '</b>. Kinder: <b>' + m.children + ' von ' + m.max + '</b>.</p>' +
+          '<label class="row" style="gap:8px;margin-top:10px"><input type="checkbox" id="fw"' + (m.weekly ? " checked" : "") + '><span>Wochenzusammenfassung per Mail (' + ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"][m.day] + " um " + m.hour + ' Uhr)</span></label><p id="fmsg" class="small muted" style="margin:8px 0 0"></p></div>' +
+          '<div class="card"><h2>Meine Daten</h2><p class="small muted" style="margin:0 0 10px">Du kannst alle gespeicherten Daten deiner Familie als Datei herunterladen oder das Konto samt aller Kinder und Lernstände endgültig löschen.</p>' +
+          '<div class="row" style="gap:8px"><a class="ghost sm" href="/api/fam/me/export" download style="padding:8px 12px;border-radius:8px;text-decoration:none">Daten herunterladen</a><button class="ghost sm" id="flo">Abmelden</button><button class="ghost sm" id="fdel" style="color:#b8403b">Konto löschen …</button></div>' +
+          '<p class="small muted" style="margin:10px 0 0"><a href="/f/datenschutz" target="_blank">Datenschutzerklärung</a></p></div>';
+        document.getElementById("fw").onchange = function () { post("/api/admin/me", { weekly: this.checked }).then(function () { document.getElementById("fmsg").textContent = "Gespeichert."; }); };
+        document.getElementById("flo").onclick = function () { post("/api/family/logout").then(function () { location.href = "/f/"; }); };
+        document.getElementById("fdel").onclick = function () { var c = prompt("Das löscht dein Konto, alle Kinder und alle Lernstände endgültig. Zur Bestätigung deine E-Mail-Adresse eintippen:"); if (c) api("/api/admin/me", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ confirm: c }) }).then(function () { location.href = "/f/"; }).catch(function (e) { alert(e.message); }); };
+      }).catch(function (e) { view.innerHTML = '<div class="card err">' + esc(e.message) + "</div>"; });
+    }
+    view.innerHTML = '<div class="card muted">Lade …</div>';
+    return Promise.all([api("/api/admin/families"), api("/api/admin/families/invites")]).then(function (r) {
+      var fs = r[0], inv = r[1].filter(function (i) { return i.expires > Date.now() && i.uses < i.max; });
+      view.innerHTML = '<div class="card"><h2>Einladungslink erstellen</h2><p class="small muted" style="margin:0 0 10px">Wer den Link bekommt, kann sich mit seiner E-Mail-Adresse registrieren und danach seine Kinder selbst verwalten. Jeder Link gilt für eine bestimmte Zahl Familien.</p>' +
+        '<div class="row" style="gap:8px"><input id="in" class="grow" maxlength="60" placeholder="Notiz, z. B. Familie Meier"><select id="iu"><option value="1">1 Familie</option><option value="3">3</option><option value="10">10</option></select><button id="imk">Link erstellen</button></div><div id="iout"></div></div>' +
+        '<div class="card"><h2>Offene Einladungen</h2>' + (inv.length ? inv.map(function (i) { return '<div class="row" style="gap:8px;padding:6px 0;border-top:1px solid #e3e8f0"><span class="grow small"><b>' + esc(i.note || "ohne Notiz") + '</b> · ' + i.uses + "/" + i.max + ' benutzt<br><span class="muted">' + esc(i.url) + '</span></span><button class="ghost sm" data-cp="' + esc(i.url) + '">Kopieren</button><button class="ghost sm" data-di="' + esc(i.code) + '">Löschen</button></div>'; }).join("") : '<p class="small muted" style="margin:0">Keine offenen Einladungen.</p>') + "</div>" +
+        '<div class="card"><h2>Familien (' + fs.length + ')</h2>' + (fs.length ? fs.map(function (f) { return '<div class="row" style="gap:8px;padding:6px 0;border-top:1px solid #e3e8f0"><span class="grow small"><b>' + esc(f.email) + '</b> ' + (f.status === "blocked" ? '<span class="err">gesperrt</span>' : "") + '<br><span class="muted">' + f.children + ' Kinder · zuletzt angemeldet ' + fmtAgo(f.lastLogin) + '</span></span><button class="ghost sm" data-bl="' + f.id + '" data-b="' + (f.status === "blocked" ? 0 : 1) + '">' + (f.status === "blocked" ? "Entsperren" : "Sperren") + '</button><button class="ghost sm" data-df="' + f.id + '" data-n="' + esc(f.email) + '">Löschen</button></div>'; }).join("") : '<p class="small muted" style="margin:0">Noch keine Familien registriert.</p>') +
+        '<p class="small muted" style="margin:10px 0 0">Aus Datenschutzgründen siehst du hier nur Konten, nicht die Lernstände fremder Kinder.</p></div>';
+      document.getElementById("imk").onclick = function () { post("/api/admin/families/invites", { note: document.getElementById("in").value, uses: +document.getElementById("iu").value }).then(function (i) { viewFam().then(function () { document.getElementById("iout").innerHTML = '<p style="margin:10px 0 0"><b>Link:</b> <input readonly class="grow" style="width:100%" value="' + esc(i.url) + '" onclick="this.select()"></p>'; }); }).catch(function (e) { alert(e.message); }); };
+      Array.prototype.forEach.call(view.querySelectorAll("[data-cp]"), function (b) { b.onclick = function () { navigator.clipboard.writeText(b.getAttribute("data-cp")); b.textContent = "Kopiert"; }; });
+      Array.prototype.forEach.call(view.querySelectorAll("[data-di]"), function (b) { b.onclick = function () { api("/api/admin/families/invites/" + b.getAttribute("data-di"), { method: "DELETE" }).then(viewFam); }; });
+      Array.prototype.forEach.call(view.querySelectorAll("[data-bl]"), function (b) { b.onclick = function () { post("/api/admin/families/" + b.getAttribute("data-bl") + "/block", { blocked: b.getAttribute("data-b") === "1" }).then(viewFam); }; });
+      Array.prototype.forEach.call(view.querySelectorAll("[data-df]"), function (b) { b.onclick = function () { if (confirm(b.getAttribute("data-n") + " samt allen Kindern und Lernständen endgültig löschen?")) api("/api/admin/families/" + b.getAttribute("data-df"), { method: "DELETE" }).then(viewFam); }; });
+    }).catch(function (e) { view.innerHTML = '<div class="card err">' + esc(e.message) + "</div>"; });
+  }
   function viewNew(inv, name) {
     var h = '<div class="card"><h2>Neuen Spieler anlegen</h2><div class="row"><input id="nn" class="grow" maxlength="20" placeholder="Name, z. B. Magnus"><button id="mk">Anlegen</button></div>' +
       '<label class="row" style="margin-top:10px;gap:8px;font-size:14px"><input type="checkbox" id="nh"> <span>Nur sichern, nicht anzeigen <span class="muted">(zum Beispiel für dich selbst: der Lernstand wird gesichert, aber es gibt keine Zahlen, Ziele oder Mails dazu)</span></span></label>' +

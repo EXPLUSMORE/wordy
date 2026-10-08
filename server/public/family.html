@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Wordy · Eltern</title>
+<style>
+:root{--bg:#F4F6F8;--card:#fff;--ink:#16222B;--ink2:#52606B;--line:#E1E6EA;--acc:#1E6273;--bad:#b8403b;--good:#2E8B57}
+@media (prefers-color-scheme:dark){:root{--bg:#10171C;--card:#18222A;--ink:#E8EEF2;--ink2:#9AA9B4;--line:#26333D;--acc:#4FA8BE}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:grid;place-items:center;min-height:100vh;padding:16px}
+.card{width:100%;max-width:440px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;box-shadow:0 8px 30px rgba(0,0,0,.08)}
+h1{margin:0 0 6px;font-size:22px}p{margin:0 0 14px;color:var(--ink2)}
+label{display:block;font-size:14px;margin:12px 0 4px;font-weight:600}
+input[type=email]{width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit}
+.chk{display:flex;gap:10px;align-items:flex-start;font-weight:400;font-size:14px;margin-top:14px}.chk input{margin-top:4px}
+button{width:100%;margin-top:16px;padding:13px;border:0;border-radius:12px;background:var(--acc);color:#fff;font:inherit;font-weight:700;cursor:pointer}
+button:disabled{opacity:.6}.msg{margin-top:14px;font-size:14px}.err{color:var(--bad)}.ok{color:var(--good)}
+a{color:var(--acc)}.small{font-size:13px}
+</style>
+</head>
+<body>
+<div class="card" id="c"></div>
+<script>
+(function () {
+  var c = document.getElementById("c"), q = new URLSearchParams(location.search), path = location.pathname;
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (x) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[x]; }); }
+  function post(u, b) { return fetch(u, { method: "POST", headers: { "Content-Type": "application/json", "X-Wordy": "1" }, body: JSON.stringify(b || {}) }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok) throw new Error(j.error || "Fehler " + r.status); return j; }); }); }
+  function done(msg) { document.getElementById("m").className = "msg ok"; document.getElementById("m").textContent = msg; }
+  function fail(e) { var m = document.getElementById("m"); m.className = "msg err"; m.textContent = e.message; var b = c.querySelector("button"); if (b) b.disabled = false; }
+  if (path === "/f/login" && q.get("t")) {
+    c.innerHTML = '<h1>📚 Wordy · Eltern</h1><p>Schön, dass du da bist. Tippe auf den Knopf, um dich anzumelden.</p><button id="go">Jetzt anmelden</button><div id="m" class="msg"></div>';
+    document.getElementById("go").onclick = function () { this.disabled = true; post("/api/family/session", { t: q.get("t") }).then(function () { location.replace("/f/"); }).catch(function (e) { fail(e); c.insertAdjacentHTML("beforeend", '<p class="small" style="margin-top:12px"><a href="/f/">Neuen Link anfordern</a></p>'); }); };
+    return;
+  }
+  var join = path === "/f/join", code = q.get("i") || "";
+  if (join && !code) { c.innerHTML = '<h1>Einladung</h1><p>Dieser Link ist unvollständig. Bitte öffne den Link aus deiner Einladung noch einmal.</p>'; return; }
+  c.innerHTML = '<h1>📚 Wordy · Eltern</h1><p>' + (join ? "Du wurdest eingeladen! Mit deiner E-Mail-Adresse legst du dein Elternkonto an und verwaltest danach die Kinder selbst." : "Melde dich mit deiner E-Mail-Adresse an. Wir schicken dir einen Anmeldelink, ein Passwort brauchst du nicht.") + '</p>' +
+    '<label for="e">E-Mail-Adresse</label><input id="e" type="email" autocomplete="email" inputmode="email" placeholder="name@beispiel.de">' +
+    (join ? '<label class="chk"><input type="checkbox" id="k"><span>Ich bin erziehungsberechtigt und stimme der <a href="/f/datenschutz" target="_blank">Datenschutzerklärung</a> zu. Gespeichert werden nur Lerndaten meiner Kinder (Wörter, Zeiten, Käufe) und diese E-Mail-Adresse.</span></label>' : '') +
+    '<button id="go">' + (join ? "Konto anlegen" : "Anmeldelink senden") + '</button><div id="m" class="msg"></div>' + (join ? "" : '<p class="small" style="margin-top:14px">Noch kein Konto? Du brauchst einen Einladungslink.</p>');
+  document.getElementById("go").onclick = function () {
+    var e = document.getElementById("e").value.trim(); if (!e) return;
+    if (join && !document.getElementById("k").checked) { fail(new Error("Bitte stimme der Datenschutzerklärung zu.")); return; }
+    this.disabled = true;
+    (join ? post("/api/family/join", { email: e, invite: code, consent: true }) : post("/api/family/login", { email: e }))
+      .then(function () { done("Fast geschafft: Wenn die Adresse stimmt, ist die Mail unterwegs. Der Link gilt " + 20 + " Minuten. Schau auch im Spam-Ordner nach."); }).catch(fail);
+  };
+})();
+</script>
+</body>
+</html>

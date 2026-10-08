@@ -68,6 +68,42 @@ db.exec(`
 `);
 
 if (!db.prepare("PRAGMA table_info(players)").all().some(c => c.name === "hidden")) db.exec("ALTER TABLE players ADD COLUMN hidden INTEGER NOT NULL DEFAULT 0");
+/* Elternkonten: Familien melden sich per E-Mail-Link an und verwalten nur ihre eigenen Kinder. Spieler ohne Familie gehören dem Betreiber (Basic-Anmeldung). */
+db.exec(`
+  CREATE TABLE IF NOT EXISTS families (id INTEGER PRIMARY KEY, email TEXT NOT NULL UNIQUE, created INTEGER NOT NULL, status TEXT NOT NULL DEFAULT 'active',
+    consent_ts INTEGER, consent_ver TEXT, weekly INTEGER NOT NULL DEFAULT 1, last_login INTEGER);
+  CREATE TABLE IF NOT EXISTS family_links (hash TEXT PRIMARY KEY, family INTEGER NOT NULL REFERENCES families(id) ON DELETE CASCADE, created INTEGER NOT NULL, used INTEGER NOT NULL DEFAULT 0);
+  CREATE TABLE IF NOT EXISTS family_sessions (hash TEXT PRIMARY KEY, family INTEGER NOT NULL REFERENCES families(id) ON DELETE CASCADE, created INTEGER NOT NULL, last_seen INTEGER NOT NULL);
+  CREATE TABLE IF NOT EXISTS family_invites (code TEXT PRIMARY KEY, created INTEGER NOT NULL, expires INTEGER NOT NULL, max_uses INTEGER NOT NULL DEFAULT 1, uses INTEGER NOT NULL DEFAULT 0, note TEXT);
+`);
+if (!db.prepare("PRAGMA table_info(players)").all().some(c => c.name === "family")) db.exec("ALTER TABLE players ADD COLUMN family INTEGER REFERENCES families(id) ON DELETE CASCADE");
+const fq = {
+  byId: db.prepare("SELECT * FROM families WHERE id = ?"),
+  byEmail: db.prepare("SELECT * FROM families WHERE email = ?"),
+  all: db.prepare("SELECT f.*, (SELECT COUNT(*) FROM players p WHERE p.family = f.id) AS children FROM families f ORDER BY f.id"),
+  add: db.prepare("INSERT INTO families(email, created, consent_ts, consent_ver) VALUES (?, ?, ?, ?)"),
+  setStatus: db.prepare("UPDATE families SET status = ? WHERE id = ?"),
+  setWeekly: db.prepare("UPDATE families SET weekly = ? WHERE id = ?"),
+  touchLogin: db.prepare("UPDATE families SET last_login = ? WHERE id = ?"),
+  del: db.prepare("DELETE FROM families WHERE id = ?"),
+  addLink: db.prepare("INSERT INTO family_links(hash, family, created) VALUES (?, ?, ?)"),
+  link: db.prepare("SELECT * FROM family_links WHERE hash = ?"),
+  useLink: db.prepare("UPDATE family_links SET used = 1 WHERE hash = ?"),
+  addSess: db.prepare("INSERT INTO family_sessions(hash, family, created, last_seen) VALUES (?, ?, ?, ?)"),
+  sess: db.prepare("SELECT * FROM family_sessions WHERE hash = ?"),
+  touchSess: db.prepare("UPDATE family_sessions SET last_seen = ? WHERE hash = ?"),
+  delSess: db.prepare("DELETE FROM family_sessions WHERE hash = ?"),
+  delSessOf: db.prepare("DELETE FROM family_sessions WHERE family = ?"),
+  addInv: db.prepare("INSERT INTO family_invites(code, created, expires, max_uses, note) VALUES (?, ?, ?, ?, ?)"),
+  inv: db.prepare("SELECT * FROM family_invites WHERE code = ?"),
+  invs: db.prepare("SELECT * FROM family_invites ORDER BY created DESC LIMIT 50"),
+  useInv: db.prepare("UPDATE family_invites SET uses = uses + 1 WHERE code = ?"),
+  delInv: db.prepare("DELETE FROM family_invites WHERE code = ?"),
+  kids: db.prepare("SELECT * FROM players WHERE family = ? ORDER BY id"),
+  addKid: db.prepare("INSERT INTO players(name, created, hidden, family) VALUES (?, ?, 0, ?)"),
+  prune: db.prepare("DELETE FROM family_links WHERE created < ?")
+};
+const MAX_KIDS = 6, LINK_MIN = 20, SESSION_DAYS = 30, CONSENT_VER = "2026-10";
 const q = {
   player: db.prepare("SELECT * FROM players WHERE id = ?"),
   players: db.prepare("SELECT * FROM players ORDER BY id"),
@@ -495,8 +531,8 @@ function weeklyData(pid) {
     goals: r.goals.filter(g => g.current), plans: r.plans, problems: r.problems.slice(0, 5), meta: r.meta
   };
 }
-function mailContent() {
-  const players = q.players.all().filter(x => !x.hidden), parts = [], texts = [];
+function mailContent(list, link) {
+  const players = list || q.players.all().filter(x => !x.hidden && x.family == null), parts = [], texts = [];
   for (const p of players) {
     const d = weeklyData(p.id), idle = !d.items && !d.sec;
     const trend = d.prevSec ? (d.sec >= d.prevSec ? "↑ " : "↓ ") + "Vorwoche " + fmtMin(d.prevSec) : "";
@@ -520,8 +556,8 @@ function mailContent() {
   const mon = mondayOf(dayOf(Date.now()));
   return {
     subject: "Wordy: Lernwoche ab " + mon.split("-").reverse().join("."),
-    text: "Wordy Wochenzusammenfassung (Woche ab " + mon + ")\n\n" + (texts.join("\n\n") || "Noch keine Spieler angelegt.") + "\n\nAlle Details im Dashboard: " + DASH_URL + "\n",
-    html: '<div style="font-family:system-ui,Segoe UI,Arial,sans-serif;color:#16222B;max-width:560px"><h1 style="font-size:20px;margin:0 0 4px">📚 Wordy · Lernwoche</h1><div style="color:#666">Woche ab ' + esc(mon.split("-").reverse().join(".")) + "</div>" + (parts.join("") || "<p>Noch keine Spieler angelegt.</p>") + '<p style="margin:26px 0 0"><a href="' + esc(DASH_URL) + '" style="display:inline-block;background:#1E6273;color:#fff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:600">Zum Dashboard</a></p><p style="margin:8px 0 0;color:#666;font-size:13px"><a href="' + esc(DASH_URL) + '" style="color:#1E6273">' + esc(DASH_URL) + "</a></p></div>"
+    text: "Wordy Wochenzusammenfassung (Woche ab " + mon + ")\n\n" + (texts.join("\n\n") || "Noch keine Spieler angelegt.") + "\n\nAlle Details im Dashboard: " + (link || DASH_URL) + "\n",
+    html: '<div style="font-family:system-ui,Segoe UI,Arial,sans-serif;color:#16222B;max-width:560px"><h1 style="font-size:20px;margin:0 0 4px">📚 Wordy · Lernwoche</h1><div style="color:#666">Woche ab ' + esc(mon.split("-").reverse().join(".")) + "</div>" + (parts.join("") || "<p>Noch keine Spieler angelegt.</p>") + '<p style="margin:26px 0 0"><a href="' + esc(link || DASH_URL) + '" style="display:inline-block;background:#1E6273;color:#fff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:600">Zum Dashboard</a></p><p style="margin:8px 0 0;color:#666;font-size:13px"><a href="' + esc(link || DASH_URL) + '" style="color:#1E6273">' + esc(link || DASH_URL) + "</a></p></div>"
   };
 }
 async function sendWeekly() {
@@ -546,7 +582,14 @@ function mailTick() {
   sendWeekly().then(() => { q.kvSet.run("mail_sent", key); console.log("Wochenmail gesendet für Woche ab " + key); },
     e => console.error("Wochenmail fehlgeschlagen:", e.message));
 }
+function famTick() {
+  if (!transportOn()) return;
+  const { wd, h } = localNow();
+  if (wd !== MAIL.day || h < MAIL.hour) return;
+  famWeekly().catch(e => console.error("Familien-Wochenmail:", e.message));
+}
 setInterval(mailTick, 60000).unref();
+setInterval(famTick, 60000).unref();
 
 
 /* ---------- Vollständige Sicherung des Lernstands ---------- */
@@ -568,8 +611,8 @@ function apiStateGet(pid, day) {
   return [200, Object.assign(stateMeta(r), { state: JSON.parse(r.d) })];
 }
 
-function adminPlayers(hidden) {
-  return q.players.all().filter(p => !!p.hidden === !!hidden).map(p => {
+function adminPlayers(hidden, scope) {
+  return q.players.all().filter(p => !!p.hidden === !!hidden && famPlayer(p, scope)).map(p => {
     const c = q.evCount.get(p.id), m = snap(p.id, "meta"), devs = q.devices.all(p.id);
     const today = dayOf(Date.now());
     let todaySec = 0, todayItems = 0;
@@ -590,10 +633,67 @@ function newInvite(pid) {
   return { code, validDays: INVITE_DAYS };
 }
 
+
+/* ---------- Elternkonten ---------- */
+const transportOn = () => !!((GRAPH.tenant && GRAPH.clientId && GRAPH.clientSecret && MAIL.from) || (MAIL.host && MAIL.from));
+async function deliver(o) {   // eine Mail an eine Adresse, über Graph oder SMTP
+  if (!transportOn()) throw new Error("Mailversand ist nicht eingerichtet (siehe README).");
+  if (GRAPH.tenant && GRAPH.clientId && GRAPH.clientSecret && MAIL.from) return sendGraph({ tenant: GRAPH.tenant, clientId: GRAPH.clientId, clientSecret: GRAPH.clientSecret, from: MAIL.from, to: o.to, subject: o.subject, html: o.html });
+  return sendMail({ host: MAIL.host, port: MAIL.port, secure: MAIL.secure, user: MAIL.user, pass: MAIL.pass, from: MAIL.from, to: o.to, subject: o.subject, text: o.text, html: o.html });
+}
+const EMAIL_RE = /^[^\s@<>",;]{1,64}@[^\s@<>",;]{1,200}\.[A-Za-z]{2,}$/;
+const normEmail = s => clean(s, 120).toLowerCase();
+function mailShell(title, body) {
+  return '<div style="font-family:system-ui,Segoe UI,Arial,sans-serif;color:#16222B;max-width:520px"><h1 style="font-size:20px;margin:0 0 10px">' + esc(title) + "</h1>" + body + '<p style="color:#888;font-size:12px;margin-top:24px">Wordy · Lernfortschritt für Eltern</p></div>';
+}
+async function sendLoginLink(fam) {
+  const t = rand(32);
+  fq.addLink.run(sha(t), fam.id, Date.now());
+  fq.prune.run(Date.now() - 86400000);
+  const url = DASH_URL + "/f/login?t=" + t;
+  await deliver({
+    to: fam.email, subject: "Dein Wordy-Anmeldelink",
+    text: "Hallo!\n\nMit diesem Link meldest du dich im Wordy-Elternbereich an (gültig " + LINK_MIN + " Minuten, nur einmal nutzbar):\n\n" + url + "\n\nHast du das nicht angefordert, kannst du diese Mail ignorieren.\n",
+    html: mailShell("Dein Anmeldelink", '<p>Mit diesem Link meldest du dich im Wordy-Elternbereich an. Er gilt ' + LINK_MIN + ' Minuten und funktioniert nur einmal.</p><p><a href="' + esc(url) + '" style="display:inline-block;background:#1E6273;color:#fff;padding:12px 20px;border-radius:10px;text-decoration:none;font-weight:700">Jetzt anmelden</a></p><p style="color:#666;font-size:13px">Oder diesen Link kopieren:<br>' + esc(url) + "</p><p style=\"color:#666;font-size:13px\">Hast du das nicht angefordert, kannst du diese Mail ignorieren.</p>")
+  });
+}
+function cookieOf(req, name) {
+  for (const part of String(req.headers.cookie || "").split(";")) { const i = part.indexOf("="); if (i > 0 && part.slice(0, i).trim() === name) return part.slice(i + 1).trim(); }
+  return "";
+}
+function famAuth(req) {   // Familie aus dem Sitzungs-Cookie, nur aktive Konten
+  const t = cookieOf(req, "wf"); if (!/^[0-9a-f]{64}$/.test(t)) return null;
+  const h = sha(t), s = fq.sess.get(h); if (!s) return null;
+  if (Date.now() - s.created > SESSION_DAYS * 86400000) { fq.delSess.run(h); return null; }
+  const f = fq.byId.get(s.family); if (!f || f.status !== "active") return null;
+  if (Date.now() - s.last_seen > 3600000) fq.touchSess.run(Date.now(), h);
+  return f;
+}
+const cookieHdr = (v, maxAge) => "wf=" + v + "; Path=/; HttpOnly; SameSite=Lax; Max-Age=" + maxAge + (DASH_URL.startsWith("https") ? "; Secure" : "");
+const famPlayer = (pl, scope) => !!pl && (scope ? pl.family === scope.id : pl.family == null);   // Besitzprüfung: Familie nur eigene Kinder, Betreiber nur eigene Spieler
+function famExport(f) {
+  return { exportedAt: new Date().toISOString(), email: f.email, created: f.created, consent: { ts: f.consent_ts, version: f.consent_ver }, children: fq.kids.all(f.id).map(p => ({
+    id: p.id, name: p.name, created: p.created, goals: q.goals.all(p.id, "0000-00-00"), plans: q.plans.all(p.id, "0000-00-00"), latestState: (q.latestState.get(p.id) || {}).d ? JSON.parse(q.latestState.get(p.id).d) : null, events: q.events.all(p.id, 0).map(e => ({ ts: e.ts, k: e.k, d: JSON.parse(e.d) })) })) };
+}
+async function famWeekly() {
+  if (!transportOn()) return;
+  const key = mondayOf(dayOf(Date.now()));
+  for (const f of fq.all.all()) {
+    if (f.status !== "active" || !f.weekly || !f.children) continue;
+    const sk = "fmail_sent:" + f.id, sent = q.kvGet.get(sk);
+    if (sent && sent.val === key) continue;
+    const tries = "fmail_try:" + f.id + ":" + key, n = q.kvGet.get(tries);
+    if (n && +n.val >= 3) continue;
+    q.kvSet.run(tries, String((n ? +n.val : 0) + 1));
+    try { const c = mailContent(fq.kids.all(f.id).filter(x => !x.hidden), DASH_URL + "/f/"); await deliver({ to: f.email, subject: c.subject, html: c.html, text: c.text }); q.kvSet.run(sk, key); }
+    catch (e) { console.error("Familien-Wochenmail fehlgeschlagen:", e.message); }
+  }
+}
+
 /* ---------- Routing ---------- */
 const PUBLIC = path.join(__dirname, "public");
 const server = http.createServer(async (req, res) => {
-  const ip = clientIp(req), url = new URL(req.url, "http://x"), p = url.pathname;
+  const ip = clientIp(req), url = new URL(req.url, "http://x"); let p = url.pathname, scope = null;   // scope = Familie, wenn über das Elternkonto zugegriffen wird
   try {
     cors(req, res);
     if (req.method === "OPTIONS") { res.writeHead(204); return res.end(); }
@@ -631,10 +731,65 @@ const server = http.createServer(async (req, res) => {
       { const pl = q.player.get(pid); return send(res, 200, { ok: true, name: pl.name, hidden: !!pl.hidden }); }
     }
 
+
+    /* ---------- Elternkonto: Seiten, Anmeldung per E-Mail-Link ---------- */
+    const FCSP = "default-src 'self'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'self'; img-src 'self' data:; form-action 'self'; frame-ancestors 'none'";
+    if (p === "/f/datenschutz" && req.method === "GET") return send(res, 200, fs.readFileSync(path.join(PUBLIC, "datenschutz.html"), "utf8"), { "Content-Security-Policy": FCSP });
+    if ((p === "/f/join" || p === "/f/login") && req.method === "GET") return send(res, 200, fs.readFileSync(path.join(PUBLIC, "family.html"), "utf8"), { "Content-Security-Policy": FCSP });
+    if ((p === "/f" || p === "/f/") && req.method === "GET") {
+      if (!famAuth(req)) return send(res, 200, fs.readFileSync(path.join(PUBLIC, "family.html"), "utf8"), { "Content-Security-Policy": FCSP });
+      const html = fs.readFileSync(path.join(PUBLIC, "index.html"), "utf8").replace(/\/api\/admin/g, "/api/fam").replace("<head>", "<head><script>window.WF=1</script>");
+      return send(res, 200, html, { "Content-Security-Policy": FCSP });
+    }
+    if (p === "/api/family/login" && req.method === "POST") {
+      if (limited(ip, "flogin", 10, 600000)) return send(res, 429, { error: "Zu viele Versuche. Bitte später noch einmal." });
+      const email = normEmail((await readJson(req)).email);
+      if (!EMAIL_RE.test(email)) return send(res, 400, { error: "Bitte eine gültige E-Mail-Adresse eingeben." });
+      if (!transportOn()) return send(res, 503, { error: "Der Mailversand ist auf dem Server nicht eingerichtet." });
+      if (!limited(email, "fmail", 3, 3600000)) {
+        const f = fq.byEmail.get(email);
+        if (f && f.status === "active") { try { await sendLoginLink(f); } catch (e) { console.error("Anmeldelink:", e.message); return send(res, 502, { error: "Die Mail konnte nicht gesendet werden." }); } }
+      }
+      return send(res, 200, { ok: true });   // immer dieselbe Antwort: nicht verraten, welche Adressen es gibt
+    }
+    if (p === "/api/family/join" && req.method === "POST") {
+      if (limited(ip, "fjoin", 10, 600000)) return send(res, 429, { error: "Zu viele Versuche. Bitte später noch einmal." });
+      const b = await readJson(req), email = normEmail(b.email), code = clean(b.invite, 40).toUpperCase().replace(/[^A-Z0-9-]/g, "");
+      if (!EMAIL_RE.test(email)) return send(res, 400, { error: "Bitte eine gültige E-Mail-Adresse eingeben." });
+      if (b.consent !== true) return send(res, 400, { error: "Bitte stimme der Datenschutzerklärung zu." });
+      if (!transportOn()) return send(res, 503, { error: "Der Mailversand ist auf dem Server nicht eingerichtet." });
+      const inv = fq.inv.get(code);
+      if (!inv || inv.expires < Date.now() || inv.uses >= inv.max_uses) return send(res, 400, { error: "Dieser Einladungslink ist ungültig oder abgelaufen." });
+      let f = fq.byEmail.get(email);
+      if (!f) { const id = +fq.add.run(email, Date.now(), Date.now(), CONSENT_VER).lastInsertRowid; fq.useInv.run(code); f = fq.byId.get(id); }
+      if (f.status === "active" && !limited(email, "fmail", 3, 3600000)) { try { await sendLoginLink(f); } catch (e) { console.error("Anmeldelink:", e.message); return send(res, 502, { error: "Die Mail konnte nicht gesendet werden." }); } }
+      return send(res, 200, { ok: true });
+    }
+    if (p === "/api/family/session" && req.method === "POST") {
+      if (limited(ip, "fsess", 20, 600000)) return send(res, 429, { error: "Zu viele Versuche." });
+      const t = clean((await readJson(req)).t, 80), row = /^[0-9a-f]{64}$/.test(t) ? fq.link.get(sha(t)) : null;
+      const f = row && !row.used && Date.now() - row.created < LINK_MIN * 60000 ? fq.byId.get(row.family) : null;
+      if (!f || f.status !== "active") return send(res, 400, { error: "Der Link ist ungültig oder abgelaufen. Bitte fordere einen neuen an." });
+      fq.useLink.run(sha(t));
+      const tok = rand(32); fq.addSess.run(sha(tok), f.id, Date.now(), Date.now()); fq.touchLogin.run(Date.now(), f.id);
+      return send(res, 200, { ok: true }, { "Set-Cookie": cookieHdr(tok, SESSION_DAYS * 86400) });
+    }
+    if (p === "/api/family/logout" && req.method === "POST") {
+      const t = cookieOf(req, "wf"); if (/^[0-9a-f]{64}$/.test(t)) fq.delSess.run(sha(t));
+      return send(res, 200, { ok: true }, { "Set-Cookie": cookieHdr("", 0) });
+    }
+    if (p.startsWith("/api/fam/")) {   // Eltern-Schnittstelle der Familie: gleiche Routen wie /api/admin, aber nur für die eigenen Kinder
+      if (limited(ip, "fam", 240, 60000)) return send(res, 429, { error: "Zu viele Anfragen." });
+      scope = famAuth(req);
+      if (!scope) return send(res, 401, { error: "Bitte neu anmelden." });
+      if (req.method !== "GET" && req.headers["x-wordy"] !== "1") return send(res, 403, { error: "Nicht erlaubt." });   // einfacher Schutz vor fremden Formularen
+      p = "/api/admin/" + p.slice("/api/fam/".length);
+    }
+
     /* Ab hier nur für Eltern */
     if (p === "/" || p.startsWith("/api/admin/")) {
-      if (limited(ip, "admin", 120, 60000)) return send(res, 429, { error: "Zu viele Anfragen." });
-      if (!adminOk(req)) {
+      if (!scope && limited(ip, "admin", 120, 60000)) return send(res, 429, { error: "Zu viele Anfragen." });
+      if (!scope && !adminOk(req)) {
         if (limited(ip, "authfail", 10, 600000)) return send(res, 429, { error: "Zu viele Versuche." });
         return send(res, 401, "Anmeldung nötig", { "WWW-Authenticate": 'Basic realm="Wordy Lernfortschritt", charset="UTF-8"' });
       }
@@ -643,27 +798,58 @@ const server = http.createServer(async (req, res) => {
           { "Content-Security-Policy": "default-src 'self'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'self'; img-src 'self' data:" });
       }
       if (p === "/api/admin/info" && req.method === "GET") return send(res, 200, SERVER_INFO);
+      if (scope && p === "/api/admin/me" && req.method === "GET") return send(res, 200, { email: scope.email, created: scope.created, weekly: !!scope.weekly, children: fq.kids.all(scope.id).length, max: MAX_KIDS, mail: transportOn(), day: MAIL.day, hour: MAIL.hour });
+      if (scope && p === "/api/admin/me" && req.method === "POST") { const b = await readJson(req); fq.setWeekly.run(b.weekly ? 1 : 0, scope.id); return send(res, 200, { ok: true }); }
+      if (scope && p === "/api/admin/me/export" && req.method === "GET") {
+        res.writeHead(200, { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store", "Content-Disposition": 'attachment; filename="wordy-daten-export.json"' });
+        return res.end(JSON.stringify(famExport(scope), null, 1));
+      }
+      if (scope && p === "/api/admin/me" && req.method === "DELETE") {
+        const b = await readJson(req); if (normEmail(b.confirm) !== scope.email) return send(res, 400, { error: "Zur Bestätigung bitte die E-Mail-Adresse eintippen." });
+        fq.del.run(scope.id); return send(res, 200, { ok: true }, { "Set-Cookie": cookieHdr("", 0) });   // löscht Konto, Kinder, Lernstände (ON DELETE CASCADE)
+      }
+      if (scope && p.startsWith("/api/admin/families")) return send(res, 403, { error: "Nicht erlaubt." });
+      if (!scope && p === "/api/admin/families" && req.method === "GET") return send(res, 200, fq.all.all().map(f => ({ id: f.id, email: f.email, created: f.created, status: f.status, children: f.children, lastLogin: f.last_login, weekly: !!f.weekly, consent: f.consent_ts })));
+      if (!scope && p === "/api/admin/families/invites" && req.method === "GET") return send(res, 200, fq.invs.all().map(i => ({ code: i.code, created: i.created, expires: i.expires, max: i.max_uses, uses: i.uses, note: i.note, url: DASH_URL + "/f/join?i=" + i.code })));
+      if (!scope && p === "/api/admin/families/invites" && req.method === "POST") {
+        const b = await readJson(req), code = (rand(5)).toUpperCase(), days = Math.min(60, Math.max(1, +b.days || 14)), uses = Math.min(50, Math.max(1, +b.uses || 1));
+        fq.addInv.run(code, Date.now(), Date.now() + days * 86400000, uses, clean(b.note, 60));
+        return send(res, 200, { code, url: DASH_URL + "/f/join?i=" + code, expires: Date.now() + days * 86400000, max: uses });
+      }
+      const mfi = p.match(/^\/api\/admin\/families\/invites\/([A-Z0-9]{4,20})$/);
+      if (!scope && mfi && req.method === "DELETE") { fq.delInv.run(mfi[1]); return send(res, 200, { ok: true }); }
+      const mf = p.match(/^\/api\/admin\/families\/(\d+)(?:\/(\w+))?$/);
+      if (!scope && mf) {
+        const f = fq.byId.get(+mf[1]); if (!f) return send(res, 404, { error: "Unbekannt." });
+        if (mf[2] === "block" && req.method === "POST") { const blocked = !!(await readJson(req)).blocked; fq.setStatus.run(blocked ? "blocked" : "active", f.id); if (blocked) fq.delSessOf.run(f.id); return send(res, 200, { ok: true }); }
+        if (!mf[2] && req.method === "DELETE") { fq.del.run(f.id); return send(res, 200, { ok: true }); }
+      }
+      if (p === "/api/admin/mail" && req.method === "GET" && scope) { const sent = q.kvGet.get("fmail_sent:" + scope.id); return send(res, 200, { configured: transportOn() && !!scope.weekly, to: scope.email, day: MAIL.day, hour: MAIL.hour, lastWeek: sent ? sent.val : null, family: true }); }
+      if (p === "/api/admin/mail/test" && req.method === "POST" && scope) {
+        try { const c = mailContent(fq.kids.all(scope.id).filter(x => !x.hidden), DASH_URL + "/f/"); await deliver({ to: scope.email, subject: c.subject, html: c.html, text: c.text }); return send(res, 200, { ok: true }); } catch (e) { return send(res, 200, { ok: false, error: String(e.message).slice(0, 200) }); }
+      }
       if (p === "/api/admin/mail" && req.method === "GET") { const sent = q.kvGet.get("mail_sent"); return send(res, 200, { configured: mailOn(), to: mailOn() ? MAIL.to : "", day: MAIL.day, hour: MAIL.hour, lastWeek: sent ? sent.val : null }); }
       if (p === "/api/admin/mail/test" && req.method === "POST") {
         try { await sendWeekly(); return send(res, 200, { ok: true }); } catch (e) { return send(res, 200, { ok: false, error: String(e.message).replace(MAIL.pass || "\u0000", "***").replace(GRAPH.clientSecret || "\u0000", "***").slice(0, 300) }); }
       }
-      if (p === "/api/admin/players" && req.method === "GET") return send(res, 200, adminPlayers(url.searchParams.get("hidden") === "1"));
+      if (p === "/api/admin/players" && req.method === "GET") return send(res, 200, adminPlayers(url.searchParams.get("hidden") === "1", scope));
       if (p === "/api/admin/players" && req.method === "POST") {
         const b = await readJson(req), name = clean(b.name, 20);
         if (!name) return send(res, 400, { error: "Name fehlt." });
-        const id = +q.addPlayer.run(name, Date.now(), b.hidden ? 1 : 0).lastInsertRowid;
+        if (scope && fq.kids.all(scope.id).length >= MAX_KIDS) return send(res, 400, { error: "Es sind höchstens " + MAX_KIDS + " Kinder pro Konto möglich." });
+        const id = scope ? +fq.addKid.run(name, Date.now(), scope.id).lastInsertRowid : +q.addPlayer.run(name, Date.now(), b.hidden ? 1 : 0).lastInsertRowid;
         return send(res, 200, { id, name, hidden: !!b.hidden, invite: newInvite(id) });
       }
       const mu = p.match(/^\/api\/admin\/players\/(\d+)\/unit\/([A-Za-z0-9_.\-]{1,30})$/);
-      if (mu && req.method === "GET") { if (!q.player.get(+mu[1])) return send(res, 404, { error: "Unbekannt." }); const [c, b] = unitDetail(+mu[1], mu[2]); return send(res, c, b); }
+      if (mu && req.method === "GET") { if (!famPlayer(q.player.get(+mu[1]), scope)) return send(res, 404, { error: "Unbekannt." }); const [c, b] = unitDetail(+mu[1], mu[2]); return send(res, c, b); }
       const mw = p.match(/^\/api\/admin\/players\/(\d+)\/words$/);
-      if (mw && req.method === "GET") { if (!q.player.get(+mw[1])) return send(res, 404, { error: "Unbekannt." }); return send(res, 200, allWords(+mw[1])); }
+      if (mw && req.method === "GET") { if (!famPlayer(q.player.get(+mw[1]), scope)) return send(res, 404, { error: "Unbekannt." }); return send(res, 200, allWords(+mw[1])); }
       const mg = p.match(/^\/api\/admin\/(goals|plans)\/(\d+)$/);
-      if (mg && req.method === "DELETE") { (mg[1] === "goals" ? q.delGoal : q.delPlan).run(+mg[2]); return send(res, 200, { ok: true }); }
+      if (mg && req.method === "DELETE") { const row = (mg[1] === "goals" ? q.goal : q.plan).get(+mg[2]); if (!row || !famPlayer(q.player.get(row.player), scope)) return send(res, 404, { error: "Unbekannt." }); (mg[1] === "goals" ? q.delGoal : q.delPlan).run(+mg[2]); return send(res, 200, { ok: true }); }
       const m = p.match(/^\/api\/admin\/players\/(\d+)(?:\/(\w+))?$/);
       if (m) {
         const pid = +m[1], pl = q.player.get(pid);
-        if (!pl) return send(res, 404, { error: "Unbekannt." });
+        if (!famPlayer(pl, scope)) return send(res, 404, { error: "Unbekannt." });
         if (!m[2] && req.method === "GET") return send(res, 200, { id: pid, name: pl.name });
         if (m[2] === "report" && req.method === "GET") return send(res, 200, report(pid, Math.min(90, Math.max(7, +url.searchParams.get("days") || 30))));
         if (m[2] === "states" && req.method === "GET") return send(res, 200, q.stateList.all(pid).map(stateMeta));

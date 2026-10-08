@@ -97,6 +97,16 @@ Von Hand testen: `sudo -u wordy /opt/node22/bin/node /opt/wordy/server/backup.js
 - Eingaben werden begrenzt (Größe, Anzahl), doppelt gesendete Ereignisse werden erkannt.
 - `ALLOW_ORIGIN` auf die Adresse der App einschränken (nicht `*`).
 
+## Elternkonten (mehrere Familien)
+Außer dem Betreiber-Zugang (`/`, Basic-Anmeldung) gibt es Konten für Familien. Jede Familie verwaltet **nur ihre eigenen Kinder**; der Betreiber sieht fremde Kinder nicht (nur Konten).
+- **Einladung:** Betreiber-Dashboard → „👪 Familien“ → Einladungslink erstellen (Notiz, 1/3/10 Familien). Der Link `…/f/join?i=CODE` gilt 14 Tage.
+- **Registrierung:** Die Eltern geben E-Mail-Adresse und Einwilligung ein, bekommen einen **Anmeldelink per Mail** (20 Minuten gültig, nur einmal nutzbar, ohne Passwort) und sind danach unter `…/f/` im Dashboard (30 Tage angemeldet, Cookie `wf`: HttpOnly, SameSite=Lax, Secure bei https).
+- **Kinder:** bis zu 6 pro Konto. Verbindungscode wie bisher, Kinder koppeln ihr Gerät in der App unter Profil › Setup › Auto-Save.
+- **Konto:** Wochenmail an die Eltern an/aus (am gleichen Wochentag wie die Betreiber-Mail), Daten als Datei herunterladen, Konto samt allen Kindern endgültig löschen.
+- **Betreiber:** Konten sperren/entsperren/löschen, Einladungen löschen.
+- **Voraussetzung:** Mailversand (SMTP oder Graph mit `MAIL_FROM`) und `DASHBOARD_URL` müssen gesetzt sein, sonst kann sich niemand anmelden. Die Datenschutzerklärung `server/public/datenschutz.html` ist ein **Entwurf**: Verantwortlichen eintragen und rechtlich prüfen lassen, bevor fremde Familien eingeladen werden.
+- Technik: Tabellen `families`, `family_links`, `family_sessions`, `family_invites`, Spalte `players.family` (leer = Spieler des Betreibers). Familien-Schnittstelle: `/api/fam/…` (gleiche Routen wie `/api/admin/…`, mit Besitzprüfung), schreibende Aufrufe brauchen den Kopf `X-Wordy: 1`.
+
 ## Schnittstellen (zur Information)
 App: `POST /api/pair`, `/api/events`, `/api/snapshot`, `/api/ping` · Eltern: `GET /`, `/api/admin/players`, `/api/admin/players/:id/report?days=30` u. a.
 
