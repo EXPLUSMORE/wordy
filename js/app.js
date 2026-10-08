@@ -326,7 +326,19 @@
   function segBar(group, cur, items) {
     return '<div class="segs">' + items.map(function (x) {
       return '<button data-act="seg" data-g="' + group + '" data-v="' + x[0] + '" aria-pressed="' + (cur === x[0]) + '">' + x[1] + '</button>';
-    }).join("") + '</div>';
+    }).join("") + (global.VTFILM && (group === "lernen" || group === "spielen") ? '<button class="howto" data-act="howto" aria-label="How-to: Erklärfilme">▶ How-to</button>' : "") + '</div>';
+  }
+  /* How-to: die Erklärfilme liegen hinter einem eigenen Knopf, damit sie das Üben nicht stören */
+  function howtoSheet() {
+    var ov = document.createElement("div"); ov.className = "srmd";
+    ov.innerHTML = '<div class="dsh" style="max-height:86vh;overflow:auto;text-align:left"><div class="dshg"></div><div class="eyebrow">How-to</div><h3 style="text-align:center">Kurz erklärt</h3><p style="text-align:center">Bruno, Pingo, Robbi und Eisi zeigen jeden Modus in 30 Sekunden.</p><div class="fmlist">' +
+      global.VTFILM.list.map(function (f) { return '<button class="fmcard" data-id="' + f.id + '"><span>' + f.icon + '</span><b>' + esc(f.title) + '</b><i>▶</i></button>'; }).join("") + '</div><button class="dshx" data-close="1">Schließen</button></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener("click", function (e) {
+      var c = e.target.closest(".fmcard");
+      if (e.target === ov || e.target.closest("[data-close]")) return ov.remove();
+      if (c) { var id = c.getAttribute("data-id"); ov.remove(); var b = document.createElement("button"); b.hidden = true; b.setAttribute("data-act", "film"); b.setAttribute("data-id", id); view.appendChild(b); b.click(); b.remove(); }
+    });
   }
   function tile(icon, title, desc, attrs, extra, cls) {
     return '<button class="tile' + (cls ? " " + cls : "") + '" ' + attrs + '><span class="ti">' + icon + '</span><span class="tt"><b>' + title + '</b><span class="d">' + desc + '</span>' + (extra || "") + '</span></button>';
@@ -771,7 +783,7 @@
     return '<section class="card"><div class="eyebrow">Lernen</div>' +
       '<div class="row wrap" style="margin-top:8px"><span class="small muted">Dauer</span>' + [3, 5, 10, 15].map(function (m2) { return '<button class="chip" data-act="setmin" data-min="' + m2 + '" aria-pressed="' + (mins === m2) + '">' + m2 + ' Min</button>'; }).join("") + '</div>' +
       '<div class="tiles">' + learn + '</div></section>' +
-      films + '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Gezielt üben</div><span class="pill">neu</span></div>' +
+      '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Gezielt üben</div><span class="pill">neu</span></div>' +
       '<p class="small muted" style="margin:6px 0 0">Eine Aufgabenform üben, mit Wörtern, die dran sind (ca. ' + mins + ' Min).</p><div class="tiles">' +
       focusT.map(function (f) { return tile(f[0], f[1], f[2], 'data-act="start" data-mode="focus" data-focus="' + f[3] + '" data-min="' + mins + '"' + (f[4] ? " disabled" : "")); }).join("") + '</div></section>';
   }
@@ -2707,6 +2719,7 @@
       crewDo("/crew/claim", { quest: act.getAttribute("data-q"), tier: +act.getAttribute("data-t") }, function (r) { var got = S.crewReward(r.coins, r.tier); renderHeader(); toast("🥇 " + r.tier + " bei " + r.quest + "! +" + got + " 🪙", 3600); try { global.VTC.burst("stars", rect.left + rect.width / 2, rect.top, 22, 1.2); } catch (e) {} });
     }
     else if (a === "socmode") { soc.boardMode = act.getAttribute("data-m"); render(); }
+    else if (a === "howto") howtoSheet();
     else if (a === "film") {
       global.VTFILM.play(act.getAttribute("data-id"), { audio: S.state.settings.audio, speak: function (t) { speak(t, null, "de"); }, voice: function () { var n = S.state.settings.narrator || "auto"; return n === "dev" ? null : n === "m" ? "m" : "f"; }, onGo: function (g) {
         var b = document.createElement("button"); b.hidden = true;
