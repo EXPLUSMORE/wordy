@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.51.1 – 2026-10-08
+- **Design im Profil wählbar:** Eigene Karte „🎨 Design“ ganz oben im Profil mit den vier Designs als Vorschau-Kacheln; Wechsel sofort, bleibt gespeichert.
+
 ## 2.51.0 – 2026-10-08
 - **Neue Designs, durchgängig** (Einstellungen › Ton & Aussehen › Design): **Nachtgold** (Standard; dunkles Marineblau mit Gold, bei „Hell“ cremefarben mit Petrol und Gold), **Sonnenschein** (hell, warm, bunt, dicke Knöpfe) und **Aurora** (Nachthimmel mit Polarlicht, glasige Karten, Mint) sowie **Klassisch** (bisheriges Papier-Design, dort gelten die Shop-Farbwelten). Das Design färbt Kopfzeile, Reiter, Karten, Knöpfe, Balken, Auswahlfelder, Challenge-Kachel, Duell-Auswahl, Arena-, Shop- und Crew-Bausteine, dazu je Design eine eigene Überschriftenschrift. Die Auswahl steht pro Gerät in den Einstellungen.
 - **Dashboard und Anmeldeseiten im selben Stil:** Nachtgold dunkel/hell (folgt dem Gerät), goldene bzw. petrolfarbene Knöpfe, rundere Karten; Datenschutzerklärung und Anmeldeseite ebenso.

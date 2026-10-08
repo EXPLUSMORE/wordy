@@ -1011,6 +1011,12 @@
         '<section class="card"><div class="eyebrow">So funktioniert der Monatspass</div><p class="small muted" style="margin:6px 0 0">Der Pass läuft einen Monat in vier Wochen plus Finale. Jede Woche zählt, an wie vielen Tagen du dein Tagesziel schaffst. Sind genug Tage zusammen, öffnest du die Wochen-Beute mit Figur, Tanz, Sticker und Münzen. Alle vier Wochen geschafft? Dann wartet das Finale.</p></section></div>';
     }
   }
+  function designCard() {
+    var cur = S.state.settings.design || "gold";
+    return '<section class="card"><div class="eyebrow">🎨 Design</div><p class="small muted" style="margin:4px 0 10px">Such dir aus, wie Wordy aussieht. Du kannst jederzeit wechseln.</p><div class="dsgrid">' + global.VTC.DESIGNS.map(function (d) {
+      return '<button class="dstile" data-act="setdesign" data-d="' + d[0] + '" aria-pressed="' + (cur === d[0]) + '"><i style="background:' + d[3] + '"></i><b>' + d[1] + (cur === d[0] ? " ✓" : "") + '</b><small>' + d[2] + '</small></button>';
+    }).join("") + '</div><p class="small muted" style="margin:10px 0 0">„Hell“ oder „Dunkel“ stellst du unter Ton &amp; Aussehen ein (gilt für Nachtgold). Die Shop-Farbwelten gelten im Design „Klassisch“.</p></section>';
+  }
   function profileCard() {
     var st = S.state, r = S.rankOf(st.xp), pn = playerName(), pf = st.profile, xpPct = r.next ? Math.min(100, Math.round(r.into * 100 / Math.max(1, r.span))) : 100;
     var favs = S.favs().map(function (id) { return '<button class="hhf" data-act="gotab" data-t="showroom" aria-label="Favorit">' + favIcon(id) + '</button>'; }).join("");
@@ -1630,7 +1636,7 @@
   function viewParent() {
     var st = S.state, s = S.stats();
     var html = '<div class="stack">';
-    html += profileCard() + howToCard();
+    html += profileCard() + designCard() + howToCard();
     function unCard(h) { return h.replace(/^<section class="card"[^>]*>(<div class="eyebrow"[^>]*>[^<]*<\/div>)?/, "").replace(/<\/section>$/, ""); }
     function fold(key, icon, title, sub, inner) {
       return '<details class="fold" data-f="' + key + '"' + (openFolds[key] ? " open" : "") + '><summary><span class="chev">▸</span><span style="flex:1 1 auto;min-width:0"><b>' + icon + " " + title + '</b>' +
@@ -1658,9 +1664,6 @@
       '<input type="checkbox" id="setHearts" ' + (st.settings.hearts ? "checked" : "") + ' style="width:auto"></label>' +
       '<p class="small muted" style="margin:10px 0 0">Gelernt wird als <b>' + esc(playerName()) + '</b>. Den Namen änderst du unter „Spieler“.</p>');
     html += fold("ton", "🔊", "Ton &amp; Aussehen", "Vorlesen, Hell oder Dunkel",
-      '<div style="margin:4px 0 12px"><div style="font-weight:700;margin-bottom:8px">Design</div><div class="dsgrid">' + global.VTC.DESIGNS.map(function (d) {
-        return '<button class="dstile" data-act="setdesign" data-d="' + d[0] + '" aria-pressed="' + ((st.settings.design || "gold") === d[0]) + '"><i style="background:' + d[3] + '"></i><b>' + d[1] + '</b><small>' + d[2] + '</small></button>';
-      }).join("") + '</div><p class="small muted" style="margin:8px 0 0">Die Farbwelten aus dem Shop gelten im Design „Klassisch“.</p></div>' +
       '<label class="row" style="margin-top:4px"><span style="flex:1 1 auto">Aussprache vorlesen<br><span class="small muted">Nutzt die englische Stimme des Geräts</span></span>' +
       '<input type="checkbox" id="setAudio" ' + (st.settings.audio ? "checked" : "") + ' style="width:auto"></label>' +
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Erscheinungsbild<br><span class="small muted">Automatisch folgt der Einstellung des Geräts</span></span>' +
