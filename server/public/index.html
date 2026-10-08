@@ -187,6 +187,28 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
       };
     });
   }
+  function loadHidden() {
+    api("/api/admin/players?hidden=1").then(function (l) {
+      var el = document.getElementById("hiddenList"); if (!el || !l.length) return;
+      el.innerHTML = '<div class="card"><h2>Nur gesicherte Spieler</h2><p class="small muted" style="margin:0 0 6px">Sie sind in der Übersicht und in der Wochenmail nicht zu sehen. Der Server hält nur ihren Lernstand als Sicherung bereit.</p>' + l.map(function (p) {
+        return '<div class="goal"><div class="t"><b>' + esc(p.name) + '</b><div class="small muted">' + (p.backup ? "Letzte Sicherung " + fmtAgo(p.backup.ts) + " (" + fmtAt(p.backup.ts) + ") · " + p.backup.words + " Wörter · " + p.backup.coins + " Münzen" : "Noch keine Sicherung") + " · " + p.devices.length + " Gerät" + (p.devices.length === 1 ? "" : "e") + '</div></div>' +
+          '<div class="acts"><button class="ghost sm" data-hi="' + p.id + '">Neuer Code</button>' + (p.backup ? '<a class="small" href="/api/admin/players/' + p.id + '/state" download>Herunterladen</a>' : "") +
+          '<button class="ghost sm" data-hs="' + p.id + '">Anzeigen</button><button class="ghost sm" data-hd="' + p.id + '">Löschen</button></div></div>';
+      }).join("") + "</div>";
+      Array.prototype.forEach.call(el.querySelectorAll("button[data-hi]"), function (b) { b.onclick = function () { var pl = l.filter(function (x) { return String(x.id) === b.getAttribute("data-hi"); })[0]; post("/api/admin/players/" + pl.id + "/invite").then(function (i) { viewNew(i, pl.name); loadHidden(); }); }; });
+      Array.prototype.forEach.call(el.querySelectorAll("button[data-hs]"), function (b) { b.onclick = function () { post("/api/admin/players/" + b.getAttribute("data-hs") + "/hidden", { hidden: false }).then(function () { loadPlayers(+b.getAttribute("data-hs")); }); }; });
+      Array.prototype.forEach.call(el.querySelectorAll("button[data-hd]"), function (b) { b.onclick = function () { if (confirm("Diesen Spieler und seine Sicherung endgültig löschen?")) api("/api/admin/players/" + b.getAttribute("data-hd"), { method: "DELETE" }).then(function () { viewNew(); }); }; });
+    }).catch(function () {});
+  }
+  function inviteString(inv) { return location.origin + "#" + inv.code; }
+  function inviteCard(name, inv) {
+    return '<div class="card"><h2>Verbindung für ' + esc(name) + "</h2>" +
+      '<p class="small" style="margin:0 0 6px"><b>Am einfachsten:</b> Link an das Kind schicken (WhatsApp, Mail). Es tippt darauf, bestätigt einmal, fertig.</p><div class="code" id="il">' + esc(inv.link || "") + "</div>" +
+      '<div class="row" style="margin-top:10px"><button id="cpl">Link kopieren</button></div>' +
+      '<p class="small muted" style="margin:14px 0 6px">Oder von Hand: Code in der App unter Setup → Auto-Save / Lernfortschritt einfügen.</p><div class="code" id="ic">' + esc(inviteString(inv)) + "</div>" +
+      '<div class="row" style="margin-top:10px"><button class="ghost" id="cp">Code kopieren</button></div>' +
+      '<p class="small muted" style="margin:10px 0 0">Gilt ' + inv.validDays + " Tage und nur für ein Gerät.</p></div>";
+  }
   function showInvite(name, inv) {
     view.insertAdjacentHTML("afterbegin", inviteCard(name, inv));
     wireCopy();
