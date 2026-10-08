@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.54.0 – 2026-10-08
+- Verbindungslink: Das Dashboard zeigt nach dem Anlegen (und bei „Neuer Code“) einen Link, den man dem Kind schickt. Antippen öffnet Wordy, nach einer Bestätigung ist das Gerät verbunden; der Code von Hand bleibt möglich. Neu: Server-Einstellung `APP_URL` (Standard https://wordy.explusmore.com).
+- Gleiche Namen: Innerhalb eines Kontos (bzw. beim Betreiber) lässt der Server keinen zweiten Spieler mit gleichem Namen zu (Groß-/Kleinschreibung egal), auch beim Umbenennen. Server-Update nötig.
+
 ## 2.53.10 – 2026-10-08
 - Dashboard: Empfänger-Adresse(n) der Sonntagsmail direkt unter „Wochenzusammenfassung per Mail“ eintragen (mehrere mit Komma). Hat Vorrang vor `MAIL_TO` in der `.env`; leer speichern = `.env` gilt wieder. Server-Update nötig.
 

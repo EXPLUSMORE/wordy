@@ -37,6 +37,8 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     const H = { Authorization: auth, "Content-Type": "application/json" };
     const mk = await J("/api/admin/players", { method: "POST", headers: H, body: JSON.stringify({ name: "Magnus" }) });
     assert.equal(mk.s, 200); const code = mk.j.invite.code;
+    assert.ok(/^https:\/\/wordy\.explusmore\.com\/#verbinden=/.test(mk.j.invite.link) && decodeURIComponent(mk.j.invite.link.split("=")[1]).endsWith("#" + code), "Verbindungslink");
+    assert.equal((await J("/api/admin/players", { method: "POST", headers: H, body: JSON.stringify({ name: "magnus " }) })).s, 400, "gleicher Name abgelehnt");
     assert.equal((await J("/api/pair", { method: "POST", body: JSON.stringify({ code: "ZZZZ-ZZZZ" }) })).s, 400, "falscher Code");
     const pr = await J("/api/pair", { method: "POST", body: JSON.stringify({ code: code.toLowerCase(), device: "Test" }) });
     assert.equal(pr.s, 200); const T = { Authorization: "Bearer " + pr.j.token, "Content-Type": "application/json" };

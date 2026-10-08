@@ -35,6 +35,7 @@ const MAIL = {
 const GRAPH = { tenant: process.env.GRAPH_TENANT || "", clientId: process.env.GRAPH_CLIENT_ID || "", clientSecret: process.env.GRAPH_CLIENT_SECRET || "" };
 const mailTo = () => { try { const r = q.kvGet.get("mail_to"); if (r && r.val) return r.val; } catch (e) {} return MAIL.to; };   // Dashboard-Eintrag vor .env
 const graphOn = () => !!(GRAPH.tenant && GRAPH.clientId && GRAPH.clientSecret && MAIL.from && mailTo());
+const APP_URL = (process.env.APP_URL || "https://wordy.explusmore.com").replace(/\/+$/, "");
 const DASH_URL = (process.env.DASHBOARD_URL || "https://track.wordy.explusmore.com").replace(/\/+$/, "");
 const mailOn = () => graphOn() || !!(MAIL.host && MAIL.from && mailTo());
 
@@ -707,10 +708,14 @@ function adminPlayers(hidden, scope) {
       today: { sec: todaySec, items: todayItems } };
   });
 }
+function nameTaken(name, scope, exceptId) {
+  const rows = scope ? fq.kids.all(scope.id) : db.prepare("SELECT id, name FROM players WHERE family IS NULL").all();
+  return rows.some(r => r.id !== exceptId && String(r.name).trim().toLowerCase() === String(name).trim().toLowerCase());
+}
 function newInvite(pid) {
   const code = newCode();
   q.addInvite.run(code, pid, Date.now());
-  return { code, validDays: INVITE_DAYS };
+  return { code, validDays: INVITE_DAYS, link: APP_URL + "/#verbinden=" + encodeURIComponent(DASH_URL + "#" + code) };
 }
 
 
@@ -1253,6 +1258,7 @@ const server = http.createServer(async (req, res) => {
         const b = await readJson(req), name = clean(b.name, 20);
         if (!name) return send(res, 400, { error: "Name fehlt." });
         if (isT) return send(res, 403, { error: "Lehrkraft-Konten haben keine Kinder." });
+        if (nameTaken(name, scope, 0)) return send(res, 400, { error: "Es gibt schon einen Spieler mit diesem Namen. Bitte unterscheide sie, z. B. „Mia L.“ und „Mia K.“." });
         if (scope && fq.kids.all(scope.id).length >= MAX_KIDS) return send(res, 400, { error: "Es sind höchstens " + MAX_KIDS + " Kinder pro Konto möglich." });
         const id = scope ? +fq.addKid.run(name, Date.now(), scope.id).lastInsertRowid : +q.addPlayer.run(name, Date.now(), b.hidden ? 1 : 0).lastInsertRowid;
         if (!scope && !b.hidden) { sq.setSocial.run(1, id); fcodeOf(id); }   // Testphase: vom Betreiber angelegte Spieler starten mit eingeschalteten Freunden
@@ -1319,6 +1325,7 @@ const server = http.createServer(async (req, res) => {
         if (m[2] === "invite" && req.method === "POST") return send(res, 200, newInvite(pid));
         if (m[2] === "rename" && req.method === "POST") {
           const name = clean((await readJson(req)).name, 20); if (!name) return send(res, 400, { error: "Name fehlt." });
+          if (nameTaken(name, scope, pid)) return send(res, 400, { error: "Es gibt schon einen Spieler mit diesem Namen. Bitte unterscheide sie, z. B. „Mia L.“ und „Mia K.“." });
           q.renamePlayer.run(name, pid); return send(res, 200, { ok: true });
         }
         if (m[2] === "hidden" && req.method === "POST") { q.setHidden.run((await readJson(req)).hidden ? 1 : 0, pid); return send(res, 200, { ok: true }); }

@@ -2888,6 +2888,27 @@
   render();
   (function () { var bt = document.getElementById("boot"); if (bt) setTimeout(function () { bt.classList.add("off"); setTimeout(function () { if (bt.parentNode) bt.parentNode.removeChild(bt); }, 600); }, 350); })();
   pickPlayer();
+  /* Verbindungslink der Eltern (#verbinden=<Adresse#Code>): nach Bestätigung automatisch verbinden */
+  (function () {
+    var m = String(location.hash || "").match(/^#verbinden=(.+)$/); if (!m) return;
+    var code = ""; try { code = decodeURIComponent(m[1]); } catch (e) {}
+    try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {}
+    if (!code) return;
+    setTimeout(function () {
+      if (!window.WordySync) return;
+      if (window.WordySync.connected()) { toast("Dieses Gerät ist schon verbunden. Einen neuen Link brauchst du nur auf einem anderen Gerät."); return; }
+      if (!confirm("Dieses Gerät mit dem Lernfortschritt deiner Eltern verbinden?\n\nDeine Eltern sehen dann, wie du lernst, und dein Lernstand wird gesichert.")) return;
+      window.WordySync.pair(code).then(function (r) {
+        if (r.error) { toast(r.error); return; }
+        toast("Verbunden als " + r.name + ".");
+        if (r.backups && r.backups.length) {
+          var b0 = r.backups[0], dt = new Date(b0.ts);
+          if (confirm("Auf dem Server liegt ein gesicherter Lernstand von " + r.name + " (" + dt.toLocaleDateString("de-DE") + ", " + b0.words + " Wörter, " + b0.coins + " Münzen). Wiederherstellen?")) { window.WordySync.restore(b0.day).then(function (rr) { toast(rr.error || "Lernstand wiederhergestellt."); render(); }); return; }
+        }
+        render();
+      });
+    }, 1500);
+  })();
   S.keepStorage(function () { if (tab === "parent") render(); });
   setInterval(function () { if (sessionEl.hidden) { S.regenHearts(); renderHeader(); } }, 30000);
 })(window);
