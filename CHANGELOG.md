@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.50.0 – 2026-10-08
+- **Mehr üben wird belohnt:** Die Dauer-Wahl (3/5/10/15 Min) in der Daily Challenge entfällt, weil sie am Bonus nichts änderte. Die Runde hat die Länge des Tagesziels; wer keine Zeit hat, nimmt die „Blitz-Challenge“ (4 Min) und rettet trotzdem die Serie. Neu: **Bonus-Runden** – nach der Daily Challenge gibt jede weitere gemischte Runde +5 🪙 (mindestens 8 Aufgaben und 60 % richtig, höchstens 3 am Tag; erste Woche ×1,5 wie sonst). Die Kachel zeigt, wie viele noch offen sind, das Rundenende zeigt die Belohnung.
+
 ## 2.49.3 – 2026-10-08
 - **Freunde:** Das Eingabefeld für den Freundescode passt jetzt auf kleine Bildschirme (kleinere Schrift, kurzer Platzhalter „Freundescode“).
 

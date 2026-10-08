@@ -623,12 +623,14 @@
   function crewJoined() { var cr = state.crew || (state.crew = { joined: 0, gold: 0 }); if (!cr.joined) { cr.joined = 1; save(true); } }
   var CHAL_BONUS = { 3: 10, 7: 30, 14: 60, 30: 150 };
   /* Challenge-Serie für die Anzeige: Streak (zählt nur, wenn gestern oder heute geschafft), letzte 7 Tage */
+  var XTRA_MAX = 3, XTRA_COINS = 5;
   function chalInfo() {
     var ch = state.chal || { last: "", streak: 0, best: 0, days: {} }, t = today(), days = [], i;
     for (i = 6; i >= 0; i--) { var dd = new Date(t + "T12:00:00"); dd.setDate(dd.getDate() - i); var k = dd.getFullYear() + "-" + ("0" + (dd.getMonth() + 1)).slice(-2) + "-" + ("0" + dd.getDate()).slice(-2); days.push({ date: k, ok: !!ch.days[k], today: i === 0, wd: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"][dd.getDay()] }); }
     var yd = new Date(t + "T12:00:00"); yd.setDate(yd.getDate() - 1); var ys = yd.getFullYear() + "-" + ("0" + (yd.getMonth() + 1)).slice(-2) + "-" + ("0" + yd.getDate()).slice(-2);
     var alive = ch.last === t || ch.last === ys, streak = alive ? ch.streak : 0, next = [3, 7, 14, 30].filter(function (x) { return x > streak; })[0];
-    return { streak: streak, best: ch.best || 0, days: days, doneToday: ch.last === t, next: next || null, nextCoins: next ? CHAL_BONUS[next] : 0 };
+    var dd0 = state.daily && state.daily.date === t ? state.daily : {}, xl = Math.max(0, XTRA_MAX - (dd0.xtra || 0));
+    return { extraLeft: xl, extraCoins: XTRA_COINS, streak: streak, best: ch.best || 0, days: days, doneToday: ch.last === t, next: next || null, nextCoins: next ? CHAL_BONUS[next] : 0 };
   }
   /* Zu viel Fälliges: erst wiederholen, bevor neue Wörter dazukommen (sonst wächst nur der Berg) */
   function newBlocked() { var p = pools(); return p.due.length + p.box.length >= 30 ? p.due.length + p.box.length : 0; }
@@ -1030,6 +1032,11 @@
         var sb2 = CHAL_BONUS[ch.streak];
         if (sb2) { var sc2 = boost(sb2); addCoins(sc2); addCl("ziel", sc2); rewards.coins += sc2; rewards.challengeStreak = { n: ch.streak, coins: sc2 }; rewards.parts.push({ c: sc2, t: ch.streak + " Challenge-Tage in Folge!" }); }
       }
+    }
+    /* Bonus-Runden: nach der Daily Challenge gibt jede weitere gemischte Runde (mind. 8 Aufgaben, mind. 60 % richtig) +5, höchstens 3 am Tag */
+    else if (res.daily && d.chal && res.items >= 8 && res.correct >= res.items * 0.6 && (d.xtra || 0) < XTRA_MAX) {
+      d.xtra = (d.xtra || 0) + 1; var xc = boost(XTRA_COINS); addCoins(xc); addCl("ziel", xc); rewards.coins += xc; rewards.extra = { coins: xc, n: d.xtra, left: XTRA_MAX - d.xtra };
+      rewards.parts.push({ c: xc, t: "Bonus-Runde" });
     }
     progressLog = { neu: 0, stufe: 0, gemeistert: 0, kartei: 0, einheit: 0, serie: 0, parts: [], n: {} };
     save(true);

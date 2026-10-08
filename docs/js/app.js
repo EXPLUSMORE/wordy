@@ -981,19 +981,21 @@
     return { top: d.task ? h : "", bottom: d.task ? "" : h };
   }
   function challengeHtml() {
-    var ci = S.chalInfo(), mins = startMin || S.goalMin(), done = ci.doneToday, st = S.state, kl = classHtml();
+    var ci = S.chalInfo(), done = ci.doneToday, st = S.state, kl = classHtml();
     var dots = ci.days.map(function (d) { return '<span class="ctad' + (d.ok ? " ok" : "") + (d.today ? " now" : "") + '"><i>' + (d.ok ? "🔥" : d.today ? "⭐" : "·") + '</i>' + d.wd + '</span>'; }).join("");
-    var left = ci.next ? ci.next - ci.streak : 0;
+    var left = ci.next ? ci.next - ci.streak : 0, xl = ci.extraLeft, mins = Math.max(5, S.goalMin());
     var nx = ci.next ? 'Noch ' + left + (left === 1 ? ' Tag' : ' Tage') + ' bis Serienbonus +' + ci.nextCoins + ' 🪙' : 'Alle Serienboni erreicht. Stark!';
-    var rew = done ? '<em>✅</em><div><b>Tagesbonus abgeholt</b><small>' + nx + '</small></div>' : '<em>🪙</em><div><b>+10 Münzen für Runde 1</b><small>' + nx + '</small></div>';
+    var rew = !done ? '<em>🪙</em><div><b>+10 Münzen für Runde 1</b><small>' + nx + '</small></div>'
+      : xl ? '<em>🎁</em><div><b>Bonus-Runden: +' + ci.extraCoins + ' 🪙 je Runde</b><small>Tagesbonus ist geholt. Noch ' + xl + (xl === 1 ? ' Bonus-Runde' : ' Bonus-Runden') + ' heute. ' + nx + '</small></div>'
+      : '<em>✅</em><div><b>Heute alles geholt!</b><small>' + nx + '</small></div>';
+    var label = !done ? "Challenge starten ▶" : xl ? "Bonus-Runde ▶ +" + ci.extraCoins + " 🪙" : "Noch eine Runde ▶";
     return kl.top + '<section class="cta"><div class="ctaglow"></div><div class="ctatop"><div class="eyebrow">Daily Challenge</div><span class="ctafl">🔥 ' + ci.streak + (ci.streak === 1 ? " Tag" : " Tage") + '</span></div>' +
       '<h2>' + (done ? "Heute geschafft!" : "Deine Tagesbelohnung wartet") + '</h2>' +
-      '<p class="ctap">' + (done ? "Weitere Runden sind Zusatz-Runden und zählen normal." : "Eine bunte Runde aus Neuem, Fälligem und Fehlern.") + '</p>' +
+      '<p class="ctap">' + (done ? (xl ? "Mehr üben lohnt sich: jede Bonus-Runde bringt Münzen." : "Alle Bonus-Runden sind geholt. Weiterüben zählt trotzdem für dein Lernen.") : "Eine bunte Runde aus Neuem, Fälligem und Fehlern.") + '</p>' +
       '<div class="ctarew">' + rew + '</div>' +
-      '<button class="ctabtn" data-act="start" data-mode="mix" data-min="' + mins + '">' + (done ? "Zusatz-Runde ▶" : "Challenge starten ▶") + '</button>' +
+      '<button class="ctabtn" data-act="start" data-mode="mix" data-min="' + mins + '">' + label + '</button>' +
       '<div class="ctadays">' + dots + '</div>' +
-      '<div class="row" style="gap:6px;margin-top:14px;justify-content:space-between;align-items:center"><span class="small" style="opacity:.7">Dauer</span><span class="row" style="gap:4px">' +
-      [3, 5, 10, 15].map(function (m) { return '<button class="chip ctachip" data-act="setmin" data-min="' + m + '" aria-pressed="' + (mins === m) + '">' + m + ' Min</button>'; }).join("") + '</span></div>' +
+      (done ? '' : '<button class="ctablitz" data-act="start" data-mode="mix" data-min="4">⚡ Keine Zeit? Blitz-Challenge (4 Min)</button>') +
       '<p class="small" style="margin:12px 0 0;color:#8f98a9">Serienboni gibt es bei 3, 7, 14 und 30 Tagen in Folge' + (ci.best > 1 ? '. Bestserie: ' + ci.best + ' Tage' : '') + '.</p></section>' + kl.bottom;
   }
   function viewSpielen() {
@@ -1932,6 +1934,7 @@
         rw.parts.map(function (x) { return '<div class="row small"><span style="flex:1 1 auto">' + esc(x.t) + '</span><b class="tnum">+' + x.c + ' 🪙</b></div>'; }).join("") + '</div>' : "") + '</section>';
     if (SS.sentOk) html += '<section class="card"><div class="eyebrow">Satzbau</div><p style="margin:6px 0 0">' + SS.sentOk + ' ' + plural(SS.sentOk, "Satz", "Sätze") + ' richtig zusammengesetzt.</p></section>';
     if (SS.mastered) html += '<section class="card"><div class="eyebrow" style="color:var(--gold)">Neu gemeistert</div><p style="margin:6px 0 0">' + SS.mastered + ' ' + plural(SS.mastered, "Wort sitzt", "Wörter sitzen") + ' jetzt langfristig.</p></section>';
+    if (rw.extra) html += '<section class="card" style="border-color:var(--gold)"><div class="eyebrow" style="color:var(--gold)">🎁 Bonus-Runde</div><p style="margin:6px 0 0"><b>+' + rw.extra.coins + ' 🪙</b> für die Extra-Runde.' + (rw.extra.left ? ' Noch ' + rw.extra.left + (rw.extra.left === 1 ? ' Bonus-Runde' : ' Bonus-Runden') + ' heute.' : ' Das waren alle Bonus-Runden für heute.') + '</p></section>';
     if (rw.challenge) html += '<section class="card" style="border-color:var(--gold)"><div class="eyebrow" style="color:var(--gold)">🎁 Daily Challenge geschafft</div><p style="margin:6px 0 0">Tagesbonus: <b>+' + rw.challenge + ' 🪙</b>. Morgen wartet die nächste Challenge.' + (rw.challengeStreak ? '<br>🔥 <b>' + rw.challengeStreak.n + ' Tage in Folge!</b> Serienbonus +' + rw.challengeStreak.coins + ' 🪙' : '') + '</p></section>';
     if (rw.goalReached) html += '<section class="card"><div class="eyebrow" style="color:var(--good)">Tagesziel erreicht</div>' + (rw.streakUp ? '<div class="fin-flame">🔥</div>' : "") + '<p style="margin:6px 0 0">' + (rw.streakUp ? "Streak steht bei " + st.streak.count + " " + plural(st.streak.count, "Tag", "Tagen") + "." : "Schon erledigt heute.") + '</p></section>';
     if (rw.missions.length) html += '<section class="card"><div class="eyebrow">Missionen erfüllt</div>' + rw.missions.map(function (m) { return '<div class="mission done"><div class="tick">✓</div><div class="txt small">' + esc(m.n) + '</div><span class="pill">🪙 ' + m.coins + '</span></div>'; }).join("") + '</section>';
@@ -1939,7 +1942,7 @@
     if (pr) html += '<section class="card"><div class="eyebrow">Lernpfad</div><p style="margin:6px 0 0"><b>Station geschafft</b> · ' + "★".repeat(stars) + "☆".repeat(3 - stars) + (pr.advanced ? "" : " (Wiederholung)") + '</p>' +
       (pr.chest ? '<p class="small" style="margin:6px 0 0">💰 Abschnitt geschafft – eine Truhe wartet auf dich!</p>' : pr.finished ? '<p class="small" style="margin:6px 0 0">🏆 Du hast den ganzen Pfad geschafft!</p>' : "") + '</section>';
     if (SS.station) html += '<div class="row" style="gap:8px">' + (pr && pr.chest ? '<button class="btn wide lg" data-act="openchest">💰 Truhe öffnen</button>' : '<button class="btn wide lg" data-act="close">' + (pr ? "Weiter auf dem Pfad" : "Zurück zum Pfad") + '</button>') + '</div></div></div>';
-    else html += '<div class="row" style="gap:8px"><button class="btn wide" data-act="again">' + (SS.mode === "mix" && S.challengeDone() ? "Zusatz-Runde" : "Noch eine Runde") + '</button>' +
+    else html += '<div class="row" style="gap:8px"><button class="btn wide" data-act="again">' + (SS.mode === "mix" && S.challengeDone() && S.chalInfo().extraLeft ? "Bonus-Runde +" + S.chalInfo().extraCoins + " 🪙" : "Noch eine Runde") + '</button>' +
       '<button class="btn ghost" data-act="close">Fertig</button></div></div></div>';
     sessionEl.innerHTML = html;
     renderHeader();
