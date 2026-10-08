@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.50.2 – 2026-10-08
+- **Ranglisten sauber ausgerichtet:** Medaille, Figur, Name und Punkte stehen in festen Spalten untereinander (auch bei der eigenen, hervorgehobenen Zeile); Trennlinien gleichmäßig.
+
 ## 2.50.1 – 2026-10-08
 - **Duell-Auswahl im Stil der Daily Challenge:** dunkle Karte mit goldenem Rahmen, goldene Modus-Knöpfe, ruhiger Abbrechen-Knopf; offene Herausforderungen haben jetzt einen goldenen statt pinken Rahmen.
 
