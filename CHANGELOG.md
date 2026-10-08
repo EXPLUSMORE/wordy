@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.49.2 – 2026-10-08
+- **Daily-Challenge-Kachel neu** („Goldene Belohnung“): dunkle Karte mit goldenem Rahmen im Farbklang der App, Serie als Flammen-Pille, Belohnungsfeld mit Tagesbonus und Weg zum nächsten Serienbonus, goldener Start-Knopf, Wochentage und Dauer-Wahl in der Karte. Die zweite Serien-Karte entfällt.
+
 ## 2.49.1 – 2026-10-08
 - **Testphase Freunde** (Server-Update nötig): Spieler, die der Betreiber selbst anlegt (Magnus, Chrissi …), haben Freunde, Crew und Liga von Anfang an eingeschaltet; bestehende Spieler des Betreibers werden beim Start einmalig eingeschaltet. Eltern-Konten bleiben bei „aus“; im Dashboard lässt es sich pro Kind wieder ausschalten.
 

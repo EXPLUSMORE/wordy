@@ -982,17 +982,19 @@
   }
   function challengeHtml() {
     var ci = S.chalInfo(), mins = startMin || S.goalMin(), done = ci.doneToday, st = S.state, kl = classHtml();
-    var dots = ci.days.map(function (d) { return '<span class="chd' + (d.ok ? " ok" : "") + (d.today ? " now" : "") + '"><i>' + (d.ok ? "🔥" : d.today ? "⭐" : "·") + '</i>' + d.wd + '</span>'; }).join("");
-    return kl.top + '<section class="cta"><div class="ctaglow"></div><div class="eyebrow">Daily Challenge</div>' +
-      '<h2>' + (done ? "✓ Heute geschafft" : "🏆 Heute bunt gemischt") + '</h2>' +
-      '<p class="small" style="margin:0 0 14px;opacity:.85">' + (done ? "Bonus ist abgeholt. Weitere Runden sind Zusatz-Runden und zählen normal." : "Eine Runde aus allem, was dran ist: Neues, Fälliges, Fehler. Die erste am Tag gibt <b>+10 🪙</b>.") + '</p>' +
+    var dots = ci.days.map(function (d) { return '<span class="ctad' + (d.ok ? " ok" : "") + (d.today ? " now" : "") + '"><i>' + (d.ok ? "🔥" : d.today ? "⭐" : "·") + '</i>' + d.wd + '</span>'; }).join("");
+    var left = ci.next ? ci.next - ci.streak : 0;
+    var nx = ci.next ? 'Noch ' + left + (left === 1 ? ' Tag' : ' Tage') + ' bis Serienbonus +' + ci.nextCoins + ' 🪙' : 'Alle Serienboni erreicht. Stark!';
+    var rew = done ? '<em>✅</em><div><b>Tagesbonus abgeholt</b><small>' + nx + '</small></div>' : '<em>🪙</em><div><b>+10 Münzen für Runde 1</b><small>' + nx + '</small></div>';
+    return kl.top + '<section class="cta"><div class="ctaglow"></div><div class="ctatop"><div class="eyebrow">Daily Challenge</div><span class="ctafl">🔥 ' + ci.streak + (ci.streak === 1 ? " Tag" : " Tage") + '</span></div>' +
+      '<h2>' + (done ? "Heute geschafft!" : "Deine Tagesbelohnung wartet") + '</h2>' +
+      '<p class="ctap">' + (done ? "Weitere Runden sind Zusatz-Runden und zählen normal." : "Eine bunte Runde aus Neuem, Fälligem und Fehlern.") + '</p>' +
+      '<div class="ctarew">' + rew + '</div>' +
       '<button class="ctabtn" data-act="start" data-mode="mix" data-min="' + mins + '">' + (done ? "Zusatz-Runde ▶" : "Challenge starten ▶") + '</button>' +
-      '<div class="row" style="gap:6px;margin-top:14px;justify-content:space-between;align-items:center"><span class="small" style="opacity:.8">Dauer</span><span class="row" style="gap:6px">' +
-      [3, 5, 10, 15].map(function (m) { return '<button class="chip ctachip" data-act="setmin" data-min="' + m + '" aria-pressed="' + (mins === m) + '">' + m + ' Min</button>'; }).join("") + '</span></div></section>' +
-      '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Challenge-Serie</div><span class="pill tnum">🔥 ' + ci.streak + (ci.streak === 1 ? " Tag" : " Tage") + '</span></div>' +
-      '<div class="chdots">' + dots + '</div>' +
-      '<p class="small muted" style="margin:10px 0 0">' + (ci.next ? "Noch " + (ci.next - ci.streak) + " " + (ci.next - ci.streak === 1 ? "Tag" : "Tage") + " bis zum Serienbonus <b>+" + ci.nextCoins + " 🪙</b> (bei " + ci.next + " Tagen)." : "Alle Serienboni erreicht. Stark!") + (ci.best > 1 ? " Bestserie: " + ci.best + " Tage." : "") + '</p>' +
-      '<p class="small muted" style="margin:6px 0 0">Serienboni gibt es bei 3, 7, 14 und 30 Tagen in Folge.</p></section>' + kl.bottom;
+      '<div class="ctadays">' + dots + '</div>' +
+      '<div class="row" style="gap:6px;margin-top:14px;justify-content:space-between;align-items:center"><span class="small" style="opacity:.7">Dauer</span><span class="row" style="gap:4px">' +
+      [3, 5, 10, 15].map(function (m) { return '<button class="chip ctachip" data-act="setmin" data-min="' + m + '" aria-pressed="' + (mins === m) + '">' + m + ' Min</button>'; }).join("") + '</span></div>' +
+      '<p class="small" style="margin:12px 0 0;color:#8f98a9">Serienboni gibt es bei 3, 7, 14 und 30 Tagen in Folge' + (ci.best > 1 ? '. Bestserie: ' + ci.best + ' Tage' : '') + '.</p></section>' + kl.bottom;
   }
   function viewSpielen() {
     var top = segBar("spielen", spielSeg, [["challenge", "🏆 Challenge"], ["arena", "🕹️ Arena"], ["freunde", "👥 Freunde"], ["crew", "🛡️ Crew"], ["rang", "🥇 Liga"]]);
