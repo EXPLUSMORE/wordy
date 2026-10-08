@@ -241,6 +241,50 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     assert.ok(/Lena/.test(fm) && !/Magnus|Christian/.test(fm), "Familien-Wochenmail zeigt nur eigene Kinder");
     // Export
     const ex = await J("/api/fam/me/export", { headers: F }); assert.equal(ex.j.children[0].name, "Lena"); assert.equal(ex.j.email, "mama@example.org");
+
+    /* ---------- Freunde, Duelle, Ranglisten ---------- */
+    const jm = await J("/api/admin/players", { method: "POST", headers: H, body: JSON.stringify({ name: "Jonas" }) });
+    const jt = T2((await J("/api/pair", { method: "POST", body: JSON.stringify({ code: jm.j.invite.code, device: "J" }) })).j.token), lt = T2(kp.j.token);
+    assert.equal((await J("/api/social/me", { headers: lt })).j.enabled, false, "Freunde standardmäßig aus");
+    assert.equal((await J("/api/social/friends", { method: "POST", headers: lt, body: JSON.stringify({ code: "XXXX" }) })).s, 403, "ohne Freigabe der Eltern keine Freunde");
+    assert.equal((await J("/api/fam/players/" + kid.j.id + "/social", { method: "POST", headers: F, body: JSON.stringify({ enabled: true }) })).s, 200);
+    assert.equal((await J("/api/admin/players/" + jm.j.id + "/social", { method: "POST", headers: H, body: JSON.stringify({ enabled: true }) })).s, 200);
+    const lme = (await J("/api/social/me", { headers: lt })).j, jme = (await J("/api/social/me", { headers: jt })).j;
+    assert.ok(lme.enabled && /^F[A-Z0-9]{5}$/.test(lme.code), "Freundescode");
+    assert.equal((await J("/api/social/friends", { method: "POST", headers: jt, body: JSON.stringify({ code: jme.code }) })).s, 400, "nicht den eigenen Code");
+    assert.equal((await J("/api/social/friends", { method: "POST", headers: jt, body: JSON.stringify({ code: lme.code }) })).s, 200, "Anfrage an Lena");
+    assert.equal((await J("/api/social/friends", { method: "POST", headers: jt, body: JSON.stringify({ code: lme.code }) })).s, 400, "nur eine Anfrage");
+    const WORDS = ["H2-1a#0", "H2-1a#1", "H2-1a#2", "H2-1a#3", "H2-1a#4", "H2-1a#5", "H2-1a#6", "H2-1a#7", "H2-1a#8"];
+    assert.equal((await J("/api/social/challenges", { method: "POST", headers: jt, body: JSON.stringify({ to: kid.j.id, mode: "blitz", words: WORDS, seed: 5, score: 100 }) })).s, 403, "vor der Zustimmung der Eltern kein Duell");
+    assert.equal((await J("/api/admin/players/" + kid.j.id + "/friends/" + jm.j.id, { method: "POST", headers: H, body: JSON.stringify({ action: "approve" }) })).s, 404, "Betreiber kann nicht für fremde Kinder zustimmen");
+    assert.equal((await J("/api/admin/players/" + jm.j.id + "/friends/" + kid.j.id, { method: "POST", headers: H, body: JSON.stringify({ action: "approve" }) })).s, 200);
+    assert.equal((await J("/api/social/challenges", { method: "POST", headers: jt, body: JSON.stringify({ to: kid.j.id, mode: "blitz", words: WORDS, seed: 5, score: 100 }) })).s, 403, "eine Zustimmung reicht nicht");
+    const pf = (await J("/api/fam/players/" + kid.j.id + "/social", { headers: F })).j.friends[0];
+    assert.equal(pf.name, "Jonas"); assert.equal(pf.state, "mine", "Lenas Eltern sehen die offene Anfrage");
+    assert.equal((await J("/api/fam/players/" + kid.j.id + "/friends/" + jm.j.id, { method: "POST", headers: F, body: JSON.stringify({ action: "approve" }) })).s, 200);
+    assert.equal((await J("/api/social/me", { headers: lt })).j.friends[0].state, "ok", "Freunde bestätigt");
+    assert.equal((await J("/api/social/challenges", { method: "POST", headers: jt, body: JSON.stringify({ to: kid.j.id, mode: "blitz", words: WORDS.slice(0, 3), seed: 5, score: 100 }) })).s, 400, "zu wenige Wörter");
+    assert.equal((await J("/api/social/challenges", { method: "POST", headers: jt, body: JSON.stringify({ to: kid.j.id, mode: "blitz", words: WORDS, seed: 5, score: 999999 }) })).s, 400, "unmögliche Punktzahl");
+    const ch = await J("/api/social/challenges", { method: "POST", headers: jt, body: JSON.stringify({ to: kid.j.id, mode: "blitz", words: WORDS, seed: 5, score: 120 }) });
+    assert.equal(ch.s, 200);
+    const ib = (await J("/api/social/inbox", { headers: lt })).j; assert.equal(ib.open.length, 1); assert.equal(ib.open[0].from.name, "Jonas"); assert.equal(ib.open[0].aScore, 120); assert.deepEqual(ib.open[0].words, WORDS);
+    assert.equal((await J("/api/social/challenges/" + ch.j.id + "/result", { method: "POST", headers: jt, body: JSON.stringify({ score: 1 }) })).s, 403, "Herausforderer kann nicht selbst antworten");
+    assert.equal((await J("/api/social/challenges/" + ch.j.id + "/react", { method: "POST", headers: lt, body: JSON.stringify({ emoji: "👏" }) })).s, 400, "Reaktion erst nach dem Spiel");
+    assert.equal((await J("/api/social/challenges/" + ch.j.id + "/result", { method: "POST", headers: lt, body: JSON.stringify({ score: 150 }) })).s, 200);
+    assert.equal((await J("/api/social/challenges/" + ch.j.id + "/result", { method: "POST", headers: lt, body: JSON.stringify({ score: 999 }) })).s, 400, "nur einmal spielen");
+    assert.equal((await J("/api/social/challenges/" + ch.j.id + "/react", { method: "POST", headers: lt, body: JSON.stringify({ emoji: "🔥" }) })).s, 200);
+    const rc = (await J("/api/social/inbox", { headers: jt })).j.recent[0]; assert.equal(rc.aScore, 120); assert.equal(rc.bScore, 150); assert.equal(rc.theirReact, "🔥");
+    assert.equal((await J("/api/social/challenges/" + ch.j.id + "/result", { method: "POST", headers: T, body: JSON.stringify({ score: 1 }) })).s, 401, "fremdes Gerät ohne Zugang");
+    await J("/api/social/score", { method: "POST", headers: jt, body: JSON.stringify({ mode: "blitz", score: 30 }) });
+    await J("/api/social/score", { method: "POST", headers: lt, body: JSON.stringify({ mode: "blitz", score: 50 }) });
+    await J("/api/social/score", { method: "POST", headers: lt, body: JSON.stringify({ mode: "blitz", score: 40 }) });
+    const bd = (await J("/api/social/board?mode=blitz", { headers: jt })).j; assert.deepEqual(bd.rows.map(r => r.name + ":" + r.score), ["Lena:50", "Jonas:30"], "Rangliste unter Freunden, bester Wert zählt");
+    assert.equal((await J("/api/social/board?mode=nix", { headers: jt })).s, 400);
+    await J("/api/social/profile", { method: "POST", headers: lt, body: JSON.stringify({ avatar: "svg:fnwolf" }) });
+    assert.equal((await J("/api/social/me", { headers: jt })).j.friends[0].avatar, "svg:fnwolf", "Figur des Freundes");
+    assert.equal((await J("/api/social/friends/" + kid.j.id, { method: "DELETE", headers: jt })).s, 200);
+    assert.equal((await J("/api/social/challenges", { method: "POST", headers: jt, body: JSON.stringify({ to: kid.j.id, mode: "blitz", words: WORDS, seed: 5, score: 10 }) })).s, 403, "nach dem Entfernen keine Duelle mehr");
+    await J("/api/admin/players/" + jm.j.id, { method: "DELETE", headers: H });
     // Sperren und wieder anmelden
     const fams = (await J("/api/admin/families", { headers: H })).j, mama = fams.find(x => x.email === "mama@example.org");
     assert.equal(mama.children, 1);

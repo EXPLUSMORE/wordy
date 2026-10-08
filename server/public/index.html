@@ -345,7 +345,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
       '<div class="small muted">Zuletzt aktiv: ' + fmtAgo(p.lastEvent) + (p.lastEvent ? " (" + fmtAt(p.lastEvent) + ")" : "") + (r.metaTs ? " · Übersicht von " + fmtAt(r.metaTs) : "") + (m.rank ? " · " + esc(m.rank) : "") + (m.coins != null ? " · <b>🪙 " + m.coins + "</b> · <b>" + (m.xp || 0).toLocaleString("de-DE") + " XP</b>" : "") + (m.streak ? " · 🔥 " + m.streak + " Tage Serie" : "") +
       (p.devices.length ? " · " + p.devices.length + " Gerät" + (p.devices.length > 1 ? "e" : "") : " · noch kein Gerät verbunden") + "</div></div>" +
       '<button class="ghost" id="inv">Neuer Code</button><button class="ghost" id="ren">Umbenennen</button><button class="ghost" id="hid">Nur sichern</button><button class="ghost" id="rev">Geräte trennen</button><button class="ghost" id="del">Löschen</button></div></div>';
-    h += heuteCard(r, m) + wocheCard(r, m) + '<div class="card" id="giftCard"></div><div class="card" id="passCard"></div><div class="card" id="wpCard"></div>';
+    h += heuteCard(r, m) + wocheCard(r, m) + '<div class="card" id="friendCard"></div><div class="card" id="giftCard"></div><div class="card" id="passCard"></div><div class="card" id="wpCard"></div>';
     h += '<div class="card" id="pathCard"></div><div class="card" id="goalsCard"></div><div class="card" id="plansCard"></div>';
     h += '<div class="card"><div class="row"><h2 class="grow" style="margin:0">Übungszeit pro Tag</h2><button class="tab" data-d="14" aria-pressed="' + (days === 14) + '">14 Tage</button><button class="tab" data-d="30" aria-pressed="' + (days === 30) + '">30 Tage</button><button class="tab" data-d="90" aria-pressed="' + (days === 90) + '">90 Tage</button></div>' +
       bars(r.days) + '<div class="legend"><span><i style="background:var(--good)"></i>10 Min. oder mehr</span><span><i style="background:var(--acc2)"></i>weniger</span><span class="muted">Insgesamt ' + fmtMin(t.sec) + ", " + t.items + " Aufgaben, " + t.activeDays + " aktive Tage</span></div></div>";
@@ -378,7 +378,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     document.getElementById("hid").onclick = function () { if (confirm(p.name + " nur noch sichern und hier nicht mehr anzeigen? Die Zahlen verschwinden aus Übersicht und Wochenmail, die Sicherung bleibt. Zurückholen kannst du ihn unter „＋ Spieler“.")) post("/api/admin/players/" + p.id + "/hidden", { hidden: true }).then(function () { cur = null; loadPlayers(); }); };
     document.getElementById("rev").onclick = function () { if (confirm("Alle verbundenen Geräte von " + p.name + " trennen? Neu verbinden geht mit einem neuen Code.")) post("/api/admin/players/" + p.id + "/revoke").then(function () { loadPlayers(p.id); }); };
     document.getElementById("del").onclick = function () { if (confirm(p.name + " und alle gespeicherten Lerndaten endgültig löschen?")) api("/api/admin/players/" + p.id, { method: "DELETE" }).then(function () { cur = null; loadPlayers(); }); };
-    drawGifts(p, r); drawPass(p, r); drawWeekPlan(p, r); drawPath(p, r); drawGoals(p, r); drawPlans(p, r); drawBackups(p, r); drawMail();
+    drawFriends(p); drawGifts(p, r); drawPass(p, r); drawWeekPlan(p, r); drawPath(p, r); drawGoals(p, r); drawPlans(p, r); drawBackups(p, r); drawMail();
     var wd = document.getElementById("wdet"); if (wd) wd.addEventListener("toggle", function () { if (wd.open) showWords(p); });
     Array.prototype.forEach.call(view.querySelectorAll("tr[data-u]"), function (tr) { tr.onclick = function () { showUnit(p, tr.getAttribute("data-u")); }; });
   }
@@ -470,6 +470,22 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
       if (!confirm("Wirklich " + c + " Münzen an " + p.name + " überweisen?")) return;
       post("/api/admin/players/" + p.id + "/gifts", { coins: c, note: note }).then(function (x) { msg("Gesendet."); document.getElementById("gNote").value = ""; cnt(); list(x.list); }).catch(function (e) { msg(e.message, 1); });
     };
+  }
+  /* Freunde und Duelle: nur mit deiner Freigabe, jede Freundschaft braucht die Zustimmung beider Eltern */
+  function drawFriends(p) {
+    var el = document.getElementById("friendCard"); if (!el) return;
+    el.innerHTML = "<h2>Freunde &amp; Duelle</h2><p class='muted small'>Lade …</p>";
+    api("/api/admin/players/" + p.id + "/social").then(function (s) {
+      var ST = { ok: "Befreundet", mine: "wartet auf deine Zustimmung", theirs: "wartet auf die Eltern des Freundes" };
+      el.innerHTML = "<h2>Freunde &amp; Duelle</h2>" +
+        "<p class='small muted' style='margin:0 0 10px'>Mit dieser Funktion kann " + esc(p.name) + " Freunde mit einem Freundescode hinzufügen, sich in Arena-Spielen herausfordern und Wochen-Ranglisten sehen. Es sind nur der Name, die Figur und Punkte sichtbar, kein Chat. Jede Freundschaft muss <b>beide Eltern</b> bestätigen.</p>" +
+        "<label class='row' style='gap:8px'><input type='checkbox' id='frOn'" + (s.enabled ? " checked" : "") + "><span><b>Freunde-Funktion einschalten</b></span></label>" +
+        (s.enabled ? "<p style='margin:10px 0 0'>Freundescode von " + esc(p.name) + ": <b style='font-family:ui-monospace,monospace;font-size:18px'>" + esc(s.code) + "</b></p>" : "") +
+        (s.enabled ? "<div style='margin-top:10px'>" + (s.friends.length ? s.friends.map(function (f) { return "<div class='row' style='gap:8px;padding:6px 0;border-top:1px solid var(--line)'><span class='grow'><b>" + esc(f.name) + "</b><br><span class='small muted'>" + ST[f.state] + "</span></span>" + (f.state === "mine" ? "<button class='sm' data-fa='" + f.id + "'>Zustimmen</button>" : "") + "<button class='ghost sm' data-fr='" + f.id + "'>" + (f.state === "mine" ? "Ablehnen" : "Entfernen") + "</button></div>"; }).join("") : "<p class='small muted' style='margin:0'>Noch keine Freunde.</p>") + "</div>" : "");
+      document.getElementById("frOn").onchange = function () { post("/api/admin/players/" + p.id + "/social", { enabled: this.checked }).then(function () { drawFriends(p); }); };
+      Array.prototype.forEach.call(el.querySelectorAll("[data-fa]"), function (b) { b.onclick = function () { post("/api/admin/players/" + p.id + "/friends/" + b.getAttribute("data-fa"), { action: "approve" }).then(function () { drawFriends(p); }); }; });
+      Array.prototype.forEach.call(el.querySelectorAll("[data-fr]"), function (b) { b.onclick = function () { if (confirm("Diesen Freund entfernen?")) post("/api/admin/players/" + p.id + "/friends/" + b.getAttribute("data-fr"), { action: "remove" }).then(function () { drawFriends(p); }); }; });
+    }).catch(function (e) { el.innerHTML = "<h2>Freunde &amp; Duelle</h2><p class='err small'>" + esc(e.message) + "</p>"; });
   }
   function drawWeekPlan(p, r) {
     var el = document.getElementById("wpCard"); if (!el) return;

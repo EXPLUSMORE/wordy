@@ -48,8 +48,16 @@
       seenDe[w.de] = seenEn[w.en] = 1; return true;
     });
   }
+  /* Duelle: gleiche Wörter in gleicher Reihenfolge für beide (Mischung aus einer Startzahl) */
+  function seeded(arr, seed) {
+    var a = arr.slice(), s = (seed >>> 0) || 1, i, j, t;
+    function rnd() { s = (s + 0x6D2B79F5) >>> 0; var x = Math.imul(s ^ s >>> 15, 1 | s); x = x + Math.imul(x ^ x >>> 7, 61 | x) ^ x; return ((x ^ x >>> 14) >>> 0) / 4294967296; }
+    for (i = a.length - 1; i > 0; i--) { j = Math.floor(rnd() * (i + 1)); t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
+  }
+  function deckFor(o, round) { return o && o.seed != null ? seeded(o.words, o.seed + (round || 0) * 7919) : S.shuffle(o.words.slice()); }
   function nextWord() {
-    if (!run.queue.length) run.queue = run.opts && run.opts.words ? S.shuffle(run.opts.words.slice()) : pool(run.mode);
+    if (!run.queue.length) { run.round = (run.round || 0) + 1; run.queue = run.cfg && run.cfg.words ? deckFor(run.cfg, run.round) : pool(run.mode); }
     return run.queue.shift();
   }
   function distractors(w, n) {
@@ -283,10 +291,10 @@
     S.rollDay();
     run = {
       mode: mode, score: 0, combo: 0, maxCombo: 0, items: 0, correct: 0, wrong: 0,
-      start: Date.now(), left: 0, total: 0, queue: [], all: opts && opts.words ? opts.words.concat(p.all.filter(function (x) { return opts.words.indexOf(x) < 0; })) : p.all, locked: false, opts: opts || null, boss: opts && opts.boss || null,
+      start: Date.now(), left: 0, total: 0, queue: [], all: opts && opts.words ? opts.words.concat(p.all.filter(function (x) { return opts.words.indexOf(x) < 0; })) : p.all, locked: false, cfg: opts || null, boss: opts && opts.boss || null,
       qTotal: 7000, qLeft: 7000, targets: [], hits: {}, cleared: 0, note: ""
     };
-    run.queue = opts && opts.words ? S.shuffle(opts.words.slice()) : pool(mode);
+    run.queue = opts && opts.words ? deckFor(opts, 0) : pool(mode);
     el.hidden = false;
     document.documentElement.classList.add("ar-open");
     if (mode === "match") return renderMatch();
@@ -353,6 +361,7 @@
       '<div><b class="tnum">' + run.maxCombo + '</b><span>beste Serie</span></div>' +
       '<div><b class="tnum">' + Math.max(rec.best, score) + '</b><span>Bestwert</span></div>' +
       '</div>' +
+      (run.cfg && run.cfg.duel ? '<div id="arDuel" class="ar-duel">' + esc(run.cfg.duel.wait || "Ergebnis wird übertragen …") + '</div>' : '') +
       '<p class="ar-note">' + (coins ? "🪙 " + coins + " Münzen" + (capped ? " (Tageslimit der Arena erreicht)" : "") : (capped ? "Arena-Münzen für heute sind voll – lerne neue Wörter für mehr" : "Keine Münzen diesmal")) +
       (boss ? " · Boss: " + run.correct + " von " + run.boss.need + " richtig nötig" + (boss.pass ? " " + "★".repeat(boss.stars) : "") : "") +
       (rw.goalReached ? " · Tagesziel erreicht" : "") +
@@ -360,9 +369,12 @@
       (run.cleared ? " · " + run.cleared + " aus der Fehlerkartei befreit" : "") + '</p>' +
       (fresh.length ? '<p class="ar-note" style="color:var(--ar-gold)">🏅 Neu: ' + fresh.map(function (b) { return esc(b.n); }).join(", ") + '</p>' : "") +
       '<div class="ar-endbtns">' + (boss && boss.pass ? (boss.chest ? '<button class="ar-btn" data-a="chest">🎁 Truhe öffnen</button>' : '<button class="ar-btn" data-a="quit">Weiter auf dem Pfad</button>')
+        : run.cfg && run.cfg.duel ? '<button class="ar-btn" data-a="duelnext" id="arNext" hidden>' + esc(run.cfg.duel.nextLabel || "🔁 Revanche") + '</button><button class="ar-btn ghost" data-a="quit">Zurück</button>'
         : '<button class="ar-btn" data-a="again">' + (boss ? "Nochmal versuchen" : "Noch mal") + '</button><button class="ar-btn ghost" data-a="quit">Zurück</button>') + '</div></div>';
     S.save(true);
     if (global.VTUI && global.VTUI.refreshHeader) global.VTUI.refreshHeader();
+    if (global.VTUI && global.VTUI.arenaScore && !run.boss) global.VTUI.arenaScore(run.mode, score);   // Wochen-Rangliste unter Freunden
+    if (run.cfg && run.cfg.onFinish) run.cfg.onFinish({ score: score, correct: run.correct, items: run.items, mode: run.mode, reason: reason }, function (html, next) { var d = $("#arDuel"); if (d) d.innerHTML = html; var nb = $("#arNext"); if (nb && next) nb.hidden = false; });
   }
 
   function close() {
@@ -381,7 +393,8 @@
     if (t) {
       var a = t.getAttribute("data-a");
       if (a === "quit") { if (!run.done) finish("quit"); else close(); return; }
-      if (a === "again") { var m = run.mode, o = run.opts; close(); return start(m, o); }
+      if (a === "again") { var m = run.mode, o = run.cfg; close(); return start(m, o); }
+      if (a === "duelnext") { var nx = run.cfg && run.cfg.duel && run.cfg.duel.next; close(); if (nx) nx(); return; }
       if (a === "chest") { close(); return global.VTUI.openChest(); }
     }
     if (run.done) return;

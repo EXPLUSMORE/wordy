@@ -604,6 +604,16 @@
     act.forEach(function (x) { var r = state.s[x.id]; if (r && r.reps) { seen++; if (r.iv >= 21) mastered++; } });
     return { total: act.length, seen: seen, mastered: mastered, ok: state.totals.sentOk };
   }
+  /* Duell abgerechnet (einmal je Duell): zählt Spiele und Siege, ein Sieg gibt 5 Münzen (höchstens 3 am Tag) */
+  function duelDone(id, win) {
+    var d = state.duels || (state.duels = { p: 0, w: 0, seen: {} });
+    if (!d.seen) d.seen = {};
+    if (d.seen[id]) return { coins: 0, fresh: false };
+    d.seen[id] = 1; Object.keys(d.seen).slice(0, -80).forEach(function (k) { delete d.seen[k]; });
+    d.p++; var c = 0;
+    if (win) { d.w++; var day = state.daily; day.duelWins = (day.duelWins || 0) + 1; if (day.duelWins <= 3) { c = boost(5); addCoins(c); addCl("ziel", c); } }
+    save(true); return { coins: c, fresh: true, win: !!win };
+  }
   var CHAL_BONUS = { 3: 10, 7: 30, 14: 60, 30: 150 };
   /* Challenge-Serie für die Anzeige: Streak (zählt nur, wenn gestern oder heute geschafft), letzte 7 Tage */
   function chalInfo() {
@@ -867,6 +877,12 @@
     M("serie100", "Serie 100", "legend", best >= 100, "100 Tage am Stück üben", "100");
     M("w25", "25 Meister", "rare", mast >= 25, "25 Wörter meistern (" + Math.min(mast, 25) + "/25)", "25");
     M("w100", "100 Meister", "epic", mast >= 100, "100 Wörter meistern (" + Math.min(mast, 100) + "/100)", "100");
+    var du = state.duels || { p: 0, w: 0 }, chBest = (state.chal && state.chal.best) || 0;
+    M("duel1", "Erstes Duell", "common", du.p >= 1, "Ein Duell gegen einen Freund spielen", "⚔");
+    M("duel5", "Duell-Held", "rare", du.w >= 5, "5 Duelle gewinnen (" + Math.min(du.w, 5) + "/5)", "5");
+    M("duel20", "Duell-König", "epic", du.w >= 20, "20 Duelle gewinnen (" + Math.min(du.w, 20) + "/20)", "20");
+    M("chal7", "Challenge 7", "rare", chBest >= 7, "Die Daily Challenge 7 Tage am Stück schaffen (Bestwert " + chBest + ")", "7");
+    M("chal30", "Challenge 30", "legend", chBest >= 30, "Die Daily Challenge 30 Tage am Stück schaffen", "30");
     info.weeks.forEach(function (w) { M(sid + "p" + w.n, "Woche " + w.n, w.n === info.weeks.length ? "legend" : "epic", w.claimed, info.season.title + "-Pass, Woche " + w.n, String(w.n)); });
     if (info.season.finale) M(sid + "cup", info.season.title + "-Pokal", "legend", info.fin.claimed, "Alle Wochen und das Finale im " + info.season.title + "-Pass", "cup");
     return ms;
@@ -1297,7 +1313,7 @@
     sentences: function () { return sentences; }, activeSentences: activeSentences,
     planSentences: planSentences, gradeSentence: gradeSentence, sentenceStats: sentenceStats,
     srec: srec, groupsOf: groupsOf, setTrack: setTrack,
-    newBlocked: newBlocked, chalInfo: chalInfo, challengeDone: function () { return !!(state.daily && state.daily.date === today() && state.daily.chal); }, rankOf: rankOf, addXp: addXp, addCoins: addCoins, finishSession: finishSession,
+    newBlocked: newBlocked, duelDone: duelDone, chalInfo: chalInfo, challengeDone: function () { return !!(state.daily && state.daily.date === today() && state.daily.chal); }, rankOf: rankOf, addXp: addXp, addCoins: addCoins, finishSession: finishSession,
     stats: stats, today: today, shuffle: shuffle, regenHearts: regenHearts, heartsIn: heartsIn,
     rollDay: rollDay, verbs: function () { return verbs; }, verbPools: verbPools, planVerbs: planVerbs, verbStats: verbStats, parseCsv: parseCsv, removeCustom: removeCustom,
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },

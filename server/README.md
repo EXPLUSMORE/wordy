@@ -107,6 +107,14 @@ Außer dem Betreiber-Zugang (`/`, Basic-Anmeldung) gibt es Konten für Familien.
 - **Voraussetzung:** Mailversand (SMTP oder Graph mit `MAIL_FROM`) und `DASHBOARD_URL` müssen gesetzt sein, sonst kann sich niemand anmelden. Die Datenschutzerklärung `server/public/datenschutz.html` ist ein **Entwurf**: Verantwortlichen eintragen und rechtlich prüfen lassen, bevor fremde Familien eingeladen werden.
 - Technik: Tabellen `families`, `family_links`, `family_sessions`, `family_invites`, Spalte `players.family` (leer = Spieler des Betreibers). Familien-Schnittstelle: `/api/fam/…` (gleiche Routen wie `/api/admin/…`, mit Besitzprüfung), schreibende Aufrufe brauchen den Kopf `X-Wordy: 1`.
 
+## Freunde, Duelle, Ranglisten
+Optional und **aus**, bis die Eltern es im Dashboard beim Kind einschalten („Freunde & Duelle“).
+- **Freundescode:** Jedes freigeschaltete Kind bekommt einen Code (`F…`). Das andere Kind gibt ihn in der App ein (Spielen › Freunde). Eine Freundschaft gilt erst, wenn die **Eltern beider Kinder** im Dashboard zugestimmt haben (Betreiber für eigene Spieler, Familien für ihre Kinder, je nur für die eigene Seite).
+- **Sichtbar** für Freunde sind nur der von den Eltern vergebene Name, die gewählte Figur und Punkte. Kein Chat, kein Freitext, nur sechs Emoji-Reaktionen.
+- **Duelle:** Das Kind spielt zuerst (Match-Rausch, Blitzrunde oder Letztes Herz) mit 60 zufälligen Schulwörtern, der Freund bekommt dieselben Wörter in derselben Reihenfolge und muss das Ergebnis schlagen. Antworten sind 7 Tage möglich, es gibt Revanche. Plausibilitätsgrenzen je Spiel, höchstens 30 Herausforderungen pro Tag.
+- **Liga:** Wochen-Rangliste je Spiel (Montag bis Sonntag, bester Wert) nur unter bestätigten Freunden.
+- Tabellen `friends`, `challenges`, `scores`, Spalten `players.social/fcode/avatar`. Schnittstellen (Gerät, Bearer): `/api/social/me|friends|challenges|inbox|score|board|profile`. Eltern: `/api/admin/players/:id/social` (an/aus, Code, Freunde) und `/friends/:fid` (approve/remove).
+
 ## Schnittstellen (zur Information)
 App: `POST /api/pair`, `/api/events`, `/api/snapshot`, `/api/ping` · Eltern: `GET /`, `/api/admin/players`, `/api/admin/players/:id/report?days=30` u. a.
 

@@ -9,6 +9,13 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.47.0 – 2026-10-08
+- **Freunde, Duelle und Liga** (Server-Update nötig; Spielen › Freunde / Liga): Freundescode, Anfragen, Herausforderungen in Match-Rausch, Blitzrunde und Letztes Herz mit denselben Wörtern in derselben Reihenfolge, Antwort bis zu 7 Tage, Revanche, Emoji-Reaktionen, roter Punkt am Reiter bei neuen Herausforderungen, Wochen-Rangliste je Spiel unter Freunden.
+- **Eltern behalten die Kontrolle**: Funktion pro Kind im Dashboard (Karte „Freunde & Duelle“) ein-/ausschaltbar, jede Freundschaft braucht die Zustimmung beider Eltern, sichtbar sind nur Name, Figur und Punkte.
+- Duell-Sieg: +5 Münzen (höchstens 3 am Tag), neue Medaillen „Erstes Duell“, „Duell-Held“, „Duell-König“, „Challenge 7“, „Challenge 30“ im Showroom.
+- Fehler behoben: „Noch mal“ und „Nochmal versuchen“ in der Arena nutzten die Antwortoptionen statt der Startoptionen (z. B. ging beim Boss-Wiederholen der Boss verloren).
+- Server-Tests für Freundschaft, Zustimmung beider Eltern, Duell, Ergebnis, Reaktion, Liga und Plausibilität.
+
 ## 2.46.0 – 2026-10-08
 - **Elternkonten für mehrere Familien** (Server-Update nötig): Einladungslink vom Betreiber → Registrierung mit E-Mail und Einwilligung → Anmeldung per Einmal-Link aus der Mail (ohne Passwort). Jede Familie verwaltet nur ihre eigenen Kinder (bis zu 6) im bekannten Dashboard unter `/f/`. Konto-Seite: Wochenmail an/aus, Daten herunterladen, Konto samt Kindern löschen. Betreiber-Dashboard: Reiter „👪 Familien“ mit Einladungen, Sperren und Löschen. Fremde Kinder sind für den Betreiber nicht sichtbar. Wochenmail pro Familie. Datenschutzerklärung als Entwurf unter `/f/datenschutz`.
 - Neue Server-Tests: Registrierung, Einmal-Link, Isolation zwischen Familien und Betreiber, Sperren, Export, Löschen.

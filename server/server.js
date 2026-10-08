@@ -103,6 +103,40 @@ const fq = {
   addKid: db.prepare("INSERT INTO players(name, created, hidden, family) VALUES (?, ?, 0, ?)"),
   prune: db.prepare("DELETE FROM family_links WHERE created < ?")
 };
+/* Freunde und Duelle: nur mit Freigabe der Eltern beider Kinder. Öffentlich sichtbar ist nur der von den Eltern vergebene Name, die Figur und Punkte. */
+for (const [col, ddl] of [["social", "INTEGER NOT NULL DEFAULT 0"], ["fcode", "TEXT"], ["avatar", "TEXT"]]) if (!db.prepare("PRAGMA table_info(players)").all().some(c => c.name === col)) db.exec("ALTER TABLE players ADD COLUMN " + col + " " + ddl);
+db.exec(`
+  CREATE UNIQUE INDEX IF NOT EXISTS players_fcode ON players(fcode);
+  CREATE TABLE IF NOT EXISTS friends (lo INTEGER NOT NULL REFERENCES players(id) ON DELETE CASCADE, hi INTEGER NOT NULL REFERENCES players(id) ON DELETE CASCADE,
+    lo_ok INTEGER NOT NULL DEFAULT 0, hi_ok INTEGER NOT NULL DEFAULT 0, req INTEGER NOT NULL, created INTEGER NOT NULL, PRIMARY KEY(lo, hi));
+  CREATE TABLE IF NOT EXISTS challenges (id INTEGER PRIMARY KEY, a INTEGER NOT NULL REFERENCES players(id) ON DELETE CASCADE, b INTEGER NOT NULL REFERENCES players(id) ON DELETE CASCADE,
+    mode TEXT NOT NULL, words TEXT NOT NULL, seed INTEGER NOT NULL, a_score INTEGER NOT NULL, a_ts INTEGER NOT NULL, b_score INTEGER, b_ts INTEGER, created INTEGER NOT NULL, a_react TEXT, b_react TEXT);
+  CREATE INDEX IF NOT EXISTS ch_b ON challenges(b, b_score);
+  CREATE TABLE IF NOT EXISTS scores (player INTEGER NOT NULL REFERENCES players(id) ON DELETE CASCADE, mode TEXT NOT NULL, week TEXT NOT NULL, best INTEGER NOT NULL, PRIMARY KEY(player, mode, week));
+`);
+const sq = {
+  me: db.prepare("SELECT * FROM players WHERE id = ?"),
+  byCode: db.prepare("SELECT * FROM players WHERE fcode = ?"),
+  setCode: db.prepare("UPDATE players SET fcode = ? WHERE id = ?"),
+  setSocial: db.prepare("UPDATE players SET social = ? WHERE id = ?"),
+  setAvatar: db.prepare("UPDATE players SET avatar = ? WHERE id = ?"),
+  fr: db.prepare("SELECT * FROM friends WHERE lo = ? AND hi = ?"),
+  frOf: db.prepare("SELECT * FROM friends WHERE lo = ? OR hi = ?"),
+  addFr: db.prepare("INSERT INTO friends(lo, hi, lo_ok, hi_ok, req, created) VALUES (?, ?, 0, 0, ?, ?)"),
+  okLo: db.prepare("UPDATE friends SET lo_ok = 1 WHERE lo = ? AND hi = ?"), okHi: db.prepare("UPDATE friends SET hi_ok = 1 WHERE lo = ? AND hi = ?"),
+  delFr: db.prepare("DELETE FROM friends WHERE lo = ? AND hi = ?"),
+  addCh: db.prepare("INSERT INTO challenges(a, b, mode, words, seed, a_score, a_ts, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"),
+  ch: db.prepare("SELECT * FROM challenges WHERE id = ?"),
+  inbox: db.prepare("SELECT * FROM challenges WHERE b = ? AND b_score IS NULL AND created > ? ORDER BY created DESC LIMIT 20"),
+  recent: db.prepare("SELECT * FROM challenges WHERE (a = ? OR b = ?) AND b_score IS NOT NULL ORDER BY b_ts DESC LIMIT 20"),
+  waiting: db.prepare("SELECT * FROM challenges WHERE a = ? AND b_score IS NULL AND created > ? ORDER BY created DESC LIMIT 20"),
+  chDone: db.prepare("UPDATE challenges SET b_score = ?, b_ts = ? WHERE id = ? AND b_score IS NULL"),
+  reactA: db.prepare("UPDATE challenges SET a_react = ? WHERE id = ? AND a = ?"), reactB: db.prepare("UPDATE challenges SET b_react = ? WHERE id = ? AND b = ?"),
+  chCount: db.prepare("SELECT COUNT(*) AS n FROM challenges WHERE a = ? AND created > ?"),
+  setScore: db.prepare("INSERT INTO scores(player, mode, week, best) VALUES (?, ?, ?, ?) ON CONFLICT(player, mode, week) DO UPDATE SET best = MAX(best, excluded.best)"),
+  score: db.prepare("SELECT best FROM scores WHERE player = ? AND mode = ? AND week = ?"),
+  pruneScores: db.prepare("DELETE FROM scores WHERE week < ?")
+};
 const MAX_KIDS = 6, LINK_MIN = 20, SESSION_DAYS = 30, CONSENT_VER = "2026-10";
 const q = {
   player: db.prepare("SELECT * FROM players WHERE id = ?"),
@@ -690,6 +724,87 @@ async function famWeekly() {
   }
 }
 
+
+/* ---------- Freunde, Duelle, Ranglisten ---------- */
+const SOCIAL_MAX = { match: 3000, blitz: 5000, survival: 200 };
+const REACTS = ["👏", "😮", "🔥", "😅", "💪", "🤝"];
+const AVATAR_RE = /^[A-Za-z0-9:_\-←-⯿\u{1F000}-\u{1FFFF}️‍]{1,40}$/u;
+const pairOf = (a, b) => a < b ? [a, b] : [b, a];
+function fcodeOf(pid) {
+  let r = sq.me.get(pid); if (r.fcode) return r.fcode;
+  for (let i = 0; i < 20; i++) { const c = "F" + newCode().replace("-", "").slice(0, 5); if (!sq.byCode.get(c)) { sq.setCode.run(c, pid); return c; } }
+  throw new Error("Kein Freundescode");
+}
+const frState = (f, me) => (f.lo_ok && f.hi_ok) ? "ok" : ((me === f.lo ? f.lo_ok : f.hi_ok) ? "theirs" : "mine");   // ok | mine = meine Eltern müssen noch zustimmen | theirs = die Eltern des Freundes
+function friendsOf(pid) {
+  return sq.frOf.all(pid, pid).map(f => { const o = sq.me.get(f.lo === pid ? f.hi : f.lo); return o ? { id: o.id, name: o.name, avatar: o.avatar || "", state: frState(f, pid), social: !!o.social, since: f.created } : null; }).filter(Boolean);
+}
+const areFriends = (a, b) => { const [lo, hi] = pairOf(a, b), f = sq.fr.get(lo, hi); return !!(f && f.lo_ok && f.hi_ok); };
+const weekKey = () => mondayOf(dayOf(Date.now()));
+function socialGuard(pid) { const me = sq.me.get(pid); return me && me.social ? null : [403, { error: "Die Freunde-Funktion ist noch nicht freigeschaltet. Bitte deine Eltern." }]; }
+const chView = (c, me) => { const a = sq.me.get(c.a), b = sq.me.get(c.b); return { id: c.id, mode: c.mode, seed: c.seed, words: JSON.parse(c.words), from: { id: a.id, name: a.name, avatar: a.avatar || "" }, to: { id: b.id, name: b.name, avatar: b.avatar || "" }, aScore: c.a_score, bScore: c.b_score, created: c.created, done: c.b_ts, mine: me === c.a ? "a" : "b", myReact: me === c.a ? c.a_react : c.b_react, theirReact: me === c.a ? c.b_react : c.a_react }; };
+async function apiSocial(pid, method, p, url, req, ip) {
+  const g = socialGuard(pid);
+  if (p === "/api/social/profile" && method === "POST") { const av = clean((await readJson(req)).avatar, 40); if (av && AVATAR_RE.test(av)) sq.setAvatar.run(av, pid); return [200, { ok: true }]; }
+  if (p === "/api/social/me" && method === "GET") { const me = sq.me.get(pid); return [200, me.social ? { enabled: true, code: fcodeOf(pid), name: me.name, friends: friendsOf(pid) } : { enabled: false, name: me.name }]; }
+  if (g) return g;
+  if (p === "/api/social/friends" && method === "POST") {
+    if (limited("p" + pid, "friend", 20, 3600000)) return [429, { error: "Zu viele Anfragen. Bitte später noch einmal." }];
+    const code = clean((await readJson(req)).code, 12).toUpperCase().replace(/[^A-Z0-9]/g, ""), o = code ? sq.byCode.get(code) : null;
+    if (!o || !o.social) return [400, { error: "Diesen Freundescode gibt es nicht." }];
+    if (o.id === pid) return [400, { error: "Das ist dein eigener Code." }];
+    if (friendsOf(pid).length >= 30) return [400, { error: "Du hast schon sehr viele Freunde." }];
+    const [lo, hi] = pairOf(pid, o.id); if (sq.fr.get(lo, hi)) return [400, { error: "Ihr seid schon verbunden oder die Anfrage läuft." }];
+    sq.addFr.run(lo, hi, pid, Date.now());
+    return [200, { ok: true, name: o.name }];
+  }
+  const mfd = p.match(/^\/api\/social\/friends\/(\d+)$/);
+  if (mfd && method === "DELETE") { const [lo, hi] = pairOf(pid, +mfd[1]); sq.delFr.run(lo, hi); return [200, { ok: true }]; }
+  if (p === "/api/social/challenges" && method === "POST") {
+    const b = await readJson(req), to = +b.to, mode = String(b.mode), score = Math.round(+b.score);
+    if (!SOCIAL_MAX[mode] || !(score >= 0 && score <= SOCIAL_MAX[mode])) return [400, { error: "Ungültiges Spiel." }];
+    if (!areFriends(pid, to)) return [403, { error: "Ihr seid noch keine bestätigten Freunde." }];
+    const o = sq.me.get(to); if (!o || !o.social) return [403, { error: "Dein Freund hat die Funktion nicht freigeschaltet." }];
+    const words = Array.isArray(b.words) ? b.words.map(w => String(w)).filter(w => /^[A-Za-z0-9_.\-#]{1,40}$/.test(w)).slice(0, 80) : [];
+    if (words.length < 8) return [400, { error: "Zu wenige Wörter." }];
+    if (sq.chCount.get(pid, Date.now() - 86400000).n >= 30) return [429, { error: "Für heute sind genug Herausforderungen verschickt." }];
+    const id = +sq.addCh.run(pid, to, mode, JSON.stringify(words), Math.abs(Math.round(+b.seed)) % 2147483647, score, Date.now(), Date.now()).lastInsertRowid;
+    return [200, { id }];
+  }
+  if (p === "/api/social/inbox" && method === "GET") {
+    const since = Date.now() - 7 * 86400000;
+    return [200, { open: sq.inbox.all(pid, since).map(c => chView(c, pid)), waiting: sq.waiting.all(pid, since).map(c => chView(c, pid)), recent: sq.recent.all(pid, pid).map(c => chView(c, pid)) }];
+  }
+  const mr = p.match(/^\/api\/social\/challenges\/(\d+)\/(result|react)$/);
+  if (mr && method === "POST") {
+    const c = sq.ch.get(+mr[1]); if (!c || (c.a !== pid && c.b !== pid)) return [404, { error: "Unbekannt." }];
+    const b = await readJson(req);
+    if (mr[2] === "result") {
+      const score = Math.round(+b.score);
+      if (c.b !== pid) return [403, { error: "Das ist deine eigene Herausforderung." }];
+      if (!(score >= 0 && score <= SOCIAL_MAX[c.mode])) return [400, { error: "Ungültiges Ergebnis." }];
+      if (c.b_score != null) return [400, { error: "Schon gespielt." }];
+      if (Date.now() - c.created > 7 * 86400000) return [400, { error: "Abgelaufen." }];
+      sq.chDone.run(score, Date.now(), c.id); return [200, { ok: true, view: chView(sq.ch.get(c.id), pid) }];
+    }
+    const e = String(b.emoji); if (!REACTS.includes(e)) return [400, { error: "Unbekannte Reaktion." }];
+    if (c.b_score == null) return [400, { error: "Erst nach dem Spiel." }];
+    (c.a === pid ? sq.reactA : sq.reactB).run(e, c.id, pid); return [200, { ok: true }];
+  }
+  if (p === "/api/social/score" && method === "POST") {
+    const b = await readJson(req), mode = String(b.mode), score = Math.round(+b.score);
+    if (!SOCIAL_MAX[mode] || !(score >= 0 && score <= SOCIAL_MAX[mode])) return [400, { error: "Ungültig." }];
+    sq.setScore.run(pid, mode, weekKey(), score); sq.pruneScores.run(ymdAdd(weekKey(), -35)); return [200, { ok: true }];
+  }
+  if (p === "/api/social/board" && method === "GET") {
+    const mode = url.searchParams.get("mode") || "blitz"; if (!SOCIAL_MAX[mode]) return [400, { error: "Unbekanntes Spiel." }];
+    const ids = [pid, ...friendsOf(pid).filter(f => f.state === "ok" && f.social).map(f => f.id)], wk = weekKey();
+    const rows = ids.map(id => { const o = sq.me.get(id), s = sq.score.get(id, mode, wk); return { id, name: o.name, avatar: o.avatar || "", score: s ? s.best : 0, me: id === pid }; }).sort((x, y) => y.score - x.score);
+    return [200, { mode, week: wk, rows }];
+  }
+  return [404, { error: "Nicht gefunden." }];
+}
+
 /* ---------- Routing ---------- */
 const PUBLIC = path.join(__dirname, "public");
 const server = http.createServer(async (req, res) => {
@@ -725,6 +840,11 @@ const server = http.createServer(async (req, res) => {
     if (p === "/api/sync" && req.method === "GET") {
       const pid = playerOf(req); if (!pid) return send(res, 401, { error: "Nicht verbunden." });
       const [c, b] = apiSync(pid); return send(res, c, b);
+    }
+    if (p.startsWith("/api/social/")) {
+      const pid = playerOf(req); if (!pid) return send(res, 401, { error: "Nicht verbunden." });
+      if (q.player.get(pid).hidden) return send(res, 403, { error: "Dieser Spieler wird nur gesichert." });
+      const [c, b] = await apiSocial(pid, req.method, p, url, req, ip); return send(res, c, b);
     }
     if (p === "/api/ping" && req.method === "POST") {
       const pid = playerOf(req); if (!pid) return send(res, 401, { error: "Nicht verbunden." });
@@ -846,6 +966,15 @@ const server = http.createServer(async (req, res) => {
       if (mw && req.method === "GET") { if (!famPlayer(q.player.get(+mw[1]), scope)) return send(res, 404, { error: "Unbekannt." }); return send(res, 200, allWords(+mw[1])); }
       const mg = p.match(/^\/api\/admin\/(goals|plans)\/(\d+)$/);
       if (mg && req.method === "DELETE") { const row = (mg[1] === "goals" ? q.goal : q.plan).get(+mg[2]); if (!row || !famPlayer(q.player.get(row.player), scope)) return send(res, 404, { error: "Unbekannt." }); (mg[1] === "goals" ? q.delGoal : q.delPlan).run(+mg[2]); return send(res, 200, { ok: true }); }
+      const mfr = p.match(/^\/api\/admin\/players\/(\d+)\/friends\/(\d+)$/);
+      if (mfr && req.method === "POST") {
+        const pid = +mfr[1], oid = +mfr[2]; if (!famPlayer(q.player.get(pid), scope)) return send(res, 404, { error: "Unbekannt." });
+        const [lo, hi] = pairOf(pid, oid), f = sq.fr.get(lo, hi); if (!f) return send(res, 404, { error: "Unbekannt." });
+        const act = clean((await readJson(req)).action, 10);
+        if (act === "approve") { (pid === lo ? sq.okLo : sq.okHi).run(lo, hi); return send(res, 200, { ok: true }); }
+        if (act === "remove") { sq.delFr.run(lo, hi); return send(res, 200, { ok: true }); }
+        return send(res, 400, { error: "Unbekannte Aktion." });
+      }
       const m = p.match(/^\/api\/admin\/players\/(\d+)(?:\/(\w+))?$/);
       if (m) {
         const pid = +m[1], pl = q.player.get(pid);
@@ -860,6 +989,8 @@ const server = http.createServer(async (req, res) => {
           res.writeHead(200, { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store", "Content-Disposition": 'attachment; filename="wordy-lernstand-' + String(pl.name).replace(/[^A-Za-z0-9_-]/g, "_") + "-" + r.day + '.json"' });
           return res.end(r.d);
         }
+        if (m[2] === "social" && req.method === "GET") { const me = sq.me.get(pid); return send(res, 200, { enabled: !!me.social, code: me.social ? fcodeOf(pid) : null, friends: friendsOf(pid) }); }
+        if (m[2] === "social" && req.method === "POST") { const on = !!(await readJson(req)).enabled; sq.setSocial.run(on ? 1 : 0, pid); if (on) fcodeOf(pid); return send(res, 200, { ok: true }); }
         if (m[2] === "goals" && req.method === "GET") return send(res, 200, weekGoals(pid));
         if (m[2] === "goals" && req.method === "POST") { const [c, b] = createGoal(pid, await readJson(req)); return send(res, c, b); }
         if (m[2] === "plans" && req.method === "GET") return send(res, 200, plansOf(pid));

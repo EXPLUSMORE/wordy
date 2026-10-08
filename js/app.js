@@ -427,7 +427,7 @@
     return '<span class="srem">' + (c.it ? shopIcon(c.it) : "🎁") + '</span>';
   }
   function medalStyle(id) {
-    var m = /^md:(\w+?)(?:p(\d)|cup)?$/.exec(id) || [], k = id.slice(3), T = { boss1: ["common", "⚔"], boss5: ["rare", "⚔"], boss10: ["epic", "⚔"], serie7: ["rare", "7"], serie30: ["epic", "30"], serie100: ["legend", "100"], w25: ["rare", "25"], w100: ["epic", "100"] };
+    var m = /^md:(\w+?)(?:p(\d)|cup)?$/.exec(id) || [], k = id.slice(3), T = { boss1: ["common", "⚔"], boss5: ["rare", "⚔"], boss10: ["epic", "⚔"], serie7: ["rare", "7"], serie30: ["epic", "30"], serie100: ["legend", "100"], duel1: ["common", "⚔"], duel5: ["rare", "5"], duel20: ["epic", "20"], chal7: ["rare", "7"], chal30: ["legend", "30"], w25: ["rare", "25"], w100: ["epic", "100"] };
     if (T[k]) return { rar: T[k][0], val: T[k][1] };
     var pm = /p(\d)$/.exec(k); if (pm) return { rar: +pm[1] >= S.passInfo().weeks.length ? "legend" : "epic", val: pm[1] };
     return { rar: "legend", val: "cup" };
@@ -776,6 +776,118 @@
       focusT.map(function (f) { return tile(f[0], f[1], f[2], 'data-act="start" data-mode="focus" data-focus="' + f[3] + '" data-min="' + mins + '"' + (f[4] ? " disabled" : "")); }).join("") + '</div></section>';
   }
 
+
+  /* ================= Freunde, Duelle, Ranglisten ================= */
+  var soc = { me: null, inbox: null, err: "", loading: false, ts: 0, board: {}, boardMode: "blitz" };
+  var DUEL_MODES = [["match", "⚡ Match-Rausch"], ["blitz", "🔥 Blitzrunde"], ["survival", "💠 Letztes Herz"]], MODE_NAME = { match: "Match-Rausch", blitz: "Blitzrunde", survival: "Letztes Herz" };
+  var REACTS = ["👏", "😮", "🔥", "😅", "💪", "🤝"];
+  function socOn() { return !!(global.WordySync && global.WordySync.connected()); }
+  function socViewing() { return tab === "spielen" && (spielSeg === "freunde" || spielSeg === "rang") && sessionEl.hidden; }
+  function socLoad(force) {
+    if (!socOn() || soc.loading || (!force && Date.now() - soc.ts < 4000)) return;
+    var W = global.WordySync; soc.loading = true;
+    W.social("POST", "/profile", { avatar: S.state.profile.avatar }).catch(function () {})
+      .then(function () { return W.social("GET", "/me"); })
+      .then(function (me) { soc.me = me; soc.err = ""; return me.enabled ? W.social("GET", "/inbox").then(function (ib) { soc.inbox = ib; }) : null; })
+      .catch(function (e) { soc.err = e.message; })
+      .then(function () {
+        soc.loading = false; soc.ts = Date.now();
+        if (soc.inbox) { var gained = 0, wins = 0; soc.inbox.recent.forEach(function (c) { var r = duelResult(c), o = S.duelDone(c.id, r.win && !r.tie); if (o.fresh) { gained += o.coins; if (o.win) wins++; } }); if (wins) { toast("🏆 " + (wins === 1 ? "Duell gewonnen" : wins + " Duelle gewonnen") + (gained ? "! +" + gained + " 🪙" : "!"), 3600); renderHeader(); } }
+        var n = soc.inbox ? soc.inbox.open.length : 0, b = $('#tabs [data-tab="spielen"]'); if (b) b.classList.toggle("dot", n > 0);
+        if (socViewing()) render();
+      });
+  }
+  function socBoardLoad(mode, force) {
+    var c = soc.board[mode]; if (!socOn() || (c && (c.loading || (!force && Date.now() - c.ts < 4000)))) return;
+    c = soc.board[mode] = c || { rows: null, ts: 0 }; c.loading = true;
+    global.WordySync.social("GET", "/board?mode=" + mode).then(function (r) { c.rows = r.rows; c.err = ""; }).catch(function (e) { c.err = e.message; })
+      .then(function () { c.loading = false; c.ts = Date.now(); if (socViewing()) render(); });
+  }
+  function infoCard(title, text) { return '<section class="card"><div class="eyebrow">' + title + '</div><p class="small muted" style="margin:8px 0 0">' + text + '</p></section>'; }
+  function socGate() {
+    if (!socOn()) return infoCard("👥 Freunde", "Dafür muss Wordy mit dem Server verbunden sein. Deine Eltern richten das unter <b>Profil › Auto-Save</b> ein.");
+    if (!soc.me) return infoCard("👥 Freunde", soc.err ? esc(soc.err) : "Lade …");
+    if (!soc.me.enabled) return infoCard("👥 Freunde sind noch aus", "Deine Eltern können sie im Eltern-Dashboard unter <b>„Freunde &amp; Duelle“</b> einschalten. Dann bekommst du deinen Freundescode.");
+    return "";
+  }
+  function who(p, size) { return '<span class="fav" style="width:' + (size || 40) + 'px;height:' + (size || 40) + 'px">' + avatarHtml(p.avatar || "svg:pbaer") + '</span>'; }
+  function duelResult(c) {
+    var me = c.mine === "a" ? c.aScore : c.bScore, they = c.mine === "a" ? c.bScore : c.aScore, other = c.mine === "a" ? c.to : c.from;
+    return { me: me, they: they, other: other, win: me > they, tie: me === they };
+  }
+  function friendsHtml() {
+    var gate = socGate(); if (gate) return gate;
+    socLoad();
+    var me = soc.me, ib = soc.inbox || { open: [], waiting: [], recent: [] }, h = "";
+    if (ib.open.length) h += '<section class="card duelcard"><div class="eyebrow">⚔️ Herausforderungen für dich</div>' + ib.open.map(function (c) {
+      return '<div class="drow">' + who(c.from) + '<div class="grow"><b>' + esc(c.from.name) + '</b><div class="small muted">' + MODE_NAME[c.mode] + ' · schlag <b class="tnum">' + c.aScore + '</b></div></div><button class="btn" data-act="socaccept" data-id="' + c.id + '">Annehmen ▶</button></div>';
+    }).join("") + '</section>';
+    h += '<section class="card"><div class="eyebrow">Mein Freundescode</div><div class="fcode">' + esc(me.code) + '</div>' +
+      '<div class="row" style="gap:8px;margin-top:8px"><button class="chip" data-act="soccopy">📋 Kopieren</button><button class="chip" data-act="socshare">📤 Teilen</button></div>' +
+      '<p class="small muted" style="margin:10px 0 0">Gib den Code deinen Freunden. Ihr könnt euch erst herausfordern, wenn die Eltern von euch beiden zugestimmt haben.</p>' +
+      '<div class="row" style="gap:8px;margin-top:14px"><input id="socCode" class="grow" maxlength="12" placeholder="Code von einem Freund" style="text-transform:uppercase"><button class="btn" data-act="socadd">Hinzufügen</button></div><div id="socMsg" class="small muted" style="margin-top:6px"></div></section>';
+    h += '<section class="card"><div class="eyebrow">Meine Freunde (' + me.friends.length + ')</div>' + (me.friends.length ? me.friends.map(function (f) {
+      var st = f.state === "ok" ? "" : f.state === "mine" ? "wartet auf deine Eltern" : "wartet auf die Eltern von " + esc(f.name);
+      return '<div class="drow">' + who(f) + '<div class="grow"><b>' + esc(f.name) + '</b>' + (st ? '<div class="small muted">' + st + '</div>' : '') + '</div>' +
+        (f.state === "ok" ? '<button class="btn soft" data-act="socchallenge" data-id="' + f.id + '">⚔️ Duell</button>' : '<span class="pill">⏳</span>') + '<button class="chip" data-act="socdel" data-id="' + f.id + '" aria-label="Entfernen">✕</button></div>';
+    }).join("") : '<p class="small muted" style="margin:8px 0 0">Noch keine Freunde. Tausche Codes aus!</p>') + '</section>';
+    if (ib.waiting.length) h += '<section class="card"><div class="eyebrow">Warten auf Antwort</div>' + ib.waiting.map(function (c) { return '<div class="drow">' + who(c.to, 32) + '<div class="grow small"><b>' + esc(c.to.name) + '</b> · ' + MODE_NAME[c.mode] + ' · dein Wert <b class="tnum">' + c.aScore + '</b></div></div>'; }).join("") + '</section>';
+    if (ib.recent.length) h += '<section class="card"><div class="eyebrow">Letzte Duelle</div>' + ib.recent.map(function (c) {
+      var r = duelResult(c);
+      return '<div class="drow">' + who(r.other, 32) + '<div class="grow"><b>' + (r.tie ? "🤝 Unentschieden" : r.win ? "🏆 Gewonnen" : "Verloren") + '</b> <span class="small muted">gegen ' + esc(r.other.name) + ' · ' + MODE_NAME[c.mode] + '</span><div class="tnum small"><b>' + r.me + '</b> : ' + r.they + '</div></div>' +
+        '<span class="reacts">' + (c.theirReact ? '<span class="rea on" title="Reaktion von ' + esc(r.other.name) + '">' + c.theirReact + '</span>' : '') + REACTS.slice(0, 4).map(function (e) { return '<button class="rea' + (c.myReact === e ? " on" : "") + '" data-act="socreact" data-id="' + c.id + '" data-e="' + e + '">' + e + '</button>'; }).join("") + '</span></div>';
+    }).join("") + '</section>';
+    return h;
+  }
+  function boardHtml() {
+    var gate = socGate(); if (gate) return gate;
+    var mode = soc.boardMode; socBoardLoad(mode);
+    var c = soc.board[mode], MED = ["🥇", "🥈", "🥉"];
+    var SHORT = { match: "⚡ Match", blitz: "🔥 Blitz", survival: "💠 Herz" }, tabs = '<div class="segs">' + DUEL_MODES.map(function (m) { return '<button data-act="socmode" data-m="' + m[0] + '" aria-pressed="' + (mode === m[0]) + '">' + SHORT[m[0]] + '</button>'; }).join("") + '</div>';
+    var body = !c || !c.rows ? '<p class="small muted">' + (c && c.err ? esc(c.err) : "Lade …") + '</p>' : c.rows.length < 2 ? '<p class="small muted">Noch keine Freunde auf der Liste. Hol dir welche und überhol sie!</p>' + c.rows.map(rankRow).join("") : c.rows.map(rankRow).join("");
+    function rankRow(r, i) { return '<div class="drow' + (r.me ? " me" : "") + '"><span class="medal">' + (r.score ? (MED[i] || (i + 1)) : "·") + '</span>' + who(r, 34) + '<div class="grow"><b>' + esc(r.name) + (r.me ? " (du)" : "") + '</b></div><b class="tnum">' + r.score + '</b></div>'; }
+    return tabs + '<section class="card"><div class="eyebrow">Diese Woche · beste Runde</div>' + body + '<p class="small muted" style="margin:10px 0 0">Jede Arena-Runde zählt. Nur du und deine bestätigten Freunde stehen auf der Liste. Am Montag geht es von vorn los.</p></section>';
+  }
+  function duelSheet(friend) {
+    var ov = document.createElement("div"); ov.className = "srmd";
+    ov.innerHTML = '<div class="srmc" style="--c:#2f6fd0;--g:rgba(70,160,255,.8)"><div class="eyebrow" style="color:#fff;opacity:.85">Herausforderung</div><h3>Gegen ' + esc(friend.name) + '</h3><p>Du spielst zuerst. Dann bekommt ' + esc(friend.name) + ' genau dieselben Wörter und muss dein Ergebnis schlagen.</p>' +
+      DUEL_MODES.map(function (m) { return '<button class="sbtn" data-m="' + m[0] + '" style="display:block;width:100%;margin:6px 0">' + m[1] + '</button>'; }).join("") + '<button class="sbtn b4" data-m="x" style="display:block;width:100%;margin:10px 0 0">Abbrechen</button></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener("click", function (e) {
+      var m = e.target.closest("[data-m]"), mm = m && m.getAttribute("data-m");
+      if (e.target === ov || mm === "x") return ov.remove();
+      if (mm) { ov.remove(); startChallenge(friend, mm); }
+    });
+  }
+  function duelDeck() {
+    var all = S.pools().all.filter(function (w) { return w.track !== "eigen"; });
+    return all.length >= 12 ? S.shuffle(all.slice()).slice(0, 60) : null;
+  }
+  function startChallenge(friend, mode) {
+    var deck = duelDeck(); if (!deck) return toast("Dafür fehlen noch Wörter im gewählten Lernbereich.");
+    var ids = deck.map(function (w) { return w.id; }), seed = Math.floor(Math.random() * 2000000000);
+    global.ARENA.start(mode, { words: deck, seed: seed, duel: { wait: "Herausforderung wird gesendet …" }, onFinish: function (res, show) {
+      global.WordySync.social("POST", "/challenges", { to: friend.id, mode: mode, words: ids, seed: seed, score: res.score })
+        .then(function () { soc.ts = 0; show("📨 <b>Gesendet!</b> " + esc(friend.name) + " muss jetzt deine <b>" + res.score + "</b> schlagen."); })
+        .catch(function (e) { show("⚠️ " + esc(e.message)); });
+    } });
+  }
+  function acceptDuel(ch) {
+    var words = ch.words.map(function (id) { return S.byId(id); }).filter(Boolean);
+    if (words.length < 8) return toast("Die Wörter dieser Herausforderung gibt es in deiner App nicht.");
+    var other = ch.from;
+    global.ARENA.start(ch.mode, { words: words, seed: ch.seed, duel: { wait: "Dein Ergebnis wird übertragen …", nextLabel: "🔁 Revanche", next: function () { soc.ts = 0; startChallenge(other, ch.mode); } }, onFinish: function (res, show) {
+      global.WordySync.social("POST", "/challenges/" + ch.id + "/result", { score: res.score }).then(function (r) {
+        var v = r.view, mine = v.bScore, theirs = v.aScore; soc.ts = 0;
+        show((mine > theirs ? "🏆 <b>Gewonnen!</b>" : mine === theirs ? "🤝 <b>Unentschieden!</b>" : "💪 <b>Knapp verloren.</b>") + " Du <b>" + mine + "</b> : " + theirs + " " + esc(other.name), true);
+        if (mine > theirs) try { global.VTC.burst("stars", innerWidth / 2, innerHeight / 3, 30, 1.4); } catch (e) {}
+      }).catch(function (e) { show("⚠️ " + esc(e.message)); });
+    } });
+  }
+  global.addEventListener("focus", function () { if (socOn()) socLoad(); });
+  setInterval(function () { if (socOn() && !document.hidden) socLoad(); }, 120000);
+  setTimeout(function () { if (socOn()) socLoad(); }, 4000);
+
   /* ================= Hauptmenü: Start · Lernen · Spielen · Beute · Profil ================= */
   function topSegs(html) { var st = view.querySelector(".stack"); if (st) st.insertAdjacentHTML("afterbegin", html); else view.insertAdjacentHTML("afterbegin", html); }
   function viewLernen() {
@@ -805,8 +917,8 @@
       '<p class="small muted" style="margin:6px 0 0">Serienboni gibt es bei 3, 7, 14 und 30 Tagen in Folge.</p></section>';
   }
   function viewSpielen() {
-    var top = segBar("spielen", spielSeg, [["challenge", "🏆 Challenge"], ["arena", "🕹️ Arena"]]);
-    view.innerHTML = '<div class="stack">' + top + (spielSeg === "arena" ? modiHtml("spiel") : challengeHtml()) + '</div>';
+    var top = segBar("spielen", spielSeg, [["challenge", "🏆 Challenge"], ["arena", "🕹️ Arena"], ["freunde", "👥 Freunde"], ["rang", "🥇 Liga"]]);
+    view.innerHTML = '<div class="stack">' + top + (spielSeg === "arena" ? modiHtml("spiel") : spielSeg === "freunde" ? friendsHtml() : spielSeg === "rang" ? boardHtml() : challengeHtml()) + '</div>';
   }
   function viewBeute() {
     var top = segBar("beute", beuteSeg, [["pass", "❄️ Monatspass"], ["shop", "🛍️ Shop"], ["showroom", "🏆 Showroom"]]);
@@ -2480,6 +2592,17 @@
       clearTimeout(hhT); hhT = setTimeout(function () { var h2 = $("#hhFig"); if (h2) h2.innerHTML = heroHtml(S.state.profile.avatar, 0); }, 4200);
     }
     else if (a === "narrtest") { speak("Hallo Magnus! Ich bin dein Erzähler. Heute zeige ich dir, wie man Wörter knackt – ohne Schweiß, aber mit Style.", null, "de", true); }
+    else if (a === "soccopy") { try { navigator.clipboard.writeText(soc.me.code); toast("Code kopiert"); } catch (e) { toast(soc.me.code); } }
+    else if (a === "socshare") { var stx = "Spiel mit mir Wordy! Mein Freundescode: " + soc.me.code; if (navigator.share) navigator.share({ text: stx }).catch(function () {}); else { try { navigator.clipboard.writeText(stx); toast("Text kopiert"); } catch (e) {} } }
+    else if (a === "socadd") {
+      var sc = ($("#socCode") || {}).value || "", sm = $("#socMsg"); if (!sc.trim()) return;
+      global.WordySync.social("POST", "/friends", { code: sc }).then(function (r) { soc.ts = 0; toast("Anfrage an " + r.name + " ist raus. Jetzt müssen eure Eltern zustimmen."); socLoad(true); }).catch(function (e) { if (sm) sm.textContent = e.message; });
+    }
+    else if (a === "socdel") { if (confirm("Diesen Freund entfernen?")) global.WordySync.social("DELETE", "/friends/" + act.getAttribute("data-id")).then(function () { socLoad(true); }).catch(function (e) { toast(e.message); }); }
+    else if (a === "socchallenge") { var fr = (soc.me.friends || []).filter(function (f) { return String(f.id) === act.getAttribute("data-id"); })[0]; if (fr) duelSheet(fr); }
+    else if (a === "socaccept") { var ch = (soc.inbox.open || []).filter(function (c) { return String(c.id) === act.getAttribute("data-id"); })[0]; if (ch) acceptDuel(ch); }
+    else if (a === "socreact") { global.WordySync.social("POST", "/challenges/" + act.getAttribute("data-id") + "/react", { emoji: act.getAttribute("data-e") }).then(function () { socLoad(true); }).catch(function (e) { toast(e.message); }); }
+    else if (a === "socmode") { soc.boardMode = act.getAttribute("data-m"); render(); }
     else if (a === "film") {
       global.VTFILM.play(act.getAttribute("data-id"), { audio: S.state.settings.audio, speak: function (t) { speak(t, null, "de"); }, voice: function () { var n = S.state.settings.narrator || "auto"; return n === "dev" ? null : n === "m" ? "m" : "f"; }, onGo: function (g) {
         var b = document.createElement("button"); b.hidden = true;
@@ -2627,7 +2750,8 @@
     afterArena: function () { render(); },
     bossFinish: bossFinish,
     danceWin: danceWin,
-    openChest: openChest
+    openChest: openChest,
+    arenaScore: function (mode, score) { if (socOn() && /^(match|blitz|survival)$/.test(mode)) global.WordySync.social("POST", "/score", { mode: mode, score: score }).catch(function () {}); }
   };
 
   S.load();

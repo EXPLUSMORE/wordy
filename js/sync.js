@@ -210,6 +210,11 @@
   };
 
   /* Verbinden mit dem Code der Eltern: "https://server#ABCD-EFGH" */
+  /* Freunde und Duelle: Anfrage an die Social-Schnittstelle des Servers (Antwort als Objekt, Fehler mit lesbarer Meldung) */
+  W.social = function (method, path, body) {
+    var c = cfg(); if (!c || !c.token || !g.fetch) return Promise.reject(new Error("Nicht mit dem Server verbunden."));
+    return api(c, method, "/api/social" + path, body).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok) throw new Error(j.error || "Fehler " + r.status); return j; }); });
+  };
   W.pair = function (text) {
     var s = String(text || "").trim(), m = s.match(/^(https?:\/\/[^\s#]+?)\/?#?\s*([A-Za-z0-9]{4}-?[A-Za-z0-9]{4})$/);
     if (!m) return Promise.resolve({ error: "Bitte den ganzen Code einfügen, so wie ihn das Dashboard zeigt (Adresse und Code)." });
