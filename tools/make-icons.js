@@ -10,7 +10,7 @@ const stars = [[78, 214, 7], [430, 196, 9], [452, 330, 6], [60, 360, 5], [388, 1
 const wordy = (svg, k) => `<div style="width:512px;height:512px;position:relative;overflow:hidden;background:radial-gradient(70% 60% at 72% 10%,rgba(233,189,98,.40),transparent 62%),radial-gradient(90% 70% at 10% 105%,rgba(30,98,115,.65),transparent 62%),linear-gradient(160deg,#18223d,${NAVY})">
  <div style="position:absolute;inset:0;transform:scale(${k});transform-origin:50% 50%">${stars}
   <div style="position:absolute;left:0;right:0;top:50px;display:flex;justify-content:center;gap:11px">${[..."WORDY"].map((c, i) => `<b style="width:76px;height:80px;border-radius:18px;background:${GOLD};color:#2a1c00;font:800 52px/80px ${FONT};text-align:center;box-shadow:0 7px 0 #9b6f1c,0 12px 18px rgba(0,0,0,.35);transform:rotate(${[-4, 3, -2, 4, -3][i]}deg)">${c}</b>`).join("")}</div>
-  <div style="position:absolute;left:112px;top:160px;width:288px;height:288px;border-radius:50%;overflow:hidden;background:radial-gradient(circle at 50% 35%,#5b4aa8,#2b2466 75%);border:9px solid #E9BD62;box-shadow:0 0 0 7px rgba(233,189,98,.25),0 18px 30px rgba(0,0,0,.5)"><div style="position:absolute;left:-1%;top:-9%;width:102%;height:102%">${svg}</div></div></div></div>`;
+  <div style="position:absolute;left:96px;top:150px;width:320px;height:320px;${outline}">${svg}</div></div></div>`;
 const dash = k => `<div style="width:512px;height:512px;position:relative;overflow:hidden;background:radial-gradient(70% 60% at 25% 8%,rgba(233,189,98,.38),transparent 62%),radial-gradient(90% 70% at 100% 100%,rgba(14,19,32,.6),transparent 60%),linear-gradient(160deg,#2B8197,#1E6273 45%,#0c3340)">
  <div style="position:absolute;inset:0;transform:scale(${k});transform-origin:50% 50%">
   <div style="position:absolute;left:0;right:0;top:46px;display:flex;justify-content:center;gap:9px">${[..."WORDY"].map((c, i) => `<b style="width:66px;height:70px;border-radius:16px;background:${GOLD};color:#2a1c00;font:800 45px/70px ${FONT};text-align:center;box-shadow:0 6px 0 #9b6f1c,0 10px 16px rgba(0,0,0,.35);transform:rotate(${[-4, 3, -2, 4, -3][i]}deg)">${c}</b>`).join("")}</div>
@@ -23,7 +23,7 @@ const face = svg => `<div style="width:32px;height:32px;background:${NAVY};posit
   await new Promise(r => setTimeout(r, 700));
   const b = await chromium.launch({ executablePath: "/opt/pw-browsers/chromium" }), pg = await b.newPage({ viewport: { width: 600, height: 600 } });
   await pg.goto("http://127.0.0.1:" + PORT + "/index.html"); await pg.waitForTimeout(900);
-  const svg = (await pg.evaluate(() => VTC.avatarHtml("svg:clombo"))).replace("<svg", '<svg style="width:100%;height:100%;display:block"');
+  const svg = (await pg.evaluate(() => VTC.avatarHtml("svg:clombo"))).replace("<svg", '<svg style="width:100%;height:100%;display:block;overflow:visible"');
   const fonts = "https://fonts.googleapis.com/css2?family=DM+Sans:wght@800&display=swap";
   async function shot(html, size, file, scale) {
     await pg.setViewportSize({ width: 600, height: 600 });
