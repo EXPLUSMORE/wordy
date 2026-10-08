@@ -295,6 +295,7 @@ hr.sep{border:0;border-top:1px solid var(--line);margin:4px 0}
 .tile.word{font-size:15px;padding:10px 13px;min-width:0;font-weight:600}
 .slot .sl{cursor:pointer;padding:6px 1px;border-radius:4px;min-width:.6em;text-align:center}
 .slot .sl:active{background:var(--accent-soft)}
+.gapline u.gfill{text-decoration:none;font-weight:800;border-bottom:3px solid currentColor;padding:0 4px}.gapline u.gfill.ok{color:var(--good)}.gapline u.gfill.bad{color:var(--bad)}
 .slot .caret{display:inline-block;width:2px;height:1.25em;background:var(--accent);margin:0 1px;vertical-align:text-bottom;animation:caretblink 1s steps(1) infinite}
 @keyframes caretblink{50%{opacity:0}}
 @media (prefers-reduced-motion:reduce){.slot .caret{animation:none}}
@@ -1008,7 +1009,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.53.0";window.WORDY_BUILD="00500a01f7";</script>
+<script>window.WORDY_VERSION="2.53.1";window.WORDY_BUILD="ac5d8fe2e5";</script>
 </head>
 <body>
 <div id="app">
@@ -9205,7 +9206,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
         ci.addEventListener("input", function () { copied = judgeTyped(ci.value, w.en) === 2; ci.classList.toggle("good", copied); release(); });
         setTimeout(function () { ci.focus(); }, 80);
       }
-      if (!ok) speak(w.en);   // die richtige Lösung wird vorgelesen
+      if (!ok && !(SS.tasks[SS.i] && SS.tasks[SS.i].type === "gap")) speak(w.en);   // die richtige Lösung wird vorgelesen (bei Lückensätzen liest der Satz)
     }
   }
   /* Pause nach der Antwort: der Weiter-Knopf ist kurz gesperrt (Füllbalken), damit die Lösung gesehen wird */
@@ -9310,6 +9311,10 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var res2 = applyGrade(w, ok ? 2 : 0);
     if (!ok) SS.retry.push({ type: t.type === "odd" ? "mc_en_de" : t.type, w: w });
     if (ok && (t.type === "listen" || t.type === "mc_en_de")) speak(w.en);
+    if (t.type === "gap") {   // der ganze Satz mit dem richtigen Wort wird gezeigt und noch einmal vorgelesen
+      var gu = $(".gapline u"); if (gu) { gu.innerHTML = esc(w.gap); gu.className = ok ? "gfill ok" : "gfill bad"; }
+      if (audioAvailable()) setTimeout(function () { speak(w.ex, 0.9); }, 250);
+    }
     verdict(ok, w, res2);
   }
   function next() {

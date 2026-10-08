@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.53.1 – 2026-10-08
+- **„Welches Wort fehlt?“ liest den richtigen Satz vor:** Nach der Antwort (richtig oder falsch) steht das gesuchte Wort im Satz (grün bei richtig, rot bei falsch) und der ganze Satz wird noch einmal vorgelesen. Bisher wurde bei einer falschen Antwort nur das einzelne Wort gesprochen.
+
 ## 2.53.0 – 2026-10-08
 - **Erklärfilme hinter eigenem „▶ How-to“-Knopf:** Die Filmkarte ist aus dem Üben-Bereich verschwunden, damit sie den Lernfluss nicht stört. Der Knopf sitzt oben neben den Reitern in Lernen und Spielen, öffnet eine Auswahl aller Filme und startet den gewählten.
 

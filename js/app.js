@@ -2306,7 +2306,7 @@
         ci.addEventListener("input", function () { copied = judgeTyped(ci.value, w.en) === 2; ci.classList.toggle("good", copied); release(); });
         setTimeout(function () { ci.focus(); }, 80);
       }
-      if (!ok) speak(w.en);   // die richtige Lösung wird vorgelesen
+      if (!ok && !(SS.tasks[SS.i] && SS.tasks[SS.i].type === "gap")) speak(w.en);   // die richtige Lösung wird vorgelesen (bei Lückensätzen liest der Satz)
     }
   }
   /* Pause nach der Antwort: der Weiter-Knopf ist kurz gesperrt (Füllbalken), damit die Lösung gesehen wird */
@@ -2411,6 +2411,10 @@
     var res2 = applyGrade(w, ok ? 2 : 0);
     if (!ok) SS.retry.push({ type: t.type === "odd" ? "mc_en_de" : t.type, w: w });
     if (ok && (t.type === "listen" || t.type === "mc_en_de")) speak(w.en);
+    if (t.type === "gap") {   // der ganze Satz mit dem richtigen Wort wird gezeigt und noch einmal vorgelesen
+      var gu = $(".gapline u"); if (gu) { gu.innerHTML = esc(w.gap); gu.className = ok ? "gfill ok" : "gfill bad"; }
+      if (audioAvailable()) setTimeout(function () { speak(w.ex, 0.9); }, 250);
+    }
     verdict(ok, w, res2);
   }
   function next() {
