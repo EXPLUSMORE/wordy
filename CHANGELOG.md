@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.53.4 – 2026-10-08
+- **Dashboard mit neutralem Wording** (Server-Update nötig): Statt „Magnus“ stehen jetzt „das Kind“ bzw. der Name des jeweiligen Spielers (z. B. beim Wochenpass), das Namensfeld zeigt „Vorname des Kindes“.
+
 ## 2.53.3 – 2026-10-08
 - **Extramünzen nur für den Betreiber** (Server-Update nötig): Im Elternbereich entfallen „Extramünzen schenken“, der Münzfaktor und die Bonusmünzen bei Zielen und Lernplänen. Der Server lehnt Geschenke und Münzfaktor über Elternkonten ab und setzt Bonusmünzen bei Zielen und Plänen aus Elternkonten auf 0. Der Betreiber behält alles; die Münzen, die Kinder durch Lernen verdienen, bleiben unverändert.
 
