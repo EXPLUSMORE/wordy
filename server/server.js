@@ -352,7 +352,7 @@ function report(pid, days) {
       const x = day(e.ts); x.items++; if (d.g > 0) x.correct++;
       if (e.k === "a" && (d.b || 0) === 0 && d.g > 0) x.neu++;
       if (d.g === 0 && d.id) {
-        const b = bad[d.id] = bad[d.id] || { id: d.id, en: d.en || d.id, de: d.de || "", n: 0, last: 0 };
+        const b = bad[d.id] = bad[d.id] || Object.assign({ id: d.id, n: 0, last: 0 }, nameOf(d));
         b.n++; b.last = e.ts;
       }
     } else if (e.k === "ss") {
@@ -363,7 +363,7 @@ function report(pid, days) {
   const runsBy = {}, badBy = {};
   for (const s of sessions) (runsBy[dayOf(s.ts)] = runsBy[dayOf(s.ts)] || []).push(s);
   for (const e of evs) if (e.ts >= from && (e.k === "a" || e.k === "s") && e.d.g === 0 && e.d.id) {
-    const m = badBy[dayOf(e.ts)] = badBy[dayOf(e.ts)] || {}, x = m[e.d.id] = m[e.d.id] || { en: e.d.en || e.d.id, de: e.d.de || "", n: 0 };
+    const m = badBy[dayOf(e.ts)] = badBy[dayOf(e.ts)] || {}, x = m[e.d.id] = m[e.d.id] || Object.assign({ n: 0 }, nameOf(e.d));
     x.n++;
   }
   const dayList = [];
@@ -378,7 +378,7 @@ function report(pid, days) {
   const sumDays = list => list.reduce((a, x) => ({ sec: a.sec + x.sec, items: a.items + x.items, correct: a.correct + x.correct, neu: a.neu + x.neu, coins: a.coins + x.coins, sessions: a.sessions + x.sessions, activeDays: a.activeDays + (x.items > 0 ? 1 : 0) }), { sec: 0, items: 0, correct: 0, neu: 0, coins: 0, sessions: 0, activeDays: 0 });
   const wdays = []; for (let i = 0; i < 7; i++) wdays.push(dayAt(ymdAdd(mon, i)));
   const pdays = []; for (let i = 0; i < 7; i++) pdays.push(dayAt(ymdAdd(pmon, i)));
-  const topBad = (a, b) => { const m = {}; for (const e of evs) { const k = dayOf(e.ts); if ((e.k === "a" || e.k === "s") && e.d.g === 0 && e.d.id && k >= a && k <= b) { const x = m[e.d.id] = m[e.d.id] || { id: e.d.id, en: e.d.en || e.d.id, de: e.d.de || "", n: 0, last: 0 }; x.n++; x.last = e.ts; } }
+  const topBad = (a, b) => { const m = {}; for (const e of evs) { const k = dayOf(e.ts); if ((e.k === "a" || e.k === "s") && e.d.g === 0 && e.d.id && k >= a && k <= b) { const x = m[e.d.id] = m[e.d.id] || Object.assign({ id: e.d.id, n: 0, last: 0 }, nameOf(e.d)); x.n++; x.last = e.ts; } }
     return Object.values(m).sort((x, y) => y.n - x.n || y.last - x.last).slice(0, 5); };
   const todayInfo = Object.assign(dayAt(todayK), { problems: topBad(todayK, todayK), runs: sessions.filter(s => dayOf(s.ts) === todayK).reverse() });
   const weekInfo = Object.assign(sumDays(wdays), { from: mon, to: sun, days: wdays, problems: topBad(mon, sun), prev: Object.assign(sumDays(pdays), { from: pmon, to: psun }) });
@@ -962,13 +962,29 @@ function crewLeave(pid) {
 
 
 /* ---------- Klassen-Modus ---------- */
-const UNITS = (() => {   // Einheiten der Schule (Headlight 2 und Klassen 6 bis 8) aus den Datendateien der App
+const CATALOG = (() => {   // alle Datendateien der App (gleiche Reihenfolge wie build.js): Wörter, Sätze, Verben
+  const out = { units: [], sentences: [], verbs: [] };
   try {
     const vm = require("node:vm"), ctx = { window: {} }; vm.createContext(ctx);
-    for (const f of ["klasse6", "klasse7", "klasse8", "lernbuch"]) vm.runInContext(fs.readFileSync(path.join(__dirname, "..", "data", f + ".js"), "utf8"), ctx);
-    return (ctx.window.VOCAB_UNITS || []).map(u => ({ id: String(u.id), k: u.k, title: String(u.title), icon: u.icon || "", words: u.words.map(w => [w[0], w[1]]) }));
-  } catch (e) { console.error("Einheiten-Katalog nicht geladen:", e.message); return []; }
+    for (const f of ["klasse6", "klasse7", "klasse8", "business", "business-basis2", "business-aufbau2", "business-profi2", "smalltalk", "idioms", "saetze", "saetze2", "lernbuch", "verben"]) {
+      try { vm.runInContext(fs.readFileSync(path.join(__dirname, "..", "data", f + ".js"), "utf8"), ctx); } catch (e) { console.error("Datei " + f + " nicht geladen:", e.message); }
+    }
+    out.units = (ctx.window.VOCAB_UNITS || []).map(u => ({ id: String(u.id), k: u.k, title: String(u.title), icon: u.icon || "", words: u.words.map(w => [w[0], w[1]]) }));
+    out.sentences = (ctx.window.SENTENCES || []).map(a => [a[2], a[3]]);
+    out.verbs = (ctx.window.VERBS || []).map(v => { const f = x => String(x).split("/")[0]; return [v[0] + ", " + f(v[1]) + ", " + f(v[2]), v[3]]; });
+  } catch (e) { console.error("Katalog nicht geladen:", e.message); }
+  return out;
 })();
+const UNITS = CATALOG.units;
+/* Lesbarer Name zu einem Lernereignis: neue Apps schicken Englisch und Deutsch mit, ältere nur die ID (Sätze "s12", Verben "v#3", Wörter "Einheit#Nr"). */
+function nameOf(d) {
+  if (d.en) return { en: String(d.en), de: String(d.de || "") };
+  const id = String(d.id || ""); let m, r;
+  if ((m = id.match(/^s(\d+)$/)) && (r = CATALOG.sentences[+m[1]])) return { en: r[0], de: r[1] };
+  if ((m = id.match(/^v#(\d+)$/)) && (r = CATALOG.verbs[+m[1]])) return { en: r[0], de: r[1] };
+  if ((m = id.match(/^(.+)#(\d+)$/))) { const u = UNIT_BY[m[1]], w = u && u.words[+m[2]]; if (w) return { en: w[0], de: w[1] }; }
+  return { en: id, de: "" };
+}
 const UNIT_BY = Object.fromEntries(UNITS.map(u => [u.id, u]));
 const GOAL_DEFAULT = 15;   // wiedererkannte Wörter je Kind im Zeitraum der Aufgabe
 function classCode() { for (let i = 0; i < 20; i++) { const c = "K" + newCode().replace("-", "").slice(0, 5); if (!kq.byCode.get(c)) return c; } throw new Error("Kein Klassencode"); }
@@ -994,7 +1010,7 @@ function classOverview(cid) {
     return { id: uid, title: u.title, pct: n ? Math.round(sum * 100 / n) : 0 };
   }) : [];
   const hard = {};
-  if (t) { const us = new Set(JSON.parse(t.units)); for (const id of ids) for (const e of q.events.all(id, Date.parse(t.d_from + "T00:00:00Z") - 86400000)) { if (e.k !== "a") continue; const d = dayOf(e.ts); if (d < t.d_from || d > t.d_to) continue; const j = JSON.parse(e.d); if (us.has(j.u) && j.g === 0 && j.en) { const k = j.en + "|" + (j.de || ""); hard[k] = (hard[k] || 0) + 1; } } }
+  if (t) { const us = new Set(JSON.parse(t.units)); for (const id of ids) for (const e of q.events.all(id, Date.parse(t.d_from + "T00:00:00Z") - 86400000)) { if (e.k !== "a") continue; const d = dayOf(e.ts); if (d < t.d_from || d > t.d_to) continue; const j = JSON.parse(e.d); if (us.has(j.u) && j.g === 0 && (j.en || j.id)) { const nm = nameOf(j), k = nm.en + "|" + nm.de; hard[k] = (hard[k] || 0) + 1; } } }
   const problems = Object.entries(hard).filter(x => x[1] >= 2).sort((a, b) => b[1] - a[1]).slice(0, 10).map(([k, n]) => ({ en: k.split("|")[0], de: k.split("|")[1], n }));
   return { id: c.id, name: c.name, teacher: c.tname, code: c.code, members: rows, pending, active: rows.filter(r => r.active).length, tasks: kq.tasks.all(cid).map(taskView), current: t ? taskView(t) : null, goal: { total, target }, units, problems };
 }

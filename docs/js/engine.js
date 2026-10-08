@@ -486,7 +486,9 @@
     var after = levelOf(id);
     if (after === 4 && before < 4) r.m = Date.now();   // wann das Wort gemeistert wurde (für „diese Woche gemeistert“)
     if (g > 0) awardProgress(id, before, after, wasDue, wasBox && !inErrorBox(id));
-    var it = byId[id]; ev("a", { id: id, g: g, h: o.hint ? 1 : 0, b: before, a: after, en: it ? it.en : "", de: it ? it.de : "", u: it ? it.unit : "" });
+    var it = byId[id], vi = !it && id.indexOf("v#") === 0 ? verbs[+id.slice(2)] : null;   // unregelmäßige Verben haben keinen Wort-Eintrag
+    if (vi) it = { en: vi.en, de: vi.de, unit: "verbs" };
+    ev("a", { id: id, g: g, h: o.hint ? 1 : 0, b: before, a: after, en: it ? it.en : "", de: it ? it.de : "", u: it ? it.unit : "" });
     return { before: before, after: after, rec: r };
   }
 
@@ -596,7 +598,8 @@
       r.iv = r.reps === 0 ? 2 : r.reps === 1 ? 5 : Math.min(400, Math.round(r.iv * r.ef));
       r.reps++; r.due = Date.now() + r.iv * 86400000;
     }
-    ev("s", { id: id, g: g });
+    var sx = /^s\d+$/.test(id) ? sentences[+id.slice(1)] : null;
+    ev("s", { id: id, g: g, en: sx ? sx.en : "", de: sx ? sx.de : "" });
     return r;
   }
   function sentenceStats() {

@@ -166,6 +166,16 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     assert.equal((await dl.json()).coins, 77);
     const rp2 = await J("/api/admin/players/" + mk.j.id + "/report?days=14", { headers: H });
     assert.equal(rp2.j.backups.length, 1, "Dashboard kennt die Sicherung");
+    // Lesbare Namen statt Nummern: ältere Apps schicken bei Sätzen und Verben nur die ID
+    const nn = Date.now();
+    await J("/api/events", { method: "POST", headers: T2(pr.j.token), body: JSON.stringify({ events: [
+      { i: "nm1" + nn, t: nn, k: "s", d: { id: "s0", g: 0 } }, { i: "nm2" + nn, t: nn, k: "a", d: { id: "v#0", g: 0 } }, { i: "nm3" + nn, t: nn, k: "a", d: { id: "H2-1a#0", g: 0 } },
+      { i: "nm4" + nn, t: nn, k: "s", d: { id: "s1", g: 0, en: "Neue App schickt den Text mit.", de: "Der neue Text." } }] }) });
+    const rp3 = (await J("/api/admin/players/" + mk.j.id + "/report?days=14", { headers: H })).j;
+    assert.ok(rp3.problems.some(x => x.id === "s0" && /sister|My/.test(x.en) && x.de), "Satz-ID wird zum Satz");
+    assert.ok(rp3.problems.some(x => x.id === "v#0" && /be, was, been/.test(x.en) && x.de === "sein"), "Verb-ID wird zum Verb");
+    assert.ok(rp3.problems.every(x => !/^(s\d+|v#\d+)$/.test(x.en)), "keine nackten Nummern mehr");
+    assert.ok(rp3.problems.some(x => x.id === "s1" && x.en === "Neue App schickt den Text mit."), "mitgeschickter Text hat Vorrang");
 
     // ---- "Nur sichern, nicht anzeigen"
     const hk = await J("/api/admin/players", { method: "POST", headers: H, body: JSON.stringify({ name: "Christian", hidden: true }) });
