@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.49.3 – 2026-10-08
+- **Freunde:** Das Eingabefeld für den Freundescode passt jetzt auf kleine Bildschirme (kleinere Schrift, kurzer Platzhalter „Freundescode“).
+
 ## 2.49.2 – 2026-10-08
 - **Daily-Challenge-Kachel neu** („Goldene Belohnung“): dunkle Karte mit goldenem Rahmen im Farbklang der App, Serie als Flammen-Pille, Belohnungsfeld mit Tagesbonus und Weg zum nächsten Serienbonus, goldener Start-Knopf, Wochentage und Dauer-Wahl in der Karte. Die zweite Serien-Karte entfällt.
 

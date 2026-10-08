@@ -860,6 +860,7 @@ details.fold>.fbody{padding:2px 0 14px}
 @media (prefers-reduced-motion:reduce){.rtile.legend,.rtile:after{animation:none!important}}
 .chdots{display:flex;gap:6px;margin-top:10px}.chd{flex:1;text-align:center;font-size:11px;font-weight:700;border-radius:10px;padding:4px 0;background:var(--card-2);color:var(--ink-3)}.chd i{display:block;font-style:normal;font-size:18px;opacity:.5}.chd.ok i{opacity:1}.chd.ok{background:var(--accent-soft);color:var(--ink)}.chd.now{outline:2px solid var(--accent)}
 /* Freunde, Duelle, Rangliste */
+.soccode{min-width:0;width:100%;font-size:15px;text-transform:uppercase;letter-spacing:1px}.soccode::placeholder{text-transform:none;letter-spacing:0}
 .fcode{font:900 34px/1.1 ui-monospace,Menlo,monospace;letter-spacing:4px;text-align:center;padding:12px;border-radius:14px;background:var(--accent-soft);margin-top:8px}
 .drow{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line)}.drow:first-of-type{border-top:0}.drow .grow{flex:1 1 auto;min-width:0}.drow .btn{padding:8px 12px;font-size:13px;white-space:nowrap;flex:none;width:auto;min-height:0}
 .drow .fav{display:grid;place-items:center;flex:none;border-radius:12px;background:var(--accent-soft);overflow:hidden;font-size:24px}.drow .fav svg{width:100%;height:100%}
@@ -882,7 +883,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.49.2";window.WORDY_BUILD="61d855a045";</script>
+<script>window.WORDY_VERSION="2.49.3";window.WORDY_BUILD="5d88994994";</script>
 </head>
 <body>
 <div id="app">
@@ -7577,7 +7578,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     h += '<section class="card"><div class="eyebrow">Mein Freundescode</div><div class="fcode">' + esc(me.code) + '</div>' +
       '<div class="row" style="gap:8px;margin-top:8px"><button class="chip" data-act="soccopy">📋 Kopieren</button><button class="chip" data-act="socshare">📤 Teilen</button></div>' +
       '<p class="small muted" style="margin:10px 0 0">Gib den Code deinen Freunden. Ihr könnt euch erst herausfordern, wenn die Eltern von euch beiden zugestimmt haben.</p>' +
-      '<div class="row" style="gap:8px;margin-top:14px"><input id="socCode" class="grow" maxlength="12" placeholder="Code von einem Freund" style="text-transform:uppercase"><button class="btn" data-act="socadd">Hinzufügen</button></div><div id="socMsg" class="small muted" style="margin-top:6px"></div></section>';
+      '<div class="row" style="gap:8px;margin-top:14px"><input id="socCode" class="grow soccode" maxlength="12" placeholder="Freundescode" autocapitalize="characters" autocomplete="off"><button class="btn" data-act="socadd">Hinzufügen</button></div><div id="socMsg" class="small muted" style="margin-top:6px"></div></section>';
     h += '<section class="card"><div class="eyebrow">Meine Freunde (' + me.friends.length + ')</div>' + (me.friends.length ? me.friends.map(function (f) {
       var st = f.state === "ok" ? "" : f.state === "mine" ? "wartet auf deine Eltern" : "wartet auf die Eltern von " + esc(f.name);
       return '<div class="drow">' + who(f) + '<div class="grow"><b>' + esc(f.name) + '</b>' + (st ? '<div class="small muted">' + st + '</div>' : '') + '</div>' +

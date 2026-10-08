@@ -825,7 +825,7 @@
     h += '<section class="card"><div class="eyebrow">Mein Freundescode</div><div class="fcode">' + esc(me.code) + '</div>' +
       '<div class="row" style="gap:8px;margin-top:8px"><button class="chip" data-act="soccopy">📋 Kopieren</button><button class="chip" data-act="socshare">📤 Teilen</button></div>' +
       '<p class="small muted" style="margin:10px 0 0">Gib den Code deinen Freunden. Ihr könnt euch erst herausfordern, wenn die Eltern von euch beiden zugestimmt haben.</p>' +
-      '<div class="row" style="gap:8px;margin-top:14px"><input id="socCode" class="grow" maxlength="12" placeholder="Code von einem Freund" style="text-transform:uppercase"><button class="btn" data-act="socadd">Hinzufügen</button></div><div id="socMsg" class="small muted" style="margin-top:6px"></div></section>';
+      '<div class="row" style="gap:8px;margin-top:14px"><input id="socCode" class="grow soccode" maxlength="12" placeholder="Freundescode" autocapitalize="characters" autocomplete="off"><button class="btn" data-act="socadd">Hinzufügen</button></div><div id="socMsg" class="small muted" style="margin-top:6px"></div></section>';
     h += '<section class="card"><div class="eyebrow">Meine Freunde (' + me.friends.length + ')</div>' + (me.friends.length ? me.friends.map(function (f) {
       var st = f.state === "ok" ? "" : f.state === "mine" ? "wartet auf deine Eltern" : "wartet auf die Eltern von " + esc(f.name);
       return '<div class="drow">' + who(f) + '<div class="grow"><b>' + esc(f.name) + '</b>' + (st ? '<div class="small muted">' + st + '</div>' : '') + '</div>' +
