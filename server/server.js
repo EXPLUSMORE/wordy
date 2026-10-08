@@ -1296,6 +1296,7 @@ const server = http.createServer(async (req, res) => {
         if (m[2] === "plans" && req.method === "POST") { const [c, b] = createPlan(pid, await readJson(req)); return send(res, c, b); }
         if (m[2] === "weekplan" && req.method === "GET") return send(res, 200, weekPlanOf(pid));
         if (m[2] === "weekplan" && req.method === "POST") { const [c, b] = setWeekPlan(pid, await readJson(req)); return send(res, c, b); }
+        if (m[2] === "season" && scope) return send(res, 403, { error: "Der Wochenpass wird vom Betreiber zusammengestellt." });
         if (m[2] === "season" && req.method === "GET") return send(res, 200, seasonOf(pid));
         if (m[2] === "season" && req.method === "POST") { const [c, b] = setSeason(pid, await readJson(req)); return send(res, c, b); }
         if (m[2] === "gifts" && req.method === "GET") return send(res, 200, giftsOf(pid).slice(-20));

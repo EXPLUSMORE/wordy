@@ -420,6 +420,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
   var KIND_DE = { avatar: "Figuren", dance: "Tänze", outfit: "Outfits", kit: "Trikots", fx: "Effekte", frame: "Rahmen" };
   function drawPass(p, r) {
     var el = document.getElementById("passCard"); if (!el) return;
+    if (window.WF) { if (el.parentNode) el.parentNode.removeChild(el); return; }   // den Wochenpass stellt nur der Betreiber zusammen
     var m = r.meta || {}, ps = m.pass, shop = m.shop && m.shop.length ? m.shop : DEF_SHOP;
     el.innerHTML = "<h2>Pass: Wochen-Sets zusammenbauen</h2><p class='muted small'>Lade …</p>";
     api("/api/admin/players/" + p.id + "/season").then(function (cur) {
