@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.53.5 – 2026-10-08
+- **Dashboard nennt den Spieler beim Namen** (Server-Update nötig): Statt „das Kind“ steht in den Texten der Name des gewählten Spielers (Wochenpass, Lernplan, Ziele, Geschenke, Klassen-Hinweis); ohne Namen bleibt „das Kind“ als Rückfall. Pronomen sind dabei vermieden.
+
 ## 2.53.4 – 2026-10-08
 - **Dashboard mit neutralem Wording** (Server-Update nötig): Statt „Magnus“ stehen jetzt „das Kind“ bzw. der Name des jeweiligen Spielers (z. B. beim Wochenpass), das Namensfeld zeigt „Vorname des Kindes“.
 

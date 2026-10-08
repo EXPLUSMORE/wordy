@@ -72,6 +72,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
   var view = document.getElementById("view"), tabs = document.getElementById("tabs");
   if (window.WF) { document.getElementById("ttl").textContent = "Eltern"; document.documentElement.classList.add("WFX"); }
   var players = [], cur = null, days = 14;
+  function nm() { var p = players.filter(function (x) { return x.id === cur; })[0]; return p ? p.name : "das Kind"; }   // Name des gewählten Spielers für die Texte
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   function api(path, opt) {
     opt = Object.assign({}, opt || {}); opt.headers = Object.assign({ "X-Wordy": "1" }, opt.headers || {});
@@ -275,7 +276,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
   function groupName(g) { return /^\d+$/.test(g) ? "Klasse " + g : g === "Headlight 2" ? "Headlight 2 (Schulbuch)" : g; }
   function unitsCard(r, m) {
     var h = '<div class="card"><h2>Fortschritt pro Einheit</h2>';
-    if (!r.units.length && !(r.meta && r.meta.path && r.meta.path.sections && r.meta.path.sections.length)) return h + '<p class="muted small">Noch keine Daten. Sie erscheinen, sobald das Kind die App geöffnet und eine Runde gelernt hat.</p></div>';
+    if (!r.units.length && !(r.meta && r.meta.path && r.meta.path.sections && r.meta.path.sections.length)) return h + '<p class="muted small">Noch keine Daten. Sie erscheinen, sobald ' + esc(nm()) + ' die App geöffnet und eine Runde gelernt hat.</p></div>';
     var secBy = {}, pp = r.meta && r.meta.path;
     ((pp && pp.sections) || []).forEach(function (x) { (secBy[x.u] = secBy[x.u] || []).push(x); });
     var groups = {}, order = [], have = {}, pathIdx = {};
@@ -380,7 +381,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
 
     if (r.buys.length) h += '<div class="card"><h2>Käufe im Shop</h2><table>' + r.buys.map(function (b) { return "<tr><td>" + fmtDate(b.ts) + "</td><td>" + esc(b.name) + '</td><td class="n">🪙 ' + b.cost + "</td></tr>"; }).join("") + "</table></div>";
     h += '<div class="card" id="backupCard"></div><div class="card" id="mailCard"></div>';
-    h += '<p class="small muted">Es werden nur Lerndaten gespeichert (Wörter, Antworten, Zeiten, Käufe). In der App sieht das Kind, dass die Eltern den Fortschritt sehen.</p><p class="small muted" id="srvinfo"></p>';
+    h += '<p class="small muted">Es werden nur Lerndaten gespeichert (Wörter, Antworten, Zeiten, Käufe). In der App sieht ' + esc(nm()) + ', dass die Eltern den Fortschritt sehen.</p><p class="small muted" id="srvinfo"></p>';
     view.innerHTML = h;
     api("/api/admin/info").then(function (i) { var el = document.getElementById("srvinfo"); if (el) el.textContent = "Server-Version " + (i.version || "?") + (i.commit ? " · Stand " + i.commit : "") + " · Dienst gestartet " + fmtAgo(i.started); }).catch(function () {});
 
@@ -440,7 +441,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
           '<div class="row" style="gap:10px;align-items:center;margin-top:6px"><label class="small"><input type="checkbox" class="ps"' + (w.slot ? " checked" : "") + '> +1 Stickerplatz</label><label class="small">+<input type="number" class="pc" min="0" max="500" value="' + (w.coins || 0) + '" style="width:70px"> 🪙</label></div></div>';
       };
       var prog = ps ? '<p class="small" style="margin:0 0 8px">' + esc(p.name) + ': ' + ps.weeks.map(function (w) { return "Woche " + w.n + (w.c ? " ✅" : " " + w.cnt + "/" + w.need); }).join(" · ") + (ps.fin ? " · Finale ✅" : "") + '</p>' : "";
-      el.innerHTML = "<h2>Pass: Wochen-Sets zusammenbauen</h2><p class='muted small' style='margin:0 0 8px'>Jede Woche gibt es ein Set, wenn die Aufgabe geschafft ist. Zu jeder Figur gehört automatisch der passende Sticker. Aufgabe = an so vielen Tagen der 7 Tage das Tagesziel schaffen.</p>" + prog +
+      el.innerHTML = "<h2>Pass: Wochen-Sets zusammenbauen</h2><p class='muted small' style='margin:0 0 8px'>Jede Woche bekommt " + esc(p.name) + " ein Set, wenn die Aufgabe geschafft ist. Zu jeder Figur gehört automatisch der passende Sticker. Aufgabe = an so vielen Tagen der 7 Tage das Tagesziel schaffen.</p>" + prog +
         '<div class="row" style="gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px"><label class="small">Titel <input id="psT" value="' + esc(s.title || "") + '" maxlength="30"></label><label class="small">Start <input id="psS" type="date" value="' + esc(s.start || "") + '"></label><span class="small muted">Start leer = beim ersten Öffnen der App</span></div>' +
         s.weeks.map(function (w, i) { return block(w, "w" + (i + 1), false); }).join("") + block(s.finale || { title: "Finale", items: [], coins: 0 }, "fin", true) +
         '<div class="row" style="gap:8px;margin-top:6px"><button id="psSave">Pass speichern</button><button class="ghost" id="psNew">Neuen Pass starten</button><button class="ghost" id="psClr">Zurück auf Standard</button><span id="psMsg" class="small"></span></div>';
@@ -460,11 +461,11 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     var el = document.getElementById("giftCard"); if (!el) return;
     if (window.WF) { if (el.parentNode) el.parentNode.removeChild(el); return; }   // Extramünzen schenkt nur der Betreiber
     var m = r.meta || {};
-    el.innerHTML = "<h2>Extramünzen schenken</h2><p class='small muted' style='margin:0 0 8px'>Für besondere Leistungen. Die Münzen werden beim nächsten Öffnen der App gutgeschrieben, das Kind sieht deine Nachricht." +
+    el.innerHTML = "<h2>Extramünzen schenken</h2><p class='small muted' style='margin:0 0 8px'>Für besondere Leistungen. Die Münzen werden beim nächsten Öffnen der App gutgeschrieben, " + esc(p.name) + " sieht deine Nachricht." +
       (m.coins != null ? " Aktueller Stand laut App: <b>🪙 " + m.coins + "</b>, " + (m.xp || 0).toLocaleString("de-DE") + " XP." : "") + "</p>" +
       '<div class="row" style="gap:6px;flex-wrap:wrap;align-items:center">' + [10, 20, 50, 100].map(function (c) { return '<button class="ghost gamt" data-c="' + c + '">+' + c + '</button>'; }).join("") +
       '<input id="gAmt" type="number" min="1" max="500" value="20" style="width:80px"><button id="gSend">Überweisen</button><span id="gMsg" class="small"></span></div>' +
-      '<textarea id="gNote" rows="3" maxlength="240" placeholder="Deine Nachricht an das Kind (frei wählbar), z. B. Tolle Woche, ich bin stolz auf dich!" style="width:100%;box-sizing:border-box;margin-top:8px"></textarea>' +
+      '<textarea id="gNote" rows="3" maxlength="240" placeholder="Deine Nachricht an ' + esc(p.name) + ' (frei wählbar), z. B. Tolle Woche, ich bin stolz auf dich!" style="width:100%;box-sizing:border-box;margin-top:8px"></textarea>' +
       '<div class="row" style="gap:6px;flex-wrap:wrap;margin-top:6px;align-items:center"><span class="small muted">Vorschläge:</span>' + ["Tolle Woche!", "Super Boss-Runde!", "Danke fürs fleißige Üben!", "Ich bin stolz auf dich!", "Weiter so, Champion!"].map(function (t) { return '<button class="ghost gtxt" style="font-size:12px;padding:4px 8px">' + t + '</button>'; }).join("") + '<span class="small muted" id="gCnt" style="margin-left:auto">0 / 240</span></div><div id="gList" style="margin-top:10px"></div>';
     var msg = function (t, bad) { var e = document.getElementById("gMsg"); if (e) { e.className = "small" + (bad ? " err" : ""); e.textContent = t; } };
     var done = (m.gifts || []);
@@ -509,7 +510,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     var el = document.getElementById("classCard"); if (!el) return;
     api("/api/admin/players/" + p.id + "/class").then(function (c) {
       var head = "<h2>Klasse &amp; Wochenaufgabe</h2>";
-      if (c.state === "none") { el.innerHTML = head + "<p class='small muted' style='margin:0'>" + esc(p.name) + " ist in keiner Klasse. Eine Lehrkraft kann Wochenaufgaben einstellen; das Kind tritt mit einem Klassencode bei (App: Spielen › Challenge), und du bestätigst es hier. Die Teilnahme ist freiwillig.</p>"; return; }
+      if (c.state === "none") { el.innerHTML = head + "<p class='small muted' style='margin:0'>" + esc(p.name) + " ist in keiner Klasse. Eine Lehrkraft kann Wochenaufgaben einstellen; " + esc(p.name) + " tritt mit einem Klassencode bei (App: Spielen › Challenge), und du bestätigst es hier. Die Teilnahme ist freiwillig.</p>"; return; }
       el.innerHTML = head + (c.state === "pending"
         ? "<p style='margin:0 0 10px'><b>" + esc(p.name) + "</b> möchte der Klasse <b>" + esc(c.name) + "</b> (" + esc(c.teacher) + ") beitreten.</p><p class='small muted' style='margin:0 0 10px'>Die Lehrkraft sieht dann den Vornamen, die Übungsminuten, aktive Tage und die erkannten Wörter der Wochenaufgabe sowie klassenweit die häufigsten schwierigen Wörter, keine Einzelfehler und keine Kontaktdaten. Du kannst jederzeit austreten lassen.</p><div class='row' style='gap:8px'><button class='sm' data-ca='approve'>Zustimmen</button><button class='ghost sm' data-ca='decline'>Ablehnen</button></div>"
         : "<p style='margin:0 0 10px'>" + esc(p.name) + " ist in der Klasse <b>" + esc(c.name) + "</b> (" + esc(c.teacher) + ").</p><button class='ghost sm' data-ca='leave'>Aus der Klasse nehmen</button>");
@@ -566,7 +567,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
       var g = (r.meta && r.meta.goalMin) || 10, vals = plan ? plan.min.slice() : [g, g, g, g, g, g, g], bonus = plan ? plan.bonus : 30, days = r.calWeek.days, todayK = r.today.date, names = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
       function paint() {
         var soll = 0, ist = 0, pd = 0, ok = 0, h = "<h2>Wochenzeitplan</h2><div class='t' style='font-size:16px;margin:0 0 6px'>" + dLong(r.calWeek.from) + " bis " + dLong(r.calWeek.to) + "</div>" +
-          (plan ? "" : '<p class="small muted" style="margin:0 0 8px">Noch kein Plan: Es gilt jeden Tag das Tagesziel der App (' + g + " Min.). Mit „Plan speichern“ gilt der Plan unten jede Woche gleich.</p>") +
+          (plan ? "" : '<p class="small muted" style="margin:0 0 8px">Noch kein Plan: ' + esc(nm()) + ' übt jeden Tag nach dem Tagesziel der App (' + g + " Min.). Mit „Plan speichern“ gilt der Plan unten jede Woche gleich.</p>") +
           '<div class="row" style="gap:6px;flex-wrap:wrap;margin-bottom:8px"><button class="ghost sm" data-pre="school">Schultage ' + g + ' Min</button><button class="ghost sm" data-pre="all">Täglich ' + g + ' Min</button><button class="ghost sm" data-pre="free">Wochenende frei</button></div>' +
           '<div style="display:grid;grid-template-columns:44px 124px 1fr 84px;gap:8px;align-items:center;font-size:13px" id="wpGrid">' +
           "<b class='small muted'>Tag</b><b class='small muted'>Geplant (Min.)</b><b class='small muted'>Geübt</b><b class='small muted' style='text-align:right'>Stand</b>";
@@ -591,7 +592,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
         Array.prototype.forEach.call(el.querySelectorAll("[data-pre]"), function (b) { b.onclick = function () { var k = b.getAttribute("data-pre"); vals = vals.map(function (v, i) { return k === "school" ? (i < 5 ? g : 0) : k === "all" ? g : (i < 5 ? (v || g) : 0); }); paint(); }; });
         var msg = function (t, bad) { var m = document.getElementById("wpMsg"); if (m) { m.className = "small" + (bad ? " err" : ""); m.textContent = t; } };
         document.getElementById("wpSave").onclick = function () { post("/api/admin/players/" + p.id + "/weekplan", { min: vals, bonus: bonus }).then(function (x) { plan = x.plan; paint(); msg("Gespeichert. Die App übernimmt den Plan beim nächsten Öffnen."); }).catch(function (e) { msg(e.message, 1); }); };
-        var cl = document.getElementById("wpClear"); if (cl) cl.onclick = function () { if (confirm("Plan löschen? Dann gilt wieder jeden Tag das Tagesziel der App.")) post("/api/admin/players/" + p.id + "/weekplan", { clear: true }).then(function () { plan = null; paint(); msg("Plan gelöscht."); }).catch(function (e) { msg(e.message, 1); }); };
+        var cl = document.getElementById("wpClear"); if (cl) cl.onclick = function () { if (confirm("Plan löschen? Dann gilt für " + nm() + " wieder jeden Tag das Tagesziel der App.")) post("/api/admin/players/" + p.id + "/weekplan", { clear: true }).then(function () { plan = null; paint(); msg("Plan gelöscht."); }).catch(function (e) { msg(e.message, 1); }); };
       }
       paint();
     }).catch(function (e) { el.innerHTML = "<h2>Wochenzeitplan</h2><p class='err small'>" + esc(e.message) + "</p>"; });
@@ -606,8 +607,8 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     h += '<h3 style="margin:14px 0 6px;font-size:15px">Boss-Runden</h3><div class="row" style="gap:8px;align-items:center;flex-wrap:wrap"><label class="small" for="bossDiff">Schwierigkeit</label>' +
       '<select id="bossDiff"><option value="leicht">leicht (Ziel × 0,7)</option><option value="normal">normal</option><option value="schwer">schwer (Ziel × 1,3)</option></select><span id="bossMsg" class="small"></span></div>' +
       '<div class="row opcoin" style="gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px"><label class="small" for="coinF">Münzfaktor</label><select id="coinF"><option value="0.5">0,5 (langsamer)</option><option value="1">1 (normal)</option><option value="1.5">1,5</option><option value="2">2 (doppelt)</option></select><span id="coinMsg" class="small"></span></div>' +
-      '<p class="small muted opcoin" style="margin:4px 0 0">Verdienst des Kindes im Shop (Missionen, Tagesziel, Truhen, Fortschritt). In der ersten Woche gibt es zusätzlich ×1,5.</p>' +
-      '<p class="small muted" style="margin:6px 0 0">Nach zwei verfehlten Versuchen wird das Ziel automatisch um 1 gesenkt, nach vier um 2 (mindestens 3). Das sieht das Kind offen in der App.</p>';
+      '<p class="small muted opcoin" style="margin:4px 0 0">Verdienst von ' + esc(nm()) + ' im Shop (Missionen, Tagesziel, Truhen, Fortschritt). In der ersten Woche gibt es zusätzlich ×1,5.</p>' +
+      '<p class="small muted" style="margin:6px 0 0">Nach zwei verfehlten Versuchen wird das Ziel automatisch um 1 gesenkt, nach vier um 2 (mindestens 3). Das sieht ' + esc(nm()) + ' offen in der App.</p>';
     if (bl.length) {
       var by = {};
       bl.forEach(function (b) { var x = by[b.m] || (by[b.m] = { n: 0, ok: 0, first: 0, firstOk: 0, gap: [] }); x.n++; x.ok += b.ok; if (b.a === 1) { x.first++; x.firstOk += b.ok; } x.gap.push(b.c - (b.base || b.need)); });
@@ -650,7 +651,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     h += list.length ? list.map(function (g) {
       var pc = Math.min(100, Math.round(g.cur * 100 / g.target)), wk = g.week.split("-").reverse().slice(0, 2).join(".");
       return '<div class="goal"><div class="t"><b>' + (g.done ? "✅ " : "") + esc(g.title) + '</b><div class="small muted">Woche ab ' + wk + (g.current ? " (diese Woche)" : "") + " · " + g.cur + " von " + g.target + (g.kind === "unit" ? " %" : "") + (g.coins ? " · 🪙 " + g.coins + " Bonus" : "") + '</div><div class="mini"><i class="' + (g.done ? "d" : "") + '" style="width:' + pc + '%"></i></div></div><button class="ghost sm" data-gdel="' + g.id + '">Löschen</button></div>';
-    }).join("") : '<p class="muted small" style="margin:0">Noch keine Ziele. Das Kind sieht Ziele in der App auf der Startseite und bekommt die Bonusmünzen automatisch, wenn es sie schafft.</p>';
+    }).join("") : '<p class="muted small" style="margin:0">Noch keine Ziele. ' + esc(nm()) + ' sieht Ziele in der App auf der Startseite und bekommt die Bonusmünzen automatisch, sobald ein Ziel geschafft ist.</p>';
     h += '<details style="margin-top:12px"><summary style="cursor:pointer;color:var(--acc);font-weight:600">＋ Ziel hinzufügen</summary><div class="form">' +
       '<div><label>Art</label><select id="gk"><option value="minutes">Minuten üben</option><option value="days">Tage üben (mind. 5 Min.)</option><option value="newwords">Wörter wiedererkennen (richtig am Folgetag)</option><option value="unit">Einheit sicher lernen (%)</option></select></div>' +
       '<div><label id="gtl">Ziel (Minuten pro Woche)</label><input id="gt" type="number" min="1" value="60"></div>' +
@@ -678,7 +679,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     var list = r.plans || [], h = "<h2>Lernplan für Klassenarbeiten</h2>";
     h += list.length ? list.map(function (x) {
       return '<div class="goal"><div class="t"><b>📅 ' + esc(x.title) + '</b><div class="small muted">Arbeit am ' + x.exam.split("-").reverse().join(".") + " · " + (x.daysLeft > 0 ? "noch " + x.daysLeft + " Tage" : x.daysLeft === 0 ? "heute" : "vorbei") + " · " + x.pct + " % sicher (" + x.ok + " von " + x.total + ")" + (x.coins ? " · 🪙 " + x.coins + " Bonus bei 90 %" : "") + '</div><div class="small muted">' + esc(x.unitTitles.join(", ")) + '</div><div class="mini"><i class="' + (x.pct >= 90 ? "d" : "") + '" style="width:' + Math.min(100, x.pct) + '%"></i></div></div><button class="ghost sm" data-pdel="' + x.id + '">Löschen</button></div>';
-    }).join("") : '<p class="muted small" style="margin:0">Noch kein Lernplan. Mit Datum und Einheiten verteilt die App die Wörter auf die Tage bis zur Arbeit und zeigt dem Kind, was heute dran ist.</p>';
+    }).join("") : '<p class="muted small" style="margin:0">Noch kein Lernplan. Mit Datum und Einheiten verteilt die App die Wörter auf die Tage bis zur Arbeit und zeigt ' + esc(nm()) + ', was heute dran ist.</p>';
     h += '<details style="margin-top:12px"><summary style="cursor:pointer;color:var(--acc);font-weight:600">＋ Lernplan anlegen</summary><div class="form">' +
       '<div><label>Bezeichnung</label><input id="pt" maxlength="60" placeholder="z. B. Englischarbeit Unit 4"></div>' +
       '<div><label>Datum der Arbeit</label><input id="pd" type="date"></div>' +
