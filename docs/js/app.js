@@ -896,8 +896,8 @@
   }
   function duelSheet(friend) {
     var ov = document.createElement("div"); ov.className = "srmd";
-    ov.innerHTML = '<div class="srmc" style="--c:#2f6fd0;--g:rgba(70,160,255,.8)"><div class="eyebrow" style="color:#fff;opacity:.85">Herausforderung</div><h3>Gegen ' + esc(friend.name) + '</h3><p>Du spielst zuerst. Dann bekommt ' + esc(friend.name) + ' genau dieselben Wörter und muss dein Ergebnis schlagen.</p>' +
-      DUEL_MODES.map(function (m) { return '<button class="sbtn" data-m="' + m[0] + '" style="display:block;width:100%;margin:6px 0">' + m[1] + '</button>'; }).join("") + '<button class="sbtn b4" data-m="x" style="display:block;width:100%;margin:10px 0 0">Abbrechen</button></div>';
+    ov.innerHTML = '<div class="dsh"><div class="dshg"></div><div class="eyebrow">Herausforderung</div><h3>Gegen ' + esc(friend.name) + '</h3><p>Du spielst zuerst. Dann bekommt ' + esc(friend.name) + ' genau dieselben Wörter und muss dein Ergebnis schlagen.</p>' +
+      DUEL_MODES.map(function (m) { return '<button class="dshb" data-m="' + m[0] + '">' + m[1] + '</button>'; }).join("") + '<button class="dshx" data-m="x">Abbrechen</button></div>';
     document.body.appendChild(ov);
     ov.addEventListener("click", function (e) {
       var m = e.target.closest("[data-m]"), mm = m && m.getAttribute("data-m");
