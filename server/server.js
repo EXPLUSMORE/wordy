@@ -1038,6 +1038,12 @@ function taskCreate(cid, b) {
   return [200, { id: +kq.addTask.run(cid, title, JSON.stringify(units), from, to, goal, Date.now()).lastInsertRowid }];
 }
 
+/* Testphase: Spieler des Betreibers (eigene Familie) bekommen die Freunde-Funktion einmalig eingeschaltet; Eltern-Konten bleiben bei „aus“ */
+if (!q.kvGet.get("social_default_v1")) {
+  for (const p of db.prepare("SELECT id FROM players WHERE family IS NULL AND hidden = 0 AND social = 0").all()) { sq.setSocial.run(1, p.id); fcodeOf(p.id); }
+  q.kvSet.run("social_default_v1", "1");
+}
+
 /* ---------- Routing ---------- */
 const PUBLIC = path.join(__dirname, "public");
 const server = http.createServer(async (req, res) => {
@@ -1211,6 +1217,7 @@ const server = http.createServer(async (req, res) => {
         if (isT) return send(res, 403, { error: "Lehrkraft-Konten haben keine Kinder." });
         if (scope && fq.kids.all(scope.id).length >= MAX_KIDS) return send(res, 400, { error: "Es sind höchstens " + MAX_KIDS + " Kinder pro Konto möglich." });
         const id = scope ? +fq.addKid.run(name, Date.now(), scope.id).lastInsertRowid : +q.addPlayer.run(name, Date.now(), b.hidden ? 1 : 0).lastInsertRowid;
+        if (!scope && !b.hidden) { sq.setSocial.run(1, id); fcodeOf(id); }   // Testphase: vom Betreiber angelegte Spieler starten mit eingeschalteten Freunden
         return send(res, 200, { id, name, hidden: !!b.hidden, invite: newInvite(id) });
       }
       const mu = p.match(/^\/api\/admin\/players\/(\d+)\/unit\/([A-Za-z0-9_.\-]{1,30})$/);

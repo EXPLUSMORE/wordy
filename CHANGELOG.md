@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.49.1 – 2026-10-08
+- **Testphase Freunde** (Server-Update nötig): Spieler, die der Betreiber selbst anlegt (Magnus, Chrissi …), haben Freunde, Crew und Liga von Anfang an eingeschaltet; bestehende Spieler des Betreibers werden beim Start einmalig eingeschaltet. Eltern-Konten bleiben bei „aus“; im Dashboard lässt es sich pro Kind wieder ausschalten.
+
 ## 2.49.0 – 2026-10-08
 - **Klassen-Modus** (Server-Update nötig; rein freiwillig): Der Betreiber lädt Lehrkräfte per Einladungslink ein (Einladung mit Rolle „Lehrkraft“). Die Lehrkraft legt im Dashboard eine Klasse an (Klassencode), stellt Wochenaufgaben ein (Einheiten, Zeitraum, Ziel je Kind) und sieht nur Klassen-Zahlen: je Kind Minuten, aktive Tage, erkannte Wörter, dazu Lernstand der gewählten Einheiten und die häufigsten Stolperwörter der ganzen Klasse (keine Einzelfehler, keine Einzel-Rangliste). Kinder treten in Spielen › Challenge mit dem Code bei, die Eltern stimmen im Dashboard zu. Die Aufgabe erscheint als Klassen-Challenge (fragt genau diese Einheiten ab, zählt als Daily Challenge mit Tagesbonus), mit persönlichem Balken, Klassenziel-Balken und Crew-Liga der Klasse. Datenschutzerklärung um Abschnitt 7a ergänzt.
 - Fahrplan (noch nicht gebaut): weitere Sprachen (Französisch, Spanisch …). Nötig: Sprache je Wortschatz (Felder en/de, Sprachausgabe, Unregelmäßige Verben und Grammatikregeln sind englischspezifisch), Klassen-Modus bleibt unverändert nutzbar.

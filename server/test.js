@@ -249,6 +249,7 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     const jm = await J("/api/admin/players", { method: "POST", headers: H, body: JSON.stringify({ name: "Jonas" }) });
     const jt = T2((await J("/api/pair", { method: "POST", body: JSON.stringify({ code: jm.j.invite.code, device: "J" }) })).j.token), lt = T2(kp.j.token);
     assert.equal((await J("/api/social/me", { headers: lt })).j.enabled, false, "Freunde standardmäßig aus");
+    assert.equal((await J("/api/social/me", { headers: jt })).j.enabled, true, "Spieler des Betreibers starten mit Freunden (Testphase)");
     assert.equal((await J("/api/social/friends", { method: "POST", headers: lt, body: JSON.stringify({ code: "XXXX" }) })).s, 403, "ohne Freigabe der Eltern keine Freunde");
     assert.equal((await J("/api/fam/players/" + kid.j.id + "/social", { method: "POST", headers: F, body: JSON.stringify({ enabled: true }) })).s, 200);
     assert.equal((await J("/api/admin/players/" + jm.j.id + "/social", { method: "POST", headers: H, body: JSON.stringify({ enabled: true }) })).s, 200);
