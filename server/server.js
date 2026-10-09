@@ -734,7 +734,7 @@ const fbq = {
   add: db.prepare("INSERT INTO feedback(created, player, family, role, kind, text, source, ver, device) VALUES (?,?,?,?,?,?,?,?,?)"),
   byId: db.prepare("SELECT * FROM feedback WHERE id = ?"),
   ofFamily: db.prepare("SELECT * FROM feedback WHERE family = ? ORDER BY created DESC LIMIT 100"),
-  ofPlayer: db.prepare("SELECT * FROM feedback WHERE player = ? OR (family IS NOT NULL AND family = (SELECT family FROM players WHERE id = ?)) ORDER BY created DESC LIMIT 100"),
+  ofPlayer: db.prepare("SELECT * FROM feedback WHERE player = ? ORDER BY created DESC LIMIT 100"),   // das Gerät sieht nur, was von diesem Gerät kam (nicht, was die Eltern im Dashboard geschrieben haben)
   all: db.prepare("SELECT f.*, fam.email AS fam_email, p.name AS pname FROM feedback f LEFT JOIN families fam ON fam.id = f.family LEFT JOIN players p ON p.id = f.player ORDER BY f.created DESC LIMIT 500"),
   upd: db.prepare("UPDATE feedback SET status = ?, note = ?, reply = ?, reply_ts = ? WHERE id = ?"),
   del: db.prepare("DELETE FROM feedback WHERE id = ?"),
@@ -1169,7 +1169,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (p === "/api/feedback" && (req.method === "GET" || req.method === "POST")) {
       const pid = playerOf(req); if (!pid) return send(res, 401, { error: "Nicht verbunden." });
-      if (req.method === "GET") return send(res, 200, { items: fbq.ofPlayer.all(pid, pid).map(fbOwn), kinds: FB_KINDS });
+      if (req.method === "GET") return send(res, 200, { items: fbq.ofPlayer.all(pid).map(fbOwn), kinds: FB_KINDS });
       if (limited(ip, "fb", 10, 3600000)) return send(res, 429, { error: "Zu viele Rückmeldungen. Bitte später noch einmal." });
       const b = await readJson(req), pl = q.player.get(pid);
       const [c, r] = fbAdd({ player: pid, family: pl.family, role: pl.family ? "family" : "operator", kind: b.kind, text: b.text, source: "app", ver: b.ver, device: b.device });

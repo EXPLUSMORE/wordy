@@ -169,6 +169,7 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     assert.equal((await J("/api/admin/feedback/" + fbB.j.id, { method: "POST", headers: H, body: JSON.stringify({ status: "in_arbeit", reply: "Danke, wir schauen es uns an.", note: "iOS prüfen" }) })).s, 200);
     const own = await J("/api/feedback", { headers: T });
     const mine = own.j.items.filter(x => x.id === fbB.j.id)[0];
+    assert.ok(!own.j.items.some(x => x.id === fbA.j.id), "App-Gerät sieht keine Dashboard-Rückmeldungen");
     assert.equal(mine.status, "in_arbeit"); assert.equal(mine.reply, "Danke, wir schauen es uns an.", "App sieht Status und Antwort");
     assert.equal((await J("/api/admin/feedback/settings", { method: "POST", headers: H, body: JSON.stringify({ hour: 7 }) })).s, 200);
     assert.equal((await J("/api/admin/feedback", { headers: H })).j.hour, 7, "Uhrzeit wählbar");
