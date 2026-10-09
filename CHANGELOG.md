@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.56.0 – 2026-10-09
+- Track Wordy aufgeräumt: pro Kind zwei Reiter. **Dashboard** mit Unterreitern Überblick (heute, Woche), Verlauf (Übungszeit, Tage einzeln), Wörter (Einheiten, alle Wörter, Problemwörter) und Aktivität (Runden, Käufe). **Einstellungen** nach Wichtigkeit als aufklappbare Gruppen: Verbindung & Geräte, Lernstoff steuern, Tagesziel & Wochenzeitplan, Belohnungen, Freunde/Klasse, Sicherung & Daten, Name & Spieler. Die Wochenmail-Einstellung steht jetzt auf der Konto-Seite (Familien). Server-Update nötig.
+
 ## 2.55.0 – 2026-10-09
 - Start-Reiter „Dein Tag“: feste Reihenfolge mit Häkchen und Weg (Daily Challenge, Pfad-Station, Lernplan/Klassenaufgabe, Tagesziel), Hero mit Status und Streak bleibt. Der Lernpfad liegt jetzt unter Lernen › Pfad.
 - Gesteuertes Lernen: Ist die App mit dem Server verbunden, kommen Challenge, Üben und Pfad aus den im Dashboard gewählten Pfad-Einheiten (Standard: Headlight 2), ohne Hinweis für das Kind. Neuer Dashboard-Schalter „Kind wählt den Stoff selbst“ (Spieler › Pfad) gibt die Lernbereiche frei.

@@ -59,6 +59,14 @@ button.sm{padding:5px 10px;font-size:13px}
 tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
 .pill.l0{color:var(--ink2)}.pill.l1{border-color:var(--l1)}.pill.l2{border-color:var(--l2)}.pill.l3{border-color:var(--l3)}.pill.l4{border-color:var(--l4);color:var(--good)}
 @media (prefers-color-scheme:dark){.card{border-color:rgba(233,189,98,.16)}}
+
+.tabs2{display:flex;gap:6px;margin:0 0 12px;flex-wrap:wrap}.tabs2 button{flex:1 1 0;min-width:110px;padding:9px 10px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-weight:600;cursor:pointer}
+.tabs2 button[aria-pressed="true"]{background:var(--acc);color:#fff;border-color:var(--acc)}.tabs2.sub button{min-width:0;font-size:13px;padding:6px 8px;font-weight:600}
+details.sg{background:var(--card);border:1px solid var(--line);border-radius:12px;margin-bottom:10px;padding:0 14px}details.sg[hidden]{display:none}
+details.sg>summary{display:flex;gap:10px;align-items:center;cursor:pointer;list-style:none;padding:12px 0}details.sg>summary::-webkit-details-marker{display:none}
+details.sg .chev{color:var(--acc);transition:transform .2s}details.sg[open] .chev{transform:rotate(90deg)}
+details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;padding:8px 0 4px;margin:0 0 4px;border-top:1px solid var(--line);border-radius:0}details.sg .sgb>.card:empty{display:none}
+[hidden]{display:none!important}
 </style>
 </head>
 <body>
@@ -71,7 +79,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
 (function () {
   var view = document.getElementById("view"), tabs = document.getElementById("tabs");
   if (window.WF) { document.getElementById("ttl").textContent = "Eltern"; document.documentElement.classList.add("WFX"); }
-  var players = [], cur = null, days = 14;
+  var players = [], cur = null, days = 14, mainTab = "dash", subTab = "over", setOpen = {};
   function nm() { var p = players.filter(function (x) { return x.id === cur; })[0]; return p ? p.name : "das Kind"; }   // Name des gewählten Spielers für die Texte
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   function api(path, opt) {
@@ -152,7 +160,8 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
         '<div class="row" style="gap:8px"><input id="in" class="grow" maxlength="60" placeholder="Notiz, z. B. Familie Meier"><select id="iu"><option value="1">1 Familie</option><option value="3">3</option><option value="10">10</option></select><select id="ir"><option value="parent">Eltern</option><option value="teacher">Lehrkraft</option></select><button id="imk">Link erstellen</button></div><div id="iout"></div></div>' +
         '<div class="card"><h2>Offene Einladungen</h2>' + (inv.length ? inv.map(function (i) { return '<div class="row" style="gap:8px;padding:6px 0;border-top:1px solid var(--line)"><span class="grow small"><b>' + (i.role === "teacher" ? "🏫 " : "") + esc(i.note || "ohne Notiz") + '</b> · ' + i.uses + "/" + i.max + ' benutzt<br><span class="muted">' + esc(i.url) + '</span></span><button class="ghost sm" data-cp="' + esc(i.url) + '">Kopieren</button><button class="ghost sm" data-di="' + esc(i.code) + '">Löschen</button></div>'; }).join("") : '<p class="small muted" style="margin:0">Keine offenen Einladungen.</p>') + "</div>" +
         '<div class="card"><h2>Familien (' + fs.length + ')</h2>' + (fs.length ? fs.map(function (f) { return '<div class="row" style="gap:8px;padding:6px 0;border-top:1px solid var(--line)"><span class="grow small"><b>' + (f.role === "teacher" ? "🏫 " : "") + esc(f.email) + '</b> ' + (f.status === "blocked" ? '<span class="err">gesperrt</span>' : "") + '<br><span class="muted">' + f.children + ' Kinder · zuletzt angemeldet ' + fmtAgo(f.lastLogin) + '</span></span><button class="ghost sm" data-bl="' + f.id + '" data-b="' + (f.status === "blocked" ? 0 : 1) + '">' + (f.status === "blocked" ? "Entsperren" : "Sperren") + '</button><button class="ghost sm" data-df="' + f.id + '" data-n="' + esc(f.email) + '">Löschen</button></div>'; }).join("") : '<p class="small muted" style="margin:0">Noch keine Familien registriert.</p>') +
-        '<p class="small muted" style="margin:10px 0 0">Aus Datenschutzgründen siehst du hier nur Konten, nicht die Lernstände fremder Kinder.</p></div>';
+        '<p class="small muted" style="margin:10px 0 0">Aus Datenschutzgründen siehst du hier nur Konten, nicht die Lernstände fremder Kinder.</p></div><div class="card" id="mailCard"></div>';
+      drawMail();
       document.getElementById("imk").onclick = function () { post("/api/admin/families/invites", { note: document.getElementById("in").value, uses: +document.getElementById("iu").value, role: document.getElementById("ir").value }).then(function (i) { viewFam().then(function () { document.getElementById("iout").innerHTML = '<p style="margin:10px 0 0"><b>Link:</b> <input readonly class="grow" style="width:100%" value="' + esc(i.url) + '" onclick="this.select()"></p>'; }); }).catch(function (e) { alert(e.message); }); };
       Array.prototype.forEach.call(view.querySelectorAll("[data-cp]"), function (b) { b.onclick = function () { navigator.clipboard.writeText(b.getAttribute("data-cp")); b.textContent = "Kopiert"; }; });
       Array.prototype.forEach.call(view.querySelectorAll("[data-di]"), function (b) { b.onclick = function () { api("/api/admin/families/invites/" + b.getAttribute("data-di"), { method: "DELETE" }).then(viewFam); }; });
@@ -356,35 +365,45 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     return h + '<div class="small muted" style="margin-top:8px">Spalten: Tag · Balken (grün = Tagesziel erreicht) · Zeit · Aufgaben · richtig. Tippe auf einen Tag für die Runden und Fehler.</div></div>';
   }
   function viewPlayer(p, r) {
-    var m = r.meta || {}, t = r.totals, wk = r.week, h = "";
+    var m = r.meta || {}, t = r.totals, wk = r.week, h = "", D1 = "", D2 = "", D3 = "", D4 = "";
     var today = r.days[r.days.length - 1];
     h += '<div class="card"><div class="row"><div class="grow"><b style="font-size:18px">' + esc(p.name) + "</b>" +
       '<div class="small muted">Zuletzt aktiv: ' + fmtAgo(p.lastEvent) + (p.lastEvent ? " (" + fmtAt(p.lastEvent) + ")" : "") + (r.metaTs ? " · Übersicht von " + fmtAt(r.metaTs) : "") + (m.rank ? " · " + esc(m.rank) : "") + (m.coins != null ? " · <b>🪙 " + m.coins + "</b> · <b>" + (m.xp || 0).toLocaleString("de-DE") + " XP</b>" : "") + (m.streak ? " · 🔥 " + m.streak + " Tage Serie" : "") +
-      (p.devices.length ? " · " + p.devices.length + " Gerät" + (p.devices.length > 1 ? "e" : "") : " · noch kein Gerät verbunden") + "</div></div>" +
-      '<button class="ghost" id="inv">Neuer Code</button><button class="ghost" id="ren">Umbenennen</button><button class="ghost" id="hid">Nur sichern</button><button class="ghost" id="rev">Geräte trennen</button><button class="ghost" id="del">Löschen</button></div></div>';
-    h += heuteCard(r, m) + wocheCard(r, m) + '<div class="card" id="friendCard"></div><div class="card" id="classCard"></div><div class="card" id="giftCard"></div><div class="card" id="passCard"></div><div class="card" id="wpCard"></div>';
-    h += '<div class="card" id="pathCard"></div><div class="card" id="goalsCard"></div><div class="card" id="plansCard"></div>';
-    h += '<div class="card"><div class="row"><h2 class="grow" style="margin:0">Übungszeit pro Tag</h2><button class="tab" data-d="14" aria-pressed="' + (days === 14) + '">14 Tage</button><button class="tab" data-d="30" aria-pressed="' + (days === 30) + '">30 Tage</button><button class="tab" data-d="90" aria-pressed="' + (days === 90) + '">90 Tage</button></div>' +
+      (p.devices.length ? " · " + p.devices.length + " Gerät" + (p.devices.length > 1 ? "e" : "") : " · noch kein Gerät verbunden") + "</div></div>" + '</div></div></div>';
+    D1 += heuteCard(r, m) + wocheCard(r, m);
+    D2 += '<div class="card"><div class="row"><h2 class="grow" style="margin:0">Übungszeit pro Tag</h2><button class="tab" data-d="14" aria-pressed="' + (days === 14) + '">14 Tage</button><button class="tab" data-d="30" aria-pressed="' + (days === 30) + '">30 Tage</button><button class="tab" data-d="90" aria-pressed="' + (days === 90) + '">90 Tage</button></div>' +
       bars(r.days) + '<div class="legend"><span><i style="background:var(--good)"></i>10 Min. oder mehr</span><span><i style="background:var(--acc2)"></i>weniger</span><span class="muted">Insgesamt ' + fmtMin(t.sec) + ", " + t.items + " Aufgaben, " + t.activeDays + " aktive Tage</span></div></div>";
 
-    h += tageCard(r, m);
-    h += unitsCard(r, m);
+    D2 += tageCard(r, m);
+    D3 += unitsCard(r, m);
 
-    h += '<div class="card"><h2>Alle Wörter</h2><details id="wdet"><summary style="cursor:pointer;color:var(--acc);font-weight:600">Wörterliste öffnen (Suche, Filter, Fehlerquote)</summary><div id="wbox"></div></details></div>';
-    h += '<div class="card"><h2>Problemwörter (' + days + " Tage)</h2>";
-    h += r.problems.length ? "<table><tr><th>Wort</th><th>Bedeutung</th><th class=\"n\">Fehler</th><th>Stand</th></tr>" + r.problems.map(function (x) {
+    D3 += '<div class="card"><h2>Alle Wörter</h2><details id="wdet"><summary style="cursor:pointer;color:var(--acc);font-weight:600">Wörterliste öffnen (Suche, Filter, Fehlerquote)</summary><div id="wbox"></div></details></div>';
+    D3 += '<div class="card"><h2>Problemwörter (' + days + " Tage)</h2>";
+    D3 += r.problems.length ? "<table><tr><th>Wort</th><th>Bedeutung</th><th class=\"n\">Fehler</th><th>Stand</th></tr>" + r.problems.map(function (x) {
       return "<tr><td><b>" + esc(x.en) + "</b></td><td>" + esc(x.de) + '</td><td class="n">' + x.n + '</td><td><span class="pill">' + LV[x.lv] + "</span></td></tr>";
     }).join("") + "</table>" : '<p class="muted small">Keine Fehler in diesem Zeitraum.</p>';
-    h += "</div>";
+    D3 += "</div>";
 
-    h += '<div class="card"><h2>Letzte Runden</h2>';
-    h += r.sessions.length ? "<table><tr><th>Wann</th><th>Art</th><th class=\"n\">Dauer</th><th class=\"n\">Aufgaben</th><th class=\"n\">Richtig</th><th class=\"n\">Münzen</th></tr>" + r.sessions.map(function (s) {
+    D4 += '<div class="card"><h2>Letzte Runden</h2>';
+    D4 += r.sessions.length ? "<table><tr><th>Wann</th><th>Art</th><th class=\"n\">Dauer</th><th class=\"n\">Aufgaben</th><th class=\"n\">Richtig</th><th class=\"n\">Münzen</th></tr>" + r.sessions.map(function (s) {
       return "<tr><td>" + fmtDate(s.ts) + "</td><td>" + esc(MODE[s.mode] || s.mode) + '</td><td class="n">' + fmtMin(s.sec) + '</td><td class="n">' + s.items + '</td><td class="n">' + pct(s.correct, s.items) + '</td><td class="n">' + s.coins + "</td></tr>";
     }).join("") + "</table>" : '<p class="muted small">Noch keine Runden.</p>';
-    h += "</div>";
+    D4 += "</div>";
 
-    if (r.buys.length) h += '<div class="card"><h2>Käufe im Shop</h2><table>' + r.buys.map(function (b) { return "<tr><td>" + fmtDate(b.ts) + "</td><td>" + esc(b.name) + '</td><td class="n">🪙 ' + b.cost + "</td></tr>"; }).join("") + "</table></div>";
-    h += '<div class="card" id="backupCard"></div><div class="card" id="mailCard"></div>';
+    if (r.buys.length) D4 += '<div class="card"><h2>Käufe im Shop</h2><table>' + r.buys.map(function (b) { return "<tr><td>" + fmtDate(b.ts) + "</td><td>" + esc(b.name) + '</td><td class="n">🪙 ' + b.cost + "</td></tr>"; }).join("") + "</table></div>";
+    var sg = function (key, icon, title, sub, inner, open) { return '<details class="sg" data-sg="' + key + '"' + ((setOpen[key] === undefined ? open : setOpen[key]) ? " open" : "") + '><summary><span class="chev">▸</span><span class="grow"><b>' + icon + " " + title + '</b><span class="small muted" style="display:block">' + sub + '</span></span></summary><div class="sgb">' + inner + '</div></details>'; };
+    var SET = sg("conn", "🔗", "Verbindung &amp; Geräte", "Neuer Code oder Link · Geräte trennen · Nur sichern", '<div class="row" style="gap:8px;flex-wrap:wrap"><button class="ghost" id="inv">Neuer Code / Link</button><button class="ghost" id="rev">Geräte trennen</button><button class="ghost" id="hid">Nur sichern</button></div>', true) +
+      sg("stoff", "🧭", "Lernstoff steuern", "Pfad-Einheiten · „Kind wählt selbst“ · Lernplan · Wochenziele · Boss", '<div class="card" id="pathCard"></div><div class="card" id="plansCard"></div><div class="card" id="goalsCard"></div>', true) +
+      sg("ziel", "⏱️", "Tagesziel &amp; Wochenzeitplan", "Minuten je Tag · freie Tage", '<div class="card" id="wpCard"></div>', false) +
+      sg("belohn", "🎁", "Belohnungen", "Extramünzen · Pass (nur Betreiber)", '<div class="card" id="giftCard"></div><div class="card" id="passCard"></div>', false) +
+      sg("sozial", "👥", "Freunde, Klasse, Crew", "Freigaben der Eltern", '<div class="card" id="friendCard"></div><div class="card" id="classCard"></div>', false) +
+      sg("daten", "💾", "Sicherung &amp; Daten", "Lernstand wiederherstellen · Herunterladen", '<div class="card" id="backupCard"></div>', false) +
+      sg("name", "✏️", "Name &amp; Spieler", "Umbenennen · Spieler löschen", '<div class="row" style="gap:8px;flex-wrap:wrap"><button class="ghost" id="ren">Umbenennen</button><button class="ghost" id="del">Löschen</button></div>', false);
+    var SUBS = [["over", "Überblick", D1], ["verl", "Verlauf", D2], ["woert", "Wörter", D3], ["akt", "Aktivität", D4]];
+    h += '<div class="tabs2" id="mainTabs"><button data-mt="dash" aria-pressed="' + (mainTab === "dash") + '">📊 Dashboard</button><button data-mt="set" aria-pressed="' + (mainTab === "set") + '">⚙️ Einstellungen</button></div>' +
+      '<div id="paneDash"' + (mainTab === "dash" ? "" : " hidden") + '><div class="tabs2 sub" id="subTabs">' + SUBS.map(function (s) { return '<button data-st="' + s[0] + '" aria-pressed="' + (subTab === s[0]) + '">' + s[1] + '</button>'; }).join("") + '</div>' +
+      SUBS.map(function (s) { return '<div data-sp="' + s[0] + '"' + (subTab === s[0] ? "" : " hidden") + '>' + s[2] + '</div>'; }).join("") + '</div>' +
+      '<div id="paneSet"' + (mainTab === "set" ? "" : " hidden") + '>' + SET + '</div>';
     h += '<p class="small muted">Es werden nur Lerndaten gespeichert (Wörter, Antworten, Zeiten, Käufe). In der App sieht ' + esc(nm()) + ', dass die Eltern den Fortschritt sehen.</p><p class="small muted" id="srvinfo"></p>';
     view.innerHTML = h;
     api("/api/admin/info").then(function (i) { var el = document.getElementById("srvinfo"); if (el) el.textContent = "Server-Version " + (i.version || "?") + (i.commit ? " · Stand " + i.commit : "") + " · Dienst gestartet " + fmtAgo(i.started); }).catch(function () {});
@@ -395,7 +414,14 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     document.getElementById("hid").onclick = function () { if (confirm(p.name + " nur noch sichern und hier nicht mehr anzeigen? Die Zahlen verschwinden aus Übersicht und Wochenmail, die Sicherung bleibt. Zurückholen kannst du ihn unter „＋ Spieler“.")) post("/api/admin/players/" + p.id + "/hidden", { hidden: true }).then(function () { cur = null; loadPlayers(); }); };
     document.getElementById("rev").onclick = function () { if (confirm("Alle verbundenen Geräte von " + p.name + " trennen? Neu verbinden geht mit einem neuen Code.")) post("/api/admin/players/" + p.id + "/revoke").then(function () { loadPlayers(p.id); }); };
     document.getElementById("del").onclick = function () { if (confirm(p.name + " und alle gespeicherten Lerndaten endgültig löschen?")) api("/api/admin/players/" + p.id, { method: "DELETE" }).then(function () { cur = null; loadPlayers(); }); };
-    drawFriends(p); drawClass(p); drawGifts(p, r); drawPass(p, r); drawWeekPlan(p, r); drawPath(p, r); drawGoals(p, r); drawPlans(p, r); drawBackups(p, r); drawMail();
+    drawFriends(p); drawClass(p); drawGifts(p, r); drawPass(p, r); drawWeekPlan(p, r); drawPath(p, r); drawGoals(p, r); drawPlans(p, r); drawBackups(p, r);
+    function pane() { document.getElementById("paneDash").hidden = mainTab !== "dash"; document.getElementById("paneSet").hidden = mainTab !== "set"; Array.prototype.forEach.call(view.querySelectorAll("#mainTabs button"), function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-mt") === mainTab)); }); Array.prototype.forEach.call(view.querySelectorAll("#subTabs button"), function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-st") === subTab)); }); Array.prototype.forEach.call(view.querySelectorAll("[data-sp]"), function (e) { e.hidden = e.getAttribute("data-sp") !== subTab; }); }
+    Array.prototype.forEach.call(view.querySelectorAll("#mainTabs button"), function (b) { b.onclick = function () { mainTab = b.getAttribute("data-mt"); pane(); }; });
+    Array.prototype.forEach.call(view.querySelectorAll("#subTabs button"), function (b) { b.onclick = function () { subTab = b.getAttribute("data-st"); pane(); }; });
+    Array.prototype.forEach.call(view.querySelectorAll("details.sg"), function (d) { d.addEventListener("toggle", function () { setOpen[d.getAttribute("data-sg")] = d.open; }); });
+    /* Gruppen ohne Inhalt (z. B. Belohnungen im Elternkonto) ausblenden, sobald die Karten gezeichnet sind */
+    var tidy = function () { Array.prototype.forEach.call(view.querySelectorAll("details.sg"), function (d) { var body = d.querySelector(".sgb"); if (body && !body.textContent.trim() && !body.querySelector("button,input,select")) d.hidden = true; }); };
+    setTimeout(tidy, 600); setTimeout(tidy, 2500);
     var wd = document.getElementById("wdet"); if (wd) wd.addEventListener("toggle", function () { if (wd.open) showWords(p); });
     Array.prototype.forEach.call(view.querySelectorAll("tr[data-u]"), function (tr) { tr.onclick = function () { showUnit(p, tr.getAttribute("data-u")); }; });
   }
