@@ -1254,7 +1254,39 @@
     return '<div class="eyebrow" style="margin-top:14px">🌐 Auf dem Server</div>' +
       '<p class="small muted" style="margin:6px 0 10px">Optional: Verbinde dieses Gerät mit dem Wordy-Server. Der Fortschritt wird gespeichert. Den Code bekommst du von deinen Eltern. Ohne Verbindung läuft alles wie bisher.</p>' +
       '<input id="syncCode" placeholder="Code einfügen" autocomplete="off" autocapitalize="off" spellcheck="false" style="width:100%">' +
-      '<button class="btn soft wide" data-act="syncpair" style="margin-top:8px">Verbinden</button>';
+      '<button class="btn soft wide" data-act="syncpair" style="margin-top:8px">Verbinden</button>' +
+      '<p class="small muted" style="margin:14px 0 6px;text-align:center">oder ohne Code</p>' +
+      '<button class="btn ghost wide" data-act="pairask">Meine Eltern fragen</button><div id="pairBox" style="margin-top:10px"></div>';
+  }
+  /* Kind meldet sich selbst an: kurzer Code für die Eltern, das Gerät wartet auf die Freigabe */
+  var pairReq = null, pairTimer = null;
+  function pairStop() { clearInterval(pairTimer); pairTimer = null; pairReq = null; }
+  function pairDraw(msg) {
+    var el = $("#pairBox"); if (!el) return; if (!pairReq) { el.innerHTML = ""; return; }
+    el.innerHTML = '<div style="text-align:center;padding:14px;border-radius:14px;background:var(--card-2)"><div class="small muted">Dein Code</div>' +
+      '<div class="tnum" style="font-size:40px;font-weight:800;letter-spacing:.12em;margin:4px 0">' + esc(pairReq.code) + '</div>' +
+      '<p class="small" style="margin:0 0 10px">Gib den Code deinen Eltern. Sie geben ihn im Dashboard frei, dann bist du verbunden. Er gilt 15 Minuten.</p>' +
+      '<div class="row wrap" style="gap:8px;justify-content:center"><button class="btn soft" data-act="pairshare">Code teilen</button><button class="btn ghost" data-act="paircancel">Abbrechen</button></div>' +
+      '<div class="small muted" style="margin-top:8px">' + esc(msg || "Warte auf deine Eltern …") + '</div></div>';
+  }
+  function afterPair(r) {
+    toast(window.WordySync.info().hidden ? "Verbunden. Dein Lernstand wird gesichert." : "Verbunden. Deine Eltern sehen jetzt deinen Lernfortschritt.");
+    if (r.backups && r.backups.length) {
+      var b0 = r.backups[0], dt = new Date(b0.ts);
+      if (confirm("Auf dem Server liegt ein gesicherter Lernstand von " + r.name + " (" + dt.toLocaleDateString("de-DE") + ", " + b0.words + " Wörter, " + b0.coins + " Münzen). Wiederherstellen?")) {
+        window.WordySync.restore(b0.day).then(function (rr) { toast(rr.error || "Lernstand wiederhergestellt."); render(); });
+        return;
+      }
+    }
+    render();
+  }
+  function pairTick() {
+    if (!pairReq || !$("#pairBox")) { pairStop(); return; }
+    window.WordySync.pairPoll(pairReq).then(function (r) {
+      if (!pairReq) return;
+      if (r.status === "approved") { pairStop(); afterPair(r); }
+      else if (r.status === "expired" || r.status === "denied") { var d = r.status === "denied"; pairStop(); var el = $("#pairBox"); if (el) el.innerHTML = '<p class="small" style="color:var(--bad)">' + (d ? "Deine Eltern haben den Code abgelehnt." : "Der Code ist abgelaufen.") + ' Du kannst einen neuen anfordern.</p>'; }
+    });
   }
   /* Eine Karte für alles rund ums Speichern: Server, dieses Gerät, manuelles Sichern */
   function saveCard() {
@@ -2719,16 +2751,23 @@
       var inp = $("#syncCode"), txt = inp ? inp.value : ""; act.disabled = true; act.textContent = "Verbinde …";
       window.WordySync.pair(txt).then(function (r) {
         if (r.error) { toast(r.error); act.disabled = false; act.textContent = "Verbinden"; return; }
-        toast(window.WordySync.info().hidden ? "Verbunden. Dein Lernstand wird gesichert." : "Verbunden. Deine Eltern sehen jetzt deinen Lernfortschritt.");
-        if (r.backups && r.backups.length) {
-          var b0 = r.backups[0], dt = new Date(b0.ts);
-          if (confirm("Auf dem Server liegt ein gesicherter Lernstand von " + r.name + " (" + dt.toLocaleDateString("de-DE") + ", " + b0.words + " Wörter, " + b0.coins + " Münzen). Wiederherstellen?")) {
-            window.WordySync.restore(b0.day).then(function (rr) { toast(rr.error || "Lernstand wiederhergestellt."); render(); });
-            return;
-          }
-        }
-        render();
+        afterPair(r);
       });
+    }
+    else if (a === "pairask") {
+      act.disabled = true; pairStop();
+      window.WordySync.pairStart(playerName()).then(function (r) {
+        act.disabled = false;
+        if (r.error) { toast(r.error); return; }
+        pairReq = r; pairDraw(); pairTimer = setInterval(pairTick, 3000);
+      });
+    }
+    else if (a === "paircancel") { pairStop(); pairDraw(); }
+    else if (a === "pairshare" && pairReq) {
+      var ptxt = "Wordy: Bitte gib meinen Code " + pairReq.code + " frei: " + window.WordySync.pairServer + "/f/?koppeln=" + pairReq.code.replace("-", "");
+      if (navigator.share) navigator.share({ text: ptxt }).catch(function () {});
+      else if (navigator.clipboard) navigator.clipboard.writeText(ptxt).then(function () { toast("Kopiert. Schick es deinen Eltern."); });
+      else prompt("Text kopieren:", ptxt);
     }
     else if (a === "restoreopen") {
       var box = $("#restoreBox"); if (box) box.innerHTML = '<p class="small muted">Lade …</p>';

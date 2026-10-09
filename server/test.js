@@ -157,6 +157,25 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     assert.ok(/Magnus/.test(decoded) && /Übungszeit/.test(decoded) && /Wochenziele/.test(decoded) && /Lernplan/.test(decoded), "Mail enthält Spieler, Zeit, Ziele, Lernplan");
     assert.ok(decoded.includes("https://track.wordy.explusmore.com"), "Mail enthält den Dashboard-Link");
     assert.ok(/Subject: =\?UTF-8/.test(mailGot) || /Subject: Wordy/.test(mailGot), "Betreff vorhanden");
+    /* Gerät selbst anmelden: Kind fordert Code an, Betreiber gibt frei */
+    const rq = await J("/api/pair/request", { method: "POST", body: JSON.stringify({ device: "Test-Handy", name: "Mia" }) });
+    assert.equal(rq.s, 200); assert.ok(/^[A-Z0-9]{3}-[A-Z0-9]{3}$/.test(rq.j.code), "Code-Format");
+    const pollU = (r) => "/api/pair/request/" + r.j.id + "?secret=" + r.j.secret;
+    assert.equal((await J(pollU(rq))).j.status, "pending");
+    assert.equal((await J("/api/pair/request/" + rq.j.id + "?secret=falsch")).s, 404, "falsches Geheimnis");
+    assert.equal((await J("/api/admin/pairing/ZZZ-ZZZ", { headers: H })).s, 404, "unbekannter Code");
+    assert.equal((await J("/api/admin/pairing/" + rq.j.code, { headers: { "X-Wordy": "1" } })).s, 401, "Freigabe nur angemeldet");
+    const lk = await J("/api/admin/pairing/" + rq.j.code.toLowerCase(), { headers: H }); assert.equal(lk.j.device, "Test-Handy"); assert.equal(lk.j.hint, "Mia");
+    assert.equal((await J("/api/admin/pairing/" + rq.j.code + "/approve", { method: "POST", headers: H, body: JSON.stringify({ player: 99999 }) })).s, 404, "fremder Spieler");
+    const ap = await J("/api/admin/pairing/" + rq.j.code + "/approve", { method: "POST", headers: H, body: JSON.stringify({ newName: "Mia" }) });
+    assert.equal(ap.s, 200, "Freigabe mit neuem Kind"); assert.equal(ap.j.name, "Mia");
+    const got = await J(pollU(rq)); assert.equal(got.j.status, "approved"); assert.equal(got.j.name, "Mia"); assert.ok(/^[0-9a-f]{64}$/.test(got.j.token), "Token");
+    assert.equal((await J("/api/ping", { method: "POST", headers: { Authorization: "Bearer " + got.j.token } })).j.name, "Mia", "Token funktioniert");
+    assert.equal((await J(pollU(rq))).j.status, "expired", "Token nur einmal abholbar");
+    assert.equal((await J("/api/admin/pairing/" + rq.j.code, { headers: H })).s, 404, "Code nur einmal nutzbar");
+    const rq2 = await J("/api/pair/request", { method: "POST", body: JSON.stringify({ device: "Tablet" }) });
+    assert.equal((await J("/api/admin/pairing/" + rq2.j.code + "/deny", { method: "POST", headers: H })).s, 200);
+    assert.equal((await J(pollU(rq2))).j.status, "denied", "Ablehnung kommt an");
     /* Feedback: Betreiber, App (Bearer), Status/Antwort, Eingabeprüfung */
     const fbA = await J("/api/admin/feedback", { method: "POST", headers: H, body: JSON.stringify({ kind: "idea", text: "Die Challenge sollte kürzer sein." }) });
     assert.equal(fbA.s, 200, "Feedback (Dashboard)");
@@ -285,6 +304,10 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     assert.equal((await J("/api/fam/players", { headers: { Cookie: cookie } })).j.length, 0, "Familie startet ohne Kinder");
     assert.equal((await J("/api/fam/players", { method: "POST", headers: { Cookie: cookie, "Content-Type": "application/json" }, body: JSON.stringify({ name: "Lena" }) })).s, 403, "ohne X-Wordy-Kopf kein Schreiben");
     const kid = await J("/api/fam/players", { method: "POST", headers: F, body: JSON.stringify({ name: "Lena" }) });
+    { const r3 = await J("/api/pair/request", { method: "POST", body: JSON.stringify({ device: "Lenas Handy" }) });
+      assert.equal((await J("/api/fam/pairing/" + r3.j.code + "/approve", { method: "POST", headers: F, body: JSON.stringify({ player: 1 }) })).s, 404, "Familie kann kein fremdes Kind freigeben");
+      assert.equal((await J("/api/fam/pairing/" + r3.j.code + "/approve", { method: "POST", headers: F, body: JSON.stringify({ player: kid.j.id }) })).s, 200, "Familie gibt eigenes Kind frei");
+      assert.equal((await J("/api/pair/request/" + r3.j.id + "?secret=" + r3.j.secret)).j.status, "approved"); }
     assert.equal(kid.s, 200); assert.ok(kid.j.invite.code);
     const kp = await J("/api/pair", { method: "POST", body: JSON.stringify({ code: kid.j.invite.code, device: "Lena-Handy" }) });
     assert.equal(kp.s, 200, "Kind lässt sich koppeln"); assert.equal((await J("/api/ping", { method: "POST", headers: T2(kp.j.token), body: "{}" })).s, 200);

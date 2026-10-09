@@ -79,6 +79,7 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
 (function () {
   var view = document.getElementById("view"), tabs = document.getElementById("tabs");
   if (window.WF) { document.getElementById("ttl").textContent = "Eltern"; document.documentElement.classList.add("WFX"); }
+  var pendingPair = (function () { var c = ""; try { c = new URLSearchParams(location.search).get("koppeln") || localStorage.getItem("wf.koppeln") || ""; localStorage.removeItem("wf.koppeln"); } catch (e) {} return String(c).slice(0, 10); })();
   var players = [], cur = null, days = 14, mainTab = "dash", subTab = "over", setOpen = {};
   function nm() { var p = players.filter(function (x) { return x.id === cur; })[0]; return p ? p.name : "das Kind"; }   // Name des gewählten Spielers für die Texte
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
@@ -115,6 +116,7 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
     }).catch(function (e) { view.innerHTML = '<div class="card err">' + esc(e.message) + "</div>"; });
     return api("/api/admin/players").then(function (l) {
       players = l; if (!cur || !players.some(function (p) { return p.id === cur; })) cur = players[0] ? players[0].id : "new";
+      if (pendingPair && !keep) cur = "new";
       if (keep) cur = keep;
       drawTabs(); return show();
     }).catch(function (e) { view.innerHTML = '<div class="card err">' + esc(e.message) + "</div>"; });
@@ -174,13 +176,44 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
       Array.prototype.forEach.call(view.querySelectorAll("[data-df]"), function (b) { b.onclick = function () { if (confirm(b.getAttribute("data-n") + " samt allen Kindern und Lernständen endgültig löschen?")) api("/api/admin/families/" + b.getAttribute("data-df"), { method: "DELETE" }).then(viewFam); }; });
     }).catch(function (e) { view.innerHTML = '<div class="card err">' + esc(e.message) + "</div>"; });
   }
+  /* Gerät eines Kindes freigeben: Code aus der App prüfen, Kind wählen (oder neu anlegen), freigeben */
+  function pairCard(id) {
+    return '<div class="card" id="' + id + '"><h2>Gerät eines Kindes freigeben</h2><p class="small muted" style="margin:0 0 10px">Das Kind tippt in der App unter Profil › Auto-Save / Lernfortschritt auf „Meine Eltern fragen“ und zeigt oder schickt dir den Code. Gib ihn hier ein.</p>' +
+      '<div class="row" style="gap:8px"><input class="grow pcode" maxlength="8" placeholder="Code, z. B. K7M-4PX" autocapitalize="characters" autocomplete="off"><button class="pcheck">Prüfen</button></div><div class="pres" style="margin-top:10px"></div></div>';
+  }
+  function wirePair(id, preselect, prefill) {
+    var root = document.getElementById(id); if (!root) return;
+    var inp = root.querySelector(".pcode"), res = root.querySelector(".pres");
+    function msg(t, bad) { res.innerHTML = '<p class="small' + (bad ? " err" : "") + '" style="margin:0">' + esc(t) + "</p>"; }
+    function check() {
+      var code = inp.value.trim(); if (!code) return;
+      api("/api/admin/pairing/" + encodeURIComponent(code)).then(function (r) {
+        var opts = players.map(function (p) { return '<option value="' + p.id + '"' + (p.id === preselect ? " selected" : "") + ">" + esc(p.name) + "</option>"; }).join("") + '<option value="new">＋ Neues Kind anlegen</option>';
+        res.innerHTML = '<div style="padding:10px 12px;border-radius:10px;background:var(--bg)"><div class="small"><b>Gerät:</b> ' + esc(r.device || "unbekannt") + (r.hint ? " · Name-Vorschlag: <b>" + esc(r.hint) + "</b>" : "") + '</div>' +
+          '<div class="row" style="gap:8px;margin-top:8px;flex-wrap:wrap"><select class="psel" style="width:auto">' + opts + '</select><input class="pnew grow" maxlength="20" placeholder="Vorname des Kindes" value="' + esc(r.hint || "") + '" hidden></div>' +
+          '<p class="small muted" style="margin:8px 0">Gib nur frei, wenn das Gerät gerade bei dir oder deinem Kind liegt und der Code dort angezeigt wird.</p>' +
+          '<div class="row" style="gap:8px"><button class="pgo">Freigeben</button><button class="ghost pno">Ablehnen</button></div></div>';
+        var sel = res.querySelector(".psel"), nw = res.querySelector(".pnew");
+        function tog() { nw.hidden = sel.value !== "new"; } sel.onchange = tog; tog();
+        res.querySelector(".pgo").onclick = function () {
+          var body = sel.value === "new" ? { newName: nw.value } : { player: +sel.value };
+          post("/api/admin/pairing/" + encodeURIComponent(code) + "/approve", body).then(function (x) { msg("Verbunden: Das Gerät gehört jetzt zu " + x.name + ". Es dauert nur wenige Sekunden."); inp.value = ""; if (body.newName) loadPlayers(x.player); }).catch(function (e) { msg(e.message, true); });
+        };
+        res.querySelector(".pno").onclick = function () { post("/api/admin/pairing/" + encodeURIComponent(code) + "/deny").then(function () { res.innerHTML = ""; inp.value = ""; }); };
+      }).catch(function (e) { msg(e.message, true); });
+    }
+    root.querySelector(".pcheck").onclick = check; inp.onkeydown = function (e) { if (e.key === "Enter") check(); };
+    if (prefill) { inp.value = prefill; check(); }
+  }
   function viewNew(inv, name) {
     var h = '<div class="card"><h2>Neuen Spieler anlegen</h2><div class="row"><input id="nn" class="grow" maxlength="20" placeholder="Vorname des Kindes"><button id="mk">Anlegen</button></div>' +
       '<label class="row" style="margin-top:10px;gap:8px;font-size:14px"><input type="checkbox" id="nh"> <span>Nur sichern, nicht anzeigen <span class="muted">(zum Beispiel für dich selbst: der Lernstand wird gesichert, aber es gibt keine Zahlen, Ziele oder Mails dazu)</span></span></label>' +
       '<p class="small muted" style="margin:10px 0 0">Es reicht ein Vorname. Danach erscheint ein Code, den du in der App unter Setup → Auto-Save / Lernfortschritt einfügst.</p></div>';
     if (inv) h = inviteCard(name, inv) + h;
+    if (!window.WT) h = pairCard("pairNew") + h;
     h += '<div id="hiddenList"></div>';
     view.innerHTML = h;
+    var kp = pendingPair; pendingPair = ""; wirePair("pairNew", 0, kp);
     var b = document.getElementById("mk");
     if (b) b.onclick = function () {
       var n = document.getElementById("nn").value.trim(); if (!n) return;
@@ -443,7 +476,7 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
 
     if (r.buys.length) D4 += '<div class="card"><h2>Käufe im Shop</h2><table>' + r.buys.map(function (b) { return "<tr><td>" + fmtDate(b.ts) + "</td><td>" + esc(b.name) + '</td><td class="n">🪙 ' + b.cost + "</td></tr>"; }).join("") + "</table></div>";
     var sg = function (key, icon, title, sub, inner, open) { return '<details class="sg" data-sg="' + key + '"' + ((setOpen[key] === undefined ? open : setOpen[key]) ? " open" : "") + '><summary><span class="chev">▸</span><span class="grow"><b>' + icon + " " + title + '</b><span class="small muted" style="display:block">' + sub + '</span></span></summary><div class="sgb">' + inner + '</div></details>'; };
-    var SET = sg("conn", "🔗", "Verbindung &amp; Geräte", "Neuer Code oder Link · Geräte trennen · Nur sichern", '<div class="row" style="gap:8px;flex-wrap:wrap"><button class="ghost" id="inv">Neuer Code / Link</button><button class="ghost" id="rev">Geräte trennen</button><button class="ghost" id="hid">Nur sichern</button></div>', true) +
+    var SET = sg("conn", "🔗", "Verbindung &amp; Geräte", "Neuer Code oder Link · Geräte trennen · Nur sichern", '<div class="row" style="gap:8px;flex-wrap:wrap"><button class="ghost" id="inv">Neuer Code / Link</button><button class="ghost" id="rev">Geräte trennen</button><button class="ghost" id="hid">Nur sichern</button></div>' + (window.WT ? "" : '<div style="margin-top:12px">' + pairCard("pairKid") + "</div>"), true) +
       sg("stoff", "🧭", "Lernstoff steuern", "Pfad-Einheiten · „Kind wählt selbst“ · Lernplan · Wochenziele · Boss", '<div class="card" id="pathCard"></div><div class="card" id="plansCard"></div><div class="card" id="goalsCard"></div>', true) +
       sg("ziel", "⏱️", "Tagesziel &amp; Wochenzeitplan", "Minuten je Tag · freie Tage", '<div class="card" id="wpCard"></div>', false) +
       sg("belohn", "🎁", "Belohnungen", "Extramünzen · Pass (nur Betreiber)", '<div class="card" id="giftCard"></div><div class="card" id="passCard"></div>', false) +
@@ -465,6 +498,7 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
     document.getElementById("hid").onclick = function () { if (confirm(p.name + " nur noch sichern und hier nicht mehr anzeigen? Die Zahlen verschwinden aus Übersicht und Wochenmail, die Sicherung bleibt. Zurückholen kannst du ihn unter „＋ Spieler“.")) post("/api/admin/players/" + p.id + "/hidden", { hidden: true }).then(function () { cur = null; loadPlayers(); }); };
     document.getElementById("rev").onclick = function () { if (confirm("Alle verbundenen Geräte von " + p.name + " trennen? Neu verbinden geht mit einem neuen Code.")) post("/api/admin/players/" + p.id + "/revoke").then(function () { loadPlayers(p.id); }); };
     document.getElementById("del").onclick = function () { if (confirm(p.name + " und alle gespeicherten Lerndaten endgültig löschen?")) api("/api/admin/players/" + p.id, { method: "DELETE" }).then(function () { cur = null; loadPlayers(); }); };
+    wirePair("pairKid", p.id, "");
     drawFriends(p); drawClass(p); drawGifts(p, r); drawPass(p, r); drawWeekPlan(p, r); drawPath(p, r); drawGoals(p, r); drawPlans(p, r); drawBackups(p, r);
     function pane() { document.getElementById("paneDash").hidden = mainTab !== "dash"; document.getElementById("paneSet").hidden = mainTab !== "set"; document.getElementById("paneFb").hidden = mainTab !== "fb"; if (mainTab === "fb") drawFeedback(document.getElementById("paneFb")); Array.prototype.forEach.call(view.querySelectorAll("#mainTabs button"), function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-mt") === mainTab)); }); Array.prototype.forEach.call(view.querySelectorAll("#subTabs button"), function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-st") === subTab)); }); Array.prototype.forEach.call(view.querySelectorAll("[data-sp]"), function (e) { e.hidden = e.getAttribute("data-sp") !== subTab; }); }
     Array.prototype.forEach.call(view.querySelectorAll("#mainTabs button"), function (b) { b.onclick = function () { mainTab = b.getAttribute("data-mt"); pane(); }; });

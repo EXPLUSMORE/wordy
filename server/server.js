@@ -726,6 +726,63 @@ function newInvite(pid) {
 
 /* ---------- Elternkonten ---------- */
 const transportOn = () => !!((GRAPH.tenant && GRAPH.clientId && GRAPH.clientSecret && MAIL.from) || (MAIL.host && MAIL.from));
+/* Kinder melden ihr Gerät selbst an: Das Gerät fordert einen kurzen Code an, Eltern/Betreiber geben ihn im Dashboard für ein Kind frei, danach holt sich das Gerät sein Token ab. */
+db.exec(`CREATE TABLE IF NOT EXISTS pair_requests (id TEXT PRIMARY KEY, code TEXT NOT NULL UNIQUE, secret TEXT NOT NULL, created INTEGER NOT NULL, device TEXT NOT NULL DEFAULT '', hint TEXT NOT NULL DEFAULT '',
+  status TEXT NOT NULL DEFAULT 'pending', player INTEGER, token TEXT NOT NULL DEFAULT '')`);
+const PAIR_MIN = 15;
+const prq = {
+  add: db.prepare("INSERT INTO pair_requests(id, code, secret, created, device, hint) VALUES (?,?,?,?,?,?)"),
+  byId: db.prepare("SELECT * FROM pair_requests WHERE id = ?"),
+  byCode: db.prepare("SELECT * FROM pair_requests WHERE code = ?"),
+  approve: db.prepare("UPDATE pair_requests SET status = 'approved', player = ?, token = ? WHERE id = ?"),
+  setStatus: db.prepare("UPDATE pair_requests SET status = ?, token = '' WHERE id = ?"),
+  purge: db.prepare("DELETE FROM pair_requests WHERE created < ?"),
+  pending: db.prepare("SELECT COUNT(*) AS n FROM pair_requests WHERE status = 'pending'")
+};
+function pairCode() { let s = ""; const b = crypto.randomBytes(6); for (let i = 0; i < 6; i++) s += ALPHABET[b[i] % ALPHABET.length]; return s.slice(0, 3) + "-" + s.slice(3); }
+function pairNormCode(c) { const x = String(c || "").toUpperCase().replace(/[^A-Z0-9]/g, ""); return x.length === 6 ? x.slice(0, 3) + "-" + x.slice(3) : ""; }
+const pairLive = r => r && Date.now() - r.created < PAIR_MIN * 60000;
+function pairRequest(body, ip) {
+  if (limited(ip, "prq", 10, 600000)) return [429, { error: "Zu viele Versuche. Bitte später noch einmal." }];
+  prq.purge.run(Date.now() - 3600000);
+  if (prq.pending.get().n > 500) return [503, { error: "Gerade zu viele offene Anfragen. Bitte später noch einmal." }];
+  let code = pairCode(); for (let i = 0; i < 5 && prq.byCode.get(code); i++) code = pairCode();
+  const id = rand(16), secret = rand(24);
+  prq.add.run(id, code, sha(secret), Date.now(), clean(body.device, 80), clean(body.name, 20));
+  return [200, { id, secret, code, expires: Date.now() + PAIR_MIN * 60000 }];
+}
+function pairPoll(id, secret, ip) {
+  if (limited(ip, "ppoll", 400, 600000)) return [429, { error: "Zu viele Anfragen." }];
+  const r = /^[0-9a-f]{32}$/.test(id) ? prq.byId.get(id) : null;
+  if (!r || !eq(r.secret, sha(String(secret || "")))) return [404, { error: "Unbekannt." }];
+  if (r.status === "approved" && r.token) { const t = r.token, pl = q.player.get(r.player); prq.setStatus.run("done", r.id); return [200, { status: "approved", token: t, name: pl ? pl.name : "", hidden: !!(pl && pl.hidden) }]; }
+  if (r.status === "pending" && !pairLive(r)) return [200, { status: "expired" }];
+  return [200, { status: r.status === "done" ? "expired" : r.status }];
+}
+function pairLookup(code, scope, ip) {
+  if (limited(ip + (scope ? ":" + scope.id : ":op"), "plook", 30, 600000)) return [429, { error: "Zu viele Versuche. Bitte später noch einmal." }];
+  const r = prq.byCode.get(pairNormCode(code));
+  if (!r || r.status !== "pending" || !pairLive(r)) return [404, { error: "Dieser Code stimmt nicht oder ist abgelaufen. Das Kind kann in der App einen neuen anfordern." }];
+  return [200, { code: r.code, device: r.device, hint: r.hint, created: r.created }];
+}
+function pairApprove(code, body, scope, ip) {
+  const [c, info] = pairLookup(code, scope, ip); if (c !== 200) return [c, info];
+  const r = prq.byCode.get(info.code); let pid;
+  if (body.player) {
+    const pl = q.player.get(+body.player); if (!famPlayer(pl, scope)) return [404, { error: "Unbekannt." }]; pid = pl.id;
+  } else {
+    const name = clean(body.newName, 20); if (!name) return [400, { error: "Bitte wähle ein Kind oder gib einen Vornamen ein." }];
+    if (scope && scope.role === "teacher") return [403, { error: "Lehrkraft-Konten haben keine Kinder." }];
+    if (nameTaken(name, scope, 0)) return [400, { error: "Es gibt schon einen Spieler mit diesem Namen." }];
+    if (scope && fq.kids.all(scope.id).length >= MAX_KIDS) return [400, { error: "Es sind höchstens " + MAX_KIDS + " Kinder pro Konto möglich." }];
+    pid = scope ? +fq.addKid.run(name, Date.now(), scope.id).lastInsertRowid : +q.addPlayer.run(name, Date.now(), 0).lastInsertRowid;
+    if (!scope) { sq.setSocial.run(1, pid); fcodeOf(pid); }
+  }
+  const token = rand(32); q.addToken.run(sha(token), pid, clean(r.device, 80), Date.now(), Date.now());
+  prq.approve.run(pid, token, r.id);
+  return [200, { ok: true, player: pid, name: q.player.get(pid).name }];
+}
+
 /* ---------- Feedback: Rückmeldungen von Eltern und Lehrkräften (App und Dashboard), eine Datenbank, Tagesmail an den Betreiber ---------- */
 db.exec(`CREATE TABLE IF NOT EXISTS feedback (id INTEGER PRIMARY KEY, created INTEGER NOT NULL, player INTEGER, family INTEGER, role TEXT NOT NULL DEFAULT 'operator',
   kind TEXT NOT NULL, text TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'neu', note TEXT NOT NULL DEFAULT '', reply TEXT NOT NULL DEFAULT '', reply_ts INTEGER,
@@ -1184,6 +1241,8 @@ const server = http.createServer(async (req, res) => {
       if (q.player.get(pid).hidden) return send(res, 403, { error: "Dieser Spieler wird nur gesichert." });
       const [c, b] = await apiSocial(pid, req.method, p, url, req, ip); return send(res, c, b);
     }
+    if (p === "/api/pair/request" && req.method === "POST") { const [c, b] = pairRequest(await readJson(req), ip); return send(res, c, b); }
+    { const mp = p.match(/^\/api\/pair\/request\/([0-9a-f]{32})$/); if (mp && req.method === "GET") { const [c, b] = pairPoll(mp[1], url.searchParams.get("secret"), ip); return send(res, c, b); } }
     if (p === "/api/feedback" && (req.method === "GET" || req.method === "POST")) {
       const pid = playerOf(req); if (!pid) return send(res, 401, { error: "Nicht verbunden." });
       if (req.method === "GET") return send(res, 200, { items: fbq.ofPlayer.all(pid).map(fbOwn), kinds: FB_KINDS });
@@ -1328,6 +1387,12 @@ const server = http.createServer(async (req, res) => {
         if (mf[2] === "block" && req.method === "POST") { const blocked = !!(await readJson(req)).blocked; fq.setStatus.run(blocked ? "blocked" : "active", f.id); if (blocked) fq.delSessOf.run(f.id); return send(res, 200, { ok: true }); }
         if (!mf[2] && req.method === "DELETE") { fq.del.run(f.id); return send(res, 200, { ok: true }); }
       }
+      { const mq = p.match(/^\/api\/admin\/pairing\/([A-Za-z0-9-]{4,10})(\/approve|\/deny)?$/);
+        if (mq) {
+          if (!mq[2] && req.method === "GET") { const [c, b] = pairLookup(mq[1], scope, ip); return send(res, c, b); }
+          if (mq[2] === "/approve" && req.method === "POST") { const [c, b] = pairApprove(mq[1], await readJson(req), scope, ip); return send(res, c, b); }
+          if (mq[2] === "/deny" && req.method === "POST") { const [c, b] = pairLookup(mq[1], scope, ip); if (c === 200) prq.setStatus.run("denied", prq.byCode.get(b.code).id); return send(res, c, c === 200 ? { ok: true } : b); }
+        } }
       if (p === "/api/admin/feedback" && req.method === "GET") {
         if (scope) return send(res, 200, { items: fbq.ofFamily.all(scope.id).map(fbOwn), kinds: FB_KINDS });
         return send(res, 200, { items: fbq.all.all().map(fbAdminRow), kinds: FB_KINDS, open: fbq.open.get().n, hour: fbHour(), mail: transportOn() && !!mailTo(), to: mailTo() });

@@ -234,12 +234,39 @@
       .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
       .then(function (x) {
         if (!x.ok) return { error: x.j && x.j.error || "Verbinden hat nicht geklappt." };
-        lsSet("wordy.sync." + pid(), { url: url, token: x.j.token, name: x.j.name, last: 0, hidden: !!x.j.hidden });
-        W.log("hello", { v: g.WORDY_VERSION || "" });
-        if (VT.isFresh()) return W.snapshot().then(function () { return flush(false); }).then(function () { return W.pull(true); }).then(function () { return W.stateList(); }).then(function (l) { return { ok: true, name: x.j.name, backups: l }; });
-        return W.snapshot().then(function () { return flush(false); }).then(function () { return W.pull(true); }).then(function () { W.pushState(true); return { ok: true, name: x.j.name }; });
+        return finishPair(url, x.j.token, x.j.name, !!x.j.hidden);
       }).catch(function () { return { error: "Der Server ist nicht erreichbar. Gibt es Netz, und stimmt die Adresse?" }; });
   };
+  /* gemeinsamer Abschluss: Token speichern, ersten Abgleich machen, ggf. Sicherungen anbieten */
+  function finishPair(url, token, name, hidden) {
+    lsSet("wordy.sync." + pid(), { url: url, token: token, name: name, last: 0, hidden: !!hidden });
+    W.log("hello", { v: g.WORDY_VERSION || "" });
+    if (VT.isFresh()) return W.snapshot().then(function () { return flush(false); }).then(function () { return W.pull(true); }).then(function () { return W.stateList(); }).then(function (l) { return { ok: true, name: name, backups: l }; });
+    return W.snapshot().then(function () { return flush(false); }).then(function () { return W.pull(true); }).then(function () { W.pushState(true); return { ok: true, name: name }; });
+  }
+  /* Kind meldet das Gerät selbst an: kurzer Code für die Eltern, danach holt sich das Gerät sein Token */
+  function deviceLabel() {
+    var u = (g.navigator && g.navigator.userAgent) || "", os = /iPhone/.test(u) ? "iPhone" : /iPad/.test(u) ? "iPad" : /Android/.test(u) ? "Android" : /Windows/.test(u) ? "Windows" : /Mac OS/.test(u) ? "Mac" : /Linux/.test(u) ? "Linux" : "Gerät";
+    var br = /EdgA?\//.test(u) ? "Edge" : /OPR\//.test(u) ? "Opera" : /Firefox|FxiOS/.test(u) ? "Firefox" : /Chrome|CriOS/.test(u) ? "Chrome" : /Safari/.test(u) ? "Safari" : "";
+    return br ? os + " · " + br : os;
+  }
+  var PAIR_SERVER = "https://track.wordy.explusmore.com";
+  W.pairStart = function (name) {
+    if (!g.fetch) return Promise.resolve({ error: "Dieses Gerät kann das nicht." });
+    return g.fetch(PAIR_SERVER + "/api/pair/request", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ device: deviceLabel(), name: /^Spieler \d+$/.test(String(name || "")) ? "" : String(name || "").slice(0, 20) }) })
+      .then(function (r) { return r.json().then(function (j) { return r.ok ? { ok: true, id: j.id, secret: j.secret, code: j.code, expires: j.expires } : { error: j.error || "Fehler " + r.status }; }); })
+      .catch(function () { return { error: "Der Server ist nicht erreichbar. Gibt es Netz?" }; });
+  };
+  W.pairPoll = function (req) {
+    return g.fetch(PAIR_SERVER + "/api/pair/request/" + req.id + "?secret=" + encodeURIComponent(req.secret))
+      .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (x) {
+        if (!x.ok) return { status: "error" };
+        if (x.j.status !== "approved") return { status: x.j.status };
+        return finishPair(PAIR_SERVER, x.j.token, x.j.name, !!x.j.hidden).then(function (r) { r.status = "approved"; return r; });
+      }).catch(function () { return { status: "offline" }; });
+  };
+  W.pairServer = PAIR_SERVER;
   W.disconnect = function () { try { g.localStorage.removeItem("wordy.sync." + pid()); g.localStorage.removeItem("wordy.q." + pid()); g.localStorage.removeItem("wordy.cfg." + pid()); } catch (e) {} };
 
   /* Aus der App: Ende einer Lernrunde */

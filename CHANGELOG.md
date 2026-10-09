@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.59.0 – 2026-10-09
+- Kinder melden ihr Gerät selbst an: In der App (Profil › Auto-Save) „Meine Eltern fragen“ zeigt einen kurzen Code (z. B. K7M-4PX, 15 Minuten gültig) und lässt sich teilen. Eltern geben ihn im Dashboard frei („Gerät eines Kindes freigeben“, auch über den Link …/f/?koppeln=CODE), wählen das Kind oder legen ein neues an. Danach verbindet sich das Gerät automatisch, ohne Mail und Passwort für das Kind. Server-Update nötig.
+
 ## 2.58.0 – 2026-10-09
 - Eltern und Lehrkräfte können sich mit E-Mail und Passwort anmelden (Dashboard-Anmeldeseite). Der Anmeldelink per Mail bleibt als Alternative und für „Passwort vergessen“. Passwort festlegen oder ändern unter Konto (mindestens 10 Zeichen, scrypt-Hash, Sperre nach 6 Fehlversuchen für 15 Minuten, Ändern nach älterer Sitzung nur mit dem aktuellen Passwort). Datenschutzerklärung ergänzt (Fassung 2026-10d, noch rechtlich prüfen lassen). Server-Update nötig.
 
