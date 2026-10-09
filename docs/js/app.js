@@ -2099,10 +2099,13 @@
       var opts = S.shuffle([{ label: w.en, ok: true, de: w.de }].concat(three.map(function (x) { return { label: x.en, ok: false, de: x.de }; })));
       t.opts = opts;
       var topic = three[0].unitTitle;
+      var spoken = opts.map(function (o) { return o.label; }).join(". ");   // alle vier Wörter nacheinander, bevor man antwortet
       body.innerHTML = '<div class="stack" style="padding-top:8px"><div class="eyebrow">Was passt nicht?</div>' +
-        '<h2 style="font-size:20px">Drei Wörter gehören zum Thema „' + esc(topic) + '“.</h2>' +
+        '<div class="row" style="gap:12px;align-items:center">' + (audioAvailable() ? speakBtn(spoken) : "") +
+        '<h2 style="font-size:20px;margin:0;flex:1 1 auto">Drei Wörter gehören zum Thema „' + esc(topic) + '“.</h2></div>' +
         optionList(opts) + '</div>';
       foot.innerHTML = footCheck();
+      if (audioAvailable()) setTimeout(function () { speak(spoken, 0.85); }, 300);
     },
     verbintro: function (t, body, foot) {
       var v = t.v, w = verbWord(v);

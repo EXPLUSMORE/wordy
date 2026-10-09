@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.54.2 – 2026-10-09
+- „Was passt nicht?“: Die vier Wörter werden beim Start automatisch nacheinander vorgelesen (mit Lautsprecher-Knopf zum Wiederholen), bevor man antwortet. Nur wenn Ton an ist.
+
 ## 2.54.1 – 2026-10-08
 - Korrektur: Im Dashboard fehlten durch einen Fehler in 2.54.0 zwei Funktionen („inviteCard is not defined“); Spieler anlegen und „Neuer Code“ zeigen Link und Code wieder an. Server-Update nötig.
 
