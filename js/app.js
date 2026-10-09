@@ -406,9 +406,13 @@
         if (fresh) setTimeout(function () { try { if (S.state.settings.audio) global.VTC.sound(S.state.profile.snd, true); global.VTC.burst(S.state.profile.fx, global.innerWidth / 2, global.innerHeight * .4, 14, 1); } catch (e) {} }, 350);
         return '<span class="stp ' + cls + (fresh ? " new" : "") + '"><span class="stpi">' + (d.ok ? sIcon : d.joker ? "🃏" : d.today ? "▶" : d.future ? "○" : "·") + '</span><small>' + lab + '</small></span>';
       }).join("") + '</div>' + (w.joker ? '<p class="small muted" style="margin:6px 0 0">🃏 Joker: ein verpasster Tag zählt in dieser Woche trotzdem mit.</p>' : '<p class="small muted" style="margin:6px 0 0">🃏 Pro Woche zählt ein verpasster Tag als Joker mit.</p>');
+      var TN = { bronze: "🥉 Bronze", silber: "🥈 Silber", gold: "🥇 Gold" };
+      var tierHtml = '<div class="ptiers">' + w.tiers.map(function (t) {
+        return '<button class="ptr ' + t.k + (t.got ? " got" : t.ok ? " rdy" : "") + '" ' + (t.ok && !t.got ? 'data-act="passtier" data-n="' + w.n + '" data-k="' + t.k + '"' : "disabled") + '><b>' + TN[t.k] + '</b><small>' + t.d + ' Tage</small><span>' + (t.got ? "✓" : "+" + t.c + " 🪙") + '</span></button>';
+      }).join("") + '</div>';
       det = '<div class="pdet"><b>Woche ' + w.n + ': ' + esc(w.title) + '</b><p class="small" style="margin:4px 0 6px">Schaffe an <b>' + w.need + ' Tagen</b> dein Tagesziel: <b class="tnum">' + w.cnt + ' / ' + w.need + '</b>' +
         (w.state === "cur" && w.left != null ? ' · noch ' + w.left + ' ' + plural(w.left, "Tag", "Tage") : w.state === "missed" ? ' · Zeit abgelaufen' : "") + '</p>' +
-        dayDots + '<div class="rcards" style="margin-top:10px">' + w.items.map(function (id) { var it = S.itemById(id), x = rcard(id, !w.claimed && w.state !== "ready"); return x + (it && it.kind === "avatar" && S.itemById("st:" + id.slice(3)) ? rcard("st:" + id.slice(3), !w.claimed && w.state !== "ready") : ""); }).join("") +
+        dayDots + tierHtml + '<div class="rcards" style="margin-top:10px">' + w.items.map(function (id) { var it = S.itemById(id), x = rcard(id, !w.claimed && w.state !== "ready"); return x + (it && it.kind === "avatar" && S.itemById("st:" + id.slice(3)) ? rcard("st:" + id.slice(3), !w.claimed && w.state !== "ready") : ""); }).join("") +
         (w.slot ? '<div class="rcard extra"><span class="ri em">🏷️</span><b>+1 Sticker-Platz</b></div>' : "") + (w.coins ? '<div class="rcard extra"><span class="ri em">🪙</span><b>+' + w.coins + ' Münzen</b></div>' : "") + (w.boost ? '<div class="rcard extra"><span class="ri em">⚡</span><b>+' + w.boost + ' XP-Booster</b></div>' : "") + '</div>' +
         (w.state === "ready" ? '<button class="btn wide lg" data-act="passclaim" data-n="' + w.n + '" style="margin-top:10px">🎁 Set abholen</button>' : w.claimed ? '<p class="small muted" style="margin:10px 0 0">Schon abgeholt. 🎉</p>' : "") + '</div>';
     }
@@ -418,8 +422,10 @@
       return '<button class="phc ' + rr + (x.claimed ? " got" : "") + '" data-act="passsel" data-n="' + x.n + '"><span class="phr">' + (RAR_NAME[rr] || "") + '</span>' +
         '<span class="phi' + (x.claimed ? "" : " sil") + '">' + itemIcon(it) + '</span><b>' + (x.claimed ? esc(it.label) : "???") + '</b><small>' + (x.claimed ? "✓ abgeholt" : x.label) + '</small></button>';
     }).join("") + '</div><div class="small muted" style="margin:-2px 0 8px">Die Highlights dieser Saison</div>' : "";
+    var nx = info.started && !info.over && info.weeks[info.idx + 1], secret = "";
+    if (nx) { var nm = (nx.items.map(S.itemById).filter(function (x) { return x && x.kind === "avatar"; })[0] || S.itemById(nx.items[0])); if (nm) secret = '<div class="psec ' + S.rarityOf(nm) + '"><span class="phi sil">' + itemIcon(nm) + '</span><div><b>🎁 Geheimes Geschenk</b><small>Woche ' + nx.n + ' · ' + (RAR_NAME[S.rarityOf(nm)] || "") + ' · kommt Montag, ' + nx.days[0].k.split("-").reverse().slice(0, 2).join(".") + '.</small></div></div>'; }
     return '<section class="card passc"><div class="row"><div class="eyebrow" style="flex:1 1 auto">' + icon + ' ' + esc(s.title) + '</div><span class="pill tnum">' + head + '</span></div>' + hlHtml +
-      '<div class="ptiles">' + tiles + '</div>' + det + '</section>';
+      '<div class="ptiles">' + tiles + '</div>' + secret + det + '</section>';
   }
   function passIcon(s) { return { Zauberwald: "🔮", "Beute-Insel": "🪂", Sternenreise: "🌌" }[s.title] || "❄️"; }
   /* Die 2 bis 3 größten Geschenke einer Saison: höchste Seltenheit, in Reihenfolge der Wochen */
@@ -1071,7 +1077,7 @@
     else if (beuteSeg === "showroom") { viewShowroom(); topSegs(top); }
     else {
       view.innerHTML = '<div class="stack">' + top + passCard() +
-        '<section class="card"><div class="eyebrow">So funktioniert der Monatspass</div><p class="small muted" style="margin:6px 0 0">Der Pass läuft einen Monat in vier Wochen plus Finale. Jede Woche zählt, an wie vielen Tagen du dein Tagesziel schaffst, und jeder Tag gibt einen Stempel. Ein verpasster Tag pro Woche zählt als Joker mit. Sind genug Tage zusammen, öffnest du die Wochen-Beute mit Figur, Tanz, Sticker und Münzen. Alle vier Wochen geschafft? Dann wartet das Finale.</p></section></div>';
+        '<section class="card"><div class="eyebrow">So funktioniert der Monatspass</div><p class="small muted" style="margin:6px 0 0">Der Pass läuft einen Monat in vier Wochen plus Finale. Jede Woche zählt, an wie vielen Tagen du dein Tagesziel schaffst, und jeder Tag gibt einen Stempel. Ein verpasster Tag pro Woche zählt als Joker mit. Sind genug Tage zusammen, öffnest du die Wochen-Beute mit Figur, Tanz, Sticker und Münzen. Schon ab 3 Tagen gibt es Bronze, bei 5 Silber, bei 7 Gold, jeweils mit Münzen. Und nächste Woche wartet ein geheimes Geschenk. Alle vier Wochen geschafft? Dann wartet das Finale.</p></section></div>';
     }
   }
   function designCard() {
@@ -2843,6 +2849,7 @@
       renderHeader(); render();
     }
     else if (a === "passsel") { var pn = act.getAttribute("data-n"); passSel = pn === "fin" ? "fin" : +pn; render(); }
+    else if (a === "passtier") { var tr = S.claimPassTier(+act.getAttribute("data-n"), act.getAttribute("data-k")); if (tr.error) toast(tr.error); else { try { if (S.state.settings.audio) global.VTC.sound(S.state.profile.snd, true); var rc = act.getBoundingClientRect(); global.VTC.burst("stars", rc.left + rc.width / 2, rc.top, 12, 1); } catch (e) {} toast("+" + tr.coins + " 🪙 " + ({ bronze: "Bronze", silber: "Silber", gold: "Gold" })[tr.k]); renderHeader(); render(); } }
     else if (a === "passclaim") { openPassReward(act.getAttribute("data-n")); }
     else if (a === "sritem") { srModal(act.getAttribute("data-id")); }
     else if (a === "hhdance") {

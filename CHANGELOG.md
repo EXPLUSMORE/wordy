@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.64.0 – 2026-10-09
+- Pass: Wochenstufen Bronze (3 Tage, +5 🪙), Silber (5 Tage, +10 🪙) und Gold (7 Tage, +20 🪙), einzeln abholbar (`claimPassTier`, `state.pass.tiers`). Auch wer nur 3 bis 4 Tage schafft, geht nicht leer aus.
+- Pass: „Geheimes Geschenk“ als Silhouette mit Seltenheit und „kommt Montag, TT.MM.“ für die nächste Woche.
+
 ## 2.63.0 – 2026-10-09
 - Pass: Joker-Tag (pro Woche zählt ein verpasster, vergangener Tag trotzdem mit, sobald mindestens ein Tag geschafft ist, keine Strafe) und Stempelkarte statt der kleinen Tagespunkte: sieben Stempel mit dem Symbol der Saison, Joker als 🃏, heutiger Tag pulsiert, der neue Stempel „knallt“ einmal mit Ton und Funken ein. Auf der Ergebnisseite steht „Pass-Stempel: Woche N, x von y Tagen“.
 
