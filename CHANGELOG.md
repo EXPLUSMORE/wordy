@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.54.5 – 2026-10-09
+- Auslieferung: Die Versionen 2.53.8 bis 2.54.4 wurden von GitHub Pages nicht veröffentlicht (Push auf zwei Zweige in einem Befehl). Enthält alle Änderungen dieser Versionen.
+
 ## 2.54.4 – 2026-10-09
 - Profil: „Design“ ist eine eigene zugeklappte Zeile direkt unter „Lernen“ (nicht mehr darin).
 
