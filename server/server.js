@@ -511,6 +511,7 @@ function apiSync(pid) {
     pathUnits: pathUnitsOf(pid),
     weekPlan: weekPlanOf(pid),
     bossDiff: bossDiffOf(pid),
+    selfChoose: selfChooseOf(pid),
     coinFactor: coinFactorOf(pid),
     gifts: giftsOf(pid).slice(-20),
     season: seasonOf(pid)
@@ -527,6 +528,9 @@ function setWeekPlan(pid, body) {
   return [200, { ok: true, plan }];
 }
 /* Schwierigkeit der Boss-Runden: leicht, normal oder schwer (Zielwerte x 0,7 / 1 / 1,3) */
+/* Wer wählt den Stoff? Standard: gesteuert (Eltern/Lehrkraft über die Pfad-Einheiten). „Kind wählt selbst“ gibt die Lernbereiche frei. */
+function selfChooseOf(pid) { const r = q.kvGet.get("selfchoose:" + pid); return !!(r && r.val === "1"); }
+function setSelfChoose(pid, body) { q.kvSet.run("selfchoose:" + pid, body && body.on ? "1" : "0"); return [200, { ok: true, on: !!(body && body.on) }]; }
 function bossDiffOf(pid) { const r = q.kvGet.get("bossdiff:" + pid); return r && (r.val === "leicht" || r.val === "schwer") ? r.val : "normal"; }
 function setBossDiff(pid, body) {
   const v = body && (body.diff === "leicht" || body.diff === "schwer") ? body.diff : "normal";
@@ -1317,6 +1321,8 @@ const server = http.createServer(async (req, res) => {
         if (m[2] === "gifts" && req.method === "POST") { const [c, b] = addGift(pid, await readJson(req)); return send(res, c, b); }
         if (m[2] === "coinfactor" && req.method === "GET") return send(res, 200, { factor: coinFactorOf(pid) });
         if (m[2] === "coinfactor" && req.method === "POST") { const [c, b] = setCoinFactor(pid, await readJson(req)); return send(res, c, b); }
+        if (m[2] === "selfchoose" && req.method === "GET") return send(res, 200, { on: selfChooseOf(pid) });
+        if (m[2] === "selfchoose" && req.method === "POST") { const [c, b] = setSelfChoose(pid, await readJson(req)); return send(res, c, b); }
         if (m[2] === "bossdiff" && req.method === "GET") return send(res, 200, { diff: bossDiffOf(pid) });
         if (m[2] === "bossdiff" && req.method === "POST") { const [c, b] = setBossDiff(pid, await readJson(req)); return send(res, c, b); }
         if (m[2] === "pathunits" && req.method === "GET") return send(res, 200, pathUnitsOf(pid));

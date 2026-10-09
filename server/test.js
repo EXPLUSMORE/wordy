@@ -146,6 +146,9 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     assert.equal(plr.j[0].daysLeft, 3);
     const ml = await J("/api/admin/mail/test", { method: "POST", headers: H });
     assert.equal(ml.j.ok, true, "Testmail: " + (ml.j.error || ""));
+    assert.equal((await J("/api/admin/players/" + mk.j.id + "/selfchoose", { headers: H })).j.on, false, "gesteuert ist Standard");
+    assert.equal((await J("/api/admin/players/" + mk.j.id + "/selfchoose", { method: "POST", headers: H, body: JSON.stringify({ on: true }) })).s, 200);
+    assert.equal((await J("/api/admin/players/" + mk.j.id + "/selfchoose", { headers: H })).j.on, true, "Kind wählt selbst gespeichert");
     const mt = await J("/api/admin/mail", { method: "POST", headers: { ...H, "Content-Type": "application/json" }, body: JSON.stringify({ to: "eltern@example.de, oma@example.de" }) });
     assert.equal(mt.s, 200, "Empfänger speichern");
     assert.equal((await J("/api/admin/mail", { headers: H })).j.to, "eltern@example.de,oma@example.de", "Empfänger aus Dashboard");

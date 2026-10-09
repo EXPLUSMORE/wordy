@@ -1000,6 +1000,19 @@ details.fold>.fbody{padding:2px 0 14px}
 #boot.off{opacity:0;visibility:hidden}
 @keyframes bootpop{from{transform:scale(.7);opacity:0}to{transform:none;opacity:1}}
 @media (prefers-reduced-motion:reduce){#boot img{animation:none}}
+
+/* Start: „Dein Tag“ – feste Reihenfolge, was heute dran ist */
+.dwl{position:relative;margin-top:10px;padding-left:2px}
+.dwl:before{content:"";position:absolute;left:19px;top:18px;bottom:18px;width:3px;background:var(--line);border-radius:2px}
+.dws{display:flex;gap:12px;align-items:flex-start;position:relative;margin-bottom:10px}
+.dwd{flex:none;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--card-2);border:2px solid var(--line);font-size:17px;font-weight:700;color:var(--ink-2);position:relative;z-index:1}
+.dws.d .dwd{background:var(--good);border-color:var(--good);color:#fff}
+.dws.now .dwd{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.dwc{flex:1 1 auto;min-width:0;display:flex;gap:10px;align-items:center;background:var(--card-2);border-radius:14px;padding:10px 12px;border:2px solid transparent}
+.dws.now .dwc{border-color:var(--accent);background:var(--card)}
+.dws.d .dwc{opacity:.78}
+.dwt{flex:1 1 auto;min-width:0}.dwt b{font-size:15px}
+.dwb{flex:none;white-space:nowrap}.dwc .btn.dwb{width:auto;padding:9px 14px}
 </style>
 
 <div id="app">

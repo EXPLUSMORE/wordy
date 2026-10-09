@@ -623,7 +623,8 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
         '<details style="margin-top:6px"><summary class="small" style="cursor:pointer">Letzte Boss-Runden</summary>' + bl.slice().reverse().slice(0, 15).map(function (b) {
           var d = new Date(b.t); return '<div class="small">' + (b.ok ? "✅" : "❌") + " " + esc(b.s) + " · " + (MN[b.m] || b.m) + " · " + b.c + "/" + b.need + (b.base && b.base !== b.need ? " (Ziel erleichtert von " + b.base + ")" : "") + " · Versuch " + b.a + " · " + d.getDate() + "." + (d.getMonth() + 1) + ". " + String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0") + "</div>"; }).join("") + '</details>';
     } else h += '<p class="small muted" style="margin:8px 0 0">Noch keine Boss-Runde gespielt. Die Ergebnisse erscheinen hier, sobald die App sie gesendet hat.</p>';
-    h += '<p class="small muted" style="margin:14px 0 0" id="pathSel">Lade Auswahl …</p>' +
+    h += '<label class="row" style="margin:14px 0 0;gap:8px;font-size:14px"><input type="checkbox" id="selfCh" style="width:auto"> <span><b>Kind wählt den Stoff selbst</b><br><span class="muted small">Aus (Standard) = gesteuert: Challenge, Üben und Pfad nutzen die Einheiten unten, das Kind merkt davon nichts. An = das Kind sieht die Lernbereiche und wählt aus der Liste (sinnvoll für ältere Schüler).</span></span></label><span id="selfMsg" class="small"></span>' +
+      '<p class="small muted" style="margin:14px 0 0" id="pathSel">Lade Auswahl …</p>' +
       '<details style="margin-top:10px" id="pathDet"><summary style="cursor:pointer;color:var(--acc);font-weight:600">Einheiten für den Lernpfad wählen</summary><div id="pathPickBox" style="margin-top:10px"></div></details>';
     el.innerHTML = h;
     api("/api/admin/players/" + p.id + "/coinfactor").then(function (x) {
@@ -633,6 +634,10 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     api("/api/admin/players/" + p.id + "/bossdiff").then(function (x) {
       var sl = document.getElementById("bossDiff"); if (!sl) return; sl.value = x.diff || "normal";
       sl.onchange = function () { post("/api/admin/players/" + p.id + "/bossdiff", { diff: sl.value }).then(function () { var m = document.getElementById("bossMsg"); if (m) { m.className = "small"; m.textContent = "Gespeichert. Die App übernimmt es beim nächsten Öffnen."; } }).catch(function (e) { var m = document.getElementById("bossMsg"); if (m) { m.className = "small err"; m.textContent = e.message; } }); };
+    }).catch(function () {});
+    api("/api/admin/players/" + p.id + "/selfchoose").then(function (x) {
+      var cb = document.getElementById("selfCh"); if (!cb) return; cb.checked = !!x.on;
+      cb.onchange = function () { post("/api/admin/players/" + p.id + "/selfchoose", { on: cb.checked }).then(function () { var m = document.getElementById("selfMsg"); if (m) { m.className = "small"; m.textContent = "Gespeichert. Die App übernimmt es beim nächsten Öffnen."; } }).catch(function (e) { var m = document.getElementById("selfMsg"); if (m) { m.className = "small err"; m.textContent = e.message; } }); };
     }).catch(function () {});
     Promise.all([api("/api/admin/players/" + p.id + "/pathunits"), catCache[p.id] ? Promise.resolve(catCache[p.id]) : getCatalog(p.id)]).then(function (res) {
       var cur = res[0] || [], cat = res[1] || [], sel = document.getElementById("pathSel"); if (!sel) return;

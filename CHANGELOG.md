@@ -9,6 +9,11 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.55.0 – 2026-10-09
+- Start-Reiter „Dein Tag“: feste Reihenfolge mit Häkchen und Weg (Daily Challenge, Pfad-Station, Lernplan/Klassenaufgabe, Tagesziel), Hero mit Status und Streak bleibt. Der Lernpfad liegt jetzt unter Lernen › Pfad.
+- Gesteuertes Lernen: Ist die App mit dem Server verbunden, kommen Challenge, Üben und Pfad aus den im Dashboard gewählten Pfad-Einheiten (Standard: Headlight 2), ohne Hinweis für das Kind. Neuer Dashboard-Schalter „Kind wählt den Stoff selbst“ (Spieler › Pfad) gibt die Lernbereiche frei.
+- Lernbereich neu geordnet: Schulbücher (nach Schuljahr und Schulzweig, Headlight 2 = Klasse 6 · Realschule), dann Klassen-Listen, dann eigene Listen. Server-Update für den Schalter nötig.
+
 ## 2.54.6 – 2026-10-09
 - Dashboard „Heute“: Fehlt zum Tagesziel nur ein kleiner Rest (z. B. 9:40 statt 10:00 Min., gerundet „10 Min.“), steht jetzt die genaue Zeit und „Noch 20 Sek. bis zum Tagesziel“ statt eines unerklärlich gelben Balkens. Server-Update nötig.
 

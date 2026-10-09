@@ -557,8 +557,18 @@
     if (!Array.isArray(s[key]) || !s[key].length) s[key] = biz ? ["Basis"] : ["Headlight 2"];   // immer mindestens eine Auswahl
     return s[key];
   }
+  /* Gesteuert lernen: Schule + mit dem Server verbunden + Eltern haben „Kind wählt selbst“ nicht freigegeben.
+     Dann kommen alle Übungen aus den Einheiten des Lernpfads (Dashboard-Auswahl, sonst Headlight 2). Das Kind merkt davon nichts. */
+  function steered() {
+    var W = global.WordySync;
+    return state.settings.track !== "business" && !!(W && W.connected && W.connected() && !((W.remote() || {}).selfChoose));
+  }
   function activeWords() {
     var s = state.settings, sel = groupsOf();
+    if (steered() && !(s.units && s.units.length)) {
+      var ids = {}, ul = pathUnitList(); ul.forEach(function (u) { ids[u.id] = 1; });
+      if (ul.length) return words.filter(function (w) { return ids[w.unit] || w.track === "eigen"; });
+    }
     return words.filter(function (w) {
       if (s.units && s.units.length) return s.units.indexOf(w.unit) >= 0;
       if (w.track === "eigen") return true;            // eigene Listen immer aktiv
@@ -1264,6 +1274,7 @@
         p.pending.push(chest);
       }
     }
+    if (state.daily) state.daily.pathDone = (state.daily.pathDone || 0) + 1;   // für „Dein Tag“ auf dem Start-Reiter
     pathSync(); save(true);
     return { advanced: adv, chest: chest, finished: p.pos >= pathStations().length };
   }
@@ -1340,6 +1351,6 @@
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
-    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, boost: boost, coinFactor: coinFactor, avgCoins: avgCoins, dealItem: dealItem, priceOf: priceOf, passInfo: passInfo, favs: favs, toggleFav: toggleFav, collection: collection, findCollItem: findCollItem, CUP_TIERS: CUP_TIERS, claimPassWeek: claimPassWeek, claimPassFinale: claimPassFinale, passMeta: passMeta, rarityOf: rarityOf, shopList: shopList, activeSetDeal: activeSetDeal, buySet: buySet, takeNews: takeNews, SETS: SETS, itemById: itemById, minXp: minXp, defaultOf: defaultOf
+    resetProgress: resetProgress, steered: steered, pathUnitList: pathUnitList, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, boost: boost, coinFactor: coinFactor, avgCoins: avgCoins, dealItem: dealItem, priceOf: priceOf, passInfo: passInfo, favs: favs, toggleFav: toggleFav, collection: collection, findCollItem: findCollItem, CUP_TIERS: CUP_TIERS, claimPassWeek: claimPassWeek, claimPassFinale: claimPassFinale, passMeta: passMeta, rarityOf: rarityOf, shopList: shopList, activeSetDeal: activeSetDeal, buySet: buySet, takeNews: takeNews, SETS: SETS, itemById: itemById, minXp: minXp, defaultOf: defaultOf
   };
 })(window);

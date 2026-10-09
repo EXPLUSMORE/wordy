@@ -693,6 +693,40 @@
     if (p.fresh.length) return { icon: "✨", title: "Neue Wörter", sub: "Nichts ist fällig. Zeit für etwas Neues.", opts: { minutes: mins, mode: "new" } };
     return { icon: "🏆", title: "Daily Challenge", sub: "Eine bunte Runde aus allem.", opts: { minutes: mins, mode: "mix" } };
   }
+  /* „Dein Tag“: feste Reihenfolge der Dinge, die heute dran sind (Daily Challenge, Pfad, Lernplan/Klassenaufgabe, Tagesziel) */
+  function dayCard(pct) {
+    var st = S.state, W = window.WordySync, steps = [], goalSec = S.goalMin() * 60, d = st.daily || {};
+    steps.push({ icon: "🏆", t: "Daily Challenge", sub: S.challengeDone() ? "geschafft · Zusatz-Runden sind Bonus" : "Bunte Runde aus allem, was dran ist · 🪙 10", done: S.challengeDone(),
+      go: 'data-act="start" data-mode="mix" data-min="' + S.goalMin() + '"', btn: S.challengeDone() ? "Zusatz" : "Los ▶" });
+    var all = st.settings.pathOn === false ? [] : S.pathStations();
+    if (all.length) {
+      var p = S.pathSync(), fin = p.pos >= all.length;
+      if (!fin) {
+        var cur = all[p.pos], did = (d.pathDone || 0) > 0;
+        steps.push({ icon: "🗺️", t: "Pfad: " + (cur.last ? "Boss-Runde" : "Station " + cur.n), sub: esc(cur.sectionTitle) + (cur.last ? " · " + BOSS_NAMES[cur.bossMode] : " · Station " + cur.n + " von " + cur.of), done: did,
+          go: 'data-act="pathgo" data-id="' + esc(cur.id) + '"', btn: did ? "Weiter" : (cur.last ? "Boss ⚔️" : "Los ▶") });
+      }
+    }
+    if (W && W.connected()) W.activePlans().forEach(function (pl) {
+      var i = W.planInfo(pl), newToday = d.newSeen || 0, left = Math.max(0, i.quota - newToday), when = i.days > 1 ? "in " + i.days + " Tagen" : i.days === 1 ? "morgen" : "heute";
+      steps.push({ icon: pl.cls ? "🏫" : "📅", t: (pl.cls ? "Klassenaufgabe: " : "Lernplan: ") + esc(pl.title), sub: (pl.cls ? "Ende " : "Arbeit ") + when + " · " + i.pct + " % sicher" + (left ? " · heute " + left + " neue" : ""), done: left === 0 && i.pct >= 1,
+        go: 'data-act="startplan" data-id="' + esc(pl.id) + '"', btn: "Üben" });
+    });
+    var goalDone = pct >= 100;
+    steps.push({ icon: "🎯", t: "Tagesziel " + S.goalMin() + " Min.", sub: goalDone ? "geschafft · alles Weitere ist Bonus" : "noch " + fmtMin(Math.max(0, goalSec - (d.sec || 0))), done: goalDone,
+      go: 'data-act="start" data-mode="mix" data-min="' + Math.max(5, Math.min(15, Math.ceil(Math.max(0, goalSec - (d.sec || 0)) / 60))) + '"', btn: "Los ▶" });
+    var nowIx = -1; steps.forEach(function (s, i) { if (nowIx < 0 && !s.done) nowIx = i; });
+    var doneN = steps.filter(function (s) { return s.done; }).length;
+    var h = '<section class="card dayw"><div class="row" style="align-items:baseline"><div class="eyebrow" style="flex:1 1 auto">Dein Tag</div><span class="small muted tnum">' + doneN + ' von ' + steps.length + '</span></div><div class="dwl">';
+    steps.forEach(function (s, i) {
+      var now = i === nowIx;
+      h += '<div class="dws' + (s.done ? " d" : "") + (now ? " now" : "") + '"><div class="dwd">' + (s.done ? "✓" : now ? (i + 1) : s.icon) + '</div>' +
+        '<div class="dwc"><div class="dwt"><b>' + (s.done || now ? s.icon + " " : "") + s.t + '</b><span class="small muted" style="display:block">' + s.sub + '</span></div>' +
+        (s.done && s.btn !== "Weiter" && s.btn !== "Zusatz" ? "" : '<button class="' + (now ? "btn" : "chip") + ' dwb" ' + s.go + '>' + s.btn + '</button>') + '</div></div>';
+    });
+    h += '</div>' + (all.length ? '<div style="text-align:center;margin-top:4px"><button class="chip" data-act="gopfad">Ganzen Pfad ansehen →</button></div>' : "") + '</section>';
+    return h;
+  }
   function viewHome() {
     var st = S.state, r = S.rankOf(st.xp);
     var goalSec = S.goalMin() * 60, pct = Math.min(100, Math.round(st.daily.sec * 100 / goalSec));
@@ -721,16 +755,10 @@
       '<div class="hhchips"><span class="hhc">🔥 <b class="tnum">' + st.streak.count + '</b></span><span class="hhc">🪙 <b class="tnum">' + st.coins + '</b></span></div></div>' +
       '</section>';
 
-    html += pathCard();
-
-    html += parentCards("plans");
+    html += dayCard(pct);
 
     var wish = S.wish();
-    var chDone = S.challengeDone();
-    html += '<section class="card"><div class="eyebrow">Heute</div><div style="margin-top:6px">' +
-      '<div class="mission' + (chDone ? " done" : "") + '"><div class="tick">' + (chDone ? "✓" : "🏆") + '</div><div class="txt"><div class="small" style="font-weight:600">Daily Challenge</div>' +
-      '<div class="row" style="margin-top:4px;gap:8px"><span class="small muted" style="flex:1 1 auto">' + (chDone ? "Bonus geholt. Weitere Runden sind Zusatz-Runden." : "Bunte Runde aus allem, was dran ist.") + '</span><button class="chip" style="white-space:nowrap" data-act="start" data-mode="mix" data-min="' + S.goalMin() + '">' + (chDone ? "Zusatz →" : "Los →") + '</button></div></div>' +
-      '<div class="pill nowrap">' + (chDone ? "✓" : "🪙 10") + '</div></div>' +
+    html += '<section class="card"><div class="eyebrow">Tagesmissionen</div><div style="margin-top:6px">' +
       st.daily.missions.map(function (m) {
         var pc = Math.min(100, Math.round(m.p * 100 / m.goal)), go = m.done ? "" : missionGo(m);
         return '<div class="mission' + (m.done ? " done" : "") + '"><div class="tick">✓</div>' +
@@ -950,10 +978,13 @@
   function topSegs(html) { var st = view.querySelector(".stack"); if (st) st.insertAdjacentHTML("afterbegin", html); else view.insertAdjacentHTML("afterbegin", html); }
   function viewLernen() {
     var seg = detailUnit ? "units" : lernSeg;
-    var top = segBar("lernen", seg, [["ueben", "🎮 Üben"], ["units", "📚 Lernbereich"], ["stats", "📈 Fortschritt"]]);
+    var pfadOn = S.state.settings.pathOn !== false && S.pathStations().length > 0;
+    if (seg === "pfad" && !pfadOn) seg = "ueben";
+    var top = segBar("lernen", seg, (pfadOn ? [["pfad", "🗺️ Pfad"]] : []).concat([["ueben", "🎮 Üben"], ["units", "📚 Lernbereich"], ["stats", "📈 Fortschritt"]]));
     if (detailUnit === "__verbs") return viewVerbList();
     if (detailUnit) return viewUnitDetail(detailUnit);
     if (seg === "stats") viewStats();
+    else if (seg === "pfad") view.innerHTML = '<div class="stack">' + pathCard() + '</div>';
     else {
       view.innerHTML = '<div class="stack">' + (seg === "units" ? unitsHtml() : modiHtml("lern")) + '</div>';
       $$("details.grp").forEach(function (d) { d.addEventListener("toggle", function () { openGroups[d.getAttribute("data-k")] = d.open; }); });
@@ -1052,8 +1083,9 @@
     var groups = biz ? ["Basis", "Aufbau", "Profi", "Smalltalk", "Redewendungen"] : ["Headlight 2", 6, 7, 8];
     var sel = S.groupsOf();
     var html = '';
-    html += '<section class="card"><div class="eyebrow">Lernbereich</div><div style="margin-top:8px">' + trackSwitch() + '</div></section>';
-    html += '<section class="card">' +
+    var guided = S.steered();   // gesteuert: das Kind sieht nur die Einheiten, die für es vorgesehen sind (ohne Hinweis darauf)
+    if (!guided) html += '<section class="card"><div class="eyebrow">Lernbereich</div><div style="margin-top:8px">' + trackSwitch() + '</div></section>';
+    if (!guided) html += '<section class="card">' +
       '<div class="eyebrow">' + (biz ? "Stufe" : "Schuljahr") + '</div>' +
       '<div class="row wrap" style="margin-top:8px">' +
       groups.map(function (k) {
@@ -1069,16 +1101,25 @@
         '<span class="small muted" style="display:block">' + vs0.seen + ' von ' + vs0.total + ' geübt · ' + vs0.mastered + ' sitzen</span></span></summary>' +
         verbCard().replace(/^<section class="card"[^>]*>(<div class="row"><div style="flex:1 1 auto"><div class="eyebrow">[^<]*<\/div>)/, '<div class="row"><div style="flex:1 1 auto">').replace(/<\/section>$/, "") + '</details>';
     }
-    var byGroup = {}, order = [];
+    var byGroup = {}, order = [], guidedIds = {};
+    if (guided) S.pathUnitList().forEach(function (x) { guidedIds[x.id] = 1; });
     stt.perUnit.forEach(function (u) {
-      if (u.track !== "eigen" && sel.indexOf(u.k) < 0) return;   // nur die gewählten Stufen bzw. Jahrgänge
+      if (guided) { if (u.track !== "eigen" && !guidedIds[u.id]) return; }
+      else if (u.track !== "eigen" && sel.indexOf(u.k) < 0) return;   // nur die gewählten Stufen bzw. Jahrgänge
       var key = String(u.k);
       if (!byGroup[key]) { byGroup[key] = []; order.push(key); }
       byGroup[key].push(u);
     });
     order.sort(function (a, b) { var ia = groups.indexOf(/^\d+$/.test(a) ? +a : a), ib = groups.indexOf(/^\d+$/.test(b) ? +b : b); return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); });
+    var secShown = {};
+    function secHead(id, h, sub) { if (guided || biz || secShown[id]) return ""; secShown[id] = 1; return '<div class="eyebrow" style="margin:18px 2px 2px">' + h + '</div><div class="small muted" style="margin:0 2px 8px">' + sub + '</div>'; }
     order.forEach(function (k) {
-      var title = k === "0" ? "✏️ Eigene Vokabeln" : k === "Headlight 2" ? "📕 Headlight 2 (Schulbuch)" : groupLabel(byGroup[k][0].k);
+      var secH = k === "Headlight 2" ? secHead("books", "📕 Schulbücher", "Offizielle Schulbücher, nach Schuljahr und Schulzweig")
+        : k === "0" ? secHead("own", "✏️ Eigene Listen", "Deine eigenen Vokabellisten")
+        : secHead("cls", "📘 Klassen-Listen", "Nicht an ein Schulbuch gebunden");
+      var bk0 = BOOKS.filter(function (b) { return byGroup[k][0].id.indexOf(b.pre) === 0; })[0];
+      var title = k === "0" ? "✏️ Eigene Vokabeln" : k === "Headlight 2" ? "📕 Headlight 2 · Klasse " + (bk0 ? bk0.jahr : 6) + " · " + (bk0 ? bk0.zweig : "Realschule") : groupLabel(byGroup[k][0].k);
+      html += secH;
       var books = [], rest = [];
       byGroup[k].forEach(function (u) { (BOOKS.filter(function (b) { return u.id.indexOf(b.pre) === 0; })[0] ? books : rest).push(u); });
       function unitRow(u) {
@@ -1099,7 +1140,7 @@
     return html;
   }
   /* Buchkachel: selbst gezeichnetes Cover über den Einheiten eines Schulbuchs */
-  var BOOKS = [{ pre: "H2-", name: "HEADLIGHT", no: "2", sub: "Schulbuch · Unit 1–6" }];
+  var BOOKS = [{ pre: "H2-", name: "HEADLIGHT", no: "2", sub: "Schulbuch · Unit 1–6", jahr: 6, zweig: "Realschule" }];
   function bookTile(b, us) {
     var m = 0, t = 0; us.forEach(function (u) { m += u.mastered; t += u.total; });
     var pc = Math.round(m * 100 / Math.max(1, t));
@@ -1299,7 +1340,7 @@
     { k: "fn", n: "Fortnite" }, { k: "bg", n: "Hintergründe" }, { k: "fx", n: "Effekte" }, { k: "dance", n: "Tänze 💃" }, { k: "outfit", n: "Outfits 👕" }, { k: "kit", n: "Trikots ⚽" }, { k: "sets", n: "Sets ⭐" }, { k: "snd", n: "Töne" }, { k: "theme", n: "Farben" }
   ];
   var KIND_NAME = { sticker: "Sticker", avatar: "Figur", frame: "Rahmen", title: "Titel", bg: "Hintergrund", fx: "Effekt", dance: "Tanz", outfit: "Outfit", kit: "Trikot", snd: "Ton", theme: "Farbwelt" };
-  var shopTab = "avatar", lernSeg = "ueben", spielSeg = "challenge", beuteSeg = "pass";
+  var shopTab = "avatar", lernSeg = "pfad", spielSeg = "challenge", beuteSeg = "pass";
   var TABMAP = { ueben: "lernen", stats: "lernen", shop: "beute", showroom: "beute" };
   var THEME_DOT = { paper: "#1E6273", mint: "#2E7357", plum: "#6A3D70", amber: "#8A5A1B" };
   function shopIcon(it) {
@@ -2629,6 +2670,7 @@
     else if (a === "wfilter") { wFilter = act.getAttribute("data-f"); wMax = 40; render(); }
     else if (a === "wmore") { wMax += 40; $("#wList").innerHTML = wordListHtml(); }
     else if (a === "setmin") { startMin = +act.getAttribute("data-min"); render(); }
+    else if (a === "gopfad") { tab = "lernen"; lernSeg = "pfad"; detailUnit = null; render(); view.scrollTop = 0; }
     else if (a === "goueben") { tab = "ueben"; uebenSeg = "modi"; detailUnit = null; render(); view.scrollTop = 0; }
     else if (a === "back") { stopReading(); detailUnit = null; render(); }
     else if (a === "readall") {
@@ -2892,6 +2934,7 @@
   render();
   (function () { var bt = document.getElementById("boot"); if (bt) setTimeout(function () { bt.classList.add("off"); setTimeout(function () { if (bt.parentNode) bt.parentNode.removeChild(bt); }, 600); }, 350); })();
   pickPlayer();
+  setTimeout(function () { if (window.WordySync && sessionEl.hidden && (tab === "home" || tab === "lernen")) render(); }, 300);   // sync.js lädt nach app.js: Verbindung und Pläne erst jetzt sichtbar
   /* Verbindungslink der Eltern (#verbinden=<Adresse#Code>): nach Bestätigung automatisch verbinden */
   (function () {
     var m = String(location.hash || "").match(/^#verbinden=(.+)$/); if (!m) return;

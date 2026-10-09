@@ -1006,10 +1006,23 @@ details.fold>.fbody{padding:2px 0 14px}
 #boot.off{opacity:0;visibility:hidden}
 @keyframes bootpop{from{transform:scale(.7);opacity:0}to{transform:none;opacity:1}}
 @media (prefers-reduced-motion:reduce){#boot img{animation:none}}
+
+/* Start: „Dein Tag“ – feste Reihenfolge, was heute dran ist */
+.dwl{position:relative;margin-top:10px;padding-left:2px}
+.dwl:before{content:"";position:absolute;left:19px;top:18px;bottom:18px;width:3px;background:var(--line);border-radius:2px}
+.dws{display:flex;gap:12px;align-items:flex-start;position:relative;margin-bottom:10px}
+.dwd{flex:none;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--card-2);border:2px solid var(--line);font-size:17px;font-weight:700;color:var(--ink-2);position:relative;z-index:1}
+.dws.d .dwd{background:var(--good);border-color:var(--good);color:#fff}
+.dws.now .dwd{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.dwc{flex:1 1 auto;min-width:0;display:flex;gap:10px;align-items:center;background:var(--card-2);border-radius:14px;padding:10px 12px;border:2px solid transparent}
+.dws.now .dwc{border-color:var(--accent);background:var(--card)}
+.dws.d .dwc{opacity:.78}
+.dwt{flex:1 1 auto;min-width:0}.dwt b{font-size:15px}
+.dwb{flex:none;white-space:nowrap}.dwc .btn.dwb{width:auto;padding:9px 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.54.6";window.WORDY_BUILD="28c9de6359";</script>
+<script>window.WORDY_VERSION="2.55.0";window.WORDY_BUILD="dbed3fba22";</script>
 </head>
 <body>
 <div id="app">
@@ -4932,8 +4945,18 @@ window.VERBS = [
     if (!Array.isArray(s[key]) || !s[key].length) s[key] = biz ? ["Basis"] : ["Headlight 2"];   // immer mindestens eine Auswahl
     return s[key];
   }
+  /* Gesteuert lernen: Schule + mit dem Server verbunden + Eltern haben „Kind wählt selbst“ nicht freigegeben.
+     Dann kommen alle Übungen aus den Einheiten des Lernpfads (Dashboard-Auswahl, sonst Headlight 2). Das Kind merkt davon nichts. */
+  function steered() {
+    var W = global.WordySync;
+    return state.settings.track !== "business" && !!(W && W.connected && W.connected() && !((W.remote() || {}).selfChoose));
+  }
   function activeWords() {
     var s = state.settings, sel = groupsOf();
+    if (steered() && !(s.units && s.units.length)) {
+      var ids = {}, ul = pathUnitList(); ul.forEach(function (u) { ids[u.id] = 1; });
+      if (ul.length) return words.filter(function (w) { return ids[w.unit] || w.track === "eigen"; });
+    }
     return words.filter(function (w) {
       if (s.units && s.units.length) return s.units.indexOf(w.unit) >= 0;
       if (w.track === "eigen") return true;            // eigene Listen immer aktiv
@@ -5639,6 +5662,7 @@ window.VERBS = [
         p.pending.push(chest);
       }
     }
+    if (state.daily) state.daily.pathDone = (state.daily.pathDone || 0) + 1;   // für „Dein Tag“ auf dem Start-Reiter
     pathSync(); save(true);
     return { advanced: adv, chest: chest, finished: p.pos >= pathStations().length };
   }
@@ -5715,7 +5739,7 @@ window.VERBS = [
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
-    resetProgress: resetProgress, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, boost: boost, coinFactor: coinFactor, avgCoins: avgCoins, dealItem: dealItem, priceOf: priceOf, passInfo: passInfo, favs: favs, toggleFav: toggleFav, collection: collection, findCollItem: findCollItem, CUP_TIERS: CUP_TIERS, claimPassWeek: claimPassWeek, claimPassFinale: claimPassFinale, passMeta: passMeta, rarityOf: rarityOf, shopList: shopList, activeSetDeal: activeSetDeal, buySet: buySet, takeNews: takeNews, SETS: SETS, itemById: itemById, minXp: minXp, defaultOf: defaultOf
+    resetProgress: resetProgress, steered: steered, pathUnitList: pathUnitList, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, boost: boost, coinFactor: coinFactor, avgCoins: avgCoins, dealItem: dealItem, priceOf: priceOf, passInfo: passInfo, favs: favs, toggleFav: toggleFav, collection: collection, findCollItem: findCollItem, CUP_TIERS: CUP_TIERS, claimPassWeek: claimPassWeek, claimPassFinale: claimPassFinale, passMeta: passMeta, rarityOf: rarityOf, shopList: shopList, activeSetDeal: activeSetDeal, buySet: buySet, takeNews: takeNews, SETS: SETS, itemById: itemById, minXp: minXp, defaultOf: defaultOf
   };
 })(window);
 </script>
@@ -7591,6 +7615,40 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (p.fresh.length) return { icon: "✨", title: "Neue Wörter", sub: "Nichts ist fällig. Zeit für etwas Neues.", opts: { minutes: mins, mode: "new" } };
     return { icon: "🏆", title: "Daily Challenge", sub: "Eine bunte Runde aus allem.", opts: { minutes: mins, mode: "mix" } };
   }
+  /* „Dein Tag“: feste Reihenfolge der Dinge, die heute dran sind (Daily Challenge, Pfad, Lernplan/Klassenaufgabe, Tagesziel) */
+  function dayCard(pct) {
+    var st = S.state, W = window.WordySync, steps = [], goalSec = S.goalMin() * 60, d = st.daily || {};
+    steps.push({ icon: "🏆", t: "Daily Challenge", sub: S.challengeDone() ? "geschafft · Zusatz-Runden sind Bonus" : "Bunte Runde aus allem, was dran ist · 🪙 10", done: S.challengeDone(),
+      go: 'data-act="start" data-mode="mix" data-min="' + S.goalMin() + '"', btn: S.challengeDone() ? "Zusatz" : "Los ▶" });
+    var all = st.settings.pathOn === false ? [] : S.pathStations();
+    if (all.length) {
+      var p = S.pathSync(), fin = p.pos >= all.length;
+      if (!fin) {
+        var cur = all[p.pos], did = (d.pathDone || 0) > 0;
+        steps.push({ icon: "🗺️", t: "Pfad: " + (cur.last ? "Boss-Runde" : "Station " + cur.n), sub: esc(cur.sectionTitle) + (cur.last ? " · " + BOSS_NAMES[cur.bossMode] : " · Station " + cur.n + " von " + cur.of), done: did,
+          go: 'data-act="pathgo" data-id="' + esc(cur.id) + '"', btn: did ? "Weiter" : (cur.last ? "Boss ⚔️" : "Los ▶") });
+      }
+    }
+    if (W && W.connected()) W.activePlans().forEach(function (pl) {
+      var i = W.planInfo(pl), newToday = d.newSeen || 0, left = Math.max(0, i.quota - newToday), when = i.days > 1 ? "in " + i.days + " Tagen" : i.days === 1 ? "morgen" : "heute";
+      steps.push({ icon: pl.cls ? "🏫" : "📅", t: (pl.cls ? "Klassenaufgabe: " : "Lernplan: ") + esc(pl.title), sub: (pl.cls ? "Ende " : "Arbeit ") + when + " · " + i.pct + " % sicher" + (left ? " · heute " + left + " neue" : ""), done: left === 0 && i.pct >= 1,
+        go: 'data-act="startplan" data-id="' + esc(pl.id) + '"', btn: "Üben" });
+    });
+    var goalDone = pct >= 100;
+    steps.push({ icon: "🎯", t: "Tagesziel " + S.goalMin() + " Min.", sub: goalDone ? "geschafft · alles Weitere ist Bonus" : "noch " + fmtMin(Math.max(0, goalSec - (d.sec || 0))), done: goalDone,
+      go: 'data-act="start" data-mode="mix" data-min="' + Math.max(5, Math.min(15, Math.ceil(Math.max(0, goalSec - (d.sec || 0)) / 60))) + '"', btn: "Los ▶" });
+    var nowIx = -1; steps.forEach(function (s, i) { if (nowIx < 0 && !s.done) nowIx = i; });
+    var doneN = steps.filter(function (s) { return s.done; }).length;
+    var h = '<section class="card dayw"><div class="row" style="align-items:baseline"><div class="eyebrow" style="flex:1 1 auto">Dein Tag</div><span class="small muted tnum">' + doneN + ' von ' + steps.length + '</span></div><div class="dwl">';
+    steps.forEach(function (s, i) {
+      var now = i === nowIx;
+      h += '<div class="dws' + (s.done ? " d" : "") + (now ? " now" : "") + '"><div class="dwd">' + (s.done ? "✓" : now ? (i + 1) : s.icon) + '</div>' +
+        '<div class="dwc"><div class="dwt"><b>' + (s.done || now ? s.icon + " " : "") + s.t + '</b><span class="small muted" style="display:block">' + s.sub + '</span></div>' +
+        (s.done && s.btn !== "Weiter" && s.btn !== "Zusatz" ? "" : '<button class="' + (now ? "btn" : "chip") + ' dwb" ' + s.go + '>' + s.btn + '</button>') + '</div></div>';
+    });
+    h += '</div>' + (all.length ? '<div style="text-align:center;margin-top:4px"><button class="chip" data-act="gopfad">Ganzen Pfad ansehen →</button></div>' : "") + '</section>';
+    return h;
+  }
   function viewHome() {
     var st = S.state, r = S.rankOf(st.xp);
     var goalSec = S.goalMin() * 60, pct = Math.min(100, Math.round(st.daily.sec * 100 / goalSec));
@@ -7619,16 +7677,10 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       '<div class="hhchips"><span class="hhc">🔥 <b class="tnum">' + st.streak.count + '</b></span><span class="hhc">🪙 <b class="tnum">' + st.coins + '</b></span></div></div>' +
       '</section>';
 
-    html += pathCard();
-
-    html += parentCards("plans");
+    html += dayCard(pct);
 
     var wish = S.wish();
-    var chDone = S.challengeDone();
-    html += '<section class="card"><div class="eyebrow">Heute</div><div style="margin-top:6px">' +
-      '<div class="mission' + (chDone ? " done" : "") + '"><div class="tick">' + (chDone ? "✓" : "🏆") + '</div><div class="txt"><div class="small" style="font-weight:600">Daily Challenge</div>' +
-      '<div class="row" style="margin-top:4px;gap:8px"><span class="small muted" style="flex:1 1 auto">' + (chDone ? "Bonus geholt. Weitere Runden sind Zusatz-Runden." : "Bunte Runde aus allem, was dran ist.") + '</span><button class="chip" style="white-space:nowrap" data-act="start" data-mode="mix" data-min="' + S.goalMin() + '">' + (chDone ? "Zusatz →" : "Los →") + '</button></div></div>' +
-      '<div class="pill nowrap">' + (chDone ? "✓" : "🪙 10") + '</div></div>' +
+    html += '<section class="card"><div class="eyebrow">Tagesmissionen</div><div style="margin-top:6px">' +
       st.daily.missions.map(function (m) {
         var pc = Math.min(100, Math.round(m.p * 100 / m.goal)), go = m.done ? "" : missionGo(m);
         return '<div class="mission' + (m.done ? " done" : "") + '"><div class="tick">✓</div>' +
@@ -7848,10 +7900,13 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   function topSegs(html) { var st = view.querySelector(".stack"); if (st) st.insertAdjacentHTML("afterbegin", html); else view.insertAdjacentHTML("afterbegin", html); }
   function viewLernen() {
     var seg = detailUnit ? "units" : lernSeg;
-    var top = segBar("lernen", seg, [["ueben", "🎮 Üben"], ["units", "📚 Lernbereich"], ["stats", "📈 Fortschritt"]]);
+    var pfadOn = S.state.settings.pathOn !== false && S.pathStations().length > 0;
+    if (seg === "pfad" && !pfadOn) seg = "ueben";
+    var top = segBar("lernen", seg, (pfadOn ? [["pfad", "🗺️ Pfad"]] : []).concat([["ueben", "🎮 Üben"], ["units", "📚 Lernbereich"], ["stats", "📈 Fortschritt"]]));
     if (detailUnit === "__verbs") return viewVerbList();
     if (detailUnit) return viewUnitDetail(detailUnit);
     if (seg === "stats") viewStats();
+    else if (seg === "pfad") view.innerHTML = '<div class="stack">' + pathCard() + '</div>';
     else {
       view.innerHTML = '<div class="stack">' + (seg === "units" ? unitsHtml() : modiHtml("lern")) + '</div>';
       $$("details.grp").forEach(function (d) { d.addEventListener("toggle", function () { openGroups[d.getAttribute("data-k")] = d.open; }); });
@@ -7950,8 +8005,9 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var groups = biz ? ["Basis", "Aufbau", "Profi", "Smalltalk", "Redewendungen"] : ["Headlight 2", 6, 7, 8];
     var sel = S.groupsOf();
     var html = '';
-    html += '<section class="card"><div class="eyebrow">Lernbereich</div><div style="margin-top:8px">' + trackSwitch() + '</div></section>';
-    html += '<section class="card">' +
+    var guided = S.steered();   // gesteuert: das Kind sieht nur die Einheiten, die für es vorgesehen sind (ohne Hinweis darauf)
+    if (!guided) html += '<section class="card"><div class="eyebrow">Lernbereich</div><div style="margin-top:8px">' + trackSwitch() + '</div></section>';
+    if (!guided) html += '<section class="card">' +
       '<div class="eyebrow">' + (biz ? "Stufe" : "Schuljahr") + '</div>' +
       '<div class="row wrap" style="margin-top:8px">' +
       groups.map(function (k) {
@@ -7967,16 +8023,25 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
         '<span class="small muted" style="display:block">' + vs0.seen + ' von ' + vs0.total + ' geübt · ' + vs0.mastered + ' sitzen</span></span></summary>' +
         verbCard().replace(/^<section class="card"[^>]*>(<div class="row"><div style="flex:1 1 auto"><div class="eyebrow">[^<]*<\/div>)/, '<div class="row"><div style="flex:1 1 auto">').replace(/<\/section>$/, "") + '</details>';
     }
-    var byGroup = {}, order = [];
+    var byGroup = {}, order = [], guidedIds = {};
+    if (guided) S.pathUnitList().forEach(function (x) { guidedIds[x.id] = 1; });
     stt.perUnit.forEach(function (u) {
-      if (u.track !== "eigen" && sel.indexOf(u.k) < 0) return;   // nur die gewählten Stufen bzw. Jahrgänge
+      if (guided) { if (u.track !== "eigen" && !guidedIds[u.id]) return; }
+      else if (u.track !== "eigen" && sel.indexOf(u.k) < 0) return;   // nur die gewählten Stufen bzw. Jahrgänge
       var key = String(u.k);
       if (!byGroup[key]) { byGroup[key] = []; order.push(key); }
       byGroup[key].push(u);
     });
     order.sort(function (a, b) { var ia = groups.indexOf(/^\d+$/.test(a) ? +a : a), ib = groups.indexOf(/^\d+$/.test(b) ? +b : b); return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); });
+    var secShown = {};
+    function secHead(id, h, sub) { if (guided || biz || secShown[id]) return ""; secShown[id] = 1; return '<div class="eyebrow" style="margin:18px 2px 2px">' + h + '</div><div class="small muted" style="margin:0 2px 8px">' + sub + '</div>'; }
     order.forEach(function (k) {
-      var title = k === "0" ? "✏️ Eigene Vokabeln" : k === "Headlight 2" ? "📕 Headlight 2 (Schulbuch)" : groupLabel(byGroup[k][0].k);
+      var secH = k === "Headlight 2" ? secHead("books", "📕 Schulbücher", "Offizielle Schulbücher, nach Schuljahr und Schulzweig")
+        : k === "0" ? secHead("own", "✏️ Eigene Listen", "Deine eigenen Vokabellisten")
+        : secHead("cls", "📘 Klassen-Listen", "Nicht an ein Schulbuch gebunden");
+      var bk0 = BOOKS.filter(function (b) { return byGroup[k][0].id.indexOf(b.pre) === 0; })[0];
+      var title = k === "0" ? "✏️ Eigene Vokabeln" : k === "Headlight 2" ? "📕 Headlight 2 · Klasse " + (bk0 ? bk0.jahr : 6) + " · " + (bk0 ? bk0.zweig : "Realschule") : groupLabel(byGroup[k][0].k);
+      html += secH;
       var books = [], rest = [];
       byGroup[k].forEach(function (u) { (BOOKS.filter(function (b) { return u.id.indexOf(b.pre) === 0; })[0] ? books : rest).push(u); });
       function unitRow(u) {
@@ -7997,7 +8062,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     return html;
   }
   /* Buchkachel: selbst gezeichnetes Cover über den Einheiten eines Schulbuchs */
-  var BOOKS = [{ pre: "H2-", name: "HEADLIGHT", no: "2", sub: "Schulbuch · Unit 1–6" }];
+  var BOOKS = [{ pre: "H2-", name: "HEADLIGHT", no: "2", sub: "Schulbuch · Unit 1–6", jahr: 6, zweig: "Realschule" }];
   function bookTile(b, us) {
     var m = 0, t = 0; us.forEach(function (u) { m += u.mastered; t += u.total; });
     var pc = Math.round(m * 100 / Math.max(1, t));
@@ -8197,7 +8262,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     { k: "fn", n: "Fortnite" }, { k: "bg", n: "Hintergründe" }, { k: "fx", n: "Effekte" }, { k: "dance", n: "Tänze 💃" }, { k: "outfit", n: "Outfits 👕" }, { k: "kit", n: "Trikots ⚽" }, { k: "sets", n: "Sets ⭐" }, { k: "snd", n: "Töne" }, { k: "theme", n: "Farben" }
   ];
   var KIND_NAME = { sticker: "Sticker", avatar: "Figur", frame: "Rahmen", title: "Titel", bg: "Hintergrund", fx: "Effekt", dance: "Tanz", outfit: "Outfit", kit: "Trikot", snd: "Ton", theme: "Farbwelt" };
-  var shopTab = "avatar", lernSeg = "ueben", spielSeg = "challenge", beuteSeg = "pass";
+  var shopTab = "avatar", lernSeg = "pfad", spielSeg = "challenge", beuteSeg = "pass";
   var TABMAP = { ueben: "lernen", stats: "lernen", shop: "beute", showroom: "beute" };
   var THEME_DOT = { paper: "#1E6273", mint: "#2E7357", plum: "#6A3D70", amber: "#8A5A1B" };
   function shopIcon(it) {
@@ -9527,6 +9592,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     else if (a === "wfilter") { wFilter = act.getAttribute("data-f"); wMax = 40; render(); }
     else if (a === "wmore") { wMax += 40; $("#wList").innerHTML = wordListHtml(); }
     else if (a === "setmin") { startMin = +act.getAttribute("data-min"); render(); }
+    else if (a === "gopfad") { tab = "lernen"; lernSeg = "pfad"; detailUnit = null; render(); view.scrollTop = 0; }
     else if (a === "goueben") { tab = "ueben"; uebenSeg = "modi"; detailUnit = null; render(); view.scrollTop = 0; }
     else if (a === "back") { stopReading(); detailUnit = null; render(); }
     else if (a === "readall") {
@@ -9790,6 +9856,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   render();
   (function () { var bt = document.getElementById("boot"); if (bt) setTimeout(function () { bt.classList.add("off"); setTimeout(function () { if (bt.parentNode) bt.parentNode.removeChild(bt); }, 600); }, 350); })();
   pickPlayer();
+  setTimeout(function () { if (window.WordySync && sessionEl.hidden && (tab === "home" || tab === "lernen")) render(); }, 300);   // sync.js lädt nach app.js: Verbindung und Pläne erst jetzt sichtbar
   /* Verbindungslink der Eltern (#verbinden=<Adresse#Code>): nach Bestätigung automatisch verbinden */
   (function () {
     var m = String(location.hash || "").match(/^#verbinden=(.+)$/); if (!m) return;
@@ -10399,7 +10466,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     lastPull = Date.now();
     return g.fetch(c.url + "/api/sync", { headers: { Authorization: "Bearer " + c.token } })
       .then(function (r) { if (!r.ok) throw new Error(String(r.status)); return r.json(); })
-      .then(function (j) { lsSet("wordy.cfg." + pid(), { goals: j.goals || [], plans: j.plans || [], pathUnits: j.pathUnits || [], weekPlan: j.weekPlan || null, bossDiff: j.bossDiff || "normal", coinFactor: j.coinFactor || 1, gifts: j.gifts || [], season: j.season || null, t: Date.now() }); W.check(); if (g.WordyHooks && g.WordyHooks.onChange) g.WordyHooks.onChange(); return true; })
+      .then(function (j) { lsSet("wordy.cfg." + pid(), { goals: j.goals || [], plans: j.plans || [], pathUnits: j.pathUnits || [], weekPlan: j.weekPlan || null, bossDiff: j.bossDiff || "normal", selfChoose: !!j.selfChoose, coinFactor: j.coinFactor || 1, gifts: j.gifts || [], season: j.season || null, t: Date.now() }); W.check(); if (g.WordyHooks && g.WordyHooks.onChange) g.WordyHooks.onChange(); return true; })
       .catch(function () { return false; });
   };
 
