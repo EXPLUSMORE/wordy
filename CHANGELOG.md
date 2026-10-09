@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.57.0 – 2026-10-09
+- Feedback: Eltern und Lehrkräfte können in der App (Profil › Feedback) und im Dashboard (Reiter Feedback) Idee, Fehler, Lob oder Frage senden. Alles landet in einer Datenbanktabelle; der Betreiber bearbeitet im Dashboard (Status, Antwort, Notiz), Absender sehen Status und Antwort. Täglich um 18 Uhr (wählbar) eine Mail mit allen neuen Rückmeldungen, nur wenn es welche gibt; „Jetzt senden“ zum Testen. Server-Update nötig.
+
 ## 2.56.0 – 2026-10-09
 - Track Wordy aufgeräumt: pro Kind zwei Reiter. **Dashboard** mit Unterreitern Überblick (heute, Woche), Verlauf (Übungszeit, Tage einzeln), Wörter (Einheiten, alle Wörter, Problemwörter) und Aktivität (Runden, Käufe). **Einstellungen** nach Wichtigkeit als aufklappbare Gruppen: Verbindung & Geräte, Lernstoff steuern, Tagesziel & Wochenzeitplan, Belohnungen, Freunde/Klasse, Sicherung & Daten, Name & Spieler. Die Wochenmail-Einstellung steht jetzt auf der Konto-Seite (Familien). Server-Update nötig.
 

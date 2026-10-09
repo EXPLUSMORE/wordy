@@ -725,6 +725,47 @@ function newInvite(pid) {
 
 /* ---------- Elternkonten ---------- */
 const transportOn = () => !!((GRAPH.tenant && GRAPH.clientId && GRAPH.clientSecret && MAIL.from) || (MAIL.host && MAIL.from));
+/* ---------- Feedback: Rückmeldungen von Eltern und Lehrkräften (App und Dashboard), eine Datenbank, Tagesmail an den Betreiber ---------- */
+db.exec(`CREATE TABLE IF NOT EXISTS feedback (id INTEGER PRIMARY KEY, created INTEGER NOT NULL, player INTEGER, family INTEGER, role TEXT NOT NULL DEFAULT 'operator',
+  kind TEXT NOT NULL, text TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'neu', note TEXT NOT NULL DEFAULT '', reply TEXT NOT NULL DEFAULT '', reply_ts INTEGER,
+  source TEXT NOT NULL DEFAULT 'dashboard', ver TEXT NOT NULL DEFAULT '', device TEXT NOT NULL DEFAULT '', mailed INTEGER NOT NULL DEFAULT 0)`);
+const FB_KINDS = { idea: "Idee", bug: "Fehler", praise: "Lob", question: "Frage" }, FB_STATUS = ["neu", "in_arbeit", "erledigt"];
+const fbq = {
+  add: db.prepare("INSERT INTO feedback(created, player, family, role, kind, text, source, ver, device) VALUES (?,?,?,?,?,?,?,?,?)"),
+  byId: db.prepare("SELECT * FROM feedback WHERE id = ?"),
+  ofFamily: db.prepare("SELECT * FROM feedback WHERE family = ? ORDER BY created DESC LIMIT 100"),
+  ofPlayer: db.prepare("SELECT * FROM feedback WHERE player = ? OR (family IS NOT NULL AND family = (SELECT family FROM players WHERE id = ?)) ORDER BY created DESC LIMIT 100"),
+  all: db.prepare("SELECT f.*, fam.email AS fam_email, p.name AS pname FROM feedback f LEFT JOIN families fam ON fam.id = f.family LEFT JOIN players p ON p.id = f.player ORDER BY f.created DESC LIMIT 500"),
+  upd: db.prepare("UPDATE feedback SET status = ?, note = ?, reply = ?, reply_ts = ? WHERE id = ?"),
+  del: db.prepare("DELETE FROM feedback WHERE id = ?"),
+  unmailed: db.prepare("SELECT f.*, fam.email AS fam_email, p.name AS pname FROM feedback f LEFT JOIN families fam ON fam.id = f.family LEFT JOIN players p ON p.id = f.player WHERE f.mailed = 0 ORDER BY f.created"),
+  markMailed: db.prepare("UPDATE feedback SET mailed = 1 WHERE mailed = 0 AND id <= ?"),
+  open: db.prepare("SELECT COUNT(*) AS n FROM feedback WHERE status = 'neu'")
+};
+function fbAdd(o) {
+  const kind = FB_KINDS[o.kind] ? o.kind : "idea", text = clean(o.text, 2000);
+  if (!text || text.length < 3) return [400, { error: "Bitte ein paar Worte schreiben." }];
+  const id = +fbq.add.run(Date.now(), o.player || null, o.family || null, o.role || "operator", kind, text, o.source || "dashboard", clean(o.ver, 20), clean(o.device, 80)).lastInsertRowid;
+  return [200, { ok: true, id }];
+}
+const fbOwn = r => ({ id: r.id, created: r.created, kind: r.kind, text: r.text, status: r.status, reply: r.reply, replyTs: r.reply_ts });
+const fbAdminRow = r => Object.assign(fbOwn(r), { role: r.role, source: r.source, ver: r.ver, device: r.device, note: r.note, who: r.fam_email || r.pname || "Betreiber", player: r.pname || "", mailed: !!r.mailed });
+const fbHour = () => { const r = q.kvGet.get("fb_hour"); const h = r ? +r.val : 18; return Number.isInteger(h) && h >= 0 && h <= 23 ? h : 18; };
+let fbTries = { key: "", n: 0 };
+async function fbTick(force) {
+  if (!transportOn() || !mailTo()) { if (force) throw new Error("Mailversand oder Empfänger-Adresse ist nicht eingerichtet."); return; }
+  const { h } = localNow(), key = dayOf(Date.now()), sent = q.kvGet.get("fb_sent");
+  if (!force && (h < fbHour() || (sent && sent.val === key))) return;
+  const rows = fbq.unmailed.all(); if (!rows.length) return;
+  if (!force) { if (fbTries.key !== key) fbTries = { key, n: 0 }; if (fbTries.n >= 3) return; fbTries.n++; }
+  const rowHtml = r => '<div style="margin:0 0 14px;padding:10px 12px;border-left:4px solid #1E6273;background:#F7F9FC"><div style="font-size:13px;color:#555"><b>' + esc(FB_KINDS[r.kind]) + "</b> · " + esc(r.fam_email || r.pname || "Betreiber") + (r.pname && r.fam_email ? " (" + esc(r.pname) + ")" : "") + " · " + esc(r.source) + (r.ver ? " " + esc(r.ver) : "") + " · " + new Date(r.created).toLocaleString("de-DE", { timeZone: TZ }) + '</div><div style="margin-top:6px;white-space:pre-wrap">' + esc(r.text) + "</div></div>";
+  const html = '<div style="font-family:system-ui,Segoe UI,Arial,sans-serif;color:#16222B;max-width:600px"><h1 style="font-size:20px;margin:0 0 12px">💬 Wordy · ' + rows.length + (rows.length === 1 ? " neue Rückmeldung" : " neue Rückmeldungen") + "</h1>" + rows.map(rowHtml).join("") + '<p><a href="' + DASH_URL + '" style="display:inline-block;background:#1E6273;color:#fff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:600">Im Dashboard bearbeiten</a></p></div>';
+  const text = rows.map(r => "[" + FB_KINDS[r.kind] + "] " + (r.fam_email || r.pname || "Betreiber") + " (" + r.source + "): " + r.text).join("\n\n") + "\n\nBearbeiten: " + DASH_URL + "\n";
+  try { await deliver({ to: mailTo(), subject: "Wordy: " + rows.length + (rows.length === 1 ? " neue Rückmeldung" : " neue Rückmeldungen"), html, text }); fbq.markMailed.run(rows[rows.length - 1].id); q.kvSet.run("fb_sent", key); console.log("Feedback-Mail gesendet (" + rows.length + ")"); }
+  catch (e) { console.error("Feedback-Mail fehlgeschlagen:", e.message); if (force) throw e; }
+}
+setInterval(() => fbTick().catch(() => {}), 60000).unref();
+
 async function deliver(o) {   // eine Mail an eine Adresse, über Graph oder SMTP
   if (!transportOn()) throw new Error("Mailversand ist nicht eingerichtet (siehe README).");
   if (GRAPH.tenant && GRAPH.clientId && GRAPH.clientSecret && MAIL.from) return sendGraph({ tenant: GRAPH.tenant, clientId: GRAPH.clientId, clientSecret: GRAPH.clientSecret, from: MAIL.from, to: o.to, subject: o.subject, html: o.html });
@@ -1126,6 +1167,14 @@ const server = http.createServer(async (req, res) => {
       if (q.player.get(pid).hidden) return send(res, 403, { error: "Dieser Spieler wird nur gesichert." });
       const [c, b] = await apiSocial(pid, req.method, p, url, req, ip); return send(res, c, b);
     }
+    if (p === "/api/feedback" && (req.method === "GET" || req.method === "POST")) {
+      const pid = playerOf(req); if (!pid) return send(res, 401, { error: "Nicht verbunden." });
+      if (req.method === "GET") return send(res, 200, { items: fbq.ofPlayer.all(pid, pid).map(fbOwn), kinds: FB_KINDS });
+      if (limited(ip, "fb", 10, 3600000)) return send(res, 429, { error: "Zu viele Rückmeldungen. Bitte später noch einmal." });
+      const b = await readJson(req), pl = q.player.get(pid);
+      const [c, r] = fbAdd({ player: pid, family: pl.family, role: pl.family ? "family" : "operator", kind: b.kind, text: b.text, source: "app", ver: b.ver, device: b.device });
+      return send(res, c, r);
+    }
     if (p === "/api/ping" && req.method === "POST") {
       const pid = playerOf(req); if (!pid) return send(res, 401, { error: "Nicht verbunden." });
       { const pl = q.player.get(pid); return send(res, 200, { ok: true, name: pl.name, hidden: !!pl.hidden }); }
@@ -1242,6 +1291,31 @@ const server = http.createServer(async (req, res) => {
         const f = fq.byId.get(+mf[1]); if (!f) return send(res, 404, { error: "Unbekannt." });
         if (mf[2] === "block" && req.method === "POST") { const blocked = !!(await readJson(req)).blocked; fq.setStatus.run(blocked ? "blocked" : "active", f.id); if (blocked) fq.delSessOf.run(f.id); return send(res, 200, { ok: true }); }
         if (!mf[2] && req.method === "DELETE") { fq.del.run(f.id); return send(res, 200, { ok: true }); }
+      }
+      if (p === "/api/admin/feedback" && req.method === "GET") {
+        if (scope) return send(res, 200, { items: fbq.ofFamily.all(scope.id).map(fbOwn), kinds: FB_KINDS });
+        return send(res, 200, { items: fbq.all.all().map(fbAdminRow), kinds: FB_KINDS, open: fbq.open.get().n, hour: fbHour(), mail: transportOn() && !!mailTo(), to: mailTo() });
+      }
+      if (p === "/api/admin/feedback" && req.method === "POST") {
+        if (limited(ip, "fb", 20, 3600000)) return send(res, 429, { error: "Zu viele Rückmeldungen. Bitte später noch einmal." });
+        const b = await readJson(req), [c, r] = fbAdd({ family: scope ? scope.id : null, role: scope ? (scope.role === "teacher" ? "teacher" : "family") : "operator", kind: b.kind, text: b.text, source: "dashboard", ver: b.ver });
+        return send(res, c, r);
+      }
+      if (!scope && p === "/api/admin/feedback/mailnow" && req.method === "POST") {
+        try { await fbTick(true); return send(res, 200, { ok: true, pending: fbq.unmailed.all().length }); } catch (e) { return send(res, 200, { ok: false, error: String(e.message).slice(0, 200) }); }
+      }
+      if (!scope && p === "/api/admin/feedback/settings" && req.method === "POST") {
+        const h = +(await readJson(req)).hour; if (!Number.isInteger(h) || h < 0 || h > 23) return send(res, 400, { error: "Uhrzeit 0 bis 23." });
+        q.kvSet.run("fb_hour", String(h)); return send(res, 200, { ok: true, hour: h });
+      }
+      const mfb = p.match(/^\/api\/admin\/feedback\/(\d+)$/);
+      if (!scope && mfb) {
+        const row = fbq.byId.get(+mfb[1]); if (!row) return send(res, 404, { error: "Unbekannt." });
+        if (req.method === "DELETE") { fbq.del.run(row.id); return send(res, 200, { ok: true }); }
+        if (req.method === "POST") {
+          const b = await readJson(req), st = FB_STATUS.includes(b.status) ? b.status : row.status, reply = b.reply === undefined ? row.reply : clean(b.reply, 2000), note = b.note === undefined ? row.note : clean(b.note, 2000);
+          fbq.upd.run(st, note, reply, reply !== row.reply && reply ? Date.now() : row.reply_ts, row.id); return send(res, 200, { ok: true });
+        }
       }
       if (p === "/api/admin/mail" && req.method === "GET" && scope) { const sent = q.kvGet.get("fmail_sent:" + scope.id); return send(res, 200, { configured: transportOn() && !!scope.weekly, to: scope.email, day: MAIL.day, hour: MAIL.hour, lastWeek: sent ? sent.val : null, family: true }); }
       if (p === "/api/admin/mail/test" && req.method === "POST" && scope) {

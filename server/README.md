@@ -163,3 +163,6 @@ systemctl list-timers wordy-deploy.timer
 ## Klassen-Modus (v2.49)
 
 Lehrkräfte: Betreiber erstellt im Dashboard (Familien) einen Einladungslink mit Rolle „Lehrkraft“. Die Lehrkraft legt Klassen und Wochenaufgaben an (`/api/fam/classes…`), sieht nur Klassen-Zahlen. Kinder treten über `/api/social/class/join` bei, die Eltern bestätigen im Dashboard. Keine neuen Umgebungsvariablen; neue Tabellen werden beim Start angelegt. Datenschutz: Abschnitt 7a, `CONSENT_VER` auf 2026-10c.
+
+## Feedback
+Eltern und Lehrkräfte schicken Rückmeldungen aus der App (Profil › Feedback) oder dem Dashboard (Reiter „Feedback“). Alles liegt in der Tabelle `feedback` (Status neu / in Arbeit / erledigt, interne Notiz, Antwort). Der Betreiber bearbeitet im Dashboard unter Feedback; Absender sehen Status und Antwort. Einmal täglich (Standard 18:00, im Dashboard wählbar, Zeitzone Europe/Berlin) geht eine Mail mit allen neuen Rückmeldungen an die Empfänger-Adresse der Wochenmail; ohne neue Rückmeldungen keine Mail. „Jetzt senden“ löst sie sofort aus.

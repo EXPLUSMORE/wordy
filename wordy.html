@@ -1022,7 +1022,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.56.0";window.WORDY_BUILD="a290559370";</script>
+<script>window.WORDY_VERSION="2.57.0";window.WORDY_BUILD="de2a5c5211";</script>
 </head>
 <body>
 <div id="app">
@@ -8611,6 +8611,21 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
         return '<li><span class="hi">' + x[0] + '</span><div><b>' + x[1] + '</b><div class="small muted">' + x[2] + '</div></div></li>';
       }).join("") + '</ol></details>';
   }
+  /* Feedback im Profil: Formular + eigene Rückmeldungen mit Status und Antwort */
+  var fbKind = "idea", FB_LBL = { idea: "💡 Idee", bug: "🐞 Fehler", praise: "👍 Lob", question: "❓ Frage" }, FB_ST = { neu: "neu", in_arbeit: "in Arbeit", erledigt: "erledigt" };
+  function fbDraw() {
+    var el = $("#fbApp"); if (!el) return;
+    el.innerHTML = '<div class="row wrap" style="gap:6px">' + Object.keys(FB_LBL).map(function (k) { return '<button class="chip" data-act="fbkind" data-k="' + k + '" aria-pressed="' + (fbKind === k) + '">' + FB_LBL[k] + '</button>'; }).join("") + '</div>' +
+      '<textarea id="fbTxt" rows="4" maxlength="2000" style="width:100%;margin-top:10px" placeholder="Was sollen wir wissen oder verbessern?"></textarea>' +
+      '<button class="btn wide" data-act="fbsend" style="margin-top:8px">Senden</button><div id="fbMsg" class="small muted" style="margin-top:6px"></div><div id="fbList" style="margin-top:10px"></div>';
+    window.WordySync.fbList().then(function (l) {
+      var box = $("#fbList"); if (!box || !l.length) return;
+      box.innerHTML = '<div class="eyebrow">Meine Rückmeldungen</div>' + l.map(function (x) {
+        return '<div style="padding:8px 0;border-top:1px solid var(--line)"><div class="row"><b class="small" style="flex:1 1 auto">' + (FB_LBL[x.kind] || x.kind) + ' · ' + new Date(x.created).toLocaleDateString("de-DE") + '</b><span class="pill">' + (FB_ST[x.status] || x.status) + '</span></div>' +
+          '<div style="margin-top:4px;white-space:pre-wrap">' + esc(x.text) + '</div>' + (x.reply ? '<div class="small" style="margin-top:6px;padding:8px 10px;border-radius:8px;background:var(--card-2)"><b>Antwort:</b> ' + esc(x.reply) + '</div>' : "") + '</div>';
+      }).join("");
+    });
+  }
   function viewParent() {
     var st = S.state, s = S.stats();
     var html = '<div class="stack">';
@@ -8684,11 +8699,13 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       '<br>© ' + new Date().getFullYear() + ' Magnus, Pummel &amp; Christian</div>' +
       '<div class="row wrap" style="gap:8px;justify-content:center;margin-top:10px"><button class="btn ghost" data-act="checkupdate">Nach Updates suchen</button>' +
       '<button class="btn ghost" data-act="clearcache" title="Lernstand bleibt erhalten">App-Cache leeren</button></div>';
+    if (window.WordySync && window.WordySync.connected()) html += fold("feedback", "💬", "Feedback", "Idee, Fehler oder Lob an das Wordy-Team", '<div id="fbApp"><p class="small muted">Lade …</p></div>');
     html += fold("about", "ℹ️", "Über Wordy", "Version " + esc(global.WORDY_VERSION || "–") + ", Updates, Installieren", unCard(installCard()) + '<hr class="sep" style="margin:14px 0">' + aboutHtml +
       '<hr class="sep" style="margin:14px 0"><div class="eyebrow">Datenschutz</div><p class="small muted" style="margin:6px 0 8px">Wordy speichert den Lernstand nur auf diesem Gerät. Nur wenn deine Eltern es verbinden, geht der Lernfortschritt an den Wordy-Server. Keine Werbung, kein Tracking.</p><a class="chip" target="_blank" rel="noopener" href="' + esc(((global.WordySync && global.WordySync.info().url) || "https://track.wordy.explusmore.com").replace(/\/+$/, "") + "/f/datenschutz") + '">Datenschutzerklärung lesen</a>');
     html += '</div>';
     view.innerHTML = html;
-    $$("details.fold").forEach(function (d) { d.addEventListener("toggle", function () { openFolds[d.getAttribute("data-f")] = d.open; }); });
+    $$("details.fold").forEach(function (d) { d.addEventListener("toggle", function () { openFolds[d.getAttribute("data-f")] = d.open; if (d.open && d.getAttribute("data-f") === "feedback") fbDraw(); }); });
+    if (openFolds.feedback) fbDraw();
 
     $("#setGoal").onchange = function () { st.settings.goalMin = +this.value; S.save(true); renderHeader(); };
     $("#setNew").onchange = function () { st.settings.newPerDay = +this.value; S.save(true); };
@@ -9592,6 +9609,12 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     else if (a === "wfilter") { wFilter = act.getAttribute("data-f"); wMax = 40; render(); }
     else if (a === "wmore") { wMax += 40; $("#wList").innerHTML = wordListHtml(); }
     else if (a === "setmin") { startMin = +act.getAttribute("data-min"); render(); }
+    else if (a === "fbkind") { fbKind = act.getAttribute("data-k"); $$('[data-act="fbkind"]').forEach(function (b) { b.setAttribute("aria-pressed", String(b === act)); }); }
+    else if (a === "fbsend") {
+      var ft = $("#fbTxt"), fm = $("#fbMsg"); if (!ft || ft.value.trim().length < 3) { if (fm) fm.textContent = "Bitte ein paar Worte schreiben."; return; }
+      act.disabled = true;
+      window.WordySync.fbSend(fbKind, ft.value.trim()).then(function (r) { act.disabled = false; if (r.error) { if (fm) fm.textContent = r.error; return; } toast("Danke für deine Rückmeldung!"); fbDraw(); });
+    }
     else if (a === "gopfad") { tab = "lernen"; lernSeg = "pfad"; detailUnit = null; render(); view.scrollTop = 0; }
     else if (a === "goueben") { tab = "ueben"; uebenSeg = "modi"; detailUnit = null; render(); view.scrollTop = 0; }
     else if (a === "back") { stopReading(); detailUnit = null; render(); }
@@ -10512,6 +10535,17 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   };
 
   /* Verbinden mit dem Code der Eltern: "https://server#ABCD-EFGH" */
+  /* Feedback: Rückmeldung an das Wordy-Team (Eltern/Lehrkräfte), eigene Rückmeldungen mit Status und Antwort */
+  W.fbSend = function (kind, text) {
+    var c = cfg(); if (!c || !c.token || !g.fetch) return Promise.resolve({ error: "Nicht mit dem Server verbunden." });
+    return api(c, "POST", "/api/feedback", { kind: kind, text: text, ver: g.WORDY_VERSION || "", device: (g.navigator && g.navigator.userAgent || "").slice(0, 70) })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return r.ok ? { ok: true } : { error: j.error || "Fehler " + r.status }; }); })
+      .catch(function () { return { error: "Der Server ist nicht erreichbar." }; });
+  };
+  W.fbList = function () {
+    var c = cfg(); if (!c || !c.token || !g.fetch) return Promise.resolve([]);
+    return api(c, "GET", "/api/feedback").then(function (r) { return r.json(); }).then(function (j) { return j.items || []; }).catch(function () { return []; });
+  };
   /* Freunde und Duelle: Anfrage an die Social-Schnittstelle des Servers (Antwort als Objekt, Fehler mit lesbarer Meldung) */
   W.social = function (method, path, body) {
     var c = cfg(); if (!c || !c.token || !g.fetch) return Promise.reject(new Error("Nicht mit dem Server verbunden."));

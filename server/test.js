@@ -157,6 +157,30 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     assert.ok(/Magnus/.test(decoded) && /Übungszeit/.test(decoded) && /Wochenziele/.test(decoded) && /Lernplan/.test(decoded), "Mail enthält Spieler, Zeit, Ziele, Lernplan");
     assert.ok(decoded.includes("https://track.wordy.explusmore.com"), "Mail enthält den Dashboard-Link");
     assert.ok(/Subject: =\?UTF-8/.test(mailGot) || /Subject: Wordy/.test(mailGot), "Betreff vorhanden");
+    /* Feedback: Betreiber, App (Bearer), Status/Antwort, Eingabeprüfung */
+    const fbA = await J("/api/admin/feedback", { method: "POST", headers: H, body: JSON.stringify({ kind: "idea", text: "Die Challenge sollte kürzer sein." }) });
+    assert.equal(fbA.s, 200, "Feedback (Dashboard)");
+    assert.equal((await J("/api/admin/feedback", { method: "POST", headers: H, body: JSON.stringify({ kind: "idea", text: "x" }) })).s, 400, "zu kurzer Text");
+    const fbB = await J("/api/feedback", { method: "POST", headers: T, body: JSON.stringify({ kind: "bug", text: "Vorlesen hakt manchmal.", ver: "2.57.0", device: "iPhone" }) });
+    assert.equal(fbB.s, 200, "Feedback (App)");
+    assert.equal((await J("/api/feedback", { method: "POST", body: JSON.stringify({ kind: "bug", text: "ohne Anmeldung" }) })).s, 401, "App-Feedback braucht Verbindung");
+    const fbL = await J("/api/admin/feedback", { headers: H });
+    assert.equal(fbL.j.items.length, 2); assert.equal(fbL.j.open, 2); assert.equal(fbL.j.hour, 18, "Standard 18 Uhr");
+    assert.equal((await J("/api/admin/feedback/" + fbB.j.id, { method: "POST", headers: H, body: JSON.stringify({ status: "in_arbeit", reply: "Danke, wir schauen es uns an.", note: "iOS prüfen" }) })).s, 200);
+    const own = await J("/api/feedback", { headers: T });
+    const mine = own.j.items.filter(x => x.id === fbB.j.id)[0];
+    assert.equal(mine.status, "in_arbeit"); assert.equal(mine.reply, "Danke, wir schauen es uns an.", "App sieht Status und Antwort");
+    assert.equal((await J("/api/admin/feedback/settings", { method: "POST", headers: H, body: JSON.stringify({ hour: 7 }) })).s, 200);
+    assert.equal((await J("/api/admin/feedback", { headers: H })).j.hour, 7, "Uhrzeit wählbar");
+    assert.equal((await J("/api/admin/feedback/settings", { method: "POST", headers: H, body: JSON.stringify({ hour: 25 }) })).s, 400);
+    assert.equal((await J("/api/admin/feedback", { headers: { "X-Wordy": "1" } })).s, 401, "Feedback-Liste nur mit Anmeldung");
+    mailGot = "";
+    const fbm = await J("/api/admin/feedback/mailnow", { method: "POST", headers: H });
+    assert.equal(fbm.j.ok, true, "Feedback-Mail: " + (fbm.j.error || "")); assert.equal(fbm.j.pending, 0, "alle als gesendet markiert");
+    const fdec = (mailGot.match(/^[A-Za-z0-9+\/=]{20,}$/gm) || []).map(x => Buffer.from(x, "base64").toString("utf8")).join("\n");
+    assert.ok(/Challenge sollte kürzer/.test(fdec) && /Vorlesen hakt/.test(fdec), "Feedback-Mail enthält die Rückmeldungen");
+    mailGot = "";
+    assert.equal((await J("/api/admin/feedback/mailnow", { method: "POST", headers: H })).j.pending, 0); assert.equal(mailGot, "", "ohne neue Rückmeldungen keine Mail");
 
     // ---- Vollständige Sicherung des Lernstands
     const stFull = { v: 2, coins: 77, xp: 5, settings: { klassen: ["Headlight 2"] }, w: { "H2-1a#0": { reps: 2, iv: 3 }, "H2-1a#1": { reps: 1 } }, profile: { owned: ["av:🦊"] } };

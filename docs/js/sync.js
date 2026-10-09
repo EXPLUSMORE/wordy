@@ -210,6 +210,17 @@
   };
 
   /* Verbinden mit dem Code der Eltern: "https://server#ABCD-EFGH" */
+  /* Feedback: Rückmeldung an das Wordy-Team (Eltern/Lehrkräfte), eigene Rückmeldungen mit Status und Antwort */
+  W.fbSend = function (kind, text) {
+    var c = cfg(); if (!c || !c.token || !g.fetch) return Promise.resolve({ error: "Nicht mit dem Server verbunden." });
+    return api(c, "POST", "/api/feedback", { kind: kind, text: text, ver: g.WORDY_VERSION || "", device: (g.navigator && g.navigator.userAgent || "").slice(0, 70) })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return r.ok ? { ok: true } : { error: j.error || "Fehler " + r.status }; }); })
+      .catch(function () { return { error: "Der Server ist nicht erreichbar." }; });
+  };
+  W.fbList = function () {
+    var c = cfg(); if (!c || !c.token || !g.fetch) return Promise.resolve([]);
+    return api(c, "GET", "/api/feedback").then(function (r) { return r.json(); }).then(function (j) { return j.items || []; }).catch(function () { return []; });
+  };
   /* Freunde und Duelle: Anfrage an die Social-Schnittstelle des Servers (Antwort als Objekt, Fehler mit lesbarer Meldung) */
   W.social = function (method, path, body) {
     var c = cfg(); if (!c || !c.token || !g.fetch) return Promise.reject(new Error("Nicht mit dem Server verbunden."));

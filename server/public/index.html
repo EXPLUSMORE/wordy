@@ -110,7 +110,7 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
   var classes = [], unitCat = null;
   function loadPlayers(keep) {
     if (window.WT) return api("/api/admin/classes").then(function (l) {
-      classes = l; if (keep) cur = keep; else if (!cur || cur === "new" || (cur.charAt(0) === "c" && !classes.some(function (c) { return "c" + c.id === cur; }) && cur !== "newc" && cur !== "fam")) cur = classes[0] ? "c" + classes[0].id : "newc";
+      classes = l; if (keep) cur = keep; else if (!cur || cur === "new" || (cur.charAt(0) === "c" && !classes.some(function (c) { return "c" + c.id === cur; }) && cur !== "newc" && cur !== "fam" && cur !== "fb")) cur = classes[0] ? "c" + classes[0].id : "newc";
       drawTabs(); return show();
     }).catch(function (e) { view.innerHTML = '<div class="card err">' + esc(e.message) + "</div>"; });
     return api("/api/admin/players").then(function (l) {
@@ -121,14 +121,15 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
   }
   function drawTabs() {
     if (window.WT) { tabs.innerHTML = classes.map(function (c) { return '<button class="tab" data-p="c' + c.id + '" aria-pressed="' + (cur === "c" + c.id) + '">🏫 ' + esc(c.name) + (c.pending ? " (" + c.pending + ")" : "") + "</button>"; }).join("") +
-      '<button class="tab" data-p="newc" aria-pressed="' + (cur === "newc") + '">＋ Klasse</button><button class="tab" data-p="fam" aria-pressed="' + (cur === "fam") + '">⚙️ Konto</button>'; return; }
+      '<button class="tab" data-p="newc" aria-pressed="' + (cur === "newc") + '">＋ Klasse</button><button class="tab" data-p="fb" aria-pressed="' + (cur === "fb") + '">💬 Feedback</button><button class="tab" data-p="fam" aria-pressed="' + (cur === "fam") + '">⚙️ Konto</button>'; return; }
     tabs.innerHTML = players.map(function (p) { return '<button class="tab" data-p="' + p.id + '" aria-pressed="' + (cur === p.id) + '">' + esc(p.name) + "</button>"; }).join("") +
       '<button class="tab" data-p="new" aria-pressed="' + (cur === "new") + '">＋ Spieler</button>' +
       '<button class="tab" data-p="fam" aria-pressed="' + (cur === "fam") + '">' + (window.WF ? "⚙️ Konto" : "👪 Familien") + '</button>';
   }
-  tabs.onclick = function (e) { var b = e.target.closest("button[data-p]"); if (!b) return; var v = b.getAttribute("data-p"); cur = v === "new" || v === "fam" || v === "newc" || (window.WT && v.charAt(0) === "c") ? v : +v; drawTabs(); show(); };
+  tabs.onclick = function (e) { var b = e.target.closest("button[data-p]"); if (!b) return; var v = b.getAttribute("data-p"); cur = v === "new" || v === "fam" || v === "fb" || v === "newc" || (window.WT && v.charAt(0) === "c") ? v : +v; drawTabs(); show(); };
 
   function show() {
+    if (window.WT && cur === "fb") { view.innerHTML = '<div id="fbBox"></div>'; drawFeedback(document.getElementById("fbBox")); return Promise.resolve(); }
     if (window.WT) { if (cur === "fam") return Promise.resolve(viewFam()); if (cur === "newc" || !classes.length) return Promise.resolve(viewNewClass()); return viewClass(+String(cur).slice(1)); }
     if (cur === "fam") return Promise.resolve(viewFam());
     if (cur === "new" || !players.length) return Promise.resolve(viewNew());
@@ -364,6 +365,52 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
     }).join("");
     return h + '<div class="small muted" style="margin-top:8px">Spalten: Tag · Balken (grün = Tagesziel erreicht) · Zeit · Aufgaben · richtig. Tippe auf einen Tag für die Runden und Fehler.</div></div>';
   }
+  /* ---------- Feedback: Formular, eigene Rückmeldungen mit Status; Betreiber: Eingang mit Bearbeitung und Uhrzeit der Tagesmail ---------- */
+  var fbFilter = "neu", FBK = { idea: "💡 Idee", bug: "🐞 Fehler", praise: "👍 Lob", question: "❓ Frage" }, FBS = { neu: "neu", in_arbeit: "in Arbeit", erledigt: "erledigt" };
+  function drawFeedback(el) {
+    if (!el) return;
+    var op = !window.WF;
+    el.innerHTML = '<div class="card muted">Lade …</div>';
+    api("/api/admin/feedback").then(function (d) {
+      var kind = "idea", items = d.items || [];
+      var form = '<div class="card"><h2>Was möchtest du uns sagen?</h2><div class="row" style="gap:6px;flex-wrap:wrap;margin-bottom:8px" id="fbKinds">' + Object.keys(FBK).map(function (k) { return '<button class="ghost sm" data-fk="' + k + '" aria-pressed="' + (k === kind) + '">' + FBK[k] + '</button>'; }).join("") + '</div>' +
+        '<textarea id="fbText" rows="4" maxlength="2000" style="width:100%" placeholder="z. B. „Die Challenge sollte …“, „Beim Vorlesen hakt …“"></textarea>' +
+        '<div class="row" style="gap:8px;margin-top:8px;align-items:center"><button id="fbSend">Senden</button><span id="fbMsg" class="small"></span></div><p class="small muted" style="margin:8px 0 0">Danke! Jede Rückmeldung wird gelesen. Hier siehst du danach den Stand.</p></div>';
+      var list;
+      if (!op) {
+        list = '<div class="card"><h2>Meine Rückmeldungen</h2>' + (items.length ? items.map(function (x) {
+          return '<div style="padding:8px 0;border-top:1px solid var(--line)"><div class="row" style="gap:8px"><b class="small grow">' + (FBK[x.kind] || x.kind) + ' · ' + fmtDate(x.created) + '</b><span class="pill">' + FBS[x.status] + '</span></div><div style="margin-top:4px;white-space:pre-wrap">' + esc(x.text) + '</div>' + (x.reply ? '<div class="small" style="margin-top:6px;padding:8px 10px;border-radius:8px;background:var(--bg)"><b>Antwort:</b> ' + esc(x.reply) + '</div>' : "") + '</div>';
+        }).join("") : '<p class="small muted" style="margin:0">Noch keine Rückmeldung.</p>') + '</div>';
+      } else {
+        var shown = items.filter(function (x) { return fbFilter === "alle" || x.status === fbFilter; });
+        var hours = ""; for (var hh = 0; hh < 24; hh++) hours += '<option value="' + hh + '"' + (hh === d.hour ? " selected" : "") + '>' + (hh < 10 ? "0" : "") + hh + ':00 Uhr</option>';
+        list = '<div class="card"><h2>Eingang (' + d.open + ' neu)</h2><div class="row" style="gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px"><span class="small">Tagesmail um</span><select id="fbHour" style="width:auto">' + hours + '</select><button class="ghost sm" id="fbNow">Jetzt senden</button><span id="fbMail" class="small muted">' + (d.mail ? "an " + esc(d.to) : "Mailversand/Empfänger noch nicht eingerichtet") + '</span></div>' +
+          '<div class="row" style="gap:6px;flex-wrap:wrap;margin-bottom:8px">' + ["neu", "in_arbeit", "erledigt", "alle"].map(function (s) { return '<button class="ghost sm" data-ff="' + s + '" aria-pressed="' + (fbFilter === s) + '">' + (FBS[s] || "alle") + '</button>'; }).join("") + '</div>' +
+          (shown.length ? shown.map(function (x) {
+            return '<div class="fbi" data-id="' + x.id + '" style="padding:10px 0;border-top:1px solid var(--line)"><div class="small muted">' + (FBK[x.kind] || x.kind) + ' · ' + fmtDate(x.created) + ' · ' + esc(x.who) + (x.player && x.who !== x.player ? " (" + esc(x.player) + ")" : "") + ' · ' + esc(x.source) + (x.ver ? " " + esc(x.ver) : "") + (x.device ? " · " + esc(x.device) : "") + '</div>' +
+              '<div style="margin:4px 0 8px;white-space:pre-wrap">' + esc(x.text) + '</div><div class="row" style="gap:8px;flex-wrap:wrap;align-items:flex-start"><select data-fs style="width:auto">' + Object.keys(FBS).map(function (s) { return '<option value="' + s + '"' + (s === x.status ? " selected" : "") + '>' + FBS[s] + '</option>'; }).join("") + '</select>' +
+              '<textarea data-fr rows="2" class="grow" placeholder="Antwort an den Absender (sichtbar)" style="min-width:200px">' + esc(x.reply) + '</textarea><textarea data-fn rows="2" class="grow" placeholder="Interne Notiz" style="min-width:160px">' + esc(x.note) + '</textarea>' +
+              '<button class="sm" data-fsave>Speichern</button><button class="ghost sm" data-fdel>Löschen</button></div></div>';
+          }).join("") : '<p class="small muted" style="margin:0">Nichts in dieser Liste.</p>') + '</div>';
+      }
+      el.innerHTML = form + list;
+      Array.prototype.forEach.call(el.querySelectorAll("[data-fk]"), function (b) { b.onclick = function () { kind = b.getAttribute("data-fk"); Array.prototype.forEach.call(el.querySelectorAll("[data-fk]"), function (x) { x.setAttribute("aria-pressed", String(x === b)); }); }; });
+      el.querySelector("#fbSend").onclick = function () {
+        var t = el.querySelector("#fbText").value, m = el.querySelector("#fbMsg");
+        post("/api/admin/feedback", { kind: kind, text: t, ver: "dashboard" }).then(function () { drawFeedback(el); }).catch(function (e) { m.className = "small err"; m.textContent = e.message; });
+      };
+      if (op) {
+        el.querySelector("#fbHour").onchange = function () { post("/api/admin/feedback/settings", { hour: +this.value }).then(function () { el.querySelector("#fbMail").textContent = "Gespeichert."; }).catch(function (e) { alert(e.message); }); };
+        el.querySelector("#fbNow").onclick = function () { post("/api/admin/feedback/mailnow").then(function (r) { el.querySelector("#fbMail").textContent = r.ok ? "Gesendet (" + (r.pending || 0) + " offen)." : "Fehler: " + r.error; }); };
+        Array.prototype.forEach.call(el.querySelectorAll("[data-ff]"), function (b) { b.onclick = function () { fbFilter = b.getAttribute("data-ff"); drawFeedback(el); }; });
+        Array.prototype.forEach.call(el.querySelectorAll(".fbi"), function (row) {
+          var id = row.getAttribute("data-id");
+          row.querySelector("[data-fsave]").onclick = function () { post("/api/admin/feedback/" + id, { status: row.querySelector("[data-fs]").value, reply: row.querySelector("[data-fr]").value, note: row.querySelector("[data-fn]").value }).then(function () { drawFeedback(el); }).catch(function (e) { alert(e.message); }); };
+          row.querySelector("[data-fdel]").onclick = function () { if (confirm("Rückmeldung endgültig löschen?")) api("/api/admin/feedback/" + id, { method: "DELETE" }).then(function () { drawFeedback(el); }); };
+        });
+      }
+    }).catch(function (e) { el.innerHTML = '<div class="card err">' + esc(e.message) + "</div>"; });
+  }
   function viewPlayer(p, r) {
     var m = r.meta || {}, t = r.totals, wk = r.week, h = "", D1 = "", D2 = "", D3 = "", D4 = "";
     var today = r.days[r.days.length - 1];
@@ -400,10 +447,10 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
       sg("daten", "💾", "Sicherung &amp; Daten", "Lernstand wiederherstellen · Herunterladen", '<div class="card" id="backupCard"></div>', false) +
       sg("name", "✏️", "Name &amp; Spieler", "Umbenennen · Spieler löschen", '<div class="row" style="gap:8px;flex-wrap:wrap"><button class="ghost" id="ren">Umbenennen</button><button class="ghost" id="del">Löschen</button></div>', false);
     var SUBS = [["over", "Überblick", D1], ["verl", "Verlauf", D2], ["woert", "Wörter", D3], ["akt", "Aktivität", D4]];
-    h += '<div class="tabs2" id="mainTabs"><button data-mt="dash" aria-pressed="' + (mainTab === "dash") + '">📊 Dashboard</button><button data-mt="set" aria-pressed="' + (mainTab === "set") + '">⚙️ Einstellungen</button></div>' +
+    h += '<div class="tabs2" id="mainTabs"><button data-mt="dash" aria-pressed="' + (mainTab === "dash") + '">📊 Dashboard</button><button data-mt="set" aria-pressed="' + (mainTab === "set") + '">⚙️ Einstellungen</button><button data-mt="fb" aria-pressed="' + (mainTab === "fb") + '">💬 Feedback</button></div>' +
       '<div id="paneDash"' + (mainTab === "dash" ? "" : " hidden") + '><div class="tabs2 sub" id="subTabs">' + SUBS.map(function (s) { return '<button data-st="' + s[0] + '" aria-pressed="' + (subTab === s[0]) + '">' + s[1] + '</button>'; }).join("") + '</div>' +
       SUBS.map(function (s) { return '<div data-sp="' + s[0] + '"' + (subTab === s[0] ? "" : " hidden") + '>' + s[2] + '</div>'; }).join("") + '</div>' +
-      '<div id="paneSet"' + (mainTab === "set" ? "" : " hidden") + '>' + SET + '</div>';
+      '<div id="paneSet"' + (mainTab === "set" ? "" : " hidden") + '>' + SET + '</div><div id="paneFb"' + (mainTab === "fb" ? "" : " hidden") + '></div>';
     h += '<p class="small muted">Es werden nur Lerndaten gespeichert (Wörter, Antworten, Zeiten, Käufe). In der App sieht ' + esc(nm()) + ', dass die Eltern den Fortschritt sehen.</p><p class="small muted" id="srvinfo"></p>';
     view.innerHTML = h;
     api("/api/admin/info").then(function (i) { var el = document.getElementById("srvinfo"); if (el) el.textContent = "Server-Version " + (i.version || "?") + (i.commit ? " · Stand " + i.commit : "") + " · Dienst gestartet " + fmtAgo(i.started); }).catch(function () {});
@@ -415,13 +462,14 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
     document.getElementById("rev").onclick = function () { if (confirm("Alle verbundenen Geräte von " + p.name + " trennen? Neu verbinden geht mit einem neuen Code.")) post("/api/admin/players/" + p.id + "/revoke").then(function () { loadPlayers(p.id); }); };
     document.getElementById("del").onclick = function () { if (confirm(p.name + " und alle gespeicherten Lerndaten endgültig löschen?")) api("/api/admin/players/" + p.id, { method: "DELETE" }).then(function () { cur = null; loadPlayers(); }); };
     drawFriends(p); drawClass(p); drawGifts(p, r); drawPass(p, r); drawWeekPlan(p, r); drawPath(p, r); drawGoals(p, r); drawPlans(p, r); drawBackups(p, r);
-    function pane() { document.getElementById("paneDash").hidden = mainTab !== "dash"; document.getElementById("paneSet").hidden = mainTab !== "set"; Array.prototype.forEach.call(view.querySelectorAll("#mainTabs button"), function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-mt") === mainTab)); }); Array.prototype.forEach.call(view.querySelectorAll("#subTabs button"), function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-st") === subTab)); }); Array.prototype.forEach.call(view.querySelectorAll("[data-sp]"), function (e) { e.hidden = e.getAttribute("data-sp") !== subTab; }); }
+    function pane() { document.getElementById("paneDash").hidden = mainTab !== "dash"; document.getElementById("paneSet").hidden = mainTab !== "set"; document.getElementById("paneFb").hidden = mainTab !== "fb"; if (mainTab === "fb") drawFeedback(document.getElementById("paneFb")); Array.prototype.forEach.call(view.querySelectorAll("#mainTabs button"), function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-mt") === mainTab)); }); Array.prototype.forEach.call(view.querySelectorAll("#subTabs button"), function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-st") === subTab)); }); Array.prototype.forEach.call(view.querySelectorAll("[data-sp]"), function (e) { e.hidden = e.getAttribute("data-sp") !== subTab; }); }
     Array.prototype.forEach.call(view.querySelectorAll("#mainTabs button"), function (b) { b.onclick = function () { mainTab = b.getAttribute("data-mt"); pane(); }; });
     Array.prototype.forEach.call(view.querySelectorAll("#subTabs button"), function (b) { b.onclick = function () { subTab = b.getAttribute("data-st"); pane(); }; });
     Array.prototype.forEach.call(view.querySelectorAll("details.sg"), function (d) { d.addEventListener("toggle", function () { setOpen[d.getAttribute("data-sg")] = d.open; }); });
     /* Gruppen ohne Inhalt (z. B. Belohnungen im Elternkonto) ausblenden, sobald die Karten gezeichnet sind */
     var tidy = function () { Array.prototype.forEach.call(view.querySelectorAll("details.sg"), function (d) { var body = d.querySelector(".sgb"); if (body && !body.textContent.trim() && !body.querySelector("button,input,select")) d.hidden = true; }); };
     setTimeout(tidy, 600); setTimeout(tidy, 2500);
+    if (mainTab === "fb") drawFeedback(document.getElementById("paneFb"));
     var wd = document.getElementById("wdet"); if (wd) wd.addEventListener("toggle", function () { if (wd.open) showWords(p); });
     Array.prototype.forEach.call(view.querySelectorAll("tr[data-u]"), function (tr) { tr.onclick = function () { showUnit(p, tr.getAttribute("data-u")); }; });
   }
