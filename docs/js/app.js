@@ -402,15 +402,16 @@
     } else {
       var w = info.weeks[sel - 1] || info.weeks[0];
       var sIcon = passIcon(s), dayDots = '<div class="stamps">' + w.days.map(function (d) {
-        var lab = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"][(new Date(d.k + "T00:00:00Z").getUTCDay() + 6) % 7], cls = d.ok ? "ok" : d.joker ? "joker" : d.today ? "now" : d.future ? "fut" : "miss", fresh = d.ok && d.today && S.stampNew(d.k);
+        var lab = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"][(new Date(d.k + "T00:00:00Z").getUTCDay() + 6) % 7], cls = d.ok ? "ok" : d.joker || d.makeup ? "joker" : d.today ? "now" : d.future ? "fut" : "miss", fresh = d.ok && d.today && S.stampNew(d.k);
         if (fresh) setTimeout(function () { try { if (S.state.settings.audio) global.VTC.sound(S.state.profile.snd, true); global.VTC.burst(S.state.profile.fx, global.innerWidth / 2, global.innerHeight * .4, 14, 1); } catch (e) {} }, 350);
-        return '<span class="stp ' + cls + (fresh ? " new" : "") + '"><span class="stpi">' + (d.ok ? sIcon : d.joker ? "🃏" : d.today ? "▶" : d.future ? "○" : "·") + '</span><small>' + lab + '</small></span>';
-      }).join("") + '</div>' + (w.joker ? '<p class="small muted" style="margin:6px 0 0">🃏 Joker: ein verpasster Tag zählt in dieser Woche trotzdem mit.</p>' : '<p class="small muted" style="margin:6px 0 0">🃏 Pro Woche zählt ein verpasster Tag als Joker mit.</p>');
+        return '<span class="stp ' + cls + (fresh ? " new" : "") + '"><span class="stpi">' + (d.ok ? sIcon : d.joker ? "🃏" : d.makeup ? "💪" : d.today ? "▶" : d.future ? "○" : "·") + '</span><small>' + lab + '</small></span>';
+      }).join("") + '</div>' + (w.joker ? '<p class="small muted" style="margin:6px 0 0">🃏 Joker: ein verpasster Tag zählt in dieser Woche trotzdem mit.</p>' : '<p class="small muted" style="margin:6px 0 0">🃏 Pro Woche zählt ein verpasster Tag als Joker mit.</p>') + (w.makeup ? '<p class="small" style="margin:4px 0 0">💪 Nachgeholt: Mit dem doppelten Tagesziel heute zählt ein weiterer Tag mit.</p>' : w.state === "cur" ? '<p class="small muted" style="margin:4px 0 0">💪 Nachholen: Schaffst du heute das doppelte Tagesziel, zählt ein weiterer verpasster Tag.</p>' : "");
       var TN = { bronze: "🥉 Bronze", silber: "🥈 Silber", gold: "🥇 Gold" };
       var tierHtml = '<div class="ptiers">' + w.tiers.map(function (t) {
         return '<button class="ptr ' + t.k + (t.got ? " got" : t.ok ? " rdy" : "") + '" ' + (t.ok && !t.got ? 'data-act="passtier" data-n="' + w.n + '" data-k="' + t.k + '"' : "disabled") + '><b>' + TN[t.k] + '</b><small>' + t.d + ' Tage</small><span>' + (t.got ? "✓" : "+" + t.c + " 🪙") + '</span></button>';
       }).join("") + '</div>';
-      det = '<div class="pdet"><b>Woche ' + w.n + ': ' + esc(w.title) + '</b><p class="small" style="margin:4px 0 6px">Schaffe an <b>' + w.need + ' Tagen</b> dein Tagesziel: <b class="tnum">' + w.cnt + ' / ' + w.need + '</b>' +
+      tierHtml += '<button class="ptr crew ' + (w.crew.got ? "got" : w.crew.ok ? "rdy" : "") + '" style="width:100%;margin-top:8px;flex-direction:row;justify-content:center;gap:8px" ' + (w.crew.ok && !w.crew.got ? 'data-act="passcrew" data-n="' + w.n + '"' : "disabled") + '><b>👥 Crew-Bonus</b><small>Crew-Wochenziel geholt</small><span>' + (w.crew.got ? "✓" : "+" + w.crew.c + " 🪙") + '</span></button>';
+      det = '<div class="pdet"><b>Woche ' + w.n + ': ' + esc(w.title) + '</b><p class="small muted" style="margin:2px 0 0">' + esc(w.motto) + '</p><p class="small" style="margin:4px 0 6px">Schaffe an <b>' + w.need + ' Tagen</b> dein Tagesziel: <b class="tnum">' + w.cnt + ' / ' + w.need + '</b>' +
         (w.state === "cur" && w.left != null ? ' · noch ' + w.left + ' ' + plural(w.left, "Tag", "Tage") : w.state === "missed" ? ' · Zeit abgelaufen' : "") + '</p>' +
         dayDots + tierHtml + '<div class="rcards" style="margin-top:10px">' + w.items.map(function (id) { var it = S.itemById(id), x = rcard(id, !w.claimed && w.state !== "ready"); return x + (it && it.kind === "avatar" && S.itemById("st:" + id.slice(3)) ? rcard("st:" + id.slice(3), !w.claimed && w.state !== "ready") : ""); }).join("") +
         (w.slot ? '<div class="rcard extra"><span class="ri em">🏷️</span><b>+1 Sticker-Platz</b></div>' : "") + (w.coins ? '<div class="rcard extra"><span class="ri em">🪙</span><b>+' + w.coins + ' Münzen</b></div>' : "") + (w.boost ? '<div class="rcard extra"><span class="ri em">⚡</span><b>+' + w.boost + ' XP-Booster</b></div>' : "") + '</div>' +
@@ -425,7 +426,22 @@
     var nx = info.started && !info.over && info.weeks[info.idx + 1], secret = "";
     if (nx) { var nm = (nx.items.map(S.itemById).filter(function (x) { return x && x.kind === "avatar"; })[0] || S.itemById(nx.items[0])); if (nm) secret = '<div class="psec ' + S.rarityOf(nm) + '"><span class="phi sil">' + itemIcon(nm) + '</span><div><b>🎁 Geheimes Geschenk</b><small>Woche ' + nx.n + ' · ' + (RAR_NAME[S.rarityOf(nm)] || "") + ' · kommt Montag, ' + nx.days[0].k.split("-").reverse().slice(0, 2).join(".") + '.</small></div></div>'; }
     return '<section class="card passc"><div class="row"><div class="eyebrow" style="flex:1 1 auto">' + icon + ' ' + esc(s.title) + '</div><span class="pill tnum">' + head + '</span></div>' + hlHtml +
-      '<div class="ptiles">' + tiles + '</div>' + secret + det + '</section>';
+      '<div class="ptiles">' + tiles + '</div>' + secret + det + '<div class="psec" style="border-style:solid;margin-top:12px"><div style="flex:1"><b>🧩 Sammel-Set ' + esc(s.title) + '</b><small>' + info.coll.have + ' von ' + info.coll.total + ' Wochen-Figuren gesammelt' + (info.coll.have === info.coll.total && info.coll.total ? ' · komplett! 🎉' : '') + '</small></div><button class="btn" data-act="passshare">📤 Teilen</button></div></section>';
+  }
+  /* Siegerbild: Pass-Stand als Bild zum Teilen (ohne Namen, nur Saison, Stempel und Stufen) */
+  function sharePass() {
+    var info = S.passInfo(), w = info.weeks[Math.min(Math.max(info.idx, 0), info.weeks.length - 1)], c = document.createElement("canvas"); c.width = 900; c.height = 600;
+    var g = c.getContext("2d"), gr = g.createLinearGradient(0, 0, 900, 600); gr.addColorStop(0, "#0E1320"); gr.addColorStop(1, "#27407a"); g.fillStyle = gr; g.fillRect(0, 0, 900, 600);
+    g.fillStyle = "#f2b33d"; g.font = "bold 60px sans-serif"; g.fillText(passIcon(info.season) + " " + info.season.title, 50, 100);
+    g.fillStyle = "#fff"; g.font = "bold 40px sans-serif"; g.fillText("Woche " + w.n + ": " + w.cnt + " von " + w.need + " Tagen geschafft", 50, 180);
+    w.days.forEach(function (d, i) { g.beginPath(); g.arc(110 + i * 110, 300, 40, 0, 7); g.fillStyle = d.ok ? "#f2b33d" : d.joker || d.makeup ? "#9a8cff" : "rgba(255,255,255,.18)"; g.fill(); g.fillStyle = "#14213d"; g.font = "bold 36px sans-serif"; g.textAlign = "center"; g.fillText(d.ok ? "✓" : d.joker ? "J" : "", 110 + i * 110, 313); });
+    g.textAlign = "left"; g.fillStyle = "#fff"; g.font = "36px sans-serif"; g.fillText(w.tiers.filter(function (t) { return t.ok; }).map(function (t) { return { bronze: "🥉", silber: "🥈", gold: "🥇" }[t.k]; }).join(" ") + "   " + info.coll.have + "/" + info.coll.total + " Figuren gesammelt", 50, 440);
+    g.fillStyle = "#b9c9de"; g.font = "30px sans-serif"; g.fillText("Wordy – Vokabeln lernen und sammeln", 50, 540);
+    c.toBlob(function (b) {
+      var f = new File([b], "wordy-pass.png", { type: "image/png" });
+      if (navigator.canShare && navigator.canShare({ files: [f] })) navigator.share({ files: [f], text: "Mein Wordy-Pass" }).catch(function () {});
+      else { var a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "wordy-pass.png"; a.click(); toast("Bild gespeichert."); }
+    });
   }
   function passIcon(s) { return { Zauberwald: "🔮", "Beute-Insel": "🪂", Sternenreise: "🌌" }[s.title] || "❄️"; }
   /* Die 2 bis 3 größten Geschenke einer Saison: höchste Seltenheit, in Reihenfolge der Wochen */
@@ -1077,7 +1093,7 @@
     else if (beuteSeg === "showroom") { viewShowroom(); topSegs(top); }
     else {
       view.innerHTML = '<div class="stack">' + top + passCard() +
-        '<section class="card"><div class="eyebrow">So funktioniert der Monatspass</div><p class="small muted" style="margin:6px 0 0">Der Pass läuft einen Monat in vier Wochen plus Finale. Jede Woche zählt, an wie vielen Tagen du dein Tagesziel schaffst, und jeder Tag gibt einen Stempel. Ein verpasster Tag pro Woche zählt als Joker mit. Sind genug Tage zusammen, öffnest du die Wochen-Beute mit Figur, Tanz, Sticker und Münzen. Schon ab 3 Tagen gibt es Bronze, bei 5 Silber, bei 7 Gold, jeweils mit Münzen. Und nächste Woche wartet ein geheimes Geschenk. Alle vier Wochen geschafft? Dann wartet das Finale.</p></section></div>';
+        '<section class="card"><div class="eyebrow">So funktioniert der Monatspass</div><p class="small muted" style="margin:6px 0 0">Der Pass läuft einen Monat in vier Wochen plus Finale. Jede Woche zählt, an wie vielen Tagen du dein Tagesziel schaffst, und jeder Tag gibt einen Stempel. Ein verpasster Tag pro Woche zählt als Joker mit. Sind genug Tage zusammen, öffnest du die Wochen-Beute mit Figur, Tanz, Sticker und Münzen. Schon ab 3 Tagen gibt es Bronze, bei 5 Silber, bei 7 Gold, jeweils mit Münzen. Mit doppeltem Tagesziel holst du einen verpassten Tag nach, ein Crew-Wochenziel gibt Bonusmünzen, und nächste Woche wartet ein geheimes Geschenk. Alle vier Wochen geschafft? Dann wartet das Finale.</p></section></div>';
     }
   }
   function designCard() {
@@ -2850,6 +2866,8 @@
     }
     else if (a === "passsel") { var pn = act.getAttribute("data-n"); passSel = pn === "fin" ? "fin" : +pn; render(); }
     else if (a === "passtier") { var tr = S.claimPassTier(+act.getAttribute("data-n"), act.getAttribute("data-k")); if (tr.error) toast(tr.error); else { try { if (S.state.settings.audio) global.VTC.sound(S.state.profile.snd, true); var rc = act.getBoundingClientRect(); global.VTC.burst("stars", rc.left + rc.width / 2, rc.top, 12, 1); } catch (e) {} toast("+" + tr.coins + " 🪙 " + ({ bronze: "Bronze", silber: "Silber", gold: "Gold" })[tr.k]); renderHeader(); render(); } }
+    else if (a === "passcrew") { var cr2 = S.claimPassCrew(+act.getAttribute("data-n")); if (cr2.error) toast(cr2.error); else { toast("👥 Crew-Bonus! +" + cr2.coins + " 🪙"); renderHeader(); render(); } }
+    else if (a === "passshare") { sharePass(); }
     else if (a === "passclaim") { openPassReward(act.getAttribute("data-n")); }
     else if (a === "sritem") { srModal(act.getAttribute("data-id")); }
     else if (a === "hhdance") {

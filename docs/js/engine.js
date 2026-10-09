@@ -630,7 +630,7 @@
   /* Crew-Belohnung abgeholt (der Server hat Ziel und Beitrag geprüft): Münzen mit Booster, Zähler für Medaillen */
   function crewReward(coins, tier) {
     var c = boost(coins); addCoins(c); addCl("ziel", c);
-    var cr = state.crew || (state.crew = { joined: 0, gold: 0 }); cr.joined = 1; if (tier === "Gold") cr.gold = (cr.gold || 0) + 1;
+    var cr = state.crew || (state.crew = { joined: 0, gold: 0 }); cr.joined = 1; if (!cr.days) cr.days = []; if (cr.days.indexOf(today()) < 0) cr.days.push(today()); cr.days = cr.days.slice(-40); if (tier === "Gold") cr.gold = (cr.gold || 0) + 1;
     save(true); return c;
   }
   function crewJoined() { var cr = state.crew || (state.crew = { joined: 0, gold: 0 }); if (!cr.joined) { cr.joined = 1; save(true); } }
@@ -842,6 +842,8 @@
   function dayAdd(k, n) { var d = new Date(k + "T00:00:00Z"); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); }
   function daySecOf(k) { return k === today() ? ((state.daily && state.daily.sec) || 0) : ((state.history[k] && state.history[k].sec) || 0); }
   function dayDone(k) { return k <= today() && (planMin(k) === 0 || daySecOf(k) >= goalMin(k) * 60); }
+  var PASS_CREW = 10;   // Crew-Bonus: mit der Crew ein Wochenziel geholt
+  var PASS_MOTTO = ["Wochenthema: Auf die Plätze, los!", "Wochenthema: Dranbleiben zahlt sich aus", "Wochenthema: Halbzeit, jetzt Vollgas", "Wochenthema: Das große Finale naht"];
   var PASS_TIERS = [{ k: "bronze", d: 3, c: 5 }, { k: "silber", d: 5, c: 10 }, { k: "gold", d: 7, c: 20 }];   // Wochenstufen: kleine Münzen, damit auch 3 bis 4 Tage etwas bringen
   function passInfo() {
     var s = passSeason(), p = passState(), t = today(), idx = Math.floor(dayDiff(p.start, t) / 7), weeks = [];
@@ -850,13 +852,18 @@
       for (var i = 0; i < 7; i++) { var k = dayAdd(ws, i), ok = dayDone(k); if (ok) cnt++; days.push({ k: k, ok: ok, today: k === t, future: k > t, joker: false }); }
       var joker = false;   // Joker-Tag: ein verpasster, schon vergangener Tag pro Woche zählt trotzdem mit (wenn mindestens ein Tag geschafft ist)
       if (cnt >= 1) for (var jx = 0; jx < 7; jx++) { var dj = days[jx]; if (!dj.ok && !dj.today && !dj.future) { dj.joker = true; joker = true; cnt++; break; } }
+      var makeup = false, dsT = daySecOf(t);   // Nachholen: wer heute das doppelte Tagesziel schafft, holt einen weiteren verpassten Tag der Woche nach
+      if (cnt >= 1 && n === idx && goalMin(t) > 0 && dsT >= goalMin(t) * 120) for (var mx = 0; mx < 7; mx++) { var dm = days[mx]; if (!dm.ok && !dm.joker && !dm.today && !dm.future) { dm.makeup = true; makeup = true; cnt++; break; } }
+      var cdays = (state.crew && state.crew.days) || [], crewOk = days.some(function (d) { return cdays.indexOf(d.k) >= 0; });
       var claimed = !!p.claimed[n + 1], ready = cnt >= w.need, tg = p.tiers || {};
       var tiers = PASS_TIERS.map(function (t) { return { k: t.k, d: t.d, c: t.c, ok: cnt >= t.d, got: !!tg[(n + 1) + t.k] }; });
-      weeks.push({ tiers: tiers, n: n + 1, title: w.title, need: w.need, cnt: cnt, joker: joker, days: days, items: w.items || [], slot: w.slot || 0, boost: w.boost || 0, coins: w.coins || 0, claimed: claimed, ready: ready && !claimed,
+      weeks.push({ tiers: tiers, makeup: makeup, crew: { ok: crewOk, got: !!tg[(n + 1) + 'crew'], c: PASS_CREW }, motto: PASS_MOTTO[n % PASS_MOTTO.length], n: n + 1, title: w.title, need: w.need, cnt: cnt, joker: joker, days: days, items: w.items || [], slot: w.slot || 0, boost: w.boost || 0, coins: w.coins || 0, claimed: claimed, ready: ready && !claimed,
         state: claimed ? "claimed" : ready ? "ready" : n === idx ? "cur" : n < idx ? "missed" : "future", left: n === idx ? 7 - dayDiff(ws, t) : null });
     });
     var all = weeks.every(function (w) { return w.claimed; });
-    return { season: s, start: p.start, idx: idx, started: idx >= 0, over: idx >= s.weeks.length, weeks: weeks, fin: { ready: all && !p.fin && !!s.finale, claimed: !!p.fin, def: s.finale || null } };
+    var mains = s.weeks.map(function (w) { var its = (w.items || []).map(itemById).filter(Boolean); return (its.filter(function (x) { return x.kind === "avatar"; })[0] || its[0] || {}).id; }).filter(Boolean);
+    var coll = { have: mains.filter(function (id) { return owns(itemById(id)); }).length, total: mains.length };
+    return { coll: coll, season: s, start: p.start, idx: idx, started: idx >= 0, over: idx >= s.weeks.length, weeks: weeks, fin: { ready: all && !p.fin && !!s.finale, claimed: !!p.fin, def: s.finale || null } };
   }
   function passGrant(rw) {
     var got = [], slot = 0, extra = 0;
@@ -890,6 +897,11 @@
     if (!t.ok) return { error: "Noch " + (t.d - w.cnt) + " Tage fehlen." };
     var p = passState(); if (!p.tiers) p.tiers = {}; p.tiers[n + k] = 1;
     parentCoins(t.c); save(true); return { ok: true, coins: t.c, k: k };
+  }
+  function claimPassCrew(n) {
+    var w = passInfo().weeks[n - 1]; if (!w || w.crew.got) return { error: "Schon abgeholt." };
+    if (!w.crew.ok) return { error: "Hol zuerst ein Crew-Wochenziel." };
+    var p = passState(); if (!p.tiers) p.tiers = {}; p.tiers[n + "crew"] = 1; parentCoins(PASS_CREW); save(true); return { ok: true, coins: PASS_CREW };
   }
   function claimPassFinale() {
     var info = passInfo(); if (!info.fin.ready) return { error: "Erst alle Wochen abholen." };
@@ -1420,6 +1432,6 @@
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
-    resetProgress: resetProgress, stampNew: stampNew, passStamp: passStamp, shopVisible: shopVisible, shopWeeks: shopWeeks, shopCatalog: shopCatalog, shopTeasers: shopTeasers, shopNow: shopNow, shopRel: shopRel, WELCOME: WELCOME, welcomeGrant: welcomeGrant, welcomeNeeded: welcomeNeeded, steered: steered, pathUnitList: pathUnitList, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, boost: boost, coinFactor: coinFactor, avgCoins: avgCoins, dealItem: dealItem, priceOf: priceOf, passInfo: passInfo, favs: favs, toggleFav: toggleFav, collection: collection, findCollItem: findCollItem, CUP_TIERS: CUP_TIERS, claimPassWeek: claimPassWeek, claimPassTier: claimPassTier, claimPassFinale: claimPassFinale, passMeta: passMeta, rarityOf: rarityOf, shopList: shopList, activeSetDeal: activeSetDeal, buySet: buySet, takeNews: takeNews, SETS: SETS, itemById: itemById, minXp: minXp, defaultOf: defaultOf
+    resetProgress: resetProgress, stampNew: stampNew, passStamp: passStamp, shopVisible: shopVisible, shopWeeks: shopWeeks, shopCatalog: shopCatalog, shopTeasers: shopTeasers, shopNow: shopNow, shopRel: shopRel, WELCOME: WELCOME, welcomeGrant: welcomeGrant, welcomeNeeded: welcomeNeeded, steered: steered, pathUnitList: pathUnitList, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, boost: boost, coinFactor: coinFactor, avgCoins: avgCoins, dealItem: dealItem, priceOf: priceOf, passInfo: passInfo, favs: favs, toggleFav: toggleFav, collection: collection, findCollItem: findCollItem, CUP_TIERS: CUP_TIERS, claimPassWeek: claimPassWeek, claimPassTier: claimPassTier, claimPassCrew: claimPassCrew, claimPassFinale: claimPassFinale, passMeta: passMeta, rarityOf: rarityOf, shopList: shopList, activeSetDeal: activeSetDeal, buySet: buySet, takeNews: takeNews, SETS: SETS, itemById: itemById, minXp: minXp, defaultOf: defaultOf
   };
 })(window);

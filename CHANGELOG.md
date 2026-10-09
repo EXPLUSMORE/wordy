@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.65.0 – 2026-10-09
+- Pass: Nachholen (doppeltes Tagesziel heute holt einen weiteren verpassten Tag der Woche nach), Crew-Bonus (+10 🪙 pro Woche, wenn ein Crew-Wochenziel geholt wurde; `state.crew.days`), Wochenthema (Motto je Woche), Sammel-Set-Anzeige (Wochen-Figuren x/4) und Siegerbild zum Teilen (Bild mit Stempeln und Stufen, Teilen-Menü oder Download).
+
 ## 2.64.0 – 2026-10-09
 - Pass: Wochenstufen Bronze (3 Tage, +5 🪙), Silber (5 Tage, +10 🪙) und Gold (7 Tage, +20 🪙), einzeln abholbar (`claimPassTier`, `state.pass.tiers`). Auch wer nur 3 bis 4 Tage schafft, geht nicht leer aus.
 - Pass: „Geheimes Geschenk“ als Silhouette mit Seltenheit und „kommt Montag, TT.MM.“ für die nächste Woche.
