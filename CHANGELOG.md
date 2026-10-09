@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.54.4 – 2026-10-09
+- Profil: „Design“ ist eine eigene zugeklappte Zeile direkt unter „Lernen“ (nicht mehr darin).
+
 ## 2.54.3 – 2026-10-09
 - Profil: „Design“ ist jetzt eine zugeklappte Zeile im Bereich „Lernen“ (zeigt das gewählte Design) statt einer großen Karte oben.
 

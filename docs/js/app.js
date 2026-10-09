@@ -1677,8 +1677,8 @@
       '<input type="checkbox" id="setArenaM" ' + (st.settings.arenaMissions !== false ? "checked" : "") + ' style="width:auto"></label>' +
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Herzen benutzen<br><span class="small muted">Aus = Üben ohne Abbruch</span></span>' +
       '<input type="checkbox" id="setHearts" ' + (st.settings.hearts ? "checked" : "") + ' style="width:auto"></label>' +
-      '<p class="small muted" style="margin:10px 0 0">Gelernt wird als <b>' + esc(playerName()) + '</b>. Den Namen änderst du unter „Spieler“.</p>' +
-      fold("design", "🎨", "Design", "Aussehen von Wordy: " + ((global.VTC.DESIGNS.filter(function (d) { return d[0] === (st.settings.design || "gold"); })[0] || [])[1] || ""), unCard(designCard())));
+      '<p class="small muted" style="margin:10px 0 0">Gelernt wird als <b>' + esc(playerName()) + '</b>. Den Namen änderst du unter „Spieler“.</p>');
+    html += fold("design", "🎨", "Design", "Aussehen von Wordy: " + ((global.VTC.DESIGNS.filter(function (d) { return d[0] === (st.settings.design || "gold"); })[0] || [])[1] || ""), unCard(designCard()));
     html += fold("ton", "🔊", "Ton &amp; Aussehen", "Vorlesen, Hell oder Dunkel",
       '<label class="row" style="margin-top:4px"><span style="flex:1 1 auto">Aussprache vorlesen<br><span class="small muted">Nutzt die englische Stimme des Geräts</span></span>' +
       '<input type="checkbox" id="setAudio" ' + (st.settings.audio ? "checked" : "") + ' style="width:auto"></label>' +

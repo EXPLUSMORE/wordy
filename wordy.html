@@ -528,7 +528,6 @@ details.grp .chev,details.fold .chev{font-size:18px;color:var(--accent);transiti
 details.grp[open] .chev,details.fold[open] .chev{transform:rotate(90deg)}
 details.fold{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:2px 16px}
 details.fold>.fbody{padding:2px 0 14px}
-.fbody details.fold{box-shadow:none;background:var(--card-2,rgba(128,128,128,.08));margin-top:14px}
 .rec-card h2{font-size:21px;margin:6px 0 2px}
 .nowrap{white-space:nowrap}
 @media (min-width:520px){ .tiles4{grid-template-columns:repeat(4,1fr)} .quick{grid-template-columns:repeat(4,1fr)} }
@@ -1010,7 +1009,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.54.3";window.WORDY_BUILD="f06d3e8c4b";</script>
+<script>window.WORDY_VERSION="2.54.4";window.WORDY_BUILD="a7356c2720";</script>
 </head>
 <body>
 <div id="app">
@@ -8576,8 +8575,8 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       '<input type="checkbox" id="setArenaM" ' + (st.settings.arenaMissions !== false ? "checked" : "") + ' style="width:auto"></label>' +
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Herzen benutzen<br><span class="small muted">Aus = Üben ohne Abbruch</span></span>' +
       '<input type="checkbox" id="setHearts" ' + (st.settings.hearts ? "checked" : "") + ' style="width:auto"></label>' +
-      '<p class="small muted" style="margin:10px 0 0">Gelernt wird als <b>' + esc(playerName()) + '</b>. Den Namen änderst du unter „Spieler“.</p>' +
-      fold("design", "🎨", "Design", "Aussehen von Wordy: " + ((global.VTC.DESIGNS.filter(function (d) { return d[0] === (st.settings.design || "gold"); })[0] || [])[1] || ""), unCard(designCard())));
+      '<p class="small muted" style="margin:10px 0 0">Gelernt wird als <b>' + esc(playerName()) + '</b>. Den Namen änderst du unter „Spieler“.</p>');
+    html += fold("design", "🎨", "Design", "Aussehen von Wordy: " + ((global.VTC.DESIGNS.filter(function (d) { return d[0] === (st.settings.design || "gold"); })[0] || [])[1] || ""), unCard(designCard()));
     html += fold("ton", "🔊", "Ton &amp; Aussehen", "Vorlesen, Hell oder Dunkel",
       '<label class="row" style="margin-top:4px"><span style="flex:1 1 auto">Aussprache vorlesen<br><span class="small muted">Nutzt die englische Stimme des Geräts</span></span>' +
       '<input type="checkbox" id="setAudio" ' + (st.settings.audio ? "checked" : "") + ' style="width:auto"></label>' +
