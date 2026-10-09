@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.58.0 – 2026-10-09
+- Eltern und Lehrkräfte können sich mit E-Mail und Passwort anmelden (Dashboard-Anmeldeseite). Der Anmeldelink per Mail bleibt als Alternative und für „Passwort vergessen“. Passwort festlegen oder ändern unter Konto (mindestens 10 Zeichen, scrypt-Hash, Sperre nach 6 Fehlversuchen für 15 Minuten, Ändern nach älterer Sitzung nur mit dem aktuellen Passwort). Datenschutzerklärung ergänzt (Fassung 2026-10d, noch rechtlich prüfen lassen). Server-Update nötig.
+
 ## 2.57.1 – 2026-10-09
 - Feedback-Datenschutz: Das App-Gerät eines Kindes sieht in Profil › Feedback nur Rückmeldungen, die von diesem Gerät kamen, nicht die, die die Eltern im Dashboard geschrieben haben. Server-Update nötig.
 

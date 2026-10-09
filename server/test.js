@@ -264,6 +264,24 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     assert.ok(/HttpOnly/i.test(ss.headers.get("set-cookie")) && /SameSite=Lax/i.test(ss.headers.get("set-cookie")), "Cookie HttpOnly und SameSite");
     assert.equal((await J("/api/family/session", { method: "POST", body: JSON.stringify({ t: t1 }) })).s, 400, "Link nur einmal nutzbar");
     const F = { Cookie: cookie, "Content-Type": "application/json", "X-Wordy": "1" };
+    /* Passwort-Anmeldung der Eltern (optional neben dem Link) */
+    const JP = (u, b, h) => J(u, { method: "POST", headers: h || { "Content-Type": "application/json", "X-Wordy": "1" }, body: JSON.stringify(b) });
+    assert.equal((await JP("/api/family/signin", { email: "mama@example.org", password: "irgendwas-langes-1" })).s, 401, "ohne gesetztes Passwort keine Anmeldung");
+    assert.equal((await JP("/api/fam/me/password", { password: "kurz" }, F)).s, 400, "Passwort zu kurz");
+    assert.equal((await JP("/api/fam/me/password", { password: "passwort123" }, F)).s, 400, "zu einfaches Passwort");
+    assert.equal((await JP("/api/fam/me/password", { password: "Drei Wörter hintereinander" }, F)).s, 200, "Passwort setzen (frisch angemeldet)");
+    assert.equal((await J("/api/fam/me", { headers: F })).j.hasPassword, true);
+    assert.equal((await JP("/api/family/signin", { email: "mama@example.org", password: "falsches-passwort-1" })).s, 401, "falsches Passwort");
+    const si = await fetch(base + "/api/family/signin", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: "MAMA@example.org", password: "Drei Wörter hintereinander" }) });
+    assert.equal(si.status, 200, "Anmeldung mit Passwort"); const cookiePW = (si.headers.get("set-cookie") || "").split(";")[0];
+    assert.equal((await J("/api/fam/me", { headers: { Cookie: cookiePW } })).s, 200, "Sitzung nach Passwort-Anmeldung gültig");
+    { const { DatabaseSync } = require("node:sqlite"); const d = new DatabaseSync(path.join(dir, "t.db")); d.exec("UPDATE family_sessions SET created = created - 3600000"); d.close(); }
+    const FPW = { Cookie: cookiePW, "Content-Type": "application/json", "X-Wordy": "1" };
+    assert.equal((await JP("/api/fam/me/password", { password: "Ein ganz neues Passwort" }, FPW)).s, 403, "Ändern ohne aktuelles Passwort nach älterer Sitzung gesperrt");
+    assert.equal((await JP("/api/fam/me/password", { password: "Ein ganz neues Passwort", current: "Drei Wörter hintereinander" }, FPW)).s, 200, "Ändern mit aktuellem Passwort");
+    assert.equal((await JP("/api/family/signin", { email: "mama@example.org", password: "Drei Wörter hintereinander" })).s, 401, "altes Passwort gilt nicht mehr");
+    for (let i = 0; i < 6; i++) await JP("/api/family/signin", { email: "fremd@example.org", password: "falsch-falsch-" + i });
+    assert.equal((await JP("/api/family/signin", { email: "fremd@example.org", password: "falsch-falsch-9" })).s, 429, "Sperre nach Fehlversuchen");
     assert.equal((await J("/api/fam/players", { headers: { Cookie: cookie } })).j.length, 0, "Familie startet ohne Kinder");
     assert.equal((await J("/api/fam/players", { method: "POST", headers: { Cookie: cookie, "Content-Type": "application/json" }, body: JSON.stringify({ name: "Lena" }) })).s, 403, "ohne X-Wordy-Kopf kein Schreiben");
     const kid = await J("/api/fam/players", { method: "POST", headers: F, body: JSON.stringify({ name: "Lena" }) });

@@ -13,7 +13,7 @@
 .card{width:100%;max-width:440px;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:26px;box-shadow:0 10px 34px rgba(16,21,31,.12)}
 h1{margin:0 0 6px;font-size:24px;font-weight:800;letter-spacing:-.015em;font-family:ui-rounded,"SF Pro Rounded","Nunito","DM Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}p{margin:0 0 14px;color:var(--ink2)}
 label{display:block;font-size:14px;margin:12px 0 4px;font-weight:600}
-input[type=email]{width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit}
+input[type=email],input[type=password]{width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit}
 .chk{display:flex;gap:10px;align-items:flex-start;font-weight:400;font-size:14px;margin-top:14px}.chk input{margin-top:4px}
 button{width:100%;margin-top:16px;padding:13px;border:0;border-radius:14px;background:var(--acc);color:var(--on-acc);font:inherit;font-weight:800;cursor:pointer;box-shadow:0 4px 0 var(--btn-sh)}
 button:disabled{opacity:.6}.msg{margin-top:14px;font-size:14px}.err{color:var(--bad)}.ok{color:var(--good)}
@@ -38,17 +38,27 @@ a{color:var(--acc)}.small{font-size:13px}
   var join = path === "/f/join", code = q.get("i") || "";
   if (join && !code) { c.innerHTML = '<h1>Einladung</h1><p>Dieser Link ist unvollständig. Bitte öffne den Link aus deiner Einladung noch einmal.</p>'; return; }
   var teach = join && q.get("l") === "1";
-  c.innerHTML = '<h1><img src="/app/icon-192.png" alt="" width="34" height="34" style="border-radius:9px;vertical-align:-9px;margin-right:8px">Track Wordy · ' + (teach ? "Lehrkräfte" : "Eltern") + '</h1><p>' + (teach ? "Du wurdest als Lehrkraft eingeladen! Mit deiner E-Mail-Adresse legst du dein Konto an, erstellst eine Klasse und stellst die Wochenaufgabe ein. Die Teilnahme ist für Kinder freiwillig und braucht die Zustimmung der Eltern." : join ? "Du wurdest eingeladen! Mit deiner E-Mail-Adresse legst du dein Elternkonto an und verwaltest danach die Kinder selbst." : "Melde dich mit deiner E-Mail-Adresse an. Wir schicken dir einen Anmeldelink, ein Passwort brauchst du nicht.") + '</p>' +
+  c.innerHTML = '<h1><img src="/app/icon-192.png" alt="" width="34" height="34" style="border-radius:9px;vertical-align:-9px;margin-right:8px">Track Wordy · ' + (teach ? "Lehrkräfte" : "Eltern") + '</h1><p>' + (teach ? "Du wurdest als Lehrkraft eingeladen! Mit deiner E-Mail-Adresse legst du dein Konto an, erstellst eine Klasse und stellst die Wochenaufgabe ein. Die Teilnahme ist für Kinder freiwillig und braucht die Zustimmung der Eltern." : join ? "Du wurdest eingeladen! Mit deiner E-Mail-Adresse legst du dein Elternkonto an und verwaltest danach die Kinder selbst." : "Melde dich mit E-Mail und Passwort an. Hast du noch keins oder es vergessen, schicken wir dir einen Anmeldelink per Mail.") + '</p>' +
     '<label for="e">E-Mail-Adresse</label><input id="e" type="email" autocomplete="email" inputmode="email" placeholder="name@beispiel.de">' +
     (join ? '<label class="chk"><input type="checkbox" id="k"><span>' + (teach ? "Ich bin Lehrkraft und stimme der" : "Ich bin erziehungsberechtigt und stimme der") + ' <a href="/f/datenschutz" target="_blank">Datenschutzerklärung</a> zu. ' + (teach ? "Gespeichert werden diese E-Mail-Adresse, meine Klassen und Aufgaben." : "Gespeichert werden nur Lerndaten meiner Kinder (Wörter, Zeiten, Käufe) und diese E-Mail-Adresse.") + '</span></label>' : '') +
-    '<button id="go">' + (join ? "Konto anlegen" : "Anmeldelink senden") + '</button><div id="m" class="msg"></div>' + (join ? "" : '<p class="small" style="margin-top:14px">Noch kein Konto? Du brauchst einen Einladungslink.</p>');
+    (join ? "" : '<label for="pw">Passwort</label><input id="pw" type="password" autocomplete="current-password" placeholder="Passwort (oder unten Link anfordern)">') +
+    '<button id="go">' + (join ? "Konto anlegen" : "Anmelden") + '</button>' + (join ? "" : '<button id="lk" style="background:transparent;color:var(--acc);box-shadow:none;border:1.5px solid var(--acc);margin-top:10px">Link per Mail senden</button>') + '<div id="m" class="msg"></div>' + (join ? "" : '<p class="small" style="margin-top:14px">Noch kein Konto? Du brauchst einen Einladungslink. Passwort vergessen oder noch keins? Fordere einen Anmeldelink an und lege danach unter „Konto“ ein Passwort fest.</p>');
+  function sendLink(btn) {
+    var e = document.getElementById("e").value.trim(); if (!e) { fail(new Error("Bitte die E-Mail-Adresse eingeben.")); return; }
+    btn.disabled = true;
+    post("/api/family/login", { email: e }).then(function () { btn.disabled = false; done("Fast geschafft: Wenn die Adresse stimmt, ist die Mail unterwegs. Der Link gilt " + 20 + " Minuten. Schau auch im Spam-Ordner nach."); }).catch(function (x) { btn.disabled = false; fail(x); });
+  }
   document.getElementById("go").onclick = function () {
     var e = document.getElementById("e").value.trim(); if (!e) return;
     if (join && !document.getElementById("k").checked) { fail(new Error("Bitte stimme der Datenschutzerklärung zu.")); return; }
+    var self = this;
+    if (join) { this.disabled = true; post("/api/family/join", { email: e, invite: code, consent: true }).then(function () { done("Fast geschafft: Wenn die Adresse stimmt, ist die Mail unterwegs. Der Link gilt " + 20 + " Minuten. Schau auch im Spam-Ordner nach."); }).catch(fail); return; }
+    var pw = document.getElementById("pw").value;
+    if (!pw) { sendLink(self); return; }
     this.disabled = true;
-    (join ? post("/api/family/join", { email: e, invite: code, consent: true }) : post("/api/family/login", { email: e }))
-      .then(function () { done("Fast geschafft: Wenn die Adresse stimmt, ist die Mail unterwegs. Der Link gilt " + 20 + " Minuten. Schau auch im Spam-Ordner nach."); }).catch(fail);
+    post("/api/family/signin", { email: e, password: pw }).then(function () { location.replace("/f/"); }).catch(fail);
   };
+  var lk = document.getElementById("lk"); if (lk) lk.onclick = function () { sendLink(lk); };
 })();
 </script>
 </body>

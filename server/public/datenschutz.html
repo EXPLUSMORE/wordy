@@ -59,6 +59,7 @@ a{color:var(--acc)}
 <h2 id="fam">6. Elternkonto und Eltern-Dashboard</h2>
 <ul>
 <li><b>Registrierung:</b> nur mit einem Einladungslink des Betreibers. Verarbeitet werden die E-Mail-Adresse, Zeitpunkt und Version der Einwilligung, Zeitpunkt der Registrierung und der letzten Anmeldung.</li>
+<li><b>Anmeldung:</b> per Anmeldelink, der an die E-Mail-Adresse geschickt wird, oder optional mit selbst gewähltem Passwort. Das Passwort wird nie im Klartext gespeichert, sondern nur als gesalzener Hash (scrypt). Nach mehreren Fehlversuchen wird die Anmeldung vorübergehend gesperrt.</li>
 <li><b>Anmeldung ohne Passwort:</b> Es wird ein Einmal-Link per E-Mail versandt (20 Minuten gültig, nur einmal nutzbar; nur als Hash gespeichert, nach 24 Stunden gelöscht). Danach wird ein <b>Sitzungs-Cookie</b> („wf“, HttpOnly, SameSite=Lax, bei https mit Secure, 30 Tage) gesetzt. Es dient ausschließlich der Anmeldung und ist technisch erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG).</li>
 <li><b>Wochenzusammenfassung per E-Mail:</b> Sie ist im Konto abschaltbar. Sie enthält Lernzeiten, Ziele und Problemwörter der eigenen Kinder.</li>
 <li><b>Rechtsgrundlagen:</b> Art. 6 Abs. 1 lit. b (Nutzung des Elternkontos), lit. a (Einwilligung bei der Registrierung) und lit. f DSGVO (Sicherheit der Anmeldung).</li>

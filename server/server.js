@@ -79,10 +79,11 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS family_invites (code TEXT PRIMARY KEY, created INTEGER NOT NULL, expires INTEGER NOT NULL, max_uses INTEGER NOT NULL DEFAULT 1, uses INTEGER NOT NULL DEFAULT 0, note TEXT);
 `);
 if (!db.prepare("PRAGMA table_info(players)").all().some(c => c.name === "family")) db.exec("ALTER TABLE players ADD COLUMN family INTEGER REFERENCES families(id) ON DELETE CASCADE");
-for (const [tab, col, ddl] of [["families", "role", "TEXT NOT NULL DEFAULT 'parent'"], ["family_invites", "role", "TEXT NOT NULL DEFAULT 'parent'"]]) if (!db.prepare("PRAGMA table_info(" + tab + ")").all().some(c => c.name === col)) db.exec("ALTER TABLE " + tab + " ADD COLUMN " + col + " " + ddl);
+for (const [tab, col, ddl] of [["families", "role", "TEXT NOT NULL DEFAULT 'parent'"], ["families", "pw", "TEXT NOT NULL DEFAULT ''"], ["family_invites", "role", "TEXT NOT NULL DEFAULT 'parent'"]]) if (!db.prepare("PRAGMA table_info(" + tab + ")").all().some(c => c.name === col)) db.exec("ALTER TABLE " + tab + " ADD COLUMN " + col + " " + ddl);
 const fq = {
   byId: db.prepare("SELECT * FROM families WHERE id = ?"),
   byEmail: db.prepare("SELECT * FROM families WHERE email = ?"),
+  setPw: db.prepare("UPDATE families SET pw = ? WHERE id = ?"),
   all: db.prepare("SELECT f.*, (SELECT COUNT(*) FROM players p WHERE p.family = f.id) AS children FROM families f ORDER BY f.id"),
   add: db.prepare("INSERT INTO families(email, created, consent_ts, consent_ver, role) VALUES (?, ?, ?, ?, ?)"),
   setStatus: db.prepare("UPDATE families SET status = ? WHERE id = ?"),
@@ -184,7 +185,7 @@ const kq = {
   tasks: db.prepare("SELECT * FROM class_tasks WHERE class = ? ORDER BY d_from DESC, id DESC"), active: db.prepare("SELECT * FROM class_tasks WHERE class = ? AND d_from <= ? AND d_to >= ? ORDER BY d_to, id"), task: db.prepare("SELECT * FROM class_tasks WHERE id = ?"),
   addTask: db.prepare("INSERT INTO class_tasks(class, title, units, d_from, d_to, goal, created) VALUES (?, ?, ?, ?, ?, ?, ?)"), delTask: db.prepare("DELETE FROM class_tasks WHERE id = ?")
 };
-const MAX_KIDS = 6, LINK_MIN = 20, SESSION_DAYS = 30, CONSENT_VER = "2026-10c";   // Version der Datenschutzerklärung, der zugestimmt wird
+const MAX_KIDS = 6, LINK_MIN = 20, SESSION_DAYS = 30, CONSENT_VER = "2026-10d";   // Version der Datenschutzerklärung, der zugestimmt wird
 const q = {
   player: db.prepare("SELECT * FROM players WHERE id = ?"),
   players: db.prepare("SELECT * FROM players ORDER BY id"),
@@ -791,13 +792,29 @@ function cookieOf(req, name) {
   for (const part of String(req.headers.cookie || "").split(";")) { const i = part.indexOf("="); if (i > 0 && part.slice(0, i).trim() === name) return part.slice(i + 1).trim(); }
   return "";
 }
+/* Passwort für Eltern und Lehrkräfte (optional neben dem Anmeldelink): scrypt, Mindestlänge 10, Sperre nach Fehlversuchen */
+const PW_BAD = ["passwort123", "password123", "1234567890", "0123456789", "qwertzuiop", "passwort12", "wordy12345", "1q2w3e4r5t"];
+function pwHash(pw) { const salt = crypto.randomBytes(16); return "s1$" + salt.toString("hex") + "$" + crypto.scryptSync(pw, salt, 64, { N: 16384, r: 8, p: 1 }).toString("hex"); }
+function pwCheck(pw, stored) {
+  try { const [v, s, h] = String(stored).split("$"); if (v !== "s1") return false; return crypto.timingSafeEqual(crypto.scryptSync(pw, Buffer.from(s, "hex"), 64, { N: 16384, r: 8, p: 1 }), Buffer.from(h, "hex")); } catch (e) { return false; }
+}
+const PW_DUMMY = pwHash("dummy-gegen-zeitmessung");
+function pwProblem(pw, email) {
+  if (typeof pw !== "string" || pw.length < 10) return "Das Passwort braucht mindestens 10 Zeichen.";
+  if (pw.length > 200) return "Das Passwort ist zu lang.";
+  if (PW_BAD.includes(pw.toLowerCase()) || pw.toLowerCase() === String(email).toLowerCase() || /^(.)\1+$/.test(pw)) return "Dieses Passwort ist zu einfach. Bitte wähle ein anderes (z. B. drei Wörter hintereinander).";
+  return "";
+}
+const pwFails = new Map();   // E-Mail → { n, until }
+const pwLocked = email => { const x = pwFails.get(email); return !!(x && x.until > Date.now()); };
+function pwFail(email) { const x = pwFails.get(email) || { n: 0, until: 0 }; if (x.until && x.until <= Date.now()) { x.n = 0; x.until = 0; } x.n++; if (x.n >= 6) { x.until = Date.now() + 15 * 60000; x.n = 0; } pwFails.set(email, x); }
 function famAuth(req) {   // Familie aus dem Sitzungs-Cookie, nur aktive Konten
   const t = cookieOf(req, "wf"); if (!/^[0-9a-f]{64}$/.test(t)) return null;
   const h = sha(t), s = fq.sess.get(h); if (!s) return null;
   if (Date.now() - s.created > SESSION_DAYS * 86400000) { fq.delSess.run(h); return null; }
   const f = fq.byId.get(s.family); if (!f || f.status !== "active") return null;
   if (Date.now() - s.last_seen > 3600000) fq.touchSess.run(Date.now(), h);
-  return f;
+  return Object.assign({}, f, { sessCreated: s.created });
 }
 const cookieHdr = (v, maxAge) => "wf=" + v + "; Path=/; HttpOnly; SameSite=Lax; Max-Age=" + maxAge + (DASH_URL.startsWith("https") ? "; Secure" : "");
 /* Datenschutzerklärung: Angaben des Betreibers kommen aus .env (PRIVACY_*), fehlende werden gelb markiert */
@@ -1214,6 +1231,18 @@ const server = http.createServer(async (req, res) => {
       if (f.status === "active" && !limited(email, "fmail", 3, 3600000)) { try { await sendLoginLink(f); } catch (e) { console.error("Anmeldelink:", e.message); return send(res, 502, { error: "Die Mail konnte nicht gesendet werden." }); } }
       return send(res, 200, { ok: true });
     }
+    if (p === "/api/family/signin" && req.method === "POST") {
+      if (limited(ip, "fsignin", 20, 600000)) return send(res, 429, { error: "Zu viele Versuche. Bitte später noch einmal." });
+      const b = await readJson(req), email = normEmail(b.email), pw = typeof b.password === "string" ? b.password.slice(0, 200) : "";
+      const bad = () => send(res, 401, { error: "E-Mail oder Passwort stimmt nicht. Du kannst dir auch einen Anmeldelink per Mail schicken lassen." });
+      if (!EMAIL_RE.test(email) || !pw) return bad();
+      if (pwLocked(email)) return send(res, 429, { error: "Zu viele Fehlversuche. Bitte in 15 Minuten noch einmal oder einen Anmeldelink per Mail anfordern." });
+      const f = fq.byEmail.get(email), ok = f && f.status === "active" && f.pw ? pwCheck(pw, f.pw) : (pwCheck(pw, PW_DUMMY), false);
+      if (!ok) { pwFail(email); return bad(); }
+      pwFails.delete(email);
+      const tok = rand(32); fq.addSess.run(sha(tok), f.id, Date.now(), Date.now()); fq.touchLogin.run(Date.now(), f.id);
+      return send(res, 200, { ok: true }, { "Set-Cookie": cookieHdr(tok, SESSION_DAYS * 86400) });
+    }
     if (p === "/api/family/session" && req.method === "POST") {
       if (limited(ip, "fsess", 20, 600000)) return send(res, 429, { error: "Zu viele Versuche." });
       const t = clean((await readJson(req)).t, 80), row = /^[0-9a-f]{64}$/.test(t) ? fq.link.get(sha(t)) : null;
@@ -1266,7 +1295,14 @@ const server = http.createServer(async (req, res) => {
         if (mcl[2] === "task" && mcl[3] && req.method === "DELETE") { const t = kq.task.get(+mcl[3]); if (!t || t.class !== c.id) return send(res, 404, { error: "Unbekannt." }); kq.delTask.run(t.id); return send(res, 200, { ok: true }); }
         if (mcl[2] === "kick" && mcl[3] && req.method === "POST") { const cm = kq.memberOf.get(+mcl[3]); if (cm && cm.class === c.id) kq.delMember.run(+mcl[3]); return send(res, 200, { ok: true }); }
       }
-      if (scope && p === "/api/admin/me" && req.method === "GET") return send(res, 200, { email: scope.email, created: scope.created, weekly: !!scope.weekly, children: fq.kids.all(scope.id).length, max: MAX_KIDS, mail: transportOn(), day: MAIL.day, hour: MAIL.hour });
+      if (scope && p === "/api/admin/me" && req.method === "GET") return send(res, 200, { email: scope.email, created: scope.created, weekly: !!scope.weekly, hasPassword: !!scope.pw, children: fq.kids.all(scope.id).length, max: MAX_KIDS, mail: transportOn(), day: MAIL.day, hour: MAIL.hour });
+      if (scope && p === "/api/admin/me/password" && req.method === "POST") {
+        const b = await readJson(req), problem = pwProblem(b.password, scope.email);
+        if (problem) return send(res, 400, { error: problem });
+        const fresh = Date.now() - scope.sessCreated < 30 * 60000;   // frisch angemeldet (z. B. per Link): „Passwort vergessen“ ohne das alte
+        if (scope.pw && !fresh && !(typeof b.current === "string" && pwCheck(b.current, scope.pw))) return send(res, 403, { error: "Das aktuelle Passwort stimmt nicht." });
+        fq.setPw.run(pwHash(b.password), scope.id); return send(res, 200, { ok: true });
+      }
       if (scope && p === "/api/admin/me" && req.method === "POST") { const b = await readJson(req); fq.setWeekly.run(b.weekly ? 1 : 0, scope.id); return send(res, 200, { ok: true }); }
       if (scope && p === "/api/admin/me/export" && req.method === "GET") {
         res.writeHead(200, { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store", "Content-Disposition": 'attachment; filename="wordy-daten-export.json"' });
