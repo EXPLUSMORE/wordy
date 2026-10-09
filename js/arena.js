@@ -118,7 +118,7 @@
   }
   function paintHud() {
     var nt = $("#arNote"); if (nt && run.boss) nt.textContent = noteText();
-    var c = $("#arClock"); if (c) c.textContent = fmt(run.left);
+    var c = $("#arClock"); if (c) c.textContent = run.mode === "survival" ? run.correct : fmt(run.left);   // „Letztes Herz“ hat keine Gesamtzeit: oben stehen die Treffer, nicht 0.0
     var sc = $("#arScore"); if (sc) sc.textContent = run.score;
     var cb = $("#arCombo");
     if (cb) {

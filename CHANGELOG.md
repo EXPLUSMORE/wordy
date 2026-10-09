@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.59.1 – 2026-10-09
+- „Letztes Herz“: Die große Zahl oben zeigte nach jeder Antwort „0.0“, als wäre die Zeit abgelaufen. Jetzt steht dort durchgehend die Zahl der Treffer. Die Runde endet unverändert bei einem Fehler oder wenn der Balken eines Worts abläuft.
+
 ## 2.59.0 – 2026-10-09
 - Kinder melden ihr Gerät selbst an: In der App (Profil › Auto-Save) „Meine Eltern fragen“ zeigt einen kurzen Code (z. B. K7M-4PX, 15 Minuten gültig) und lässt sich teilen. Eltern geben ihn im Dashboard frei („Gerät eines Kindes freigeben“, auch über den Link …/f/?koppeln=CODE), wählen das Kind oder legen ein neues an. Danach verbindet sich das Gerät automatisch, ohne Mail und Passwort für das Kind. Server-Update nötig.
 

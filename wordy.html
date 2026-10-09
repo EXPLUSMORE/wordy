@@ -1022,7 +1022,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.59.0";window.WORDY_BUILD="4a873b9672";</script>
+<script>window.WORDY_VERSION="2.59.1";window.WORDY_BUILD="a26d0d0d29";</script>
 </head>
 <body>
 <div id="app">
@@ -10064,7 +10064,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   }
   function paintHud() {
     var nt = $("#arNote"); if (nt && run.boss) nt.textContent = noteText();
-    var c = $("#arClock"); if (c) c.textContent = fmt(run.left);
+    var c = $("#arClock"); if (c) c.textContent = run.mode === "survival" ? run.correct : fmt(run.left);   // „Letztes Herz“ hat keine Gesamtzeit: oben stehen die Treffer, nicht 0.0
     var sc = $("#arScore"); if (sc) sc.textContent = run.score;
     var cb = $("#arCombo");
     if (cb) {
