@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.59.3 – 2026-10-09
+- Lernpfad: Pro Boss höchstens 25 Münzen. Die Boss-Truhe bringt 10 bis 25 (statt 30 bis 60), auch mit Booster und Münzfaktor nie mehr als 25; schon angelegte Truhen zahlen ebenfalls höchstens 25. Boss-Runden in der Arena geben selbst keine Münzen mehr, sondern nur die Truhe. Anzeigetext in den Münz-Hinweisen angepasst.
+
 ## 2.59.2 – 2026-10-09
 - Arena abgesichert: Ein Fehler beim Auswerten einer Antwort (Lernstand, Ton, Effekt, Ergebnis) kann eine Runde nicht mehr festhalten. Treffer und Fehler zählen weiter, Zeit- und Fehler-Ende laufen weiter, bei leerem Wortstapel wird neu gemischt, und die Ergebnisseite erscheint auch dann, wenn die Auswertung scheitert. (Meldung: „Letztes Herz“ reagierte nach 540 Punkten nicht mehr.)
 

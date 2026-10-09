@@ -1022,7 +1022,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.59.2";window.WORDY_BUILD="a3ee9c2a83";</script>
+<script>window.WORDY_VERSION="2.59.3";window.WORDY_BUILD="b52f959873";</script>
 </head>
 <body>
 <div id="app">
@@ -5658,7 +5658,7 @@ window.VERBS = [
     if (adv) {
       if (st.last && !p.chests[st.section]) {
         p.chests[st.section] = 1;
-        chest = { section: st.section, title: st.sectionTitle, coins: boost(30 + Math.floor(Math.random() * 31)), boost: Math.random() < 0.4 };
+        chest = { section: st.section, title: st.sectionTitle, coins: Math.min(25, boost(10 + Math.floor(Math.random() * 16))), boost: Math.random() < 0.4 };   // höchstens 25 Münzen je Boss (auch mit Booster/Münzfaktor)
         p.pending.push(chest);
       }
     }
@@ -5669,6 +5669,7 @@ window.VERBS = [
   function claimChest() {
     var p = pathState(), c = p.pending.shift();
     if (!c) return null;
+    c.coins = Math.min(25, c.coins);   // schon angelegte Truhen mit mehr Münzen gelten ebenfalls höchstens 25
     addCoins(c.coins); addCl("fortschritt", c.coins);
     if (c.boost) p.boost.stock++;
     if (Math.random() < 0.12) {   // Überraschung: ein Stück, das er noch nicht hat
@@ -8258,7 +8259,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       '• <b>Neue Einheit entdeckt</b> +8 (fünf Wörter angefangen), <b>Einheit geschafft</b> +30 (Verben +60)<br>' +
       '• <b>Missionen</b> 10 bis 18, <b>Tagesziel</b> +20, <b>Serien</b> bei 3, 7, 14, 30, 60, 100 Tagen<br>' +
       '• <b>Arena</b> bis 30 pro Tag, +10 bei Rekord<br>' +
-      '• <b>Boss-Truhen</b> 30 bis 60, manchmal mit Überraschung · <b>Rangaufstieg</b> 50 plus 10 je Rang und ein Geschenk<br>' +
+      '• <b>Boss-Truhen</b> 10 bis 25, manchmal mit Überraschung · <b>Rangaufstieg</b> 50 plus 10 je Rang und ein Geschenk<br>' +
       '• <b>Erste Woche</b> ×1,5 Münzen · jeden Tag ein <b>Tagesangebot</b> mit 20 % Rabatt<br>' +
       '<span class="muted">Jedes Wort zahlt höchstens einmal pro Tag und nur, wenn es zur Wiederholung dran war. Immer dieselben Wörter zu üben bringt nichts – neue Einheiten und fällige Wörter schon. Missionen, Tagesziel und Serien werden am Ende der Runde gutgeschrieben.</span></div></details></section>';
   }
@@ -10286,7 +10287,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var rec = best(run.mode), isRecord = score > rec.best;
     if (!S.state.arena) S.state.arena = {};
     S.state.arena[key(run.mode)] = { best: Math.max(rec.best, score), plays: rec.plays + 1 };
-    var coins = Math.min(40, Math.floor(score / 40)) + (isRecord ? 10 : 0);
+    var coins = run.boss ? 0 : Math.min(40, Math.floor(score / 40)) + (isRecord ? 10 : 0);   // Boss-Runden: Münzen nur über die Truhe (höchstens 25 je Boss)
     if (global.WordySync) { global.WordySync.sessionEnd({ sec: sec, items: run.items, correct: run.correct, mode: "arena", sub: run.mode, score: score, coins: coins }); global.WordySync.ctx = null; }
     S.rollDay();
     var left = Math.max(0, 30 - (S.state.daily.arenaCoins || 0));   // Tageslimit, damit dieselben Wörter nicht endlos Münzen bringen
@@ -10329,7 +10330,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       '<div><b class="tnum">' + Math.max(rec.best, score) + '</b><span>Bestwert</span></div>' +
       '</div>' +
       (run.cfg && run.cfg.duel ? '<div id="arDuel" class="ar-duel">' + esc(run.cfg.duel.wait || "Ergebnis wird übertragen …") + '</div>' : '') +
-      '<p class="ar-note">' + (coins ? "🪙 " + coins + " Münzen" + (capped ? " (Tageslimit der Arena erreicht)" : "") : (capped ? "Arena-Münzen für heute sind voll – lerne neue Wörter für mehr" : "Keine Münzen diesmal")) +
+      '<p class="ar-note">' + (run.boss ? (boss && boss.pass ? "Die Münzen gibt es in der Truhe" : "Schaffst du das Ziel, wartet eine Truhe") : coins ? "🪙 " + coins + " Münzen" + (capped ? " (Tageslimit der Arena erreicht)" : "") : (capped ? "Arena-Münzen für heute sind voll – lerne neue Wörter für mehr" : "Keine Münzen diesmal")) +
       (boss ? " · Boss: " + run.correct + " von " + run.boss.need + " richtig nötig" + (boss.pass ? " " + "★".repeat(boss.stars) : "") : "") +
       (rw.goalReached ? " · Tagesziel erreicht" : "") +
       rw.missions.filter(function (x) { return x.type === "arena"; }).map(function (x) { return " · Mission geschafft: +" + x.coins + " 🪙"; }).join("") +

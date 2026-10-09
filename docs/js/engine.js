@@ -1270,7 +1270,7 @@
     if (adv) {
       if (st.last && !p.chests[st.section]) {
         p.chests[st.section] = 1;
-        chest = { section: st.section, title: st.sectionTitle, coins: boost(30 + Math.floor(Math.random() * 31)), boost: Math.random() < 0.4 };
+        chest = { section: st.section, title: st.sectionTitle, coins: Math.min(25, boost(10 + Math.floor(Math.random() * 16))), boost: Math.random() < 0.4 };   // höchstens 25 Münzen je Boss (auch mit Booster/Münzfaktor)
         p.pending.push(chest);
       }
     }
@@ -1281,6 +1281,7 @@
   function claimChest() {
     var p = pathState(), c = p.pending.shift();
     if (!c) return null;
+    c.coins = Math.min(25, c.coins);   // schon angelegte Truhen mit mehr Münzen gelten ebenfalls höchstens 25
     addCoins(c.coins); addCl("fortschritt", c.coins);
     if (c.boost) p.boost.stock++;
     if (Math.random() < 0.12) {   // Überraschung: ein Stück, das er noch nicht hat
