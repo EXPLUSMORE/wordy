@@ -513,6 +513,7 @@ function apiSync(pid) {
     weekPlan: weekPlanOf(pid),
     bossDiff: bossDiffOf(pid),
     selfChoose: selfChooseOf(pid),
+    shop: shopPlan(),
     coinFactor: coinFactorOf(pid),
     gifts: giftsOf(pid).slice(-20),
     season: seasonOf(pid)
@@ -532,6 +533,18 @@ function setWeekPlan(pid, body) {
 /* Wer wählt den Stoff? Standard: gesteuert (Eltern/Lehrkraft über die Pfad-Einheiten). „Kind wählt selbst“ gibt die Lernbereiche frei. */
 function selfChooseOf(pid) { const r = q.kvGet.get("selfchoose:" + pid); return !!(r && r.val === "1"); }
 function setSelfChoose(pid, body) { q.kvSet.run("selfchoose:" + pid, body && body.on ? "1" : "0"); return [200, { ok: true, on: !!(body && body.on) }]; }
+/* Shop-Kalender: Go-live-Datum (Montag) und Abweichungen „ab Woche N“ je Artikel, nur der Betreiber ändert sie */
+function shopPlan() {
+  const st = q.kvGet.get("shop_start"), ov = q.kvGet.get("shop_over");
+  let over = {}; try { over = ov ? JSON.parse(ov.val) : {}; } catch (e) {}
+  return { start: st && /^\d{4}-\d{2}-\d{2}$/.test(st.val) ? st.val : "", over };
+}
+function setShopPlan(body) {
+  const start = /^\d{4}-\d{2}-\d{2}$/.test(body.start || "") ? body.start : "", over = {};
+  if (body.over && typeof body.over === "object") Object.keys(body.over).slice(0, 300).forEach(id => { if (/^[a-z]{2}:[^\s"<>]{1,40}$/.test(id)) over[id] = Math.max(0, Math.min(104, Math.round(+body.over[id]) || 0)); });
+  q.kvSet.run("shop_start", start); q.kvSet.run("shop_over", JSON.stringify(over));
+  return [200, { ok: true }];
+}
 function bossDiffOf(pid) { const r = q.kvGet.get("bossdiff:" + pid); return r && (r.val === "leicht" || r.val === "schwer") ? r.val : "normal"; }
 function setBossDiff(pid, body) {
   const v = body && (body.diff === "leicht" || body.diff === "schwer") ? body.diff : "normal";
@@ -1354,6 +1367,8 @@ const server = http.createServer(async (req, res) => {
         if (mcl[2] === "task" && mcl[3] && req.method === "DELETE") { const t = kq.task.get(+mcl[3]); if (!t || t.class !== c.id) return send(res, 404, { error: "Unbekannt." }); kq.delTask.run(t.id); return send(res, 200, { ok: true }); }
         if (mcl[2] === "kick" && mcl[3] && req.method === "POST") { const cm = kq.memberOf.get(+mcl[3]); if (cm && cm.class === c.id) kq.delMember.run(+mcl[3]); return send(res, 200, { ok: true }); }
       }
+      if (!scope && p === "/api/admin/shopplan" && req.method === "GET") return send(res, 200, shopPlan());
+      if (!scope && p === "/api/admin/shopplan" && req.method === "POST") { const [c, b] = setShopPlan(await readJson(req)); return send(res, c, b); }
       if (scope && p === "/api/admin/me" && req.method === "GET") return send(res, 200, { email: scope.email, created: scope.created, weekly: !!scope.weekly, hasPassword: !!scope.pw, children: fq.kids.all(scope.id).length, max: MAX_KIDS, mail: transportOn(), day: MAIL.day, hour: MAIL.hour });
       if (scope && p === "/api/admin/me/password" && req.method === "POST") {
         const b = await readJson(req), problem = pwProblem(b.password, scope.email);

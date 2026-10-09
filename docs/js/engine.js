@@ -786,7 +786,7 @@
   function dealItem() {
     var t = today();
     if (!state.deal || state.deal.day !== t) {
-      var c = SHOP.filter(function (x) { return x.kind !== "sticker" && !x.reward && x.cost >= 90 && !owns(x) && state.xp >= minXp(x); }), h = 0;
+      var c = SHOP.filter(function (x) { return x.kind !== "sticker" && !x.reward && x.cost >= 90 && !owns(x) && state.xp >= minXp(x) && shopVisible(x); }), h = 0;
       for (var i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) >>> 0;
       state.deal = { day: t, id: c.length ? c[h % c.length].id : null };
     }
@@ -885,6 +885,8 @@
   }
   var RAR_ORDER = { common: 0, rare: 1, epic: 2, legend: 3 };
   function rarityOf(it) { return it.rar || (it.cost <= 120 ? "common" : it.cost <= 350 ? "rare" : it.cost <= 800 ? "epic" : "legend"); }
+  function shopCatalog() { return SHOP.filter(function (x) { return x.kind !== "sticker" && !x.reward && x.cost > 0; }).map(function (x) { return [x.id, x.label, x.kind, SHOP_WEEK[x.id] || 0]; }); }
+  function shopWeeks() { var o = {}; SHOP.forEach(function (x) { if (x.kind !== "sticker" && !x.reward) o[x.id] = SHOP_WEEK[x.id] || 0; }); return o; }
   function shopList() { return SHOP.filter(function (x) { return ["avatar", "dance", "outfit", "kit", "fx", "frame", "title", "bg"].indexOf(x.kind) >= 0 && x.cost > 0 || x.kind === "dance"; }).map(function (x) { return [x.id, x.label, x.kind]; }); }
 
   /* ---------- Showroom: alles Gesammelte, Medaillen, Sammler-Pokale, Favoriten ---------- */
@@ -1286,7 +1288,7 @@
     addCoins(c.coins); addCl("fortschritt", c.coins);
     if (c.boost) p.boost.stock++;
     if (Math.random() < 0.12) {   // Überraschung: ein Stück, das er noch nicht hat
-      var cand = SHOP.filter(function (x) { return x.kind !== "sticker" && !x.reward && x.cost <= 350 && !owns(x) && state.xp >= minXp(x); });
+      var cand = SHOP.filter(function (x) { return x.kind !== "sticker" && !x.reward && x.cost <= 350 && !owns(x) && state.xp >= minXp(x) && shopVisible(x); });
       if (cand.length) { var g = cand[Math.floor(Math.random() * cand.length)]; state.profile.owned.push(g.id); c.item = g.label; checkSets(); }
     }
     save(true); return c;
@@ -1319,6 +1321,53 @@
     var on = state.profile.wish !== id; state.profile.wish = on ? id : null; save(true);
     return { ok: true, on: on, item: it };
   }
+  /* ---------- Shop-Kalender: was ab welcher Woche nach dem Go-live im Shop steht ---------- */
+  var SHOP_GOLIVE = "2026-10-12";   // Standard, das Dashboard (Betreiber) kann ein anderes Datum setzen
+  var SHOP_WEEK = {   // Woche seit Go-live; nicht aufgeführte Artikel (Start-Sortiment, Fuchs) sind ab Woche 0 da. Sticker folgen ihrer Figur.
+    "av:🐢": 1, "kt:turin": 1, "th:amber": 1,
+    "av:fnfrosch": 2, "sn:arcade": 2, "kt:deutschland": 2,
+    "dn:roboter": 3, "of:held": 3, "fx:sparks": 3,
+    "fx:firework": 4, "of:raum": 4, "av:🐙": 4,
+    "av:🦈": 5, "bg:space": 5, "kt:argentinien": 5,
+    "av:🦄": 6, "dn:moonwalk": 6, "of:rock": 6,
+    "av:pummel": 7, "sn:harp": 7, "kt:portugal": 7,
+    "av:fnraptor": 8, "ti:freund": 8, "ti:profi": 8,
+    "ti:genie": 9, "av:pdrache": 9, "av:🦕": 9,
+    "av:pphoenix": 10, "ti:champ": 11, "dn:sieg": 11, "av:fnelite": 12,
+    "av:fnllama": 13, "av:fnschwein": 13, "av:fnkristall": 14, "av:clombo": 15,
+    "av:eisbaer": 17, "av:eispingu": 17, "av:eisrobbe": 17, "of:polar": 17, "dn:eislauf": 17, "fx:schnee": 17,
+    "av:eiskoenig": 22, "av:fnunreal": 26,
+    "av:pkatze": 30, "av:fnwolf": 30, "fr:rainbow": 31, "av:pregen": 34, "fr:fire": 35, "av:pgold": 36, "av:fnchamp": 38, "av:pgalaxie": 42
+  };
+  function shopStart() { var r = global.WordySync && global.WordySync.remote ? (global.WordySync.remote() || {}).shop : null; return r && /^\d{4}-\d{2}-\d{2}$/.test(r.start || "") ? r.start : SHOP_GOLIVE; }
+  function shopNow() { return Math.max(0, Math.floor(dayDiff(shopStart(), today()) / 7)); }   // aktuelle Shop-Woche
+  function shopRel(it) {
+    var r = global.WordySync && global.WordySync.remote ? ((global.WordySync.remote() || {}).shop || {}).over : null, id = it.kind === "sticker" ? "av:" + it.id.slice(3) : it.id;
+    if (r && r[id] != null && isFinite(+r[id])) return Math.max(0, +r[id]);
+    return SHOP_WEEK[id] || 0;
+  }
+  /* sichtbar: schon gekauft, ein Geschenk (Set, Pass, Rang) oder freigeschaltet */
+  function shopVisible(it) { return owns(it) || !!it.reward || !!it.pass || shopRel(it) <= shopNow(); }
+  /* „Kommt bald“: die Artikel der nächsten zwei Wochen (ohne Sticker), höchstens sechs */
+  function shopTeasers() {
+    var w = shopNow();
+    return SHOP.filter(function (x) { return x.kind !== "sticker" && !x.reward && !x.pass && !owns(x) && shopRel(x) > w && shopRel(x) <= w + 2; })
+      .sort(function (a, b) { return shopRel(a) - shopRel(b); }).slice(0, 6).map(function (x) { return { id: x.id, kind: x.kind, rar: rarityOf(x), inWeeks: shopRel(x) - w }; });
+  }
+  /* Willkommenspaket für jedes neue Kind: eine Figur zur Wahl plus Münzen, Effekt und Titel */
+  var WELCOME = { choices: ["av:🐼", "av:🦉", "av:pbaer"], coins: 50, extras: ["fx:confetti", "ti:wort"] };
+  function welcomeGrant(figId) {
+    if (state.welcome || WELCOME.choices.indexOf(figId) < 0) return { error: true };
+    var got = [figId, "st:" + figId.slice(3)].concat(WELCOME.extras);
+    got.forEach(function (id) { var it = itemById(id); if (it && !owns(it)) state.profile.owned.push(id); });
+    var fig = itemById(figId); if (fig) state.profile[PROFILE_KEY[fig.kind]] = fig.val;
+    var fx = itemById("fx:confetti"); if (fx) state.profile[PROFILE_KEY[fx.kind]] = fx.val;
+    addCoins(WELCOME.coins); addCl("geschenk", WELCOME.coins);
+    state.welcome = 1; checkSets(); save(true);
+    return { ok: true, coins: WELCOME.coins };
+  }
+  function welcomeNeeded() { if (state.welcome) return false; if (isFresh()) return true; state.welcome = 1; save(true); return false; }
+
   function buy(id) {
     var it = itemById(id);
     if (!it) return { error: "Unbekannt." };
@@ -1326,6 +1375,7 @@
     if (state.xp < minXp(it)) return { error: "Das gibt es erst ab dem Rang " + it.rank + "." };
     if (it.reward) return { error: "Diese Belohnung gibt es nur für das komplette Set." };
     if (it.pass) return { error: "Das gibt es nur im " + it.pass + "-Pass." };
+    if (!shopVisible(it)) return { error: "Das kommt später in den Shop." };
     var price = priceOf(it);
     if (state.coins < price) return { error: "Dafür fehlen noch " + (price - state.coins) + " Münzen." };
     state.coins -= price; state.profile.owned.push(id);
@@ -1353,6 +1403,6 @@
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
-    resetProgress: resetProgress, steered: steered, pathUnitList: pathUnitList, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, boost: boost, coinFactor: coinFactor, avgCoins: avgCoins, dealItem: dealItem, priceOf: priceOf, passInfo: passInfo, favs: favs, toggleFav: toggleFav, collection: collection, findCollItem: findCollItem, CUP_TIERS: CUP_TIERS, claimPassWeek: claimPassWeek, claimPassFinale: claimPassFinale, passMeta: passMeta, rarityOf: rarityOf, shopList: shopList, activeSetDeal: activeSetDeal, buySet: buySet, takeNews: takeNews, SETS: SETS, itemById: itemById, minXp: minXp, defaultOf: defaultOf
+    resetProgress: resetProgress, shopVisible: shopVisible, shopWeeks: shopWeeks, shopCatalog: shopCatalog, shopTeasers: shopTeasers, shopNow: shopNow, shopRel: shopRel, WELCOME: WELCOME, welcomeGrant: welcomeGrant, welcomeNeeded: welcomeNeeded, steered: steered, pathUnitList: pathUnitList, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, boost: boost, coinFactor: coinFactor, avgCoins: avgCoins, dealItem: dealItem, priceOf: priceOf, passInfo: passInfo, favs: favs, toggleFav: toggleFav, collection: collection, findCollItem: findCollItem, CUP_TIERS: CUP_TIERS, claimPassWeek: claimPassWeek, claimPassFinale: claimPassFinale, passMeta: passMeta, rarityOf: rarityOf, shopList: shopList, activeSetDeal: activeSetDeal, buySet: buySet, takeNews: takeNews, SETS: SETS, itemById: itemById, minXp: minXp, defaultOf: defaultOf
   };
 })(window);

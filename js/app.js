@@ -1420,7 +1420,7 @@
     }).join("") + '</span>';
   }
   function stickerBook(set) {
-    var list = S.SHOP.filter(function (x) { return x.kind === "sticker" && (set ? x.set === set : !x.set); });
+    var list = S.SHOP.filter(function (x) { return x.kind === "sticker" && (set ? x.set === set : !x.set) && S.shopVisible(x); });
     var have = list.filter(function (x) { return S.owns(x); }).length;
     return '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">' + (set ? "Fortnite-Stickerbuch" : "Stickerbuch") + '</div><span class="pill tnum">' + have + ' / ' + list.length + '</span></div>' +
       '<p class="small muted" style="margin:6px 0 10px">Sammle Sticker im Shop und klebe bis zu drei davon auf deine Startseite und dein Profil. Antippen klebt auf oder löst ab.</p>' +
@@ -1435,7 +1435,7 @@
   }
   function lockNote(it) { return S.minXp(it) > S.state.xp; }
   function albumCard(set) {
-    var st = S.state, list = S.SHOP.filter(function (x) { return x.kind === "avatar" && (set ? x.set === set : !x.set); });
+    var st = S.state, list = S.SHOP.filter(function (x) { return x.kind === "avatar" && (set ? x.set === set : !x.set) && S.shopVisible(x); });
     var have = list.filter(function (x) { return S.owns(x); }).length;
     return '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">' + (set ? "Fortnite-Album" : "Sammelalbum") + '</div><span class="pill tnum">' + have + ' / ' + list.length + '</span></div>' +
       '<p class="small muted" style="margin:6px 0 10px">' + (set ? "Tiere und Kristalle aus Fortnite, selbst gezeichnet. Die Tiere gibt es ab Rang Gold II, die Kristalle ab ihrem Rang, die Unreal-Stücke erst ab Unreal. Wünschen kannst du dir etwas im Shop mit dem ⭐."
@@ -1492,6 +1492,28 @@
         : locked && !it.reward ? '<span class="pill" title="Erst ab Rang ' + esc(it.rank) + '">🔒 ' + esc(it.rank) + '</span><button class="chip" data-act="wish" data-id="' + esc(it.id) + '" aria-pressed="' + (wishId === it.id) + '" aria-label="Wunsch" style="margin-left:6px">⭐</button>'
         : buyBtn) + '</div>';
   }
+  /* „Kommt bald“: Silhouetten der nächsten Freischaltungen */
+  function teaserHtml() {
+    var t = S.shopTeasers(); if (!t.length) return "";
+    return '<div style="margin:2px 0 10px"><div class="eyebrow">Kommt bald</div><div class="row wrap" style="gap:8px;margin-top:6px">' + t.map(function (x) {
+      var it = S.itemById(x.id);
+      return '<div style="width:74px;text-align:center"><div class="sil" style="width:56px;height:56px;margin:0 auto;display:grid;place-items:center;font-size:30px;border-radius:14px;background:var(--card-2);border:2px dashed var(--line);filter:grayscale(1)">' + (it && it.kind === "avatar" ? "❔" : "🎁") + '</div><small class="muted" style="display:block;font-size:11px;margin-top:3px">' + (x.inWeeks === 1 ? "Montag" : "in " + x.inWeeks + " Wochen") + '</small></div>';
+    }).join("") + '</div></div>';
+  }
+  /* Willkommenspaket: jedes neue Kind wählt seine erste Figur und bekommt Münzen, Konfetti und einen Titel */
+  function openWelcome() {
+    if (!S.welcomeNeeded() || document.getElementById("welcomeSheet")) return;
+    var ov = document.createElement("div"); ov.className = "srmd"; ov.id = "welcomeSheet";
+    ov.innerHTML = '<div class="dsh" style="text-align:center"><div class="dshg"></div><div class="eyebrow">Willkommen</div><h3>Such dir deine erste Figur aus!</h3>' +
+      '<p class="small muted" style="margin:4px 0 12px">Dazu schenken wir dir ' + S.WELCOME.coins + ' 🪙, den Effekt „Konfetti“ und den Titel „Wortjäger“.</p>' +
+      '<div class="row" style="gap:10px;justify-content:center">' + S.WELCOME.choices.map(function (id) { var it = S.itemById(id); return '<button class="album-i" data-wel="' + esc(id) + '" style="min-width:86px"><span class="art">' + avatarHtml(it.val) + '</span><small>' + esc(it.label) + '</small></button>'; }).join("") + '</div></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-wel]"); if (!b) return;
+      var r = S.welcomeGrant(b.getAttribute("data-wel")); if (r.error) return;
+      ov.remove(); toast("Willkommen! +" + r.coins + " 🪙, deine Figur und Konfetti sind da."); render(); renderHeader();
+    });
+  }
   function shopCard() {
     var st = S.state, wishId = (S.wish() || {}).id, deal = S.dealItem(), sd = S.activeSetDeal();
     var html = '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Shop</div><span class="pill">🪙 ' + st.coins + '</span></div>' +
@@ -1515,7 +1537,7 @@
       return html + '</section>';
     }
     var RO = { common: 0, rare: 1, epic: 2, legend: 3 };   // Sortierung immer: gewöhnlich, selten, episch, legendär, danach nach Preis
-    html += '<div class="rgrid">' + S.SHOP.filter(function (it) { return shopTab === "fn" ? it.set === "fn" : it.kind === shopTab && !it.set; })
+    html += teaserHtml() + '<div class="rgrid">' + S.SHOP.filter(function (it) { return (shopTab === "fn" ? it.set === "fn" : it.kind === shopTab && !it.set) && S.shopVisible(it); })
       .map(function (it, i) { return { it: it, i: i }; }).sort(function (a, b) { return (RO[S.rarityOf(a.it)] - RO[S.rarityOf(b.it)]) || (a.it.cost - b.it.cost) || (a.i - b.i); })
       .map(function (x) { return shopTile(x.it, wishId); }).join("") + '</div>';
     return html + '</section>';
@@ -3011,6 +3033,7 @@
   render();
   (function () { var bt = document.getElementById("boot"); if (bt) setTimeout(function () { bt.classList.add("off"); setTimeout(function () { if (bt.parentNode) bt.parentNode.removeChild(bt); }, 600); }, 350); })();
   pickPlayer();
+  setTimeout(function () { try { openWelcome(); } catch (e) {} }, 900);
   setTimeout(function () { if (window.WordySync && sessionEl.hidden && (tab === "home" || tab === "lernen")) render(); }, 300);   // sync.js lädt nach app.js: Verbindung und Pläne erst jetzt sichtbar
   /* Verbindungslink der Eltern (#verbinden=<Adresse#Code>): nach Bestätigung automatisch verbinden */
   (function () {

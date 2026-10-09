@@ -167,8 +167,8 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
         '<div class="row" style="gap:8px"><input id="in" class="grow" maxlength="60" placeholder="Notiz, z. B. Familie Meier"><select id="iu"><option value="1">1 Familie</option><option value="3">3</option><option value="10">10</option></select><select id="ir"><option value="parent">Eltern</option><option value="teacher">Lehrkraft</option></select><button id="imk">Link erstellen</button></div><div id="iout"></div></div>' +
         '<div class="card"><h2>Offene Einladungen</h2>' + (inv.length ? inv.map(function (i) { return '<div class="row" style="gap:8px;padding:6px 0;border-top:1px solid var(--line)"><span class="grow small"><b>' + (i.role === "teacher" ? "🏫 " : "") + esc(i.note || "ohne Notiz") + '</b> · ' + i.uses + "/" + i.max + ' benutzt<br><span class="muted">' + esc(i.url) + '</span></span><button class="ghost sm" data-cp="' + esc(i.url) + '">Kopieren</button><button class="ghost sm" data-di="' + esc(i.code) + '">Löschen</button></div>'; }).join("") : '<p class="small muted" style="margin:0">Keine offenen Einladungen.</p>') + "</div>" +
         '<div class="card"><h2>Familien (' + fs.length + ')</h2>' + (fs.length ? fs.map(function (f) { return '<div class="row" style="gap:8px;padding:6px 0;border-top:1px solid var(--line)"><span class="grow small"><b>' + (f.role === "teacher" ? "🏫 " : "") + esc(f.email) + '</b> ' + (f.status === "blocked" ? '<span class="err">gesperrt</span>' : "") + '<br><span class="muted">' + f.children + ' Kinder · zuletzt angemeldet ' + fmtAgo(f.lastLogin) + '</span></span><button class="ghost sm" data-bl="' + f.id + '" data-b="' + (f.status === "blocked" ? 0 : 1) + '">' + (f.status === "blocked" ? "Entsperren" : "Sperren") + '</button><button class="ghost sm" data-df="' + f.id + '" data-n="' + esc(f.email) + '">Löschen</button></div>'; }).join("") : '<p class="small muted" style="margin:0">Noch keine Familien registriert.</p>') +
-        '<p class="small muted" style="margin:10px 0 0">Aus Datenschutzgründen siehst du hier nur Konten, nicht die Lernstände fremder Kinder.</p></div><div class="card" id="mailCard"></div>';
-      drawMail();
+        '<p class="small muted" style="margin:10px 0 0">Aus Datenschutzgründen siehst du hier nur Konten, nicht die Lernstände fremder Kinder.</p></div><div class="card" id="shopPlanCard"></div><div class="card" id="mailCard"></div>';
+      drawMail(); drawShopPlan();
       document.getElementById("imk").onclick = function () { post("/api/admin/families/invites", { note: document.getElementById("in").value, uses: +document.getElementById("iu").value, role: document.getElementById("ir").value }).then(function (i) { viewFam().then(function () { document.getElementById("iout").innerHTML = '<p style="margin:10px 0 0"><b>Link:</b> <input readonly class="grow" style="width:100%" value="' + esc(i.url) + '" onclick="this.select()"></p>'; }); }).catch(function (e) { alert(e.message); }); };
       Array.prototype.forEach.call(view.querySelectorAll("[data-cp]"), function (b) { b.onclick = function () { navigator.clipboard.writeText(b.getAttribute("data-cp")); b.textContent = "Kopiert"; }; });
       Array.prototype.forEach.call(view.querySelectorAll("[data-di]"), function (b) { b.onclick = function () { api("/api/admin/families/invites/" + b.getAttribute("data-di"), { method: "DELETE" }).then(viewFam); }; });
@@ -552,7 +552,7 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
       finale: { title: "Sternenregen", need: 1, items: ["fx:stars"], slot: 0, boost: 1, coins: 100 } }
   };
   var SEASON_NAMES = { eiswelt: "Eiswelt (läuft)", zauberwald: "Zauberwald (Pummel-Reihe)", beute: "Beute-Insel (Fortnite-Reihe)", sterne: "Sternenreise (Weltall)" };
-  var KIND_DE = { avatar: "Figuren", dance: "Tänze", outfit: "Outfits", kit: "Trikots", fx: "Effekte", frame: "Rahmen", title: "Titel", bg: "Hintergründe" };
+  var KIND_DE = { avatar: "Figuren", dance: "Tänze", outfit: "Outfits", kit: "Trikots", fx: "Effekte", frame: "Rahmen", title: "Titel", bg: "Hintergründe", snd: "Töne", theme: "Farbwelten" };
   function drawPass(p, r, ov) {
     var el = document.getElementById("passCard"); if (!el) return;
     if (window.WF) { if (el.parentNode) el.parentNode.removeChild(el); return; }   // den Wochenpass stellt nur der Betreiber zusammen
@@ -846,6 +846,26 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
           return "<tr><td>" + x.day.split("-").reverse().join(".") + "</td><td>" + fmtDate(x.ts) + '</td><td class="n">' + x.words + '</td><td class="n">' + x.coins + '</td><td><a href="/api/admin/players/' + p.id + "/state?day=" + x.day + '" download>Herunterladen</a></td></tr>';
         }).join("") + "</table>"
       : '<p class="muted small" style="margin:0">Noch keine Sicherung. Sie entsteht nach der nächsten Lernrunde mit der neuen App-Version.</p>');
+  }
+  /* Shop-Kalender (nur Betreiber): Go-live-Datum und „ab Woche N“ je Artikel */
+  function drawShopPlan() {
+    var el = document.getElementById("shopPlanCard"); if (!el) return;
+    el.innerHTML = "<h2>Shop-Kalender</h2><p class='muted small'>Lade …</p>";
+    var first = players[0];
+    Promise.all([api("/api/admin/shopplan"), first ? api("/api/admin/players/" + first.id + "/report?days=1") : Promise.resolve(null)]).then(function (res) {
+      var plan = res[0], cat = (res[1] && res[1].meta && res[1].meta.shopCat) || [], over = plan.over || {};
+      var rows = cat.length ? cat.slice().sort(function (a, b) { return (over[a[0]] != null ? over[a[0]] : a[3]) - (over[b[0]] != null ? over[b[0]] : b[3]); }).map(function (x) {
+        var v = over[x[0]] != null ? over[x[0]] : x[3];
+        return '<tr><td>' + esc(x[1]) + ' <span class="muted small">' + esc(KIND_DE[x[2]] || x[2]) + '</span></td><td class="n"><input type="number" min="0" max="104" class="sw" data-id="' + esc(x[0]) + '" data-def="' + x[3] + '" value="' + v + '" style="width:64px"></td></tr>';
+      }).join("") : "";
+      el.innerHTML = "<h2>Shop-Kalender</h2><p class='small muted' style='margin:0 0 10px'>Jeden Montag schaltet sich frei, was „ab Woche N“ dran ist. Woche 0 ist das Start-Sortiment. Das Go-live-Datum sollte ein Montag sein. Leer = Standarddatum der App.</p>" +
+        '<div class="row" style="gap:8px;align-items:center;flex-wrap:wrap"><label class="small">Go-live <input type="date" id="spStart" value="' + esc(plan.start || "") + '"></label><button id="spSave">Speichern</button><span id="spMsg" class="small"></span></div>' +
+        (rows ? '<details style="margin-top:10px"><summary style="cursor:pointer;color:var(--acc);font-weight:600">Termine je Artikel (' + cat.length + ')</summary><table style="margin-top:8px"><tr><th>Artikel</th><th class="n">Ab Woche</th></tr>' + rows + '</table></details>' : '<p class="small muted" style="margin:10px 0 0">Die Artikelliste erscheint, sobald ein Spieler einmal Daten gesendet hat.</p>');
+      document.getElementById("spSave").onclick = function () {
+        var o = {}; Array.prototype.forEach.call(el.querySelectorAll("input.sw"), function (i) { if (String(i.value) !== i.getAttribute("data-def")) o[i.getAttribute("data-id")] = +i.value; });
+        post("/api/admin/shopplan", { start: document.getElementById("spStart").value, over: o }).then(function () { var m = document.getElementById("spMsg"); m.className = "small"; m.textContent = "Gespeichert. Die App übernimmt es beim nächsten Öffnen."; }).catch(function (e) { var m = document.getElementById("spMsg"); m.className = "small err"; m.textContent = e.message; });
+      };
+    }).catch(function (e) { el.innerHTML = "<h2>Shop-Kalender</h2><p class='err small'>" + esc(e.message) + "</p>"; });
   }
   function drawMail() {
     var el = document.getElementById("mailCard"); if (!el) return;

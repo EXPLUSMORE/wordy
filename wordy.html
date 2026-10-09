@@ -1029,7 +1029,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.61.0";window.WORDY_BUILD="6be2f39062";</script>
+<script>window.WORDY_VERSION="2.62.0";window.WORDY_BUILD="3387ecfbc4";</script>
 </head>
 <body>
 <div id="app">
@@ -5181,7 +5181,7 @@ window.VERBS = [
   function dealItem() {
     var t = today();
     if (!state.deal || state.deal.day !== t) {
-      var c = SHOP.filter(function (x) { return x.kind !== "sticker" && !x.reward && x.cost >= 90 && !owns(x) && state.xp >= minXp(x); }), h = 0;
+      var c = SHOP.filter(function (x) { return x.kind !== "sticker" && !x.reward && x.cost >= 90 && !owns(x) && state.xp >= minXp(x) && shopVisible(x); }), h = 0;
       for (var i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) >>> 0;
       state.deal = { day: t, id: c.length ? c[h % c.length].id : null };
     }
@@ -5280,6 +5280,8 @@ window.VERBS = [
   }
   var RAR_ORDER = { common: 0, rare: 1, epic: 2, legend: 3 };
   function rarityOf(it) { return it.rar || (it.cost <= 120 ? "common" : it.cost <= 350 ? "rare" : it.cost <= 800 ? "epic" : "legend"); }
+  function shopCatalog() { return SHOP.filter(function (x) { return x.kind !== "sticker" && !x.reward && x.cost > 0; }).map(function (x) { return [x.id, x.label, x.kind, SHOP_WEEK[x.id] || 0]; }); }
+  function shopWeeks() { var o = {}; SHOP.forEach(function (x) { if (x.kind !== "sticker" && !x.reward) o[x.id] = SHOP_WEEK[x.id] || 0; }); return o; }
   function shopList() { return SHOP.filter(function (x) { return ["avatar", "dance", "outfit", "kit", "fx", "frame", "title", "bg"].indexOf(x.kind) >= 0 && x.cost > 0 || x.kind === "dance"; }).map(function (x) { return [x.id, x.label, x.kind]; }); }
 
   /* ---------- Showroom: alles Gesammelte, Medaillen, Sammler-Pokale, Favoriten ---------- */
@@ -5681,7 +5683,7 @@ window.VERBS = [
     addCoins(c.coins); addCl("fortschritt", c.coins);
     if (c.boost) p.boost.stock++;
     if (Math.random() < 0.12) {   // Überraschung: ein Stück, das er noch nicht hat
-      var cand = SHOP.filter(function (x) { return x.kind !== "sticker" && !x.reward && x.cost <= 350 && !owns(x) && state.xp >= minXp(x); });
+      var cand = SHOP.filter(function (x) { return x.kind !== "sticker" && !x.reward && x.cost <= 350 && !owns(x) && state.xp >= minXp(x) && shopVisible(x); });
       if (cand.length) { var g = cand[Math.floor(Math.random() * cand.length)]; state.profile.owned.push(g.id); c.item = g.label; checkSets(); }
     }
     save(true); return c;
@@ -5714,6 +5716,53 @@ window.VERBS = [
     var on = state.profile.wish !== id; state.profile.wish = on ? id : null; save(true);
     return { ok: true, on: on, item: it };
   }
+  /* ---------- Shop-Kalender: was ab welcher Woche nach dem Go-live im Shop steht ---------- */
+  var SHOP_GOLIVE = "2026-10-12";   // Standard, das Dashboard (Betreiber) kann ein anderes Datum setzen
+  var SHOP_WEEK = {   // Woche seit Go-live; nicht aufgeführte Artikel (Start-Sortiment, Fuchs) sind ab Woche 0 da. Sticker folgen ihrer Figur.
+    "av:🐢": 1, "kt:turin": 1, "th:amber": 1,
+    "av:fnfrosch": 2, "sn:arcade": 2, "kt:deutschland": 2,
+    "dn:roboter": 3, "of:held": 3, "fx:sparks": 3,
+    "fx:firework": 4, "of:raum": 4, "av:🐙": 4,
+    "av:🦈": 5, "bg:space": 5, "kt:argentinien": 5,
+    "av:🦄": 6, "dn:moonwalk": 6, "of:rock": 6,
+    "av:pummel": 7, "sn:harp": 7, "kt:portugal": 7,
+    "av:fnraptor": 8, "ti:freund": 8, "ti:profi": 8,
+    "ti:genie": 9, "av:pdrache": 9, "av:🦕": 9,
+    "av:pphoenix": 10, "ti:champ": 11, "dn:sieg": 11, "av:fnelite": 12,
+    "av:fnllama": 13, "av:fnschwein": 13, "av:fnkristall": 14, "av:clombo": 15,
+    "av:eisbaer": 17, "av:eispingu": 17, "av:eisrobbe": 17, "of:polar": 17, "dn:eislauf": 17, "fx:schnee": 17,
+    "av:eiskoenig": 22, "av:fnunreal": 26,
+    "av:pkatze": 30, "av:fnwolf": 30, "fr:rainbow": 31, "av:pregen": 34, "fr:fire": 35, "av:pgold": 36, "av:fnchamp": 38, "av:pgalaxie": 42
+  };
+  function shopStart() { var r = global.WordySync && global.WordySync.remote ? (global.WordySync.remote() || {}).shop : null; return r && /^\d{4}-\d{2}-\d{2}$/.test(r.start || "") ? r.start : SHOP_GOLIVE; }
+  function shopNow() { return Math.max(0, Math.floor(dayDiff(shopStart(), today()) / 7)); }   // aktuelle Shop-Woche
+  function shopRel(it) {
+    var r = global.WordySync && global.WordySync.remote ? ((global.WordySync.remote() || {}).shop || {}).over : null, id = it.kind === "sticker" ? "av:" + it.id.slice(3) : it.id;
+    if (r && r[id] != null && isFinite(+r[id])) return Math.max(0, +r[id]);
+    return SHOP_WEEK[id] || 0;
+  }
+  /* sichtbar: schon gekauft, ein Geschenk (Set, Pass, Rang) oder freigeschaltet */
+  function shopVisible(it) { return owns(it) || !!it.reward || !!it.pass || shopRel(it) <= shopNow(); }
+  /* „Kommt bald“: die Artikel der nächsten zwei Wochen (ohne Sticker), höchstens sechs */
+  function shopTeasers() {
+    var w = shopNow();
+    return SHOP.filter(function (x) { return x.kind !== "sticker" && !x.reward && !x.pass && !owns(x) && shopRel(x) > w && shopRel(x) <= w + 2; })
+      .sort(function (a, b) { return shopRel(a) - shopRel(b); }).slice(0, 6).map(function (x) { return { id: x.id, kind: x.kind, rar: rarityOf(x), inWeeks: shopRel(x) - w }; });
+  }
+  /* Willkommenspaket für jedes neue Kind: eine Figur zur Wahl plus Münzen, Effekt und Titel */
+  var WELCOME = { choices: ["av:🐼", "av:🦉", "av:pbaer"], coins: 50, extras: ["fx:confetti", "ti:wort"] };
+  function welcomeGrant(figId) {
+    if (state.welcome || WELCOME.choices.indexOf(figId) < 0) return { error: true };
+    var got = [figId, "st:" + figId.slice(3)].concat(WELCOME.extras);
+    got.forEach(function (id) { var it = itemById(id); if (it && !owns(it)) state.profile.owned.push(id); });
+    var fig = itemById(figId); if (fig) state.profile[PROFILE_KEY[fig.kind]] = fig.val;
+    var fx = itemById("fx:confetti"); if (fx) state.profile[PROFILE_KEY[fx.kind]] = fx.val;
+    addCoins(WELCOME.coins); addCl("geschenk", WELCOME.coins);
+    state.welcome = 1; checkSets(); save(true);
+    return { ok: true, coins: WELCOME.coins };
+  }
+  function welcomeNeeded() { if (state.welcome) return false; if (isFresh()) return true; state.welcome = 1; save(true); return false; }
+
   function buy(id) {
     var it = itemById(id);
     if (!it) return { error: "Unbekannt." };
@@ -5721,6 +5770,7 @@ window.VERBS = [
     if (state.xp < minXp(it)) return { error: "Das gibt es erst ab dem Rang " + it.rank + "." };
     if (it.reward) return { error: "Diese Belohnung gibt es nur für das komplette Set." };
     if (it.pass) return { error: "Das gibt es nur im " + it.pass + "-Pass." };
+    if (!shopVisible(it)) return { error: "Das kommt später in den Shop." };
     var price = priceOf(it);
     if (state.coins < price) return { error: "Dafür fehlen noch " + (price - state.coins) + " Münzen." };
     state.coins -= price; state.profile.owned.push(id);
@@ -5748,7 +5798,7 @@ window.VERBS = [
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
-    resetProgress: resetProgress, steered: steered, pathUnitList: pathUnitList, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, boost: boost, coinFactor: coinFactor, avgCoins: avgCoins, dealItem: dealItem, priceOf: priceOf, passInfo: passInfo, favs: favs, toggleFav: toggleFav, collection: collection, findCollItem: findCollItem, CUP_TIERS: CUP_TIERS, claimPassWeek: claimPassWeek, claimPassFinale: claimPassFinale, passMeta: passMeta, rarityOf: rarityOf, shopList: shopList, activeSetDeal: activeSetDeal, buySet: buySet, takeNews: takeNews, SETS: SETS, itemById: itemById, minXp: minXp, defaultOf: defaultOf
+    resetProgress: resetProgress, shopVisible: shopVisible, shopWeeks: shopWeeks, shopCatalog: shopCatalog, shopTeasers: shopTeasers, shopNow: shopNow, shopRel: shopRel, WELCOME: WELCOME, welcomeGrant: welcomeGrant, welcomeNeeded: welcomeNeeded, steered: steered, pathUnitList: pathUnitList, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, boost: boost, coinFactor: coinFactor, avgCoins: avgCoins, dealItem: dealItem, priceOf: priceOf, passInfo: passInfo, favs: favs, toggleFav: toggleFav, collection: collection, findCollItem: findCollItem, CUP_TIERS: CUP_TIERS, claimPassWeek: claimPassWeek, claimPassFinale: claimPassFinale, passMeta: passMeta, rarityOf: rarityOf, shopList: shopList, activeSetDeal: activeSetDeal, buySet: buySet, takeNews: takeNews, SETS: SETS, itemById: itemById, minXp: minXp, defaultOf: defaultOf
   };
 })(window);
 </script>
@@ -8351,7 +8401,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     }).join("") + '</span>';
   }
   function stickerBook(set) {
-    var list = S.SHOP.filter(function (x) { return x.kind === "sticker" && (set ? x.set === set : !x.set); });
+    var list = S.SHOP.filter(function (x) { return x.kind === "sticker" && (set ? x.set === set : !x.set) && S.shopVisible(x); });
     var have = list.filter(function (x) { return S.owns(x); }).length;
     return '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">' + (set ? "Fortnite-Stickerbuch" : "Stickerbuch") + '</div><span class="pill tnum">' + have + ' / ' + list.length + '</span></div>' +
       '<p class="small muted" style="margin:6px 0 10px">Sammle Sticker im Shop und klebe bis zu drei davon auf deine Startseite und dein Profil. Antippen klebt auf oder löst ab.</p>' +
@@ -8366,7 +8416,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   }
   function lockNote(it) { return S.minXp(it) > S.state.xp; }
   function albumCard(set) {
-    var st = S.state, list = S.SHOP.filter(function (x) { return x.kind === "avatar" && (set ? x.set === set : !x.set); });
+    var st = S.state, list = S.SHOP.filter(function (x) { return x.kind === "avatar" && (set ? x.set === set : !x.set) && S.shopVisible(x); });
     var have = list.filter(function (x) { return S.owns(x); }).length;
     return '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">' + (set ? "Fortnite-Album" : "Sammelalbum") + '</div><span class="pill tnum">' + have + ' / ' + list.length + '</span></div>' +
       '<p class="small muted" style="margin:6px 0 10px">' + (set ? "Tiere und Kristalle aus Fortnite, selbst gezeichnet. Die Tiere gibt es ab Rang Gold II, die Kristalle ab ihrem Rang, die Unreal-Stücke erst ab Unreal. Wünschen kannst du dir etwas im Shop mit dem ⭐."
@@ -8423,6 +8473,28 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
         : locked && !it.reward ? '<span class="pill" title="Erst ab Rang ' + esc(it.rank) + '">🔒 ' + esc(it.rank) + '</span><button class="chip" data-act="wish" data-id="' + esc(it.id) + '" aria-pressed="' + (wishId === it.id) + '" aria-label="Wunsch" style="margin-left:6px">⭐</button>'
         : buyBtn) + '</div>';
   }
+  /* „Kommt bald“: Silhouetten der nächsten Freischaltungen */
+  function teaserHtml() {
+    var t = S.shopTeasers(); if (!t.length) return "";
+    return '<div style="margin:2px 0 10px"><div class="eyebrow">Kommt bald</div><div class="row wrap" style="gap:8px;margin-top:6px">' + t.map(function (x) {
+      var it = S.itemById(x.id);
+      return '<div style="width:74px;text-align:center"><div class="sil" style="width:56px;height:56px;margin:0 auto;display:grid;place-items:center;font-size:30px;border-radius:14px;background:var(--card-2);border:2px dashed var(--line);filter:grayscale(1)">' + (it && it.kind === "avatar" ? "❔" : "🎁") + '</div><small class="muted" style="display:block;font-size:11px;margin-top:3px">' + (x.inWeeks === 1 ? "Montag" : "in " + x.inWeeks + " Wochen") + '</small></div>';
+    }).join("") + '</div></div>';
+  }
+  /* Willkommenspaket: jedes neue Kind wählt seine erste Figur und bekommt Münzen, Konfetti und einen Titel */
+  function openWelcome() {
+    if (!S.welcomeNeeded() || document.getElementById("welcomeSheet")) return;
+    var ov = document.createElement("div"); ov.className = "srmd"; ov.id = "welcomeSheet";
+    ov.innerHTML = '<div class="dsh" style="text-align:center"><div class="dshg"></div><div class="eyebrow">Willkommen</div><h3>Such dir deine erste Figur aus!</h3>' +
+      '<p class="small muted" style="margin:4px 0 12px">Dazu schenken wir dir ' + S.WELCOME.coins + ' 🪙, den Effekt „Konfetti“ und den Titel „Wortjäger“.</p>' +
+      '<div class="row" style="gap:10px;justify-content:center">' + S.WELCOME.choices.map(function (id) { var it = S.itemById(id); return '<button class="album-i" data-wel="' + esc(id) + '" style="min-width:86px"><span class="art">' + avatarHtml(it.val) + '</span><small>' + esc(it.label) + '</small></button>'; }).join("") + '</div></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-wel]"); if (!b) return;
+      var r = S.welcomeGrant(b.getAttribute("data-wel")); if (r.error) return;
+      ov.remove(); toast("Willkommen! +" + r.coins + " 🪙, deine Figur und Konfetti sind da."); render(); renderHeader();
+    });
+  }
   function shopCard() {
     var st = S.state, wishId = (S.wish() || {}).id, deal = S.dealItem(), sd = S.activeSetDeal();
     var html = '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Shop</div><span class="pill">🪙 ' + st.coins + '</span></div>' +
@@ -8446,7 +8518,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       return html + '</section>';
     }
     var RO = { common: 0, rare: 1, epic: 2, legend: 3 };   // Sortierung immer: gewöhnlich, selten, episch, legendär, danach nach Preis
-    html += '<div class="rgrid">' + S.SHOP.filter(function (it) { return shopTab === "fn" ? it.set === "fn" : it.kind === shopTab && !it.set; })
+    html += teaserHtml() + '<div class="rgrid">' + S.SHOP.filter(function (it) { return (shopTab === "fn" ? it.set === "fn" : it.kind === shopTab && !it.set) && S.shopVisible(it); })
       .map(function (it, i) { return { it: it, i: i }; }).sort(function (a, b) { return (RO[S.rarityOf(a.it)] - RO[S.rarityOf(b.it)]) || (a.it.cost - b.it.cost) || (a.i - b.i); })
       .map(function (x) { return shopTile(x.it, wishId); }).join("") + '</div>';
     return html + '</section>';
@@ -9942,6 +10014,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   render();
   (function () { var bt = document.getElementById("boot"); if (bt) setTimeout(function () { bt.classList.add("off"); setTimeout(function () { if (bt.parentNode) bt.parentNode.removeChild(bt); }, 600); }, 350); })();
   pickPlayer();
+  setTimeout(function () { try { openWelcome(); } catch (e) {} }, 900);
   setTimeout(function () { if (window.WordySync && sessionEl.hidden && (tab === "home" || tab === "lernen")) render(); }, 300);   // sync.js lädt nach app.js: Verbindung und Pläne erst jetzt sichtbar
   /* Verbindungslink der Eltern (#verbinden=<Adresse#Code>): nach Bestätigung automatisch verbinden */
   (function () {
@@ -10471,7 +10544,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var meta = {
       name: st.profile.name || "", coins: st.coins, xp: st.xp, rank: rk.rank ? rk.rank.n : "", streak: st.streak.count, best: st.streak.best,
       goalMin: VT.goalMin ? VT.goalMin() : st.settings.goalMin, todaySec: d.sec || 0, todayItems: d.items || 0, owned: (st.profile.owned || []).length,
-      pass: VT.passMeta ? VT.passMeta() : null, shop: VT.shopList ? VT.shopList() : [], gifts: Object.keys(st.goalsDone || {}).filter(function (k) { return k.indexOf("gift") === 0; }).map(function (k) { return k.slice(4); }), wish: (VT.wish && VT.wish()) ? VT.wish().label || VT.wish().id : "", klassen: st.settings.klassen, version: g.WORDY_VERSION || "", totals: st.totals, path: VT.pathProgress ? Object.assign(VT.pathProgress(), { sections: VT.pathSections(), bosses: VT.bossLog ? VT.bossLog() : [] }) : null
+      pass: VT.passMeta ? VT.passMeta() : null, shop: VT.shopList ? VT.shopList() : [], shopCat: VT.shopCatalog ? VT.shopCatalog() : [], gifts: Object.keys(st.goalsDone || {}).filter(function (k) { return k.indexOf("gift") === 0; }).map(function (k) { return k.slice(4); }), wish: (VT.wish && VT.wish()) ? VT.wish().label || VT.wish().id : "", klassen: st.settings.klassen, version: g.WORDY_VERSION || "", totals: st.totals, path: VT.pathProgress ? Object.assign(VT.pathProgress(), { sections: VT.pathSections(), bosses: VT.bossLog ? VT.bossLog() : [] }) : null
     };
     lastSnap = Date.now();
     var cat = Object.keys(units).map(function (k) { return units[k]; });
@@ -10573,7 +10646,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     lastPull = Date.now();
     return g.fetch(c.url + "/api/sync", { headers: { Authorization: "Bearer " + c.token } })
       .then(function (r) { if (!r.ok) throw new Error(String(r.status)); return r.json(); })
-      .then(function (j) { lsSet("wordy.cfg." + pid(), { goals: j.goals || [], plans: j.plans || [], pathUnits: j.pathUnits || [], weekPlan: j.weekPlan || null, bossDiff: j.bossDiff || "normal", selfChoose: !!j.selfChoose, coinFactor: j.coinFactor || 1, gifts: j.gifts || [], season: j.season || null, t: Date.now() }); W.check(); if (g.WordyHooks && g.WordyHooks.onChange) g.WordyHooks.onChange(); return true; })
+      .then(function (j) { lsSet("wordy.cfg." + pid(), { goals: j.goals || [], plans: j.plans || [], pathUnits: j.pathUnits || [], weekPlan: j.weekPlan || null, bossDiff: j.bossDiff || "normal", selfChoose: !!j.selfChoose, shop: j.shop || null, coinFactor: j.coinFactor || 1, gifts: j.gifts || [], season: j.season || null, t: Date.now() }); W.check(); if (g.WordyHooks && g.WordyHooks.onChange) g.WordyHooks.onChange(); return true; })
       .catch(function () { return false; });
   };
 

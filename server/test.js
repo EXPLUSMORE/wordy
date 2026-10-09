@@ -176,6 +176,12 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     const rq2 = await J("/api/pair/request", { method: "POST", body: JSON.stringify({ device: "Tablet" }) });
     assert.equal((await J("/api/admin/pairing/" + rq2.j.code + "/deny", { method: "POST", headers: H })).s, 200);
     assert.equal((await J(pollU(rq2))).j.status, "denied", "Ablehnung kommt an");
+    /* Shop-Kalender */
+    assert.equal((await J("/api/admin/shopplan", { headers: H })).j.start, "", "Standard: kein eigenes Datum");
+    assert.equal((await J("/api/admin/shopplan", { method: "POST", headers: H, body: JSON.stringify({ start: "2026-11-02", over: { "av:fnfrosch": 5, "kaputt": 3 } }) })).s, 200);
+    const sp = (await J("/api/admin/shopplan", { headers: H })).j; assert.equal(sp.start, "2026-11-02"); assert.equal(sp.over["av:fnfrosch"], 5); assert.ok(!("kaputt" in sp.over), "ungültige Artikel-ID abgelehnt");
+    assert.equal((await J("/api/sync", { headers: { Authorization: "Bearer " + pr.j.token } })).j.shop.start, "2026-11-02", "App bekommt das Datum");
+    assert.equal((await J("/api/admin/shopplan", { headers: { "X-Wordy": "1" } })).s, 401, "Shop-Kalender nur Betreiber");
     /* Feedback: Betreiber, App (Bearer), Status/Antwort, Eingabeprüfung */
     const fbA = await J("/api/admin/feedback", { method: "POST", headers: H, body: JSON.stringify({ kind: "idea", text: "Die Challenge sollte kürzer sein." }) });
     assert.equal(fbA.s, 200, "Feedback (Dashboard)");
