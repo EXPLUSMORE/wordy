@@ -72,21 +72,25 @@
     var mult = Math.min(3, 1 + run.combo * 0.1);
     var pts = Math.round(10 * mult * (weight || 1));
     run.score += pts; run.correct++; run.items++;
-    var bn = $("#arNote"); if (bn && run.boss) bn.textContent = noteText();
-    if (w) { if (global.WordySync) global.WordySync.ctx = { mode: "arena" }; S.grade(w.id, 1); }            // Tempo zählt als sichere, nicht als tiefe Wiederholung
-    S.addXp(2);
-    flash("+" + pts, run.combo >= 5 ? "combo" : "ok");
-    var pr = S.state.profile;
-    if (S.state.settings.audio) global.VTC.sound(pr.snd, true);
-    global.VTC.burst(pr.fx, global.innerWidth / 2, global.innerHeight * .5, 10, .9);
+    try {   // Beiwerk (Note, Lernstand, Ton, Effekt) darf die Runde nie blockieren
+      var bn = $("#arNote"); if (bn && run.boss) bn.textContent = noteText();
+      if (w) { if (global.WordySync) global.WordySync.ctx = { mode: "arena" }; S.grade(w.id, 1); }            // Tempo zählt als sichere, nicht als tiefe Wiederholung
+      S.addXp(2);
+      flash("+" + pts, run.combo >= 5 ? "combo" : "ok");
+      var pr = S.state.profile;
+      if (S.state.settings.audio) global.VTC.sound(pr.snd, true);
+      global.VTC.burst(pr.fx, global.innerWidth / 2, global.innerHeight * .5, 10, .9);
+    } catch (e) { try { console.error("arena hit:", e); } catch (x) {} }
     return pts;
   }
   function miss(w) {
     run.combo = 0; run.items++; run.wrong++;
-    if (w) { if (global.WordySync) global.WordySync.ctx = { mode: "arena" }; S.grade(w.id, 0); }
-    buzz(35);
-    shake();
-    if (S.state.settings.audio) global.VTC.sound(S.state.profile.snd, false);
+    try {
+      if (w) { if (global.WordySync) global.WordySync.ctx = { mode: "arena" }; S.grade(w.id, 0); }
+      buzz(35);
+      shake();
+      if (S.state.settings.audio) global.VTC.sound(S.state.profile.snd, false);
+    } catch (e) { try { console.error("arena miss:", e); } catch (x) {} }
   }
   function flash(text, kind) {
     var f = $("#arFlash"); if (!f) return;
@@ -137,7 +141,8 @@
   /* ---------- Takt ---------- */
   function startClock() {
     var last = Date.now();
-    timer = setInterval(function () {
+    timer = setInterval(function () { try { tick(); } catch (e) { try { console.error("arena tick:", e); } catch (x) {} if (run && !run.done && run.mode === "survival" && run.qLeft <= 0) { try { finish("timeout"); } catch (y) { stopClock(); } } } }, 90);
+    function tick() {
       if (!run) return stopClock();
       var now = Date.now(), d = now - last; last = now;
       run.left -= d;
@@ -155,7 +160,7 @@
       }
       if (run.left <= 0) { run.left = 0; paintHud(); return finish("time"); }
       paintHud();
-    }, 90);
+    }
   }
   function stopClock() { if (timer) clearInterval(timer); timer = null; }
 
@@ -223,6 +228,8 @@
   /* ================= Modus 2 & 4: Karten mit Auswahl ================= */
   function renderCard() {
     var w = nextWord();
+    if (!w && run.mode !== "hunt") { run.queue = S.shuffle(run.all.slice()); w = run.queue.shift(); }   // Stapel leer: neu mischen
+    if (!w && run.mode !== "hunt") return finish("quit");
     if (run.mode === "hunt") {
       if (!run.targets.length) return finish("cleared");
       w = run.targets[Math.floor(Math.random() * run.targets.length)];
@@ -246,7 +253,13 @@
     if (run.mode === "survival") { run.qLeft = run.qTotal; var c = $("#arClock"); if (c) c.textContent = run.correct; }
     paintHud();
   }
-  function tapOpt(i) {
+  function tapOpt(i) {   // Absicherung: ein Fehler in der Auswertung darf die Runde nie festhalten
+    try { tapOpt0(i); } catch (e) {
+      try { console.error("arena tap:", e); } catch (x) {}
+      if (run && !run.done) { run.locked = false; try { renderCard(); } catch (y) { finish("quit"); } }
+    }
+  }
+  function tapOpt0(i) {
     if (!run || run.locked) return;
     var o = run.opts[i], w = run.cur;
     var btns = $$(".ar-opt");
@@ -311,6 +324,14 @@
   }
 
   function finish(reason) {
+    if (!run || run.done) return;
+    try { finish0(reason); } catch (e) {
+      try { console.error("arena finish:", e); } catch (x) {}
+      run.done = true; stopClock();
+      el.innerHTML = '<div class="ar-end"><h1>Runde vorbei</h1><div class="ar-big tnum">' + run.correct + ' richtig</div><div class="ar-endbtns"><button class="ar-btn" data-a="again">Noch mal</button><button class="ar-btn ghost" data-a="quit">Zurück</button></div></div>';
+    }
+  }
+  function finish0(reason) {
     if (!run || run.done) return;
     run.done = true; stopClock();
     var sec = Math.round((Date.now() - run.start) / 1000);

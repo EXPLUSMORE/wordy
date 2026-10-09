@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.59.2 – 2026-10-09
+- Arena abgesichert: Ein Fehler beim Auswerten einer Antwort (Lernstand, Ton, Effekt, Ergebnis) kann eine Runde nicht mehr festhalten. Treffer und Fehler zählen weiter, Zeit- und Fehler-Ende laufen weiter, bei leerem Wortstapel wird neu gemischt, und die Ergebnisseite erscheint auch dann, wenn die Auswertung scheitert. (Meldung: „Letztes Herz“ reagierte nach 540 Punkten nicht mehr.)
+
 ## 2.59.1 – 2026-10-09
 - „Letztes Herz“: Die große Zahl oben zeigte nach jeder Antwort „0.0“, als wäre die Zeit abgelaufen. Jetzt steht dort durchgehend die Zahl der Treffer. Die Runde endet unverändert bei einem Fehler oder wenn der Balken eines Worts abläuft.
 
