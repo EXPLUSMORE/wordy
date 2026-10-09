@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.61.0 – 2026-10-09
+- Season-Pässe: Neuer, sparsamer Aufbau mit 2 bis 3 Highlights je Saison (Woche 2 Figur selten, Woche 4 Figur legendär, Finale Rahmen oder Effekt), dazwischen nur Münzen und Booster. Im Dashboard (Belohnungen › Pass) gibt es Vorlagen zum Laden: Eiswelt, Zauberwald (Pummel-Reihe), Beute-Insel (Fortnite-Reihe), Sternenreise (Weltall); Titel und Hintergründe sind jetzt wählbar. In der App zeigt die Pass-Seite die Highlights als große Karten mit Silhouette für noch nicht abgeholte Geschenke. Server-Update nötig (Dashboard).
+
 ## 2.60.0 – 2026-10-09
 - XP-Booster gibt es nur noch ab und zu: Boss-Truhen enthalten nur noch mit 10 % Wahrscheinlichkeit einen (vorher 40 %). Dafür ist der Booster ein Geschenk im Monatspass (Standard: Woche 2 und Finale, je 1). Beim Wochenpass-Zusammenstellen im Dashboard gibt es dafür das Feld „+n ⚡ XP-Booster“ (0 bis 3 je Woche/Finale). Server-Update nötig für das neue Feld.
 

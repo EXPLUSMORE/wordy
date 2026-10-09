@@ -408,8 +408,23 @@
         (w.slot ? '<div class="rcard extra"><span class="ri em">🏷️</span><b>+1 Sticker-Platz</b></div>' : "") + (w.coins ? '<div class="rcard extra"><span class="ri em">🪙</span><b>+' + w.coins + ' Münzen</b></div>' : "") + (w.boost ? '<div class="rcard extra"><span class="ri em">⚡</span><b>+' + w.boost + ' XP-Booster</b></div>' : "") + '</div>' +
         (w.state === "ready" ? '<button class="btn wide lg" data-act="passclaim" data-n="' + w.n + '" style="margin-top:10px">🎁 Set abholen</button>' : w.claimed ? '<p class="small muted" style="margin:10px 0 0">Schon abgeholt. 🎉</p>' : "") + '</div>';
     }
-    return '<section class="card passc"><div class="row"><div class="eyebrow" style="flex:1 1 auto">❄️ ' + esc(s.title) + '</div><span class="pill tnum">' + head + '</span></div>' +
+    var hl = passHighlights(info), icon = { Zauberwald: "🔮", "Beute-Insel": "🪂", Sternenreise: "🌌" }[s.title] || "❄️";
+    var hlHtml = hl.length >= 2 ? '<div class="phl">' + hl.map(function (x) {
+      var it = S.itemById(x.id), rr = S.rarityOf(it);
+      return '<button class="phc ' + rr + (x.claimed ? " got" : "") + '" data-act="passsel" data-n="' + x.n + '"><span class="phr">' + (RAR_NAME[rr] || "") + '</span>' +
+        '<span class="phi' + (x.claimed ? "" : " sil") + '">' + itemIcon(it) + '</span><b>' + (x.claimed ? esc(it.label) : "???") + '</b><small>' + (x.claimed ? "✓ abgeholt" : x.label) + '</small></button>';
+    }).join("") + '</div><div class="small muted" style="margin:-2px 0 8px">Die Highlights dieser Saison</div>' : "";
+    return '<section class="card passc"><div class="row"><div class="eyebrow" style="flex:1 1 auto">' + icon + ' ' + esc(s.title) + '</div><span class="pill tnum">' + head + '</span></div>' + hlHtml +
       '<div class="ptiles">' + tiles + '</div>' + det + '</section>';
+  }
+  /* Die 2 bis 3 größten Geschenke einer Saison: höchste Seltenheit, in Reihenfolge der Wochen */
+  function passHighlights(info) {
+    var rk = { common: 0, rare: 1, epic: 2, legend: 3 }, c = [];
+    function main(items) { var its = (items || []).map(S.itemById).filter(Boolean); return (its.filter(function (x) { return x.kind === "avatar"; })[0] || its[0] || {}).id; }
+    info.weeks.forEach(function (w) { var id = main(w.items); if (id) c.push({ id: id, n: w.n, claimed: w.claimed, label: "Woche " + w.n }); });
+    var f = info.season.finale; if (f && main(f.items)) c.push({ id: main(f.items), n: "fin", claimed: info.fin.claimed, label: "Finale" });
+    c.forEach(function (x, i) { x.o = i; x.r = rk[S.rarityOf(S.itemById(x.id))] || 0; });
+    return c.slice().sort(function (a, b) { return (b.r - a.r) || (a.o - b.o); }).slice(0, 3).sort(function (a, b) { return a.o - b.o; });
   }
   /* ---------- Showroom (Trophäenschrank) ---------- */
   var DANCE_NUM = { wackler: 1, huepfer: 2, drehung: 3, roboter: 4, moonwalk: 5, sieg: 6, eislauf: 7 };

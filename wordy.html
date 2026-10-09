@@ -1019,10 +1019,17 @@ details.fold>.fbody{padding:2px 0 14px}
 .dws.d .dwc{opacity:.78}
 .dwt{flex:1 1 auto;min-width:0}.dwt b{font-size:15px}
 .dwb{flex:none;white-space:nowrap}.dwc .btn.dwb{width:auto;padding:9px 14px}
+
+.phl{display:flex;gap:8px;margin:10px 0 4px}
+.phc{flex:1 1 0;min-width:0;border-radius:16px;padding:10px 6px 8px;background:var(--card-2);border:2px solid var(--line);display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center;cursor:pointer;color:var(--ink)}
+.phc.rare{border-color:#4aa3ff}.phc.epic{border-color:#b56cff}.phc.legend{border-color:#ffc247;box-shadow:0 0 14px rgba(255,194,71,.35)}
+.phc.got{opacity:.85}.phc .phr{font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+.phc .phi{width:54px;height:54px;display:grid;place-items:center;font-size:34px}.phc .phi.sil{filter:brightness(0) opacity(.35)}
+.phc b{font-size:13px}.phc small{font-size:11px;color:var(--ink-2)}
 </style>
 
 
-<script>window.WORDY_VERSION="2.60.0";window.WORDY_BUILD="18fce03c1d";</script>
+<script>window.WORDY_VERSION="2.61.0";window.WORDY_BUILD="6be2f39062";</script>
 </head>
 <body>
 <div id="app">
@@ -5273,7 +5280,7 @@ window.VERBS = [
   }
   var RAR_ORDER = { common: 0, rare: 1, epic: 2, legend: 3 };
   function rarityOf(it) { return it.rar || (it.cost <= 120 ? "common" : it.cost <= 350 ? "rare" : it.cost <= 800 ? "epic" : "legend"); }
-  function shopList() { return SHOP.filter(function (x) { return ["avatar", "dance", "outfit", "kit", "fx", "frame"].indexOf(x.kind) >= 0 && x.cost > 0 || x.kind === "dance"; }).map(function (x) { return [x.id, x.label, x.kind]; }); }
+  function shopList() { return SHOP.filter(function (x) { return ["avatar", "dance", "outfit", "kit", "fx", "frame", "title", "bg"].indexOf(x.kind) >= 0 && x.cost > 0 || x.kind === "dance"; }).map(function (x) { return [x.id, x.label, x.kind]; }); }
 
   /* ---------- Showroom: alles Gesammelte, Medaillen, Sammler-Pokale, Favoriten ---------- */
   function favs() { var f = state.profile.favs; if (!Array.isArray(f)) f = state.profile.favs = []; return f; }
@@ -7332,8 +7339,23 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
         (w.slot ? '<div class="rcard extra"><span class="ri em">🏷️</span><b>+1 Sticker-Platz</b></div>' : "") + (w.coins ? '<div class="rcard extra"><span class="ri em">🪙</span><b>+' + w.coins + ' Münzen</b></div>' : "") + (w.boost ? '<div class="rcard extra"><span class="ri em">⚡</span><b>+' + w.boost + ' XP-Booster</b></div>' : "") + '</div>' +
         (w.state === "ready" ? '<button class="btn wide lg" data-act="passclaim" data-n="' + w.n + '" style="margin-top:10px">🎁 Set abholen</button>' : w.claimed ? '<p class="small muted" style="margin:10px 0 0">Schon abgeholt. 🎉</p>' : "") + '</div>';
     }
-    return '<section class="card passc"><div class="row"><div class="eyebrow" style="flex:1 1 auto">❄️ ' + esc(s.title) + '</div><span class="pill tnum">' + head + '</span></div>' +
+    var hl = passHighlights(info), icon = { Zauberwald: "🔮", "Beute-Insel": "🪂", Sternenreise: "🌌" }[s.title] || "❄️";
+    var hlHtml = hl.length >= 2 ? '<div class="phl">' + hl.map(function (x) {
+      var it = S.itemById(x.id), rr = S.rarityOf(it);
+      return '<button class="phc ' + rr + (x.claimed ? " got" : "") + '" data-act="passsel" data-n="' + x.n + '"><span class="phr">' + (RAR_NAME[rr] || "") + '</span>' +
+        '<span class="phi' + (x.claimed ? "" : " sil") + '">' + itemIcon(it) + '</span><b>' + (x.claimed ? esc(it.label) : "???") + '</b><small>' + (x.claimed ? "✓ abgeholt" : x.label) + '</small></button>';
+    }).join("") + '</div><div class="small muted" style="margin:-2px 0 8px">Die Highlights dieser Saison</div>' : "";
+    return '<section class="card passc"><div class="row"><div class="eyebrow" style="flex:1 1 auto">' + icon + ' ' + esc(s.title) + '</div><span class="pill tnum">' + head + '</span></div>' + hlHtml +
       '<div class="ptiles">' + tiles + '</div>' + det + '</section>';
+  }
+  /* Die 2 bis 3 größten Geschenke einer Saison: höchste Seltenheit, in Reihenfolge der Wochen */
+  function passHighlights(info) {
+    var rk = { common: 0, rare: 1, epic: 2, legend: 3 }, c = [];
+    function main(items) { var its = (items || []).map(S.itemById).filter(Boolean); return (its.filter(function (x) { return x.kind === "avatar"; })[0] || its[0] || {}).id; }
+    info.weeks.forEach(function (w) { var id = main(w.items); if (id) c.push({ id: id, n: w.n, claimed: w.claimed, label: "Woche " + w.n }); });
+    var f = info.season.finale; if (f && main(f.items)) c.push({ id: main(f.items), n: "fin", claimed: info.fin.claimed, label: "Finale" });
+    c.forEach(function (x, i) { x.o = i; x.r = rk[S.rarityOf(S.itemById(x.id))] || 0; });
+    return c.slice().sort(function (a, b) { return (b.r - a.r) || (a.o - b.o); }).slice(0, 3).sort(function (a, b) { return a.o - b.o; });
   }
   /* ---------- Showroom (Trophäenschrank) ---------- */
   var DANCE_NUM = { wackler: 1, huepfer: 2, drehung: 3, roboter: 4, moonwalk: 5, sieg: 6, eislauf: 7 };

@@ -534,15 +534,32 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
     { title: "Der Eisbär", need: 5, items: ["av:eisbaer", "dn:eislauf"], slot: 1, coins: 50 }, { title: "Pinguin-Party", need: 5, items: ["av:eispingu", "dn:moonwalk"], slot: 1, boost: 1, coins: 50 },
     { title: "Robben-Rutsche", need: 5, items: ["av:eisrobbe", "dn:drehung"], slot: 1, coins: 50 }, { title: "Der Eiskönig", need: 6, items: ["av:eiskoenig", "dn:sieg"], slot: 1, coins: 100 }],
     finale: { title: "Eiskönigs Schatz", need: 1, items: ["fr:eis", "of:polar", "fx:schnee"], slot: 0, boost: 1, coins: 200 } };
-  var DEF_SHOP = [["av:eisbaer", "Eisbär", "avatar"], ["av:eispingu", "Eis-Pinguin", "avatar"], ["av:eisrobbe", "Eis-Robbe", "avatar"], ["av:eiskoenig", "Eiskönig", "avatar"], ["dn:wackler", "Wackler", "dance"], ["dn:huepfer", "Hüpfer", "dance"], ["dn:drehung", "Drehung", "dance"], ["dn:roboter", "Roboter", "dance"], ["dn:moonwalk", "Moonwalk", "dance"], ["dn:sieg", "Epischer Sieg", "dance"], ["dn:eislauf", "Eislauf", "dance"], ["of:polar", "Polarjacke", "outfit"], ["fx:schnee", "Schneefall", "fx"], ["fr:eis", "Eiskristall-Rahmen", "frame"]];
-  var KIND_DE = { avatar: "Figuren", dance: "Tänze", outfit: "Outfits", kit: "Trikots", fx: "Effekte", frame: "Rahmen" };
-  function drawPass(p, r) {
+  var DEF_SHOP = [["av:eisbaer", "Eisbär", "avatar"], ["av:eispingu", "Eis-Pinguin", "avatar"], ["av:eisrobbe", "Eis-Robbe", "avatar"], ["av:eiskoenig", "Eiskönig", "avatar"], ["dn:wackler", "Wackler", "dance"], ["dn:huepfer", "Hüpfer", "dance"], ["dn:drehung", "Drehung", "dance"], ["dn:roboter", "Roboter", "dance"], ["dn:moonwalk", "Moonwalk", "dance"], ["dn:sieg", "Epischer Sieg", "dance"], ["dn:eislauf", "Eislauf", "dance"], ["of:polar", "Polarjacke", "outfit"], ["fx:schnee", "Schneefall", "fx"], ["fr:eis", "Eiskristall-Rahmen", "frame"], ["ti:wort", "Wortjäger", "title"], ["ti:streber", "Streber", "title"], ["bg:stars", "Sterne", "bg"], ["av:pkatze", "Pummelkatze", "avatar"], ["av:pregen", "Regenbogenpummel", "avatar"], ["av:pgold", "Goldpummel", "avatar"], ["av:pgalaxie", "Galaxiepummel", "avatar"], ["av:fnwolf", "Wolf", "avatar"], ["av:fnchamp", "Champion-Kristall", "avatar"], ["fr:rainbow", "Regenbogenrahmen", "frame"], ["fr:fire", "Flammenrahmen", "frame"], ["fx:stars", "Sternenregen", "fx"]];
+  /* Vorlagen: je Saison 4 Wochen + Finale, 2 bis 3 Highlights (Woche 2, Woche 4, Finale), dazwischen nur Münzen und Booster */
+  var SEASON_TPL = {
+    eiswelt: DEF_SEASON,
+    zauberwald: { id: "zauberwald1", title: "Zauberwald", start: "", weeks: [
+      { title: "Funkelstart", need: 4, items: ["bg:stars"], slot: 0, boost: 0, coins: 20 }, { title: "Pummelkatze", need: 5, items: ["av:pkatze"], slot: 0, boost: 0, coins: 0 },
+      { title: "Zaubertrank", need: 5, items: [], slot: 0, boost: 1, coins: 30 }, { title: "Regenbogenpummel", need: 6, items: ["av:pregen"], slot: 0, boost: 0, coins: 0 }],
+      finale: { title: "Regenbogenzauber", need: 1, items: ["fr:rainbow"], slot: 0, boost: 1, coins: 100 } },
+    beute: { id: "beute1", title: "Beute-Insel", start: "", weeks: [
+      { title: "Landung", need: 4, items: ["ti:wort"], slot: 0, boost: 0, coins: 20 }, { title: "Wolfsrudel", need: 5, items: ["av:fnwolf"], slot: 0, boost: 0, coins: 0 },
+      { title: "Beutezug", need: 5, items: [], slot: 0, boost: 1, coins: 30 }, { title: "Champion-Kristall", need: 6, items: ["av:fnchamp"], slot: 0, boost: 0, coins: 0 }],
+      finale: { title: "Siegerpodest", need: 1, items: ["fr:fire"], slot: 0, boost: 1, coins: 100 } },
+    sterne: { id: "sterne1", title: "Sternenreise", start: "", weeks: [
+      { title: "Abflug", need: 4, items: ["ti:streber"], slot: 0, boost: 0, coins: 20 }, { title: "Goldene Sterne", need: 5, items: ["av:pgold"], slot: 0, boost: 0, coins: 0 },
+      { title: "Mondlandung", need: 5, items: [], slot: 0, boost: 1, coins: 30 }, { title: "Galaxiepummel", need: 6, items: ["av:pgalaxie"], slot: 0, boost: 0, coins: 0 }],
+      finale: { title: "Sternenregen", need: 1, items: ["fx:stars"], slot: 0, boost: 1, coins: 100 } }
+  };
+  var SEASON_NAMES = { eiswelt: "Eiswelt (läuft)", zauberwald: "Zauberwald (Pummel-Reihe)", beute: "Beute-Insel (Fortnite-Reihe)", sterne: "Sternenreise (Weltall)" };
+  var KIND_DE = { avatar: "Figuren", dance: "Tänze", outfit: "Outfits", kit: "Trikots", fx: "Effekte", frame: "Rahmen", title: "Titel", bg: "Hintergründe" };
+  function drawPass(p, r, ov) {
     var el = document.getElementById("passCard"); if (!el) return;
     if (window.WF) { if (el.parentNode) el.parentNode.removeChild(el); return; }   // den Wochenpass stellt nur der Betreiber zusammen
-    var m = r.meta || {}, ps = m.pass, shop = m.shop && m.shop.length ? m.shop : DEF_SHOP;
+    var m = r.meta || {}, ps = m.pass, shop = (m.shop && m.shop.length ? m.shop : []).concat(DEF_SHOP.filter(function (d) { return !(m.shop || []).some(function (x) { return x[0] === d[0]; }); }));
     el.innerHTML = "<h2>Pass: Wochen-Sets zusammenbauen</h2><p class='muted small'>Lade …</p>";
     api("/api/admin/players/" + p.id + "/season").then(function (cur) {
-      var s = cur || DEF_SEASON, kinds = ["avatar", "dance", "outfit", "kit", "fx", "frame"];
+      var s = ov || cur || DEF_SEASON, kinds = ["avatar", "dance", "outfit", "kit", "fx", "frame", "title", "bg"];
       var opts = function (sel) {
         return '<option value="">–</option>' + kinds.map(function (k) {
           var l = shop.filter(function (x) { return x[2] === k; }); if (!l.length) return "";
@@ -558,7 +575,7 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
       };
       var prog = ps ? '<p class="small" style="margin:0 0 8px">' + esc(p.name) + ': ' + ps.weeks.map(function (w) { return "Woche " + w.n + (w.c ? " ✅" : " " + w.cnt + "/" + w.need); }).join(" · ") + (ps.fin ? " · Finale ✅" : "") + '</p>' : "";
       el.innerHTML = "<h2>Pass: Wochen-Sets zusammenbauen</h2><p class='muted small' style='margin:0 0 8px'>Jede Woche bekommt " + esc(p.name) + " ein Set, wenn die Aufgabe geschafft ist. Zu jeder Figur gehört automatisch der passende Sticker. Aufgabe = an so vielen Tagen der 7 Tage das Tagesziel schaffen.</p>" + prog +
-        '<div class="row" style="gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px"><label class="small">Titel <input id="psT" value="' + esc(s.title || "") + '" maxlength="30"></label><label class="small">Start <input id="psS" type="date" value="' + esc(s.start || "") + '"></label><span class="small muted">Start leer = beim ersten Öffnen der App</span></div>' +
+        '<div class="row" style="gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px"><label class="small">Vorlage <select id="psTpl"><option value="">wählen …</option>' + Object.keys(SEASON_TPL).map(function (k) { return '<option value="' + k + '">' + esc(SEASON_NAMES[k]) + "</option>"; }).join("") + '</select></label><button class="ghost sm" id="psTplGo">Laden</button><label class="small">Titel <input id="psT" value="' + esc(s.title || "") + '" maxlength="30"></label><label class="small">Start <input id="psS" type="date" value="' + esc(s.start || "") + '"></label><span class="small muted">Start leer = beim ersten Öffnen der App</span></div>' +
         s.weeks.map(function (w, i) { return block(w, "w" + (i + 1), false); }).join("") + block(s.finale || { title: "Finale", items: [], coins: 0 }, "fin", true) +
         '<div class="row" style="gap:8px;margin-top:6px"><button id="psSave">Pass speichern</button><button class="ghost" id="psNew">Neuen Pass starten</button><button class="ghost" id="psClr">Zurück auf Standard</button><span id="psMsg" class="small"></span></div>';
       var msg = function (t, bad) { var e = document.getElementById("psMsg"); if (e) { e.className = "small" + (bad ? " err" : ""); e.textContent = t; } };
@@ -567,6 +584,7 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
         var weeks = Array.prototype.map.call(el.querySelectorAll('.goal[data-k^="w"]'), rd), fin = rd(el.querySelector('.goal[data-k="fin"]'));
         return { id: s.id, title: document.getElementById("psT").value, start: document.getElementById("psS").value, weeks: weeks, finale: fin.items.length || fin.coins ? fin : null, newId: !!newId };
       };
+      document.getElementById("psTplGo").onclick = function () { var k = document.getElementById("psTpl").value; if (!k) return; drawPass(p, r, JSON.parse(JSON.stringify(SEASON_TPL[k]))); setTimeout(function () { var m2 = document.getElementById("psMsg"); if (m2) { m2.className = "small"; m2.textContent = "Vorlage geladen. Mit „Neuen Pass starten“ übernehmen (der Fortschritt im alten Pass wird nicht übernommen)."; } }, 50); };
       document.getElementById("psSave").onclick = function () { post("/api/admin/players/" + p.id + "/season", read(false)).then(function () { msg("Gespeichert. Die App übernimmt es beim nächsten Öffnen."); }).catch(function (e) { msg(e.message, 1); }); };
       document.getElementById("psNew").onclick = function () { if (confirm("Einen neuen Pass starten? Der Fortschritt im alten Pass wird nicht übernommen.")) post("/api/admin/players/" + p.id + "/season", read(true)).then(function () { msg("Neuer Pass gespeichert."); }).catch(function (e) { msg(e.message, 1); }); };
       document.getElementById("psClr").onclick = function () { if (confirm("Zurück auf den Standard-Pass (Eiswelt)?")) post("/api/admin/players/" + p.id + "/season", { clear: true }).then(function () { msg("Standard aktiv."); drawPass(p, r); }).catch(function (e) { msg(e.message, 1); }); };
