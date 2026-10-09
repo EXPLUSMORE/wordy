@@ -1022,7 +1022,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.59.3";window.WORDY_BUILD="b52f959873";</script>
+<script>window.WORDY_VERSION="2.60.0";window.WORDY_BUILD="18fce03c1d";</script>
 </head>
 <body>
 <div id="app">
@@ -5213,10 +5213,10 @@ window.VERBS = [
   /* ---------- Pass: ein Monat aus Wochen-Sets ---------- */
   var PASS_DEFAULT = { id: "eiswelt1", title: "Eiswelt", theme: "ice", weeks: [
     { title: "Der Eisbär", need: 5, items: ["av:eisbaer", "dn:eislauf"], slot: 1, coins: 50 },
-    { title: "Pinguin-Party", need: 5, items: ["av:eispingu", "dn:moonwalk"], slot: 1, coins: 50 },
+    { title: "Pinguin-Party", need: 5, items: ["av:eispingu", "dn:moonwalk"], slot: 1, boost: 1, coins: 50 },
     { title: "Robben-Rutsche", need: 5, items: ["av:eisrobbe", "dn:drehung"], slot: 1, coins: 50 },
     { title: "Der Eiskönig", need: 6, items: ["av:eiskoenig", "dn:sieg"], slot: 1, coins: 100 }],
-    finale: { title: "Eiskönigs Schatz", items: ["fr:eis", "of:polar", "fx:schnee"], slot: 0, coins: 200 } };
+    finale: { title: "Eiskönigs Schatz", items: ["fr:eis", "of:polar", "fx:schnee"], slot: 0, boost: 1, coins: 200 } };
   function passSeason() {
     var r = global.WordySync && global.WordySync.remote ? (global.WordySync.remote() || {}).season : null;
     return r && Array.isArray(r.weeks) && r.weeks.length ? r : PASS_DEFAULT;
@@ -5236,7 +5236,7 @@ window.VERBS = [
       var ws = dayAdd(p.start, n * 7), days = [], cnt = 0;
       for (var i = 0; i < 7; i++) { var k = dayAdd(ws, i), ok = dayDone(k); if (ok) cnt++; days.push({ k: k, ok: ok, today: k === t, future: k > t }); }
       var claimed = !!p.claimed[n + 1], ready = cnt >= w.need;
-      weeks.push({ n: n + 1, title: w.title, need: w.need, cnt: cnt, days: days, items: w.items || [], slot: w.slot || 0, coins: w.coins || 0, claimed: claimed, ready: ready && !claimed,
+      weeks.push({ n: n + 1, title: w.title, need: w.need, cnt: cnt, days: days, items: w.items || [], slot: w.slot || 0, boost: w.boost || 0, coins: w.coins || 0, claimed: claimed, ready: ready && !claimed,
         state: claimed ? "claimed" : ready ? "ready" : n === idx ? "cur" : n < idx ? "missed" : "future", left: n === idx ? 7 - dayDiff(ws, t) : null });
     });
     var all = weeks.every(function (w) { return w.claimed; });
@@ -5251,8 +5251,9 @@ window.VERBS = [
     });
     if (rw.slot) { var n = stickerSlots(); if (n < MAX_STICKERS) { state.profile.stickerSlots = n + 1; slot = 1; } else extra = 25; }
     var c = Math.max(0, Math.round(+rw.coins || 0)) + extra; if (c) parentCoins(c);
+    var bo = Math.max(0, Math.min(3, Math.round(+rw.boost || 0))); if (bo) pathState().boost.stock += bo;   // XP-Booster als Pass-Geschenk
     checkSets();
-    return { items: got, slot: slot, coins: c };
+    return { items: got, slot: slot, coins: c, boost: bo };
   }
   function claimPassWeek(n) {
     var info = passInfo(), w = info.weeks[n - 1];
@@ -5658,7 +5659,7 @@ window.VERBS = [
     if (adv) {
       if (st.last && !p.chests[st.section]) {
         p.chests[st.section] = 1;
-        chest = { section: st.section, title: st.sectionTitle, coins: Math.min(25, boost(10 + Math.floor(Math.random() * 16))), boost: Math.random() < 0.4 };   // höchstens 25 Münzen je Boss (auch mit Booster/Münzfaktor)
+        chest = { section: st.section, title: st.sectionTitle, coins: Math.min(25, boost(10 + Math.floor(Math.random() * 16))), boost: Math.random() < 0.1 };   // höchstens 25 Münzen je Boss (auch mit Booster/Münzfaktor)
         p.pending.push(chest);
       }
     }
@@ -7320,7 +7321,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var det = "";
     if (sel === "fin" && s.finale) {
       det = '<div class="pdet"><b>' + esc(s.finale.title || "Finale") + '</b><p class="small muted" style="margin:2px 0 8px">Hol alle Wochen ab, dann gehört dir der Schatz.</p><div class="rcards">' + (s.finale.items || []).map(function (id) { return rcard(id, !info.fin.ready && !info.fin.claimed); }).join("") + '</div>' +
-        '<div class="small" style="margin:8px 0 0">' + (s.finale.coins ? "+" + s.finale.coins + " 🪙 " : "") + (s.finale.slot ? "· +1 Stickerplatz" : "") + '</div>' +
+        '<div class="small" style="margin:8px 0 0">' + (s.finale.coins ? "+" + s.finale.coins + " 🪙 " : "") + (s.finale.slot ? "· +1 Stickerplatz " : "") + (s.finale.boost ? "· +" + s.finale.boost + " ⚡ Booster" : "") + '</div>' +
         (info.fin.ready ? '<button class="btn wide lg" data-act="passclaim" data-n="fin" style="margin-top:10px">🎁 Finale abholen</button>' : info.fin.claimed ? '<p class="small muted" style="margin:10px 0 0">Schon abgeholt. Stark!</p>' : '') + '</div>';
     } else {
       var w = info.weeks[sel - 1] || info.weeks[0];
@@ -7328,7 +7329,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       det = '<div class="pdet"><b>Woche ' + w.n + ': ' + esc(w.title) + '</b><p class="small" style="margin:4px 0 6px">Schaffe an <b>' + w.need + ' Tagen</b> dein Tagesziel: <b class="tnum">' + w.cnt + ' / ' + w.need + '</b>' +
         (w.state === "cur" && w.left != null ? ' · noch ' + w.left + ' ' + plural(w.left, "Tag", "Tage") : w.state === "missed" ? ' · Zeit abgelaufen' : "") + '</p>' +
         '<div class="ddays">' + dayDots + '</div><div class="rcards" style="margin-top:10px">' + w.items.map(function (id) { var it = S.itemById(id), x = rcard(id, !w.claimed && w.state !== "ready"); return x + (it && it.kind === "avatar" && S.itemById("st:" + id.slice(3)) ? rcard("st:" + id.slice(3), !w.claimed && w.state !== "ready") : ""); }).join("") +
-        (w.slot ? '<div class="rcard extra"><span class="ri em">🏷️</span><b>+1 Sticker-Platz</b></div>' : "") + (w.coins ? '<div class="rcard extra"><span class="ri em">🪙</span><b>+' + w.coins + ' Münzen</b></div>' : "") + '</div>' +
+        (w.slot ? '<div class="rcard extra"><span class="ri em">🏷️</span><b>+1 Sticker-Platz</b></div>' : "") + (w.coins ? '<div class="rcard extra"><span class="ri em">🪙</span><b>+' + w.coins + ' Münzen</b></div>' : "") + (w.boost ? '<div class="rcard extra"><span class="ri em">⚡</span><b>+' + w.boost + ' XP-Booster</b></div>' : "") + '</div>' +
         (w.state === "ready" ? '<button class="btn wide lg" data-act="passclaim" data-n="' + w.n + '" style="margin-top:10px">🎁 Set abholen</button>' : w.claimed ? '<p class="small muted" style="margin:10px 0 0">Schon abgeholt. 🎉</p>' : "") + '</div>';
     }
     return '<section class="card passc"><div class="row"><div class="eyebrow" style="flex:1 1 auto">❄️ ' + esc(s.title) + '</div><span class="pill tnum">' + head + '</span></div>' +
@@ -7453,7 +7454,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var pf = S.state.profile, ov = document.createElement("div"); ov.className = "chestov";
     var type = n === "fin" ? "vault" : "ice", title = n === "fin" ? (S.passInfo().season.finale.title || "Finale") : "Woche " + n + " geschafft";
     var cards = r.items.map(function (x, i) { var c = RAR_COL[x.rar] || RAR_COL.rare; return '<div class="rcard big" id="rc' + i + '" style="--c1:' + c[0] + ';--c2:' + c[1] + '">' + itemIcon(x, true) + '<b>' + esc(x.label) + '</b></div>'; }).join("") +
-      (r.slot ? '<div class="rcard big extra" id="rcs"><span class="ri em">🏷️</span><b>+1 Sticker-Platz</b></div>' : "") + (r.coins ? '<div class="rcard big extra" id="rcc"><span class="ri em">🪙</span><b>+' + r.coins + ' Münzen</b></div>' : "");
+      (r.slot ? '<div class="rcard big extra" id="rcs"><span class="ri em">🏷️</span><b>+1 Sticker-Platz</b></div>' : "") + (r.coins ? '<div class="rcard big extra" id="rcc"><span class="ri em">🪙</span><b>+' + r.coins + ' Münzen</b></div>' : "") + (r.boost ? '<div class="rcard big extra"><span class="ri em">⚡</span><b>+' + r.boost + ' XP-Booster</b></div>' : "");
     ov.innerHTML = '<div class="eyebrow" style="color:#d8cfff;position:relative;z-index:2">❄️ ' + esc(S.passInfo().season.title) + '</div><h2 style="position:relative;z-index:2;font-size:26px;margin:0">' + esc(title) + '</h2>' +
       '<div id="lootStage" style="position:relative;z-index:2;width:min(86vw,300px);height:250px;border-radius:14px;overflow:visible;cursor:pointer"></div>' +
       '<div class="rcards bigrow" style="position:relative;z-index:2">' + cards + '</div>' +

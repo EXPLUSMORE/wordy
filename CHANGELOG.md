@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.60.0 – 2026-10-09
+- XP-Booster gibt es nur noch ab und zu: Boss-Truhen enthalten nur noch mit 10 % Wahrscheinlichkeit einen (vorher 40 %). Dafür ist der Booster ein Geschenk im Monatspass (Standard: Woche 2 und Finale, je 1). Beim Wochenpass-Zusammenstellen im Dashboard gibt es dafür das Feld „+n ⚡ XP-Booster“ (0 bis 3 je Woche/Finale). Server-Update nötig für das neue Feld.
+
 ## 2.59.3 – 2026-10-09
 - Lernpfad: Pro Boss höchstens 25 Münzen. Die Boss-Truhe bringt 10 bis 25 (statt 30 bis 60), auch mit Booster und Münzfaktor nie mehr als 25; schon angelegte Truhen zahlen ebenfalls höchstens 25. Boss-Runden in der Arena geben selbst keine Münzen mehr, sondern nur die Truhe. Anzeigetext in den Münz-Hinweisen angepasst.
 

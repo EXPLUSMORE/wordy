@@ -531,9 +531,9 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
   /* Wochenzeitplan: Minuten pro Wochentag, gilt jede Woche gleich; Vergleich mit dem, was in dieser Woche geübt wurde */
   /* Pass: Monat aus Wochen-Sets zusammenbauen (Aufgabe + Belohnungen je Woche, Finale) */
   var DEF_SEASON = { id: "eiswelt1", title: "Eiswelt", start: "", weeks: [
-    { title: "Der Eisbär", need: 5, items: ["av:eisbaer", "dn:eislauf"], slot: 1, coins: 50 }, { title: "Pinguin-Party", need: 5, items: ["av:eispingu", "dn:moonwalk"], slot: 1, coins: 50 },
+    { title: "Der Eisbär", need: 5, items: ["av:eisbaer", "dn:eislauf"], slot: 1, coins: 50 }, { title: "Pinguin-Party", need: 5, items: ["av:eispingu", "dn:moonwalk"], slot: 1, boost: 1, coins: 50 },
     { title: "Robben-Rutsche", need: 5, items: ["av:eisrobbe", "dn:drehung"], slot: 1, coins: 50 }, { title: "Der Eiskönig", need: 6, items: ["av:eiskoenig", "dn:sieg"], slot: 1, coins: 100 }],
-    finale: { title: "Eiskönigs Schatz", need: 1, items: ["fr:eis", "of:polar", "fx:schnee"], slot: 0, coins: 200 } };
+    finale: { title: "Eiskönigs Schatz", need: 1, items: ["fr:eis", "of:polar", "fx:schnee"], slot: 0, boost: 1, coins: 200 } };
   var DEF_SHOP = [["av:eisbaer", "Eisbär", "avatar"], ["av:eispingu", "Eis-Pinguin", "avatar"], ["av:eisrobbe", "Eis-Robbe", "avatar"], ["av:eiskoenig", "Eiskönig", "avatar"], ["dn:wackler", "Wackler", "dance"], ["dn:huepfer", "Hüpfer", "dance"], ["dn:drehung", "Drehung", "dance"], ["dn:roboter", "Roboter", "dance"], ["dn:moonwalk", "Moonwalk", "dance"], ["dn:sieg", "Epischer Sieg", "dance"], ["dn:eislauf", "Eislauf", "dance"], ["of:polar", "Polarjacke", "outfit"], ["fx:schnee", "Schneefall", "fx"], ["fr:eis", "Eiskristall-Rahmen", "frame"]];
   var KIND_DE = { avatar: "Figuren", dance: "Tänze", outfit: "Outfits", kit: "Trikots", fx: "Effekte", frame: "Rahmen" };
   function drawPass(p, r) {
@@ -554,7 +554,7 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
         return '<div class="goal" data-k="' + key + '" style="margin-bottom:8px"><div class="row" style="gap:8px;flex-wrap:wrap;align-items:center"><b style="min-width:70px">' + (isFin ? "Finale" : "Woche " + key.slice(1)) + '</b><input class="pt" value="' + esc(w.title || "") + '" maxlength="40" style="flex:1 1 140px" placeholder="Name">' +
           (isFin ? "" : '<label class="small">Aufgabe: <select class="pn">' + nSel.map(function (n) { return '<option' + (n === w.need ? " selected" : "") + ">" + n + "</option>"; }).join("") + '</select> Tage mit Tagesziel</label>') + '</div>' +
           '<div class="row" style="gap:6px;flex-wrap:wrap;margin-top:6px">' + it.map(function (x) { return '<select class="pi">' + opts(x) + "</select>"; }).join("") + '</div>' +
-          '<div class="row" style="gap:10px;align-items:center;margin-top:6px"><label class="small"><input type="checkbox" class="ps"' + (w.slot ? " checked" : "") + '> +1 Stickerplatz</label><label class="small">+<input type="number" class="pc" min="0" max="500" value="' + (w.coins || 0) + '" style="width:70px"> 🪙</label></div></div>';
+          '<div class="row" style="gap:10px;align-items:center;margin-top:6px"><label class="small"><input type="checkbox" class="ps"' + (w.slot ? " checked" : "") + '> +1 Stickerplatz</label><label class="small">+<input type="number" class="pc" min="0" max="500" value="' + (w.coins || 0) + '" style="width:70px"> 🪙</label><label class="small">+<input type="number" class="pb" min="0" max="3" value="' + (w.boost || 0) + '" style="width:50px"> ⚡ XP-Booster</label></div></div>';
       };
       var prog = ps ? '<p class="small" style="margin:0 0 8px">' + esc(p.name) + ': ' + ps.weeks.map(function (w) { return "Woche " + w.n + (w.c ? " ✅" : " " + w.cnt + "/" + w.need); }).join(" · ") + (ps.fin ? " · Finale ✅" : "") + '</p>' : "";
       el.innerHTML = "<h2>Pass: Wochen-Sets zusammenbauen</h2><p class='muted small' style='margin:0 0 8px'>Jede Woche bekommt " + esc(p.name) + " ein Set, wenn die Aufgabe geschafft ist. Zu jeder Figur gehört automatisch der passende Sticker. Aufgabe = an so vielen Tagen der 7 Tage das Tagesziel schaffen.</p>" + prog +
@@ -563,7 +563,7 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
         '<div class="row" style="gap:8px;margin-top:6px"><button id="psSave">Pass speichern</button><button class="ghost" id="psNew">Neuen Pass starten</button><button class="ghost" id="psClr">Zurück auf Standard</button><span id="psMsg" class="small"></span></div>';
       var msg = function (t, bad) { var e = document.getElementById("psMsg"); if (e) { e.className = "small" + (bad ? " err" : ""); e.textContent = t; } };
       var read = function (newId) {
-        var rd = function (b) { return { title: b.querySelector(".pt").value, need: b.querySelector(".pn") ? +b.querySelector(".pn").value : 1, items: Array.prototype.map.call(b.querySelectorAll(".pi"), function (x) { return x.value; }).filter(Boolean), slot: b.querySelector(".ps").checked ? 1 : 0, coins: +b.querySelector(".pc").value || 0 }; };
+        var rd = function (b) { return { title: b.querySelector(".pt").value, need: b.querySelector(".pn") ? +b.querySelector(".pn").value : 1, items: Array.prototype.map.call(b.querySelectorAll(".pi"), function (x) { return x.value; }).filter(Boolean), slot: b.querySelector(".ps").checked ? 1 : 0, boost: +b.querySelector(".pb").value || 0, coins: +b.querySelector(".pc").value || 0 }; };
         var weeks = Array.prototype.map.call(el.querySelectorAll('.goal[data-k^="w"]'), rd), fin = rd(el.querySelector('.goal[data-k="fin"]'));
         return { id: s.id, title: document.getElementById("psT").value, start: document.getElementById("psS").value, weeks: weeks, finale: fin.items.length || fin.coins ? fin : null, newId: !!newId };
       };

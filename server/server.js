@@ -553,7 +553,7 @@ function seasonOf(pid) { const r = q.kvGet.get("season:" + pid); try { const v =
 function setSeason(pid, body) {
   if (body.clear) { q.kvSet.run("season:" + pid, "null"); return [200, { ok: true, season: null }]; }
   const idOk = s => /^[a-z]{2}:[^\s"<>]{1,40}$/.test(s), cl = (v, a, b) => Math.max(a, Math.min(b, Math.round(+v) || a));
-  const clean = w => ({ title: String(w.title || "").replace(/[<>]/g, "").trim().slice(0, 40), need: cl(w.need, 1, 7), items: (Array.isArray(w.items) ? w.items : []).map(String).filter(idOk).slice(0, 8), slot: w.slot ? 1 : 0, coins: cl(w.coins, 0, 500) });
+  const clean = w => ({ title: String(w.title || "").replace(/[<>]/g, "").trim().slice(0, 40), need: cl(w.need, 1, 7), items: (Array.isArray(w.items) ? w.items : []).map(String).filter(idOk).slice(0, 8), slot: w.slot ? 1 : 0, boost: cl(w.boost, 0, 3), coins: cl(w.coins, 0, 500) });
   if (!Array.isArray(body.weeks) || !body.weeks.length) return [400, { error: "Mindestens eine Woche angeben." }];
   const old = seasonOf(pid), id = body.newId ? "s" + Date.now().toString(36) : old ? old.id : /^[a-z0-9]{3,20}$/.test(body.id || "") ? body.id : "s" + Date.now().toString(36);
   const season = { id, title: String(body.title || "Pass").replace(/[<>]/g, "").trim().slice(0, 30) || "Pass", theme: "ice", start: /^\d{4}-\d{2}-\d{2}$/.test(body.start || "") ? body.start : "", weeks: body.weeks.slice(0, 6).map(clean), finale: body.finale ? clean(body.finale) : null };

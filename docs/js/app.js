@@ -397,7 +397,7 @@
     var det = "";
     if (sel === "fin" && s.finale) {
       det = '<div class="pdet"><b>' + esc(s.finale.title || "Finale") + '</b><p class="small muted" style="margin:2px 0 8px">Hol alle Wochen ab, dann gehört dir der Schatz.</p><div class="rcards">' + (s.finale.items || []).map(function (id) { return rcard(id, !info.fin.ready && !info.fin.claimed); }).join("") + '</div>' +
-        '<div class="small" style="margin:8px 0 0">' + (s.finale.coins ? "+" + s.finale.coins + " 🪙 " : "") + (s.finale.slot ? "· +1 Stickerplatz" : "") + '</div>' +
+        '<div class="small" style="margin:8px 0 0">' + (s.finale.coins ? "+" + s.finale.coins + " 🪙 " : "") + (s.finale.slot ? "· +1 Stickerplatz " : "") + (s.finale.boost ? "· +" + s.finale.boost + " ⚡ Booster" : "") + '</div>' +
         (info.fin.ready ? '<button class="btn wide lg" data-act="passclaim" data-n="fin" style="margin-top:10px">🎁 Finale abholen</button>' : info.fin.claimed ? '<p class="small muted" style="margin:10px 0 0">Schon abgeholt. Stark!</p>' : '') + '</div>';
     } else {
       var w = info.weeks[sel - 1] || info.weeks[0];
@@ -405,7 +405,7 @@
       det = '<div class="pdet"><b>Woche ' + w.n + ': ' + esc(w.title) + '</b><p class="small" style="margin:4px 0 6px">Schaffe an <b>' + w.need + ' Tagen</b> dein Tagesziel: <b class="tnum">' + w.cnt + ' / ' + w.need + '</b>' +
         (w.state === "cur" && w.left != null ? ' · noch ' + w.left + ' ' + plural(w.left, "Tag", "Tage") : w.state === "missed" ? ' · Zeit abgelaufen' : "") + '</p>' +
         '<div class="ddays">' + dayDots + '</div><div class="rcards" style="margin-top:10px">' + w.items.map(function (id) { var it = S.itemById(id), x = rcard(id, !w.claimed && w.state !== "ready"); return x + (it && it.kind === "avatar" && S.itemById("st:" + id.slice(3)) ? rcard("st:" + id.slice(3), !w.claimed && w.state !== "ready") : ""); }).join("") +
-        (w.slot ? '<div class="rcard extra"><span class="ri em">🏷️</span><b>+1 Sticker-Platz</b></div>' : "") + (w.coins ? '<div class="rcard extra"><span class="ri em">🪙</span><b>+' + w.coins + ' Münzen</b></div>' : "") + '</div>' +
+        (w.slot ? '<div class="rcard extra"><span class="ri em">🏷️</span><b>+1 Sticker-Platz</b></div>' : "") + (w.coins ? '<div class="rcard extra"><span class="ri em">🪙</span><b>+' + w.coins + ' Münzen</b></div>' : "") + (w.boost ? '<div class="rcard extra"><span class="ri em">⚡</span><b>+' + w.boost + ' XP-Booster</b></div>' : "") + '</div>' +
         (w.state === "ready" ? '<button class="btn wide lg" data-act="passclaim" data-n="' + w.n + '" style="margin-top:10px">🎁 Set abholen</button>' : w.claimed ? '<p class="small muted" style="margin:10px 0 0">Schon abgeholt. 🎉</p>' : "") + '</div>';
     }
     return '<section class="card passc"><div class="row"><div class="eyebrow" style="flex:1 1 auto">❄️ ' + esc(s.title) + '</div><span class="pill tnum">' + head + '</span></div>' +
@@ -530,7 +530,7 @@
     var pf = S.state.profile, ov = document.createElement("div"); ov.className = "chestov";
     var type = n === "fin" ? "vault" : "ice", title = n === "fin" ? (S.passInfo().season.finale.title || "Finale") : "Woche " + n + " geschafft";
     var cards = r.items.map(function (x, i) { var c = RAR_COL[x.rar] || RAR_COL.rare; return '<div class="rcard big" id="rc' + i + '" style="--c1:' + c[0] + ';--c2:' + c[1] + '">' + itemIcon(x, true) + '<b>' + esc(x.label) + '</b></div>'; }).join("") +
-      (r.slot ? '<div class="rcard big extra" id="rcs"><span class="ri em">🏷️</span><b>+1 Sticker-Platz</b></div>' : "") + (r.coins ? '<div class="rcard big extra" id="rcc"><span class="ri em">🪙</span><b>+' + r.coins + ' Münzen</b></div>' : "");
+      (r.slot ? '<div class="rcard big extra" id="rcs"><span class="ri em">🏷️</span><b>+1 Sticker-Platz</b></div>' : "") + (r.coins ? '<div class="rcard big extra" id="rcc"><span class="ri em">🪙</span><b>+' + r.coins + ' Münzen</b></div>' : "") + (r.boost ? '<div class="rcard big extra"><span class="ri em">⚡</span><b>+' + r.boost + ' XP-Booster</b></div>' : "");
     ov.innerHTML = '<div class="eyebrow" style="color:#d8cfff;position:relative;z-index:2">❄️ ' + esc(S.passInfo().season.title) + '</div><h2 style="position:relative;z-index:2;font-size:26px;margin:0">' + esc(title) + '</h2>' +
       '<div id="lootStage" style="position:relative;z-index:2;width:min(86vw,300px);height:250px;border-radius:14px;overflow:visible;cursor:pointer"></div>' +
       '<div class="rcards bigrow" style="position:relative;z-index:2">' + cards + '</div>' +

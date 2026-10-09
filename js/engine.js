@@ -825,10 +825,10 @@
   /* ---------- Pass: ein Monat aus Wochen-Sets ---------- */
   var PASS_DEFAULT = { id: "eiswelt1", title: "Eiswelt", theme: "ice", weeks: [
     { title: "Der Eisbär", need: 5, items: ["av:eisbaer", "dn:eislauf"], slot: 1, coins: 50 },
-    { title: "Pinguin-Party", need: 5, items: ["av:eispingu", "dn:moonwalk"], slot: 1, coins: 50 },
+    { title: "Pinguin-Party", need: 5, items: ["av:eispingu", "dn:moonwalk"], slot: 1, boost: 1, coins: 50 },
     { title: "Robben-Rutsche", need: 5, items: ["av:eisrobbe", "dn:drehung"], slot: 1, coins: 50 },
     { title: "Der Eiskönig", need: 6, items: ["av:eiskoenig", "dn:sieg"], slot: 1, coins: 100 }],
-    finale: { title: "Eiskönigs Schatz", items: ["fr:eis", "of:polar", "fx:schnee"], slot: 0, coins: 200 } };
+    finale: { title: "Eiskönigs Schatz", items: ["fr:eis", "of:polar", "fx:schnee"], slot: 0, boost: 1, coins: 200 } };
   function passSeason() {
     var r = global.WordySync && global.WordySync.remote ? (global.WordySync.remote() || {}).season : null;
     return r && Array.isArray(r.weeks) && r.weeks.length ? r : PASS_DEFAULT;
@@ -848,7 +848,7 @@
       var ws = dayAdd(p.start, n * 7), days = [], cnt = 0;
       for (var i = 0; i < 7; i++) { var k = dayAdd(ws, i), ok = dayDone(k); if (ok) cnt++; days.push({ k: k, ok: ok, today: k === t, future: k > t }); }
       var claimed = !!p.claimed[n + 1], ready = cnt >= w.need;
-      weeks.push({ n: n + 1, title: w.title, need: w.need, cnt: cnt, days: days, items: w.items || [], slot: w.slot || 0, coins: w.coins || 0, claimed: claimed, ready: ready && !claimed,
+      weeks.push({ n: n + 1, title: w.title, need: w.need, cnt: cnt, days: days, items: w.items || [], slot: w.slot || 0, boost: w.boost || 0, coins: w.coins || 0, claimed: claimed, ready: ready && !claimed,
         state: claimed ? "claimed" : ready ? "ready" : n === idx ? "cur" : n < idx ? "missed" : "future", left: n === idx ? 7 - dayDiff(ws, t) : null });
     });
     var all = weeks.every(function (w) { return w.claimed; });
@@ -863,8 +863,9 @@
     });
     if (rw.slot) { var n = stickerSlots(); if (n < MAX_STICKERS) { state.profile.stickerSlots = n + 1; slot = 1; } else extra = 25; }
     var c = Math.max(0, Math.round(+rw.coins || 0)) + extra; if (c) parentCoins(c);
+    var bo = Math.max(0, Math.min(3, Math.round(+rw.boost || 0))); if (bo) pathState().boost.stock += bo;   // XP-Booster als Pass-Geschenk
     checkSets();
-    return { items: got, slot: slot, coins: c };
+    return { items: got, slot: slot, coins: c, boost: bo };
   }
   function claimPassWeek(n) {
     var info = passInfo(), w = info.weeks[n - 1];
@@ -1270,7 +1271,7 @@
     if (adv) {
       if (st.last && !p.chests[st.section]) {
         p.chests[st.section] = 1;
-        chest = { section: st.section, title: st.sectionTitle, coins: Math.min(25, boost(10 + Math.floor(Math.random() * 16))), boost: Math.random() < 0.4 };   // höchstens 25 Münzen je Boss (auch mit Booster/Münzfaktor)
+        chest = { section: st.section, title: st.sectionTitle, coins: Math.min(25, boost(10 + Math.floor(Math.random() * 16))), boost: Math.random() < 0.1 };   // höchstens 25 Münzen je Boss (auch mit Booster/Münzfaktor)
         p.pending.push(chest);
       }
     }
