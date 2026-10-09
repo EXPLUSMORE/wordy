@@ -1355,7 +1355,7 @@
       .sort(function (a, b) { return shopRel(a) - shopRel(b); }).slice(0, 6).map(function (x) { return { id: x.id, kind: x.kind, rar: rarityOf(x), inWeeks: shopRel(x) - w }; });
   }
   /* Willkommenspaket für jedes neue Kind: eine Figur zur Wahl plus Münzen, Effekt und Titel */
-  var WELCOME = { choices: ["av:🐼", "av:🦉", "av:pbaer"], coins: 50, extras: ["fx:confetti", "ti:wort"] };
+  var WELCOME = { choices: ["av:🦊", "av:🐢", "av:🐼"], coins: 50, extras: ["fx:confetti", "ti:wort"] };
   function welcomeGrant(figId) {
     if (state.welcome || WELCOME.choices.indexOf(figId) < 0) return { error: true };
     var got = [figId, "st:" + figId.slice(3)].concat(WELCOME.extras);

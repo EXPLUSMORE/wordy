@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.62.1 – 2026-10-09
+- Willkommenspaket: Die erste Figur wählt das Kind aus Fuchs, Schildkröte und Panda (vorher Panda, Eule, Pummelbär). Dazu wie bisher Sticker, 50 Münzen, Konfetti und Titel Wortjäger.
+
 ## 2.62.0 – 2026-10-09
 - Shop im ersten Jahr nach Kalender: Start-Sortiment mit 22 Artikeln (Woche 0), danach schaltet sich jeden Montag frei, was „ab Woche N“ dran ist (selten ab Monat 1–2, episch ab Monat 3, erste legendäre Figur ab Woche 14, Eis-Set ab Woche 17, Pass-Figuren erst nach mehreren Monaten). Silhouetten „Kommt bald“ im Shop, Alben, Tagesangebot und Kauf folgen dem Kalender; gekaufte Artikel bleiben immer sichtbar. Dashboard (Familien › Shop-Kalender, nur Betreiber): Go-live-Datum und Termine je Artikel einstellbar. Standard-Go-live: 12.10.2026.
 - Willkommenspaket für jedes neue Kind: erste Figur zur Wahl (Panda, Eule, Pummelbär) mit Sticker, 50 Münzen, Effekt Konfetti und Titel Wortjäger. Bestehende Profile bekommen es nicht. Server-Update nötig (Shop-Kalender).
