@@ -9,7 +9,7 @@ Lernfortschritts-Server: https://track.wordy.explusmore.com (eigenständig, Node
 2. Im Headless-Chromium testen (Playwright, `/opt/pw-browsers/chromium`, Start mit `NODE_PATH=$(npm root -g)`). Frisches Gerät = neuer Browser-Kontext, nicht `localStorage.clear()`.
 3. `node server/test.js` (muss „Alle Prüfungen bestanden.“ melden).
 4. Version in `package.json` erhöhen (Fehlerkorrektur/Neben-/Hauptversion, siehe CHANGELOG), Eintrag oben in `CHANGELOG.md`.
-5. Commit (mit Co-Authored-By- und Claude-Session-Trailer) und Push auf `main` UND `claude/practical-fermat-2b3l8m`. Nie `pkill -f` mit Mustern, die die eigene Shell treffen.
+5. Commit (mit Co-Authored-By- und Claude-Session-Trailer) und Push auf `main` UND `claude/practical-fermat-2b3l8m` – **in zwei getrennten `git push`-Befehlen, zuerst `main`** (ein Push mit beiden Zweigen in einem Befehl löst GitHub Pages nicht aus, 2.53.8–2.54.4 waren deshalb nicht live). Nie `pkill -f` mit Mustern, die die eigene Shell treffen.
 6. Bericht an den Nutzer auf Deutsch, knapp. Erwähnen: App zeigt beim nächsten Öffnen „Neue Version verfügbar“; ob Server-Schritte nötig sind.
 - Bei Designentscheidungen vorher Vorschau-Bilder zeigen (Scratchpad, per SendUserFile).
 
