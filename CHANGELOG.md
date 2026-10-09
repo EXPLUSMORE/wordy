@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.63.0 – 2026-10-09
+- Pass: Joker-Tag (pro Woche zählt ein verpasster, vergangener Tag trotzdem mit, sobald mindestens ein Tag geschafft ist, keine Strafe) und Stempelkarte statt der kleinen Tagespunkte: sieben Stempel mit dem Symbol der Saison, Joker als 🃏, heutiger Tag pulsiert, der neue Stempel „knallt“ einmal mit Ton und Funken ein. Auf der Ergebnisseite steht „Pass-Stempel: Woche N, x von y Tagen“.
+
 ## 2.62.1 – 2026-10-09
 - Willkommenspaket: Die erste Figur wählt das Kind aus Fuchs, Schildkröte und Panda (vorher Panda, Eule, Pummelbär). Dazu wie bisher Sticker, 50 Münzen, Konfetti und Titel Wortjäger.
 

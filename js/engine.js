@@ -846,9 +846,11 @@
     var s = passSeason(), p = passState(), t = today(), idx = Math.floor(dayDiff(p.start, t) / 7), weeks = [];
     s.weeks.forEach(function (w, n) {
       var ws = dayAdd(p.start, n * 7), days = [], cnt = 0;
-      for (var i = 0; i < 7; i++) { var k = dayAdd(ws, i), ok = dayDone(k); if (ok) cnt++; days.push({ k: k, ok: ok, today: k === t, future: k > t }); }
+      for (var i = 0; i < 7; i++) { var k = dayAdd(ws, i), ok = dayDone(k); if (ok) cnt++; days.push({ k: k, ok: ok, today: k === t, future: k > t, joker: false }); }
+      var joker = false;   // Joker-Tag: ein verpasster, schon vergangener Tag pro Woche zählt trotzdem mit (wenn mindestens ein Tag geschafft ist)
+      if (cnt >= 1) for (var jx = 0; jx < 7; jx++) { var dj = days[jx]; if (!dj.ok && !dj.today && !dj.future) { dj.joker = true; joker = true; cnt++; break; } }
       var claimed = !!p.claimed[n + 1], ready = cnt >= w.need;
-      weeks.push({ n: n + 1, title: w.title, need: w.need, cnt: cnt, days: days, items: w.items || [], slot: w.slot || 0, boost: w.boost || 0, coins: w.coins || 0, claimed: claimed, ready: ready && !claimed,
+      weeks.push({ n: n + 1, title: w.title, need: w.need, cnt: cnt, joker: joker, days: days, items: w.items || [], slot: w.slot || 0, boost: w.boost || 0, coins: w.coins || 0, claimed: claimed, ready: ready && !claimed,
         state: claimed ? "claimed" : ready ? "ready" : n === idx ? "cur" : n < idx ? "missed" : "future", left: n === idx ? 7 - dayDiff(ws, t) : null });
     });
     var all = weeks.every(function (w) { return w.claimed; });
@@ -866,6 +868,12 @@
     var bo = Math.max(0, Math.min(3, Math.round(+rw.boost || 0))); if (bo) pathState().boost.stock += bo;   // XP-Booster als Pass-Geschenk
     checkSets();
     return { items: got, slot: slot, coins: c, boost: bo };
+  }
+  /* Stempel: einmal pro Tag animieren, wenn das Tagesziel geschafft ist */
+  function stampNew(k) { var p = passState(); if (!p.stamped) p.stamped = {}; if (p.stamped[k]) return false; p.stamped[k] = 1; save(true); return true; }
+  function passStamp() {   // für die Ergebnisseite: Stand der aktuellen Pass-Woche
+    var info = passInfo(); if (!info.started || info.over) return null;
+    var w = info.weeks[Math.min(info.idx, info.weeks.length - 1)]; return w ? { n: w.n, cnt: w.cnt, need: w.need, joker: w.joker, title: info.season.title } : null;
   }
   function claimPassWeek(n) {
     var info = passInfo(), w = info.weeks[n - 1];
@@ -1016,7 +1024,7 @@
       .concat(bumpMission("arena", res.arena ? 1 : 0));
     var goalSec = goalMin() * 60;
     if (d.sec >= goalSec && !d.done) {
-      d.done = true; rewards.goalReached = true; var zc = boost(20); addCoins(zc); addCl("ziel", zc); rewards.coins += zc;
+      d.done = true; rewards.goalReached = true; rewards.stamp = passStamp(); var zc = boost(20); addCoins(zc); addCl("ziel", zc); rewards.coins += zc;
       rewards.missions = rewards.missions.concat(bumpMission("goal", 1));
       if (state.streak.last !== d.date) {
         state.streak.count += 1; state.streak.last = d.date;
@@ -1403,6 +1411,6 @@
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
-    resetProgress: resetProgress, shopVisible: shopVisible, shopWeeks: shopWeeks, shopCatalog: shopCatalog, shopTeasers: shopTeasers, shopNow: shopNow, shopRel: shopRel, WELCOME: WELCOME, welcomeGrant: welcomeGrant, welcomeNeeded: welcomeNeeded, steered: steered, pathUnitList: pathUnitList, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, boost: boost, coinFactor: coinFactor, avgCoins: avgCoins, dealItem: dealItem, priceOf: priceOf, passInfo: passInfo, favs: favs, toggleFav: toggleFav, collection: collection, findCollItem: findCollItem, CUP_TIERS: CUP_TIERS, claimPassWeek: claimPassWeek, claimPassFinale: claimPassFinale, passMeta: passMeta, rarityOf: rarityOf, shopList: shopList, activeSetDeal: activeSetDeal, buySet: buySet, takeNews: takeNews, SETS: SETS, itemById: itemById, minXp: minXp, defaultOf: defaultOf
+    resetProgress: resetProgress, stampNew: stampNew, passStamp: passStamp, shopVisible: shopVisible, shopWeeks: shopWeeks, shopCatalog: shopCatalog, shopTeasers: shopTeasers, shopNow: shopNow, shopRel: shopRel, WELCOME: WELCOME, welcomeGrant: welcomeGrant, welcomeNeeded: welcomeNeeded, steered: steered, pathUnitList: pathUnitList, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, boost: boost, coinFactor: coinFactor, avgCoins: avgCoins, dealItem: dealItem, priceOf: priceOf, passInfo: passInfo, favs: favs, toggleFav: toggleFav, collection: collection, findCollItem: findCollItem, CUP_TIERS: CUP_TIERS, claimPassWeek: claimPassWeek, claimPassFinale: claimPassFinale, passMeta: passMeta, rarityOf: rarityOf, shopList: shopList, activeSetDeal: activeSetDeal, buySet: buySet, takeNews: takeNews, SETS: SETS, itemById: itemById, minXp: minXp, defaultOf: defaultOf
   };
 })(window);

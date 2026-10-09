@@ -1026,10 +1026,23 @@ details.fold>.fbody{padding:2px 0 14px}
 .phc.got{opacity:.85}.phc .phr{font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
 .phc .phi{width:54px;height:54px;display:grid;place-items:center;font-size:34px}.phc .phi.sil{filter:brightness(0) opacity(.35)}
 .phc b{font-size:13px}.phc small{font-size:11px;color:var(--ink-2)}
+
+.stamps{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:2px}
+.stp{display:flex;flex-direction:column;align-items:center;gap:2px}.stp small{font-size:10.5px;color:var(--ink-2)}
+.stpi{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-size:20px;border:2px dashed var(--line);color:var(--ink-3);background:transparent}
+.stp.ok .stpi{border:2px solid #e8b53c;background:radial-gradient(circle at 35% 30%,#fff3c4,#f0c14a);box-shadow:0 2px 0 #b98a1e,inset 0 0 0 3px rgba(255,255,255,.35);transform:rotate(-6deg)}
+.stp.joker .stpi{border:2px dashed #a86bff;background:rgba(168,107,255,.14);font-size:19px}
+.stp.now .stpi{border:2px solid var(--accent);color:var(--accent);animation:stpPulse 1.6s ease-in-out infinite}
+.stp.miss .stpi{opacity:.45}.stp.fut .stpi{opacity:.65}
+.stp.new .stpi{animation:stpIn .55s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes stpIn{0%{transform:scale(2.4) rotate(-30deg);opacity:0}60%{transform:scale(.9) rotate(-2deg);opacity:1}100%{transform:scale(1) rotate(-6deg)}}
+@keyframes stpPulse{0%,100%{box-shadow:0 0 0 0 rgba(30,98,115,.35)}50%{box-shadow:0 0 0 6px rgba(30,98,115,0)}}
+@media (prefers-reduced-motion:reduce){.stp.new .stpi,.stp.now .stpi{animation:none}}
+.passc .stp small{color:#c9d6f0}.passc .stpi{border-color:rgba(255,255,255,.35)}.passc .stp.ok .stpi{border-color:#e8b53c}.passc .stp.joker .stpi{border-color:#c79bff}
 </style>
 
 
-<script>window.WORDY_VERSION="2.62.1";window.WORDY_BUILD="3b137a1b9f";</script>
+<script>window.WORDY_VERSION="2.63.0";window.WORDY_BUILD="6bf763dd70";</script>
 </head>
 <body>
 <div id="app">
@@ -5241,9 +5254,11 @@ window.VERBS = [
     var s = passSeason(), p = passState(), t = today(), idx = Math.floor(dayDiff(p.start, t) / 7), weeks = [];
     s.weeks.forEach(function (w, n) {
       var ws = dayAdd(p.start, n * 7), days = [], cnt = 0;
-      for (var i = 0; i < 7; i++) { var k = dayAdd(ws, i), ok = dayDone(k); if (ok) cnt++; days.push({ k: k, ok: ok, today: k === t, future: k > t }); }
+      for (var i = 0; i < 7; i++) { var k = dayAdd(ws, i), ok = dayDone(k); if (ok) cnt++; days.push({ k: k, ok: ok, today: k === t, future: k > t, joker: false }); }
+      var joker = false;   // Joker-Tag: ein verpasster, schon vergangener Tag pro Woche zählt trotzdem mit (wenn mindestens ein Tag geschafft ist)
+      if (cnt >= 1) for (var jx = 0; jx < 7; jx++) { var dj = days[jx]; if (!dj.ok && !dj.today && !dj.future) { dj.joker = true; joker = true; cnt++; break; } }
       var claimed = !!p.claimed[n + 1], ready = cnt >= w.need;
-      weeks.push({ n: n + 1, title: w.title, need: w.need, cnt: cnt, days: days, items: w.items || [], slot: w.slot || 0, boost: w.boost || 0, coins: w.coins || 0, claimed: claimed, ready: ready && !claimed,
+      weeks.push({ n: n + 1, title: w.title, need: w.need, cnt: cnt, joker: joker, days: days, items: w.items || [], slot: w.slot || 0, boost: w.boost || 0, coins: w.coins || 0, claimed: claimed, ready: ready && !claimed,
         state: claimed ? "claimed" : ready ? "ready" : n === idx ? "cur" : n < idx ? "missed" : "future", left: n === idx ? 7 - dayDiff(ws, t) : null });
     });
     var all = weeks.every(function (w) { return w.claimed; });
@@ -5261,6 +5276,12 @@ window.VERBS = [
     var bo = Math.max(0, Math.min(3, Math.round(+rw.boost || 0))); if (bo) pathState().boost.stock += bo;   // XP-Booster als Pass-Geschenk
     checkSets();
     return { items: got, slot: slot, coins: c, boost: bo };
+  }
+  /* Stempel: einmal pro Tag animieren, wenn das Tagesziel geschafft ist */
+  function stampNew(k) { var p = passState(); if (!p.stamped) p.stamped = {}; if (p.stamped[k]) return false; p.stamped[k] = 1; save(true); return true; }
+  function passStamp() {   // für die Ergebnisseite: Stand der aktuellen Pass-Woche
+    var info = passInfo(); if (!info.started || info.over) return null;
+    var w = info.weeks[Math.min(info.idx, info.weeks.length - 1)]; return w ? { n: w.n, cnt: w.cnt, need: w.need, joker: w.joker, title: info.season.title } : null;
   }
   function claimPassWeek(n) {
     var info = passInfo(), w = info.weeks[n - 1];
@@ -5411,7 +5432,7 @@ window.VERBS = [
       .concat(bumpMission("arena", res.arena ? 1 : 0));
     var goalSec = goalMin() * 60;
     if (d.sec >= goalSec && !d.done) {
-      d.done = true; rewards.goalReached = true; var zc = boost(20); addCoins(zc); addCl("ziel", zc); rewards.coins += zc;
+      d.done = true; rewards.goalReached = true; rewards.stamp = passStamp(); var zc = boost(20); addCoins(zc); addCl("ziel", zc); rewards.coins += zc;
       rewards.missions = rewards.missions.concat(bumpMission("goal", 1));
       if (state.streak.last !== d.date) {
         state.streak.count += 1; state.streak.last = d.date;
@@ -5798,7 +5819,7 @@ window.VERBS = [
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
-    resetProgress: resetProgress, shopVisible: shopVisible, shopWeeks: shopWeeks, shopCatalog: shopCatalog, shopTeasers: shopTeasers, shopNow: shopNow, shopRel: shopRel, WELCOME: WELCOME, welcomeGrant: welcomeGrant, welcomeNeeded: welcomeNeeded, steered: steered, pathUnitList: pathUnitList, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, boost: boost, coinFactor: coinFactor, avgCoins: avgCoins, dealItem: dealItem, priceOf: priceOf, passInfo: passInfo, favs: favs, toggleFav: toggleFav, collection: collection, findCollItem: findCollItem, CUP_TIERS: CUP_TIERS, claimPassWeek: claimPassWeek, claimPassFinale: claimPassFinale, passMeta: passMeta, rarityOf: rarityOf, shopList: shopList, activeSetDeal: activeSetDeal, buySet: buySet, takeNews: takeNews, SETS: SETS, itemById: itemById, minXp: minXp, defaultOf: defaultOf
+    resetProgress: resetProgress, stampNew: stampNew, passStamp: passStamp, shopVisible: shopVisible, shopWeeks: shopWeeks, shopCatalog: shopCatalog, shopTeasers: shopTeasers, shopNow: shopNow, shopRel: shopRel, WELCOME: WELCOME, welcomeGrant: welcomeGrant, welcomeNeeded: welcomeNeeded, steered: steered, pathUnitList: pathUnitList, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, boost: boost, coinFactor: coinFactor, avgCoins: avgCoins, dealItem: dealItem, priceOf: priceOf, passInfo: passInfo, favs: favs, toggleFav: toggleFav, collection: collection, findCollItem: findCollItem, CUP_TIERS: CUP_TIERS, claimPassWeek: claimPassWeek, claimPassFinale: claimPassFinale, passMeta: passMeta, rarityOf: rarityOf, shopList: shopList, activeSetDeal: activeSetDeal, buySet: buySet, takeNews: takeNews, SETS: SETS, itemById: itemById, minXp: minXp, defaultOf: defaultOf
   };
 })(window);
 </script>
@@ -7382,14 +7403,18 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
         (info.fin.ready ? '<button class="btn wide lg" data-act="passclaim" data-n="fin" style="margin-top:10px">🎁 Finale abholen</button>' : info.fin.claimed ? '<p class="small muted" style="margin:10px 0 0">Schon abgeholt. Stark!</p>' : '') + '</div>';
     } else {
       var w = info.weeks[sel - 1] || info.weeks[0];
-      var dayDots = w.days.map(function (d, i) { return '<span class="dd ' + (d.ok ? "ok" : d.today ? "now" : d.future ? "fut" : "miss") + '"><i>' + (d.ok ? "✓" : d.today ? "▶" : d.future ? "○" : "·") + '</i>' + ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"][(new Date(d.k + "T00:00:00Z").getUTCDay() + 6) % 7] + '</span>'; }).join("");
+      var sIcon = passIcon(s), dayDots = '<div class="stamps">' + w.days.map(function (d) {
+        var lab = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"][(new Date(d.k + "T00:00:00Z").getUTCDay() + 6) % 7], cls = d.ok ? "ok" : d.joker ? "joker" : d.today ? "now" : d.future ? "fut" : "miss", fresh = d.ok && d.today && S.stampNew(d.k);
+        if (fresh) setTimeout(function () { try { if (S.state.settings.audio) global.VTC.sound(S.state.profile.snd, true); global.VTC.burst(S.state.profile.fx, global.innerWidth / 2, global.innerHeight * .4, 14, 1); } catch (e) {} }, 350);
+        return '<span class="stp ' + cls + (fresh ? " new" : "") + '"><span class="stpi">' + (d.ok ? sIcon : d.joker ? "🃏" : d.today ? "▶" : d.future ? "○" : "·") + '</span><small>' + lab + '</small></span>';
+      }).join("") + '</div>' + (w.joker ? '<p class="small muted" style="margin:6px 0 0">🃏 Joker: ein verpasster Tag zählt in dieser Woche trotzdem mit.</p>' : '<p class="small muted" style="margin:6px 0 0">🃏 Pro Woche zählt ein verpasster Tag als Joker mit.</p>');
       det = '<div class="pdet"><b>Woche ' + w.n + ': ' + esc(w.title) + '</b><p class="small" style="margin:4px 0 6px">Schaffe an <b>' + w.need + ' Tagen</b> dein Tagesziel: <b class="tnum">' + w.cnt + ' / ' + w.need + '</b>' +
         (w.state === "cur" && w.left != null ? ' · noch ' + w.left + ' ' + plural(w.left, "Tag", "Tage") : w.state === "missed" ? ' · Zeit abgelaufen' : "") + '</p>' +
-        '<div class="ddays">' + dayDots + '</div><div class="rcards" style="margin-top:10px">' + w.items.map(function (id) { var it = S.itemById(id), x = rcard(id, !w.claimed && w.state !== "ready"); return x + (it && it.kind === "avatar" && S.itemById("st:" + id.slice(3)) ? rcard("st:" + id.slice(3), !w.claimed && w.state !== "ready") : ""); }).join("") +
+        dayDots + '<div class="rcards" style="margin-top:10px">' + w.items.map(function (id) { var it = S.itemById(id), x = rcard(id, !w.claimed && w.state !== "ready"); return x + (it && it.kind === "avatar" && S.itemById("st:" + id.slice(3)) ? rcard("st:" + id.slice(3), !w.claimed && w.state !== "ready") : ""); }).join("") +
         (w.slot ? '<div class="rcard extra"><span class="ri em">🏷️</span><b>+1 Sticker-Platz</b></div>' : "") + (w.coins ? '<div class="rcard extra"><span class="ri em">🪙</span><b>+' + w.coins + ' Münzen</b></div>' : "") + (w.boost ? '<div class="rcard extra"><span class="ri em">⚡</span><b>+' + w.boost + ' XP-Booster</b></div>' : "") + '</div>' +
         (w.state === "ready" ? '<button class="btn wide lg" data-act="passclaim" data-n="' + w.n + '" style="margin-top:10px">🎁 Set abholen</button>' : w.claimed ? '<p class="small muted" style="margin:10px 0 0">Schon abgeholt. 🎉</p>' : "") + '</div>';
     }
-    var hl = passHighlights(info), icon = { Zauberwald: "🔮", "Beute-Insel": "🪂", Sternenreise: "🌌" }[s.title] || "❄️";
+    var hl = passHighlights(info), icon = passIcon(s);
     var hlHtml = hl.length >= 2 ? '<div class="phl">' + hl.map(function (x) {
       var it = S.itemById(x.id), rr = S.rarityOf(it);
       return '<button class="phc ' + rr + (x.claimed ? " got" : "") + '" data-act="passsel" data-n="' + x.n + '"><span class="phr">' + (RAR_NAME[rr] || "") + '</span>' +
@@ -7398,6 +7423,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     return '<section class="card passc"><div class="row"><div class="eyebrow" style="flex:1 1 auto">' + icon + ' ' + esc(s.title) + '</div><span class="pill tnum">' + head + '</span></div>' + hlHtml +
       '<div class="ptiles">' + tiles + '</div>' + det + '</section>';
   }
+  function passIcon(s) { return { Zauberwald: "🔮", "Beute-Insel": "🪂", Sternenreise: "🌌" }[s.title] || "❄️"; }
   /* Die 2 bis 3 größten Geschenke einer Saison: höchste Seltenheit, in Reihenfolge der Wochen */
   function passHighlights(info) {
     var rk = { common: 0, rare: 1, epic: 2, legend: 3 }, c = [];
@@ -8047,7 +8073,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     else if (beuteSeg === "showroom") { viewShowroom(); topSegs(top); }
     else {
       view.innerHTML = '<div class="stack">' + top + passCard() +
-        '<section class="card"><div class="eyebrow">So funktioniert der Monatspass</div><p class="small muted" style="margin:6px 0 0">Der Pass läuft einen Monat in vier Wochen plus Finale. Jede Woche zählt, an wie vielen Tagen du dein Tagesziel schaffst. Sind genug Tage zusammen, öffnest du die Wochen-Beute mit Figur, Tanz, Sticker und Münzen. Alle vier Wochen geschafft? Dann wartet das Finale.</p></section></div>';
+        '<section class="card"><div class="eyebrow">So funktioniert der Monatspass</div><p class="small muted" style="margin:6px 0 0">Der Pass läuft einen Monat in vier Wochen plus Finale. Jede Woche zählt, an wie vielen Tagen du dein Tagesziel schaffst, und jeder Tag gibt einen Stempel. Ein verpasster Tag pro Woche zählt als Joker mit. Sind genug Tage zusammen, öffnest du die Wochen-Beute mit Figur, Tanz, Sticker und Münzen. Alle vier Wochen geschafft? Dann wartet das Finale.</p></section></div>';
     }
   }
   function designCard() {
@@ -9066,6 +9092,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (SS.mastered) html += '<section class="card"><div class="eyebrow" style="color:var(--gold)">Neu gemeistert</div><p style="margin:6px 0 0">' + SS.mastered + ' ' + plural(SS.mastered, "Wort sitzt", "Wörter sitzen") + ' jetzt langfristig.</p></section>';
     if (rw.extra) html += '<section class="card" style="border-color:var(--gold)"><div class="eyebrow" style="color:var(--gold)">🎁 Bonus-Runde</div><p style="margin:6px 0 0"><b>+' + rw.extra.coins + ' 🪙</b> für die Extra-Runde.' + (rw.extra.left ? ' Noch ' + rw.extra.left + (rw.extra.left === 1 ? ' Bonus-Runde' : ' Bonus-Runden') + ' heute.' : ' Das waren alle Bonus-Runden für heute.') + '</p></section>';
     if (rw.challenge) html += '<section class="card" style="border-color:var(--gold)"><div class="eyebrow" style="color:var(--gold)">🎁 Daily Challenge geschafft</div><p style="margin:6px 0 0">Tagesbonus: <b>+' + rw.challenge + ' 🪙</b>. Morgen wartet die nächste Challenge.' + (rw.challengeStreak ? '<br>🔥 <b>' + rw.challengeStreak.n + ' Tage in Folge!</b> Serienbonus +' + rw.challengeStreak.coins + ' 🪙' : '') + '</p></section>';
+    if (rw.goalReached && rw.stamp) html += '<section class="card"><div class="eyebrow">🔖 Pass-Stempel</div><div class="stamps" style="margin-top:6px"><span class="stp ok new"><span class="stpi">' + passIcon({ title: rw.stamp.title }) + '</span></span></div><p style="margin:6px 0 0">' + esc(rw.stamp.title) + ', Woche ' + rw.stamp.n + ': <b>' + rw.stamp.cnt + ' von ' + rw.stamp.need + '</b> Tagen' + (rw.stamp.cnt >= rw.stamp.need ? ' – Wochen-Geschenk wartet im Pass! 🎁' : '') + '</p></section>';
     if (rw.goalReached) html += '<section class="card"><div class="eyebrow" style="color:var(--good)">Tagesziel erreicht</div>' + (rw.streakUp ? '<div class="fin-flame">🔥</div>' : "") + '<p style="margin:6px 0 0">' + (rw.streakUp ? "Streak steht bei " + st.streak.count + " " + plural(st.streak.count, "Tag", "Tagen") + "." : "Schon erledigt heute.") + '</p></section>';
     if (rw.missions.length) html += '<section class="card"><div class="eyebrow">Missionen erfüllt</div>' + rw.missions.map(function (m) { return '<div class="mission done"><div class="tick">✓</div><div class="txt small">' + esc(m.n) + '</div><span class="pill">🪙 ' + m.coins + '</span></div>'; }).join("") + '</section>';
     if (rw.badges.length) html += '<section class="card"><div class="eyebrow">Neue Abzeichen</div><div class="badges" style="margin-top:8px">' + rw.badges.map(function (b) { return '<div class="badge"><div class="g">🏅</div><b>' + esc(b.n) + '</b></div>'; }).join("") + '</div></section>';

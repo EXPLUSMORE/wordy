@@ -1033,10 +1033,23 @@ details.fold>.fbody{padding:2px 0 14px}
 .phc.got{opacity:.85}.phc .phr{font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
 .phc .phi{width:54px;height:54px;display:grid;place-items:center;font-size:34px}.phc .phi.sil{filter:brightness(0) opacity(.35)}
 .phc b{font-size:13px}.phc small{font-size:11px;color:var(--ink-2)}
+
+.stamps{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:2px}
+.stp{display:flex;flex-direction:column;align-items:center;gap:2px}.stp small{font-size:10.5px;color:var(--ink-2)}
+.stpi{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-size:20px;border:2px dashed var(--line);color:var(--ink-3);background:transparent}
+.stp.ok .stpi{border:2px solid #e8b53c;background:radial-gradient(circle at 35% 30%,#fff3c4,#f0c14a);box-shadow:0 2px 0 #b98a1e,inset 0 0 0 3px rgba(255,255,255,.35);transform:rotate(-6deg)}
+.stp.joker .stpi{border:2px dashed #a86bff;background:rgba(168,107,255,.14);font-size:19px}
+.stp.now .stpi{border:2px solid var(--accent);color:var(--accent);animation:stpPulse 1.6s ease-in-out infinite}
+.stp.miss .stpi{opacity:.45}.stp.fut .stpi{opacity:.65}
+.stp.new .stpi{animation:stpIn .55s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes stpIn{0%{transform:scale(2.4) rotate(-30deg);opacity:0}60%{transform:scale(.9) rotate(-2deg);opacity:1}100%{transform:scale(1) rotate(-6deg)}}
+@keyframes stpPulse{0%,100%{box-shadow:0 0 0 0 rgba(30,98,115,.35)}50%{box-shadow:0 0 0 6px rgba(30,98,115,0)}}
+@media (prefers-reduced-motion:reduce){.stp.new .stpi,.stp.now .stpi{animation:none}}
+.passc .stp small{color:#c9d6f0}.passc .stpi{border-color:rgba(255,255,255,.35)}.passc .stp.ok .stpi{border-color:#e8b53c}.passc .stp.joker .stpi{border-color:#c79bff}
 </style>
 
 
-<script>window.WORDY_VERSION="2.62.1";window.WORDY_BUILD="3b137a1b9f";</script>
+<script>window.WORDY_VERSION="2.63.0";window.WORDY_BUILD="6bf763dd70";</script>
 </head>
 <body>
 <div id="app">
@@ -1064,30 +1077,30 @@ details.fold>.fbody{padding:2px 0 14px}
   <div id="session" hidden></div>
 </div>
 <div id="arena" hidden></div>
-<script src="data/klasse6.js?v=3b137a1b9f"></script>
-<script src="data/klasse7.js?v=3b137a1b9f"></script>
-<script src="data/klasse8.js?v=3b137a1b9f"></script>
-<script src="data/business.js?v=3b137a1b9f"></script>
-<script src="data/business-basis2.js?v=3b137a1b9f"></script>
-<script src="data/business-aufbau2.js?v=3b137a1b9f"></script>
-<script src="data/business-profi2.js?v=3b137a1b9f"></script>
-<script src="data/smalltalk.js?v=3b137a1b9f"></script>
-<script src="data/idioms.js?v=3b137a1b9f"></script>
-<script src="data/saetze.js?v=3b137a1b9f"></script>
-<script src="data/saetze2.js?v=3b137a1b9f"></script>
-<script src="data/lernbuch.js?v=3b137a1b9f"></script>
-<script src="data/verben.js?v=3b137a1b9f"></script>
-<script src="js/engine.js?v=3b137a1b9f"></script>
-<script src="js/cosmetics.js?v=3b137a1b9f"></script>
-<script src="js/fortnite.js?v=3b137a1b9f"></script>
-<script src="js/figur.js?v=3b137a1b9f"></script>
-<script src="js/stila.js?v=3b137a1b9f"></script>
-<script src="js/stilb.js?v=3b137a1b9f"></script>
-<script src="js/loot.js?v=3b137a1b9f"></script>
-<script src="js/film.js?v=3b137a1b9f"></script>
-<script src="js/app.js?v=3b137a1b9f"></script>
-<script src="js/arena.js?v=3b137a1b9f"></script>
-<script src="js/sync.js?v=3b137a1b9f"></script>
+<script src="data/klasse6.js?v=6bf763dd70"></script>
+<script src="data/klasse7.js?v=6bf763dd70"></script>
+<script src="data/klasse8.js?v=6bf763dd70"></script>
+<script src="data/business.js?v=6bf763dd70"></script>
+<script src="data/business-basis2.js?v=6bf763dd70"></script>
+<script src="data/business-aufbau2.js?v=6bf763dd70"></script>
+<script src="data/business-profi2.js?v=6bf763dd70"></script>
+<script src="data/smalltalk.js?v=6bf763dd70"></script>
+<script src="data/idioms.js?v=6bf763dd70"></script>
+<script src="data/saetze.js?v=6bf763dd70"></script>
+<script src="data/saetze2.js?v=6bf763dd70"></script>
+<script src="data/lernbuch.js?v=6bf763dd70"></script>
+<script src="data/verben.js?v=6bf763dd70"></script>
+<script src="js/engine.js?v=6bf763dd70"></script>
+<script src="js/cosmetics.js?v=6bf763dd70"></script>
+<script src="js/fortnite.js?v=6bf763dd70"></script>
+<script src="js/figur.js?v=6bf763dd70"></script>
+<script src="js/stila.js?v=6bf763dd70"></script>
+<script src="js/stilb.js?v=6bf763dd70"></script>
+<script src="js/loot.js?v=6bf763dd70"></script>
+<script src="js/film.js?v=6bf763dd70"></script>
+<script src="js/app.js?v=6bf763dd70"></script>
+<script src="js/arena.js?v=6bf763dd70"></script>
+<script src="js/sync.js?v=6bf763dd70"></script>
 
 <script>
 if ('serviceWorker' in navigator) {
