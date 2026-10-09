@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.54.6 – 2026-10-09
+- Dashboard „Heute“: Fehlt zum Tagesziel nur ein kleiner Rest (z. B. 9:40 statt 10:00 Min., gerundet „10 Min.“), steht jetzt die genaue Zeit und „Noch 20 Sek. bis zum Tagesziel“ statt eines unerklärlich gelben Balkens. Server-Update nötig.
+
 ## 2.54.5 – 2026-10-09
 - Auslieferung: Die Versionen 2.53.8 bis 2.54.4 wurden von GitHub Pages nicht veröffentlicht (Push auf zwei Zweige in einem Befehl). Enthält alle Änderungen dieser Versionen.
 

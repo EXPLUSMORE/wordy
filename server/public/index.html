@@ -81,6 +81,7 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
     });
   }
   function post(path, body) { return api(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body || {}) }); }
+  function fmtExact(s) { s = Math.max(0, Math.round(s)); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0") + " Min."; }   // wenn gerundet „10 Min.“ erscheint, das Ziel aber knapp fehlt
   function fmtMin(s) { var m = Math.round(s / 60); return m >= 60 ? Math.floor(m / 60) + " Std. " + (m % 60) + " Min." : m + " Min."; }
   function fmtAgo(t) {
     if (!t) return "noch nie";
@@ -244,9 +245,9 @@ tr.clk{cursor:pointer}tr.clk:hover td{background:var(--bg)}
   function heuteCard(r, m) {
     var t = r.today, goal = (m.goalMin || 0) * 60, h = '<div class="card"><h2>Heute · ' + dLong(t.date) + "</h2>";
     if (!t.items && !t.sec) return h + '<p class="muted small" style="margin:0">Heute wurde noch nicht geübt.' + (goal ? " Tagesziel: " + m.goalMin + " Min." : "") + "</p></div>";
-    h += '<div class="kpis">' + kpi(fmtMin(t.sec), "geübt" + (goal ? " · Ziel " + m.goalMin + " Min." : "")) +
+    h += '<div class="kpis">' + kpi(goal && t.sec < goal && Math.round(t.sec / 60) * 60 >= goal ? fmtExact(t.sec) : fmtMin(t.sec), "geübt" + (goal ? " · Ziel " + m.goalMin + " Min." : "")) +
       kpi(t.items, "Aufgaben · " + pct(t.correct, t.items) + " richtig") + kpi(t.neu, "neue Wörter") + kpi("🪙 " + t.coins, t.sessions + (t.sessions === 1 ? " Runde" : " Runden")) + "</div>";
-    if (goal) h += '<div class="mini" style="margin-top:10px"><i class="' + (t.sec >= goal ? "d" : "") + '" style="width:' + Math.min(100, Math.round(t.sec * 100 / goal)) + '%"></i></div><div class="small muted" style="margin-top:4px">' + (t.sec >= goal ? "Tagesziel geschafft ✅" : "Noch " + fmtMin(goal - t.sec) + " bis zum Tagesziel") + "</div>";
+    if (goal) h += '<div class="mini" style="margin-top:10px"><i class="' + (t.sec >= goal ? "d" : "") + '" style="width:' + Math.min(100, Math.round(t.sec * 100 / goal)) + '%"></i></div><div class="small muted" style="margin-top:4px">' + (t.sec >= goal ? "Tagesziel geschafft ✅" : "Noch " + (goal - t.sec < 60 ? Math.ceil(goal - t.sec) + " Sek." : fmtMin(goal - t.sec)) + " bis zum Tagesziel") + "</div>";
     if (t.runs.length) h += '<h3 style="margin:14px 0 4px;font-size:14px">Runden heute</h3><table><tr><th>Uhr</th><th>Art</th><th class="n">Dauer</th><th class="n">Aufgaben</th><th class="n">Richtig</th></tr>' + t.runs.map(function (s) {
       return "<tr><td>" + new Date(s.ts).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" }) + "</td><td>" + esc(MODE[s.mode] || s.mode) + '</td><td class="n">' + fmtMin(s.sec) + '</td><td class="n">' + s.items + '</td><td class="n">' + pct(s.correct, s.items) + "</td></tr>";
     }).join("") + "</table>";
