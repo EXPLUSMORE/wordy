@@ -1047,8 +1047,8 @@ details.fold>.fbody{padding:2px 0 14px}
 .ptr small{font-size:11px;color:var(--muted)}.ptr span{font-weight:800;font-size:13px}
 .ptr.rdy{opacity:1;border-color:var(--gold,#f2b33d);box-shadow:0 0 0 3px rgba(242,179,61,.25);cursor:pointer}
 .ptr.got{opacity:.9;border-color:#4caf50}
-.psec{display:flex;align-items:center;gap:12px;margin:10px 0 0;padding:10px 12px;border-radius:16px;background:var(--card-2);border:2px dashed var(--line)}
-.psec .phi{width:44px;height:44px;flex:0 0 44px}.psec div{display:flex;flex-direction:column}.psec small{color:var(--muted)}
+.psgift{display:flex;align-items:center;gap:12px;margin:10px 0 0;padding:10px 12px;border-radius:16px;background:var(--card-2);border:2px dashed var(--line)}
+.psgift .phi{width:44px;height:44px;flex:0 0 44px}.psgift div{display:flex;flex-direction:column}.psgift small{color:var(--muted)}
 .stp.new .stpi{animation:stpIn .55s cubic-bezier(.2,1.4,.4,1) both}
 @keyframes stpIn{0%{transform:scale(2.4) rotate(-30deg);opacity:0}60%{transform:scale(.9) rotate(-2deg);opacity:1}100%{transform:scale(1) rotate(-6deg)}}
 @keyframes stpPulse{0%,100%{box-shadow:0 0 0 0 rgba(30,98,115,.35)}50%{box-shadow:0 0 0 6px rgba(30,98,115,0)}}
@@ -1057,7 +1057,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.67.0";window.WORDY_BUILD="aac1a84c67";</script>
+<script>window.WORDY_VERSION="2.67.1";window.WORDY_BUILD="61c592b42b";</script>
 </head>
 <body>
 <div id="app">
@@ -7462,9 +7462,9 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
         '<span class="phi' + (x.claimed ? "" : " sil") + '">' + itemIcon(it) + '</span><b>' + (x.claimed ? esc(it.label) : "???") + '</b><small>' + (x.claimed ? "✓ abgeholt" : x.label) + '</small></button>';
     }).join("") + '</div><div class="small muted" style="margin:-2px 0 8px">Die Highlights dieser Saison</div>' : "";
     var nx = info.started && !info.over && info.weeks[info.idx + 1], secret = "";
-    if (nx) { var nm = (nx.items.map(S.itemById).filter(function (x) { return x && x.kind === "avatar"; })[0] || S.itemById(nx.items[0])); if (nm) secret = '<div class="psec ' + S.rarityOf(nm) + '"><span class="phi sil">' + itemIcon(nm) + '</span><div><b>🎁 Geheimes Geschenk</b><small>Woche ' + nx.n + ' · ' + (RAR_NAME[S.rarityOf(nm)] || "") + ' · kommt Montag, ' + nx.days[0].k.split("-").reverse().slice(0, 2).join(".") + '.</small></div></div>'; }
+    if (nx) { var nm = (nx.items.map(S.itemById).filter(function (x) { return x && x.kind === "avatar"; })[0] || S.itemById(nx.items[0])); if (nm) secret = '<div class="psgift ' + S.rarityOf(nm) + '"><span class="phi sil">' + itemIcon(nm) + '</span><div><b>🎁 Geheimes Geschenk</b><small>Woche ' + nx.n + ' · ' + (RAR_NAME[S.rarityOf(nm)] || "") + ' · kommt Montag, ' + nx.days[0].k.split("-").reverse().slice(0, 2).join(".") + '.</small></div></div>'; }
     return '<section class="card passc"><div class="row"><div class="eyebrow" style="flex:1 1 auto">' + icon + ' ' + esc(s.title) + '</div><span class="pill tnum">' + head + '</span></div>' + hlHtml +
-      '<div class="ptiles">' + tiles + '</div>' + secret + det + '<div class="psec" style="border-style:solid;margin-top:12px"><div style="flex:1"><b>🧩 Sammel-Set ' + esc(s.title) + '</b><small>' + info.coll.have + ' von ' + info.coll.total + ' Wochen-Figuren gesammelt' + (info.coll.have === info.coll.total && info.coll.total ? ' · komplett! 🎉' : '') + '</small></div><button class="btn" data-act="passshare">📤 Teilen</button></div></section>';
+      '<div class="ptiles">' + tiles + '</div>' + secret + det + '<div class="psgift" style="border-style:solid;margin-top:12px"><div style="flex:1"><b>🧩 Sammel-Set ' + esc(s.title) + '</b><small>' + info.coll.have + ' von ' + info.coll.total + ' Wochen-Figuren gesammelt' + (info.coll.have === info.coll.total && info.coll.total ? ' · komplett! 🎉' : '') + '</small></div><button class="btn" data-act="passshare">📤 Teilen</button></div></section>';
   }
   /* Siegerbild: Pass-Stand als Bild zum Teilen (ohne Namen, nur Saison, Stempel und Stufen) */
   function sharePass() {
