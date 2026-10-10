@@ -754,7 +754,7 @@
     }
     if (W && W.connected()) W.activePlans().forEach(function (pl) {
       var i = W.planInfo(pl), newToday = d.newSeen || 0, left = Math.max(0, i.quota - newToday), when = i.days > 1 ? "in " + i.days + " Tagen" : i.days === 1 ? "morgen" : "heute";
-      steps.push({ icon: pl.cls ? "🏫" : "📅", t: (pl.cls ? "Klassenaufgabe: " : "Lernplan: ") + esc(pl.title), sub: (pl.cls ? "Ende " : "Arbeit ") + when + " · " + i.pct + " % sicher" + (left ? " · heute " + left + " neue" : ""), done: left === 0 && i.pct >= 1,
+      steps.push({ icon: pl.cls ? "🏫" : "📅", t: (pl.cls ? "Klassenaufgabe: " : "Lernplan: ") + esc(pl.title), sub: (pl.cls ? "Ende " : "Arbeit ") + when + " · " + i.pct + " % sicher" + (left ? " · heute " + left + " neue" : "") + (!pl.cls && (pl.coins || pl.item) ? " · Bonus: " + (pl.coins ? "🪙 " + pl.coins : "") + (pl.coins && pl.item ? " + " : "") + (pl.item ? "🎁 " + esc(itemLabel(pl.item)) : "") : ""), done: left === 0 && i.pct >= 1,
         go: 'data-act="startplan" data-id="' + esc(pl.id) + '"', btn: "Üben" });
     });
     var goalDone = pct >= 100;
@@ -1804,7 +1804,7 @@
       (s.boxSize ? '<button class="btn soft wide" data-act="start" data-mode="box" data-min="5" style="margin-top:12px">Fehlerkartei üben</button>' : '') + '</section>';
     var html = '<div class="stack"><div class="row" style="gap:8px"><span class="pill">' + (bizT ? "💼 Business English" : "🎒 Schule") + '</span><span class="small muted">Fortschritt in diesem Lernbereich</span></div>' + segBar("stats", statsSeg, [["ueb", "Übersicht"], ["woerter", "Wörter"], ["verlauf", "Verlauf"]]);
     if (statsSeg === "woerter") html += secDist + wordListCard() + secBox + secVerbs;
-    else if (statsSeg === "verlauf") html += weekPlanCard() + parentCards("goals") + secDays + secSent;
+    else if (statsSeg === "verlauf") html += weekPlanCard() + parentCards() + secDays + secSent;
     else html += secTiles + secDist + secOverview + secBehind;
     view.innerHTML = html + '</div>';
     var ws = $("#wSearch");
