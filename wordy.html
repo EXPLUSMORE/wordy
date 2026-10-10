@@ -511,6 +511,11 @@ html.ar-open, html.ar-open body{overflow:hidden}
 .bl-ship{position:absolute;left:50%;bottom:4px;margin-left:-22px;font-size:42px;line-height:1;transition:transform .12s;pointer-events:none}
 .bl-laser{position:absolute;height:3px;border-radius:2px;background:linear-gradient(90deg,#fff,#4FC3D9);box-shadow:0 0 8px #4FC3D9;transform-origin:0 50%;pointer-events:none;z-index:3}
 .bl-flash{position:absolute;left:0;right:0;top:36%;text-align:center;font-weight:900;font-size:26px;opacity:0;pointer-events:none;text-shadow:0 2px 14px #000a;padding:0 12px;overflow-wrap:anywhere}.bl-flash.show{opacity:1;transition:opacity .08s}.bl-flash.good{color:var(--ar-good)}.bl-flash.bad{color:var(--ar-bad);font-size:20px}.bl-flash.combo{color:var(--ar-gold);font-size:32px}
+.ls-cur{min-height:28px;font-size:22px;font-weight:900;letter-spacing:.2em;color:var(--ar-gold);text-align:center}
+.ls-grid{display:grid;grid-template-columns:repeat(var(--n),1fr);gap:2px;width:min(100%,380px);aspect-ratio:1;touch-action:none;user-select:none;-webkit-user-select:none}
+.lc{display:grid;place-items:center;border-radius:6px;background:var(--ar-s2);font-weight:800;font-size:clamp(14px,4.6vw,20px);text-transform:uppercase;cursor:pointer}
+.lc.sel{background:var(--ar-gold);color:#2a1c00}.lc.f{background:hsl(var(--fh) 55% 42%);color:#fff}.lc.f.sel{background:var(--ar-gold);color:#2a1c00}.lc.hint{outline:3px solid var(--ar-a);animation:wtf .4s}
+.ls-list{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;width:100%}.ls-it{padding:6px 10px;border-radius:99px;background:var(--ar-s);border:2px solid var(--ar-line);color:var(--ar-ink);font-size:13px;font-weight:700}.ls-it small{color:var(--ar-ink2)}.ls-it.done{opacity:.8}.ls-it.done b{color:var(--ar-good)}
 @media (prefers-reduced-motion:no-preference){
   .ar-tile,.ar-opt{transition:border-color .12s ease,background .12s ease,transform .12s ease}
   .ar-tile:active,.ar-opt:active{transform:scale(.97)}
@@ -1099,7 +1104,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.71.0";window.WORDY_BUILD="3a5eef54bb";</script>
+<script>window.WORDY_VERSION="2.72.0";window.WORDY_BUILD="b65a6f44d8";</script>
 </head>
 <body>
 <div id="app">
@@ -10696,6 +10701,8 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       desc: "Icy steht auf schmelzendem Eis. Tippe Buchstaben, die im englischen Wort vorkommen. Jeder falsche Buchstabe lässt ein Stück Eis schmelzen." },
     { id: "blast", icon: "🚀", name: "Blast", tag: "Wörter-Shooter", claim: "Schieß das richtige Wort ab.",
       desc: "Oben steht ein deutsches Wort. Englische Wörter fliegen auf dich zu: Tippe das richtige ab, bevor es dich erreicht. Falsch geschossen kostet ein Herz. Eis-Sterne bremsen alles, Bomben räumen die falschen Wörter weg." },
+    { id: "letters", icon: "🔠", name: "Letters", tag: "Buchstabensalat", claim: "Finde die versteckten Wörter.",
+      desc: "Im Buchstabensalat verstecken sich englische Wörter, waagerecht, senkrecht oder diagonal, vorwärts oder rückwärts. Die Liste zeigt die deutschen Bedeutungen. Wische über die Buchstaben, um ein Wort zu markieren." },
     { id: "kreuz", icon: "🧩", name: "Xing", tag: "Kreuzworträtsel (Crossing)", claim: "Deutsche Hinweise, englische Lösungen.",
       desc: "Ein Kreuzworträtsel aus deinen Wörtern. Die Hinweise sind deutsch, geschrieben wird englisch. Tippe ein Feld, dann die Buchstaben." }
   ];
@@ -10755,8 +10762,8 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
 
   /* ---------- Start ---------- */
   function start(id, opts) {
-    var min = id === "blast" ? 2 : 3, max = 8, n = id === "kreuz" ? 14 : id === "blast" ? 40 : 5, words = pickWords(n, min, id === "blast" ? 14 : max, opts && opts.unit, id === "blast");
-    if (words.length < (id === "kreuz" ? 6 : id === "blast" ? 6 : 3)) return toast("Dafür brauchst du mehr Wörter im gewählten Bereich (einzelne Wörter ab 3 Buchstaben).");
+    var min = id === "blast" ? 2 : 3, max = 8, n = id === "kreuz" ? 14 : id === "blast" ? 40 : id === "letters" ? 7 : 5, words = pickWords(n, min, id === "blast" ? 14 : max, opts && opts.unit, id === "blast");
+    if (words.length < (id === "kreuz" ? 6 : id === "blast" ? 6 : id === "letters" ? 5 : 3)) return toast("Dafür brauchst du mehr Wörter im gewählten Bereich (einzelne Wörter ab 3 Buchstaben).");
     S.rollDay();
     G = { id: id, words: words, i: 0, score: 0, res: [], items: 0, correct: 0, wrong: 0, hints: 0, start: Date.now(), done: false, opts: opts || null, maxStreak: 0, streak: 0, cleared: 0 };
     el.hidden = false; document.documentElement.classList.add("ar-open");
@@ -10764,6 +10771,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (id === "eisi") return eisRound();
     if (id === "kreuz") return kreuzStart();
     if (id === "blast") return blastStart();
+    if (id === "letters") return lettersStart();
   }
 
   /* ================= Wort-Detektiv ================= */
@@ -11106,9 +11114,114 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     sh.raf = requestAnimationFrame(blLoop);
   }
 
+
+  /* ================= Letters (Buchstabensalat) ================= */
+  var LDIRS = [[0, 1], [1, 0], [1, 1], [-1, 1], [0, -1], [-1, 0], [-1, -1], [1, -1]];   // alle acht Richtungen, auch rückwärts
+  function lettersBuild(words, N) {
+    var grid = [], placed = [], r, c, i;
+    for (r = 0; r < N; r++) { grid[r] = []; for (c = 0; c < N; c++) grid[r][c] = ""; }
+    var dirPool = S.shuffle([0, 1, 2, 3, 4, 5, 6, 7]);   // jedem Wort eine eigene Richtung zuweisen, damit Diagonale und Rückwärts sicher vorkommen
+    words.slice().sort(function (a, b) { return b.en.length - a.en.length; }).forEach(function (w, wi) {
+      var tries;
+      for (tries = 0; tries < 400; tries++) {
+        var d = LDIRS[tries < 150 ? dirPool[wi % 8] : Math.floor(Math.random() * 8)], len = w.en.length, sr = Math.floor(Math.random() * N), sc = Math.floor(Math.random() * N);
+        var er = sr + d[0] * (len - 1), ec = sc + d[1] * (len - 1);
+        if (er < 0 || er >= N || ec < 0 || ec >= N) continue;
+        var ok = true; for (i = 0; i < len && ok; i++) { var g = grid[sr + d[0] * i][sc + d[1] * i]; if (g && g !== w.en[i]) ok = false; }
+        if (!ok) continue;
+        for (i = 0; i < len; i++) grid[sr + d[0] * i][sc + d[1] * i] = w.en[i];
+        placed.push({ w: w, r: sr, c: sc, d: d, found: false, hue: 0 }); return;
+      }
+    });
+    var abc = "eeeeaaaiioonnrrsstttlldcuhmpbgfywkvxzjq";   // häufige Buchstaben öfter, damit es nach Englisch aussieht
+    for (r = 0; r < N; r++) for (c = 0; c < N; c++) if (!grid[r][c]) grid[r][c] = abc[Math.floor(Math.random() * abc.length)];
+    return { grid: grid, placed: placed };
+  }
+  function lettersStart() {
+    var N = 9, B = null, tries = 0;
+    while (tries++ < 8) { B = lettersBuild(G.words.slice(0, 7), N); if (B.placed.length >= 5) break; G.words = pickWords(7, 3, 8); }
+    if (!B || B.placed.length < 4) { close(); return toast("Das Rätsel ließ sich nicht bauen. Versuch es gleich noch einmal."); }
+    B.placed.forEach(function (p, i) { p.hue = Math.round(i * 360 / B.placed.length + 20); });
+    G.words = B.placed.map(function (p) { return p.w; }); G.res = [];
+    G.ls = { N: N, grid: B.grid, placed: B.placed, found: 0, sel: [], start: null, drag: false, last: Date.now(), hintsAt: null, cellOf: {} };
+    var h = top("Letters") +
+      '<div class="wg-body"><div class="ls-cur" id="lsCur">&nbsp;</div>' +
+      '<div class="ls-grid" id="lsGrid" style="--n:' + N + '">';
+    for (var r = 0; r < N; r++) for (var c = 0; c < N; c++) h += '<div class="lc" data-r="' + r + '" data-c="' + c + '">' + B.grid[r][c] + '</div>';
+    h += '</div><div class="wg-msg" id="wgMsg">Wische über ein Wort. Tippe auf einen Hinweis für einen Tipp.</div><div class="ls-list" id="lsList"></div></div>';
+    el.innerHTML = h; lsList(); lsEvents();
+  }
+  function lsList() {
+    var L = G.ls; $("#lsList").innerHTML = L.placed.map(function (p, i) {
+      return '<button class="ls-it' + (p.found ? " done" : "") + '" data-g="lshint" data-i="' + i + '"' + (p.found ? ' style="border-color:hsl(' + p.hue + ' 55% 50%)"' : "") + '>' + esc(p.w.de) + ' <small>(' + p.w.en.length + ')</small>' + (p.found ? ' <b>' + esc(p.w.raw) + '</b>' : "") + '</button>';
+    }).join("");
+  }
+  function lsCell(r, c) { return $("[data-r='" + r + "'][data-c='" + c + "']"); }
+  function lsPaintSel() {
+    var L = G.ls; $$(".lc.sel").forEach(function (e) { e.classList.remove("sel"); });
+    var txt = ""; L.sel.forEach(function (rc) { var e = lsCell(rc[0], rc[1]); if (e) e.classList.add("sel"); txt += L.grid[rc[0]][rc[1]]; });
+    $("#lsCur").textContent = txt.toUpperCase() || " ";
+  }
+  function lsLine(a, b) {   // gerade Linie (acht Richtungen) von a zu b; rastet auf die nächste Richtung ein
+    var L = G.ls, dr = b[0] - a[0], dc = b[1] - a[1];
+    if (!dr && !dc) return [a];
+    var k = Math.round(Math.atan2(dr, dc) / (Math.PI / 4)), ang = k * Math.PI / 4, sr = Math.round(Math.sin(ang)), sc = Math.round(Math.cos(ang));
+    var len = Math.max(0, Math.round((dr * sr + dc * sc) / (sr * sr + sc * sc))), out = [];
+    while (len > 0 && (a[0] + sr * len < 0 || a[0] + sr * len >= L.N || a[1] + sc * len < 0 || a[1] + sc * len >= L.N)) len--;
+    for (var i = 0; i <= len; i++) out.push([a[0] + sr * i, a[1] + sc * i]);
+    return out;
+  }
+  function lsFromPoint(e) {
+    var g = $("#lsGrid"), r = g.getBoundingClientRect(), L = G.ls, c = Math.floor((e.clientX - r.left) / r.width * L.N), rr = Math.floor((e.clientY - r.top) / r.height * L.N);
+    return [Math.max(0, Math.min(L.N - 1, rr)), Math.max(0, Math.min(L.N - 1, c))];
+  }
+  function lsEvents() {
+    var g = $("#lsGrid"), L = G.ls;
+    g.addEventListener("pointerdown", function (e) {
+      if (!G || G.done) return; e.preventDefault(); try { g.setPointerCapture(e.pointerId); } catch (x) {}
+      var p = lsFromPoint(e);
+      if (L.tap && !(L.tap[0] === p[0] && L.tap[1] === p[1])) { var line = lsLine(L.tap, p); L.sel = line; L.tap = null; lsPaintSel(); return lsCheck(); }   // Tippen-Tippen: Start und Ende
+      L.start = p; L.drag = true; L.moved = false; L.sel = [p]; lsPaintSel();
+    });
+    g.addEventListener("pointermove", function (e) {
+      if (!L.drag) return; var p = lsFromPoint(e); if (p[0] !== L.start[0] || p[1] !== L.start[1]) L.moved = true;
+      L.sel = lsLine(L.start, p); lsPaintSel();
+    });
+    function up() {
+      if (!L.drag) return; L.drag = false;
+      if (!L.moved) { L.tap = L.start; return; }   // einfacher Tipp: Start gemerkt, nächster Tipp ist das Ende
+      L.tap = null; lsCheck();
+    }
+    g.addEventListener("pointerup", up); g.addEventListener("pointercancel", function () { L.drag = false; L.sel = []; lsPaintSel(); });
+  }
+  function lsCheck() {
+    var L = G.ls, txt = L.sel.map(function (rc) { return L.grid[rc[0]][rc[1]]; }).join(""), rev = txt.split("").reverse().join(""), hit = null;
+    if (txt.length >= 2) L.placed.forEach(function (p) { if (!p.found && (p.w.en === txt || p.w.en === rev)) hit = p; });
+    if (!hit) {
+      if (txt.length >= 2) { G.wrong++; G.score = Math.max(0, G.score - 2); paintScore(); snd(false); var m = $("#wgMsg"); if (m) m.innerHTML = '<span class="bad">Das ist keins der gesuchten Wörter.</span>'; }
+      L.sel = []; L.tap = null; return lsPaintSel();
+    }
+    hit.found = true; L.found++;
+    L.sel.forEach(function (rc) { var e = lsCell(rc[0], rc[1]); if (e) { e.style.setProperty("--fh", hit.hue); e.classList.add("f"); } });
+    var quick = Math.max(0, 10 - Math.floor((Date.now() - L.last) / 3000)), pts = 20 + quick - (hit.hinted ? 8 : 0);
+    L.last = Date.now(); G.score += pts; G.items++; G.correct++; G.streak++; G.maxStreak = Math.max(G.maxStreak, G.streak);
+    try { if (global.WordySync) global.WordySync.ctx = { mode: "arena" }; S.grade(hit.w.id, 1, hit.hinted ? { hint: true } : undefined); } catch (e) {}
+    snd(true); burst(10); paintScore(); L.sel = []; lsPaintSel(); lsList();
+    var m = $("#wgMsg"); if (m) m.innerHTML = '<span class="good">✓ ' + esc(hit.w.raw) + ' = ' + esc(hit.w.de) + ' +' + pts + '</span> · noch ' + (L.placed.length - L.found); 
+    say(hit.w.raw);
+    if (L.found >= L.placed.length) { G.score += 30; paintScore(); setTimeout(function () { finish("done"); }, 1100); }
+  }
+  function lsHint(i) {
+    var L = G.ls, p = L.placed[i]; if (!p || p.found) return;
+    if (!p.hinted) { p.hinted = true; G.hints++; G.score = Math.max(0, G.score - 8); paintScore(); }
+    var e = lsCell(p.r, p.c); if (e) { e.classList.add("hint"); setTimeout(function () { e.classList.remove("hint"); }, 1800); }
+    var m = $("#wgMsg"); if (m) m.textContent = "Tipp: Das Wort fängt an der markierten Stelle an (" + p.w.en.length + " Buchstaben).";
+  }
+
   /* ---------- Ende ---------- */
   function finish(reason) {
     if (!G || G.done) return; G.done = true; if (G.sh) { G.sh.over = true; cancelAnimationFrame(G.sh.raf); }
+    if (G.id === "letters" && G.ls) G.items = G.words.length;
     var m = GAMES.filter(function (x) { return x.id === G.id; })[0], sec = Math.round((Date.now() - G.start) / 1000);
     var rec = best(G.id), score = G.score, isRecord = score > rec.best;
     if (!S.state.arena) S.state.arena = {};
@@ -11160,6 +11273,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       return kreuzHint();
     }
     if (a === "giveup") { if (G.id === "detective" && !G.det.over) { G.det.over = true; return detEnd(false); } if (G.id === "eisi" && !G.eis.over) return eisEnd(false); return; }
+    if (a === "lshint") return lsHint(+t.getAttribute("data-i"));
     if (a === "cell") return kreuzSelect(t.getAttribute("data-k"));
     if (a === "word") { var wi = +t.getAttribute("data-wi"); G.kr.sel.wi = wi; var kw = G.kr.words[wi], first = kw.keys.filter(function (k) { return G.kr.cells[k].ent !== G.kr.cells[k].ch; })[0] || kw.keys[0]; G.kr.sel.k = first; return kreuzPaint(); }
     if (a === "check") { kreuzCheckWords(true); kreuzPaint(); return kreuzWin(); }

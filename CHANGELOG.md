@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.72.0 – 2026-10-10
+- Neu: **Letters**, der Buchstabensalat (Spielen › Arena, `lettersStart()` in js/spiele.js). 7 englische Wörter verstecken sich in einem 9 × 9 Raster, waagerecht, senkrecht und diagonal, vorwärts und rückwärts (jedem Wort wird eine eigene Richtung zugewiesen). Die Liste zeigt die deutschen Bedeutungen mit Buchstabenzahl, das englische Wort erscheint beim Fund. Markieren per Wischen oder per Tippen auf Anfang und Ende, die Linie rastet auf die acht Richtungen ein. Tipp (Tippen auf einen Hinweis) markiert den Anfang des Wortes. Punkte mit Tempo-Bonus, Lernstand wie bei den anderen Wortspielen.
+
 ## 2.71.0 – 2026-10-10
 - Neu: **Blast**, der Wörter-Shooter (Spielen › Arena, `blastStart()` in js/spiele.js). Oben steht ein deutsches Wort, englische Wörter fliegen von oben auf die Rakete zu: das richtige antippen (Laserstrahl, Explosion), ein falsches kostet ein Herz, ein verpasstes richtiges Wort auch. Drei Herzen, alle 10 Treffer ein Extra-Herz (bis 5), alle 5 Treffer ein Level (schneller, mehr Wörter). Eis-Sterne ❄️ bremsen alles 5 Sekunden, Bomben 💣 räumen die falschen Wörter weg. Serien-Multiplikator, Lernstand wie bei den anderen Wortspielen, Zeit zählt aufs Tagesziel. Am Rechner schießen die Zifferntasten 1 bis 9 (von links nach rechts).
 
