@@ -1241,8 +1241,9 @@
     }
     function step() {
       if (closed || paused) return;
-      var t = ++tok, w = list[idx];
+      var t = ++tok, w = list[idx]; ov.classList.remove("mlnof");
       if (idx >= list.length) {
+        ov.classList.add("mlnof");
         if (phase === 1) {
           bar(0); $c("mlP").textContent = "Teil 2 von 2";
           $c("mlC").innerHTML = '<div class="mlen">🎤</div><div class="mlde">Jetzt du: Ich sage jedes Wort vor, du sprichst laut mit.</div><button class="btn lg" id="mlGo" style="margin-top:14px">Los geht\'s</button>';

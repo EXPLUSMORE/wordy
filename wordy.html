@@ -1034,14 +1034,14 @@ details.fold>.fbody{padding:2px 0 14px}
 .stp.joker .stpi{border:2px dashed #a86bff;background:rgba(168,107,255,.14);font-size:19px}
 .stp.now .stpi{border:2px solid var(--accent);color:var(--accent);animation:stpPulse 1.6s ease-in-out infinite}
 .stp.miss .stpi{opacity:.45}.stp.fut .stpi{opacity:.65}
-.mlov{position:fixed;inset:0;z-index:60;background:var(--bg,#0E1320);color:var(--ink);display:flex;flex-direction:column;padding:14px 16px;gap:10px}
-.mlh{display:flex;align-items:center;justify-content:space-between;gap:8px}.mlp{text-align:center;color:var(--muted);font-size:14px}
-.mlc{text-align:center;padding:10px 0;min-height:150px}.mlen{font-size:40px;font-weight:800;line-height:1.1}.mlde{font-size:20px;color:var(--muted);margin-top:6px}
+.mlov{--mlm:#B9C0CE;position:fixed;inset:0;z-index:60;background:#0E1320;color:#F6EFE0;display:flex;flex-direction:column;padding:14px 16px;gap:10px}
+.mlh{display:flex;align-items:center;justify-content:space-between;gap:8px}.mlp{text-align:center;color:var(--mlm);font-size:14px}
+.mlc{text-align:center;padding:10px 0;flex:0 0 auto;min-height:170px}.mlen{font-size:40px;font-weight:800;line-height:1.1}.mlde{font-size:20px;color:var(--mlm);margin-top:6px}
 .mlyou{margin-top:12px;font-weight:800;color:var(--gold,#f2b33d);font-size:20px}
-.mlbar{height:8px;border-radius:6px;background:var(--line);overflow:hidden}.mlbar i{display:block;height:100%;width:0;background:var(--gold,#f2b33d)}
-.mll{flex:1 1 auto;overflow:auto;border-radius:14px;background:var(--card-2)}.mlw{display:flex;justify-content:space-between;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line)}
-.mlw.on{background:rgba(242,179,61,.22);font-weight:700}.mlw .de{color:var(--muted)}
-.mlf{display:flex;gap:8px;justify-content:center;padding-bottom:6px}
+.mlbar{flex:0 0 auto;height:8px;border-radius:6px;background:rgba(255,255,255,.15);overflow:hidden}.mlbar i{display:block;height:100%;width:0;background:var(--gold,#f2b33d)}
+.mll{flex:1 1 auto;min-height:0;overflow:auto;border-radius:14px;background:#1a2233;color:#F6EFE0}.mlw{display:flex;justify-content:space-between;gap:10px;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.1)}
+.mlw.on{background:rgba(242,179,61,.28);font-weight:700}.mlw .de{color:var(--mlm)}.mlov .btn.ghost{background:rgba(255,255,255,.12);color:#F6EFE0;border-color:transparent}
+.mlnof .mlf{visibility:hidden}.mlf{display:flex;gap:8px;justify-content:center;padding-bottom:6px}
 .ptiers{display:flex;gap:8px;margin:10px 0 0}
 .ptr{flex:1 1 0;min-width:0;border-radius:14px;padding:8px 4px;background:var(--card-2);border:2px solid var(--line);color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:1px;font:inherit;opacity:.65}
 .ptr small{font-size:11px;color:var(--muted)}.ptr span{font-weight:800;font-size:13px}
@@ -1057,7 +1057,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.67.1";window.WORDY_BUILD="61c592b42b";</script>
+<script>window.WORDY_VERSION="2.67.2";window.WORDY_BUILD="7b33b5b167";</script>
 </head>
 <body>
 <div id="app">
@@ -8279,8 +8279,9 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     }
     function step() {
       if (closed || paused) return;
-      var t = ++tok, w = list[idx];
+      var t = ++tok, w = list[idx]; ov.classList.remove("mlnof");
       if (idx >= list.length) {
+        ov.classList.add("mlnof");
         if (phase === 1) {
           bar(0); $c("mlP").textContent = "Teil 2 von 2";
           $c("mlC").innerHTML = '<div class="mlen">🎤</div><div class="mlde">Jetzt du: Ich sage jedes Wort vor, du sprichst laut mit.</div><button class="btn lg" id="mlGo" style="margin-top:14px">Los geht\'s</button>';

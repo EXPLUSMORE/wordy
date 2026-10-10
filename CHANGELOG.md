@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.67.2 – 2026-10-10
+- Mitlesen: Auf der Karte „Jetzt du“ lagen Knopf, Balken und Liste übereinander und die Texte waren dunkel auf dunkel. Eigene helle Farben, feste Höhe der Wortkarte; Pause/Vor/Zurück sind auf den Übergangs- und Endkarten ausgeblendet.
+
 ## 2.67.1 – 2026-10-10
 - Korrektur Lernpfad: Seit 2.64.0 überschrieb der Stil des „Geheimen Geschenks“ (`.psec`) die Pfad-Abschnitte, die Karte war verschoben und leer. Das Geschenk heißt jetzt `.psgift`, der Pfad ist wieder wie vorher.
 
