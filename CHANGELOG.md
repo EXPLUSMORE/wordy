@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.66.1 – 2026-10-10
+- Daily-Challenge-Karte kompakter (Schrift und Abstände passend zum Rest der App). Dauer-Auswahl bricht nicht mehr um („Dauer in Min“ mit 3/5/10/15), „ca. 10 Min“ in den Kacheln bleibt zusammen.
+
 ## 2.66.0 – 2026-10-10
 - Neu: Übung „Mitlesen“ (`openMitlesen()` in app.js). Teil 1: alle Wörter werden gezeigt und vorgelesen, Teil 2: „Jetzt du“, jedes Wort wird vorgesprochen, danach Pause zum lauten Nachsprechen. Pause, Vor/Zurück, Tempo aus „Tempo bei Alle vorlesen“. Zu finden in der Einheit (🗣️ Mitlesen) und unter Lernen › Gezielt üben (alle gelernten Wörter, z. B. vor einer Arbeit). Zählt weder Münzen noch Lernzeit.
 

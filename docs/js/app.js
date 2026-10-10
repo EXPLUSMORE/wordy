@@ -823,7 +823,7 @@
   function modiHtml(part) {
     var st = S.state, p = S.pools(), stt = S.stats(), mins = startMin || S.goalMin(), biz = st.settings.track === "business", few = p.all.length < 8;
     var nW = S.itemsFor(mins), nS = Math.max(5, Math.round(mins * 60 / 16)), nV = Math.max(5, Math.round(mins * 60 / 20));
-    function cnt() { return " · ca. " + mins + " Min"; }   // Zeit statt Aufgabenzahl: die Runde hat kein Zeitlimit, die Zahl der Aufgaben richtet sich nach deinem Tempo
+    function cnt() { return " · ca.\u00a0" + mins + "\u00a0Min"; }   // Zeit statt Aufgabenzahl: die Runde hat kein Zeitlimit, die Zahl der Aufgaben richtet sich nach deinem Tempo
     var W = window.WordySync, plans = (W && W.connected()) ? W.activePlans() : [], aud = audioAvailable();
     var learn = tile("✨", "Neue Wörter", S.newBlocked() ? "Erst die " + S.newBlocked() + " fälligen wiederholen" : p.fresh.length ? p.fresh.length + " warten auf dich" + cnt(Math.min(nW, p.fresh.length)) : "Alles schon gesehen", 'data-act="start" data-mode="new" data-min="' + mins + '"' + (p.fresh.length && !S.newBlocked() ? "" : " disabled")) +
       tile("♻️", "Fehlerkartei", p.box.length ? p.box.length + " " + plural(p.box.length, "Wort", "Wörter") + " üben" + cnt(Math.min(nW, p.box.length)) : "Leer, sehr gut!", 'data-act="start" data-mode="box" data-min="' + mins + '"' + (p.box.length ? "" : " disabled")) +
@@ -851,7 +851,7 @@
       '<p class="small muted" style="margin:8px 0 0">Ein Treffer unter Zeitdruck wird als sichere, aber flache Wiederholung gewertet. Er schiebt ein Wort eine Stufe weiter, ersetzt aber nicht das ruhige Training. Ein Fehlgriff landet sofort in der Fehlerkartei. Die Zeit läuft aufs Tagesziel.' + (plays ? ' Bisher ' + plays + ' ' + plural(plays, "Spiel", "Spiele") + ' gespielt.' : '') + '</p></details></section>';
     if (part === "spiel") return playCard;
     return '<section class="card"><div class="eyebrow">Lernen</div>' +
-      '<div class="row wrap" style="margin-top:8px"><span class="small muted">Dauer</span>' + [3, 5, 10, 15].map(function (m2) { return '<button class="chip" data-act="setmin" data-min="' + m2 + '" aria-pressed="' + (mins === m2) + '">' + m2 + ' Min</button>'; }).join("") + '</div>' +
+      '<div class="row wrap" style="margin-top:8px"><span class="small muted">Dauer in Min</span>' + [3, 5, 10, 15].map(function (m2) { return '<button class="chip" data-act="setmin" data-min="' + m2 + '" aria-pressed="' + (mins === m2) + '">' + m2 + '</button>'; }).join("") + '</div>' +
       '<div class="tiles">' + learn + '</div></section>' +
       '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Gezielt üben</div><span class="pill">neu</span></div>' +
       '<p class="small muted" style="margin:6px 0 0">Eine Aufgabenform üben, mit Wörtern, die dran sind (ca. ' + mins + ' Min).</p><div class="tiles">' +
