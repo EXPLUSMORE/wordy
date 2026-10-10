@@ -274,6 +274,7 @@
   /* ================= START ================= */
 
   /* ---------- Ziele und Lernpläne der Eltern (Startseite) ---------- */
+  function itemLabel(id) { var it = S.itemById && S.itemById(id); return it ? it.label : "Überraschung"; }
   function parentCards(skipPlans) {
     var W = window.WordySync; if (!W || !W.connected()) return "";
     var h = "", goals = W.currentGoals(), plans = W.activePlans(), st = S.state;
@@ -285,7 +286,7 @@
         '<div style="margin-top:6px"><b>' + esc(pl.title) + '</b> <span class="small muted">· ' + (pl.cls ? "Ende " : "Arbeit ") + when + '</span></div>' +
         '<div class="bar" style="margin:10px 0 6px"><i style="width:' + i.pct + '%"></i></div>' +
         '<p class="small muted" style="margin:0 0 10px">' + i.pct + ' % sicher (' + i.ok + ' von ' + i.total + ' Wörtern)' +
-        (done ? ' · ✅ Ziel erreicht' : pl.coins && !pl.cls ? ' · Bonus ' + pl.coins + ' Münzen bei 90 %' : '') + '</p>' +
+        (done ? ' · ✅ Ziel erreicht' : !pl.cls && (pl.coins || pl.item) ? ' · Bonus bei 90 %: ' + (pl.coins ? pl.coins + ' Münzen' : '') + (pl.coins && pl.item ? ' + ' : '') + (pl.item ? '🎁 ' + esc(itemLabel(pl.item)) : '') : '') + '</p>' +
         (i.total - i.ok > 0 ? '<p class="small" style="margin:0 0 10px">Heute dran: ' + (left > 0 ? '<b>' + left + ' neue ' + plural(left, "Wort", "Wörter") + '</b> und ' : '') + 'Wiederholung.</p>' : '') +
         '<button class="btn wide" data-act="startplan" data-id="' + esc(pl.id) + '">' + (pl.cls ? "Klassen-Challenge starten" : "Lernplan üben") + '</button></section>';
     });
@@ -295,7 +296,7 @@
         return '<div style="padding:8px 0;border-top:1px solid var(--line)"><div class="row"><b class="small" style="flex:1 1 auto">' + (done ? "✅ " : "") + esc(g.title) + '</b>' +
           '<span class="pill tnum">' + Math.min(pr.cur, g.target) + ' / ' + g.target + (g.kind === "unit" ? " %" : "") + '</span></div>' +
           '<div class="bar" style="margin-top:6px"><i style="width:' + (done ? 100 : pr.pct) + '%"></i></div>' +
-          '<div class="row" style="margin-top:6px;gap:8px">' + (g.coins ? '<div class="small muted" style="flex:1 1 auto">' + (done ? 'Geschafft, ' + g.coins + ' Münzen sind gutgeschrieben.' : 'Belohnung: 🪙 ' + g.coins) + '</div>' : '<span style="flex:1 1 auto"></span>') +
+          '<div class="row" style="margin-top:6px;gap:8px">' + (g.coins || g.item ? '<div class="small muted" style="flex:1 1 auto">' + (done ? 'Geschafft, ' + (g.coins ? g.coins + ' Münzen' : '') + (g.coins && g.item ? ' und ' : '') + (g.item ? esc(itemLabel(g.item)) : '') + ' sind gutgeschrieben.' : 'Belohnung: ' + (g.coins ? '🪙 ' + g.coins : '') + (g.coins && g.item ? ' + ' : '') + (g.item ? '🎁 ' + esc(itemLabel(g.item)) : '')) + '</div>' : '<span style="flex:1 1 auto"></span>') +
           (done ? '' : '<button class="chip" data-act="startgoal" data-id="' + esc(g.id) + '">Jetzt üben →</button>') + '</div></div>';
       }).join("") + '</div></section>';
     }
@@ -1364,7 +1365,7 @@
       if (gl.length) showGifts(gl.map(function (x) { return { note: x.note, coins: x.coins }; }));
       if (!list.length) return;
       var c = list.reduce(function (a, x) { return a + (x.coins || 0); }, 0);
-      toast("🎉 " + (list[0].kind === "plan" ? "Lernplan geschafft" : list[0].kind === "week" ? "Wochenplan geschafft" : "Wochenziel geschafft") + ": " + list[0].title + (c ? " · +" + c + " Münzen" : ""), 6000);
+      toast("🎉 " + (list[0].kind === "plan" ? "Lernplan geschafft" : list[0].kind === "week" ? "Wochenplan geschafft" : "Wochenziel geschafft") + ": " + list[0].title + (c ? " · +" + c + " Münzen" : "") + (list[0].item ? " · 🎁 " + list[0].item : ""), 6000);
       try { if (window.VTC && S.state.settings.audio) window.VTC.sound(S.state.profile.snd, true); window.VTC.burst(S.state.profile.fx, window.innerWidth / 2, window.innerHeight * .4, 24, 1); } catch (e) {}
       if (tab === "home" && sessionEl.hidden) render();
     };

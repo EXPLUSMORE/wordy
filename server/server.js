@@ -79,7 +79,7 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS family_invites (code TEXT PRIMARY KEY, created INTEGER NOT NULL, expires INTEGER NOT NULL, max_uses INTEGER NOT NULL DEFAULT 1, uses INTEGER NOT NULL DEFAULT 0, note TEXT);
 `);
 if (!db.prepare("PRAGMA table_info(players)").all().some(c => c.name === "family")) db.exec("ALTER TABLE players ADD COLUMN family INTEGER REFERENCES families(id) ON DELETE CASCADE");
-for (const [tab, col, ddl] of [["families", "role", "TEXT NOT NULL DEFAULT 'parent'"], ["families", "pw", "TEXT NOT NULL DEFAULT ''"], ["family_invites", "role", "TEXT NOT NULL DEFAULT 'parent'"], ["families", "owner", "INTEGER REFERENCES families(id) ON DELETE CASCADE"], ["family_invites", "owner", "INTEGER"]]) if (!db.prepare("PRAGMA table_info(" + tab + ")").all().some(c => c.name === col)) db.exec("ALTER TABLE " + tab + " ADD COLUMN " + col + " " + ddl);
+for (const [tab, col, ddl] of [["families", "role", "TEXT NOT NULL DEFAULT 'parent'"], ["families", "pw", "TEXT NOT NULL DEFAULT ''"], ["family_invites", "role", "TEXT NOT NULL DEFAULT 'parent'"], ["families", "owner", "INTEGER REFERENCES families(id) ON DELETE CASCADE"], ["family_invites", "owner", "INTEGER"], ["goals", "item", "TEXT NOT NULL DEFAULT ''"], ["plans", "item", "TEXT NOT NULL DEFAULT ''"]]) if (!db.prepare("PRAGMA table_info(" + tab + ")").all().some(c => c.name === col)) db.exec("ALTER TABLE " + tab + " ADD COLUMN " + col + " " + ddl);
 const MAX_COPARENTS = 2;
 const fq = {
   byId: db.prepare("SELECT * FROM families WHERE id = ?"),
@@ -212,11 +212,11 @@ const q = {
   snap: db.prepare("SELECT ts, d FROM snaps WHERE player = ? AND key = ?"),
   goals: db.prepare("SELECT * FROM goals WHERE player = ? AND week >= ? ORDER BY week DESC, id"),
   goal: db.prepare("SELECT * FROM goals WHERE id = ?"),
-  addGoal: db.prepare("INSERT INTO goals(player, week, kind, target, scope, coins, title, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"),
+  addGoal: db.prepare("INSERT INTO goals(player, week, kind, target, scope, coins, title, created, item) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"),
   delGoal: db.prepare("DELETE FROM goals WHERE id = ?"),
   plans: db.prepare("SELECT * FROM plans WHERE player = ? AND exam >= ? ORDER BY exam, id"),
   plan: db.prepare("SELECT * FROM plans WHERE id = ?"),
-  addPlan: db.prepare("INSERT INTO plans(player, title, exam, units, coins, created) VALUES (?, ?, ?, ?, ?, ?)"),
+  addPlan: db.prepare("INSERT INTO plans(player, title, exam, units, coins, created, item) VALUES (?, ?, ?, ?, ?, ?, ?)"),
   delPlan: db.prepare("DELETE FROM plans WHERE id = ?"),
   putState: db.prepare("INSERT INTO states(player, day, ts, bytes, coins, words, d) VALUES (?, ?, ?, ?, ?, ?, ?) ON CONFLICT(player, day) DO UPDATE SET ts = excluded.ts, bytes = excluded.bytes, coins = excluded.coins, words = excluded.words, d = excluded.d"),
   latestState: db.prepare("SELECT day, ts, bytes, coins, words, d FROM states WHERE player = ? ORDER BY ts DESC LIMIT 1"),
@@ -475,12 +475,13 @@ function weekGoals(pid) {
   const mon = mondayOf(dayOf(Date.now())), list = q.goals.all(pid, ymdAdd(mon, -28));
   if (!list.length) return [];
   const evs = q.events.all(pid, Date.parse(ymdAdd(mon, -29) + "T00:00:00Z")).map(r => ({ ts: r.ts, k: r.k, d: JSON.parse(r.d) }));
-  return list.map(g => Object.assign({ id: g.id, week: g.week, kind: g.kind, target: g.target, scope: JSON.parse(g.scope), coins: g.coins, title: g.title,
+  return list.map(g => Object.assign({ id: g.id, week: g.week, kind: g.kind, target: g.target, scope: JSON.parse(g.scope), coins: g.coins, item: g.item || "", title: g.title,
     current: g.week <= mon && mon <= ymdAdd(g.week, 6) }, goalProgress(pid, g, evs)));
 }
 function plansOf(pid) {
-  return q.plans.all(pid, ymdAdd(dayOf(Date.now()), -7)).map(p => Object.assign({ id: p.id, title: p.title, exam: p.exam, units: JSON.parse(p.units), coins: p.coins, unitTitles: unitTitles(pid, JSON.parse(p.units)) }, planProgress(pid, p)));
+  return q.plans.all(pid, ymdAdd(dayOf(Date.now()), -7)).map(p => Object.assign({ id: p.id, title: p.title, exam: p.exam, units: JSON.parse(p.units), coins: p.coins, item: p.item || "", unitTitles: unitTitles(pid, JSON.parse(p.units)) }, planProgress(pid, p)));
 }
+const itemId = v => /^[a-z]{2,3}:[^\s<>"'&\\]{1,40}$/.test(String(v || "")) ? String(v) : "";   // Shop-Artikel als Belohnung (nur Betreiber)
 function createGoal(pid, b) {
   if (q.player.get(pid).hidden) return [400, { error: "Für nur gesicherte Spieler gibt es keine Ziele." }];
   const kind = String(b.kind || ""), target = Math.round(+b.target), coins = Math.round(+b.coins || 0);
@@ -492,7 +493,7 @@ function createGoal(pid, b) {
   const mon = mondayOf(dayOf(Date.now()));
   const week = b.week === "next" ? ymdAdd(mon, 7) : mon;
   const title = clean(b.title, 90) || goalTitle(pid, kind, target, scope);
-  const id = +q.addGoal.run(pid, week, kind, target, JSON.stringify(kind === "unit" ? scope : []), coins, title, Date.now()).lastInsertRowid;
+  const id = +q.addGoal.run(pid, week, kind, target, JSON.stringify(kind === "unit" ? scope : []), coins, title, Date.now(), itemId(b.item)).lastInsertRowid;
   return [200, { id }];
 }
 function createPlan(pid, b) {
@@ -503,7 +504,7 @@ function createPlan(pid, b) {
   if (!units.length) return [400, { error: "Bitte mindestens eine Einheit wählen." }];
   if (coins < 0 || coins > 500) return [400, { error: "Münzen müssen zwischen 0 und 500 liegen." }];
   const title = clean(b.title, 60) || "Klassenarbeit";
-  const id = +q.addPlan.run(pid, title, exam, JSON.stringify(units), coins, Date.now()).lastInsertRowid;
+  const id = +q.addPlan.run(pid, title, exam, JSON.stringify(units), coins, Date.now(), itemId(b.item)).lastInsertRowid;
   return [200, { id }];
 }
 /* Was die App abholt: Ziele der laufenden und kommenden Woche, offene Lernpläne */
@@ -511,8 +512,8 @@ function apiSync(pid) {
   const mon = mondayOf(dayOf(Date.now()));
   return [200, {
     now: Date.now(), today: dayOf(Date.now()),
-    goals: q.goals.all(pid, mon).map(g => ({ id: g.id, week: g.week, kind: g.kind, target: g.target, scope: JSON.parse(g.scope), coins: g.coins, title: g.title })),
-    plans: q.plans.all(pid, dayOf(Date.now())).map(p => ({ id: p.id, title: p.title, exam: p.exam, units: JSON.parse(p.units), coins: p.coins })).concat(classPlansFor(pid)),
+    goals: q.goals.all(pid, mon).map(g => ({ id: g.id, week: g.week, kind: g.kind, target: g.target, scope: JSON.parse(g.scope), coins: g.coins, item: g.item || "", title: g.title })),
+    plans: q.plans.all(pid, dayOf(Date.now())).map(p => ({ id: p.id, title: p.title, exam: p.exam, units: JSON.parse(p.units), coins: p.coins, item: p.item || "" })).concat(classPlansFor(pid)),
     pathUnits: pathUnitsOf(pid),
     weekPlan: weekPlanOf(pid),
     bossDiff: bossDiffOf(pid),
@@ -1524,9 +1525,9 @@ const server = http.createServer(async (req, res) => {
         if (m[2] === "crewleave" && req.method === "POST") { crewLeave(pid); return send(res, 200, { ok: true }); }
         if (m[2] === "social" && req.method === "POST") { const on = !!(await readJson(req)).enabled; sq.setSocial.run(on ? 1 : 0, pid); if (on) fcodeOf(pid); return send(res, 200, { ok: true }); }
         if (m[2] === "goals" && req.method === "GET") return send(res, 200, weekGoals(pid));
-        if (m[2] === "goals" && req.method === "POST") { const gb = await readJson(req); if (scope) gb.coins = 0; const [c, b] = createGoal(pid, gb); return send(res, c, b); }
+        if (m[2] === "goals" && req.method === "POST") { const gb = await readJson(req); if (scope) { gb.coins = 0; gb.item = ""; } const [c, b] = createGoal(pid, gb); return send(res, c, b); }
         if (m[2] === "plans" && req.method === "GET") return send(res, 200, plansOf(pid));
-        if (m[2] === "plans" && req.method === "POST") { const pb = await readJson(req); if (scope) pb.coins = 0; const [c, b] = createPlan(pid, pb); return send(res, c, b); }
+        if (m[2] === "plans" && req.method === "POST") { const pb = await readJson(req); if (scope) { pb.coins = 0; pb.item = ""; } const [c, b] = createPlan(pid, pb); return send(res, c, b); }
         if (m[2] === "weekplan" && req.method === "GET") return send(res, 200, weekPlanOf(pid));
         if (m[2] === "weekplan" && req.method === "POST") { const [c, b] = setWeekPlan(pid, await readJson(req)); return send(res, c, b); }
         if (m[2] === "season" && scope) return send(res, 403, { error: "Der Wochenpass wird vom Betreiber zusammengestellt." });

@@ -329,6 +329,15 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     assert.equal((await J("/api/fam/players/" + kid.j.id + "/coinfactor", { method: "POST", headers: F, body: JSON.stringify({ factor: 2 }) })).s, 403, "Eltern stellen den Münzfaktor nicht um");
     const gq = await J("/api/fam/players/" + kid.j.id + "/goals", { method: "POST", headers: F, body: JSON.stringify({ kind: "days", target: 3, coins: 400 }) }); assert.equal(gq.s, 200);
     assert.ok((await J("/api/fam/players/" + kid.j.id + "/goals", { headers: F })).j.every(x => !x.coins), "Ziele aus Elternkonten haben keine Bonusmünzen");
+    { const fg = await J("/api/fam/players/" + kid.j.id + "/goals", { method: "POST", headers: F, body: JSON.stringify({ kind: "days", target: 2, item: "av:kitty1" }) }); assert.equal(fg.s, 200);
+      assert.ok((await J("/api/fam/players/" + kid.j.id + "/goals", { headers: F })).j.every(x => !x.item), "Gegenstände als Belohnung nur vom Betreiber");
+      const og2 = await J("/api/admin/players/" + mk.j.id + "/goals", { method: "POST", headers: H, body: JSON.stringify({ kind: "days", target: 2, item: "av:kitty1", coins: 10 }) }); assert.equal(og2.s, 200);
+      const og3 = await J("/api/admin/players/" + mk.j.id + "/goals", { method: "POST", headers: H, body: JSON.stringify({ kind: "days", target: 3, item: "<b>x</b>" }) }); assert.equal(og3.s, 200);
+      const gl = (await J("/api/admin/players/" + mk.j.id + "/goals", { headers: H })).j;
+      assert.ok(gl.some(x => x.item === "av:kitty1" && x.coins === 10), "Betreiber vergibt Gegenstand und Münzen");
+      assert.ok(gl.some(x => x.target === 3 && x.item === ""), "ungültige Artikel-ID wird verworfen");
+      const op = await J("/api/admin/players/" + mk.j.id + "/plans", { method: "POST", headers: H, body: JSON.stringify({ title: "Arbeit", exam: "2099-01-01", units: ["x1"], item: "av:kitty2" }) }); assert.equal(op.s, 200);
+      assert.ok((await J("/api/admin/players/" + mk.j.id + "/plans", { headers: H })).j.some(x => x.item === "av:kitty2"), "Lernplan mit Gegenstand"); }
     const og = await J("/api/admin/players/" + mk.j.id + "/gifts", { method: "POST", headers: H, body: JSON.stringify({ coins: 20 }) }); assert.equal(og.s, 200, "Betreiber darf weiter schenken");
     assert.equal((await J("/api/fam/info", { headers: F })).s, 200);
     // zweite Familie darf die Kinder der ersten nicht sehen

@@ -1122,7 +1122,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.77.0";window.WORDY_BUILD="06c09a676b";</script>
+<script>window.WORDY_VERSION="2.79.0";window.WORDY_BUILD="713802a6fa";</script>
 </head>
 <body>
 <div id="app">
@@ -6019,7 +6019,7 @@ window.VERBS = [
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
-    resetProgress: resetProgress, stampNew: stampNew, passStamp: passStamp, shopVisible: shopVisible, shopWeeks: shopWeeks, shopCatalog: shopCatalog, shopTeasers: shopTeasers, shopNow: shopNow, shopRel: shopRel, WELCOME: WELCOME, welcomeGrant: welcomeGrant, welcomeNeeded: welcomeNeeded, steered: steered, pathUnitList: pathUnitList, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, boost: boost, coinFactor: coinFactor, avgCoins: avgCoins, dealItem: dealItem, priceOf: priceOf, passInfo: passInfo, favs: favs, toggleFav: toggleFav, collection: collection, findCollItem: findCollItem, CUP_TIERS: CUP_TIERS, claimPassWeek: claimPassWeek, claimPassTier: claimPassTier, claimPassCrew: claimPassCrew, claimPassFinale: claimPassFinale, passMeta: passMeta, rarityOf: rarityOf, shopList: shopList, activeSetDeal: activeSetDeal, buySet: buySet, takeNews: takeNews, SETS: SETS, itemById: itemById, minXp: minXp, defaultOf: defaultOf
+    grantItem: function (id) { return passGrant({ items: [id] }); }, resetProgress: resetProgress, stampNew: stampNew, passStamp: passStamp, shopVisible: shopVisible, shopWeeks: shopWeeks, shopCatalog: shopCatalog, shopTeasers: shopTeasers, shopNow: shopNow, shopRel: shopRel, WELCOME: WELCOME, welcomeGrant: welcomeGrant, welcomeNeeded: welcomeNeeded, steered: steered, pathUnitList: pathUnitList, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, boost: boost, coinFactor: coinFactor, avgCoins: avgCoins, dealItem: dealItem, priceOf: priceOf, passInfo: passInfo, favs: favs, toggleFav: toggleFav, collection: collection, findCollItem: findCollItem, CUP_TIERS: CUP_TIERS, claimPassWeek: claimPassWeek, claimPassTier: claimPassTier, claimPassCrew: claimPassCrew, claimPassFinale: claimPassFinale, passMeta: passMeta, rarityOf: rarityOf, shopList: shopList, activeSetDeal: activeSetDeal, buySet: buySet, takeNews: takeNews, SETS: SETS, itemById: itemById, minXp: minXp, defaultOf: defaultOf
   };
 })(window);
 </script>
@@ -7514,6 +7514,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   /* ================= START ================= */
 
   /* ---------- Ziele und Lernpläne der Eltern (Startseite) ---------- */
+  function itemLabel(id) { var it = S.itemById && S.itemById(id); return it ? it.label : "Überraschung"; }
   function parentCards(skipPlans) {
     var W = window.WordySync; if (!W || !W.connected()) return "";
     var h = "", goals = W.currentGoals(), plans = W.activePlans(), st = S.state;
@@ -7525,7 +7526,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
         '<div style="margin-top:6px"><b>' + esc(pl.title) + '</b> <span class="small muted">· ' + (pl.cls ? "Ende " : "Arbeit ") + when + '</span></div>' +
         '<div class="bar" style="margin:10px 0 6px"><i style="width:' + i.pct + '%"></i></div>' +
         '<p class="small muted" style="margin:0 0 10px">' + i.pct + ' % sicher (' + i.ok + ' von ' + i.total + ' Wörtern)' +
-        (done ? ' · ✅ Ziel erreicht' : pl.coins && !pl.cls ? ' · Bonus ' + pl.coins + ' Münzen bei 90 %' : '') + '</p>' +
+        (done ? ' · ✅ Ziel erreicht' : !pl.cls && (pl.coins || pl.item) ? ' · Bonus bei 90 %: ' + (pl.coins ? pl.coins + ' Münzen' : '') + (pl.coins && pl.item ? ' + ' : '') + (pl.item ? '🎁 ' + esc(itemLabel(pl.item)) : '') : '') + '</p>' +
         (i.total - i.ok > 0 ? '<p class="small" style="margin:0 0 10px">Heute dran: ' + (left > 0 ? '<b>' + left + ' neue ' + plural(left, "Wort", "Wörter") + '</b> und ' : '') + 'Wiederholung.</p>' : '') +
         '<button class="btn wide" data-act="startplan" data-id="' + esc(pl.id) + '">' + (pl.cls ? "Klassen-Challenge starten" : "Lernplan üben") + '</button></section>';
     });
@@ -7535,7 +7536,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
         return '<div style="padding:8px 0;border-top:1px solid var(--line)"><div class="row"><b class="small" style="flex:1 1 auto">' + (done ? "✅ " : "") + esc(g.title) + '</b>' +
           '<span class="pill tnum">' + Math.min(pr.cur, g.target) + ' / ' + g.target + (g.kind === "unit" ? " %" : "") + '</span></div>' +
           '<div class="bar" style="margin-top:6px"><i style="width:' + (done ? 100 : pr.pct) + '%"></i></div>' +
-          '<div class="row" style="margin-top:6px;gap:8px">' + (g.coins ? '<div class="small muted" style="flex:1 1 auto">' + (done ? 'Geschafft, ' + g.coins + ' Münzen sind gutgeschrieben.' : 'Belohnung: 🪙 ' + g.coins) + '</div>' : '<span style="flex:1 1 auto"></span>') +
+          '<div class="row" style="margin-top:6px;gap:8px">' + (g.coins || g.item ? '<div class="small muted" style="flex:1 1 auto">' + (done ? 'Geschafft, ' + (g.coins ? g.coins + ' Münzen' : '') + (g.coins && g.item ? ' und ' : '') + (g.item ? esc(itemLabel(g.item)) : '') + ' sind gutgeschrieben.' : 'Belohnung: ' + (g.coins ? '🪙 ' + g.coins : '') + (g.coins && g.item ? ' + ' : '') + (g.item ? '🎁 ' + esc(itemLabel(g.item)) : '')) + '</div>' : '<span style="flex:1 1 auto"></span>') +
           (done ? '' : '<button class="chip" data-act="startgoal" data-id="' + esc(g.id) + '">Jetzt üben →</button>') + '</div></div>';
       }).join("") + '</div></section>';
     }
@@ -8604,7 +8605,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       if (gl.length) showGifts(gl.map(function (x) { return { note: x.note, coins: x.coins }; }));
       if (!list.length) return;
       var c = list.reduce(function (a, x) { return a + (x.coins || 0); }, 0);
-      toast("🎉 " + (list[0].kind === "plan" ? "Lernplan geschafft" : list[0].kind === "week" ? "Wochenplan geschafft" : "Wochenziel geschafft") + ": " + list[0].title + (c ? " · +" + c + " Münzen" : ""), 6000);
+      toast("🎉 " + (list[0].kind === "plan" ? "Lernplan geschafft" : list[0].kind === "week" ? "Wochenplan geschafft" : "Wochenziel geschafft") + ": " + list[0].title + (c ? " · +" + c + " Münzen" : "") + (list[0].item ? " · 🎁 " + list[0].item : ""), 6000);
       try { if (window.VTC && S.state.settings.audio) window.VTC.sound(S.state.profile.snd, true); window.VTC.burst(S.state.profile.fx, window.innerWidth / 2, window.innerHeight * .4, 24, 1); } catch (e) {}
       if (tab === "home" && sessionEl.hidden) render();
     };
@@ -11840,6 +11841,12 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   W.currentGoals = function () { var mon = monday(VT.today()); return W.remote().goals.filter(function (g) { return g.week === mon; }); };
   W.activePlans = function () { var t = VT.today(); return W.remote().plans.filter(function (p) { return p.exam >= t; }); };
 
+  /* Shop-Artikel als Belohnung: ins Eigentum legen (falls noch nicht vorhanden), gibt den Namen für die Meldung zurück */
+  function giveItem(id) {
+    if (!id || !VT.grantItem) return "";
+    var it = VT.itemById(id); if (!it) return "";
+    VT.grantItem(id); return it.label;
+  }
   /* Prüft Ziele und Pläne; vergibt Bonusmünzen genau einmal */
   W.check = function () {
     if (!W.connected()) return;
@@ -11847,11 +11854,11 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (!st.goalsDone) st.goalsDone = {};
     W.currentGoals().forEach(function (g) {
       var key = "g" + g.id; if (st.goalsDone[key]) return;
-      if (W.progress(g).cur >= g.target) { st.goalsDone[key] = 1; VT.parentCoins(g.coins); W.log("goal", { id: g.id, done: 1 }); got.push({ title: g.title, coins: g.coins, kind: "goal" }); }
+      if (W.progress(g).cur >= g.target) { st.goalsDone[key] = 1; VT.parentCoins(g.coins); W.log("goal", { id: g.id, done: 1 }); got.push({ title: g.title, coins: g.coins, kind: "goal", item: giveItem(g.item) }); }
     });
     W.activePlans().forEach(function (pl) {
       var key = "p" + pl.id; if (st.goalsDone[key]) return;
-      if (W.planInfo(pl).pct >= 90) { st.goalsDone[key] = 1; VT.parentCoins(pl.coins); W.log("plan", { id: pl.id, done: 1 }); got.push({ title: pl.title, coins: pl.coins, kind: "plan" }); }
+      if (W.planInfo(pl).pct >= 90) { st.goalsDone[key] = 1; VT.parentCoins(pl.coins); W.log("plan", { id: pl.id, done: 1 }); got.push({ title: pl.title, coins: pl.coins, kind: "plan", item: giveItem(pl.item) }); }
     });
     var wp = VT.weekPlan && VT.weekPlan();   // Wochenzeitplan: Bonus, wenn genug Plan-Tage geschafft sind (mindestens 80 %, aufgerundet)
     if (wp && wp.bonus > 0) {

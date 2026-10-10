@@ -110,6 +110,12 @@
   W.currentGoals = function () { var mon = monday(VT.today()); return W.remote().goals.filter(function (g) { return g.week === mon; }); };
   W.activePlans = function () { var t = VT.today(); return W.remote().plans.filter(function (p) { return p.exam >= t; }); };
 
+  /* Shop-Artikel als Belohnung: ins Eigentum legen (falls noch nicht vorhanden), gibt den Namen für die Meldung zurück */
+  function giveItem(id) {
+    if (!id || !VT.grantItem) return "";
+    var it = VT.itemById(id); if (!it) return "";
+    VT.grantItem(id); return it.label;
+  }
   /* Prüft Ziele und Pläne; vergibt Bonusmünzen genau einmal */
   W.check = function () {
     if (!W.connected()) return;
@@ -117,11 +123,11 @@
     if (!st.goalsDone) st.goalsDone = {};
     W.currentGoals().forEach(function (g) {
       var key = "g" + g.id; if (st.goalsDone[key]) return;
-      if (W.progress(g).cur >= g.target) { st.goalsDone[key] = 1; VT.parentCoins(g.coins); W.log("goal", { id: g.id, done: 1 }); got.push({ title: g.title, coins: g.coins, kind: "goal" }); }
+      if (W.progress(g).cur >= g.target) { st.goalsDone[key] = 1; VT.parentCoins(g.coins); W.log("goal", { id: g.id, done: 1 }); got.push({ title: g.title, coins: g.coins, kind: "goal", item: giveItem(g.item) }); }
     });
     W.activePlans().forEach(function (pl) {
       var key = "p" + pl.id; if (st.goalsDone[key]) return;
-      if (W.planInfo(pl).pct >= 90) { st.goalsDone[key] = 1; VT.parentCoins(pl.coins); W.log("plan", { id: pl.id, done: 1 }); got.push({ title: pl.title, coins: pl.coins, kind: "plan" }); }
+      if (W.planInfo(pl).pct >= 90) { st.goalsDone[key] = 1; VT.parentCoins(pl.coins); W.log("plan", { id: pl.id, done: 1 }); got.push({ title: pl.title, coins: pl.coins, kind: "plan", item: giveItem(pl.item) }); }
     });
     var wp = VT.weekPlan && VT.weekPlan();   // Wochenzeitplan: Bonus, wenn genug Plan-Tage geschafft sind (mindestens 80 %, aufgerundet)
     if (wp && wp.bonus > 0) {

@@ -551,7 +551,7 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
     { title: "Der Eisbär", need: 5, items: ["av:eisbaer", "dn:eislauf"], slot: 1, coins: 50 }, { title: "Pinguin-Party", need: 5, items: ["av:eispingu", "dn:moonwalk"], slot: 1, boost: 1, coins: 50 },
     { title: "Robben-Rutsche", need: 5, items: ["av:eisrobbe", "dn:drehung"], slot: 1, coins: 50 }, { title: "Der Eiskönig", need: 6, items: ["av:eiskoenig", "dn:sieg"], slot: 1, coins: 100 }],
     finale: { title: "Eiskönigs Schatz", need: 1, items: ["fr:eis", "of:polar", "fx:schnee"], slot: 0, boost: 1, coins: 200 } };
-  var DEF_SHOP = [["av:eisbaer", "Eisbär", "avatar"], ["av:eispingu", "Eis-Pinguin", "avatar"], ["av:eisrobbe", "Eis-Robbe", "avatar"], ["av:eiskoenig", "Eiskönig", "avatar"], ["dn:wackler", "Wackler", "dance"], ["dn:huepfer", "Hüpfer", "dance"], ["dn:drehung", "Drehung", "dance"], ["dn:roboter", "Roboter", "dance"], ["dn:moonwalk", "Moonwalk", "dance"], ["dn:sieg", "Epischer Sieg", "dance"], ["dn:eislauf", "Eislauf", "dance"], ["of:polar", "Polarjacke", "outfit"], ["fx:schnee", "Schneefall", "fx"], ["fr:eis", "Eiskristall-Rahmen", "frame"], ["ti:wort", "Wortjäger", "title"], ["ti:streber", "Streber", "title"], ["bg:stars", "Sterne", "bg"], ["av:pkatze", "Pummelkatze", "avatar"], ["av:pregen", "Regenbogenpummel", "avatar"], ["av:pgold", "Goldpummel", "avatar"], ["av:pgalaxie", "Galaxiepummel", "avatar"], ["av:fnwolf", "Wolf", "avatar"], ["av:fnchamp", "Champion-Kristall", "avatar"], ["fr:rainbow", "Regenbogenrahmen", "frame"], ["fr:fire", "Flammenrahmen", "frame"], ["fx:stars", "Sternenregen", "fx"]];
+  var DEF_SHOP = [["av:eisbaer", "Eisbär", "avatar"], ["av:eispingu", "Eis-Pinguin", "avatar"], ["av:eisrobbe", "Eis-Robbe", "avatar"], ["av:eiskoenig", "Eiskönig", "avatar"], ["dn:wackler", "Wackler", "dance"], ["dn:huepfer", "Hüpfer", "dance"], ["dn:drehung", "Drehung", "dance"], ["dn:roboter", "Roboter", "dance"], ["dn:moonwalk", "Moonwalk", "dance"], ["dn:sieg", "Epischer Sieg", "dance"], ["dn:eislauf", "Eislauf", "dance"], ["of:polar", "Polarjacke", "outfit"], ["fx:schnee", "Schneefall", "fx"], ["fr:eis", "Eiskristall-Rahmen", "frame"], ["ti:wort", "Wortjäger", "title"], ["ti:streber", "Streber", "title"], ["bg:stars", "Sterne", "bg"], ["av:pkatze", "Pummelkatze", "avatar"], ["av:pregen", "Regenbogenpummel", "avatar"], ["av:pgold", "Goldpummel", "avatar"], ["av:pgalaxie", "Galaxiepummel", "avatar"], ["av:kitty1", "Kitty Schleife", "avatar"], ["av:kitty2", "Kitty Regenbogen", "avatar"], ["av:kitty3", "Kitty Prinzessin", "avatar"], ["av:kitty4", "Kitty Sternenzauber", "avatar"], ["av:fnwolf", "Wolf", "avatar"], ["av:fnchamp", "Champion-Kristall", "avatar"], ["fr:rainbow", "Regenbogenrahmen", "frame"], ["fr:fire", "Flammenrahmen", "frame"], ["fx:stars", "Sternenregen", "fx"]];
   /* Vorlagen: je Saison 4 Wochen + Finale, 2 bis 3 Highlights (Woche 2, Woche 4, Finale), dazwischen nur Münzen und Booster */
   var SEASON_TPL = {
     eiswelt: DEF_SEASON,
@@ -801,17 +801,28 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
       if (rs) rs.onclick = function () { post("/api/admin/players/" + p.id + "/pathunits", { units: [] }).then(function () { Array.prototype.forEach.call(box.querySelectorAll("#pathpick input"), function (c) { c.checked = false; }); msg("Zurück auf Standard."); sel.textContent = "Standard: Schule = Headlight 2, Business = die in der App gewählten Stufen."; }).catch(function (e) { msg(e.message, 1); }); };
     }).catch(function () { var sel = document.getElementById("pathSel"); if (sel) sel.textContent = ""; });
   }
+  /* Shop-Artikel als Belohnung für Ziele und Pläne (Liste vom Gerät, sonst Standardliste) */
+  function shopOf(r) { var m = (r && r.meta) || {}, own = m.shop && m.shop.length ? m.shop : []; return own.concat(DEF_SHOP.filter(function (d) { return !own.some(function (x) { return x[0] === d[0]; }); })); }
+  function itemLabel(r, id) { var x = shopOf(r).filter(function (y) { return y[0] === id; })[0]; return x ? x[1] : id; }
+  function itemSelect(r, domId) {
+    var shop = shopOf(r), kinds = ["avatar", "dance", "outfit", "kit", "fx", "frame", "title", "bg"];
+    return '<select id="' + domId + '"><option value="">– kein Gegenstand –</option>' + kinds.map(function (k) {
+      var l = shop.filter(function (x) { return x[2] === k; }); if (!l.length) return "";
+      return '<optgroup label="' + KIND_DE[k] + '">' + l.map(function (x) { return '<option value="' + esc(x[0]) + '">' + esc(x[1]) + "</option>"; }).join("") + "</optgroup>";
+    }).join("") + "</select>";
+  }
   function drawGoals(p, r) {
     var el = document.getElementById("goalsCard"); if (!el) return;
     var list = r.goals || [], h = '<h2>Wochenziele</h2>';
     h += list.length ? list.map(function (g) {
       var pc = Math.min(100, Math.round(g.cur * 100 / g.target)), wk = g.week.split("-").reverse().slice(0, 2).join(".");
-      return '<div class="goal"><div class="t"><b>' + (g.done ? "✅ " : "") + esc(g.title) + '</b><div class="small muted">Woche ab ' + wk + (g.current ? " (diese Woche)" : "") + " · " + g.cur + " von " + g.target + (g.kind === "unit" ? " %" : "") + (g.coins ? " · 🪙 " + g.coins + " Bonus" : "") + '</div><div class="mini"><i class="' + (g.done ? "d" : "") + '" style="width:' + pc + '%"></i></div></div><button class="ghost sm" data-gdel="' + g.id + '">Löschen</button></div>';
+      return '<div class="goal"><div class="t"><b>' + (g.done ? "✅ " : "") + esc(g.title) + '</b><div class="small muted">Woche ab ' + wk + (g.current ? " (diese Woche)" : "") + " · " + g.cur + " von " + g.target + (g.kind === "unit" ? " %" : "") + (g.coins ? " · 🪙 " + g.coins + " Bonus" : "") + (g.item ? " · 🎁 " + esc(itemLabel(r, g.item)) : "") + '</div><div class="mini"><i class="' + (g.done ? "d" : "") + '" style="width:' + pc + '%"></i></div></div><button class="ghost sm" data-gdel="' + g.id + '">Löschen</button></div>';
     }).join("") : '<p class="muted small" style="margin:0">Noch keine Ziele. ' + esc(nm()) + ' sieht Ziele in der App auf der Startseite und bekommt die Bonusmünzen automatisch, sobald ein Ziel geschafft ist.</p>';
     h += '<details style="margin-top:12px"><summary style="cursor:pointer;color:var(--acc);font-weight:600">＋ Ziel hinzufügen</summary><div class="form">' +
       '<div><label>Art</label><select id="gk"><option value="minutes">Minuten üben</option><option value="days">Tage üben (mind. 5 Min.)</option><option value="newwords">Wörter wiedererkennen (richtig am Folgetag)</option><option value="unit">Einheit sicher lernen (%)</option></select></div>' +
       '<div><label id="gtl">Ziel (Minuten pro Woche)</label><input id="gt" type="number" min="1" value="60"></div>' +
       '<div class="opcoin"><label>Bonusmünzen</label><input id="gc" type="number" min="0" max="500" value="30"></div>' +
+      '<div class="opcoin"><label>Gegenstand aus dem Shop (zusätzlich)</label>' + itemSelect(r, "gi") + '</div>' +
       '<div><label>Woche</label><select id="gw"><option value="this">Diese Woche</option><option value="next">Nächste Woche</option></select></div></div>' +
       '<div id="gu" hidden style="margin-top:8px"><label class="small muted">Einheiten (alle zusammen zählen)</label><div id="gup"></div></div>' +
       '<div style="margin-top:12px"><button id="gadd">Ziel anlegen</button> <span id="gmsg" class="small err"></span></div></details>';
@@ -824,7 +835,7 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
       if (k.value === "unit" && !document.getElementById("gup").innerHTML) (catCache[p.id] ? Promise.resolve(catCache[p.id]) : getCatalog(p.id)).then(function (c) { document.getElementById("gup").innerHTML = c.length ? unitPicker(c, "gpick") : '<p class="small muted">Noch keine Einheiten bekannt. Sie erscheinen, sobald die App einmal gesendet hat.</p>'; });
     };
     document.getElementById("gadd").onclick = function () {
-      post("/api/admin/players/" + p.id + "/goals", { kind: k.value, target: +document.getElementById("gt").value, coins: +document.getElementById("gc").value, week: document.getElementById("gw").value, scope: picked("gpick") })
+      post("/api/admin/players/" + p.id + "/goals", { kind: k.value, target: +document.getElementById("gt").value, coins: +document.getElementById("gc").value, item: (document.getElementById("gi") || {}).value || "", week: document.getElementById("gw").value, scope: picked("gpick") })
         .then(function () { show(); }).catch(function (e) { document.getElementById("gmsg").textContent = e.message; });
     };
     Array.prototype.forEach.call(el.querySelectorAll("button[data-gdel]"), function (b) { b.onclick = function () { if (confirm("Ziel löschen?")) api("/api/admin/goals/" + b.getAttribute("data-gdel"), { method: "DELETE" }).then(show); }; });
@@ -834,12 +845,13 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
     var el = document.getElementById("plansCard"); if (!el) return;
     var list = r.plans || [], h = "<h2>Lernplan für Klassenarbeiten</h2>";
     h += list.length ? list.map(function (x) {
-      return '<div class="goal"><div class="t"><b>📅 ' + esc(x.title) + '</b><div class="small muted">Arbeit am ' + x.exam.split("-").reverse().join(".") + " · " + (x.daysLeft > 0 ? "noch " + x.daysLeft + " Tage" : x.daysLeft === 0 ? "heute" : "vorbei") + " · " + x.pct + " % sicher (" + x.ok + " von " + x.total + ")" + (x.coins ? " · 🪙 " + x.coins + " Bonus bei 90 %" : "") + '</div><div class="small muted">' + esc(x.unitTitles.join(", ")) + '</div><div class="mini"><i class="' + (x.pct >= 90 ? "d" : "") + '" style="width:' + Math.min(100, x.pct) + '%"></i></div></div><button class="ghost sm" data-pdel="' + x.id + '">Löschen</button></div>';
+      return '<div class="goal"><div class="t"><b>📅 ' + esc(x.title) + '</b><div class="small muted">Arbeit am ' + x.exam.split("-").reverse().join(".") + " · " + (x.daysLeft > 0 ? "noch " + x.daysLeft + " Tage" : x.daysLeft === 0 ? "heute" : "vorbei") + " · " + x.pct + " % sicher (" + x.ok + " von " + x.total + ")" + (x.coins ? " · 🪙 " + x.coins + " Bonus bei 90 %" : "") + (x.item ? " · 🎁 " + esc(itemLabel(r, x.item)) : "") + '</div><div class="small muted">' + esc(x.unitTitles.join(", ")) + '</div><div class="mini"><i class="' + (x.pct >= 90 ? "d" : "") + '" style="width:' + Math.min(100, x.pct) + '%"></i></div></div><button class="ghost sm" data-pdel="' + x.id + '">Löschen</button></div>';
     }).join("") : '<p class="muted small" style="margin:0">Noch kein Lernplan. Mit Datum und Einheiten verteilt die App die Wörter auf die Tage bis zur Arbeit und zeigt ' + esc(nm()) + ', was heute dran ist.</p>';
     h += '<details style="margin-top:12px"><summary style="cursor:pointer;color:var(--acc);font-weight:600">＋ Lernplan anlegen</summary><div class="form">' +
       '<div><label>Bezeichnung</label><input id="pt" maxlength="60" placeholder="z. B. Englischarbeit Unit 4"></div>' +
       '<div><label>Datum der Arbeit</label><input id="pd" type="date"></div>' +
-      '<div class="opcoin"><label>Bonusmünzen bei 90 % sicher</label><input id="pc" type="number" min="0" max="500" value="50"></div></div>' +
+      '<div class="opcoin"><label>Bonusmünzen bei 90 % sicher</label><input id="pc" type="number" min="0" max="500" value="50"></div>' +
+      '<div class="opcoin"><label>Gegenstand aus dem Shop (zusätzlich)</label>' + itemSelect(r, "pi") + '</div></div>' +
       '<div style="margin-top:8px"><label class="small muted">Einheiten für die Arbeit</label><div id="ppp"><p class="small muted">Lade …</p></div></div>' +
       '<div style="margin-top:12px"><button id="padd">Lernplan anlegen</button> <span id="pmsg" class="small err"></span></div></details>';
     el.innerHTML = h;
@@ -848,7 +860,7 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
       if (det.open && !document.getElementById("ppick")) (catCache[p.id] ? Promise.resolve(catCache[p.id]) : getCatalog(p.id)).then(function (c) { document.getElementById("ppp").innerHTML = c.length ? unitPicker(c, "ppick") : '<p class="small muted">Noch keine Einheiten bekannt. Sie erscheinen, sobald die App einmal gesendet hat.</p>'; });
     });
     document.getElementById("padd").onclick = function () {
-      post("/api/admin/players/" + p.id + "/plans", { title: document.getElementById("pt").value, exam: document.getElementById("pd").value, coins: +document.getElementById("pc").value, units: picked("ppick") })
+      post("/api/admin/players/" + p.id + "/plans", { title: document.getElementById("pt").value, exam: document.getElementById("pd").value, coins: +document.getElementById("pc").value, item: (document.getElementById("pi") || {}).value || "", units: picked("ppick") })
         .then(function () { show(); }).catch(function (e) { document.getElementById("pmsg").textContent = e.message; });
     };
     Array.prototype.forEach.call(el.querySelectorAll("button[data-pdel]"), function (b) { b.onclick = function () { if (confirm("Lernplan löschen?")) api("/api/admin/plans/" + b.getAttribute("data-pdel"), { method: "DELETE" }).then(show); }; });
