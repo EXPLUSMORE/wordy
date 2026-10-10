@@ -1311,6 +1311,9 @@
       [["👂", "Hören", "listen", !audioAvailable()], ["⌨️", "Tippen", "type"], ["🧩", "Lücken", "gap"], ["🔗", "Zuordnen", "match"]].map(function (f) {
         return f[3] ? "" : '<button class="chip" data-act="start" data-unit="' + esc(u.id) + '" data-focus="' + f[2] + '" data-min="5">' + f[0] + ' ' + f[1] + '</button>';
       }).join("") + '</div>' +
+      '<div class="eyebrow" style="margin-top:14px">Oder als Spiel</div><div class="row wrap" style="margin-top:8px;gap:8px">' +
+      (global.ARENA ? global.ARENA.MODES.filter(function (m) { return m.id !== "hunt"; }).map(function (m) { return '<button class="chip" data-act="unitgame" data-unit="' + esc(u.id) + '" data-arena="' + esc(m.id) + '"' + (u.words.length < 5 ? " disabled" : "") + '>' + esc(m.icon) + ' ' + esc(m.name) + '</button>'; }).join("") : "") +
+      (global.VTG ? global.VTG.GAMES.map(function (m) { return '<button class="chip" data-act="unitgame" data-unit="' + esc(u.id) + '" data-game="' + esc(m.id) + '"' + (u.words.length < 5 ? " disabled" : "") + '>' + esc(m.icon) + ' ' + esc(m.name) + '</button>'; }).join("") : "") + '</div>' +
       (audioAvailable() ? '<p class="small muted" style="margin:10px 0 0">Tippe auf 🔊 neben einem Wort, um nur dieses zu hören.</p>' : '') + '</section>' +
       '<section class="card"><div class="eyebrow">Wortliste</div>' + rows + '</section></div>';
   }
@@ -2822,6 +2825,12 @@
       return;
     }
     if (a === "mitlesen") { var ml = mitlesenList(act.getAttribute("data-unit"), act.getAttribute("data-sec")); openMitlesen(ml.list, ml.title); return; }
+    if (a === "unitgame") {
+      var ug = act.getAttribute("data-unit"), uu = S.units().filter(function (x) { return x.id === ug; })[0]; if (!uu) return;
+      if (act.getAttribute("data-arena")) { var uw = uu.words.map(function (w, i) { return S.byId(uu.id + "#" + i); }).filter(Boolean); if (global.ARENA) global.ARENA.start(act.getAttribute("data-arena"), { words: uw }); }
+      else if (global.VTG) global.VTG.start(act.getAttribute("data-game"), { unit: uu.id });
+      return;
+    }
     if (a === "wgame") { if (global.VTG) global.VTG.start(act.getAttribute("data-id")); return; }
     if (a === "arena") { if (global.ARENA) global.ARENA.start(act.getAttribute("data-id")); return; }
     if (a === "start") {

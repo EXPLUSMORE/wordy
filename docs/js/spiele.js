@@ -33,6 +33,7 @@
   /* Wörter für ein Spiel: nur einzelne Wörter aus Buchstaben, Fehlerkartei und Fälliges zuerst */
   function pickWords(n, min, max, unit, spaces) {
     var p = S.pools(), order = S.shuffle(p.box.slice()).concat(S.shuffle(p.due.slice()), S.shuffle(p.learning.slice()), S.shuffle(p.fresh.slice()), S.shuffle(p.all.slice()));
+    if (unit) order = S.shuffle(S.words().filter(function (w) { return w.unit === unit; }));   // gewählte Einheit: alle ihre Wörter, auch außerhalb des aktiven Lernbereichs
     var seenEn = {}, seenDe = {}, out = [];
     order.forEach(function (w) {
       if (unit && w.unit !== unit) return;
@@ -328,7 +329,7 @@
 
   /* ================= Blast (Wörter-Shooter) ================= */
   function blastStart() {
-    var deck = pickWords(60, 2, 14);
+    var deck = pickWords(60, 2, 14, G.opts && G.opts.unit, true);
     G.words = deck; G.res = [];
     el.innerHTML = top("Blast") +
       '<div class="bl-hud"><span id="blLives"></span><span id="blLevel"></span><span id="blCombo"></span></div>' +

@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.73.0 – 2026-10-10
+- Einheit (Lernen › Lernbereich › Einheit): unter „Wie möchtest du üben?“ gibt es neu „Oder als Spiel“ mit Match-Rausch, Blitzrunde, Letztes Herz, Wort-Detektiv, Freezy, Blast, Letters und Xing, jeweils mit den Wörtern genau dieser Einheit (auch wenn sie nicht im aktiven Lernbereich liegt). Ab 5 Wörtern in der Einheit.
+
 ## 2.72.1 – 2026-10-10
 - Letters: Wörter überschneiden sich jetzt gezielt. Beim Platzieren wird die Stelle mit den meisten gemeinsamen Buchstaben bevorzugt (kein Wort steckt komplett in einem anderen). Im Test hatte jedes Rätsel Kreuzungen, im Schnitt etwa 4 gemeinsame Felder, immer 7 Wörter und alle 8 Richtungen.
 
