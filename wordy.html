@@ -1122,7 +1122,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.76.1";window.WORDY_BUILD="ca64928fb6";</script>
+<script>window.WORDY_VERSION="2.76.1";window.WORDY_BUILD="1970e81034";</script>
 </head>
 <body>
 <div id="app">
@@ -8343,7 +8343,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var sel = S.groupsOf();
     var html = '';
     var guided = S.steered();   // gesteuert: das Kind sieht nur die Einheiten, die für es vorgesehen sind (ohne Hinweis darauf)
-    if (!guided) html += '<section class="card"><div class="eyebrow">Was lernen?</div><div style="margin-top:8px">' + trackSwitch() + '</div></section>';
+    html += '<section class="card"><div class="eyebrow">Was lernen?</div><div style="margin-top:8px">' + trackSwitch() + '</div></section>';
     if (!guided) html += '<section class="card">' +
       '<div class="eyebrow">' + (biz ? "Stufe" : "Schuljahr") + '</div>' +
       '<div class="row wrap" style="margin-top:8px">' +
@@ -9100,9 +9100,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       return '<details class="fold" data-f="' + key + '"' + (openFolds[key] ? " open" : "") + '><summary><span class="chev">▸</span><span style="flex:1 1 auto;min-width:0"><b>' + icon + " " + title + '</b>' +
         (sub ? '<span class="small muted" style="display:block">' + sub + '</span>' : "") + '</span></summary><div class="fbody">' + inner + '</div></details>';
     }
-    html += fold("spieler", "👤", "Spieler &amp; Lernbereich", "Wer lernt, Schule oder Business", unCard(playersCard()) +
-      '<div class="eyebrow" style="margin-top:16px">Lernbereich</div>' + trackSwitch() +
-      '<p class="small muted" style="margin:12px 0 0">Schule und Business haben getrennte Wortschätze, Sätze und Statistiken. Der Fortschritt bleibt in beiden Bereichen erhalten.</p>');
+    html += fold("spieler", "👤", "Spieler", "Wer lernt", unCard(playersCard()));
     html += fold("lernen", "🎓", "Lernen", "Tagesziel, neue Wörter, Herzen",
       '<label class="row" style="margin-top:4px"><span style="flex:1 1 auto">Tagesziel</span>' +
       '<select id="setGoal" style="width:auto">' + [5, 10, 15, 20, 30].map(function (m) {

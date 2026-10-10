@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.76.2 – 2026-10-10
+- Lernen › Was lernen?: Die Umschaltung 🎒 Schule / 💼 Business steht jetzt immer oben, auch wenn die Einheiten vom Betreiber vorgegeben sind. Im Profil entfällt dafür der Bereich „Lernbereich“ (Abschnitt heißt nur noch „Spieler“).
+
 ## 2.76.1 – 2026-10-10
 - Lernen › Was lernen?: „✏️ Grammatik“ ist jetzt eine Kachel links neben „🔀 Unregelmäßige Verben“ direkt unter den Schuljahr-Karten (nicht mehr im oberen Reiter). Die Grammatik-Seite hat oben „← Was lernen?“. Die Verben-Kachel öffnet die Verbenliste (dort „Verben üben“).
 
