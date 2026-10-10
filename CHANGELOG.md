@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.79.1 – 2026-10-10
+- Shop: Kitty Sternenzauber (legendär) kostet jetzt 2.500 🪙 statt 500.
+
 ## 2.79.0 – 2026-10-10
 - Dashboard: Die vier **Kitty-Figuren** stehen jetzt auch in der Auswahl für den Wochenpass (Standardliste; Geräte mit neuer App liefern sie ohnehin mit).
 - Dashboard: Bei **Wochenzielen** und **Lernplänen** kann der Betreiber zusätzlich zu Münzen (oder statt Münzen) einen **Gegenstand aus dem Shop** als Belohnung festlegen (Figur, Tanz, Outfit, Rahmen …). Das Kind bekommt ihn mit Sticker automatisch beim Erreichen, die App zeigt „🎁 …“ bei der Belohnung und in der Meldung. Nur Betreiber (Elternkonten ignorieren das Feld wie die Bonusmünzen). Neue Spalten `goals.item`, `plans.item`, Sync-Felder `item`. **Server-Update nötig.**

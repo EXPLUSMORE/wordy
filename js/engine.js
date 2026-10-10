@@ -72,7 +72,7 @@
     { id: "av:kitty1", kind: "avatar", label: "Kitty Schleife",      cost: 50,  val: "svg:kitty1", rar: "common" },
     { id: "av:kitty2", kind: "avatar", label: "Kitty Regenbogen",    cost: 150, val: "svg:kitty2", rar: "rare" },
     { id: "av:kitty3", kind: "avatar", label: "Kitty Prinzessin",    cost: 250, val: "svg:kitty3", rar: "epic" },
-    { id: "av:kitty4", kind: "avatar", label: "Kitty Sternenzauber", cost: 500, val: "svg:kitty4", rar: "legend" },
+    { id: "av:kitty4", kind: "avatar", label: "Kitty Sternenzauber", cost: 2500, val: "svg:kitty4", rar: "legend" },
 
     /* Fortnite-Sammlung (eigene Zeichnungen): Tiere ab Gold II, Rang-Kristalle ab ihrem Rang, Unreal-Stücke erst ab Unreal */
     { id: "av:fnhuhn",     kind: "avatar", set: "fn", label: "Huhn",           cost: 120,  val: "svg:fnhuhn",     rank: "Gold II" },
