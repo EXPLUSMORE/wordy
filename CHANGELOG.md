@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.68.0 – 2026-10-10
+- Mitlesen: Kopfbereich (Titel, Teil, Wortkarte, Balken) bleibt fest, nur die Wortliste darunter scrollt. Neuer Tempo-Regler 🐢 bis 🐇 (5 Stufen, Standard Mitte, wird gemerkt; `settings.mlSpeed`).
+
 ## 2.67.2 – 2026-10-10
 - Mitlesen: Auf der Karte „Jetzt du“ lagen Knopf, Balken und Liste übereinander und die Texte waren dunkel auf dunkel. Eigene helle Farben, feste Höhe der Wortkarte; Pause/Vor/Zurück sind auf den Übergangs- und Endkarten ausgeblendet.
 

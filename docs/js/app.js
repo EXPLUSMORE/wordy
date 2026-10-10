@@ -1222,17 +1222,17 @@
   function openMitlesen(list, title) {
     if (!list.length) return toast("Dafür gibt es noch keine Wörter. Übe erst ein paar neue.");
     stopReading();
-    var pace = readPace(), tok = 0, phase = 1, idx = 0, paused = false, closed = false, ov = document.createElement("div");
+    var SP = [null, { rate: .5, gap: 2800 }, { rate: .6, gap: 2000 }, { rate: .7, gap: 1400 }, { rate: .85, gap: 900 }, { rate: 1, gap: 600 }], sp = Math.min(5, Math.max(1, +S.state.settings.mlSpeed || 3)), pace = SP[sp], tok = 0, phase = 1, idx = 0, paused = false, closed = false, ov = document.createElement("div");
     ov.className = "mlov";
     ov.innerHTML = '<div class="mlh"><b id="mlT"></b><button class="btn ghost" id="mlX" aria-label="Schließen">✕</button></div><div class="mlp" id="mlP"></div><div class="mlc" id="mlC"></div><div class="mlbar"><i id="mlB"></i></div>' +
-      '<div class="mll" id="mlL"></div><div class="mlf"><button class="btn ghost" id="mlPrev">⏮</button><button class="btn" id="mlPause">⏸ Pause</button><button class="btn ghost" id="mlNext">⏭</button></div>';
+      '<div class="mll" id="mlL"></div><div class="mlsp"><span>🐢</span><input type="range" id="mlS" min="1" max="5" step="1" value="' + sp + '" aria-label="Tempo"><span>🐇</span></div><div class="mlf"><button class="btn ghost" id="mlPrev">⏮</button><button class="btn" id="mlPause">⏸ Pause</button><button class="btn ghost" id="mlNext">⏭</button></div>';
     document.body.appendChild(ov); document.body.style.overflow = "hidden";
     var $c = function (id) { return ov.querySelector("#" + id); };
     $c("mlL").innerHTML = list.map(function (w, i) { return '<div class="mlw" id="mw' + i + '"><span class="en">' + esc(w.en) + '</span><span class="de">' + esc(w.de) + '</span></div>'; }).join("");
     function close() { closed = true; tok++; try { window.speechSynthesis.cancel(); } catch (e) {} ov.remove(); document.body.style.overflow = ""; }
     function bar(ms) { var b = $c("mlB"); b.style.transition = "none"; b.style.width = "0"; if (ms) { void b.offsetWidth; b.style.transition = "width " + ms + "ms linear"; b.style.width = "100%"; } }
     function say(w, cb, t) { var done = function () { if (t === tok && !closed) cb(); }; if (!speak(w.en, pace.rate, "en", false, done)) setTimeout(done, 1200); }
-    function mark() { Array.prototype.forEach.call(ov.querySelectorAll(".mlw.on"), function (e) { e.classList.remove("on"); }); var e = $c("mw" + idx); if (e) { e.classList.add("on"); e.scrollIntoView({ block: "center", behavior: "smooth" }); } }
+    function mark() { Array.prototype.forEach.call(ov.querySelectorAll(".mlw.on"), function (e) { e.classList.remove("on"); }); var e = $c("mw" + idx); if (e) { e.classList.add("on"); var L = $c("mlL"); L.scrollTo({ top: e.offsetTop - (L.clientHeight - e.offsetHeight) / 2, behavior: "smooth" }); } }
     function show(w, sub) { $c("mlC").innerHTML = '<div class="mlen">' + esc(w.en) + '</div><div class="mlde">' + esc(w.de) + '</div>' + (sub ? '<div class="mlyou">' + sub + '</div>' : ""); }
     function finish() {
       tok++; bar(0); $c("mlP").textContent = "Geschafft";
@@ -1263,6 +1263,7 @@
         }, t);
       }
     }
+    $c("mlS").oninput = function () { sp = +this.value; pace = SP[sp]; S.state.settings.mlSpeed = sp; try { S.save && S.save(); } catch (e) {} };
     $c("mlT").textContent = title;
     $c("mlX").onclick = close;
     $c("mlPause").onclick = function () { paused = !paused; this.textContent = paused ? "▶ Weiter" : "⏸ Pause"; if (paused) { tok++; try { window.speechSynthesis.cancel(); } catch (e) {} } else step(); };
