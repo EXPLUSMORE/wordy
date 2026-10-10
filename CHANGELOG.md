@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.75.2 – 2026-10-10
+- Lernen öffnet jetzt mit „Was lernen?“ (vorher Pfad).
+
 ## 2.75.1 – 2026-10-10
 - Lernen: „Lernbereich“ heißt jetzt **„Was lernen?“** und steht ganz links als erster Reiter (danach Pfad, Üben, Grammatik, Fortschritt). Hinweistexte angepasst.
 

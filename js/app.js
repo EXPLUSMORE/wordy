@@ -1508,7 +1508,7 @@
     { k: "fn", n: "Fortnite" }, { k: "bg", n: "Hintergründe" }, { k: "fx", n: "Effekte" }, { k: "dance", n: "Tänze 💃" }, { k: "outfit", n: "Outfits 👕" }, { k: "kit", n: "Trikots ⚽" }, { k: "sets", n: "Sets ⭐" }, { k: "snd", n: "Töne" }, { k: "theme", n: "Farben" }
   ];
   var KIND_NAME = { sticker: "Sticker", avatar: "Figur", frame: "Rahmen", title: "Titel", bg: "Hintergrund", fx: "Effekt", dance: "Tanz", outfit: "Outfit", kit: "Trikot", snd: "Ton", theme: "Farbwelt" };
-  var shopTab = "avatar", lernSeg = "pfad", spielSeg = "challenge", beuteSeg = "pass";
+  var shopTab = "avatar", lernSeg = "units", spielSeg = "challenge", beuteSeg = "pass";
   var TABMAP = { ueben: "lernen", stats: "lernen", shop: "beute", showroom: "beute" };
   var THEME_DOT = { paper: "#1E6273", mint: "#2E7357", plum: "#6A3D70", amber: "#8A5A1B" };
   function shopIcon(it) {
