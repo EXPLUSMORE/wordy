@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.69.4 – 2026-10-10
+- Mitlesen: Vorlesen bleibt nicht mehr hängen. Die Sprachausgabe-Äußerung wird festgehalten (Chrome/Android feuerte „Ende“ sonst manchmal nicht) und eine Notbremse geht nach einigen Sekunden zum nächsten Wort weiter.
+
 ## 2.69.3 – 2026-10-10
 - Mitlesen: Tempo-Regler und Tasten (Zurück, Pause, Weiter) stehen jetzt direkt unter der Wortkarte und über der Liste. Sie waren auf manchen Handys unter der Browserleiste verdeckt. Die Liste füllt den Rest.
 

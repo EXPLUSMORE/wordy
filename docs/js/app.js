@@ -123,6 +123,7 @@
       .replace(/([.!?]),/g, "$1")
       .replace(/\s+/g, " ").trim();
   }
+  var keepUtt = null;
   function speak(text, rate, lang, forceCold, onEnd) {
     if (!S.state.settings.audio || !window.speechSynthesis) return false;
     try {
@@ -137,7 +138,7 @@
       u.lang = (vo && vo.lang) || (de ? "de-DE" : "en-GB");
       u.rate = rate || (de ? tune.rate : 0.92); if (de) u.pitch = tune.pitch;
       if (onEnd) { u.onend = onEnd; u.onerror = onEnd; }
-      lastSpoke = now;
+      lastSpoke = now; keepUtt = u;   // Referenz halten: Chrome/Android feuert onend sonst nicht immer
       var lead = speechLead();
       if (busy) setTimeout(function () { synth.speak(u); }, 150);
       else if (cold && lead > 0) primeSpeech(function () { synth.speak(u); }, lead);
@@ -1231,7 +1232,7 @@
     $c("mlL").innerHTML = list.map(function (w, i) { return '<div class="mlw" id="mw' + i + '"><span class="en">' + esc(w.en) + '</span><span class="de">' + esc(w.de) + '</span></div>'; }).join("");
     function close() { closed = true; tok++; try { window.speechSynthesis.cancel(); } catch (e) {} ov.remove(); document.body.style.overflow = ""; }
     function bar(ms) { var b = $c("mlB"); b.style.transition = "none"; b.style.width = "0"; if (ms) { void b.offsetWidth; b.style.transition = "width " + ms + "ms linear"; b.style.width = "100%"; } }
-    function say(w, cb, t) { var done = function () { if (t === tok && !closed) cb(); }; if (!speak(w.en, pace.rate, "en", false, done)) setTimeout(done, 1200); }
+    function say(w, cb, t) { var fin = false, done = function () { if (fin) return; fin = true; if (t === tok && !closed) cb(); }; if (!speak(w.en, pace.rate, "en", false, done)) setTimeout(done, 1200); else setTimeout(done, 6000 + w.en.length * 150); }   // Notbremse: bleibt das Ende-Signal der Sprachausgabe aus, geht es trotzdem weiter
     function mark() { Array.prototype.forEach.call(ov.querySelectorAll(".mlw.on"), function (e) { e.classList.remove("on"); }); var e = $c("mw" + idx); if (e) { e.classList.add("on"); var L = $c("mlL"); L.scrollTo({ top: e.offsetTop - (L.clientHeight - e.offsetHeight) / 2, behavior: "smooth" }); } }
     function show(w, sub) { $c("mlC").innerHTML = '<div class="mlen">' + esc(w.en) + '</div><div class="mlde">' + esc(w.de) + '</div>' + (sub ? '<div class="mlyou">' + sub + '</div>' : ""); }
     function finish() {
