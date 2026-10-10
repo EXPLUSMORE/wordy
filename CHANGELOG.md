@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.69.2 – 2026-10-10
+- Mitlesen: Alles passt auf eine Seite, ohne seitliches Überlaufen. Lange deutsche Wörter und Übersetzungen (z. B. „der Cousin / die Cousine“) brechen in Karte und Liste um, Schrift und Kartenhöhe passen sich der Bildschirmgröße an (geprüft bei 320, 393 und 444 px Breite).
+
 ## 2.69.1 – 2026-10-10
 - Zurückgenommen: die Fenstergrößen-Änderungen aus 2.68.1 (Zoom-Sperre, Vollbild-Höhe) und 2.69.0 (breitere App, zwei Spalten, Querformat). Index und App-Code stehen wieder auf dem Stand von 2.68.0 (fester Kopf und Tempo-Regler beim Mitlesen bleiben).
 
