@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.76.1 – 2026-10-10
+- Lernen › Was lernen?: „✏️ Grammatik“ ist jetzt eine Kachel links neben „🔀 Unregelmäßige Verben“ direkt unter den Schuljahr-Karten (nicht mehr im oberen Reiter). Die Grammatik-Seite hat oben „← Was lernen?“. Die Verben-Kachel öffnet die Verbenliste (dort „Verben üben“).
+
 ## 2.76.0 – 2026-10-10
 - Lernpfad: neue **Grammatik-Station** ✏️. Je Abschnitt gibt es nach den Wort- und Verben-Stationen eine Grammatik-Lektion zur passenden Einheit, direkt vor dem Boss (Simple Past in Unit 1b, Fragen und Verneinung in Unit 1c). Sie wird nicht automatisch übersprungen; Sterne wie bei den anderen Stationen (3 ab 85 %, 2 ab 60 %). Nach der Lektion geht es mit „Weiter auf dem Pfad“ zurück. Wer den Boss schon geschafft hat, behält seinen Fortschritt: die Station gilt dann als erledigt. Themen bekommen dafür das Feld `unit` in `data/grammatik.js`. Keine Server-Änderung nötig.
 

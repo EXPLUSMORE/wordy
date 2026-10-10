@@ -1122,7 +1122,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.76.0";window.WORDY_BUILD="9241968a48";</script>
+<script>window.WORDY_VERSION="2.76.1";window.WORDY_BUILD="ca64928fb6";</script>
 </head>
 <body>
 <div id="app">
@@ -8238,12 +8238,12 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var seg = detailUnit ? "units" : lernSeg;
     var pfadOn = S.state.settings.pathOn !== false && S.pathStations().length > 0;
     if (seg === "pfad" && !pfadOn) seg = "ueben";
-    var top = segBar("lernen", seg, [["units", "📚 Was lernen?"]].concat(pfadOn ? [["pfad", "🗺️ Pfad"]] : []).concat([["ueben", "🎮 Üben"]]).concat(global.VTGR ? [["gram", "✏️ Grammatik"]] : []).concat([["stats", "📈 Fortschritt"]]));
+    var top = segBar("lernen", seg, [["units", "📚 Was lernen?"]].concat(pfadOn ? [["pfad", "🗺️ Pfad"]] : []).concat([["ueben", "🎮 Üben"]]).concat([["stats", "📈 Fortschritt"]]));
     if (detailUnit === "__verbs") return viewVerbList();
     if (detailUnit) return viewUnitDetail(detailUnit);
     if (seg === "stats") viewStats();
     else if (seg === "pfad") view.innerHTML = '<div class="stack">' + pathCard() + '</div>';
-    else if (seg === "gram") view.innerHTML = '<div class="stack">' + gramHtml() + '</div>';
+    else if (seg === "gram") view.innerHTML = '<div class="stack"><button class="chip" data-act="seg" data-g="lernen" data-v="units" style="align-self:flex-start">← Was lernen?</button>' + gramHtml() + '</div>';
     else {
       view.innerHTML = '<div class="stack">' + (seg === "units" ? unitsHtml() : modiHtml("lern")) + '</div>';
       $$("details.grp").forEach(function (d) { d.addEventListener("toggle", function () { openGroups[d.getAttribute("data-k")] = d.open; }); });
@@ -8356,9 +8356,9 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
 
     if (!biz) {
       var vs0 = S.verbStats();
-      html += '<details class="grp" data-k="__verbs"' + (openGroups.__verbs ? " open" : "") + '><summary><span class="chev">▸</span><span style="flex:1 1 auto;min-width:0"><b>🔀 Unregelmäßige Verben</b>' +
-        '<span class="small muted" style="display:block">' + vs0.seen + ' von ' + vs0.total + ' geübt · ' + vs0.mastered + ' sitzen</span></span></summary>' +
-        verbCard().replace(/^<section class="card"[^>]*>(<div class="row"><div style="flex:1 1 auto"><div class="eyebrow">[^<]*<\/div>)/, '<div class="row"><div style="flex:1 1 auto">').replace(/<\/section>$/, "") + '</details>';
+      html += '<div class="row" style="gap:10px;align-items:stretch">' +
+        (global.VTGR ? '<button class="card" data-act="seg" data-g="lernen" data-v="gram" style="display:block;flex:1 1 0;min-width:0;text-align:left;cursor:pointer"><b>✏️ Grammatik</b><span class="small muted" style="display:block">Themen aus Headlight 2</span></button>' : '') +
+        '<button class="card" data-act="verblist" style="display:block;flex:1 1 0;min-width:0;text-align:left;cursor:pointer"><b>🔀 Unregelmäßige Verben</b><span class="small muted" style="display:block">' + vs0.seen + ' von ' + vs0.total + ' geübt · ' + vs0.mastered + ' sitzen</span></button></div>';
     }
     var byGroup = {}, order = [], guidedIds = {};
     if (guided) S.pathUnitList().forEach(function (x) { guidedIds[x.id] = 1; });
