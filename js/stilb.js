@@ -156,6 +156,24 @@
   }
   var FACETS = '<path d="M70 70l22-22M128 44l24 24M60 112l18-10M160 112l-16-12" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".65"/>';
 
+
+  /* ---- Kitty-Zubehör (Schleife, Haarreifen, bunte Haare, Glitzer) ---- */
+  function bow(x, y, c, k, rot) {
+    k = k || 1;
+    return '<g transform="translate(' + x + ' ' + y + ') rotate(' + (rot || 0) + ') scale(' + k + ')" stroke="' + L + '" stroke-width="4" stroke-linejoin="round"><path d="M0 0L-30-18Q-36 0-30 18z" fill="' + c + '"/><path d="M0 0L30-18Q36 0 30 18z" fill="' + c + '"/><circle r="9" fill="' + shade(c, 1.12) + '"/><path d="M-22-8l-4 10M22-8l4 10" stroke="#fff" stroke-width="3" opacity=".55" fill="none"/></g>';
+  }
+  function band(c, gem) {
+    return '<path d="M46 86Q110-24 174 86" fill="none" stroke="' + L + '" stroke-width="15" stroke-linecap="round"/><path d="M46 86Q110-24 174 86" fill="none" stroke="' + c + '" stroke-width="8" stroke-linecap="round"/><path d="M62 56Q90 22 124 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".6"/>' + (gem || "");
+  }
+  function fringe(cols) {   // bunter Pony und Strähnen
+    var s = "", n = cols.length, i; for (i = 0; i < n; i++) { var x = 66 + i * (88 / (n - 1)); s += '<path d="M' + (x - 11) + ' 40Q' + (x - 14) + ' 70 ' + x + ' 78Q' + (x + 14) + ' 70 ' + (x + 11) + ' 40z" fill="' + cols[i] + '" stroke="' + L + '" stroke-width="3.5" stroke-linejoin="round"/>'; }
+    return s;
+  }
+  function pigtail(cx, cols, dir) {   // Zöpfe seitlich hinter dem Kopf
+    return '<g stroke="' + L + '" stroke-width="4.5" stroke-linejoin="round"><ellipse cx="' + cx + '" cy="112" rx="17" ry="38" fill="' + cols[0] + '" transform="rotate(' + (dir * 14) + ' ' + cx + ' 112)"/><ellipse cx="' + (cx + dir * 4) + '" cy="136" rx="13" ry="28" fill="' + cols[1] + '" transform="rotate(' + (dir * 22) + ' ' + cx + ' 136)"/></g>';
+  }
+  var RB = ["#ff6b8f", "#ffb347", "#ffe066", "#7be08a", "#59c8ff", "#b58cff"];
+
   /* ---- Katalog: Avatar-Wert -> [Name, Spezifikation, Standardjacke] ---- */
   var D = {
     "🦊": ["fuchs", { fur: ["#ffc27a", "#f2761a", "#b8480a"], belly: "#ffffff", ears: "point", earIn: "#3b2a2a", nose: L, back: tail("#f2761a", "#fff"), hand: "#3b2a2a" }, ["#35c6ff", "#1a7fd0"]],
@@ -204,6 +222,21 @@
     "svg:fnkristall": ["kristalllama", { fur: ["#ffffff", "#9fefff", "#7fa8ff", "#b58cff"], belly: "#f2fcff", ears: "llama", face: "small", nose: "#ff8fb8", cheek: false, under: FACETS,
       hfront: star(50, 40, 9, "#fff") + star(172, 38, 7, "#fff"), back: '<circle cx="176" cy="238" r="18" fill="#9fefff" stroke="' + L + '" stroke-width="5"/>', badge: "#fff" }, ["#b58cff", "#6a3fd0"]],
     "svg:fnelite": ["elite", { fur: ["#b8efff", "#5b8cff", "#7b4dff"], belly: "#d0ecff", ears: "", face: "gem", cheek: false, eyes: "big", sclera: "#fff", under: FACETS, hback: crystals(["#7be0ff", "#c9a7ff"]), badge: "#7be0ff" }, ["#7b4dff", "#3a1fb0"]],
+    "svg:kitty1": ["kitty", { fur: ["#ffffff", "#fbf7fb", "#e8dfe8"], belly: "#ffffff", ears: "point", earIn: "#ffd0e0", face: "cat", cheek: true, hand: "#ffffff", pants: "#ff7fa6",
+      hfront: bow(150, 50, "#ff4d6d", 1, 14) }, ["#ff8fb8", "#d0407a"]],
+    "svg:kitty2": ["kittyregenbogen", { fur: ["#fff2f8", "#ffd6e8", "#f5a6c8"], belly: "#fff9fc", ears: "point", earIn: "#ff9cc6", face: "cat", cheek: true, hand: "#fff2f8", pants: "#9a7bff", shoe: "#ffe066",
+      hback: pigtail(44, ["#ff9ec9", "#b58cff"], -1) + pigtail(176, ["#59c8ff", "#7be08a"], 1),
+      hfront: band("#b58cff", star(110, 20, 9, "#ffe066")) + fringe(["#ff6b8f", "#ffb347", "#ffe066", "#7be08a", "#59c8ff"]) + bow(156, 56, "#ffe066", .9, 16) }, ["#b58cff", "#6a3fd0"]],
+    "svg:kitty3": ["kittyprinzessin", { fur: ["#ffffff", "#f6eefc", "#d9c8f0"], belly: "#ffffff", ears: "point", earIn: "#e4c4ff", face: "cat", cheek: true, hand: "#ffffff", pants: "#ff6fa8", shoe: "#ffd0e8", badge: "#ff8fd0",
+      defs: '<linearGradient id="$Ihb" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ff6b8f"/><stop offset=".25" stop-color="#ffb347"/><stop offset=".5" stop-color="#ffe066"/><stop offset=".75" stop-color="#59c8ff"/><stop offset="1" stop-color="#b58cff"/></linearGradient>',
+      hback: pigtail(40, ["#ff8fd0", "#ffb347"], -1) + pigtail(180, ["#59c8ff", "#b58cff"], 1) + '<path d="M54 100Q44 160 70 200Q64 150 74 112z" fill="#ff8fd0" stroke="' + L + '" stroke-width="3.5"/><path d="M166 100Q176 160 150 200Q156 150 146 112z" fill="#59c8ff" stroke="' + L + '" stroke-width="3.5"/>',
+      hfront: band("url(#$Ihb)", '<path d="M110 8l9 14l-9 12l-9-12z" fill="#7be0ff" stroke="' + L + '" stroke-width="3.5" stroke-linejoin="round"/>') + fringe(RB) + bow(154, 54, "#ff4d9d", 1.05, 14) + star(48, 46, 8, "#ffe066") + star(176, 118, 7, "#fff") + star(44, 124, 6, "#ffe066"),
+      back: '<g stroke="' + L + '" stroke-width="4" stroke-linejoin="round"><path d="M62 180q-52-30-48 22q6 26 50 22z" fill="#ffe0f0" opacity=".9"/><path d="M158 180q52-30 48 22q-6 26-50 22z" fill="#d8ecff" opacity=".9"/></g>' }, ["#ff6fa8", "#c02a7a"]],
+    "svg:kitty4": ["kittysterne", { fur: ["#ffffff", "#fff8e0", "#ffe6a0"], belly: "#ffffff", ears: "point", earIn: "#ffd0f0", face: "cat", cheek: true, hand: "#ffffff", pants: "#6a4be0", shoe: "#ffd34d", badge: "#7be0ff",
+      defs: '<linearGradient id="$Ihb" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffe066"/><stop offset="1" stop-color="#ffb61e"/></linearGradient>',
+      hback: '<g stroke="' + L + '" stroke-width="4.5" stroke-linejoin="round"><path d="M56 70Q16 110 40 190Q50 150 70 130z" fill="#ff8fd0"/><path d="M164 70Q204 110 180 190Q170 150 150 130z" fill="#59c8ff"/><path d="M46 100Q22 150 42 210Q54 165 62 135z" fill="#b58cff"/><path d="M174 100Q198 150 178 210Q166 165 158 135z" fill="#7be08a"/></g>',
+      hfront: band("url(#$Ihb)", star(110, 14, 15, "#fff") + '<g stroke="' + L + '" stroke-width="3.5"><circle cx="74" cy="40" r="7" fill="#ff6bb0"/><circle cx="146" cy="40" r="7" fill="#59c8ff"/></g>') + fringe(RB) + bow(156, 58, "#ff4d9d", 1.1, 16) + star(40, 40, 10, "#ffe066") + star(182, 34, 9, "#7be0ff") + star(34, 128, 8, "#fff") + star(186, 124, 7, "#ffe066"),
+      back: wings("#fff3b8", "#ffe066") + '<g fill="#fff" opacity=".9"><circle cx="30" cy="176" r="3"/><circle cx="196" cy="168" r="3"/></g>' }, ["#ffd34d", "#e08a0a"]],
     "svg:fnchamp": ["champ", { fur: ["#ffffff", "#cfe9ff", "#b9a6ff"], belly: "#ffffff", ears: "", face: "gem", cheek: false, eyes: "big", sclera: "#fff", under: FACETS, hback: crystals(["#ffffff", "#ffe58a"], true), hfront: star(60, 42, 8, "#ffd24a") + star(160, 42, 8, "#ffd24a"), badge: "#b9a6ff" }, ["#ffd24a", "#c8780a"]],
     "svg:fnunreal": ["unreal", { fur: ["#ff8fd0", "#8f7dff", "#37c6e8", "#ffd66b"], belly: "#ffffff", ears: "", face: "gem", cheek: false, eyes: "big", sclera: "#fff", under: FACETS, hback: crystals(["#ff8fd0", "#37c6e8"], true), hfront: star(54, 46, 9, "#fff") + star(166, 44, 9, "#fff"), badge: "#ff8fd0" }, ["#37c6e8", "#1a7fa0"]]
   };
