@@ -3011,7 +3011,10 @@
     else if (a === "film") {
       global.VTFILM.play(act.getAttribute("data-id"), { audio: S.state.settings.audio, speak: function (t) { speak(t, null, "de"); }, voice: function () { var n = S.state.settings.narrator || "auto"; return n === "dev" ? null : n === "m" ? "m" : "f"; }, onGo: function (g) {
         var b = document.createElement("button"); b.hidden = true;
-        if (g.arena) { b.setAttribute("data-act", "arena"); b.setAttribute("data-id", g.arena); }
+        if (g.tab) { tab = "lernen"; lernSeg = g.tab; uebenSeg = g.tab === "units" ? "units" : "modi"; detailUnit = null; render(); view.scrollTop = 0; return; }
+        if (g.game) { b.setAttribute("data-act", "wgame"); b.setAttribute("data-id", g.game); }
+        else if (g.gram) { b.setAttribute("data-act", "gramstart"); b.setAttribute("data-id", g.gram); }
+        else if (g.arena) { b.setAttribute("data-act", "arena"); b.setAttribute("data-id", g.arena); }
         else { b.setAttribute("data-act", "start"); b.setAttribute("data-mode", g.mode); if (g.focus) b.setAttribute("data-focus", g.focus); b.setAttribute("data-min", S.goalMin()); }
         view.appendChild(b); b.click(); b.remove();
       } });

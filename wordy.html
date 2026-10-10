@@ -1122,7 +1122,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.80.1";window.WORDY_BUILD="a9e20fefc3";</script>
+<script>window.WORDY_VERSION="2.81.0";window.WORDY_BUILD="91f8a3316b";</script>
 </head>
 <body>
 <div id="app">
@@ -7095,6 +7095,16 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
 
   /* go: was „Jetzt ausprobieren“ startet */
   var FILMS = [
+    { id: "wie", icon: "🧭", title: "Was lernen? Wie?", go: { tab: "units" }, scenes: [
+      { bg: "day", cast: [{ av: B, x: 50, dance: 1, say: "Wo fange ich an?" }], props: [{ e: "🧭", x: 50, y: 16, s: 60, a: "spin" }], nar: "Willkommen bei Wordy! Zwei Fragen sind wichtig: Was lernst du? Und wie?" },
+      { bg: "day", cast: [{ av: P, x: 28, dance: 0, say: "Schule!" }, { av: R, x: 72, dance: 0, say: "Business!" }], props: [{ e: "🎒", x: 26, y: 18, s: 54, a: "bob" }, { e: "💼", x: 74, y: 18, s: 54, a: "bob" }], nar: "Unter Lernen › Was lernen? wählst du oben: Schule oder Business. Beide haben eigene Wörter, Sätze und Statistik." },
+      { bg: "ice", cast: [{ av: K, x: 50, dance: 0, say: "Headlight 2 ist mein Schulbuch." }], props: [{ e: "📕", x: 28, y: 22, s: 50, a: "bob" }, { e: "📚", x: 74, y: 24, s: 46, a: "bob" }], nar: "In der Schule steht Headlight 2 vorn, Klassen kannst du dazuschalten. Die Einheiten darunter lassen sich einzeln üben." },
+      { bg: "night", cast: [{ av: B, x: 30, dance: 0, say: "Pfad = Schritt für Schritt." }, { av: P, x: 72, dance: 3, say: "Üben = ich entscheide!" }], props: [{ e: "🗺️", x: 28, y: 16, s: 50, a: "bob" }, { e: "🎮", x: 74, y: 16, s: 50, a: "bob" }], nar: "Wie? Der Pfad führt dich Station für Station durch die Einheiten. Unter Üben wählst du selbst." },
+      { bg: "night", cast: [{ av: R, x: 50, dance: 2, say: "Neue Wörter, Fehlerkartei, Sätze, Verben …" }], props: [{ e: "✨", x: 20, y: 22, s: 40, a: "pop" }, { e: "♻️", x: 36, y: 12, s: 40, a: "pop" }, { e: "💬", x: 64, y: 12, s: 40, a: "pop" }, { e: "🔀", x: 80, y: 22, s: 40, a: "pop" }], nar: "Die Daily Challenge mischt alles. Dazu gibt es Neue Wörter, Fehlerkartei, Sätze und unregelmäßige Verben." },
+      { bg: "ice", cast: [{ av: K, x: 50, dance: 1, say: "Hören, Tippen, Lücken, Zuordnen." }], props: [{ e: "👂", x: 22, y: 22, s: 44, a: "bob" }, { e: "⌨️", x: 40, y: 12, s: 44, a: "bob" }, { e: "🧩", x: 60, y: 12, s: 44, a: "bob" }, { e: "🔗", x: 78, y: 22, s: 44, a: "bob" }], nar: "Gezielt üben: nur Hören, nur Tippen, nur Lücken oder nur Zuordnen. Perfekt vor einer Arbeit." },
+      { bg: "arena", cast: [{ av: B, x: 28, dance: 3, say: "Spielen!" }, { av: P, x: 72, dance: 1, say: "Und Grammatik!" }], props: [{ e: "🕹️", x: 26, y: 18, s: 50, a: "bob" }, { e: "✏️", x: 74, y: 18, s: 50, a: "bob" }], nar: "Dazu kommen Wortspiele und Arena, und Grammatik-Lektionen zu Headlight 2. Alles zahlt auf deine Münzen ein." },
+      { bg: "gold", cast: [{ av: K, x: 50, dance: 6, say: "Dein Weg. Dein Tempo." }], props: [{ e: "🪙", x: 24, y: 22, s: 44, a: "fly" }, { e: "🏆", x: 76, y: 22, s: 50, a: "bob" }], nar: "Such dir aus, was zu dir passt. Wichtig ist: jeden Tag ein bisschen." }
+    ] },
     { id: "mix", icon: "🏆", title: "Daily Challenge", go: { mode: "mix" }, scenes: [
       { bg: "day", cast: [{ av: B, x: 30, dance: 1, say: "Was soll ich üben?!" }], props: [{ e: "🤯", x: 30, y: 24, s: 54, a: "shake" }], nar: "Bruno hat 500 Wörter und null Plan." },
       { bg: "day", cast: [{ av: P, x: 68, dance: 0, say: "Daily Challenge antippen. Fertig." }, { av: B, x: 28, dance: 0, say: "…das war’s?" }], props: [{ e: "🧠", x: 52, y: 20, s: 60, a: "bob" }], nar: "Die Daily Challenge mischt alles, was jetzt dran ist: Neues, Fälliges, Fehler." },
@@ -7172,6 +7182,43 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       { bg: "arena", cast: [{ av: P, x: 50, dance: 1, say: "Zweimal sitzt = erledigt!" }], props: [{ e: "✅", x: 30, y: 22, s: 46, a: "pop" }, { e: "✅", x: 70, y: 22, s: 46, a: "pop" }], nar: "Jedes Wort muss zweimal sitzen, dann ist es aus der Kartei." },
       { bg: "arena", cast: [{ av: K, x: 50, dance: 3, say: "90 Sekunden. Jagd eröffnet!" }], props: [{ e: "⏱️", x: 50, y: 16, s: 56, a: "spin" }], nar: "Du hast 90 Sekunden. Schaffst du die Kartei leer?" },
       { bg: "gold", cast: [{ av: R, x: 50, dance: 6, say: "Kartei: leer!" }], props: [{ e: "🏅", x: 50, y: 16, s: 56, a: "bob" }], nar: "Super Training für die kniffligen Wörter." }
+    ] },
+    { id: "grammatik", icon: "✏️", title: "Grammatik", go: { gram: "past1" }, scenes: [
+      { bg: "day", cast: [{ av: B, x: 50, dance: 0, say: "Yesterday I goed … oder went?" }], props: [{ e: "🤔", x: 50, y: 16, s: 56, a: "bob" }], nar: "Wörter allein reichen nicht. Grammatik sagt dir, wie Sätze funktionieren." },
+      { bg: "day", cast: [{ av: P, x: 50, dance: 1, say: "Erst lesen, dann üben!" }], props: [{ e: "📖", x: 26, y: 20, s: 50, a: "bob" }, { e: "✏️", x: 74, y: 22, s: 48, a: "pop" }], nar: "Jede Lektion beginnt mit einer kurzen Erklärkarte mit Beispielen. Du kannst sie später mit dem Fragezeichen wieder aufrufen." },
+      { bg: "night", cast: [{ av: R, x: 50, dance: 2, say: "Auswählen, tippen, ordnen, Fehler finden!" }], props: [{ e: "🔤", x: 22, y: 22, s: 44, a: "bob" }, { e: "⌨️", x: 40, y: 12, s: 44, a: "bob" }, { e: "🧱", x: 60, y: 12, s: 44, a: "bob" }, { e: "🔍", x: 78, y: 22, s: 44, a: "bob" }], nar: "Acht Aufgaben in vier Arten. Bei einem Fehler siehst du sofort, warum. Falsche kommen noch einmal dran." },
+      { bg: "ice", cast: [{ av: K, x: 50, dance: 0, say: "Im Pfad: Grammatik-Station!" }], props: [{ e: "🗺️", x: 28, y: 20, s: 50, a: "bob" }, { e: "✏️", x: 72, y: 22, s: 48, a: "bob" }], nar: "Zu jeder Einheit passt eine Grammatik-Station im Lernpfad. Du findest alle Themen unter Lernen › Was lernen? › Grammatik." },
+      { bg: "gold", cast: [{ av: B, x: 50, dance: 6, say: "Das Thema sitzt!" }], props: [{ e: "🪙", x: 26, y: 22, s: 44, a: "fly" }, { e: "⭐", x: 74, y: 22, s: 44, a: "spin" }], nar: "Für gute Runden gibt es Münzen und Sterne. Je mehr beim ersten Versuch stimmt, desto besser." }
+    ] },
+    { id: "game-detective", icon: "🔎", title: "Wort-Detektiv", go: { game: "detective" }, scenes: [
+      { bg: "night", cast: [{ av: B, x: 50, dance: 0, say: "Ich suche ein Wort mit 5 Buchstaben." }], props: [{ e: "🔎", x: 50, y: 16, s: 60, a: "bob" }], nar: "Wort-Detektiv: Du bekommst die deutsche Bedeutung und die Länge des englischen Wortes." },
+      { bg: "night", cast: [{ av: P, x: 50, dance: 1, say: "Tipp ein Wort!" }], props: [{ e: "🟩", x: 28, y: 22, s: 44, a: "pop" }, { e: "🟨", x: 50, y: 12, s: 44, a: "pop" }, { e: "⬜", x: 72, y: 22, s: 44, a: "pop" }], nar: "Grün: richtiger Buchstabe an der richtigen Stelle. Gelb: richtig, aber woanders. Grau: kommt nicht vor." },
+      { bg: "night", cast: [{ av: K, x: 50, dance: 2, say: "6 Versuche. Denk nach!" }], props: [{ e: "6️⃣", x: 50, y: 14, s: 56, a: "bob" }], nar: "Du hast sechs Versuche pro Wort, insgesamt fünf Wörter." },
+      { bg: "gold", cast: [{ av: R, x: 50, dance: 6, say: "Fall gelöst!" }], props: [{ e: "🏅", x: 50, y: 16, s: 56, a: "bob" }], nar: "Je weniger Versuche, desto mehr Punkte." }
+    ] },
+    { id: "game-freezy", icon: "🐻‍❄️", title: "Freezy", go: { game: "eisi" }, scenes: [
+      { bg: "ice", cast: [{ av: B, x: 50, dance: 0, say: "Hilfe! Das Eis schmilzt!" }], props: [{ e: "🧊", x: 28, y: 22, s: 50, a: "shake" }, { e: "💧", x: 72, y: 26, s: 40, a: "bob" }], nar: "Freezy: Icy steht auf einer Eisscholle. Sie schmilzt Stück für Stück." },
+      { bg: "ice", cast: [{ av: P, x: 50, dance: 1, say: "A … E … T?" }], props: [{ e: "🔤", x: 50, y: 16, s: 56, a: "bob" }], nar: "Du siehst die deutsche Bedeutung und rätst das englische Wort Buchstabe für Buchstabe." },
+      { bg: "ice", cast: [{ av: R, x: 50, dance: 0, say: "Falscher Buchstabe? Ein Stück weg!" }], props: [{ e: "❌", x: 50, y: 18, s: 50, a: "shake" }], nar: "Jeder falsche Buchstabe lässt ein Stück Eis schmelzen. Bei fünf Wörtern in Folge musst du Icy retten." },
+      { bg: "gold", cast: [{ av: K, x: 50, dance: 6, say: "Icy ist gerettet!" }], props: [{ e: "❄️", x: 26, y: 22, s: 44, a: "spin" }, { e: "🪙", x: 74, y: 22, s: 44, a: "fly" }], nar: "Wer Icy rettet, bekommt Punkte und Münzen." }
+    ] },
+    { id: "game-xing", icon: "🧩", title: "Xing", go: { game: "kreuz" }, scenes: [
+      { bg: "day", cast: [{ av: P, x: 50, dance: 0, say: "Ein Kreuzworträtsel!" }], props: [{ e: "🧩", x: 50, y: 16, s: 60, a: "bob" }], nar: "Xing ist ein Kreuzworträtsel aus deinen Wörtern, Crossing eben." },
+      { bg: "day", cast: [{ av: B, x: 50, dance: 1, say: "Hinweise deutsch, Lösungen englisch." }], props: [{ e: "🇩🇪", x: 26, y: 22, s: 44, a: "bob" }, { e: "🇬🇧", x: 74, y: 22, s: 44, a: "bob" }], nar: "Die Hinweise sind deutsch, geschrieben wird englisch." },
+      { bg: "day", cast: [{ av: R, x: 50, dance: 2, say: "Feld antippen, dann tippen!" }], props: [{ e: "👆", x: 50, y: 18, s: 50, a: "pop" }], nar: "Tippe ein Feld an und gib die Buchstaben ein. Kreuzende Wörter helfen dir beim Raten." },
+      { bg: "gold", cast: [{ av: K, x: 50, dance: 6, say: "Alles gelöst!" }], props: [{ e: "🏆", x: 50, y: 16, s: 56, a: "bob" }], nar: "Wenn das Gitter voll ist, gibt es Punkte und Münzen." }
+    ] },
+    { id: "game-letters", icon: "🔠", title: "Letters", go: { game: "letters" }, scenes: [
+      { bg: "night", cast: [{ av: B, x: 50, dance: 0, say: "Wo ist das Wort?!" }], props: [{ e: "🔠", x: 50, y: 16, s: 60, a: "bob" }], nar: "Letters: Ein Buchstabensalat, in dem sich englische Wörter verstecken." },
+      { bg: "night", cast: [{ av: P, x: 50, dance: 1, say: "Quer, schräg, rückwärts!" }], props: [{ e: "↔️", x: 24, y: 22, s: 44, a: "bob" }, { e: "↕️", x: 50, y: 12, s: 44, a: "bob" }, { e: "↗️", x: 76, y: 22, s: 44, a: "bob" }], nar: "Die Wörter liegen waagerecht, senkrecht oder diagonal, vorwärts oder rückwärts. Sie dürfen sich überschneiden." },
+      { bg: "night", cast: [{ av: R, x: 50, dance: 2, say: "Über die Buchstaben wischen!" }], props: [{ e: "👆", x: 50, y: 18, s: 50, a: "pop" }], nar: "In der Liste stehen die deutschen Bedeutungen. Wische über die Buchstaben, um das englische Wort zu markieren." },
+      { bg: "gold", cast: [{ av: K, x: 50, dance: 6, say: "Alle gefunden!" }], props: [{ e: "🎉", x: 50, y: 16, s: 54, a: "pop" }], nar: "Alle Wörter gefunden? Dann gibt es Punkte und Münzen." }
+    ] },
+    { id: "game-blast", icon: "🚀", title: "Blast", go: { game: "blast" }, scenes: [
+      { bg: "arena", cast: [{ av: B, x: 50, dance: 0, say: "Sie kommen auf mich zu!" }], props: [{ e: "🚀", x: 50, y: 14, s: 60, a: "bob" }], nar: "Blast: Englische Wörter fliegen auf dich zu." },
+      { bg: "arena", cast: [{ av: P, x: 50, dance: 3, say: "Das passende Wort abschießen!" }], props: [{ e: "🎯", x: 50, y: 18, s: 52, a: "spin" }], nar: "Oben steht ein deutsches Wort. Tippe das richtige englische Wort ab, bevor es dich erreicht." },
+      { bg: "arena", cast: [{ av: K, x: 50, dance: 0, say: "Falsch geschossen? Ein Herz weg." }], props: [{ e: "💔", x: 28, y: 22, s: 46, a: "shake" }, { e: "❄️", x: 52, y: 12, s: 40, a: "spin" }, { e: "💣", x: 74, y: 22, s: 46, a: "bob" }], nar: "Falsch geschossen kostet ein Herz. Eis-Sterne bremsen alles, Bomben räumen die falschen Wörter weg." },
+      { bg: "gold", cast: [{ av: R, x: 50, dance: 6, say: "Neuer Rekord!" }], props: [{ e: "🏆", x: 50, y: 16, s: 58, a: "bob" }], nar: "Je länger du durchhältst, desto höher der Bestwert." }
     ] }
   ];
 
@@ -10275,7 +10322,10 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     else if (a === "film") {
       global.VTFILM.play(act.getAttribute("data-id"), { audio: S.state.settings.audio, speak: function (t) { speak(t, null, "de"); }, voice: function () { var n = S.state.settings.narrator || "auto"; return n === "dev" ? null : n === "m" ? "m" : "f"; }, onGo: function (g) {
         var b = document.createElement("button"); b.hidden = true;
-        if (g.arena) { b.setAttribute("data-act", "arena"); b.setAttribute("data-id", g.arena); }
+        if (g.tab) { tab = "lernen"; lernSeg = g.tab; uebenSeg = g.tab === "units" ? "units" : "modi"; detailUnit = null; render(); view.scrollTop = 0; return; }
+        if (g.game) { b.setAttribute("data-act", "wgame"); b.setAttribute("data-id", g.game); }
+        else if (g.gram) { b.setAttribute("data-act", "gramstart"); b.setAttribute("data-id", g.gram); }
+        else if (g.arena) { b.setAttribute("data-act", "arena"); b.setAttribute("data-id", g.arena); }
         else { b.setAttribute("data-act", "start"); b.setAttribute("data-mode", g.mode); if (g.focus) b.setAttribute("data-focus", g.focus); b.setAttribute("data-min", S.goalMin()); }
         view.appendChild(b); b.click(); b.remove();
       } });

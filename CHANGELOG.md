@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.81.0 – 2026-10-10
+- Erklärfilme: sieben neue Filme (How-to und Üben › Spielmodi): **Was lernen? Wie?** (Schule oder Business, Schuljahr und Einheiten, Pfad oder selbst wählen, alle Lern- und Spielmodi, Münzen; „Jetzt ausprobieren“ öffnet Was lernen?), **Grammatik**, **Wort-Detektiv**, **Freezy**, **Xing**, **Letters** und **Blast** („Jetzt ausprobieren“ startet das Spiel bzw. die Lektion). Neue Ziel-Arten in `go`: `tab`, `game`, `gram`. Für die aufgenommene Stimme müssen die neuen Texte beim nächsten Vertonungslauf mit erzeugt werden (bis dahin spricht die Gerätestimme).
+
 ## 2.80.1 – 2026-10-10
 - Belohnungen für Lernpläne und Wochenziele sind jetzt besser zu finden: Lernen › Fortschritt › Verlauf zeigt neben den Wochenzielen auch den Lernplan mit Belohnung (🪙 und 🎁), und der Schritt „Lernplan“ in „Dein Tag“ auf der Startseite nennt den Bonus. Vorher stand die Belohnung eines Lernplans nirgends in der App.
 
