@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.74.0 – 2026-10-10
+- Wortspiele (Wort-Detektiv, Freezy, Xing, Blast, Letters): Kurzerklärung. Beim ersten Start jedes Spiels erscheint eine Karte „So geht’s“ mit 3 bis 4 kurzen Punkten und dem Knopf „Los geht’s“. Danach öffnet der Knopf „?“ oben im Spiel jederzeit die Regeln (bei Blast hält das Spiel dabei an). `settings.gameIntro` merkt, welche Karten schon gezeigt wurden.
+
 ## 2.73.1 – 2026-10-10
 - Lernbereich: Jede Gruppe (Schulbuch, Klassen-Liste, eigene Listen) hat unter „Gruppe üben“ jetzt auch die Spiele (Match-Rausch, Blitzrunde, Letztes Herz, Wort-Detektiv, Freezy, Blast, Letters, Xing) mit allen Wörtern der Gruppe. Die Wortspiele nehmen dafür mehrere Einheiten auf einmal (`opts.units`).
 

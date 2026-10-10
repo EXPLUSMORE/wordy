@@ -63,6 +63,7 @@
   function top(title) {
     return '<div class="ar-top"><button class="ar-x" data-g="quit" aria-label="Spiel verlassen">✕</button>' +
       '<div class="wg-title">' + esc(title) + '</div>' +
+      '<button class="ar-x" data-g="help" aria-label="Spielregeln">?</button>' +
       '<div class="ar-score"><b class="tnum" id="wgScore">' + G.score + '</b><span>Punkte</span></div></div>';
   }
   function paintScore() { var s = $("#wgScore"); if (s) s.textContent = G.score; }
@@ -70,8 +71,40 @@
     return '<div class="wg-dots">' + G.words.map(function (w, i) { return '<i class="' + (i < G.i ? (G.res[i] ? "ok" : "no") : i === G.i ? "now" : "") + '"></i>'; }).join("") + '</div>';
   }
 
+
+  /* ---------- Kurzerklärung ---------- */
+  var HELP = {
+    detective: ["Rate das englische Wort zur deutschen Bedeutung. Du siehst, wie viele Buchstaben es hat.", "Tippe die Buchstaben, dann <b>✓ Prüfen</b>. Du hast 6 Versuche pro Wort, insgesamt 5 Wörter.", "🟩 richtiger Buchstabe an der richtigen Stelle · 🟨 kommt vor, aber an anderer Stelle · ⬛ kommt nicht vor.", "💡 verrät den ersten Buchstaben (kostet 25 Punkte)."],
+    eisi: ["Icy steht auf schmelzendem Eis. Rate das englische Wort zur deutschen Bedeutung, Buchstabe für Buchstabe.", "Tippe einen Buchstaben: Kommt er im Wort vor, erscheint er. Wenn nicht, schmilzt ein Eisstück.", "Nach 6 Fehlern fällt Icy ins Wasser. 5 Wörter pro Runde.", "💡 deckt einen Buchstaben auf, kostet aber ein Eisstück."],
+    kreuz: ["Ein Kreuzworträtsel: Die Hinweise sind deutsch, geschrieben wird englisch.", "Tippe ein Feld und dann die Buchstaben. Tippst du dasselbe Feld nochmal, wechselt die Richtung (waagerecht ↔ senkrecht). Du kannst auch einen Hinweis antippen.", "<b>✓ Prüfen</b> färbt falsche Buchstaben rot, 💡 deckt ein Feld auf (−8 Punkte)."],
+    blast: ["Oben steht ein deutsches Wort. Englische Wörter fliegen auf dich zu.", "Tippe das passende englische Wort an, bevor es unten ankommt.", "Falsch getippt oder das richtige verpasst: −1 ♥. Alle 5 Treffer gibt es ein neues Level, alle 10 ein Extra-Herz.", "❄️ bremst alles, 💣 räumt die falschen Wörter weg."],
+    letters: ["Im Buchstabensalat verstecken sich englische Wörter. Die Liste zeigt die deutschen Bedeutungen.", "Wische vom ersten bis zum letzten Buchstaben eines Wortes. Es geht waagerecht, senkrecht und diagonal, auch rückwärts. Wörter dürfen sich kreuzen.", "Du kannst auch erst den Anfang und dann das Ende antippen. Ein Tipp auf einen Hinweis markiert den Anfang (−8 Punkte)."]
+  };
+  function helpHtml(id, btn) {
+    var m = GAMES.filter(function (x) { return x.id === id; })[0];
+    return '<div class="wg-help"><div class="wg-hicon">' + esc(m.icon) + '</div><h2>' + esc(m.name) + '</h2><p class="wg-hclaim">' + esc(m.claim) + '</p><ul>' + HELP[id].map(function (t) { return '<li>' + t + '</li>'; }).join("") + '</ul>' + btn + '</div>';
+  }
+  function showIntro(id, opts) {
+    pending = { id: id, opts: opts };
+    el.hidden = false; document.documentElement.classList.add("ar-open");
+    var m = GAMES.filter(function (x) { return x.id === id; })[0];
+    el.innerHTML = '<div class="ar-top"><button class="ar-x" data-g="introx" aria-label="Schließen">✕</button><div class="wg-title">' + esc(m.name) + '</div><div style="width:36px"></div></div><div class="wg-body">' + helpHtml(id, '<button class="wg-btn big" data-g="introgo">Los geht’s ▶</button>') + '</div>';
+  }
+  function showHelp() {
+    if (!G || $(".wg-help-ov")) return;
+    if (G.sh) G.sh.paused = true;
+    var d = document.createElement("div"); d.className = "wg-help-ov"; d.innerHTML = helpHtml(G.id, '<button class="wg-btn big" data-g="helpx">Weiter ▶</button>'); el.appendChild(d);
+  }
+  function hideHelp() {
+    var d = $(".wg-help-ov"); if (d) d.remove();
+    if (G && G.sh && G.sh.paused) { G.sh.paused = false; G.sh.last = performance.now(); }
+  }
+
+  var pending = null;
   /* ---------- Start ---------- */
   function start(id, opts) {
+    var seen = S.state.settings.gameIntro || (S.state.settings.gameIntro = {});
+    if (!seen[id] && !(opts && opts._intro)) { if (!(S.pools().all.length || (opts && (opts.units || opts.unit)))) return; return showIntro(id, opts); }
     var min = id === "blast" ? 2 : 3, max = 8, n = id === "kreuz" ? 14 : id === "blast" ? 40 : id === "letters" ? 7 : 5, words = pickWords(n, min, id === "blast" ? 14 : max, opts && (opts.units || opts.unit), id === "blast");
     if (words.length < (id === "kreuz" ? 6 : id === "blast" ? 6 : id === "letters" ? 5 : 3)) return toast("Dafür brauchst du mehr Wörter im gewählten Bereich (einzelne Wörter ab 3 Buchstaben).");
     S.rollDay();
@@ -400,6 +433,7 @@
   }
   function blLoop(now) {
     if (!G || !G.sh || G.sh.over) return;
+    if (G.sh.paused) { G.sh.raf = requestAnimationFrame(blLoop); return; }
     var sh = G.sh, dt = Math.min(0.05, (now - sh.last) / 1000); sh.last = now; sh.t += dt;
     if (sh.freeze > 0) sh.freeze -= dt;
     var F = $("#blF"); F.classList.toggle("frozen", sh.freeze > 0);
@@ -571,6 +605,11 @@
 
   /* ---------- Eingaben ---------- */
   el.addEventListener("click", function (e) {
+    var t0 = e.target.closest("[data-g]"), a0 = t0 && t0.getAttribute("data-g");
+    if (a0 === "introgo" && pending) { var pd = pending; pending = null; (S.state.settings.gameIntro || (S.state.settings.gameIntro = {}))[pd.id] = 1; try { S.save(); } catch (x) {} el.innerHTML = ""; return start(pd.id, Object.assign({}, pd.opts || {}, { _intro: true })); }
+    if (a0 === "introx") { pending = null; el.hidden = true; el.innerHTML = ""; document.documentElement.classList.remove("ar-open"); return; }
+    if (a0 === "help") return showHelp();
+    if (a0 === "helpx") return hideHelp();
     var t = e.target.closest("[data-g]"); if (!t || !G) { if (t && !G && /^(exit|again|quit)$/.test(t.getAttribute("data-g"))) close(); return; }
     var a = t.getAttribute("data-g");
     if (a === "quit") { if (G.done) return close(); return G.items || G.score ? finish("quit") : close(); }
