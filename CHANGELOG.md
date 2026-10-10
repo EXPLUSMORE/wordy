@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.69.3 – 2026-10-10
+- Mitlesen: Tempo-Regler und Tasten (Zurück, Pause, Weiter) stehen jetzt direkt unter der Wortkarte und über der Liste. Sie waren auf manchen Handys unter der Browserleiste verdeckt. Die Liste füllt den Rest.
+
 ## 2.69.2 – 2026-10-10
 - Mitlesen: Alles passt auf eine Seite, ohne seitliches Überlaufen. Lange deutsche Wörter und Übersetzungen (z. B. „der Cousin / die Cousine“) brechen in Karte und Liste um, Schrift und Kartenhöhe passen sich der Bildschirmgröße an (geprüft bei 320, 393 und 444 px Breite).
 
