@@ -134,6 +134,10 @@
     { id: "of:raum",   kind: "outfit", label: "Raumanzug",       cost: 200, val: "raum" },
     { id: "of:polar",   kind: "outfit", label: "Polarjacke",      cost: 350, val: "polar", bundle: "eis" },
     { id: "of:rock",   kind: "outfit", label: "Rockstar",        cost: 250, val: "rock" },
+    { id: "of:kitty1", kind: "outfit", label: "Kitty-Schleife",      cost: 80,   val: "kitty1", rar: "common" },
+    { id: "of:kitty2", kind: "outfit", label: "Kitty-Regenbogen",    cost: 200,  val: "kitty2", rar: "rare" },
+    { id: "of:kitty3", kind: "outfit", label: "Kitty-Prinzessin",    cost: 400,  val: "kitty3", rar: "epic" },
+    { id: "of:kitty4", kind: "outfit", label: "Kitty-Sternenzauber", cost: 1000, val: "kitty4", rar: "legend" },
 
     { id: "sn:none",  kind: "snd", label: "Stumm",     cost: 0,   val: "none" },
     { id: "sn:bell",  kind: "snd", label: "Glöckchen", cost: 90,  val: "bell" },

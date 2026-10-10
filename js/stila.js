@@ -112,7 +112,19 @@ return '<svg class="afs" viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg
   };
   var DEFC = { bear: ["#3f9bff", "#1a5fd0"], penguin: ["#e8453c", "#a31515"], seal: ["#4aa8ff", "#1a5fd0"], king: ["#ffd24a", "#c8780a"] };
   var EXT = {}, EXTC = {};   // weitere Figuren (stilb.js): kind -> Zeichenfunktion(jacke, jackeDunkel), Standardfarben
-  function full(av, outfit) {
+  /* Outfits mit Zubehör (Kopfschmuck, Flügel): Jackenfarben plus Zeichnung, die über Kopf bzw. hinter den Körper gelegt wird (nur Figuren mit dem Standardaufbau aus stilb.js) */
+  var OVER = {}, TAIL = "</g></g></g></svg>", TAIL2 = "</g></g></svg>";
+  function outfitAdd(id, cols, over) { OUT[id] = cols; OVER[id] = over || {}; }
+  function dress(svg, outfit) {
+    var o = OVER[outfit]; if (!o) return svg;
+    var tail = svg.slice(-TAIL.length) === TAIL ? TAIL : svg.slice(-TAIL2.length) === TAIL2 ? TAIL2 : "";   // stilb.js: 3 Gruppen, Eisfiguren: 2
+    if (!tail) return svg;
+    if (o.back) svg = svg.replace('<g class="bodyG">', '<g class="bodyG">' + o.back);
+    if (o.head) svg = svg.slice(0, svg.length - tail.length) + o.head + tail;
+    return svg;
+  }
+  function full(av, outfit) { return dress(full0(av, outfit), outfit); }
+  function full0(av, outfit) {
     var k = KIND[av]; if (!k) return "";
     var c = (k !== "king" && OUT[outfit]) || DEFC[k] || EXTC[k] || ["#35c6ff", "#1a7fd0"], o = { jacket: c[0], jacketD: c[1] };
     if (EXT[k]) return EXT[k](c[0], c[1]);
@@ -128,6 +140,6 @@ return '<svg class="afs" viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg
   function head(av) { return full(av).replace('class="afs" viewBox="0 0 220 300"', 'class="afs" style="display:block;width:1.25em;height:1.25em" viewBox="22 4 176 176"'); }
   function inner(av, outfit) { return full(av, outfit).replace(/^<svg[^>]*>/, "").replace(/<\/svg>$/, ""); }
   function dancer(av, outfit, n) { return '<div class="afig a' + n + '">' + full(av, outfit) + '</div>'; }
-  global.VTA = { register: register, inner: inner, has: function (av) { return !!KIND[av]; }, full: full, head: head, dancer: dancer, get kinds() { return Object.keys(KIND); } };
+  global.VTA = { register: register, outfit: outfitAdd, inner: inner, has: function (av) { return !!KIND[av]; }, full: full, head: head, dancer: dancer, get kinds() { return Object.keys(KIND); } };
   if (global.VTC && global.VTC.ART) Object.keys(KIND).forEach(function (k) { global.VTC.ART[artKey(k)] = head(k); });
 })(window);

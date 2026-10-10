@@ -1122,7 +1122,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.79.1";window.WORDY_BUILD="37bcd5a472";</script>
+<script>window.WORDY_VERSION="2.80.0";window.WORDY_BUILD="632b6657fb";</script>
 </head>
 <body>
 <div id="app">
@@ -4709,6 +4709,10 @@ window.VERBS = [
     { id: "of:raum",   kind: "outfit", label: "Raumanzug",       cost: 200, val: "raum" },
     { id: "of:polar",   kind: "outfit", label: "Polarjacke",      cost: 350, val: "polar", bundle: "eis" },
     { id: "of:rock",   kind: "outfit", label: "Rockstar",        cost: 250, val: "rock" },
+    { id: "of:kitty1", kind: "outfit", label: "Kitty-Schleife",      cost: 80,   val: "kitty1", rar: "common" },
+    { id: "of:kitty2", kind: "outfit", label: "Kitty-Regenbogen",    cost: 200,  val: "kitty2", rar: "rare" },
+    { id: "of:kitty3", kind: "outfit", label: "Kitty-Prinzessin",    cost: 400,  val: "kitty3", rar: "epic" },
+    { id: "of:kitty4", kind: "outfit", label: "Kitty-Sternenzauber", cost: 1000, val: "kitty4", rar: "legend" },
 
     { id: "sn:none",  kind: "snd", label: "Stumm",     cost: 0,   val: "none" },
     { id: "sn:bell",  kind: "snd", label: "Glöckchen", cost: 90,  val: "bell" },
@@ -6669,7 +6673,19 @@ return '<svg class="afs" viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg
   };
   var DEFC = { bear: ["#3f9bff", "#1a5fd0"], penguin: ["#e8453c", "#a31515"], seal: ["#4aa8ff", "#1a5fd0"], king: ["#ffd24a", "#c8780a"] };
   var EXT = {}, EXTC = {};   // weitere Figuren (stilb.js): kind -> Zeichenfunktion(jacke, jackeDunkel), Standardfarben
-  function full(av, outfit) {
+  /* Outfits mit Zubehör (Kopfschmuck, Flügel): Jackenfarben plus Zeichnung, die über Kopf bzw. hinter den Körper gelegt wird (nur Figuren mit dem Standardaufbau aus stilb.js) */
+  var OVER = {}, TAIL = "</g></g></g></svg>", TAIL2 = "</g></g></svg>";
+  function outfitAdd(id, cols, over) { OUT[id] = cols; OVER[id] = over || {}; }
+  function dress(svg, outfit) {
+    var o = OVER[outfit]; if (!o) return svg;
+    var tail = svg.slice(-TAIL.length) === TAIL ? TAIL : svg.slice(-TAIL2.length) === TAIL2 ? TAIL2 : "";   // stilb.js: 3 Gruppen, Eisfiguren: 2
+    if (!tail) return svg;
+    if (o.back) svg = svg.replace('<g class="bodyG">', '<g class="bodyG">' + o.back);
+    if (o.head) svg = svg.slice(0, svg.length - tail.length) + o.head + tail;
+    return svg;
+  }
+  function full(av, outfit) { return dress(full0(av, outfit), outfit); }
+  function full0(av, outfit) {
     var k = KIND[av]; if (!k) return "";
     var c = (k !== "king" && OUT[outfit]) || DEFC[k] || EXTC[k] || ["#35c6ff", "#1a7fd0"], o = { jacket: c[0], jacketD: c[1] };
     if (EXT[k]) return EXT[k](c[0], c[1]);
@@ -6685,7 +6701,7 @@ return '<svg class="afs" viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg
   function head(av) { return full(av).replace('class="afs" viewBox="0 0 220 300"', 'class="afs" style="display:block;width:1.25em;height:1.25em" viewBox="22 4 176 176"'); }
   function inner(av, outfit) { return full(av, outfit).replace(/^<svg[^>]*>/, "").replace(/<\/svg>$/, ""); }
   function dancer(av, outfit, n) { return '<div class="afig a' + n + '">' + full(av, outfit) + '</div>'; }
-  global.VTA = { register: register, inner: inner, has: function (av) { return !!KIND[av]; }, full: full, head: head, dancer: dancer, get kinds() { return Object.keys(KIND); } };
+  global.VTA = { register: register, outfit: outfitAdd, inner: inner, has: function (av) { return !!KIND[av]; }, full: full, head: head, dancer: dancer, get kinds() { return Object.keys(KIND); } };
   if (global.VTC && global.VTC.ART) Object.keys(KIND).forEach(function (k) { global.VTC.ART[artKey(k)] = head(k); });
 })(window);
 </script>
@@ -6936,6 +6952,14 @@ return '<svg class="afs" viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg
     "svg:fnchamp": ["champ", { fur: ["#ffffff", "#cfe9ff", "#b9a6ff"], belly: "#ffffff", ears: "", face: "gem", cheek: false, eyes: "big", sclera: "#fff", under: FACETS, hback: crystals(["#ffffff", "#ffe58a"], true), hfront: star(60, 42, 8, "#ffd24a") + star(160, 42, 8, "#ffd24a"), badge: "#b9a6ff" }, ["#ffd24a", "#c8780a"]],
     "svg:fnunreal": ["unreal", { fur: ["#ff8fd0", "#8f7dff", "#37c6e8", "#ffd66b"], belly: "#ffffff", ears: "", face: "gem", cheek: false, eyes: "big", sclera: "#fff", under: FACETS, hback: crystals(["#ff8fd0", "#37c6e8"], true), hfront: star(54, 46, 9, "#fff") + star(166, 44, 9, "#fff"), badge: "#ff8fd0" }, ["#37c6e8", "#1a7fa0"]]
   };
+  /* Kitty-Outfits: Schleife, Haarreifen, bunter Pony und Glitzer für jede Figur (Siegertanz, Avatar) */
+  var RBD = '<defs><linearGradient id="kofrb" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ff6b8f"/><stop offset=".25" stop-color="#ffb347"/><stop offset=".5" stop-color="#ffe066"/><stop offset=".75" stop-color="#59c8ff"/><stop offset="1" stop-color="#b58cff"/></linearGradient></defs>';
+  A.outfit("kitty1", ["#4f8cff", "#1f4fb8"], { head: bow(148, 50, "#ff3b4f", 1.25, 12) });
+  A.outfit("kitty2", ["#b58cff", "#6a3fd0"], { head: band("#b58cff", star(110, 20, 9, "#ffe066")) + fringe(["#ff6b8f", "#ffb347", "#ffe066", "#7be08a", "#59c8ff"]) + bow(156, 56, "#ffe066", .9, 16) });
+  A.outfit("kitty3", ["#ff6fa8", "#c02a7a"], { head: RBD + band("url(#kofrb)", '<path d="M110 8l9 14l-9 12l-9-12z" fill="#7be0ff" stroke="' + L + '" stroke-width="3.5" stroke-linejoin="round"/>') + fringe(RB) + bow(154, 54, "#ff4d9d", 1.05, 14) + star(48, 46, 8, "#ffe066") + star(176, 118, 7, "#fff") + star(44, 124, 6, "#ffe066"),
+    back: '<g stroke="' + L + '" stroke-width="4" stroke-linejoin="round"><path d="M62 180q-52-30-48 22q6 26 50 22z" fill="#ffe0f0" opacity=".9"/><path d="M158 180q52-30 48 22q-6 26-50 22z" fill="#d8ecff" opacity=".9"/></g>' });
+  A.outfit("kitty4", ["#ffd34d", "#e08a0a"], { head: '<defs><linearGradient id="kofgd" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffe066"/><stop offset="1" stop-color="#ffb61e"/></linearGradient></defs>' + band("url(#kofgd)", star(110, 14, 15, "#fff")) + fringe(RB) + bow(156, 58, "#ff4d9d", 1.1, 16) + star(40, 40, 10, "#ffe066") + star(182, 34, 9, "#7be0ff") + star(34, 128, 8, "#fff") + star(186, 124, 7, "#ffe066"),
+    back: wings("#fff3b8", "#ffe066") });
   Object.keys(D).forEach(function (av) {
     var d = D[av], sp = d[1], c = d[2];
     A.register(av, d[0], function (jc, jd) { return critter(sp, jc, jd); }, c);

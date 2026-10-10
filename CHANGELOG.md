@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.80.0 – 2026-10-10
+- Shop: **Kitty-Outfits** für Siegertanz und Avatar, je Stufe eines: Kitty-Schleife (gewöhnlich, 80 🪙), Kitty-Regenbogen (selten, 200), Kitty-Prinzessin (episch, 400), Kitty-Sternenzauber (legendär, 1.000). Jede Figur trägt dann Schleife, Haarreifen, bunten Pony, Glitzersterne (und bei der Sternenzauber-Stufe goldene Flügel) plus passende Jacke. Technik: `VTA.outfit()` in `js/stila.js` legt Zubehör über Kopf bzw. hinter den Körper (gilt für alle gezeichneten Figuren; die wenigen Emoji-Figuren ohne Zeichnung bekommen nur den Namen). Auch im Pass-Dashboard auswählbar.
+
 ## 2.79.1 – 2026-10-10
 - Shop: Kitty Sternenzauber (legendär) kostet jetzt 2.500 🪙 statt 500.
 

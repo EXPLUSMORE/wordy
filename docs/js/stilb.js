@@ -245,6 +245,14 @@
     "svg:fnchamp": ["champ", { fur: ["#ffffff", "#cfe9ff", "#b9a6ff"], belly: "#ffffff", ears: "", face: "gem", cheek: false, eyes: "big", sclera: "#fff", under: FACETS, hback: crystals(["#ffffff", "#ffe58a"], true), hfront: star(60, 42, 8, "#ffd24a") + star(160, 42, 8, "#ffd24a"), badge: "#b9a6ff" }, ["#ffd24a", "#c8780a"]],
     "svg:fnunreal": ["unreal", { fur: ["#ff8fd0", "#8f7dff", "#37c6e8", "#ffd66b"], belly: "#ffffff", ears: "", face: "gem", cheek: false, eyes: "big", sclera: "#fff", under: FACETS, hback: crystals(["#ff8fd0", "#37c6e8"], true), hfront: star(54, 46, 9, "#fff") + star(166, 44, 9, "#fff"), badge: "#ff8fd0" }, ["#37c6e8", "#1a7fa0"]]
   };
+  /* Kitty-Outfits: Schleife, Haarreifen, bunter Pony und Glitzer für jede Figur (Siegertanz, Avatar) */
+  var RBD = '<defs><linearGradient id="kofrb" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ff6b8f"/><stop offset=".25" stop-color="#ffb347"/><stop offset=".5" stop-color="#ffe066"/><stop offset=".75" stop-color="#59c8ff"/><stop offset="1" stop-color="#b58cff"/></linearGradient></defs>';
+  A.outfit("kitty1", ["#4f8cff", "#1f4fb8"], { head: bow(148, 50, "#ff3b4f", 1.25, 12) });
+  A.outfit("kitty2", ["#b58cff", "#6a3fd0"], { head: band("#b58cff", star(110, 20, 9, "#ffe066")) + fringe(["#ff6b8f", "#ffb347", "#ffe066", "#7be08a", "#59c8ff"]) + bow(156, 56, "#ffe066", .9, 16) });
+  A.outfit("kitty3", ["#ff6fa8", "#c02a7a"], { head: RBD + band("url(#kofrb)", '<path d="M110 8l9 14l-9 12l-9-12z" fill="#7be0ff" stroke="' + L + '" stroke-width="3.5" stroke-linejoin="round"/>') + fringe(RB) + bow(154, 54, "#ff4d9d", 1.05, 14) + star(48, 46, 8, "#ffe066") + star(176, 118, 7, "#fff") + star(44, 124, 6, "#ffe066"),
+    back: '<g stroke="' + L + '" stroke-width="4" stroke-linejoin="round"><path d="M62 180q-52-30-48 22q6 26 50 22z" fill="#ffe0f0" opacity=".9"/><path d="M158 180q52-30 48 22q-6 26-50 22z" fill="#d8ecff" opacity=".9"/></g>' });
+  A.outfit("kitty4", ["#ffd34d", "#e08a0a"], { head: '<defs><linearGradient id="kofgd" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffe066"/><stop offset="1" stop-color="#ffb61e"/></linearGradient></defs>' + band("url(#kofgd)", star(110, 14, 15, "#fff")) + fringe(RB) + bow(156, 58, "#ff4d9d", 1.1, 16) + star(40, 40, 10, "#ffe066") + star(182, 34, 9, "#7be0ff") + star(34, 128, 8, "#fff") + star(186, 124, 7, "#ffe066"),
+    back: wings("#fff3b8", "#ffe066") });
   Object.keys(D).forEach(function (av) {
     var d = D[av], sp = d[1], c = d[2];
     A.register(av, d[0], function (jc, jd) { return critter(sp, jc, jd); }, c);
