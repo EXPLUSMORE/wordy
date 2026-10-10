@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.66.0 – 2026-10-10
+- Neu: Übung „Mitlesen“ (`openMitlesen()` in app.js). Teil 1: alle Wörter werden gezeigt und vorgelesen, Teil 2: „Jetzt du“, jedes Wort wird vorgesprochen, danach Pause zum lauten Nachsprechen. Pause, Vor/Zurück, Tempo aus „Tempo bei Alle vorlesen“. Zu finden in der Einheit (🗣️ Mitlesen) und unter Lernen › Gezielt üben (alle gelernten Wörter, z. B. vor einer Arbeit). Zählt weder Münzen noch Lernzeit.
+
 ## 2.65.0 – 2026-10-09
 - Pass: Nachholen (doppeltes Tagesziel heute holt einen weiteren verpassten Tag der Woche nach), Crew-Bonus (+10 🪙 pro Woche, wenn ein Crew-Wochenziel geholt wurde; `state.crew.days`), Wochenthema (Motto je Woche), Sammel-Set-Anzeige (Wochen-Figuren x/4) und Siegerbild zum Teilen (Bild mit Stempeln und Stufen, Teilen-Menü oder Download).
 

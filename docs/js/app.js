@@ -855,7 +855,7 @@
       '<div class="tiles">' + learn + '</div></section>' +
       '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Gezielt üben</div><span class="pill">neu</span></div>' +
       '<p class="small muted" style="margin:6px 0 0">Eine Aufgabenform üben, mit Wörtern, die dran sind (ca. ' + mins + ' Min).</p><div class="tiles">' +
-      focusT.map(function (f) { return tile(f[0], f[1], f[2], 'data-act="start" data-mode="focus" data-focus="' + f[3] + '" data-min="' + mins + '"' + (f[4] ? " disabled" : "")); }).join("") + '</div></section>';
+      focusT.map(function (f) { return tile(f[0], f[1], f[2], 'data-act="start" data-mode="focus" data-focus="' + f[3] + '" data-min="' + mins + '"' + (f[4] ? " disabled" : "")); }).join("") + tile("🗣️", "Mitlesen", "Alle gelernten Wörter hören und laut mitsprechen", 'data-act="mitlesen"') + '</div></section>';
   }
 
 
@@ -1217,6 +1217,61 @@
     }
     next();
   }
+  /* ---------- Mitlesen: erst alle Wörter hören, dann laut mitsprechen (kein Wertungsmodus, ohne Münzen) ---------- */
+  function openMitlesen(list, title) {
+    if (!list.length) return toast("Dafür gibt es noch keine Wörter. Übe erst ein paar neue.");
+    stopReading();
+    var pace = readPace(), tok = 0, phase = 1, idx = 0, paused = false, closed = false, ov = document.createElement("div");
+    ov.className = "mlov";
+    ov.innerHTML = '<div class="mlh"><b id="mlT"></b><button class="btn ghost" id="mlX" aria-label="Schließen">✕</button></div><div class="mlp" id="mlP"></div><div class="mlc" id="mlC"></div><div class="mlbar"><i id="mlB"></i></div>' +
+      '<div class="mll" id="mlL"></div><div class="mlf"><button class="btn ghost" id="mlPrev">⏮</button><button class="btn" id="mlPause">⏸ Pause</button><button class="btn ghost" id="mlNext">⏭</button></div>';
+    document.body.appendChild(ov); document.body.style.overflow = "hidden";
+    var $c = function (id) { return ov.querySelector("#" + id); };
+    $c("mlL").innerHTML = list.map(function (w, i) { return '<div class="mlw" id="mw' + i + '"><span class="en">' + esc(w.en) + '</span><span class="de">' + esc(w.de) + '</span></div>'; }).join("");
+    function close() { closed = true; tok++; try { window.speechSynthesis.cancel(); } catch (e) {} ov.remove(); document.body.style.overflow = ""; }
+    function bar(ms) { var b = $c("mlB"); b.style.transition = "none"; b.style.width = "0"; if (ms) { void b.offsetWidth; b.style.transition = "width " + ms + "ms linear"; b.style.width = "100%"; } }
+    function say(w, cb, t) { var done = function () { if (t === tok && !closed) cb(); }; if (!speak(w.en, pace.rate, "en", false, done)) setTimeout(done, 1200); }
+    function mark() { Array.prototype.forEach.call(ov.querySelectorAll(".mlw.on"), function (e) { e.classList.remove("on"); }); var e = $c("mw" + idx); if (e) { e.classList.add("on"); e.scrollIntoView({ block: "center", behavior: "smooth" }); } }
+    function show(w, sub) { $c("mlC").innerHTML = '<div class="mlen">' + esc(w.en) + '</div><div class="mlde">' + esc(w.de) + '</div>' + (sub ? '<div class="mlyou">' + sub + '</div>' : ""); }
+    function finish() {
+      tok++; bar(0); $c("mlP").textContent = "Geschafft";
+      $c("mlC").innerHTML = '<div class="mlen">🎉</div><div class="mlde">Alle ' + list.length + ' Wörter gehört und mitgesprochen.</div><div class="row" style="justify-content:center;gap:8px;margin-top:14px"><button class="btn" id="mlAgain">Nochmal</button><button class="btn ghost" id="mlEnd">Fertig</button></div>';
+      $c("mlAgain").onclick = function () { phase = 1; idx = 0; step(); }; $c("mlEnd").onclick = close;
+    }
+    function step() {
+      if (closed || paused) return;
+      var t = ++tok, w = list[idx];
+      if (idx >= list.length) {
+        if (phase === 1) {
+          bar(0); $c("mlP").textContent = "Teil 2 von 2";
+          $c("mlC").innerHTML = '<div class="mlen">🎤</div><div class="mlde">Jetzt du: Ich sage jedes Wort vor, du sprichst laut mit.</div><button class="btn lg" id="mlGo" style="margin-top:14px">Los geht\'s</button>';
+          $c("mlGo").onclick = function () { phase = 2; idx = 0; step(); }; return;
+        }
+        return finish();
+      }
+      mark();
+      if (phase === 1) {
+        $c("mlP").textContent = "Teil 1 von 2 · Zuhören (" + (idx + 1) + "/" + list.length + ")"; bar(0); show(w);
+        say(w, function () { setTimeout(function () { if (t === tok) { idx++; step(); } }, Math.round(pace.gap / 2)); }, t);
+      } else {
+        $c("mlP").textContent = "Teil 2 von 2 · Sprich mit (" + (idx + 1) + "/" + list.length + ")"; bar(0); show(w);
+        say(w, function () {
+          var ms = Math.max(2200, pace.gap + 900); show(w, "🎤 Jetzt du! Sprich laut nach."); bar(ms);
+          setTimeout(function () { if (t === tok) { idx++; step(); } }, ms);
+        }, t);
+      }
+    }
+    $c("mlT").textContent = title;
+    $c("mlX").onclick = close;
+    $c("mlPause").onclick = function () { paused = !paused; this.textContent = paused ? "▶ Weiter" : "⏸ Pause"; if (paused) { tok++; try { window.speechSynthesis.cancel(); } catch (e) {} } else step(); };
+    $c("mlNext").onclick = function () { if (idx < list.length) { idx++; try { window.speechSynthesis.cancel(); } catch (e) {} step(); } };
+    $c("mlPrev").onclick = function () { idx = Math.max(0, idx - 1); try { window.speechSynthesis.cancel(); } catch (e) {} step(); };
+    step();
+  }
+  function mitlesenList(unitId) {
+    if (unitId) { var u = S.units().filter(function (x) { return x.id === unitId; })[0]; return u ? { title: u.title, list: u.words.map(function (w) { return { en: w[0], de: w[1] }; }) } : { title: "", list: [] }; }
+    return { title: "Alle gelernten Wörter", list: S.activeWords().filter(function (w) { return S.levelOf(w.id) >= 1; }).map(function (w) { return { en: w.en, de: w.de }; }) };
+  }
   function viewUnitDetail(id) {
     var u = S.units().filter(function (x) { return x.id === id; })[0];
     if (!u) { detailUnit = null; return viewUeben(); }
@@ -1236,7 +1291,7 @@
       '<h1 style="font-size:24px">' + esc(u.icon) + ' ' + esc(u.title) + '</h1>' +
       '<p class="small muted" style="margin:6px 0 0">' + u.words.length + ' Wörter · ' + mastered + ' gemeistert</p>' +
       '<div class="row" style="margin-top:12px;gap:8px"><button class="btn" data-act="start" data-unit="' + esc(u.id) + '">Diese Einheit üben</button>' +
-      (audioAvailable() ? '<button class="btn ghost" data-act="readall" data-id="' + esc(u.id) + '">🔊 Alle vorlesen</button>' : '') + '</div>' +
+      (audioAvailable() ? '<button class="btn ghost" data-act="readall" data-id="' + esc(u.id) + '">🔊 Alle vorlesen</button>' : '') + '<button class="btn ghost" data-act="mitlesen" data-unit="' + esc(u.id) + '">🗣️ Mitlesen</button></div>' +
       '<div class="eyebrow" style="margin-top:14px">Wie möchtest du üben?</div><div class="row wrap" style="margin-top:8px;gap:8px">' +
       [["👂", "Hören", "listen", !audioAvailable()], ["⌨️", "Tippen", "type"], ["🧩", "Lücken", "gap"], ["🔗", "Zuordnen", "match"]].map(function (f) {
         return f[3] ? "" : '<button class="chip" data-act="start" data-unit="' + esc(u.id) + '" data-focus="' + f[2] + '" data-min="5">' + f[0] + ' ' + f[1] + '</button>';
@@ -2751,6 +2806,7 @@
       toast(okV ? (voice ? "Stimme: " + voice.name + " (" + voice.lang + ")" : "Standardstimme des Browsers wird genutzt.") : "Der Browser bietet hier keine Sprachausgabe an.");
       return;
     }
+    if (a === "mitlesen") { var ml = mitlesenList(act.getAttribute("data-unit")); openMitlesen(ml.list, ml.title); return; }
     if (a === "arena") { if (global.ARENA) global.ARENA.start(act.getAttribute("data-id")); return; }
     if (a === "start") {
       var fc = act.getAttribute("data-focus") || null;
