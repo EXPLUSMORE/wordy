@@ -1122,7 +1122,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.75.2";window.WORDY_BUILD="e2834ca0e6";</script>
+<script>window.WORDY_VERSION="2.75.3";window.WORDY_BUILD="7f5ff6036c";</script>
 </head>
 <body>
 <div id="app">
@@ -2987,18 +2987,18 @@ window.GRAMMAR = [
     },
     items: [
       { t: "choice", q: "Last summer we ____ a high mountain.", opts: ["climbed", "climb", "climbing", "climbs"], why: "Regelmäßiges Verb, vorbei (last summer): climb + -ed." },
-      { t: "choice", q: "I ____ to summer camp with my cousin.", opts: ["went", "goed", "go", "gone"], why: "go ist unregelmäßig: go – went. „goed“ gibt es nicht." },
-      { t: "choice", q: "She ____ a new bike yesterday.", opts: ["bought", "buyed", "buys", "buy"], why: "buy ist unregelmäßig: buy – bought." },
+      { t: "choice", q: "I ____ to summer camp with my cousin.", opts: ["went", "gone", "go", "goes"], why: "go ist unregelmäßig: go – went (nicht „goed“)." },
+      { t: "choice", q: "She ____ a new bike yesterday.", opts: ["bought", "brought", "buys", "buy"], why: "buy ist unregelmäßig: buy – bought." },
       { t: "choice", q: "It ____ cold and rainy last night.", opts: ["was", "were", "is", "be"], why: "Vergangenheit von to be: it was (Einzahl)." },
       { t: "choice", q: "We ____ at the lake two days ago.", opts: ["were", "was", "are", "is"], why: "Vergangenheit von to be: we were (Mehrzahl)." },
-      { t: "choice", q: "They ____ a barbecue because the weather was warm.", opts: ["had", "haved", "have", "has"], why: "have ist unregelmäßig: have – had." },
+      { t: "choice", q: "They ____ a barbecue because the weather was warm.", opts: ["had", "have", "has", "having"], why: "have ist unregelmäßig: have – had." },
       { t: "type", q: "Yesterday I ____ (play) football with my friends.", a: ["played"], full: "Yesterday I played football with my friends.", why: "Regelmäßig: play + -ed = played." },
       { t: "type", q: "My dad ____ (make) a big breakfast on Sunday.", a: ["made"], full: "My dad made a big breakfast on Sunday.", why: "make ist unregelmäßig: make – made." },
       { t: "type", q: "We ____ (see) a film last weekend.", a: ["saw"], full: "We saw a film last weekend.", why: "see ist unregelmäßig: see – saw." },
       { t: "type", q: "The children ____ (walk) to school an hour ago.", a: ["walked"], full: "The children walked to school an hour ago.", why: "Regelmäßig: walk + -ed = walked." },
       { t: "order", w: ["We", "visited", "our", "grandma", "last", "week."], why: "Reihenfolge: Subjekt, Verb (Past), Objekt, Zeitangabe." },
       { t: "order", w: ["She", "ate", "pizza", "for", "dinner", "yesterday."], why: "eat ist unregelmäßig: eat – ate. Die Zeitangabe steht am Ende." },
-      { t: "error", s: "Yesterday we goed to the cinema.", bad: 3, fix: ["went", "go", "gone", "goes"], why: "go ist unregelmäßig: go – went." },
+      { t: "error", s: "Yesterday we goed to the cinema.", bad: 2, fix: ["went", "go", "gone", "goes"], why: "go ist unregelmäßig: go – went." },
       { t: "error", s: "She buyed a new T-shirt last week.", bad: 1, fix: ["bought", "buy", "buys", "buying"], why: "buy ist unregelmäßig: buy – bought." },
       { t: "error", s: "We was very tired after the trip.", bad: 1, fix: ["were", "is", "are", "be"], why: "Zu we gehört were, nicht was." }
     ]
@@ -3036,7 +3036,7 @@ window.GRAMMAR = [
       { t: "order", w: ["We", "didn't", "go", "to", "the", "park."], why: "Verneinung: Person + didn't + Grundform." },
       { t: "error", s: "Did you went to the cinema?", bad: 2, fix: ["go", "going", "goes", "gone"], why: "Nach did steht die Grundform: go." },
       { t: "error", s: "I didn't saw the film.", bad: 2, fix: ["see", "seen", "sees", "seeing"], why: "Nach didn't steht die Grundform: see." },
-      { t: "error", s: "He didn't liked the book.", bad: 2, fix: ["like", "likes", "liking", "likeed"], why: "Nach didn't steht die Grundform: like, ohne -ed." }
+      { t: "error", s: "He didn't liked the book.", bad: 2, fix: ["like", "likes", "liking", "to like"], why: "Nach didn't steht die Grundform: like, ohne -ed." }
     ]
   },
   /* Folgende Themen sind geplant und erscheinen als „bald“ (Reihenfolge nach Headlight 2) */

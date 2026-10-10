@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.75.3 – 2026-10-10
+- Grammatik: Fehler im Thema „Simple Past: Das ist passiert“ behoben. Beim Satz „Yesterday we goed to the cinema.“ zeigte die Markierung auf das falsche Wort („to“ statt „goed“), und die Korrektur stand dadurch im falschen Satz. Alle 30 Aufgaben beider Themen geprüft. Erfundene Formen (goed, buyed, haved, likeed) kommen nur noch als Fehler im Fehlersatz vor, nicht mehr als Antwortmöglichkeit. Neues Prüfwerkzeug `tools/check-grammatik.js` (`node tools/check-grammatik.js`) kontrolliert Markierung, Lücken, doppelte Antworten und falsche Formen in richtigen Lösungen.
+
 ## 2.75.2 – 2026-10-10
 - Lernen öffnet jetzt mit „Was lernen?“ (vorher Pfad).
 
