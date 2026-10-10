@@ -79,13 +79,15 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS family_invites (code TEXT PRIMARY KEY, created INTEGER NOT NULL, expires INTEGER NOT NULL, max_uses INTEGER NOT NULL DEFAULT 1, uses INTEGER NOT NULL DEFAULT 0, note TEXT);
 `);
 if (!db.prepare("PRAGMA table_info(players)").all().some(c => c.name === "family")) db.exec("ALTER TABLE players ADD COLUMN family INTEGER REFERENCES families(id) ON DELETE CASCADE");
-for (const [tab, col, ddl] of [["families", "role", "TEXT NOT NULL DEFAULT 'parent'"], ["families", "pw", "TEXT NOT NULL DEFAULT ''"], ["family_invites", "role", "TEXT NOT NULL DEFAULT 'parent'"]]) if (!db.prepare("PRAGMA table_info(" + tab + ")").all().some(c => c.name === col)) db.exec("ALTER TABLE " + tab + " ADD COLUMN " + col + " " + ddl);
+for (const [tab, col, ddl] of [["families", "role", "TEXT NOT NULL DEFAULT 'parent'"], ["families", "pw", "TEXT NOT NULL DEFAULT ''"], ["family_invites", "role", "TEXT NOT NULL DEFAULT 'parent'"], ["families", "owner", "INTEGER REFERENCES families(id) ON DELETE CASCADE"], ["family_invites", "owner", "INTEGER"]]) if (!db.prepare("PRAGMA table_info(" + tab + ")").all().some(c => c.name === col)) db.exec("ALTER TABLE " + tab + " ADD COLUMN " + col + " " + ddl);
+const MAX_COPARENTS = 2;
 const fq = {
   byId: db.prepare("SELECT * FROM families WHERE id = ?"),
   byEmail: db.prepare("SELECT * FROM families WHERE email = ?"),
   setPw: db.prepare("UPDATE families SET pw = ? WHERE id = ?"),
-  all: db.prepare("SELECT f.*, (SELECT COUNT(*) FROM players p WHERE p.family = f.id) AS children FROM families f ORDER BY f.id"),
-  add: db.prepare("INSERT INTO families(email, created, consent_ts, consent_ver, role) VALUES (?, ?, ?, ?, ?)"),
+  all: db.prepare("SELECT f.*, (SELECT COUNT(*) FROM players p WHERE p.family = COALESCE(f.owner, f.id)) AS children FROM families f ORDER BY f.id"),
+  add: db.prepare("INSERT INTO families(email, created, consent_ts, consent_ver, role, owner) VALUES (?, ?, ?, ?, ?, ?)"),
+  coparents: db.prepare("SELECT * FROM families WHERE owner = ? ORDER BY id"),
   setStatus: db.prepare("UPDATE families SET status = ? WHERE id = ?"),
   setWeekly: db.prepare("UPDATE families SET weekly = ? WHERE id = ?"),
   touchLogin: db.prepare("UPDATE families SET last_login = ? WHERE id = ?"),
@@ -99,6 +101,8 @@ const fq = {
   delSess: db.prepare("DELETE FROM family_sessions WHERE hash = ?"),
   delSessOf: db.prepare("DELETE FROM family_sessions WHERE family = ?"),
   addInv: db.prepare("INSERT INTO family_invites(code, created, expires, max_uses, note, role) VALUES (?, ?, ?, ?, ?, ?)"),
+  addCoInv: db.prepare("INSERT INTO family_invites(code, created, expires, max_uses, note, role, owner) VALUES (?, ?, ?, 1, ?, 'parent', ?)"),
+  coInvs: db.prepare("SELECT * FROM family_invites WHERE owner = ? AND uses < max_uses AND expires > ?"),
   inv: db.prepare("SELECT * FROM family_invites WHERE code = ?"),
   invs: db.prepare("SELECT * FROM family_invites ORDER BY created DESC LIMIT 50"),
   useInv: db.prepare("UPDATE family_invites SET uses = uses + 1 WHERE code = ?"),
@@ -727,7 +731,7 @@ function adminPlayers(hidden, scope) {
   });
 }
 function nameTaken(name, scope, exceptId) {
-  const rows = scope ? fq.kids.all(scope.id) : db.prepare("SELECT id, name FROM players WHERE family IS NULL").all();
+  const rows = scope ? fq.kids.all(scope.fid) : db.prepare("SELECT id, name FROM players WHERE family IS NULL").all();
   return rows.some(r => r.id !== exceptId && String(r.name).trim().toLowerCase() === String(name).trim().toLowerCase());
 }
 function newInvite(pid) {
@@ -773,7 +777,7 @@ function pairPoll(id, secret, ip) {
   return [200, { status: r.status === "done" ? "expired" : r.status }];
 }
 function pairLookup(code, scope, ip) {
-  if (limited(ip + (scope ? ":" + scope.id : ":op"), "plook", 30, 600000)) return [429, { error: "Zu viele Versuche. Bitte später noch einmal." }];
+  if (limited(ip + (scope ? ":" + scope.fid : ":op"), "plook", 30, 600000)) return [429, { error: "Zu viele Versuche. Bitte später noch einmal." }];
   const r = prq.byCode.get(pairNormCode(code));
   if (!r || r.status !== "pending" || !pairLive(r)) return [404, { error: "Dieser Code stimmt nicht oder ist abgelaufen. Das Kind kann in der App einen neuen anfordern." }];
   return [200, { code: r.code, device: r.device, hint: r.hint, created: r.created }];
@@ -787,8 +791,8 @@ function pairApprove(code, body, scope, ip) {
     const name = clean(body.newName, 20); if (!name) return [400, { error: "Bitte wähle ein Kind oder gib einen Vornamen ein." }];
     if (scope && scope.role === "teacher") return [403, { error: "Lehrkraft-Konten haben keine Kinder." }];
     if (nameTaken(name, scope, 0)) return [400, { error: "Es gibt schon einen Spieler mit diesem Namen." }];
-    if (scope && fq.kids.all(scope.id).length >= MAX_KIDS) return [400, { error: "Es sind höchstens " + MAX_KIDS + " Kinder pro Konto möglich." }];
-    pid = scope ? +fq.addKid.run(name, Date.now(), scope.id).lastInsertRowid : +q.addPlayer.run(name, Date.now(), 0).lastInsertRowid;
+    if (scope && fq.kids.all(scope.fid).length >= MAX_KIDS) return [400, { error: "Es sind höchstens " + MAX_KIDS + " Kinder pro Konto möglich." }];
+    pid = scope ? +fq.addKid.run(name, Date.now(), scope.fid).lastInsertRowid : +q.addPlayer.run(name, Date.now(), 0).lastInsertRowid;
     if (!scope) { sq.setSocial.run(1, pid); fcodeOf(pid); }
   }
   const token = rand(32); q.addToken.run(sha(token), pid, clean(r.device, 80), Date.now(), Date.now());
@@ -884,7 +888,7 @@ function famAuth(req) {   // Familie aus dem Sitzungs-Cookie, nur aktive Konten
   if (Date.now() - s.created > SESSION_DAYS * 86400000) { fq.delSess.run(h); return null; }
   const f = fq.byId.get(s.family); if (!f || f.status !== "active") return null;
   if (Date.now() - s.last_seen > 3600000) fq.touchSess.run(Date.now(), h);
-  return Object.assign({}, f, { sessCreated: s.created });
+  return Object.assign({}, f, { sessCreated: s.created, fid: f.owner || f.id });   // fid = Familie, deren Kinder zu sehen sind (zweiter Elternzugang = Kinder des Hauptkontos)
 }
 const cookieHdr = (v, maxAge) => "wf=" + v + "; Path=/; HttpOnly; SameSite=Lax; Max-Age=" + maxAge + (DASH_URL.startsWith("https") ? "; Secure" : "");
 /* Datenschutzerklärung: Angaben des Betreibers kommen aus .env (PRIVACY_*), fehlende werden gelb markiert */
@@ -897,9 +901,9 @@ function privacyPage() {
   map.HINWEIS = miss.length ? '<p class="box"><b>Entwurf, bitte vervollständigen.</b> Auf dem Server fehlen noch Angaben des Betreibers (gelb markiert): ' + miss.map(esc).join(", ") + '. Sie werden in der Datei <code>.env</code> über die Variablen <code>PRIVACY_*</code> gesetzt (siehe README). Der Text wurde nach Art. 13 DSGVO verfasst, ersetzt aber keine Rechtsberatung. Bitte vor dem Einladen fremder Familien rechtlich prüfen lassen.</p>' : "";
   return fs.readFileSync(path.join(PUBLIC, "datenschutz.html"), "utf8").replace(/\{\{([A-Z]+)\}\}/g, (m, k) => map[k] != null ? map[k] : m);
 }
-const famPlayer = (pl, scope) => !!pl && (scope ? pl.family === scope.id : pl.family == null);   // Besitzprüfung: Familie nur eigene Kinder, Betreiber nur eigene Spieler
+const famPlayer = (pl, scope) => !!pl && (scope ? pl.family === scope.fid : pl.family == null);   // Besitzprüfung: Familie nur eigene Kinder, Betreiber nur eigene Spieler
 function famExport(f) {
-  return { exportedAt: new Date().toISOString(), email: f.email, created: f.created, consent: { ts: f.consent_ts, version: f.consent_ver }, children: fq.kids.all(f.id).map(p => ({
+  return { exportedAt: new Date().toISOString(), email: f.email, created: f.created, consent: { ts: f.consent_ts, version: f.consent_ver }, children: fq.kids.all(f.owner || f.id).map(p => ({
     id: p.id, name: p.name, created: p.created, goals: q.goals.all(p.id, "0000-00-00"), plans: q.plans.all(p.id, "0000-00-00"), latestState: (q.latestState.get(p.id) || {}).d ? JSON.parse(q.latestState.get(p.id).d) : null, events: q.events.all(p.id, 0).map(e => ({ ts: e.ts, k: e.k, d: JSON.parse(e.d) })) })) };
 }
 async function famWeekly() {
@@ -912,7 +916,7 @@ async function famWeekly() {
     const tries = "fmail_try:" + f.id + ":" + key, n = q.kvGet.get(tries);
     if (n && +n.val >= 3) continue;
     q.kvSet.run(tries, String((n ? +n.val : 0) + 1));
-    try { const c = mailContent(fq.kids.all(f.id).filter(x => !x.hidden), DASH_URL + "/f/"); await deliver({ to: f.email, subject: c.subject, html: c.html, text: c.text }); q.kvSet.run(sk, key); }
+    try { const c = mailContent(fq.kids.all(f.owner || f.id).filter(x => !x.hidden), DASH_URL + "/f/"); await deliver({ to: f.email, subject: c.subject, html: c.html, text: c.text }); q.kvSet.run(sk, key); }
     catch (e) { console.error("Familien-Wochenmail fehlgeschlagen:", e.message); }
   }
 }
@@ -1299,7 +1303,11 @@ const server = http.createServer(async (req, res) => {
       const inv = fq.inv.get(code);
       if (!inv || inv.expires < Date.now() || inv.uses >= inv.max_uses) return send(res, 400, { error: "Dieser Einladungslink ist ungültig oder abgelaufen." });
       let f = fq.byEmail.get(email);
-      if (!f) { const id = +fq.add.run(email, Date.now(), Date.now(), CONSENT_VER, inv.role || "parent").lastInsertRowid; fq.useInv.run(code); f = fq.byId.get(id); }
+      if (!f) {
+        let owner = null;
+        if (inv.owner) { const o = fq.byId.get(inv.owner); if (!o || o.owner || o.status !== "active" || fq.coparents.all(o.id).length >= MAX_COPARENTS) return send(res, 400, { error: "Dieser Einladungslink ist ungültig oder abgelaufen." }); owner = o.id; }
+        const id = +fq.add.run(email, Date.now(), Date.now(), CONSENT_VER, inv.role || "parent", owner).lastInsertRowid; fq.useInv.run(code); f = fq.byId.get(id);
+      }
       if (f.status === "active" && !limited(email, "fmail", 3, 3600000)) { try { await sendLoginLink(f); } catch (e) { console.error("Anmeldelink:", e.message); return send(res, 502, { error: "Die Mail konnte nicht gesendet werden." }); } }
       return send(res, 200, { ok: true });
     }
@@ -1369,7 +1377,7 @@ const server = http.createServer(async (req, res) => {
       }
       if (!scope && p === "/api/admin/shopplan" && req.method === "GET") return send(res, 200, shopPlan());
       if (!scope && p === "/api/admin/shopplan" && req.method === "POST") { const [c, b] = setShopPlan(await readJson(req)); return send(res, c, b); }
-      if (scope && p === "/api/admin/me" && req.method === "GET") return send(res, 200, { email: scope.email, created: scope.created, weekly: !!scope.weekly, hasPassword: !!scope.pw, children: fq.kids.all(scope.id).length, max: MAX_KIDS, mail: transportOn(), day: MAIL.day, hour: MAIL.hour });
+      if (scope && p === "/api/admin/me" && req.method === "GET") return send(res, 200, { email: scope.email, created: scope.created, weekly: !!scope.weekly, hasPassword: !!scope.pw, children: fq.kids.all(scope.fid).length, coparent: !!scope.owner, max: MAX_KIDS, mail: transportOn(), day: MAIL.day, hour: MAIL.hour });
       if (scope && p === "/api/admin/me/password" && req.method === "POST") {
         const b = await readJson(req), problem = pwProblem(b.password, scope.email);
         if (problem) return send(res, 400, { error: problem });
@@ -1378,6 +1386,24 @@ const server = http.createServer(async (req, res) => {
         fq.setPw.run(pwHash(b.password), scope.id); return send(res, 200, { ok: true });
       }
       if (scope && p === "/api/admin/me" && req.method === "POST") { const b = await readJson(req); fq.setWeekly.run(b.weekly ? 1 : 0, scope.id); return send(res, 200, { ok: true }); }
+      if (scope && p === "/api/admin/coparents") {   // zweiter Elternzugang: gleiche Kinder, eigene Anmeldung (nur vom Hauptkonto aus)
+        if (scope.owner || scope.role === "teacher") return send(res, 403, { error: "Nur das Hauptkonto kann weitere Eltern einladen." });
+        const list = () => ({ items: fq.coparents.all(scope.id).map(c => ({ id: c.id, email: c.email, created: c.created, lastLogin: c.last_login, status: c.status })),
+          invites: fq.coInvs.all(scope.id, Date.now()).map(i => ({ code: i.code, url: DASH_URL + "/f/join?i=" + i.code, expires: i.expires })), max: MAX_COPARENTS });
+        if (req.method === "GET") return send(res, 200, list());
+        if (req.method === "POST") {
+          const l = list(); if (l.items.length + l.invites.length >= MAX_COPARENTS) return send(res, 400, { error: "Es sind höchstens " + MAX_COPARENTS + " weitere Elternzugänge möglich." });
+          fq.addCoInv.run(rand(5).toUpperCase(), Date.now(), Date.now() + 7 * 86400000, "Zweiter Elternzugang", scope.id);
+          return send(res, 200, list());
+        }
+      }
+      const mcp = scope && p.match(/^\/api\/admin\/coparents\/(\d+|[A-Z0-9]{4,20})$/);
+      if (mcp && req.method === "DELETE") {
+        if (scope.owner || scope.role === "teacher") return send(res, 403, { error: "Nicht erlaubt." });
+        if (/^\d+$/.test(mcp[1])) { const c = fq.byId.get(+mcp[1]); if (!c || c.owner !== scope.id) return send(res, 404, { error: "Unbekannt." }); fq.del.run(c.id); }
+        else { const i = fq.inv.get(mcp[1]); if (!i || i.owner !== scope.id) return send(res, 404, { error: "Unbekannt." }); fq.delInv.run(i.code); }
+        return send(res, 200, { ok: true });
+      }
       if (scope && p === "/api/admin/me/export" && req.method === "GET") {
         res.writeHead(200, { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store", "Content-Disposition": 'attachment; filename="wordy-daten-export.json"' });
         return res.end(JSON.stringify(famExport(scope), null, 1));
@@ -1387,7 +1413,7 @@ const server = http.createServer(async (req, res) => {
         fq.del.run(scope.id); return send(res, 200, { ok: true }, { "Set-Cookie": cookieHdr("", 0) });   // löscht Konto, Kinder, Lernstände (ON DELETE CASCADE)
       }
       if (scope && p.startsWith("/api/admin/families")) return send(res, 403, { error: "Nicht erlaubt." });
-      if (!scope && p === "/api/admin/families" && req.method === "GET") return send(res, 200, fq.all.all().map(f => ({ id: f.id, email: f.email, created: f.created, status: f.status, children: f.children, role: f.role, lastLogin: f.last_login, weekly: !!f.weekly, consent: f.consent_ts })));
+      if (!scope && p === "/api/admin/families" && req.method === "GET") return send(res, 200, fq.all.all().map(f => ({ id: f.id, email: f.email, created: f.created, status: f.status, children: f.children, owner: f.owner, role: f.role, lastLogin: f.last_login, weekly: !!f.weekly, consent: f.consent_ts })));
       if (!scope && p === "/api/admin/families/invites" && req.method === "GET") return send(res, 200, fq.invs.all().map(i => ({ code: i.code, created: i.created, expires: i.expires, max: i.max_uses, uses: i.uses, note: i.note, url: DASH_URL + "/f/join?i=" + i.code + (i.role === "teacher" ? "&l=1" : ""), role: i.role })));
       if (!scope && p === "/api/admin/families/invites" && req.method === "POST") {
         const b = await readJson(req), code = (rand(5)).toUpperCase(), days = Math.min(60, Math.max(1, +b.days || 14)), uses = Math.min(50, Math.max(1, +b.uses || 1));
@@ -1409,12 +1435,12 @@ const server = http.createServer(async (req, res) => {
           if (mq[2] === "/deny" && req.method === "POST") { const [c, b] = pairLookup(mq[1], scope, ip); if (c === 200) prq.setStatus.run("denied", prq.byCode.get(b.code).id); return send(res, c, c === 200 ? { ok: true } : b); }
         } }
       if (p === "/api/admin/feedback" && req.method === "GET") {
-        if (scope) return send(res, 200, { items: fbq.ofFamily.all(scope.id).map(fbOwn), kinds: FB_KINDS });
+        if (scope) return send(res, 200, { items: fbq.ofFamily.all(scope.fid).map(fbOwn), kinds: FB_KINDS });
         return send(res, 200, { items: fbq.all.all().map(fbAdminRow), kinds: FB_KINDS, open: fbq.open.get().n, hour: fbHour(), mail: transportOn() && !!mailTo(), to: mailTo() });
       }
       if (p === "/api/admin/feedback" && req.method === "POST") {
         if (limited(ip, "fb", 20, 3600000)) return send(res, 429, { error: "Zu viele Rückmeldungen. Bitte später noch einmal." });
-        const b = await readJson(req), [c, r] = fbAdd({ family: scope ? scope.id : null, role: scope ? (scope.role === "teacher" ? "teacher" : "family") : "operator", kind: b.kind, text: b.text, source: "dashboard", ver: b.ver });
+        const b = await readJson(req), [c, r] = fbAdd({ family: scope ? scope.fid : null, role: scope ? (scope.role === "teacher" ? "teacher" : "family") : "operator", kind: b.kind, text: b.text, source: "dashboard", ver: b.ver });
         return send(res, c, r);
       }
       if (!scope && p === "/api/admin/feedback/mailnow" && req.method === "POST") {
@@ -1435,7 +1461,7 @@ const server = http.createServer(async (req, res) => {
       }
       if (p === "/api/admin/mail" && req.method === "GET" && scope) { const sent = q.kvGet.get("fmail_sent:" + scope.id); return send(res, 200, { configured: transportOn() && !!scope.weekly, to: scope.email, day: MAIL.day, hour: MAIL.hour, lastWeek: sent ? sent.val : null, family: true }); }
       if (p === "/api/admin/mail/test" && req.method === "POST" && scope) {
-        try { const c = mailContent(fq.kids.all(scope.id).filter(x => !x.hidden), DASH_URL + "/f/"); await deliver({ to: scope.email, subject: c.subject, html: c.html, text: c.text }); return send(res, 200, { ok: true }); } catch (e) { return send(res, 200, { ok: false, error: String(e.message).slice(0, 200) }); }
+        try { const c = mailContent(fq.kids.all(scope.fid).filter(x => !x.hidden), DASH_URL + "/f/"); await deliver({ to: scope.email, subject: c.subject, html: c.html, text: c.text }); return send(res, 200, { ok: true }); } catch (e) { return send(res, 200, { ok: false, error: String(e.message).slice(0, 200) }); }
       }
       if (p === "/api/admin/mail" && req.method === "POST") {
         const b = await readJson(req), list = String(b.to || "").split(/[,;\s]+/).filter(Boolean);
@@ -1453,8 +1479,8 @@ const server = http.createServer(async (req, res) => {
         if (!name) return send(res, 400, { error: "Name fehlt." });
         if (isT) return send(res, 403, { error: "Lehrkraft-Konten haben keine Kinder." });
         if (nameTaken(name, scope, 0)) return send(res, 400, { error: "Es gibt schon einen Spieler mit diesem Namen. Bitte unterscheide sie, z. B. „Mia L.“ und „Mia K.“." });
-        if (scope && fq.kids.all(scope.id).length >= MAX_KIDS) return send(res, 400, { error: "Es sind höchstens " + MAX_KIDS + " Kinder pro Konto möglich." });
-        const id = scope ? +fq.addKid.run(name, Date.now(), scope.id).lastInsertRowid : +q.addPlayer.run(name, Date.now(), b.hidden ? 1 : 0).lastInsertRowid;
+        if (scope && fq.kids.all(scope.fid).length >= MAX_KIDS) return send(res, 400, { error: "Es sind höchstens " + MAX_KIDS + " Kinder pro Konto möglich." });
+        const id = scope ? +fq.addKid.run(name, Date.now(), scope.fid).lastInsertRowid : +q.addPlayer.run(name, Date.now(), b.hidden ? 1 : 0).lastInsertRowid;
         if (!scope && !b.hidden) { sq.setSocial.run(1, id); fcodeOf(id); }   // Testphase: vom Betreiber angelegte Spieler starten mit eingeschalteten Freunden
         return send(res, 200, { id, name, hidden: !!b.hidden, invite: newInvite(id) });
       }

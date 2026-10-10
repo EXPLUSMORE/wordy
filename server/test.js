@@ -338,6 +338,24 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     const F2 = { Cookie: (ss2.headers.get("set-cookie") || "").split(";")[0], "Content-Type": "application/json", "X-Wordy": "1" };
     assert.equal((await J("/api/fam/players/" + kid.j.id + "/report", { headers: F2 })).s, 404, "fremde Familie sieht das Kind nicht");
     assert.equal((await J("/api/fam/players/" + kid.j.id, { method: "DELETE", headers: F2 })).s, 404, "und kann es nicht löschen");
+    // zweiter Elternzugang: gleiche Kinder, eigene Anmeldung
+    { const cp = await J("/api/fam/coparents", { method: "POST", headers: F, body: "{}" }); assert.equal(cp.s, 200); assert.equal(cp.j.invites.length, 1, "Einladung für zweiten Elternteil");
+      const code = cp.j.invites[0].code; assert.ok(/\/f\/join\?i=/.test(cp.j.invites[0].url));
+      mailGot = ""; assert.equal((await J("/api/family/join", { method: "POST", body: JSON.stringify({ email: "oma@example.org", invite: code, consent: true }) })).s, 200); await wait(300);
+      const ss3 = await fetch(base + "/api/family/session", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ t: linkOf() }) });
+      const F3 = { Cookie: (ss3.headers.get("set-cookie") || "").split(";")[0], "Content-Type": "application/json", "X-Wordy": "1" };
+      assert.deepEqual((await J("/api/fam/players", { headers: F3 })).j.map(x => x.name), ["Lena"], "zweiter Elternteil sieht dieselben Kinder");
+      assert.equal((await J("/api/fam/players/" + kid.j.id + "/report", { headers: F3 })).s, 200, "und deren Bericht");
+      assert.equal((await J("/api/fam/me", { headers: F3 })).j.coparent, true);
+      assert.equal((await J("/api/fam/coparents", { method: "POST", headers: F3, body: "{}" })).s, 403, "zweiter Zugang lädt nicht weiter ein");
+      assert.equal((await J("/api/fam/players/" + mk.j.id + "/report", { headers: F3 })).s, 404, "und sieht keine fremden Kinder");
+      assert.equal((await J("/api/fam/players/" + kid.j.id + "/report", { headers: F2 })).s, 404, "andere Familie weiterhin ohne Zugriff");
+      assert.equal((await J("/api/family/join", { method: "POST", body: JSON.stringify({ email: "x2@example.org", invite: code, consent: true }) })).s, 400, "Einladung nur einmal");
+      const li = await J("/api/fam/coparents", { headers: F }); assert.equal(li.j.items.length, 1); assert.equal(li.j.invites.length, 0);
+      assert.equal((await J("/api/fam/coparents/" + li.j.items[0].id, { method: "DELETE", headers: F3 })).s, 403, "zweiter Zugang entfernt niemanden");
+      assert.equal((await J("/api/fam/coparents/" + li.j.items[0].id, { method: "DELETE", headers: F })).s, 200, "Hauptkonto entfernt den Zugang");
+      assert.equal((await J("/api/fam/players", { headers: F3 })).s, 401, "entfernter Zugang ist abgemeldet");
+      assert.deepEqual((await J("/api/fam/players", { headers: F })).j.map(x => x.name), ["Lena"], "Kind bleibt beim Hauptkonto"); }
     // Einladungslink ist verbraucht (1 Nutzung)
     assert.equal((await J("/api/family/join", { method: "POST", body: JSON.stringify({ email: "x@example.org", invite: inv2.j.code, consent: true }) })).s, 400, "Einladung nur einmal nutzbar");
     // Anmeldung für unbekannte Adresse: gleiche Antwort, keine Mail
