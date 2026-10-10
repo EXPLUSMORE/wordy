@@ -7,9 +7,9 @@
   var GAMES = [
     { id: "detective", icon: "🔎", name: "Wort-Detektiv", tag: "5 Wörter · 6 Versuche", claim: "Errate das englische Wort.",
       desc: "Du bekommst die deutsche Bedeutung und die Länge. Rate das englische Wort: Grün heißt richtig, Gelb richtig aber an anderer Stelle, Grau kommt nicht vor." },
-    { id: "eisi", icon: "🐻‍❄️", name: "Rette Eisi", tag: "5 Wörter · 6 Eisschollen", claim: "Rate Buchstabe für Buchstabe.",
-      desc: "Eisi steht auf schmelzendem Eis. Tippe Buchstaben, die im englischen Wort vorkommen. Jeder falsche Buchstabe lässt ein Stück Eis schmelzen." },
-    { id: "kreuz", icon: "🧩", name: "Wort-Kreuz", tag: "Kreuzworträtsel", claim: "Deutsche Hinweise, englische Lösungen.",
+    { id: "eisi", icon: "🐻‍❄️", name: "Freezy", tag: "Rette Icy · 5 Wörter", claim: "Rate Buchstabe für Buchstabe.",
+      desc: "Icy steht auf schmelzendem Eis. Tippe Buchstaben, die im englischen Wort vorkommen. Jeder falsche Buchstabe lässt ein Stück Eis schmelzen." },
+    { id: "kreuz", icon: "🧩", name: "Xing", tag: "Kreuzworträtsel (Crossing)", claim: "Deutsche Hinweise, englische Lösungen.",
       desc: "Ein Kreuzworträtsel aus deinen Wörtern. Die Hinweise sind deutsch, geschrieben wird englisch. Tippe ein Feld, dann die Buchstaben." }
   ];
 
@@ -87,7 +87,7 @@
       '<div class="wg-body"><div class="wg-hint">' + esc(w.de) + '<small>' + n + ' Buchstaben · Wort ' + (G.i + 1) + ' von ' + G.words.length + '</small></div>' +
       '<div class="wt-grid" id="wtGrid" style="--n:' + n + '">' + tiles + '</div>' +
       '<div class="wg-msg" id="wgMsg"></div>' + keysHtml({ enter: true, back: true }) +
-      '<div class="wg-acts"><button class="wg-btn ghost" data-g="hint">💡 Erster Buchstabe (−25)</button><button class="wg-btn ghost" data-g="giveup">Aufgeben</button></div></div>';
+      '<div class="wg-acts"><button class="wg-btn" data-g="guess" id="wgGo">✓ Prüfen</button></div><div class="wg-acts"><button class="wg-btn ghost" data-g="hint">💡 Erster Buchstabe (−25)</button><button class="wg-btn ghost" data-g="giveup">Aufgeben</button></div></div>';
     detPaint();
   }
   function detPaint() {
@@ -95,6 +95,7 @@
     if (!row) return;
     var cells = $$(".wt", row), i;
     for (i = 0; i < n; i++) { cells[i].textContent = (d.cur[i] || "").toUpperCase(); cells[i].classList.toggle("on", i === d.cur.length && !d.over); }
+    var go = $("#wgGo"); if (go) go.classList.toggle("ready", d.cur.length >= n && !d.over);
   }
   function detType(k) {
     var d = G.det; if (!d || d.over) return;
@@ -135,7 +136,7 @@
     paintScore();
     var msg = win ? "✓ Richtig in " + tries + (tries === 1 ? " Versuch" : " Versuchen") + "! +" + pts : "Gesucht war: <b>" + esc(w.en) + "</b>";
     var m = $("#wgMsg"); if (m) m.innerHTML = '<span class="' + (win ? "good" : "bad") + '">' + msg + '</span> · ' + esc(w.en) + ' = ' + esc(w.de);
-    var acts = $(".wg-acts"); if (acts) acts.innerHTML = '<button class="wg-btn" data-g="say">🔊 Anhören</button><button class="wg-btn" data-g="next">' + (G.i + 1 >= G.words.length ? "Fertig ▶" : "Weiter ▶") + '</button>';
+    $$(".wg-acts").forEach(function (a, ix) { a.innerHTML = ix ? "" : '<button class="wg-btn" data-g="say">🔊 Anhören</button><button class="wg-btn" data-g="next">' + (G.i + 1 >= G.words.length ? "Fertig ▶" : "Weiter ▶") + '</button>'; });
     say(w.raw);
   }
 
@@ -143,7 +144,7 @@
   function eisRound() {
     var w = G.words[G.i];
     G.eis = { guessed: {}, wrong: 0, over: false, hinted: false };
-    el.innerHTML = top("Rette Eisi") + dots() +
+    el.innerHTML = top("Freezy") + dots() +
       '<div class="wg-body"><div class="wg-hint">' + esc(w.de) + '<small>Wort ' + (G.i + 1) + ' von ' + G.words.length + '</small></div>' +
       '<div class="eis-stage"><div class="eis-bear" id="eisBear">🐻‍❄️</div><div class="eis-ice" id="eisIce"></div></div>' +
       '<div class="eis-word" id="eisWord"></div><div class="wg-msg" id="wgMsg"></div>' + keysHtml({}) +
@@ -176,7 +177,7 @@
     G.streak = win ? G.streak + 1 : 0; G.maxStreak = Math.max(G.maxStreak, G.streak);
     try { if (global.WordySync) global.WordySync.ctx = { mode: "arena" }; S.grade(w.id, win ? (e.wrong <= 1 && !e.hinted ? 2 : 1) : 0, win && e.hinted ? { hint: true } : undefined); } catch (x) {}
     snd(win); if (win) burst(14); paintScore(); eisPaint(!win);
-    var m = $("#wgMsg"); if (m) m.innerHTML = win ? '<span class="good">✓ Eisi ist gerettet! +' + pts + '</span> · ' + esc(w.en) + ' = ' + esc(w.de) : '<span class="bad">Eisi ist ins Wasser gefallen.</span> Gesucht war: <b>' + esc(w.en) + '</b>';
+    var m = $("#wgMsg"); if (m) m.innerHTML = win ? '<span class="good">✓ Icy ist gerettet! +' + pts + '</span> · ' + esc(w.en) + ' = ' + esc(w.de) : '<span class="bad">Icy ist ins Wasser gefallen.</span> Gesucht war: <b>' + esc(w.en) + '</b>';
     var b = $("#eisBear"); if (b) b.textContent = win ? "🥳" : "🌊";
     var acts = $(".wg-acts"); if (acts) acts.innerHTML = '<button class="wg-btn" data-g="say">🔊 Anhören</button><button class="wg-btn" data-g="next">' + (G.i + 1 >= G.words.length ? "Fertig ▶" : "Weiter ▶") + '</button>';
     say(w.raw);
@@ -198,7 +199,7 @@
     var bestL = null, att, i;
     for (att = 0; att < 80; att++) {
       var ws = S.shuffle(cands.slice()).sort(function (a, b) { return (b.en.length - a.en.length) + (Math.random() - .5) * 3; }), map = {}, dirAt = {}, placed = [];
-      var first = ws[0]; for (i = 0; i < first.en.length; i++) { map["0," + i] = first.en[i]; dirAt["0," + i] = 0; }
+      var first = ws[0], bnd = { r0: 0, r1: 0, c0: 0, c1: first.en.length - 1 }; for (i = 0; i < first.en.length; i++) { map["0," + i] = first.en[i]; dirAt["0," + i] = 0; }
       placed.push({ w: first, r: 0, c: 0, dir: 0 });
       ws.slice(1).forEach(function (w) {
         if (placed.length >= target) return;
@@ -208,12 +209,15 @@
             if (p.w.en[a] !== w.en[b]) continue;
             var dir = 1 - p.dir, r = p.r + DIRS[p.dir][0] * a, c = p.c + DIRS[p.dir][1] * a;
             var sr = r - DIRS[dir][0] * b, sc = c - DIRS[dir][1] * b;
-            if (canPlace(map, dirAt, w.en, sr, sc, dir) >= 1) opts.push({ r: sr, c: sc, dir: dir });
+            var er = sr + DIRS[dir][0] * (w.en.length - 1), ec = sc + DIRS[dir][1] * (w.en.length - 1);
+            if (Math.max(bnd.r1, er) - Math.min(bnd.r0, sr) + 1 > maxDim || Math.max(bnd.c1, ec) - Math.min(bnd.c0, sc) + 1 > maxDim) continue;   // Raster soll nicht größer werden als aufs Handy passt
+            if (canPlace(map, dirAt, w.en, sr, sc, dir) >= 1) opts.push({ r: sr, c: sc, dir: dir, er: er, ec: ec });
           }
         });
         if (!opts.length) return;
         var pick = opts[Math.floor(Math.random() * opts.length)];
         for (var j = 0; j < w.en.length; j++) { var kk = (pick.r + DIRS[pick.dir][0] * j) + "," + (pick.c + DIRS[pick.dir][1] * j); map[kk] = w.en[j]; dirAt[kk] = dirAt[kk] === undefined ? pick.dir : dirAt[kk]; }
+        bnd.r0 = Math.min(bnd.r0, pick.r); bnd.c0 = Math.min(bnd.c0, pick.c); bnd.r1 = Math.max(bnd.r1, pick.er); bnd.c1 = Math.max(bnd.c1, pick.ec);
         placed.push({ w: w, r: pick.r, c: pick.c, dir: pick.dir });
       });
       var minR = 1e9, minC = 1e9, maxR = -1e9, maxC = -1e9;
@@ -245,7 +249,7 @@
   }
   function kreuzDraw() {
     var K = G.kr, size = Math.max(26, Math.min(42, Math.floor((Math.min(global.innerWidth, 520) - 28) / K.cols)));
-    var h = top("Wort-Kreuz") +
+    var h = top("Xing") +
       '<div class="wg-body"><div class="kr-clue" id="krClue"></div>' +
       '<div class="kr-grid" id="krGrid" style="grid-template-columns:repeat(' + K.cols + ',' + size + 'px);grid-template-rows:repeat(' + K.rows + ',' + size + 'px);--cs:' + size + 'px">';
     var r, c;
@@ -360,6 +364,7 @@
     if (G.done) return;
     if (a === "k") { var k = t.getAttribute("data-k"); return G.id === "detective" ? detType(k) : G.id === "eisi" ? eisType(k) : kreuzType(k); }
     if (a === "next") return next();
+    if (a === "guess") return detType("ENTER");
     if (a === "say") return say(G.words[G.i].raw);
     if (a === "hint") {
       if (G.id === "detective") { var d = G.det; if (d.hinted || d.over) return; d.hinted = true; G.hints++; d.cur = G.words[G.i].en[0]; return detPaint(); }
