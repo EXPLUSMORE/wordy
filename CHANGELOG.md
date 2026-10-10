@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.71.0 – 2026-10-10
+- Neu: **Blast**, der Wörter-Shooter (Spielen › Arena, `blastStart()` in js/spiele.js). Oben steht ein deutsches Wort, englische Wörter fliegen von oben auf die Rakete zu: das richtige antippen (Laserstrahl, Explosion), ein falsches kostet ein Herz, ein verpasstes richtiges Wort auch. Drei Herzen, alle 10 Treffer ein Extra-Herz (bis 5), alle 5 Treffer ein Level (schneller, mehr Wörter). Eis-Sterne ❄️ bremsen alles 5 Sekunden, Bomben 💣 räumen die falschen Wörter weg. Serien-Multiplikator, Lernstand wie bei den anderen Wortspielen, Zeit zählt aufs Tagesziel. Am Rechner schießen die Zifferntasten 1 bis 9 (von links nach rechts).
+
 ## 2.70.1 – 2026-10-10
 - Wortspiele: **Wort-Kreuz heißt jetzt „Xing“**, **Rette Eisi heißt „Freezy“**, der Eisbär heißt **Icy**. Das Kreuzworträtsel ließ sich in etwa jedem dritten Versuch nicht bauen (Raster zu groß); das Raster bleibt jetzt beim Bauen im Rahmen (höchstens 9 × 9), es entstehen immer 8 Wörter. Wort-Detektiv: eigener, deutlicher Knopf „✓ Prüfen“ (leuchtet, sobald alle Felder gefüllt sind), damit man nicht nach der Eingabe suchen muss.
 

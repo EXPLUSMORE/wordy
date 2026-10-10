@@ -9,6 +9,8 @@
       desc: "Du bekommst die deutsche Bedeutung und die Länge. Rate das englische Wort: Grün heißt richtig, Gelb richtig aber an anderer Stelle, Grau kommt nicht vor." },
     { id: "eisi", icon: "🐻‍❄️", name: "Freezy", tag: "Rette Icy · 5 Wörter", claim: "Rate Buchstabe für Buchstabe.",
       desc: "Icy steht auf schmelzendem Eis. Tippe Buchstaben, die im englischen Wort vorkommen. Jeder falsche Buchstabe lässt ein Stück Eis schmelzen." },
+    { id: "blast", icon: "🚀", name: "Blast", tag: "Wörter-Shooter", claim: "Schieß das richtige Wort ab.",
+      desc: "Oben steht ein deutsches Wort. Englische Wörter fliegen auf dich zu: Tippe das richtige ab, bevor es dich erreicht. Falsch geschossen kostet ein Herz. Eis-Sterne bremsen alles, Bomben räumen die falschen Wörter weg." },
     { id: "kreuz", icon: "🧩", name: "Xing", tag: "Kreuzworträtsel (Crossing)", claim: "Deutsche Hinweise, englische Lösungen.",
       desc: "Ein Kreuzworträtsel aus deinen Wörtern. Die Hinweise sind deutsch, geschrieben wird englisch. Tippe ein Feld, dann die Buchstaben." }
   ];
@@ -27,13 +29,13 @@
   function plainDe(de) { return String(de).replace(/\s*\([^)]*\)/g, "").trim() || String(de); }
 
   /* Wörter für ein Spiel: nur einzelne Wörter aus Buchstaben, Fehlerkartei und Fälliges zuerst */
-  function pickWords(n, min, max, unit) {
+  function pickWords(n, min, max, unit, spaces) {
     var p = S.pools(), order = S.shuffle(p.box.slice()).concat(S.shuffle(p.due.slice()), S.shuffle(p.learning.slice()), S.shuffle(p.fresh.slice()), S.shuffle(p.all.slice()));
     var seenEn = {}, seenDe = {}, out = [];
     order.forEach(function (w) {
       if (unit && w.unit !== unit) return;
       var s = clean(w.en);
-      if (!/^[a-z]+$/.test(s) || s.length < min || s.length > max || seenEn[s] || seenDe[w.de]) return;
+      if (!(spaces ? /^[a-z][a-z ]*[a-z]$/ : /^[a-z]+$/).test(s) || s.length < min || s.length > max || seenEn[s] || seenDe[w.de]) return;
       seenEn[s] = seenDe[w.de] = 1; out.push({ id: w.id, en: s, de: plainDe(w.de), unit: w.unit, raw: w.en });
     });
     return out.slice(0, n);
@@ -68,14 +70,15 @@
 
   /* ---------- Start ---------- */
   function start(id, opts) {
-    var min = 3, max = id === "kreuz" ? 8 : 8, n = id === "kreuz" ? 14 : 5, words = pickWords(n, min, max, opts && opts.unit);
-    if (words.length < (id === "kreuz" ? 6 : 3)) return toast("Dafür brauchst du mehr Wörter im gewählten Bereich (einzelne Wörter ab 3 Buchstaben).");
+    var min = id === "blast" ? 2 : 3, max = 8, n = id === "kreuz" ? 14 : id === "blast" ? 40 : 5, words = pickWords(n, min, id === "blast" ? 14 : max, opts && opts.unit, id === "blast");
+    if (words.length < (id === "kreuz" ? 6 : id === "blast" ? 6 : 3)) return toast("Dafür brauchst du mehr Wörter im gewählten Bereich (einzelne Wörter ab 3 Buchstaben).");
     S.rollDay();
     G = { id: id, words: words, i: 0, score: 0, res: [], items: 0, correct: 0, wrong: 0, hints: 0, start: Date.now(), done: false, opts: opts || null, maxStreak: 0, streak: 0, cleared: 0 };
     el.hidden = false; document.documentElement.classList.add("ar-open");
     if (id === "detective") return detRound();
     if (id === "eisi") return eisRound();
     if (id === "kreuz") return kreuzStart();
+    if (id === "blast") return blastStart();
   }
 
   /* ================= Wort-Detektiv ================= */
@@ -319,9 +322,108 @@
     kreuzCheckWords(false); kreuzPaint(); kreuzWin();
   }
 
+
+  /* ================= Blast (Wörter-Shooter) ================= */
+  function blastStart() {
+    var deck = pickWords(60, 2, 14);
+    G.words = deck; G.res = [];
+    el.innerHTML = top("Blast") +
+      '<div class="bl-hud"><span id="blLives"></span><span id="blLevel"></span><span id="blCombo"></span></div>' +
+      '<div class="bl-prompt" id="blP"><small>Schieß das englische Wort ab</small><b id="blT"></b></div>' +
+      '<div class="bl-field" id="blF"><div class="bl-ship" id="blS">🚀</div><div class="bl-flash" id="blFl"></div></div>';
+    var F = $("#blF");
+    G.sh = { lives: 3, level: 1, hits: 0, queue: [], target: null, foes: [], freeze: 0, lastSpawn: 0, nextOrb: 9, t: 0, last: 0, id: 0, w: 0, h: 0, over: false };
+    G.sh.w = F.clientWidth; G.sh.h = F.clientHeight;
+    F.addEventListener("pointerdown", function (e) { if (!G || !G.sh || G.sh.over) return; var f = e.target.closest(".foe"); if (!f) return; e.preventDefault(); blShoot(+f.getAttribute("data-fid"), e.clientX, e.clientY); });
+    blNextTarget(); blHud();
+    G.sh.last = performance.now(); G.sh.raf = requestAnimationFrame(blLoop);
+  }
+  function blHud() {
+    var sh = G.sh, l = "", i; for (i = 0; i < Math.max(3, sh.lives); i++) l += '<i class="' + (i < sh.lives ? "" : "off") + '">♥</i>';
+    $("#blLives").innerHTML = l; $("#blLevel").textContent = "Level " + sh.level;
+    var c = $("#blCombo"); if (c) c.textContent = G.streak >= 3 ? "×" + Math.min(3, 1 + G.streak * 0.1).toFixed(1) + " Serie " + G.streak : "";
+  }
+  function blFlash(t, cls) { var f = $("#blFl"); if (!f) return; f.textContent = t; f.className = "bl-flash show " + (cls || ""); clearTimeout(f._t); f._t = setTimeout(function () { f.className = "bl-flash"; }, 1100); }
+  function blNextTarget() {
+    var sh = G.sh; if (!sh.queue.length) sh.queue = S.shuffle(G.words.slice());
+    sh.target = sh.queue.shift(); $("#blT").textContent = sh.target.de;
+    var P = $("#blP"); P.classList.remove("pop"); void P.offsetWidth; P.classList.add("pop");
+  }
+  function blSpawn(w, kind) {
+    var sh = G.sh, F = $("#blF"), d = document.createElement("div"), id = ++sh.id;
+    d.className = "foe" + (kind ? " orb" : ""); d.setAttribute("data-fid", id); d.textContent = kind ? (kind === "freeze" ? "❄️" : "💣") : w.raw;
+    d.style.setProperty("--h", kind ? (kind === "freeze" ? 195 : 20) : Math.floor(Math.random() * 360));
+    F.appendChild(d);
+    var fw = d.offsetWidth, x = 8 + Math.random() * Math.max(1, sh.w - fw - 16);
+    var o = { id: id, el: d, w: w, kind: kind || null, x: x, y: -44, fw: fw, ph: Math.random() * 6 };
+    d.style.transform = "translate3d(" + x + "px," + o.y + "px,0)"; sh.foes.push(o); return o;
+  }
+  function blBoom(o, bad) {
+    o.dead = true; var r = o.el.getBoundingClientRect();
+    o.el.classList.add("boom"); if (bad) o.el.classList.add("bad"); setTimeout(function () { if (o.el.parentNode) o.el.parentNode.removeChild(o.el); }, 280);
+    try { global.VTC.burst(bad ? "stars" : S.state.profile.fx, r.left + r.width / 2, r.top + r.height / 2, bad ? 6 : 12, .9); } catch (e) {}
+  }
+  function blLaser(px, py) {
+    var F = $("#blF"), fr = F.getBoundingClientRect(), sx = fr.width / 2, sy = fr.height - 24, tx = px - fr.left, ty = py - fr.top, dx = tx - sx, dy = ty - sy;
+    var L = document.createElement("div"); L.className = "bl-laser"; L.style.cssText = "left:" + sx + "px;top:" + sy + "px;width:" + Math.sqrt(dx * dx + dy * dy) + "px;transform:rotate(" + Math.atan2(dy, dx) + "rad)";
+    F.appendChild(L); setTimeout(function () { if (L.parentNode) L.parentNode.removeChild(L); }, 130);
+    var sp = $("#blS"); if (sp) sp.style.transform = "rotate(" + (Math.atan2(dy, dx) + Math.PI / 2) + "rad)";
+  }
+  function blLose(why, askedWord) {
+    var sh = G.sh; sh.lives--; G.wrong++; G.streak = 0; snd(false);
+    try { if (navigator.vibrate) navigator.vibrate(40); } catch (e) {}
+    var F = $("#blF"); F.classList.remove("hurt"); void F.offsetWidth; F.classList.add("hurt");
+    if (askedWord) { try { if (global.WordySync) global.WordySync.ctx = { mode: "arena" }; S.grade(askedWord.id, 0); } catch (e) {} }
+    blHud(); paintScore();
+    if (sh.lives <= 0) { sh.over = true; cancelAnimationFrame(sh.raf); setTimeout(function () { if (G && G.id === "blast") finish("dead"); }, 700); }
+  }
+  function blShoot(fid, px, py) {
+    var sh = G.sh, o = sh.foes.filter(function (f) { return f.id === fid && !f.dead; })[0]; if (!o) return;
+    blLaser(px, py);
+    if (o.kind === "freeze") { sh.freeze = 5; blBoom(o); blFlash("❄️ Alles langsamer!", "good"); snd(true); return; }
+    if (o.kind === "bomb") { sh.foes.forEach(function (f) { if (!f.dead && !f.kind && f.w.id !== sh.target.id) { blBoom(f, true); } }); blBoom(o); blFlash("💥 Falsche Wörter weg!", "good"); snd(true); return; }
+    if (o.w.id === sh.target.id) {
+      var t = sh.target; blBoom(o);
+      G.items++; G.correct++; G.streak++; G.maxStreak = Math.max(G.maxStreak, G.streak); sh.hits++;
+      var pts = Math.round((10 + sh.level * 2) * Math.min(3, 1 + G.streak * 0.1)); G.score += pts;
+      try { if (global.WordySync) global.WordySync.ctx = { mode: "arena" }; S.grade(t.id, 1); } catch (e) {}
+      snd(true); blFlash("+" + pts, G.streak >= 5 ? "combo" : "good");
+      if (sh.hits % 5 === 0) { sh.level++; blFlash("Level " + sh.level + "!", "combo"); }
+      if (sh.hits % 10 === 0 && sh.lives < 5) { sh.lives++; blFlash("♥ Extra-Herz!", "combo"); }
+      blNextTarget(); blHud(); paintScore();
+    } else {
+      blBoom(o, true); blFlash("Falsch: " + o.w.raw + " = " + o.w.de, "bad"); G.items++; blLose("falsch", sh.target);
+    }
+  }
+  function blLoop(now) {
+    if (!G || !G.sh || G.sh.over) return;
+    var sh = G.sh, dt = Math.min(0.05, (now - sh.last) / 1000); sh.last = now; sh.t += dt;
+    if (sh.freeze > 0) sh.freeze -= dt;
+    var F = $("#blF"); F.classList.toggle("frozen", sh.freeze > 0);
+    var v = (Math.min(125, 48 + sh.level * 7)) * (sh.freeze > 0 ? 0.2 : 1), bottom = sh.h - 54;
+    sh.foes.forEach(function (o) {
+      if (o.dead) return;
+      o.y += v * dt; o.el.style.transform = "translate3d(" + (o.x + Math.sin(sh.t * 1.3 + o.ph) * 6) + "px," + o.y + "px,0)";
+      if (o.y > bottom) {
+        o.dead = true; if (o.el.parentNode) o.el.parentNode.removeChild(o.el);
+        if (!o.kind && sh.target && o.w.id === sh.target.id) { var t = sh.target; blFlash("Verpasst: " + t.en + " = " + t.de, "bad"); G.items++; blNextTarget(); blLose("verpasst", t); }
+      }
+    });
+    sh.foes = sh.foes.filter(function (o) { return !o.dead; });
+    var want = 4 + Math.min(3, Math.floor(sh.level / 2)), plain = sh.foes.filter(function (o) { return !o.kind; });
+    if (sh.t - sh.lastSpawn > Math.max(0.7, 1.3 - sh.level * 0.05) && plain.length < want) {
+      sh.lastSpawn = sh.t;
+      var hasT = plain.some(function (o) { return o.w.id === sh.target.id; }), w;
+      if (!hasT) w = sh.target; else { var pool = G.words.filter(function (x) { return x.id !== sh.target.id && x.en !== sh.target.en && !plain.some(function (o) { return o.w.id === x.id; }); }); w = pool[Math.floor(Math.random() * pool.length)]; }
+      if (w) blSpawn(w);
+    }
+    if (sh.t > sh.nextOrb) { sh.nextOrb = sh.t + 12 + Math.random() * 6; blSpawn(null, Math.random() < .5 ? "freeze" : "bomb"); }
+    sh.raf = requestAnimationFrame(blLoop);
+  }
+
   /* ---------- Ende ---------- */
   function finish(reason) {
-    if (!G || G.done) return; G.done = true;
+    if (!G || G.done) return; G.done = true; if (G.sh) { G.sh.over = true; cancelAnimationFrame(G.sh.raf); }
     var m = GAMES.filter(function (x) { return x.id === G.id; })[0], sec = Math.round((Date.now() - G.start) / 1000);
     var rec = best(G.id), score = G.score, isRecord = score > rec.best;
     if (!S.state.arena) S.state.arena = {};
@@ -345,6 +447,7 @@
     if (global.VTUI && global.VTUI.refreshHeader) global.VTUI.refreshHeader();
   }
   function close() {
+    if (G && G.sh) { G.sh.over = true; cancelAnimationFrame(G.sh.raf); }
     G = null; el.hidden = true; el.innerHTML = ""; document.documentElement.classList.remove("ar-open");
     if (global.VTUI && global.VTUI.afterArena) global.VTUI.afterArena();
   }
@@ -380,6 +483,7 @@
     if (!G || el.hidden || G.done) return;
     if (e.key === "Escape") return finish("quit");
     if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (G.id === "blast") { if (/^[1-9]$/.test(e.key) && G.sh && !G.sh.over) { var fs = G.sh.foes.filter(function (f) { return !f.dead; }).sort(function (a, b) { return a.x - b.x; }), f = fs[+e.key - 1]; if (f) { var r = f.el.getBoundingClientRect(); blShoot(f.id, r.left + r.width / 2, r.top + r.height / 2); } } return; }
     var k = e.key === "Backspace" ? "BACK" : e.key === "Enter" ? "ENTER" : /^[a-zA-Z]$/.test(e.key) ? e.key.toUpperCase() : null; if (!k) return;
     e.preventDefault();
     if (G.id === "detective") detType(k); else if (G.id === "eisi") eisType(k); else if (G.id === "kreuz") kreuzType(k);
