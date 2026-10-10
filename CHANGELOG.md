@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.69.1 – 2026-10-10
+- Zurückgenommen: die Fenstergrößen-Änderungen aus 2.68.1 (Zoom-Sperre, Vollbild-Höhe) und 2.69.0 (breitere App, zwei Spalten, Querformat). Index und App-Code stehen wieder auf dem Stand von 2.68.0 (fester Kopf und Tempo-Regler beim Mitlesen bleiben).
+
 ## 2.69.0 – 2026-10-10
 - Fensteranpassung: Auf breiten Bildschirmen (ab 900 px) wird die App bis 1040 px breit statt 780 px. Mitlesen nutzt im Querformat und am Rechner zwei Spalten (Wortkarte, Regler und Knöpfe links, Liste rechts). Flache Querformate (Handy quer): kompakte Kopfzeile, Menüleiste und Übungsrunde, damit mehr vom Inhalt sichtbar bleibt. Der Zoom-Zwang aus 2.68.1 bleibt nur noch beim Mitlesen.
 
