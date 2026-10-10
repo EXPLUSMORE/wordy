@@ -1037,11 +1037,12 @@ details.fold>.fbody{padding:2px 0 14px}
 .mlov{--mlm:#B9C0CE;position:fixed;inset:0;box-sizing:border-box;width:100%;max-width:100vw;overflow:hidden;z-index:60;background:#0E1320;color:#F6EFE0;display:flex;flex-direction:column;padding:14px 16px;gap:10px}
 .mlh{display:flex;align-items:center;justify-content:space-between;gap:8px}.mlp{text-align:center;color:var(--mlm);font-size:14px}
 .mlov>*{min-width:0}.mlc{text-align:center;padding:6px 0;flex:0 0 auto;height:clamp(88px,14vh,130px);overflow:hidden;overflow-wrap:anywhere;hyphens:auto}.mlen{font-size:clamp(26px,9vw,40px);font-weight:800;line-height:1.1}.mlde{font-size:clamp(16px,5vw,20px);color:var(--mlm);margin-top:6px;line-height:1.25}
+.mlst{flex:0 0 auto;min-height:32px;text-align:center;font-weight:800;font-size:19px;color:var(--mlm)}.mlst.you{color:#6fe08a;font-size:22px;animation:mlp 1s ease-in-out infinite}@keyframes mlp{50%{opacity:.55}}
 .mlyou{margin-top:12px;font-weight:800;color:var(--gold,#f2b33d);font-size:20px}
 .mlbar{flex:0 0 auto;height:8px;border-radius:6px;background:rgba(255,255,255,.15);overflow:hidden}.mlbar i{display:block;height:100%;width:0;background:var(--gold,#f2b33d)}
 .mll{position:relative;flex:1 1 auto;min-height:0;overflow:auto;overscroll-behavior:contain;border-radius:14px;background:#1a2233;color:#F6EFE0}.mlw{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:8px 12px;font-size:15px;border-bottom:1px solid rgba(255,255,255,.1)}
 .mlw .en{flex:0 1 42%;min-width:0;overflow-wrap:anywhere}.mlw .de{flex:1 1 0;min-width:0;text-align:right;overflow-wrap:anywhere;hyphens:auto}.mlw.on{background:rgba(242,179,61,.28);font-weight:700}.mlw .de{color:var(--mlm)}.mlov .btn.ghost{background:rgba(255,255,255,.12);color:#F6EFE0;border-color:transparent}
-.mlsp{display:flex;align-items:center;gap:10px;font-size:20px}.mlsp input{flex:1 1 auto;accent-color:#f2b33d}.mlnof .mlf{visibility:hidden}.mlf{display:flex;gap:8px;justify-content:center;padding-bottom:2px}.mll{margin-bottom:max(4px,env(safe-area-inset-bottom))}
+.mlsp{display:flex;align-items:center;gap:10px;font-size:20px}.mlsp input{flex:1 1 auto;accent-color:#f2b33d}.mlnof .mlf{visibility:hidden}.mlf{display:flex;gap:8px;justify-content:center;padding-bottom:2px}.mll{margin-bottom:calc(max(4px,env(safe-area-inset-bottom)) + 8px)}
 .ptiers{display:flex;gap:8px;margin:10px 0 0}
 .ptr{flex:1 1 0;min-width:0;border-radius:14px;padding:8px 4px;background:var(--card-2);border:2px solid var(--line);color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:1px;font:inherit;opacity:.65}
 .ptr small{font-size:11px;color:var(--muted)}.ptr span{font-weight:800;font-size:13px}
@@ -1057,7 +1058,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.69.4";window.WORDY_BUILD="26bfff19a4";</script>
+<script>window.WORDY_VERSION="2.69.5";window.WORDY_BUILD="3bc887d3bb";</script>
 </head>
 <body>
 <div id="app">
@@ -8263,18 +8264,19 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     stopReading();
     var SP = [null, { rate: .5, gap: 2800 }, { rate: .6, gap: 2000 }, { rate: .7, gap: 1400 }, { rate: .85, gap: 900 }, { rate: 1, gap: 600 }], sp = Math.min(5, Math.max(1, +S.state.settings.mlSpeed || 3)), pace = SP[sp], tok = 0, phase = 1, idx = 0, paused = false, closed = false, ov = document.createElement("div");
     ov.className = "mlov";
-    ov.innerHTML = '<div class="mlh"><b id="mlT"></b><button class="btn ghost" id="mlX" aria-label="Schließen">✕</button></div><div class="mlp" id="mlP"></div><div class="mlc" id="mlC"></div><div class="mlbar"><i id="mlB"></i></div>' +
+    ov.innerHTML = '<div class="mlh"><b id="mlT"></b><button class="btn ghost" id="mlX" aria-label="Schließen">✕</button></div><div class="mlp" id="mlP"></div><div class="mlc" id="mlC"></div><div class="mlst" id="mlSt"></div><div class="mlbar"><i id="mlB"></i></div>' +
       '<div class="mlsp"><span>🐢</span><input type="range" id="mlS" min="1" max="5" step="1" value="' + sp + '" aria-label="Tempo"><span>🐇</span></div><div class="mlf"><button class="btn ghost" id="mlPrev">⏮</button><button class="btn" id="mlPause">⏸ Pause</button><button class="btn ghost" id="mlNext">⏭</button></div><div class="mll" id="mlL"></div>';
     document.body.appendChild(ov); document.body.style.overflow = "hidden";
     var $c = function (id) { return ov.querySelector("#" + id); };
-    $c("mlL").innerHTML = list.map(function (w, i) { return '<div class="mlw" id="mw' + i + '"><span class="en">' + esc(w.en) + '</span><span class="de">' + esc(w.de) + '</span></div>'; }).join("");
+    $c("mlL").innerHTML = list.map(function (w, i) { return '<div class="mlw" id="mw' + i + '"><span class="en">' + esc(w.en) + '</span><span class="de">' + esc(w.de) + '</span></div>'; }).join("") + '<div style="height:45vh" aria-hidden="true"></div>';
     function close() { closed = true; tok++; try { window.speechSynthesis.cancel(); } catch (e) {} ov.remove(); document.body.style.overflow = ""; }
     function bar(ms) { var b = $c("mlB"); b.style.transition = "none"; b.style.width = "0"; if (ms) { void b.offsetWidth; b.style.transition = "width " + ms + "ms linear"; b.style.width = "100%"; } }
     function say(w, cb, t) { var fin = false, done = function () { if (fin) return; fin = true; if (t === tok && !closed) cb(); }; if (!speak(w.en, pace.rate, "en", false, done)) setTimeout(done, 1200); else setTimeout(done, 6000 + w.en.length * 150); }   // Notbremse: bleibt das Ende-Signal der Sprachausgabe aus, geht es trotzdem weiter
     function mark() { Array.prototype.forEach.call(ov.querySelectorAll(".mlw.on"), function (e) { e.classList.remove("on"); }); var e = $c("mw" + idx); if (e) { e.classList.add("on"); var L = $c("mlL"); L.scrollTo({ top: e.offsetTop - (L.clientHeight - e.offsetHeight) / 2, behavior: "smooth" }); } }
-    function show(w, sub) { $c("mlC").innerHTML = '<div class="mlen">' + esc(w.en) + '</div><div class="mlde">' + esc(w.de) + '</div>' + (sub ? '<div class="mlyou">' + sub + '</div>' : ""); }
+    function show(w) { $c("mlC").innerHTML = '<div class="mlen">' + esc(w.en) + '</div><div class="mlde">' + esc(w.de) + '</div>'; }
+    function status(txt, you) { var e = $c("mlSt"); e.textContent = txt; e.className = "mlst" + (you ? " you" : ""); $c("mlB").style.background = you ? "#4caf50" : ""; }
     function finish() {
-      tok++; bar(0); $c("mlP").textContent = "Geschafft";
+      tok++; bar(0); status(""); $c("mlP").textContent = "Geschafft";
       $c("mlC").innerHTML = '<div class="mlen">🎉</div><div class="mlde">Alle ' + list.length + ' Wörter gehört und mitgesprochen.</div><div class="row" style="justify-content:center;gap:8px;margin-top:14px"><button class="btn" id="mlAgain">Nochmal</button><button class="btn ghost" id="mlEnd">Fertig</button></div>';
       $c("mlAgain").onclick = function () { phase = 1; idx = 0; step(); }; $c("mlEnd").onclick = close;
     }
@@ -8284,7 +8286,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       if (idx >= list.length) {
         ov.classList.add("mlnof");
         if (phase === 1) {
-          bar(0); $c("mlP").textContent = "Teil 2 von 2";
+          bar(0); status(""); $c("mlP").textContent = "Teil 2 von 2";
           $c("mlC").innerHTML = '<div class="mlen">🎤</div><div class="mlde">Jetzt du: Ich sage jedes Wort vor, du sprichst laut mit.</div><button class="btn lg" id="mlGo" style="margin-top:14px">Los geht\'s</button>';
           $c("mlGo").onclick = function () { phase = 2; idx = 0; step(); }; return;
         }
@@ -8292,12 +8294,12 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       }
       mark();
       if (phase === 1) {
-        $c("mlP").textContent = "Teil 1 von 2 · Zuhören (" + (idx + 1) + "/" + list.length + ")"; bar(0); show(w);
+        $c("mlP").textContent = "Teil 1 von 2 · Zuhören (" + (idx + 1) + "/" + list.length + ")"; bar(0); show(w); status("👂 Zuhören", false);
         say(w, function () { setTimeout(function () { if (t === tok) { idx++; step(); } }, Math.round(pace.gap / 2)); }, t);
       } else {
-        $c("mlP").textContent = "Teil 2 von 2 · Sprich mit (" + (idx + 1) + "/" + list.length + ")"; bar(0); show(w);
+        $c("mlP").textContent = "Teil 2 von 2 · Sprich mit (" + (idx + 1) + "/" + list.length + ")"; bar(0); show(w); status("👂 Erst zuhören …", false);
         say(w, function () {
-          var ms = Math.max(2200, pace.gap + 900); show(w, "🎤 Jetzt du! Sprich laut nach."); bar(ms);
+          var ms = Math.max(2200, pace.gap + 900); status("🎤 Jetzt du! Sprich laut nach", true); bar(ms);
           setTimeout(function () { if (t === tok) { idx++; step(); } }, ms);
         }, t);
       }

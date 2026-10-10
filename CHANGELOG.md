@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.69.5 – 2026-10-10
+- Mitlesen: Eigene Anzeige „👂 Zuhören“ / „🎤 Jetzt du! Sprich laut nach“ (grün, Balken läuft grün mit) unter der Wortkarte, statt in der niedrigen Karte unterzugehen. Die letzten Wörter der Liste bleiben sichtbar (Platzhalter am Listenende, mehr Abstand nach unten).
+
 ## 2.69.4 – 2026-10-10
 - Mitlesen: Vorlesen bleibt nicht mehr hängen. Die Sprachausgabe-Äußerung wird festgehalten (Chrome/Android feuerte „Ende“ sonst manchmal nicht) und eine Notbremse geht nach einigen Sekunden zum nächsten Wort weiter.
 
