@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.72.1 – 2026-10-10
+- Letters: Wörter überschneiden sich jetzt gezielt. Beim Platzieren wird die Stelle mit den meisten gemeinsamen Buchstaben bevorzugt (kein Wort steckt komplett in einem anderen). Im Test hatte jedes Rätsel Kreuzungen, im Schnitt etwa 4 gemeinsame Felder, immer 7 Wörter und alle 8 Richtungen.
+
 ## 2.72.0 – 2026-10-10
 - Neu: **Letters**, der Buchstabensalat (Spielen › Arena, `lettersStart()` in js/spiele.js). 7 englische Wörter verstecken sich in einem 9 × 9 Raster, waagerecht, senkrecht und diagonal, vorwärts und rückwärts (jedem Wort wird eine eigene Richtung zugewiesen). Die Liste zeigt die deutschen Bedeutungen mit Buchstabenzahl, das englische Wort erscheint beim Fund. Markieren per Wischen oder per Tippen auf Anfang und Ende, die Linie rastet auf die acht Richtungen ein. Tipp (Tippen auf einen Hinweis) markiert den Anfang des Wortes. Punkte mit Tempo-Bonus, Lernstand wie bei den anderen Wortspielen.
 

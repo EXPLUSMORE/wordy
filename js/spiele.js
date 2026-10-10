@@ -432,16 +432,20 @@
     for (r = 0; r < N; r++) { grid[r] = []; for (c = 0; c < N; c++) grid[r][c] = ""; }
     var dirPool = S.shuffle([0, 1, 2, 3, 4, 5, 6, 7]);   // jedem Wort eine eigene Richtung zuweisen, damit Diagonale und Rückwärts sicher vorkommen
     words.slice().sort(function (a, b) { return b.en.length - a.en.length; }).forEach(function (w, wi) {
-      var tries;
-      for (tries = 0; tries < 400; tries++) {
-        var d = LDIRS[tries < 150 ? dirPool[wi % 8] : Math.floor(Math.random() * 8)], len = w.en.length, sr = Math.floor(Math.random() * N), sc = Math.floor(Math.random() * N);
+      var tries, cands = [], len = w.en.length;
+      for (tries = 0; tries < 500; tries++) {
+        var d = LDIRS[tries < 250 ? dirPool[wi % 8] : Math.floor(Math.random() * 8)], sr = Math.floor(Math.random() * N), sc = Math.floor(Math.random() * N);
         var er = sr + d[0] * (len - 1), ec = sc + d[1] * (len - 1);
         if (er < 0 || er >= N || ec < 0 || ec >= N) continue;
-        var ok = true; for (i = 0; i < len && ok; i++) { var g = grid[sr + d[0] * i][sc + d[1] * i]; if (g && g !== w.en[i]) ok = false; }
-        if (!ok) continue;
-        for (i = 0; i < len; i++) grid[sr + d[0] * i][sc + d[1] * i] = w.en[i];
-        placed.push({ w: w, r: sr, c: sc, d: d, found: false, hue: 0 }); return;
+        var ok = true, shared = 0; for (i = 0; i < len && ok; i++) { var g = grid[sr + d[0] * i][sc + d[1] * i]; if (g) { if (g !== w.en[i]) ok = false; else shared++; } }
+        if (!ok || shared >= len) continue;   // Überschneiden ist erlaubt (gleiche Buchstaben), aber das Wort darf nicht komplett in einem anderen stecken
+        cands.push({ d: d, r: sr, c: sc, shared: shared });
+        if (cands.length >= 40) break;
       }
+      if (!cands.length) return;
+      var most = Math.max.apply(null, cands.map(function (x) { return x.shared; })), top = cands.filter(function (x) { return x.shared === most; }), pick = top[Math.floor(Math.random() * top.length)];
+      for (i = 0; i < len; i++) grid[pick.r + pick.d[0] * i][pick.c + pick.d[1] * i] = w.en[i];
+      placed.push({ w: w, r: pick.r, c: pick.c, d: pick.d, found: false, hue: 0 });
     });
     var abc = "eeeeaaaiioonnrrsstttlldcuhmpbgfywkvxzjq";   // häufige Buchstaben öfter, damit es nach Englisch aussieht
     for (r = 0; r < N; r++) for (c = 0; c < N; c++) if (!grid[r][c]) grid[r][c] = abc[Math.floor(Math.random() * abc.length)];
