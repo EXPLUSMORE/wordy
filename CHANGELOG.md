@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.69.7 – 2026-10-10
+- Kopfzeile: Die Herzen ragten bei schmalen Handys und großen Zahlen (Münzen, Serie, XP, Booster) rechts über den Rand. Die Zeile schrumpft jetzt (kleinere Abstände und Schrift unter 400 px, Rangname mit Auslassung), die Herzen bleiben immer sichtbar.
+
 ## 2.69.6 – 2026-10-10
 - Mitlesen: Der Knopf „Los geht’s“ (und „Nochmal“/„Fertig“ am Ende) lag in der niedrigen Wortkarte und war abgeschnitten, deshalb ging Teil 2 nie los. Die Knöpfe stehen jetzt in einer eigenen Zeile unter der Karte.
 

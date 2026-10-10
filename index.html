@@ -58,6 +58,12 @@ input,textarea,select{font:inherit;color:var(--ink);background:var(--card);borde
 header#top{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:10px 16px;
   background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:blur(8px);
   border-bottom:1px solid var(--line)}
+/* schmale Handys: Kopfzeile schrumpft statt über den Rand zu ragen (Herzen rechts) */
+header#top>*{min-width:0}header#top .stat{white-space:nowrap}header#top .avatar{flex:0 0 auto}
+header#top>div:nth-child(2){flex:0 1 auto;overflow:hidden}header#top #hRank{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+header#top .spacer{flex:1 1 0;min-width:0}header#top .hearts{flex:0 0 auto}
+@media (max-width:400px){header#top{gap:6px;padding:8px 10px}header#top .hearts{font-size:12px;letter-spacing:0}header#top .stat{font-size:12px}}
+@media (max-width:340px){header#top{gap:4px;padding:8px 8px}header#top .hearts{font-size:11px}header#top .avatar{width:34px;height:34px;font-size:20px}}
 main{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;padding:16px 16px 28px;-webkit-overflow-scrolling:touch}
 nav#tabs{flex:0 0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:2px;
   border-top:1px solid var(--line);background:var(--card);
