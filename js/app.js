@@ -610,10 +610,10 @@
       '<path d="' + dDone + '" fill="none" stroke="#2e7d4f" stroke-width="6" stroke-linecap="round" stroke-dasharray="1 12" vector-effect="non-scaling-stroke"/></svg>';
     sec.forEach(function (s, k) {
       var pt = pts[k], state = s.index < p.pos ? "done" : s.index === p.pos ? "cur" : "lock", stars = p.stars[s.id] || 0;
-      var tip = (s.last ? "Boss-Runde: " + BOSS_NAMES[s.bossMode] + " (Ziel " + s.bossNeed + " richtig)" : "Station " + s.n + " von " + s.of + (s.verbIds ? " (mit unregelmäßigen Verben)" : "")) + " · " + s.sectionTitle +
+      var tip = (s.last ? "Boss-Runde: " + BOSS_NAMES[s.bossMode] + " (Ziel " + s.bossNeed + " richtig)" : s.gram ? "Grammatik: " + s.gtitle : "Station " + s.n + " von " + s.of + (s.verbIds ? " (mit unregelmäßigen Verben)" : "")) + " · " + s.sectionTitle +
         (state === "done" ? " · " + "★".repeat(stars) + "☆".repeat(3 - stars) + " · antippen zum Wiederholen" : state === "cur" ? " · jetzt dran" : " · noch gesperrt");
       h += '<button class="pnode ' + state + (s.last ? " boss" : "") + '" style="left:' + pt.x + '%;top:' + pt.y + 'px" data-tip="' + esc(tip) + '" title="' + esc(tip) + '" data-act="' + (state === "lock" ? "pathlocked" : state === "cur" ? "pathgo" : "pathreplay") + '" data-id="' + esc(s.id) + '" aria-label="' + esc(tip) + '">' +
-        (state === "done" ? "✓" : state === "cur" ? (s.last ? "⚔️" : "▶") : s.last ? "⚔️" : "🔒") + '</button>';
+        (state === "done" ? "✓" : state === "cur" ? (s.last ? "⚔️" : s.gram ? "✏️" : "▶") : s.last ? "⚔️" : "🔒") + '</button>';
       if (state === "done") h += '<span class="pstars" style="left:' + pt.x + '%;top:' + pt.y + 'px">' + "★".repeat(stars) + "☆".repeat(3 - stars) + '</span>';
     });
     var cp = pts[n], ctip = pend ? "Truhe wartet: antippen zum Öffnen" : p.chests[first.section] ? "Schon geplündert – die nächste Truhe wartet nach dem nächsten Boss" : "Truhe nach der Boss-Runde";
@@ -636,7 +636,7 @@
     var cur = all[Math.min(p.pos, all.length - 1)], finished = p.pos >= all.length, curNo = secIds.indexOf(cur.section) + 1;
     var h = '<section class="card path"><div class="eyebrow">Dein Lernpfad · Abschnitt ' + curNo + ' von ' + secIds.length + '</div>' +
       '<h2 style="margin:4px 0 2px">' + (finished ? "🏆 Alle Abschnitte geschafft!" : esc(cur.sectionTitle)) + '</h2>' +
-      '<div class="small muted">' + (finished ? "Du kannst jede Station und jeden Boss noch einmal spielen." : "Station " + cur.n + " von " + cur.of + (cur.last ? " · Boss-Runde: " + BOSS_NAMES[cur.bossMode] : "")) + '</div>';
+      '<div class="small muted">' + (finished ? "Du kannst jede Station und jeden Boss noch einmal spielen." : "Station " + cur.n + " von " + cur.of + (cur.last ? " · Boss-Runde: " + BOSS_NAMES[cur.bossMode] : cur.gram ? " · Grammatik: " + esc(cur.gtitle) : "")) + '</div>';
     // alle Abschnitte, der erste unten, der aktuelle wird in den Blick gescrollt
     var blocks = "", coords = null;
     for (var k = secIds.length - 1; k >= 0; k--) {
@@ -646,7 +646,7 @@
     }
     h += '<div class="pscroll" id="pscroll" tabindex="0" aria-label="Lernpfad, scrollbar">' + blocks + '</div>';
     if (p.pending.length) h += '<button class="btn wide lg" data-act="openchest" style="background:var(--gold,#f2b33d);color:#2b1d00;margin-bottom:8px">💰 Truhe öffnen' + (p.pending.length > 1 ? ' (' + p.pending.length + ')' : '') + '</button>';
-    if (!finished) h += '<button class="btn wide lg" data-act="pathgo" data-id="' + esc(cur.id) + '">' + (cur.last ? "Boss-Runde starten ⚔️" : "Los geht’s – Station " + cur.n + " ▶") + '</button>' +
+    if (!finished) h += '<button class="btn wide lg" data-act="pathgo" data-id="' + esc(cur.id) + '">' + (cur.last ? "Boss-Runde starten ⚔️" : cur.gram ? "Grammatik-Station starten ✏️" : "Los geht’s – Station " + cur.n + " ▶") + '</button>' +
       '<div class="row" style="justify-content:center;margin-top:8px"><button class="chip" data-act="pathfocus">↧ zur aktuellen Station</button></div>';
     h += bar + '</section>';
     if (pathShown && pathShown.pos !== p.pos) pathScroll = null;   // nach einem Fortschritt wieder zur aktuellen Station
@@ -747,7 +747,7 @@
       var p = S.pathSync(), fin = p.pos >= all.length;
       if (!fin) {
         var cur = all[p.pos], did = (d.pathDone || 0) > 0;
-        steps.push({ icon: "🗺️", t: "Pfad: " + (cur.last ? "Boss-Runde" : "Station " + cur.n), sub: esc(cur.sectionTitle) + (cur.last ? " · " + BOSS_NAMES[cur.bossMode] : " · Station " + cur.n + " von " + cur.of), done: did,
+        steps.push({ icon: "🗺️", t: "Pfad: " + (cur.last ? "Boss-Runde" : cur.gram ? "Grammatik" : "Station " + cur.n), sub: esc(cur.sectionTitle) + (cur.last ? " · " + BOSS_NAMES[cur.bossMode] : cur.gram ? " · " + esc(cur.gtitle) : " · Station " + cur.n + " von " + cur.of), done: did,
           go: 'data-act="pathgo" data-id="' + esc(cur.id) + '"', btn: did ? "Weiter" : (cur.last ? "Boss ⚔️" : "Los ▶") });
       }
     }
@@ -2152,6 +2152,7 @@
   function startPathStation(id) {
     S.rollDay(); S.regenHearts();
     var st = S.pathStations().filter(function (x) { return x.id === id; })[0]; if (!st) return;
+    if (st.gram) { if (global.VTGR) global.VTGR.start(st.gram, { station: st.id }); return; }   // Grammatik-Station: Lektion aus „Lernen › Grammatik“
     if (st.last && startBoss(st)) return;   // Boss-Runde läuft in der Arena
     if (S.state.settings.hearts && S.state.hearts <= 0) { toast("Die Herzen sind alle. Sie füllen sich bald wieder auf."); return; }
     var tasks = pathTasks(st); if (!tasks.length) { toast("Für diese Station gibt es gerade nichts zu üben."); return; }

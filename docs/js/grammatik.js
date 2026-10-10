@@ -37,10 +37,10 @@
     var pick = open.concat(done).slice(0, PER_LESSON);
     return S.shuffle(pick).map(function (i) { return { i: i, it: t.items[i], tries: 0 }; });
   }
-  function start(id) {
+  function start(id, opts) {
     var t = topic(id); if (!t || t.soon) return toast("Dieses Thema kommt bald.");
     S.rollDay();
-    L = { t: t, queue: pickItems(t), n: 0, score: 0, right: 0, wrong: 0, first: 0, start: Date.now(), done: false, retry: [], cur: null, answered: false, streak: 0, maxStreak: 0 };
+    L = { t: t, opts: opts || null, queue: pickItems(t), n: 0, score: 0, right: 0, wrong: 0, first: 0, start: Date.now(), done: false, retry: [], cur: null, answered: false, streak: 0, maxStreak: 0 };
     L.total = L.queue.length; L.orig = L.total; L.res = [];
     el.hidden = false; document.documentElement.classList.add("ar-open");
     showExplain(true);
@@ -164,11 +164,13 @@
     coins = S.boost(coins); S.addCoins(coins); S.addXp(Math.min(40, Math.round(L.score / 2)));
     var rw = S.finishSession({ items: items, correct: correct, sec: sec, maxChain: L.maxStreak, newSeen: 0, boxSolved: 0, mastered: 0, sentOk: 0, arena: true });
     var info = list().filter(function (x) { return x.id === t.id; })[0], acc = items ? Math.round(correct * 100 / items) : 0;
+    var pr = null, stars = L.first >= L.orig * 0.85 ? 3 : L.first >= L.orig * 0.6 ? 2 : 1;   // Lernpfad: Station geschafft, Sterne nach „gleich richtig“
+    if (L.opts && L.opts.station && !L.quit) pr = S.pathComplete(L.opts.station, stars);
     el.innerHTML = '<div class="ar-end"><div class="ar-endicon">' + (L.wrong === 0 ? "🏆" : esc(t.icon)) + '</div><h1>' + (L.wrong === 0 ? "Alles richtig!" : "Lektion geschafft!") + '</h1>' +
       '<div class="ar-big tnum">' + L.score + ' Punkte</div>' +
       '<div class="ar-stats"><div><b class="tnum">' + L.first + '/' + L.orig + '</b><span>gleich richtig</span></div><div><b class="tnum">' + acc + '%</b><span>Trefferquote</span></div><div><b class="tnum">' + info.pct + '%</b><span>Thema sitzt</span></div><div><b class="tnum">' + r.lessons + '</b><span>Lektionen</span></div></div>' +
-      '<p class="ar-note">' + (coins ? "🪙 " + coins + " Münzen" + (capped ? " (Tageslimit erreicht)" : "") : "Diesmal keine Münzen") + (rw.goalReached ? " · Tagesziel erreicht" : "") + '</p>' +
-      '<div class="ar-endbtns"><button class="ar-btn" data-gr="again">Noch eine Lektion</button><button class="ar-btn ghost" data-gr="exit">Zurück</button></div></div>';
+      (pr ? '<p class="ar-note"><b>Lernpfad: Station geschafft</b> ' + "★".repeat(stars) + "☆".repeat(3 - stars) + (pr.advanced ? "" : " (Wiederholung)") + '</p>' : "") + '<p class="ar-note">' + (coins ? "🪙 " + coins + " Münzen" + (capped ? " (Tageslimit erreicht)" : "") : "Diesmal keine Münzen") + (rw.goalReached ? " · Tagesziel erreicht" : "") + '</p>' +
+      '<div class="ar-endbtns">' + (L.opts && L.opts.station ? '<button class="ar-btn" data-gr="exit">Weiter auf dem Pfad</button>' : '<button class="ar-btn" data-gr="again">Noch eine Lektion</button><button class="ar-btn ghost" data-gr="exit">Zurück</button>') + '</div></div>';
     S.save(true);
     if (global.VTUI && global.VTUI.refreshHeader) global.VTUI.refreshHeader();
   }
@@ -181,9 +183,9 @@
   el.addEventListener("click", function (e) {
     var t = e.target.closest("[data-gr]"); if (!t || !L) { if (t && !L && /^(exit|quit|again)$/.test(t.getAttribute("data-gr"))) close(); return; }
     var a = t.getAttribute("data-gr");
-    if (a === "quit") { if (L.done) return close(); if (L.right + L.wrong > 0) { L.queue = []; return finish(); } return close(); }
+    if (a === "quit") { if (L.done) return close(); if (L.right + L.wrong > 0) { L.queue = []; L.quit = true; return finish(); } return close(); }
     if (a === "exit") return close();
-    if (a === "again") { var id = L.t.id; L = null; return start(id); }
+    if (a === "again") { var id = L.t.id, o0 = L.opts; L = null; return start(id, o0); }
     if (a === "help") return showExplain(false);
     if (a === "helpx") { var d = $(".wg-help-ov"); if (d) d.remove(); return; }
     if (a === "say") { var ex = L.t.explain.examples[+t.getAttribute("data-i")]; return say(plain(ex.en)); }

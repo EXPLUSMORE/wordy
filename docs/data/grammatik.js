@@ -6,7 +6,7 @@
    error:  s = Satz, bad = Nummer des falschen Wortes (ab 0), fix = Verbesserungen (erste ist richtig)
    [[…]] hebt Teile in Beispielen hervor. IDs der Themen nie ändern (Lernstand hängt daran). */
 window.GRAMMAR = [
-  { id: "past1", icon: "⏪", title: "Simple Past: Das ist passiert", book: "Headlight 2 · Unit 1",
+  { id: "past1", unit: "H2-1b", icon: "⏪", title: "Simple Past: Das ist passiert", book: "Headlight 2 · Unit 1",
     short: "-ed, unregelmäßige Verben, was/were",
     explain: {
       lead: "Mit dem Simple Past erzählst du, was <b>vorbei</b> ist.",
@@ -41,7 +41,7 @@ window.GRAMMAR = [
       { t: "error", s: "We was very tired after the trip.", bad: 1, fix: ["were", "is", "are", "be"], why: "Zu we gehört were, nicht was." }
     ]
   },
-  { id: "past2", icon: "❓", title: "Simple Past: Fragen und Verneinung", book: "Headlight 2 · Unit 1",
+  { id: "past2", unit: "H2-1c", icon: "❓", title: "Simple Past: Fragen und Verneinung", book: "Headlight 2 · Unit 1",
     short: "did / didn't + Grundform",
     explain: {
       lead: "Fragen und Verneinung im Simple Past bildest du mit <b>did</b>.",

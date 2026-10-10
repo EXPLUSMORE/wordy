@@ -1245,6 +1245,10 @@
         if (state.settings.track !== "business" && sec.length >= 2 && verbOrder.length) {   // in jedem Abschnitt einmal unregelmäßige Verben (Station vor dem Boss), fest nach Abschnitt verteilt
           sec[sec.length - 2].verbIds = [0, 1, 2, 3].map(function (q) { return verbOrder[(verbSec * 4 + q) % verbOrder.length]; }); verbSec++;
         }
+        if (state.settings.track !== "business" && part === parts - 1) {   // Grammatik-Stationen (data/grammatik.js, Feld unit) vor der Boss-Runde dieser Einheit
+          (global.GRAMMAR || []).forEach(function (t) { if (!t.soon && t.unit === u.id) sec.splice(sec.length - 1, 0, { id: "G" + t.id, unit: u.id, section: secId, sectionTitle: sec[0].sectionTitle, words: [], gram: t.id, gtitle: t.title, last: false }); });
+          sec.forEach(function (s, ix) { s.n = ix + 1; s.of = sec.length; });
+        }
         out = out.concat(sec);
       }
     });
@@ -1281,8 +1285,11 @@
   /* Stationen, deren Wörter schon alle „sitzen“, werden übersprungen (Magnus hat Stoff ja schon gelernt) */
   function pathSync() {
     var p = pathState(), st = pathStations(), pos = 0, moved = false;
-    while (pos < st.length && p.stars[st[pos].id]) pos++;   // Reihenfolge streng: die erste Station ohne Sterne ist dran
+    function laterDone(i) { for (var j = i + 1; j < st.length; j++) if (p.stars[st[j].id]) return true; return false; }
+    function gramAuto(i) { if (st[i].gram && !p.stars[st[i].id] && laterDone(i)) { p.stars[st[i].id] = 1; p.auto = (p.auto || 0) + 1; moved = true; } return !!p.stars[st[i].id]; }   // neue Grammatik-Station in schon geschafftem Abschnitt: nicht zurückwerfen
+    while (pos < st.length && (p.stars[st[pos].id] || gramAuto(pos))) pos++;   // Reihenfolge streng: die erste Station ohne Sterne ist dran
     while (pos < st.length) {
+      if (st[pos].gram) break;   // Grammatik wird nie übersprungen
       var s = st[pos], all = (s.last ? s.reviewWords : s.words).concat(s.verbIds || []).every(function (id) { return levelOf(id) >= 3; });
       if (!all) break;
       p.stars[s.id] = Math.max(p.stars[s.id] || 0, 3); p.auto = (p.auto || 0) + 1;
