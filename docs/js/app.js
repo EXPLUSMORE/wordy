@@ -1238,7 +1238,8 @@
     function status(txt, you) { var e = $c("mlSt"); e.textContent = txt; e.className = "mlst" + (you ? " you" : ""); $c("mlB").style.background = you ? "#4caf50" : ""; }
     function finish() {
       tok++; bar(0); status(""); $c("mlP").textContent = "Geschafft";
-      $c("mlC").innerHTML = '<div class="mlen">🎉</div><div class="mlde">Alle ' + list.length + ' Wörter gehört und mitgesprochen.</div><div class="row" style="justify-content:center;gap:8px;margin-top:14px"><button class="btn" id="mlAgain">Nochmal</button><button class="btn ghost" id="mlEnd">Fertig</button></div>';
+      $c("mlC").innerHTML = '<div class="mlen">🎉</div><div class="mlde">Alle ' + list.length + ' Wörter gehört und mitgesprochen.</div>';
+      var st0 = $c("mlSt"); st0.className = "mlst"; st0.innerHTML = '<div class="row" style="justify-content:center;gap:8px"><button class="btn lg" id="mlAgain">Nochmal</button><button class="btn ghost lg" id="mlEnd">Fertig</button></div>';
       $c("mlAgain").onclick = function () { phase = 1; idx = 0; step(); }; $c("mlEnd").onclick = close;
     }
     function step() {
@@ -1248,7 +1249,8 @@
         ov.classList.add("mlnof");
         if (phase === 1) {
           bar(0); status(""); $c("mlP").textContent = "Teil 2 von 2";
-          $c("mlC").innerHTML = '<div class="mlen">🎤</div><div class="mlde">Jetzt du: Ich sage jedes Wort vor, du sprichst laut mit.</div><button class="btn lg" id="mlGo" style="margin-top:14px">Los geht\'s</button>';
+          $c("mlC").innerHTML = '<div class="mlen">🎤</div><div class="mlde">Jetzt du: Ich sage jedes Wort vor, du sprichst laut mit.</div>';
+          var st1 = $c("mlSt"); st1.className = "mlst"; st1.innerHTML = '<button class="btn lg" id="mlGo" style="width:100%">Los geht\'s ▶</button>';
           $c("mlGo").onclick = function () { phase = 2; idx = 0; step(); }; return;
         }
         return finish();
