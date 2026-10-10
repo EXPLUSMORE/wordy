@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.70.0 – 2026-10-10
+- Neu: drei Wortspiele unter Spielen › Arena (`js/spiele.js`, `VTG`): **Wort-Detektiv** (Wordle mit deutschem Hinweis, 5 Wörter, 6 Versuche, Farbfeedback), **Rette Eisi** (Galgenmännchen mit schmelzendem Eis, 5 Wörter) und **Wort-Kreuz** (Kreuzworträtsel aus den Wörtern, deutsche Hinweise, englische Lösungen, Prüfen und Tipp). Sie nutzen nur einzelne Wörter ab 3 Buchstaben, Fehlerkartei und Fälliges zuerst, geben Lernstand über `S.grade`, zählen aufs Tagesziel und teilen sich mit der Arena das Münzlimit (30 am Tag).
+
 ## 2.69.7 – 2026-10-10
 - Kopfzeile: Die Herzen ragten bei schmalen Handys und großen Zahlen (Münzen, Serie, XP, Booster) rechts über den Rand. Die Zeile schrumpft jetzt (kleinere Abstände und Schrift unter 400 px, Rangname mit Auslassung), die Herzen bleiben immer sichtbar.
 

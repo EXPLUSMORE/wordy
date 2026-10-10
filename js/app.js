@@ -839,7 +839,10 @@
     var play = modes.map(function (m) {
       var b = global.ARENA.best(m.id);
       return tile(esc(m.icon), esc(m.name), esc(m.tag), 'data-act="arena" data-id="' + esc(m.id) + '"' + (few ? " disabled" : ""), b.best ? '<span class="pill tnum">Bestwert ' + b.best + '</span>' : "");
-    }).join("");
+    }).join("") + (global.VTG ? global.VTG.GAMES.map(function (m) {
+      var b = global.VTG.best(m.id);
+      return tile(esc(m.icon), esc(m.name), esc(m.tag), 'data-act="wgame" data-id="' + esc(m.id) + '"' + (few ? " disabled" : ""), b.best ? '<span class="pill tnum">Bestwert ' + b.best + '</span>' : "");
+    }).join("") : "");
     var plays = 0, arena = st.arena || {};
     for (var k in arena) plays += arena[k].plays || 0;
     var focusT = [["👂", "Hören", "Wort hören und finden", "listen", !aud], ["⌨️", "Tippen", "Wort selbst schreiben", "type"], ["🧩", "Lücken", "Satz vervollständigen", "gap"], ["🔗", "Zuordnen", "Paare verbinden", "match"]];
@@ -2819,6 +2822,7 @@
       return;
     }
     if (a === "mitlesen") { var ml = mitlesenList(act.getAttribute("data-unit"), act.getAttribute("data-sec")); openMitlesen(ml.list, ml.title); return; }
+    if (a === "wgame") { if (global.VTG) global.VTG.start(act.getAttribute("data-id")); return; }
     if (a === "arena") { if (global.ARENA) global.ARENA.start(act.getAttribute("data-id")); return; }
     if (a === "start") {
       var fc = act.getAttribute("data-focus") || null;
@@ -3113,6 +3117,7 @@
 
   global.VTUI = {
     speechText: speechClean,
+    speak: function (t) { speak(t); },
     toast: toast,
     refreshHeader: renderHeader,
     afterArena: function () { render(); },
