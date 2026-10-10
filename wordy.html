@@ -1122,7 +1122,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.75.0";window.WORDY_BUILD="e940396c86";</script>
+<script>window.WORDY_VERSION="2.75.1";window.WORDY_BUILD="bf16bf2fda";</script>
 </head>
 <body>
 <div id="app">
@@ -8040,7 +8040,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       '<p class="small muted" style="margin:6px 0 10px">Bruno, Pingo, Robbi und Eisi erklären jeden Modus in 30 Sekunden.</p><div class="fmlist">' +
       global.VTFILM.list.map(function (f) { return '<button class="fmcard" data-act="film" data-id="' + f.id + '"><span>' + f.icon + '</span><b>' + esc(f.title) + '</b><i>▶</i></button>'; }).join("") + '</div></section>' : "";
     var playCard = '<section class="card"><div class="eyebrow">Arena</div>' +
-      (few ? '<p class="small muted" style="margin:6px 0 0">Für die Spiele brauchst du mindestens acht Wörter im gewählten Bereich. Schalte unter „Lernbereich“ ein weiteres Schuljahr dazu.</p>' : '') +
+      (few ? '<p class="small muted" style="margin:6px 0 0">Für die Spiele brauchst du mindestens acht Wörter im gewählten Bereich. Schalte unter „Was lernen?“ ein weiteres Schuljahr dazu.</p>' : '') +
       '<div class="tiles">' + play + '</div>' +
       '<details style="margin-top:12px"><summary class="small" style="cursor:pointer;font-weight:700">Wie die Spiele zählen</summary>' +
       '<p class="small muted" style="margin:8px 0 0">Ein Treffer unter Zeitdruck wird als sichere, aber flache Wiederholung gewertet. Er schiebt ein Wort eine Stufe weiter, ersetzt aber nicht das ruhige Training. Ein Fehlgriff landet sofort in der Fehlerkartei. Die Zeit läuft aufs Tagesziel.' + (plays ? ' Bisher ' + plays + ' ' + plural(plays, "Spiel", "Spiele") + ' gespielt.' : '') + '</p></details></section>';
@@ -8187,7 +8187,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     return all.length >= 12 ? S.shuffle(all.slice()).slice(0, 60) : null;
   }
   function startChallenge(friend, mode) {
-    var deck = duelDeck(); if (!deck) return toast("Dafür fehlen noch Wörter im gewählten Lernbereich.");
+    var deck = duelDeck(); if (!deck) return toast("Dafür fehlen noch Wörter im gewählten Bereich.");
     var ids = deck.map(function (w) { return w.id; }), seed = Math.floor(Math.random() * 2000000000);
     global.ARENA.start(mode, { words: deck, seed: seed, duel: { wait: "Herausforderung wird gesendet …" }, onFinish: function (res, show) {
       global.WordySync.social("POST", "/challenges", { to: friend.id, mode: mode, words: ids, seed: seed, score: res.score })
@@ -8231,7 +8231,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var seg = detailUnit ? "units" : lernSeg;
     var pfadOn = S.state.settings.pathOn !== false && S.pathStations().length > 0;
     if (seg === "pfad" && !pfadOn) seg = "ueben";
-    var top = segBar("lernen", seg, (pfadOn ? [["pfad", "🗺️ Pfad"]] : []).concat([["ueben", "🎮 Üben"]]).concat(global.VTGR ? [["gram", "✏️ Grammatik"]] : []).concat([["units", "📚 Lernbereich"], ["stats", "📈 Fortschritt"]]));
+    var top = segBar("lernen", seg, [["units", "📚 Was lernen?"]].concat(pfadOn ? [["pfad", "🗺️ Pfad"]] : []).concat([["ueben", "🎮 Üben"]]).concat(global.VTGR ? [["gram", "✏️ Grammatik"]] : []).concat([["stats", "📈 Fortschritt"]]));
     if (detailUnit === "__verbs") return viewVerbList();
     if (detailUnit) return viewUnitDetail(detailUnit);
     if (seg === "stats") viewStats();
@@ -8323,7 +8323,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   function viewUeben() {
     if (detailUnit === "__verbs") return viewVerbList();
     if (detailUnit) return viewUnitDetail(detailUnit);
-    view.innerHTML = '<div class="stack">' + segBar("ueben", uebenSeg, [["modi", "🎮 Spielmodi"], ["units", "📚 Lernbereich"]]) +
+    view.innerHTML = '<div class="stack">' + segBar("ueben", uebenSeg, [["modi", "🎮 Spielmodi"], ["units", "📚 Was lernen?"]]) +
       (uebenSeg === "units" ? unitsHtml() : modiHtml()) + '</div>';
     $$("details.grp").forEach(function (d) { d.addEventListener("toggle", function () { openGroups[d.getAttribute("data-k")] = d.open; }); });
   }
@@ -8336,7 +8336,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var sel = S.groupsOf();
     var html = '';
     var guided = S.steered();   // gesteuert: das Kind sieht nur die Einheiten, die für es vorgesehen sind (ohne Hinweis darauf)
-    if (!guided) html += '<section class="card"><div class="eyebrow">Lernbereich</div><div style="margin-top:8px">' + trackSwitch() + '</div></section>';
+    if (!guided) html += '<section class="card"><div class="eyebrow">Was lernen?</div><div style="margin-top:8px">' + trackSwitch() + '</div></section>';
     if (!guided) html += '<section class="card">' +
       '<div class="eyebrow">' + (biz ? "Stufe" : "Schuljahr") + '</div>' +
       '<div class="row wrap" style="margin-top:8px">' +
@@ -9055,7 +9055,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var steps = [
       ["🚀", "Loslegen", "Auf <b>Start</b> schlägt Wordy dir die beste Runde für heute vor (zum Beispiel Fehlerkartei oder Lernplan). Mit <b>Los geht\'s</b> startest du, darunter stellst du die Dauer ein."],
       ["🎮", "Üben", "Unter <b>Üben → Spielmodi</b> wählst du selbst: <b>Lernen</b> (Daily Challenge, Neue Wörter, Fehlerkartei, Sätze, Verben), <b>Spielen</b> (die Arena) oder <b>Gezielt üben</b> (nur Hören, Tippen, Lücken oder Zuordnen)."],
-      ["📚", "Einheiten", "Unter <b>Üben → Lernbereich</b> wählst du Schule oder Business, Schuljahr oder Stufe und öffnest eine Einheit. Dort kannst du nur diese Einheit üben, anhören oder gezielt eine Aufgabenform trainieren."],
+      ["📚", "Einheiten", "Unter <b>Lernen → Was lernen?</b> wählst du Schule oder Business, Schuljahr oder Stufe und öffnest eine Einheit. Dort kannst du nur diese Einheit üben, anhören oder gezielt eine Aufgabenform trainieren."],
       ["🧩", "Aufgaben", "Wortkarte, Auswahl, Hören, Lückentext, Schreiben, Zuordnen und Satzbau. Eine falsche Antwort kostet ein Herz (unter Setup abschaltbar) und kommt später wieder."],
       ["✍️", "Unregelmäßige Verben", "<b>Üben → Spielmodi → Verben</b> (Einführung, Lückenaufgabe, Tippen). Die Verbenliste mit Beispielsätzen findest du unter <b>Üben → Lernbereich</b>."],
       ["⚡", "Arena", "Vier Zeitmodi unter <b>Spielen</b>: <b>Match-Rausch</b> (Paare in 60 Sekunden), <b>Blitzrunde</b> (Zeit sammeln), <b>Letztes Herz</b> (ein Fehler beendet), <b>Fehlerjagd</b> (Kartei leeren)."],

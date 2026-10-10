@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.75.1 – 2026-10-10
+- Lernen: „Lernbereich“ heißt jetzt **„Was lernen?“** und steht ganz links als erster Reiter (danach Pfad, Üben, Grammatik, Fortschritt). Hinweistexte angepasst.
+
 ## 2.75.0 – 2026-10-10
 - Neu: **Grammatik** (Lernen › Grammatik), Gerüst mit zwei Themen nach Headlight 2, Unit 1: „Simple Past: Das ist passiert“ (-ed, unregelmäßige Verben, was/were) und „Simple Past: Fragen und Verneinung“ (did / didn't + Grundform). Themen und Übungen stehen in `data/grammatik.js` (`window.GRAMMAR`), die Lektionen in `js/grammatik.js` (`VTGR`). Eine Lektion besteht aus einer Erklärkarte (mit Beispielen zum Anhören und Merksatz) und 8 Übungen aus vier Formen: Lücke zum Auswählen, Lücke tippen, Satz bauen, Fehler finden. Falsche Aufgaben kommen am Ende der Lektion noch einmal. Je Thema 15 Aufgaben, die Lektion zieht zuerst noch nicht sichere. Lernstand je Thema in `state.gram` (Prozent „sitzt“), Zeit zählt aufs Tagesziel, Münzen wie bei den Wortspielen (Tageslimit gemeinsam). Weitere Themen stehen als „kommt bald“ in der Liste (have to / should / can, will / going to, Steigerung, some / any, if-Sätze).
 
