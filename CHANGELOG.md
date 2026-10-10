@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.73.1 – 2026-10-10
+- Lernbereich: Jede Gruppe (Schulbuch, Klassen-Liste, eigene Listen) hat unter „Gruppe üben“ jetzt auch die Spiele (Match-Rausch, Blitzrunde, Letztes Herz, Wort-Detektiv, Freezy, Blast, Letters, Xing) mit allen Wörtern der Gruppe. Die Wortspiele nehmen dafür mehrere Einheiten auf einmal (`opts.units`).
+
 ## 2.73.0 – 2026-10-10
 - Einheit (Lernen › Lernbereich › Einheit): unter „Wie möchtest du üben?“ gibt es neu „Oder als Spiel“ mit Match-Rausch, Blitzrunde, Letztes Herz, Wort-Detektiv, Freezy, Blast, Letters und Xing, jeweils mit den Wörtern genau dieser Einheit (auch wenn sie nicht im aktiven Lernbereich liegt). Ab 5 Wörtern in der Einheit.
 

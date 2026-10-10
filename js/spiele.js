@@ -33,10 +33,9 @@
   /* Wörter für ein Spiel: nur einzelne Wörter aus Buchstaben, Fehlerkartei und Fälliges zuerst */
   function pickWords(n, min, max, unit, spaces) {
     var p = S.pools(), order = S.shuffle(p.box.slice()).concat(S.shuffle(p.due.slice()), S.shuffle(p.learning.slice()), S.shuffle(p.fresh.slice()), S.shuffle(p.all.slice()));
-    if (unit) order = S.shuffle(S.words().filter(function (w) { return w.unit === unit; }));   // gewählte Einheit: alle ihre Wörter, auch außerhalb des aktiven Lernbereichs
+    if (unit) { var us = [].concat(unit); order = S.shuffle(S.words().filter(function (w) { return us.indexOf(w.unit) >= 0; })); }   // gewählte Einheit: alle ihre Wörter, auch außerhalb des aktiven Lernbereichs
     var seenEn = {}, seenDe = {}, out = [];
     order.forEach(function (w) {
-      if (unit && w.unit !== unit) return;
       var s = clean(w.en);
       if (!(spaces ? /^[a-z][a-z ]*[a-z]$/ : /^[a-z]+$/).test(s) || s.length < min || s.length > max || seenEn[s] || seenDe[w.de]) return;
       seenEn[s] = seenDe[w.de] = 1; out.push({ id: w.id, en: s, de: plainDe(w.de), unit: w.unit, raw: w.en });
@@ -73,7 +72,7 @@
 
   /* ---------- Start ---------- */
   function start(id, opts) {
-    var min = id === "blast" ? 2 : 3, max = 8, n = id === "kreuz" ? 14 : id === "blast" ? 40 : id === "letters" ? 7 : 5, words = pickWords(n, min, id === "blast" ? 14 : max, opts && opts.unit, id === "blast");
+    var min = id === "blast" ? 2 : 3, max = 8, n = id === "kreuz" ? 14 : id === "blast" ? 40 : id === "letters" ? 7 : 5, words = pickWords(n, min, id === "blast" ? 14 : max, opts && (opts.units || opts.unit), id === "blast");
     if (words.length < (id === "kreuz" ? 6 : id === "blast" ? 6 : id === "letters" ? 5 : 3)) return toast("Dafür brauchst du mehr Wörter im gewählten Bereich (einzelne Wörter ab 3 Buchstaben).");
     S.rollDay();
     G = { id: id, words: words, i: 0, score: 0, res: [], items: 0, correct: 0, wrong: 0, hints: 0, start: Date.now(), done: false, opts: opts || null, maxStreak: 0, streak: 0, cleared: 0 };
@@ -239,7 +238,7 @@
   }
   function kreuzStart() {
     var cands = G.words, L = layout(cands, 8, 9), tries = 0;
-    while ((!L || L.placed.length < 5) && tries++ < 6) { cands = pickWords(16, 3, 8); var L2 = layout(cands, 8, 9); if (L2 && (!L || L2.placed.length > L.placed.length)) L = L2; }
+    while ((!L || L.placed.length < 5) && tries++ < 6) { cands = pickWords(16, 3, 8, G.opts && (G.opts.units || G.opts.unit)); var L2 = layout(cands, 8, 9); if (L2 && (!L || L2.placed.length > L.placed.length)) L = L2; }
     if (!L || L.placed.length < 3) { close(); return toast("Das Rätsel ließ sich nicht bauen. Versuch es gleich noch einmal."); }
     var cells = {}, words = [], num = 0;
     L.placed.forEach(function (p) { p.r -= L.minR; p.c -= L.minC; });
@@ -329,7 +328,7 @@
 
   /* ================= Blast (Wörter-Shooter) ================= */
   function blastStart() {
-    var deck = pickWords(60, 2, 14, G.opts && G.opts.unit, true);
+    var deck = pickWords(60, 2, 14, G.opts && (G.opts.units || G.opts.unit), true);
     G.words = deck; G.res = [];
     el.innerHTML = top("Blast") +
       '<div class="bl-hud"><span id="blLives"></span><span id="blLevel"></span><span id="blCombo"></span></div>' +
@@ -454,7 +453,7 @@
   }
   function lettersStart() {
     var N = 9, B = null, tries = 0;
-    while (tries++ < 8) { B = lettersBuild(G.words.slice(0, 7), N); if (B.placed.length >= 5) break; G.words = pickWords(7, 3, 8); }
+    while (tries++ < 8) { B = lettersBuild(G.words.slice(0, 7), N); if (B.placed.length >= 5) break; G.words = pickWords(7, 3, 8, G.opts && (G.opts.units || G.opts.unit)); }
     if (!B || B.placed.length < 4) { close(); return toast("Das Rätsel ließ sich nicht bauen. Versuch es gleich noch einmal."); }
     B.placed.forEach(function (p, i) { p.hue = Math.round(i * 360 / B.placed.length + 20); });
     G.words = B.placed.map(function (p) { return p.w; }); G.res = [];

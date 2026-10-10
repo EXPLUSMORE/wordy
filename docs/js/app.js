@@ -1181,6 +1181,7 @@
       html += '<details class="grp" data-k="' + esc(k) + '"' + (isOpen ? " open" : "") + '><summary><span class="chev">▸</span><span style="flex:1 1 auto;min-width:0"><b>' + esc(title) + '</b>' +
         '<span class="small muted" style="display:block">' + byGroup[k].length + ' ' + plural(byGroup[k].length, "Einheit", "Einheiten") + ' · ' + Math.round(sure * 100 / Math.max(1, tot)) + ' % sicher · ' + seenW + ' von ' + tot + ' Wörtern geübt</span></span></summary>' +
         '<button class="btn soft wide" data-act="start" data-scope="' + esc(gids.join(",")) + '" data-min="5" style="margin:4px 0 8px">Gruppe üben (5 Min.)</button>' +
+        '<div class="small muted" style="margin:2px 2px 4px">Oder als Spiel mit allen Wörtern der Gruppe:</div><div class="row wrap" style="gap:8px;margin-bottom:10px">' + gameChips("data-scope", gids.join(","), tot >= 8) + '</div>' +
         '<div>' + rest.map(unitRow).join("") + '</div>' +
         (books.length ? bookTile(BOOKS.filter(function (b) { return books[0].id.indexOf(b.pre) === 0; })[0], books) + books.map(unitRow).join("") : "") + '</details>';
     });
@@ -1287,6 +1288,12 @@
     if (unitId) { var u = S.units().filter(function (x) { return x.id === unitId; })[0]; return u ? { title: u.title, list: u.words.map(function (w) { return { en: w[0], de: w[1] }; }) } : { title: "", list: [] }; }
     return { title: "Alle gelernten Wörter", list: S.activeWords().filter(function (w) { return S.levelOf(w.id) >= 1; }).map(function (w) { return { en: w.en, de: w.de }; }) };
   }
+  /* Spiel-Knöpfe für eine Einheit (attr = data-unit) oder eine ganze Gruppe (attr = data-scope) */
+  function gameChips(attr, val, enough) {
+    var dis = enough ? "" : " disabled", a = ' data-act="unitgame" ' + attr + '="' + esc(val) + '"';
+    return (global.ARENA ? global.ARENA.MODES.filter(function (m) { return m.id !== "hunt"; }).map(function (m) { return '<button class="chip"' + a + ' data-arena="' + esc(m.id) + '"' + dis + '>' + esc(m.icon) + ' ' + esc(m.name) + '</button>'; }).join("") : "") +
+      (global.VTG ? global.VTG.GAMES.map(function (m) { return '<button class="chip"' + a + ' data-game="' + esc(m.id) + '"' + dis + '>' + esc(m.icon) + ' ' + esc(m.name) + '</button>'; }).join("") : "");
+  }
   function viewUnitDetail(id) {
     var u = S.units().filter(function (x) { return x.id === id; })[0];
     if (!u) { detailUnit = null; return viewUeben(); }
@@ -1312,8 +1319,7 @@
         return f[3] ? "" : '<button class="chip" data-act="start" data-unit="' + esc(u.id) + '" data-focus="' + f[2] + '" data-min="5">' + f[0] + ' ' + f[1] + '</button>';
       }).join("") + '</div>' +
       '<div class="eyebrow" style="margin-top:14px">Oder als Spiel</div><div class="row wrap" style="margin-top:8px;gap:8px">' +
-      (global.ARENA ? global.ARENA.MODES.filter(function (m) { return m.id !== "hunt"; }).map(function (m) { return '<button class="chip" data-act="unitgame" data-unit="' + esc(u.id) + '" data-arena="' + esc(m.id) + '"' + (u.words.length < 5 ? " disabled" : "") + '>' + esc(m.icon) + ' ' + esc(m.name) + '</button>'; }).join("") : "") +
-      (global.VTG ? global.VTG.GAMES.map(function (m) { return '<button class="chip" data-act="unitgame" data-unit="' + esc(u.id) + '" data-game="' + esc(m.id) + '"' + (u.words.length < 5 ? " disabled" : "") + '>' + esc(m.icon) + ' ' + esc(m.name) + '</button>'; }).join("") : "") + '</div>' +
+      gameChips("data-unit", u.id, u.words.length >= 5) + '</div>' +
       (audioAvailable() ? '<p class="small muted" style="margin:10px 0 0">Tippe auf 🔊 neben einem Wort, um nur dieses zu hören.</p>' : '') + '</section>' +
       '<section class="card"><div class="eyebrow">Wortliste</div>' + rows + '</section></div>';
   }
@@ -2826,9 +2832,11 @@
     }
     if (a === "mitlesen") { var ml = mitlesenList(act.getAttribute("data-unit"), act.getAttribute("data-sec")); openMitlesen(ml.list, ml.title); return; }
     if (a === "unitgame") {
-      var ug = act.getAttribute("data-unit"), uu = S.units().filter(function (x) { return x.id === ug; })[0]; if (!uu) return;
-      if (act.getAttribute("data-arena")) { var uw = uu.words.map(function (w, i) { return S.byId(uu.id + "#" + i); }).filter(Boolean); if (global.ARENA) global.ARENA.start(act.getAttribute("data-arena"), { words: uw }); }
-      else if (global.VTG) global.VTG.start(act.getAttribute("data-game"), { unit: uu.id });
+      var ids = (act.getAttribute("data-scope") || act.getAttribute("data-unit") || "").split(",").filter(Boolean), uws = [];
+      ids.forEach(function (uid) { var uu = S.units().filter(function (x) { return x.id === uid; })[0]; if (uu) uu.words.forEach(function (w, i) { var wo = S.byId(uu.id + "#" + i); if (wo) uws.push(wo); }); });
+      if (!uws.length) return;
+      if (act.getAttribute("data-arena")) { if (global.ARENA) global.ARENA.start(act.getAttribute("data-arena"), { words: uws }); }
+      else if (global.VTG) global.VTG.start(act.getAttribute("data-game"), { units: ids });
       return;
     }
     if (a === "wgame") { if (global.VTG) global.VTG.start(act.getAttribute("data-id")); return; }
