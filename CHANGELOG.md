@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.78.0 – 2026-10-10
+- Shop: neue **Kitty-Reihe** im Start-Sortiment, je Stufe eine Figur mit Sticker: Kitty Schleife (gewöhnlich, 50 🪙), Kitty Regenbogen (selten, 150), Kitty Prinzessin (episch, 250), Kitty Sternenzauber (legendär, 500). Weiße bzw. pastellige Katzen ohne Mund, mit Schleife, Haarreifen, bunten Haaren, Flügeln und Glitzer. Neues Gesicht `kit` und Augen `kit` in `js/stilb.js`. Seltenheit fest je Artikel (`rar`).
+
 ## 2.77.0 – 2026-10-10
 - Eltern: **zweiter Elternzugang**. Im Eltern-Dashboard (Konto) erstellt das Hauptkonto einen Einladungslink (7 Tage, einmal nutzbar, bis zu 2 weitere Zugänge). Wer ihn öffnet, bekommt eine eigene Anmeldung (E-Mail-Link, optional Passwort) und sieht dieselben Kinder, Berichte und Einstellungen. Wochenmail geht an jeden Zugang einzeln, abschaltbar. Das Hauptkonto kann Zugänge und offene Einladungen entfernen; der zweite Zugang kann niemanden einladen. Löscht der zweite Zugang sein Konto, bleiben die Kinder erhalten. **Server-Update nötig** (neue Spalten werden beim Start automatisch angelegt).
 
