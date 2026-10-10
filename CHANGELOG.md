@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.67.0 – 2026-10-10
+- Lernpfad: Jeder Abschnitt hat den optionalen Knopf „🗣️ Mitlesen“ (alle Wörter des Abschnitts hören, dann laut mitsprechen). Zählt wie bisher nicht fürs Tagesziel.
+
 ## 2.66.1 – 2026-10-10
 - Daily-Challenge-Karte kompakter (Schrift und Abstände passend zum Rest der App). Dauer-Auswahl bricht nicht mehr um („Dauer in Min“ mit 3/5/10/15), „ca. 10 Min“ in den Kacheln bleibt zusammen.
 

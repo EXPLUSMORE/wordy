@@ -603,6 +603,7 @@
     var done = sec.filter(function (s) { return p.stars[s.id]; }).length, pend = p.pending.some(function (c) { return c.section === first.section; });
     var boss = sec[n - 1], h = '<div class="psec' + (isCur ? " cur" : "") + '" data-sec="' + esc(first.section) + '"><div class="psechead"><div><div class="eyebrow">Abschnitt ' + secNo + ' von ' + secCount + '</div><b>' + esc(first.sectionTitle) + '</b></div>' +
       '<span class="pill tnum">' + done + ' / ' + n + (p.chests[first.section] ? " · 💰" : "") + '</span></div>' +
+      '<button class="chip" data-act="mitlesen" data-sec="' + esc(first.section) + '" style="margin:0 0 8px">🗣️ Mitlesen (optional)</button>' +
       '<div class="pmap" style="height:' + H + 'px"><svg viewBox="0 0 100 ' + H + '" preserveAspectRatio="none" aria-hidden="true">' +
       '<path d="' + d + '" fill="none" stroke="#fff" stroke-opacity=".85" stroke-width="16" stroke-linecap="round" vector-effect="non-scaling-stroke"/>' +
       '<path d="' + dDone + '" fill="none" stroke="#2e7d4f" stroke-width="6" stroke-linecap="round" stroke-dasharray="1 12" vector-effect="non-scaling-stroke"/></svg>';
@@ -1268,7 +1269,12 @@
     $c("mlPrev").onclick = function () { idx = Math.max(0, idx - 1); try { window.speechSynthesis.cancel(); } catch (e) {} step(); };
     step();
   }
-  function mitlesenList(unitId) {
+  function mitlesenList(unitId, secId) {
+    if (secId) {
+      var seen = {}, t = "";
+      var l = []; S.pathStations().forEach(function (st) { if (st.section !== secId) return; t = st.sectionTitle; st.words.forEach(function (id) { var w = S.byId(id); if (w && !seen[id]) { seen[id] = 1; l.push({ en: w.en, de: w.de }); } }); });
+      return { title: t || "Abschnitt", list: l };
+    }
     if (unitId) { var u = S.units().filter(function (x) { return x.id === unitId; })[0]; return u ? { title: u.title, list: u.words.map(function (w) { return { en: w[0], de: w[1] }; }) } : { title: "", list: [] }; }
     return { title: "Alle gelernten Wörter", list: S.activeWords().filter(function (w) { return S.levelOf(w.id) >= 1; }).map(function (w) { return { en: w.en, de: w.de }; }) };
   }
@@ -2806,7 +2812,7 @@
       toast(okV ? (voice ? "Stimme: " + voice.name + " (" + voice.lang + ")" : "Standardstimme des Browsers wird genutzt.") : "Der Browser bietet hier keine Sprachausgabe an.");
       return;
     }
-    if (a === "mitlesen") { var ml = mitlesenList(act.getAttribute("data-unit")); openMitlesen(ml.list, ml.title); return; }
+    if (a === "mitlesen") { var ml = mitlesenList(act.getAttribute("data-unit"), act.getAttribute("data-sec")); openMitlesen(ml.list, ml.title); return; }
     if (a === "arena") { if (global.ARENA) global.ARENA.start(act.getAttribute("data-id")); return; }
     if (a === "start") {
       var fc = act.getAttribute("data-focus") || null;
