@@ -1023,15 +1023,30 @@
 
   /* ================= Hauptmenü: Start · Lernen · Spielen · Beute · Profil ================= */
   function topSegs(html) { var st = view.querySelector(".stack"); if (st) st.insertAdjacentHTML("afterbegin", html); else view.insertAdjacentHTML("afterbegin", html); }
+  /* ---------- Grammatik (Lernen › Grammatik): Themen aus data/grammatik.js, Lektionen in js/grammatik.js ---------- */
+  function gramHtml() {
+    var l = global.VTGR.list(), nx = global.VTGR.next(), h = "";
+    if (nx) h += '<section class="card"><div class="eyebrow">Heute dran</div><h2 style="margin:6px 0 2px">' + esc(nx.icon) + ' ' + esc(nx.title) + '</h2><div class="small muted">' + esc(nx.book) + ' · ' + esc(nx.short) + '</div>' +
+      '<p class="small" style="margin:8px 0 0">Erst eine kurze Erklärung, dann ' + 8 + ' Übungen.</p><button class="btn wide lg" data-act="gramstart" data-id="' + esc(nx.id) + '" style="margin-top:10px">' + (nx.lessons ? "Weiter üben ▶" : "Los geht\u2019s ▶") + '</button></section>';
+    h += '<section class="card"><div class="eyebrow">Basis-Grammatik nach Headlight 2</div><p class="small muted" style="margin:6px 0 10px">Das braucht jeder. Die Themen folgen dem Schulbuch.</p>' +
+      l.map(function (x) {
+        return '<button class="unit gru' + (x.soon ? " soonu" : "") + '" ' + (x.soon ? "disabled" : 'data-act="gramstart" data-id="' + esc(x.id) + '"') + '><span class="ic">' + (x.soon ? "🔒" : esc(x.icon)) + '</span><span class="t"><b>' + esc(x.title) + '</b>' +
+          '<span class="small muted" style="display:block">' + esc(x.book) + (x.soon ? " · kommt bald" : " · " + esc(x.short)) + '</span>' +
+          (x.soon ? "" : '<span class="bar" style="margin-top:6px;display:block"><i style="width:' + x.pct + '%"></i></span>') + '</span>' +
+          (x.soon ? "" : '<span class="pill tnum">' + x.pct + ' %</span>') + '</button>';
+      }).join("") + '</section>';
+    return h;
+  }
   function viewLernen() {
     var seg = detailUnit ? "units" : lernSeg;
     var pfadOn = S.state.settings.pathOn !== false && S.pathStations().length > 0;
     if (seg === "pfad" && !pfadOn) seg = "ueben";
-    var top = segBar("lernen", seg, (pfadOn ? [["pfad", "🗺️ Pfad"]] : []).concat([["ueben", "🎮 Üben"], ["units", "📚 Lernbereich"], ["stats", "📈 Fortschritt"]]));
+    var top = segBar("lernen", seg, (pfadOn ? [["pfad", "🗺️ Pfad"]] : []).concat([["ueben", "🎮 Üben"]]).concat(global.VTGR ? [["gram", "✏️ Grammatik"]] : []).concat([["units", "📚 Lernbereich"], ["stats", "📈 Fortschritt"]]));
     if (detailUnit === "__verbs") return viewVerbList();
     if (detailUnit) return viewUnitDetail(detailUnit);
     if (seg === "stats") viewStats();
     else if (seg === "pfad") view.innerHTML = '<div class="stack">' + pathCard() + '</div>';
+    else if (seg === "gram") view.innerHTML = '<div class="stack">' + gramHtml() + '</div>';
     else {
       view.innerHTML = '<div class="stack">' + (seg === "units" ? unitsHtml() : modiHtml("lern")) + '</div>';
       $$("details.grp").forEach(function (d) { d.addEventListener("toggle", function () { openGroups[d.getAttribute("data-k")] = d.open; }); });
@@ -2831,6 +2846,7 @@
       return;
     }
     if (a === "mitlesen") { var ml = mitlesenList(act.getAttribute("data-unit"), act.getAttribute("data-sec")); openMitlesen(ml.list, ml.title); return; }
+    if (a === "gramstart") { if (global.VTGR) global.VTGR.start(act.getAttribute("data-id")); return; }
     if (a === "unitgame") {
       var ids = (act.getAttribute("data-scope") || act.getAttribute("data-unit") || "").split(",").filter(Boolean), uws = [];
       ids.forEach(function (uid) { var uu = S.units().filter(function (x) { return x.id === uid; })[0]; if (uu) uu.words.forEach(function (w, i) { var wo = S.byId(uu.id + "#" + i); if (wo) uws.push(wo); }); });

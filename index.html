@@ -472,7 +472,7 @@ html.ar-open, html.ar-open body{overflow:hidden}
 #arena :focus-visible{outline:2px solid var(--ar-a);outline-offset:2px}
 
 /* ---------- Wortspiele (Wort-Detektiv, Rette Eisi, Wort-Kreuz) ---------- */
-.wg-title{flex:1 1 auto;text-align:center;font-family:Newsreader,Georgia,serif;font-size:22px;font-weight:600;line-height:1.1}
+.wg-title{flex:1 1 auto;text-align:center;font-family:Newsreader,Georgia,serif;font-size:clamp(17px,5vw,22px);font-weight:600;line-height:1.1}
 .wg-dots{display:flex;gap:6px;justify-content:center;padding:2px 16px 4px}.wg-dots i{width:26px;height:6px;border-radius:4px;background:var(--ar-s2)}.wg-dots i.now{background:var(--ar-a)}.wg-dots i.ok{background:var(--ar-good)}.wg-dots i.no{background:var(--ar-bad)}
 .wg-body{flex:1 1 auto;min-height:0;overflow-y:auto;display:flex;flex-direction:column;align-items:center;gap:10px;padding:8px 14px calc(14px + env(safe-area-inset-bottom,0px));width:100%;max-width:520px;margin:0 auto}
 .wg-hint{width:100%;background:var(--ar-s);border:1px solid var(--ar-line);border-radius:14px;padding:10px 12px;text-align:center;font-size:24px;font-weight:800;overflow-wrap:anywhere}.wg-hint small{display:block;font-size:12px;font-weight:600;color:var(--ar-ink2);margin-top:2px}
@@ -514,6 +514,20 @@ html.ar-open, html.ar-open body{overflow:hidden}
 .wg-help{width:100%;max-width:420px;display:flex;flex-direction:column;align-items:stretch;gap:10px;text-align:left}.wg-hicon{font-size:56px;text-align:center;line-height:1}.wg-help h2{font-family:Newsreader,Georgia,serif;font-size:28px;text-align:center;margin:0}.wg-hclaim{text-align:center;color:var(--ar-gold);font-weight:800;margin:0}
 .wg-help ul{margin:6px 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}.wg-help li{background:var(--ar-s);border:1px solid var(--ar-line);border-radius:12px;padding:10px 12px;font-size:15px;line-height:1.35}.wg-help li b{color:var(--ar-gold)}
 .wg-btn.big{padding:15px 18px;font-size:17px;width:100%;flex:none}
+/* ---------- Grammatik ---------- */
+.gr-lead{background:var(--ar-s);border:1px solid var(--ar-line);border-radius:12px;padding:10px 12px;font-size:16px}.gr-lead b,.gr-merk{color:var(--ar-gold)}.gr-merk{font-weight:800;text-align:center;margin:4px 0}
+.gr-ex{display:flex;flex-direction:column;gap:8px}.gr-exi{display:flex;gap:10px;align-items:center;background:var(--ar-s2);border-radius:12px;padding:8px 10px}.gr-say{width:36px;height:36px;border-radius:50%;background:var(--ar-s);flex:0 0 auto}
+.gr-en{font-size:17px;font-weight:700}.gr-en u{text-decoration:none;color:#ffd98a;border-bottom:3px solid var(--ar-gold)}.gr-de{font-size:13px;color:var(--ar-ink2)}
+.gr-q{width:100%;font-size:clamp(20px,6vw,26px);font-weight:700;line-height:1.4;text-align:center;overflow-wrap:anywhere}.gr-qs{color:var(--ar-ink2);text-align:center;font-size:15px}.gr-blank{display:inline-block;min-width:70px;border-bottom:4px solid var(--ar-gold);color:var(--ar-gold);text-align:center}
+.gr-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}.gr-opt{padding:14px 8px;border-radius:12px;background:var(--ar-s);border:2px solid var(--ar-line);color:var(--ar-ink);font-weight:800;font-size:18px}.gr-opt.right{background:#2f6e43;border-color:#5fd3a0}.gr-opt.wrong{background:#7a2b2b;border-color:#f2776e}
+.gr-in{width:100%;max-width:420px;padding:14px;border-radius:12px;background:var(--ar-s);border:2px solid var(--ar-line);color:var(--ar-ink);font-size:20px;text-align:center}.gr-in.right{border-color:#5fd3a0}.gr-in.wrong{border-color:#f2776e}
+.gr-ans{width:100%;min-height:60px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:center;background:var(--ar-s);border:2px dashed var(--ar-line);border-radius:12px;padding:8px}.gr-ans.right{border-color:#5fd3a0}.gr-ans.wrong{border-color:#f2776e}.gr-hint{color:var(--ar-ink2);font-size:14px}
+.gr-pool{width:100%;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}.gr-tile{padding:10px 14px;border-radius:10px;background:#EDE3C8;color:#14213d;font-weight:800;font-size:18px}.gr-tile.on{background:#FFD98A}
+.gr-toks{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}.gr-tok{padding:8px 11px;border-radius:10px;background:var(--ar-s);border:2px solid var(--ar-line);color:var(--ar-ink);font-size:19px;font-weight:700}.gr-tok.sel{border-color:var(--ar-gold)}.gr-tok.wrong{background:#7a2b2b}.gr-tok.right{background:#2f6e43}
+.gr-fb{width:100%;border-radius:14px;padding:12px;text-align:left}.gr-fb.good{background:rgba(47,110,67,.35);border:1px solid #5fd3a0}.gr-fb.bad{background:rgba(122,43,43,.35);border:1px solid #f2776e}.gr-fb b{font-size:17px}.gr-full{margin-top:4px;font-weight:700}.gr-why{margin-top:4px;color:var(--ar-ink2);font-size:14px}
+.unit.soonu{opacity:.55}.unit.gru .t b{white-space:normal;overflow:visible;text-overflow:clip}.unit.gru .pill{white-space:nowrap}
+.gr-go{position:sticky;bottom:0;padding-top:10px;background:linear-gradient(transparent,var(--ar-bg) 35%)}.gr-help-s .wg-hicon{font-size:40px}.gr-help-s h2{font-size:24px}
+.gr-tiles{display:flex;flex-direction:column;gap:8px}
 @media (prefers-reduced-motion:no-preference){
   .ar-tile,.ar-opt{transition:border-color .12s ease,background .12s ease,transform .12s ease}
   .ar-tile:active,.ar-opt:active{transform:scale(.97)}
@@ -1136,6 +1150,7 @@ details.fold>.fbody{padding:2px 0 14px}
 <script src="data/smalltalk.js"></script>
 <script src="data/idioms.js"></script>
 <script src="data/saetze.js"></script>
+<script src="data/grammatik.js"></script>
 <script src="data/saetze2.js"></script>
 <script src="data/lernbuch.js"></script>
 <script src="data/verben.js"></script>
@@ -1150,4 +1165,5 @@ details.fold>.fbody{padding:2px 0 14px}
 <script src="js/app.js"></script>
 <script src="js/arena.js"></script>
 <script src="js/spiele.js"></script>
+<script src="js/grammatik.js"></script>
 <script src="js/sync.js"></script>
