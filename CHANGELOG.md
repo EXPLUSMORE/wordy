@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.89.7 – 2026-10-11
+- Blast 3D: Unter dem gesuchten Wort steht jetzt eine **Vorschau auf die nächsten zwei Wörter** („Danach: …“). Sie ist verbindlich: Genau diese Wörter (in genau dieser Sprache) sind als Nächstes dran.
+
 ## 2.89.6 – 2026-10-11
 - Blast 3D: Die Wörter erscheinen jetzt **sofort ganz hinten am Horizont** (der Horizont liegt weiter oben, im oberen Teil des Felds, ohne langes Einblenden) und **wachsen stetig**, je näher sie kommen (von etwa 30 % bis 125 % der Schrift), passend zur Perspektive. Dafür gibt es **drei statt vier Spuren** (breiter, kaum Überlappung); eine Welle hat zwei Wörter (richtig und falsch), im Hardcore-Modus drei, sodass immer eine Spur frei zum Ausweichen bleibt.
 

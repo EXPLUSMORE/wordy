@@ -538,7 +538,7 @@
       '<div class="bl-field b3" id="blF"><svg class="b3-grid" viewBox="0 0 100 100" preserveAspectRatio="none"><g stroke="rgba(120,200,255,.28)" stroke-width=".35" fill="none"><path d="M0 8H100"/>' +
       [-1.5, -0.5, 0.5, 1.5].map(function (k) { return '<path d="M50 8L' + (50 + k * 32) + ' 100"/>'; }).join("") + '</g></svg>' +
       '<div class="bl-ship" id="blS">🚀</div><div class="bl-flash" id="blFl"></div></div>' +
-      '<div class="bl-prompt" id="blP" style="margin:6px 14px 0"><small id="b3Sub">Flieg in die richtige Spur</small><b id="blT"></b></div>' +   // das gesuchte Wort steht unten, direkt über den Tasten
+      '<div class="bl-prompt" id="blP" style="margin:6px 14px 0"><small id="b3Sub">Flieg in die richtige Spur</small><b id="blT"></b><div class="b3-next" id="b3Next"></div></div>' +   // das gesuchte Wort steht unten, direkt über den Tasten
       '<div class="bl-ctl"><button type="button" id="blL" aria-label="Nach links">◀</button><button type="button" id="blR" aria-label="Nach rechts">▶</button></div>';
     var F = $("#blF");
     G.sh = { px: 0, lx: 0, lane: 1, dir: 0, keys: {}, lives: 3, level: 1, hits: 0, queue: [], target: null, waves: [], t: 0, last: 0, w: F.clientWidth, h: F.clientHeight, over: false, T: 8.5, hard: false, hits5: 0 };
@@ -554,8 +554,18 @@
   function b3Next() {
     var sh = G.sh; if (!sh.queue.length) sh.queue = S.shuffle(G.words.slice()); return sh.queue.shift();
   }
+  function b3Fill() {   // Vorschau: die nächsten Wörter stehen schon fest (Wort und Sprache der Antwort)
+    var sh = G.sh; sh.pre = sh.pre || [];
+    while (sh.pre.length < 3) sh.pre.push({ t: b3Next(), deAnswer: Math.random() < 0.5 });
+  }
+  function b3Preview() {
+    var sh = G.sh, el2 = $("#b3Next"); if (!el2) return;
+    var up = sh.waves.filter(function (w) { return !w.done; }).slice(1).map(function (w) { return { t: w.t, deAnswer: w.deAnswer }; }).concat(sh.pre || []).slice(0, 2);
+    var txt = up.map(function (u) { return u.deAnswer ? u.t.raw : u.t.de; }).join("   ›   ");
+    if (el2._txt !== txt) { el2._txt = txt; el2.innerHTML = '<span>Danach:</span> ' + up.map(function (u) { return '<i>' + esc(u.deAnswer ? u.t.raw : u.t.de) + '</i>'; }).join(""); }
+  }
   function b3Spawn() {
-    var sh = G.sh, F = $("#blF"), t = b3Next(), deAnswer = Math.random() < 0.5;   // deAnswer: die Antworten sind deutsch, oben steht das englische Wort
+    var sh = G.sh, F = $("#blF"); b3Fill(); var pr = sh.pre.shift(), t = pr.t, deAnswer = pr.deAnswer;   // deAnswer: die Antworten sind deutsch, oben steht das englische Wort
     var others = S.shuffle(G.words.filter(function (x) { return x.id !== t.id && x.en !== t.en && x.de !== t.de; })).slice(0, sh.hard ? 2 : 1);
     var lanes = S.shuffle([0, 1, 2]), items = [t].concat(others).map(function (w, i) {
       var txt = deAnswer ? w.de : w.raw, d = document.createElement("div"), n = txt.length;
@@ -611,6 +621,7 @@
     sh.waves = sh.waves.filter(function (wv) { if (wv.d < -0.2) { wv.items.forEach(function (it) { if (it.el.parentNode) it.el.parentNode.removeChild(it.el); }); return false; } return true; });
     var cur = sh.waves.filter(function (wv) { return !wv.done; })[0];
     if (cur && sh.promptFor !== cur) { sh.promptFor = cur; b3Prompt(cur); }
+    b3Preview();
     var last = sh.waves[sh.waves.length - 1];
     if (!sh.over && (!last || last.d < 0.5)) b3Spawn();
     if (!sh.over) sh.raf = requestAnimationFrame(b3Loop);
