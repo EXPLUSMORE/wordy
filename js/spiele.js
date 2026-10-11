@@ -403,17 +403,21 @@
     sh.target = sh.queue.shift(); $("#blT").textContent = sh.target.de;
     var P = $("#blP"); P.classList.remove("pop"); void P.offsetWidth; P.classList.add("pop");
   }
-  /* Wörter in Blast sehen nicht alle gleich aus: leicht zufällige Größe; Wortgruppen werden zufällig umgebrochen (schmal, mehrzeilig) oder einzeilig kleiner geschrieben.
-     Sehr lange Einzeiler werden so weit verkleinert, dass sie ins Feld passen. */
+  /* Wörter in Blast sehen nicht alle gleich aus: zufällige Größe; Wortgruppen erscheinen zufällig als
+     untereinander gestapelt (ein Wort pro Zeile), schmal umgebrochen, einzeilig kleiner oder groß umgebrochen.
+     Zu breite Einzeiler werden so weit verkleinert, dass sie ins Feld passen. */
   function blFit(d) {
-    var base = parseFloat(getComputedStyle(d).fontSize), n = d.textContent.length, maxW = G.sh.w * 0.92, f = 0.92 + Math.random() * 0.2;
+    var base = parseFloat(getComputedStyle(d).fontSize), t = d.textContent, n = t.length, multi = /\s/.test(t.trim()), maxW = G.sh.w * 0.92, r = Math.random(), f = 0.85 + Math.random() * 0.4;
     if (!base) return;
-    if (n > 12 && /\s/.test(d.textContent)) {
-      if (Math.random() < 0.5) { d.style.maxWidth = Math.round(38 + Math.random() * 22) + "%"; f *= n > 22 ? 0.9 : 1; }   // umbrechen
-      else { d.style.whiteSpace = "nowrap"; f *= n <= 18 ? 0.9 : n <= 22 ? 0.8 : 0.7; }   // kleiner, eine Zeile
-    } else if (n > 12) f *= n <= 18 ? 0.9 : 0.8;
+    if (n > 12) f = Math.min(f, n <= 18 ? 1 : 0.9);
+    if (multi) {
+      if (r < 0.3) { d.style.width = "min-content"; if (n > 22) f = Math.min(f, 0.95); }   // alle Wörter untereinander
+      else if (r < 0.55) { d.style.maxWidth = Math.round(38 + Math.random() * 22) + "%"; }   // schmal umbrechen
+      else if (r < 0.8) { d.style.whiteSpace = "nowrap"; f = Math.min(f, n <= 18 ? 0.9 : n <= 22 ? 0.8 : 0.7); }   // eine Zeile, kleiner
+      else { d.style.maxWidth = "46%"; f = n <= 22 ? Math.max(f, 1.1) : f; }   // groß, mehrzeilig
+    } else if (n > 12) f = Math.min(f, 0.85);
     d.style.fontSize = (Math.round(base * f * 10) / 10) + "px";
-    if (d.style.whiteSpace === "nowrap" && d.offsetWidth > maxW) d.style.fontSize = (Math.floor(base * f * maxW / d.offsetWidth * 10) / 10) + "px";
+    if (d.offsetWidth > maxW) { d.style.fontSize = (Math.floor(base * f * maxW / d.offsetWidth * 10) / 10) + "px"; }
   }
   function blSpawn(w, kind) {
     var sh = G.sh, F = $("#blF"), d = document.createElement("div"), id = ++sh.id;

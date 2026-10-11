@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.86.3 – 2026-10-11
+- Blast, mehr Abwechslung: Wortgruppen erscheinen zufällig **alle Wörter untereinander** (ein Wort pro Zeile), schmal umgebrochen, einzeilig kleiner oder groß und mehrzeilig. Die Größe schwankt stärker (85 bis 125 %, bei langen Texten begrenzt). Zu breite Wörter werden auf Feldbreite verkleinert.
+
 ## 2.86.2 – 2026-10-11
 - Blast: Die Wörter sehen nicht mehr alle gleich aus. Jedes bekommt eine leicht zufällige Größe; Wortgruppen werden zufällig entweder **umgebrochen** (schmaler Block, mehrzeilig) oder **einzeilig kleiner** geschrieben. Zu breite Einzeiler werden so weit verkleinert, dass sie ins Feld passen.
 
