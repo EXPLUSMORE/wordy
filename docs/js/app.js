@@ -151,6 +151,19 @@
     document.removeEventListener("pointerdown", warm);
     if (S.state.settings.audio && window.speechSynthesis) { try { primeSpeech(null, 300); lastSpoke = Date.now(); } catch (e) {} }
   }, { passive: true });
+  /* Bildschirm anlassen, solange Wordy offen ist (Screen Wake Lock). Das System gibt die Sperre beim Wechsel in den Hintergrund selbst frei, deshalb beim Zurückkehren neu anfordern. */
+  var wakeLock = null;
+  function wakeSync() {
+    try {
+      var want = S.state.settings.wake !== false && document.visibilityState === "visible";
+      if (!want) { if (wakeLock) { wakeLock.release().catch(function () {}); wakeLock = null; } return; }
+      if (wakeLock || !navigator.wakeLock) return;
+      navigator.wakeLock.request("screen").then(function (l) { wakeLock = l; l.addEventListener("release", function () { if (wakeLock === l) wakeLock = null; }); }).catch(function () {});
+    } catch (e) {}
+  }
+  document.addEventListener("visibilitychange", wakeSync);
+  document.addEventListener("pointerdown", function () { if (!wakeLock) wakeSync(); }, { passive: true });
+  setTimeout(wakeSync, 600);
   function audioAvailable() { return !!(window.speechSynthesis && S.state.settings.audio); }
 
   /* ---------- Textvergleich ---------- */
@@ -1927,6 +1940,8 @@
     html += fold("ton", "🔊", "Ton &amp; Aussehen", "Vorlesen, Hell oder Dunkel",
       '<label class="row" style="margin-top:4px"><span style="flex:1 1 auto">Aussprache vorlesen<br><span class="small muted">Nutzt die englische Stimme des Geräts</span></span>' +
       '<input type="checkbox" id="setAudio" ' + (st.settings.audio ? "checked" : "") + ' style="width:auto"></label>' +
+      '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Bildschirm anlassen<br><span class="small muted">Das Handy dunkelt nicht ab, solange Wordy offen ist</span></span>' +
+      '<input type="checkbox" id="setWake" ' + (st.settings.wake !== false ? "checked" : "") + ' style="width:auto"></label>' +
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Erscheinungsbild<br><span class="small muted">Automatisch folgt der Einstellung des Geräts</span></span>' +
       '<select id="setMode" style="width:auto">' + [["auto", "Automatisch"], ["light", "Hell"], ["dark", "Dunkel"]].map(function (o) {
         return '<option value="' + o[0] + '"' + ((st.settings.themeMode || "auto") === o[0] ? " selected" : "") + '>' + o[1] + '</option>';
@@ -1977,6 +1992,7 @@
     $("#setGoal").onchange = function () { st.settings.goalMin = +this.value; S.save(true); renderHeader(); };
     $("#setNew").onchange = function () { st.settings.newPerDay = +this.value; S.save(true); };
     $("#setAudio").onchange = function () { st.settings.audio = this.checked; S.save(true); };
+    $("#setWake").onchange = function () { st.settings.wake = this.checked; S.save(true); wakeSync(); };
     if ($("#setPathOn")) $("#setPathOn").onchange = function () { st.settings.pathOn = this.checked; S.save(true); };
     if ($("#setArenaM")) $("#setArenaM").onchange = function () { st.settings.arenaMissions = this.checked; S.save(true); };
     if ($("#setPause")) $("#setPause").onchange = function () { st.settings.pause = this.checked; S.save(true); };
