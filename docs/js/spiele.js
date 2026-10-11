@@ -386,7 +386,10 @@
     var k = e.key, d = k === "ArrowLeft" || k === "a" || k === "A" ? -1 : k === "ArrowRight" || k === "d" || k === "D" ? 1 : 0; if (!d) return;
     e.preventDefault(); G.sh.keys[d] = down; G.sh.dir = G.sh.keys[1] && !G.sh.keys[-1] ? 1 : G.sh.keys[-1] && !G.sh.keys[1] ? -1 : 0;
   }
-  function blShipPos() { var s = $("#blS"); if (s && G && G.sh) s.style.left = G.sh.px + "px"; }
+  function blShipPos() {   // das 🚀-Emoji zeigt von Haus aus schräg nach rechts oben (45°): zurückdrehen, damit es nach oben schaut; beim Steuern leicht in die Fahrtrichtung kippen
+    var s = $("#blS"); if (!s || !G || !G.sh) return; s.style.left = G.sh.px + "px";
+    var tilt = (G.sh.dir || 0) * 14; if (s._tilt !== tilt) { s._tilt = tilt; s.style.transform = "rotate(" + (tilt - 45) + "deg)"; }
+  }
   function blHud() {
     var sh = G.sh, l = "", i; for (i = 0; i < Math.max(3, sh.lives); i++) l += '<i class="' + (i < sh.lives ? "" : "off") + '">♥</i>';
     $("#blLives").innerHTML = l; $("#blLevel").textContent = "Level " + sh.level;
@@ -416,7 +419,6 @@
     var F = $("#blF"), fr = F.getBoundingClientRect(), sx = G.sh.px, sy = fr.height - 24, tx = px - fr.left, ty = py - fr.top, dx = tx - sx, dy = ty - sy;
     var L = document.createElement("div"); L.className = "bl-laser"; L.style.cssText = "left:" + sx + "px;top:" + sy + "px;width:" + Math.sqrt(dx * dx + dy * dy) + "px;transform:rotate(" + Math.atan2(dy, dx) + "rad)";
     F.appendChild(L); setTimeout(function () { if (L.parentNode) L.parentNode.removeChild(L); }, 130);
-    var sp = $("#blS"); if (sp) sp.style.transform = "rotate(" + (Math.atan2(dy, dx) + Math.PI / 2) + "rad)";
   }
   function blLose(why, askedWord) {
     var sh = G.sh; sh.lives--; G.wrong++; G.streak = 0; snd(false);
@@ -451,7 +453,8 @@
     if (sh.freeze > 0) sh.freeze -= dt;
     var F = $("#blF"); F.classList.toggle("frozen", sh.freeze > 0);
     var v = Math.min(200, 44 * Math.pow(1.12, sh.level - 1)) * (sh.freeze > 0 ? 0.2 : 1)   /* alle 5 Treffer ein Level: ca. 12 % schneller */, bottom = sh.h - 54;
-    if (sh.dir) { sh.px = Math.max(22, Math.min(sh.w - 22, sh.px + sh.dir * 300 * dt)); blShipPos(); }
+    if (sh.dir) sh.px = Math.max(22, Math.min(sh.w - 22, sh.px + sh.dir * 300 * dt));
+    blShipPos();
     sh.foes.forEach(function (o) {
       if (o.dead) return;
       var ox = o.x + Math.sin(sh.t * 1.3 + o.ph) * 6;
