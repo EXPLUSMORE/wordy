@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.89.0 – 2026-10-11
+- Neues Spiel **Blast 3D** (Arena › Wortspiele, 🛸): In einer 3D-Perspektive mit Fluchtpunkt kommen Wellen aus drei Wörtern in vier Spuren auf dich zu. Oben steht ein Wort (englisch oder deutsch), die Übersetzung steht in der Welle, mal deutsch, mal englisch, dazu zwei falsche Wörter. Mit ◀ ▶ (oder Pfeiltasten, A / D) steuerst du das Raumschiff in die richtige Spur und weichst den falschen aus. Falsches Wort berührt: ein Herz weg, bis die Herzen leer sind. Richtiges verpasst: nur die Serie reißt ab. Alle 5 richtigen Wörter wird es schneller (Level), alle 10 gibt es ein Extra-Herz, ab mehr als 10 in Folge wird es schwerer. Zählt wie die anderen Wortspiele für Münzen, XP, Bestwert und Lernstand. Spielbeschreibung und Erklärfilm („Blast 3D“) inklusive.
+
 ## 2.88.1 – 2026-10-11
 - Blast, ruhiger: Die Wörter bleiben **komplett im Feld** (links und rechts, auch gedreht und wackelnd). Fehler aus 2.88.0 behoben: Die Drehung lief als eigene Eigenschaft und drehte die Fallbewegung mit, dadurch drifteten Wörter zur Seite aus dem Bild; jetzt steckt die Drehung im `transform`. Tempo langsamer (Start 30 statt 44 Pixel pro Sekunde, je Wort 80 bis 110 %), das Level-Tempo steigt wie bisher alle 5 Treffer um 12 %. Drehung nur noch leicht (bis 12°, nie hochkant oder auf dem Kopf); manche Wörter wiegen langsam hin und her (±6 bis ±14°) statt sich zu drehen.
 

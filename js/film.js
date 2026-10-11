@@ -126,6 +126,12 @@
       { bg: "night", cast: [{ av: R, x: 50, dance: 2, say: "Über die Buchstaben wischen!" }], props: [{ e: "👆", x: 50, y: 18, s: 50, a: "pop" }], nar: "In der Liste stehen die deutschen Bedeutungen. Wische über die Buchstaben, um das englische Wort zu markieren." },
       { bg: "gold", cast: [{ av: K, x: 50, dance: 6, say: "Alle gefunden!" }], props: [{ e: "🎉", x: 50, y: 16, s: 54, a: "pop" }], nar: "Alle Wörter gefunden? Dann gibt es Punkte und Münzen." }
     ] },
+    { id: "game-blast3d", icon: "🛸", title: "Blast 3D", go: { game: "blast3d" }, scenes: [
+      { bg: "arena", cast: [{ av: B, x: 50, dance: 3, say: "Sie fliegen direkt auf mich zu!" }], props: [{ e: "🛸", x: 50, y: 14, s: 58, a: "bob" }], nar: "Blast 3D: Die Wörter kommen dir aus der Ferne entgegen, in vier Spuren." },
+      { bg: "arena", cast: [{ av: P, x: 50, dance: 1, say: "Welches ist die Übersetzung?" }], props: [{ e: "🇩🇪", x: 26, y: 20, s: 44, a: "bob" }, { e: "🇬🇧", x: 74, y: 20, s: 44, a: "bob" }], nar: "Oben steht ein Wort. Die Übersetzung kommt mal englisch, mal deutsch, zusammen mit falschen Wörtern." },
+      { bg: "arena", cast: [{ av: K, x: 50, dance: 2, say: "Links, rechts, ausweichen!" }], props: [{ e: "◀", x: 26, y: 20, s: 46, a: "bob" }, { e: "🚀", x: 50, y: 14, s: 50, a: "bob" }, { e: "▶", x: 74, y: 20, s: 46, a: "bob" }], nar: "Steuere dein Raumschiff mit den Pfeilen in die richtige Spur. Ein falsches Wort kostet ein Herz." },
+      { bg: "gold", cast: [{ av: R, x: 50, dance: 6, say: "Schneller und schneller!" }], props: [{ e: "⚡", x: 50, y: 16, s: 56, a: "bob" }], nar: "Alle 5 richtigen Wörter wird es schneller. Wie lange hältst du durch?" }
+    ] },
     { id: "game-blast", icon: "🚀", title: "Blast", go: { game: "blast" }, scenes: [
       { bg: "arena", cast: [{ av: B, x: 50, dance: 0, say: "Sie kommen auf mich zu!" }], props: [{ e: "🚀", x: 50, y: 14, s: 60, a: "bob" }], nar: "Blast: Englische Wörter fliegen auf dich zu." },
       { bg: "arena", cast: [{ av: P, x: 50, dance: 3, say: "Das passende Wort abschießen!" }], props: [{ e: "🎯", x: 50, y: 18, s: 52, a: "spin" }], nar: "Oben steht ein deutsches Wort. Tippe das richtige englische Wort ab, bevor es dich erreicht." },

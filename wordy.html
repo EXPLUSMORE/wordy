@@ -509,6 +509,7 @@ html.ar-open, html.ar-open body{overflow:hidden}
 .foe{max-width:76%;text-align:center;line-height:1.15;position:absolute;left:0;top:0;padding:8px 14px;border-radius:14px;font-weight:800;font-size:clamp(16px,5vw,20px);color:#fff;background:rgba(24,36,80,.88);border:2px solid hsl(var(--h) 80% 62%);box-shadow:0 0 14px hsl(var(--h) 90% 55%/.55);white-space:normal;overflow-wrap:break-word;will-change:transform;cursor:pointer}.foe.orb{font-size:30px;padding:4px 10px;border-radius:50%}
 .foe.boom{animation:blboom .28s forwards;pointer-events:none}.foe.boom.bad{border-color:#ff5b6b}@keyframes blboom{to{opacity:0;filter:brightness(2.4);scale:1.5}}
 .bl-ctl{display:flex;gap:12px;padding:8px 16px calc(10px + env(safe-area-inset-bottom));flex:none}.bl-ctl button{flex:1;height:56px;border-radius:16px;border:1px solid var(--ar-line);background:var(--ar-s);color:var(--ar-ink);font-size:26px;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}.bl-ctl button:active{background:var(--ar-line)}
+.b3-grid{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}.foe.b3w{pointer-events:none;cursor:default;white-space:normal;word-break:normal;overflow-wrap:break-word;padding:5px 8px;line-height:1.1;text-align:center;will-change:transform,opacity}.bl-field.b3:before{content:"";position:absolute;left:0;right:0;top:calc(17% - 26px);height:52px;background:linear-gradient(transparent,rgba(110,190,255,.22),transparent);pointer-events:none}
 .bl-ship{position:absolute;left:50%;bottom:4px;margin-left:-22px;font-size:42px;line-height:1;transition:transform .12s;pointer-events:none}
 .bl-laser{position:absolute;height:3px;border-radius:2px;background:linear-gradient(90deg,#fff,#4FC3D9);box-shadow:0 0 8px #4FC3D9;transform-origin:0 50%;pointer-events:none;z-index:3}
 .bl-flash{position:absolute;left:0;right:0;top:36%;text-align:center;font-weight:900;font-size:26px;opacity:0;pointer-events:none;text-shadow:0 2px 14px #000a;padding:0 12px;overflow-wrap:anywhere}.bl-flash.show{opacity:1;transition:opacity .08s}.bl-flash.good{color:var(--ar-good)}.bl-flash.bad{color:var(--ar-bad);font-size:20px}.bl-flash.combo{color:var(--ar-gold);font-size:32px}
@@ -1123,7 +1124,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.88.1";window.WORDY_BUILD="bd617abf71";</script>
+<script>window.WORDY_VERSION="2.89.0";window.WORDY_BUILD="0661e2a058";</script>
 </head>
 <body>
 <div id="app">
@@ -7422,6 +7423,12 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       { bg: "night", cast: [{ av: R, x: 50, dance: 2, say: "Über die Buchstaben wischen!" }], props: [{ e: "👆", x: 50, y: 18, s: 50, a: "pop" }], nar: "In der Liste stehen die deutschen Bedeutungen. Wische über die Buchstaben, um das englische Wort zu markieren." },
       { bg: "gold", cast: [{ av: K, x: 50, dance: 6, say: "Alle gefunden!" }], props: [{ e: "🎉", x: 50, y: 16, s: 54, a: "pop" }], nar: "Alle Wörter gefunden? Dann gibt es Punkte und Münzen." }
     ] },
+    { id: "game-blast3d", icon: "🛸", title: "Blast 3D", go: { game: "blast3d" }, scenes: [
+      { bg: "arena", cast: [{ av: B, x: 50, dance: 3, say: "Sie fliegen direkt auf mich zu!" }], props: [{ e: "🛸", x: 50, y: 14, s: 58, a: "bob" }], nar: "Blast 3D: Die Wörter kommen dir aus der Ferne entgegen, in vier Spuren." },
+      { bg: "arena", cast: [{ av: P, x: 50, dance: 1, say: "Welches ist die Übersetzung?" }], props: [{ e: "🇩🇪", x: 26, y: 20, s: 44, a: "bob" }, { e: "🇬🇧", x: 74, y: 20, s: 44, a: "bob" }], nar: "Oben steht ein Wort. Die Übersetzung kommt mal englisch, mal deutsch, zusammen mit falschen Wörtern." },
+      { bg: "arena", cast: [{ av: K, x: 50, dance: 2, say: "Links, rechts, ausweichen!" }], props: [{ e: "◀", x: 26, y: 20, s: 46, a: "bob" }, { e: "🚀", x: 50, y: 14, s: 50, a: "bob" }, { e: "▶", x: 74, y: 20, s: 46, a: "bob" }], nar: "Steuere dein Raumschiff mit den Pfeilen in die richtige Spur. Ein falsches Wort kostet ein Herz." },
+      { bg: "gold", cast: [{ av: R, x: 50, dance: 6, say: "Schneller und schneller!" }], props: [{ e: "⚡", x: 50, y: 16, s: 56, a: "bob" }], nar: "Alle 5 richtigen Wörter wird es schneller. Wie lange hältst du durch?" }
+    ] },
     { id: "game-blast", icon: "🚀", title: "Blast", go: { game: "blast" }, scenes: [
       { bg: "arena", cast: [{ av: B, x: 50, dance: 0, say: "Sie kommen auf mich zu!" }], props: [{ e: "🚀", x: 50, y: 14, s: 60, a: "bob" }], nar: "Blast: Englische Wörter fliegen auf dich zu." },
       { bg: "arena", cast: [{ av: P, x: 50, dance: 3, say: "Das passende Wort abschießen!" }], props: [{ e: "🎯", x: 50, y: 18, s: 52, a: "spin" }], nar: "Oben steht ein deutsches Wort. Tippe das richtige englische Wort ab, bevor es dich erreicht." },
@@ -11188,6 +11195,8 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       desc: "Icy steht auf schmelzendem Eis. Tippe Buchstaben, die im englischen Wort vorkommen. Jeder falsche Buchstabe lässt ein Stück Eis schmelzen." },
     { id: "blast", icon: "🚀", name: "Blast", tag: "Wörter-Shooter", claim: "Schieß das richtige Wort ab.",
       desc: "Oben steht ein deutsches Wort. Englische Wörter fliegen auf dich zu: Tippe das richtige ab, bevor es dich erreicht. Mit den Pfeilen ◀ ▶ (oder den Pfeiltasten) steuerst du dein Raumschiff und weichst den Wörtern aus: Jede Berührung kostet ein Herz. Falsch geschossen kostet ebenfalls ein Herz. Eis-Sterne bremsen alles, Bomben räumen die falschen Wörter weg." },
+    { id: "blast3d", icon: "🛸", name: "Blast 3D", tag: "Ausweichen in 3D", claim: "Flieg in die richtige Spur.",
+      desc: "Oben steht ein Wort. Die Übersetzung kommt dir in 3D entgegen, mal englisch, mal deutsch, zusammen mit falschen Wörtern. Steuere dein Raumschiff mit ◀ ▶ (oder den Pfeiltasten) in die Spur mit dem richtigen Wort und weiche den falschen aus. Ein falsches Wort kostet ein Herz, ein verpasstes richtiges nur die Serie. Alle 5 richtigen Wörter wird es schneller." },
     { id: "letters", icon: "🔠", name: "Letters", tag: "Buchstabensalat", claim: "Finde die versteckten Wörter.",
       desc: "Im Buchstabensalat verstecken sich englische Wörter, waagerecht, senkrecht oder diagonal, vorwärts oder rückwärts. Die Liste zeigt die deutschen Bedeutungen. Wische über die Buchstaben, um ein Wort zu markieren." },
     { id: "kreuz", icon: "🧩", name: "Xing", tag: "Kreuzworträtsel (Crossing)", claim: "Deutsche Hinweise, englische Lösungen.",
@@ -11282,8 +11291,8 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   function start(id, opts) {
     var seen = S.state.settings.gameIntro || (S.state.settings.gameIntro = {});
     if (!seen[id] && !(opts && opts._intro)) { if (!(S.pools().all.length || (opts && (opts.units || opts.unit)))) return; return showIntro(id, opts); }
-    var min = id === "blast" ? 2 : 3, max = 8, n = id === "kreuz" ? 14 : id === "blast" ? 40 : id === "letters" ? 7 : 5, words = pickWords(n, min, id === "blast" ? 26 : max, opts && (opts.units || opts.unit), id === "blast");
-    if (words.length < (id === "kreuz" ? 6 : id === "blast" ? 6 : id === "letters" ? 5 : 3)) return toast("Dafür brauchst du mehr Wörter im gewählten Bereich (einzelne Wörter ab 3 Buchstaben).");
+    var min = id === "blast" ? 2 : 3, max = 8, n = id === "kreuz" ? 14 : id === "blast" || id === "blast3d" ? 40 : id === "letters" ? 7 : 5, words = pickWords(n, min, id === "blast" ? 26 : id === "blast3d" ? 16 : max, opts && (opts.units || opts.unit), id === "blast" || id === "blast3d");
+    if (words.length < (id === "kreuz" ? 6 : id === "blast" || id === "blast3d" ? 6 : id === "letters" ? 5 : 3)) return toast("Dafür brauchst du mehr Wörter im gewählten Bereich (einzelne Wörter ab 3 Buchstaben).");
     S.rollDay();
     G = { id: id, words: words, i: 0, score: 0, res: [], items: 0, correct: 0, wrong: 0, hints: 0, start: Date.now(), done: false, opts: opts || null, maxStreak: 0, streak: 0, cleared: 0 };
     el.hidden = false; document.documentElement.classList.add("ar-open");
@@ -11291,6 +11300,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (id === "eisi") return eisRound();
     if (id === "kreuz") return kreuzStart();
     if (id === "blast") return blastStart();
+    if (id === "blast3d") return b3Start();
     if (id === "letters") return lettersStart();
   }
 
@@ -11559,7 +11569,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   }
   var blKeys = false;
   function blKey(e, down) {
-    if (!G || G.id !== "blast" || !G.sh || G.sh.over) return;
+    if (!G || (G.id !== "blast" && G.id !== "blast3d") || !G.sh || G.sh.over) return;
     var k = e.key, d = k === "ArrowLeft" || k === "a" || k === "A" ? -1 : k === "ArrowRight" || k === "d" || k === "D" ? 1 : 0; if (!d) return;
     e.preventDefault(); G.sh.keys[d] = down; G.sh.dir = G.sh.keys[1] && !G.sh.keys[-1] ? 1 : G.sh.keys[-1] && !G.sh.keys[1] ? -1 : 0;
   }
@@ -11628,7 +11638,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var F = $("#blF"); F.classList.remove("hurt"); void F.offsetWidth; F.classList.add("hurt");
     if (askedWord) { try { if (global.WordySync) global.WordySync.ctx = { mode: "arena" }; S.grade(askedWord.id, 0); } catch (e) {} }
     blHud(); paintScore();
-    if (sh.lives <= 0) { sh.over = true; cancelAnimationFrame(sh.raf); setTimeout(function () { if (G && G.id === "blast") finish("dead"); }, 700); }
+    if (sh.lives <= 0) { sh.over = true; cancelAnimationFrame(sh.raf); setTimeout(function () { if (G && (G.id === "blast" || G.id === "blast3d")) finish("dead"); }, 700); }
   }
   function blShoot(fid, px, py) {
     var sh = G.sh, o = sh.foes.filter(function (f) { return f.id === fid && !f.dead; })[0]; if (!o) return;
@@ -11685,6 +11695,95 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     sh.raf = requestAnimationFrame(blLoop);
   }
 
+
+
+  /* ================= Blast 3D (Ausweichen) ================= */
+  /* Perspektive: Tiefe d von 1 (Horizont) bis 0 (Ebene des Raumschiffs). Maßstab s = 1 / (1 + 6 d); Bildschirm-y wächst mit s, x = Mitte + Spur * Spurbreite * s. */
+  var B3LANES = [-1.5, -0.5, 0.5, 1.5];
+  function b3Start() {
+    G.words = pickWords(60, 2, 16, G.opts && (G.opts.units || G.opts.unit), true); G.res = [];
+    el.innerHTML = top("Blast 3D") +
+      '<div class="bl-hud"><span id="blLives"></span><span id="blLevel"></span><span id="blCombo"></span></div>' +
+      '<div class="bl-prompt" id="blP"><small id="b3Sub">Flieg in die richtige Spur</small><b id="blT"></b></div>' +
+      '<div class="bl-field b3" id="blF"><svg class="b3-grid" viewBox="0 0 100 100" preserveAspectRatio="none"><g stroke="rgba(120,200,255,.28)" stroke-width=".35" fill="none"><path d="M0 17H100"/>' +
+      [-2, -1, 0, 1, 2].map(function (k) { return '<path d="M50 17L' + (50 + k * 30) + ' 100"/>'; }).join("") + '</g></svg>' +
+      '<div class="bl-ship" id="blS">🚀</div><div class="bl-flash" id="blFl"></div></div>' +
+      '<div class="bl-ctl"><button type="button" id="blL" aria-label="Nach links">◀</button><button type="button" id="blR" aria-label="Nach rechts">▶</button></div>';
+    var F = $("#blF");
+    G.sh = { px: 0, lx: 0, dir: 0, keys: {}, lives: 3, level: 1, hits: 0, queue: [], target: null, waves: [], t: 0, last: 0, w: F.clientWidth, h: F.clientHeight, over: false, T: 4.6, hard: false, hits5: 0 };
+    G.sh.ls = G.sh.w * 0.24; G.sh.y0 = G.sh.h * 0.17; G.sh.yS = G.sh.h - 54;
+    G.sh.px = G.sh.w / 2; blShipPos();
+    [["blL", -1], ["blR", 1]].forEach(function (b) {
+      var btn = $("#" + b[0]), on = function (e) { e.preventDefault(); if (G && G.sh) G.sh.dir = b[1]; }, off = function () { if (G && G.sh && G.sh.dir === b[1]) G.sh.dir = 0; };
+      btn.addEventListener("pointerdown", on); btn.addEventListener("pointerup", off); btn.addEventListener("pointerleave", off); btn.addEventListener("pointercancel", off);
+    });
+    if (!blKeys) { blKeys = true; document.addEventListener("keydown", function (e) { blKey(e, 1); }); document.addEventListener("keyup", function (e) { blKey(e, 0); }); }
+    blHud(); G.sh.last = performance.now(); G.sh.raf = requestAnimationFrame(b3Loop);
+  }
+  function b3Next() {
+    var sh = G.sh; if (!sh.queue.length) sh.queue = S.shuffle(G.words.slice()); return sh.queue.shift();
+  }
+  function b3Spawn() {
+    var sh = G.sh, F = $("#blF"), t = b3Next(), deAnswer = Math.random() < 0.5;   // deAnswer: die Antworten sind deutsch, oben steht das englische Wort
+    var others = S.shuffle(G.words.filter(function (x) { return x.id !== t.id && x.en !== t.en && x.de !== t.de; })).slice(0, 2);
+    var lanes = S.shuffle([0, 1, 2, 3]), items = [t].concat(others).map(function (w, i) {
+      var txt = deAnswer ? w.de : w.raw, d = document.createElement("div"), n = txt.length;
+      d.className = "foe b3w"; d.textContent = txt; d.style.setProperty("--h", Math.floor(Math.random() * 360));
+      d.style.maxWidth = Math.round(sh.ls * 1.02) + "px"; d.style.fontSize = Math.max(10, Math.min(19, Math.round(sh.ls * 0.98 / Math.max(4, Math.min(n, 11)) * 1.75))) + "px"; d.style.opacity = 0;
+      F.appendChild(d); return { w: w, lane: lanes[i], el: d, correct: i === 0 };
+    });
+    sh.waves.push({ d: 1, items: items, t: t, deAnswer: deAnswer, done: false, got: false });
+  }
+  function b3Prompt(wv) {
+    var T = $("#blT"), sub = $("#b3Sub"); if (!T || !wv) return; T.textContent = wv.deAnswer ? wv.t.raw : wv.t.de;
+    if (sub) sub.textContent = wv.deAnswer ? "Flieg in die deutsche Übersetzung" : "Flieg in die englische Übersetzung";
+    var P = $("#blP"); P.classList.remove("pop"); void P.offsetWidth; P.classList.add("pop");
+  }
+  function b3Resolve(wv) {
+    var sh = G.sh; wv.done = true;
+    wv.items.forEach(function (it) {
+      if (Math.abs(sh.lx - B3LANES[it.lane]) >= 0.62) return;
+      if (it.correct) {
+        wv.got = true; G.items++; G.correct++; G.streak++; G.maxStreak = Math.max(G.maxStreak, G.streak); sh.hits++;
+        var pts = Math.round((10 + sh.level * 2) * Math.min(3, 1 + G.streak * 0.1)); G.score += pts;
+        try { if (global.WordySync) global.WordySync.ctx = { mode: "arena" }; S.grade(it.w.id, 1); } catch (e) {}
+        snd(true); blFlash("+" + pts, G.streak >= 5 ? "combo" : "good"); blBoom3(it, false);
+        if (sh.hits % 5 === 0) { sh.level++; sh.T = Math.max(1.5, sh.T * 0.9); blFlash("Level " + sh.level + " · schneller!", "combo"); }
+        if (sh.hits % 10 === 0 && sh.lives < 5) { sh.lives++; blFlash("♥ Extra-Herz!", "combo"); }
+        blHud(); paintScore();
+      } else { blBoom3(it, true); blFlash("Autsch! " + (wv.deAnswer ? it.w.de : it.w.raw) + " ist falsch", "bad"); G.items++; blLose("falsch", wv.t); }
+    });
+    if (!wv.got && !sh.over) {   // richtiges Wort ausgelassen: nur die Serie reißt ab
+      var hitWrong = wv.items.some(function (it) { return !it.correct && Math.abs(sh.lx - B3LANES[it.lane]) < 0.62; });
+      if (!hitWrong) { blFlash("Verpasst: " + wv.t.raw + " = " + wv.t.de, "bad"); G.items++; G.streak = 0; try { if (global.WordySync) global.WordySync.ctx = { mode: "arena" }; S.grade(wv.t.id, 0); } catch (e) {} blHud(); }
+    }
+  }
+  function blBoom3(it, bad) { it.hit = true; it.el.classList.add("boom"); if (bad) it.el.classList.add("bad"); try { var r = it.el.getBoundingClientRect(); global.VTC.burst(bad ? "stars" : S.state.profile.fx, r.left + r.width / 2, r.top + r.height / 2, bad ? 6 : 12, .9); } catch (e) {} }
+  function b3Loop(now) {
+    if (!G || !G.sh || G.sh.over || G.id !== "blast3d") return;
+    var sh = G.sh; if (sh.paused) { sh.raf = requestAnimationFrame(b3Loop); return; }
+    var dt = Math.min(0.05, (now - sh.last) / 1000); sh.last = now; sh.t += dt;
+    if (sh.dir) sh.lx = Math.max(-1.5, Math.min(1.5, sh.lx + sh.dir * 3.1 * dt));
+    sh.px = sh.w / 2 + sh.lx * sh.ls; blShipPos();
+    var T = sh.T * (sh.hard ? 0.82 : 1);
+    sh.waves.forEach(function (wv) {
+      wv.d -= dt / T;
+      var s = 1 / (1 + 6 * Math.max(wv.d, -0.2)), y = sh.y0 + (sh.yS - sh.y0) * s;
+      wv.items.forEach(function (it) {
+        if (it.hit && wv.d < -0.02) return;
+        var x = sh.w / 2 + B3LANES[it.lane] * sh.ls * s;
+        it.el.style.transform = "translate(" + x + "px," + y + "px) translate(-50%,-50%) scale(" + s + ")"; it.el.style.zIndex = Math.round(s * 100);
+        it.el.style.opacity = Math.max(0, Math.min(1, (1 - wv.d) * 4, wv.d < 0 ? 1 + wv.d * 6 : 1));
+      });
+      if (!wv.done && wv.d <= 0.02) b3Resolve(wv);
+    });
+    sh.waves = sh.waves.filter(function (wv) { if (wv.d < -0.2) { wv.items.forEach(function (it) { if (it.el.parentNode) it.el.parentNode.removeChild(it.el); }); return false; } return true; });
+    var cur = sh.waves.filter(function (wv) { return !wv.done; })[0];
+    if (cur && sh.promptFor !== cur) { sh.promptFor = cur; b3Prompt(cur); }
+    var last = sh.waves[sh.waves.length - 1];
+    if (!sh.over && (!last || last.d < 0.5)) b3Spawn();
+    if (!sh.over) sh.raf = requestAnimationFrame(b3Loop);
+  }
 
   /* ================= Letters (Buchstabensalat) ================= */
   var LDIRS = [[0, 1], [1, 0], [1, 1], [-1, 1], [0, -1], [-1, 0], [-1, -1], [1, -1]];   // alle acht Richtungen, auch rückwärts
