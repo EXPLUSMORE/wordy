@@ -106,6 +106,13 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
   }
   function fmtDate(ts) { return new Date(ts).toLocaleString("de-DE", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }); }
   function pct(a, b) { return b ? Math.round(a * 100 / b) + " %" : "–"; }
+  /* Arena: welches Spiel gespielt wurde (sub) */
+  var ARENA = { match: "Match-Rausch", blitz: "Blitzrunde", survival: "Letztes Herz", hunt: "Fehlerjagd", detective: "Wort-Detektiv", eisi: "Freezy", kreuz: "Xing", letters: "Letters", blast: "Blast", blast3d: "Blast 3D" };
+  function modeLabel(s) {
+    var m = MODE[s.mode] || s.mode; if (s.mode !== "arena" || !s.sub) return m;
+    var g = /^grammar:/.test(s.sub) ? "Grammatik" : (ARENA[s.sub] || s.sub);
+    return m + " · " + g + (s.score ? " (" + s.score + " Pkt.)" : "");
+  }
   var MODE = { mix: "Gemischt", new: "Neue Wörter", box: "Fehlerkartei", sent: "Sätze", verbs: "Verben", arena: "Arena", unit: "Einheit", plan: "Lernplan", focus: "Gezielt üben", master: "Meistern", path: "Lernpfad" };
 
   var classes = [], unitCat = null;
@@ -313,7 +320,7 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
       kpi(t.items, "Aufgaben · " + pct(t.correct, t.items) + " richtig") + kpi(t.neu, "neue Wörter") + kpi("🪙 " + t.coins, t.sessions + (t.sessions === 1 ? " Runde" : " Runden")) + "</div>";
     if (goal) h += '<div class="mini" style="margin-top:10px"><i class="' + (t.sec >= goal ? "d" : "") + '" style="width:' + Math.min(100, Math.round(t.sec * 100 / goal)) + '%"></i></div><div class="small muted" style="margin-top:4px">' + (t.sec >= goal ? "Tagesziel geschafft ✅" : "Noch " + (goal - t.sec < 60 ? Math.ceil(goal - t.sec) + " Sek." : fmtMin(goal - t.sec)) + " bis zum Tagesziel") + "</div>";
     if (t.runs.length) h += '<h3 style="margin:14px 0 4px;font-size:14px">Runden heute</h3><table><tr><th>Uhr</th><th>Art</th><th class="n">Dauer</th><th class="n">Aufgaben</th><th class="n">Richtig</th></tr>' + t.runs.map(function (s) {
-      return "<tr><td>" + new Date(s.ts).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" }) + "</td><td>" + esc(MODE[s.mode] || s.mode) + '</td><td class="n">' + fmtMin(s.sec) + '</td><td class="n">' + s.items + '</td><td class="n">' + pct(s.correct, s.items) + "</td></tr>";
+      return "<tr><td>" + new Date(s.ts).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" }) + "</td><td>" + esc(modeLabel(s)) + '</td><td class="n">' + fmtMin(s.sec) + '</td><td class="n">' + s.items + '</td><td class="n">' + pct(s.correct, s.items) + "</td></tr>";
     }).join("") + "</table>";
     if (t.problems.length) h += '<h3 style="margin:14px 0 4px;font-size:14px">Fehlerwörter heute</h3>' + probList(t.problems);
     return h + "</div>";
@@ -411,7 +418,7 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
       if (has) {
         det = '<div class="small" style="padding:4px 0 10px 4px"><div class="muted">' + d.sessions + (d.sessions === 1 ? " Runde" : " Runden") + " · " + d.neu + (d.neu === 1 ? " neues Wort" : " neue Wörter") + " · 🪙 " + d.coins + "</div>" +
           (d.runs.length ? "<table><tr><th>Uhr</th><th>Art</th><th class=\"n\">Dauer</th><th class=\"n\">Aufgaben</th><th class=\"n\">Richtig</th></tr>" + d.runs.map(function (s) {
-            return "<tr><td>" + hhmm(s.ts) + "</td><td>" + esc(MODE[s.mode] || s.mode) + '</td><td class="n">' + fmtMin(s.sec) + '</td><td class="n">' + s.items + '</td><td class="n">' + pct(s.correct, s.items) + "</td></tr>";
+            return "<tr><td>" + hhmm(s.ts) + "</td><td>" + esc(modeLabel(s)) + '</td><td class="n">' + fmtMin(s.sec) + '</td><td class="n">' + s.items + '</td><td class="n">' + pct(s.correct, s.items) + "</td></tr>";
           }).join("") + "</table>" : "") +
           (d.problems.length ? '<div class="muted" style="margin-top:6px">Fehler: ' + d.problems.map(function (x) { return "<b>" + esc(x.en) + "</b> (" + x.n + "×)"; }).join(", ") + "</div>" : "") + "</div>";
       } else det = '<div class="small muted" style="padding:4px 0 10px 4px">An diesem Tag wurde nicht geübt.</div>';
@@ -487,7 +494,7 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
 
     D4 += '<div class="card"><h2>Letzte Runden</h2>';
     D4 += r.sessions.length ? "<table><tr><th>Wann</th><th>Art</th><th class=\"n\">Dauer</th><th class=\"n\">Aufgaben</th><th class=\"n\">Richtig</th><th class=\"n\">Münzen</th></tr>" + r.sessions.map(function (s) {
-      return "<tr><td>" + fmtDate(s.ts) + "</td><td>" + esc(MODE[s.mode] || s.mode) + '</td><td class="n">' + fmtMin(s.sec) + '</td><td class="n">' + s.items + '</td><td class="n">' + pct(s.correct, s.items) + '</td><td class="n">' + s.coins + "</td></tr>";
+      return "<tr><td>" + fmtDate(s.ts) + "</td><td>" + esc(modeLabel(s)) + '</td><td class="n">' + fmtMin(s.sec) + '</td><td class="n">' + s.items + '</td><td class="n">' + pct(s.correct, s.items) + '</td><td class="n">' + s.coins + "</td></tr>";
     }).join("") + "</table>" : '<p class="muted small">Noch keine Runden.</p>';
     D4 += "</div>";
 

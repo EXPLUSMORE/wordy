@@ -364,7 +364,7 @@ function report(pid, days) {
       }
     } else if (e.k === "ss") {
       const x = day(e.ts); x.sec += d.sec || 0; x.coins += d.coins || 0; x.sessions++;
-      sessions.push({ ts: e.ts, sec: d.sec || 0, items: d.items || 0, correct: d.correct || 0, mode: d.mode || "", unit: d.unit || "", coins: d.coins || 0 });
+      sessions.push({ ts: e.ts, sec: d.sec || 0, items: d.items || 0, correct: d.correct || 0, mode: d.mode || "", sub: String(d.sub || "").slice(0, 40), score: d.score || 0, unit: d.unit || "", coins: d.coins || 0 });
     } else if (e.k === "buy") buys.push({ ts: e.ts, name: d.name || d.id, cost: d.cost || 0 });
   }
   const runsBy = {}, badBy = {};

@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.91.0 – 2026-10-11
+- Dashboard: Bei Arena-Runden steht jetzt, **welches Spiel gespielt wurde**, samt Punkten, zum Beispiel „Arena · Blast 3D (88 Pkt.)“ (Match-Rausch, Blitzrunde, Letztes Herz, Fehlerjagd, Wort-Detektiv, Freezy, Xing, Letters, Blast, Blast 3D, Grammatik). Gilt in den Rundenlisten (Heute, Verlauf, Aktivität) für Eltern- und Betreiber-Dashboard. Die App sendete Spiel und Punkte schon; der Server gibt sie jetzt im Bericht mit (`sub`, `score`). **Server-Update nötig** (keine neuen Spalten, kein Datenumbau; ältere Runden zeigen das Spiel ebenfalls, soweit sie es mitgeschickt haben).
+
 ## 2.90.2 – 2026-10-11
 - Neuheiten-Wolke mit mehr Action: schwebt schneller und weiter (4,6 s pro Runde, mit leichtem Schaukeln), pulsiert mit gelbem Leuchten, ein rotes „NEU“-Schild blinkt, das UFO wippt, drei Sternchen funkeln. Bei „Bewegung reduzieren“ bleibt alles ruhig.
 
