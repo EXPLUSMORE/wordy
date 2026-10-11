@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.84.0 – 2026-10-11
+- Blast: **Hardcore-Modus** ab mehr als 10 Treffern in Folge („🔥 Hardcore!“): Wörter 30 % schneller, zwei Wörter mehr gleichzeitig, schnellerer Nachschub und stark wackelnde Bahnen (28 statt 6 Pixel). Er endet mit dem ersten Fehler, einem verpassten oder berührten Wort („Hardcore vorbei“). In der Serien-Anzeige steht dann 🔥.
+
 ## 2.83.1 – 2026-10-11
 - Blast: Die Rakete schaut jetzt immer nach oben (das Emoji war von Haus aus schräg) und kippt nur leicht (14°) nach links oder rechts, solange man eine Pfeiltaste hält. Beim Schießen dreht sie sich nicht mehr zum Ziel.
 

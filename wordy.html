@@ -1123,7 +1123,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.83.1";window.WORDY_BUILD="e3011022c1";</script>
+<script>window.WORDY_VERSION="2.84.0";window.WORDY_BUILD="2e7695ea4e";</script>
 </head>
 <body>
 <div id="app">
@@ -11554,7 +11554,9 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   function blHud() {
     var sh = G.sh, l = "", i; for (i = 0; i < Math.max(3, sh.lives); i++) l += '<i class="' + (i < sh.lives ? "" : "off") + '">♥</i>';
     $("#blLives").innerHTML = l; $("#blLevel").textContent = "Level " + sh.level;
-    var c = $("#blCombo"); if (c) c.textContent = G.streak >= 3 ? "×" + Math.min(3, 1 + G.streak * 0.1).toFixed(1) + " Serie " + G.streak : "";
+    var hard = G.streak > 10;   // mehr als 10 Treffer in Folge: Hardcore (schneller, mehr Wörter, wackelnde Bahnen), endet mit dem ersten Fehler
+    if (hard !== !!sh.hard) { sh.hard = hard; blFlash(hard ? "🔥 Hardcore!" : "Hardcore vorbei", hard ? "combo" : "bad"); }
+    var c = $("#blCombo"); if (c) c.textContent = G.streak >= 3 ? "×" + Math.min(3, 1 + G.streak * 0.1).toFixed(1) + " Serie " + G.streak + (hard ? " 🔥" : "") : "";
   }
   function blFlash(t, cls) { var f = $("#blFl"); if (!f) return; f.textContent = t; f.className = "bl-flash show " + (cls || ""); clearTimeout(f._t); f._t = setTimeout(function () { f.className = "bl-flash"; }, 1100); }
   function blNextTarget() {
@@ -11613,12 +11615,12 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var sh = G.sh, dt = Math.min(0.05, (now - sh.last) / 1000); sh.last = now; sh.t += dt;
     if (sh.freeze > 0) sh.freeze -= dt;
     var F = $("#blF"); F.classList.toggle("frozen", sh.freeze > 0);
-    var v = Math.min(200, 44 * Math.pow(1.12, sh.level - 1)) * (sh.freeze > 0 ? 0.2 : 1)   /* alle 5 Treffer ein Level: ca. 12 % schneller */, bottom = sh.h - 54;
+    var v = Math.min(200, 44 * Math.pow(1.12, sh.level - 1)) * (sh.freeze > 0 ? 0.2 : 1) * (sh.hard ? 1.3 : 1)   /* alle 5 Treffer ein Level: ca. 12 % schneller */, bottom = sh.h - 54;
     if (sh.dir) sh.px = Math.max(22, Math.min(sh.w - 22, sh.px + sh.dir * 300 * dt));
     blShipPos();
     sh.foes.forEach(function (o) {
       if (o.dead) return;
-      var ox = o.x + Math.sin(sh.t * 1.3 + o.ph) * 6;
+      var ox = Math.max(0, Math.min(sh.w - o.fw, o.x + Math.sin(sh.t * (sh.hard ? 2.2 : 1.3) + o.ph) * (sh.hard ? 28 : 6)));
       o.y += v * dt; o.el.style.transform = "translate3d(" + ox + "px," + o.y + "px,0)";
       if (!o.kind && o.y + (o.fh || 34) > sh.h - 46 && o.y < sh.h - 8 && ox < sh.px + 18 && ox + o.fw > sh.px - 18) {   // Raumschiff berührt ein Wort: ein Herz weg
         var ct = sh.target && o.w.id === sh.target.id; blBoom(o, true);
@@ -11632,8 +11634,8 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       }
     });
     sh.foes = sh.foes.filter(function (o) { return !o.dead; });
-    var want = 4 + Math.min(3, Math.floor(sh.level / 2)), plain = sh.foes.filter(function (o) { return !o.kind; });
-    if (sh.t - sh.lastSpawn > Math.max(0.7, 1.3 - sh.level * 0.05) && plain.length < want) {
+    var want = 4 + Math.min(3, Math.floor(sh.level / 2)) + (sh.hard ? 2 : 0), plain = sh.foes.filter(function (o) { return !o.kind; });
+    if (sh.t - sh.lastSpawn > Math.max(0.5, 1.3 - sh.level * 0.05) * (sh.hard ? 0.7 : 1) && plain.length < want) {
       sh.lastSpawn = sh.t;
       var hasT = plain.some(function (o) { return o.w.id === sh.target.id; }), w;
       if (!hasT) w = sh.target; else { var pool = G.words.filter(function (x) { return x.id !== sh.target.id && x.en !== sh.target.en && !plain.some(function (o) { return o.w.id === x.id; }); }); w = pool[Math.floor(Math.random() * pool.length)]; }
