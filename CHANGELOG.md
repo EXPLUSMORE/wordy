@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.82.0 – 2026-10-11
+- Grammatik: **alle geplanten Themen sind fertig**, jeweils mit Erklärkarte (Merksatz, Beispiele) und 15 Aufgaben (Auswählen, Tippen, Ordnen, Fehler finden): Simple Present und Present Progressive, have to / should / can / could, will / going to, Steigerung, some / any / there is / there are, If-Sätze (Typ 1). Zusammen mit Simple Past (2 Themen) sind es 8 Themen und 120 Aufgaben; geprüft mit `tools/check-grammatik.js`. Die Themen mit Einheit bekommen eine Grammatik-Station im Lernpfad (Zuordnung `unit` in `data/grammatik.js`, aus der Reihenfolge von Headlight 2 abgeleitet, bitte am Buch prüfen). Bestehender Pfadfortschritt bleibt erhalten.
+
 ## 2.81.0 – 2026-10-10
 - Erklärfilme: sieben neue Filme (How-to und Üben › Spielmodi): **Was lernen? Wie?** (Schule oder Business, Schuljahr und Einheiten, Pfad oder selbst wählen, alle Lern- und Spielmodi, Münzen; „Jetzt ausprobieren“ öffnet Was lernen?), **Grammatik**, **Wort-Detektiv**, **Freezy**, **Xing**, **Letters** und **Blast** („Jetzt ausprobieren“ startet das Spiel bzw. die Lektion). Neue Ziel-Arten in `go`: `tab`, `game`, `gram`. Für die aufgenommene Stimme müssen die neuen Texte beim nächsten Vertonungslauf mit erzeugt werden (bis dahin spricht die Gerätestimme).
 
