@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.86.2 – 2026-10-11
+- Blast: Die Wörter sehen nicht mehr alle gleich aus. Jedes bekommt eine leicht zufällige Größe; Wortgruppen werden zufällig entweder **umgebrochen** (schmaler Block, mehrzeilig) oder **einzeilig kleiner** geschrieben. Zu breite Einzeiler werden so weit verkleinert, dass sie ins Feld passen.
+
 ## 2.86.1 – 2026-10-11
 - Die Schriftverkleinerung für lange Texte aus 2.86.0 gilt jetzt **nur noch in Blast** (überall sonst wieder wie vorher). In Blast schrumpfen lange Wörter und Redewendungen in Stufen: bis 12 Zeichen normal, bis 18 Zeichen 90 %, bis 22 Zeichen 80 %, darüber 70 %. Die Wörter brechen bei Bedarf in zwei Zeilen um (höchstens 76 % der Feldbreite). Erlaubt sind weiterhin Wörter und Wortgruppen bis 26 Zeichen (vorher 14).
 

@@ -403,11 +403,17 @@
     sh.target = sh.queue.shift(); $("#blT").textContent = sh.target.de;
     var P = $("#blP"); P.classList.remove("pop"); void P.offsetWidth; P.classList.add("pop");
   }
-  /* Lange Wörter und Redewendungen in Blast: Schrift in Stufen kleiner (bis 12 Zeichen normal, bis 18 90 %, bis 22 80 %, darüber 70 %), dazu Umbruch in zwei Zeilen */
+  /* Wörter in Blast sehen nicht alle gleich aus: leicht zufällige Größe; Wortgruppen werden zufällig umgebrochen (schmal, mehrzeilig) oder einzeilig kleiner geschrieben.
+     Sehr lange Einzeiler werden so weit verkleinert, dass sie ins Feld passen. */
   function blFit(d) {
-    var n = d.textContent.length; if (n <= 12) return;
-    var base = parseFloat(getComputedStyle(d).fontSize), f = n <= 18 ? .9 : n <= 22 ? .8 : .7;
-    if (base) d.style.fontSize = (Math.round(base * f * 10) / 10) + "px";
+    var base = parseFloat(getComputedStyle(d).fontSize), n = d.textContent.length, maxW = G.sh.w * 0.92, f = 0.92 + Math.random() * 0.2;
+    if (!base) return;
+    if (n > 12 && /\s/.test(d.textContent)) {
+      if (Math.random() < 0.5) { d.style.maxWidth = Math.round(38 + Math.random() * 22) + "%"; f *= n > 22 ? 0.9 : 1; }   // umbrechen
+      else { d.style.whiteSpace = "nowrap"; f *= n <= 18 ? 0.9 : n <= 22 ? 0.8 : 0.7; }   // kleiner, eine Zeile
+    } else if (n > 12) f *= n <= 18 ? 0.9 : 0.8;
+    d.style.fontSize = (Math.round(base * f * 10) / 10) + "px";
+    if (d.style.whiteSpace === "nowrap" && d.offsetWidth > maxW) d.style.fontSize = (Math.floor(base * f * maxW / d.offsetWidth * 10) / 10) + "px";
   }
   function blSpawn(w, kind) {
     var sh = G.sh, F = $("#blF"), d = document.createElement("div"), id = ++sh.id;
