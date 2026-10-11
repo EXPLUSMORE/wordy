@@ -1132,7 +1132,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.90.0";window.WORDY_BUILD="fe80fdd52a";</script>
+<script>window.WORDY_VERSION="2.90.1";window.WORDY_BUILD="dad4dfd0c5";</script>
 </head>
 <body>
 <div id="app">
@@ -8327,7 +8327,8 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var pf = S.state.profile, seen = pf.cloudSeen || {}, ar = S.state.arena || {}, today = S.today();
     var n = NEWS.filter(function (x) {
       if (seen[x.id] || !global.VTG || !global.VTG.GAMES.some(function (g) { return g.id === x.id; })) return false;
-      if (dayDiff2(x.date, today) > 14) return false;
+      if (dayDiff2(x.date, today) > 14 && !(pf.cloudForce || {})[x.id]) return false;
+      if ((pf.cloudForce || {})[x.id]) return true;   // „Wolke wieder anzeigen“ unter Profil › Ton & Aussehen
       return !Object.keys(ar).some(function (k) { return k.indexOf("g_" + x.id + ":") === 0; });
     })[0];
     if (!n) return "";
@@ -9489,6 +9490,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     html += fold("ton", "🔊", "Ton &amp; Aussehen", "Vorlesen, Hell oder Dunkel",
       '<label class="row" style="margin-top:4px"><span style="flex:1 1 auto">Aussprache vorlesen<br><span class="small muted">Nutzt die englische Stimme des Geräts</span></span>' +
       '<input type="checkbox" id="setAudio" ' + (st.settings.audio ? "checked" : "") + ' style="width:auto"></label>' +
+      '<div class="row" style="margin-top:10px"><span style="flex:1 1 auto">Neuheiten-Wolke<br><span class="small muted">Zeigt die Ankündigung neuer Spiele auf der Startseite wieder an</span></span><button class="chip" id="setCloud">Wieder anzeigen</button></div>' +
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Bildschirm anlassen<br><span class="small muted">Das Handy dunkelt nicht ab, solange Wordy offen ist</span></span>' +
       '<input type="checkbox" id="setWake" ' + (st.settings.wake !== false ? "checked" : "") + ' style="width:auto"></label>' +
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Erscheinungsbild<br><span class="small muted">Automatisch folgt der Einstellung des Geräts</span></span>' +
@@ -9541,6 +9543,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     $("#setGoal").onchange = function () { st.settings.goalMin = +this.value; S.save(true); renderHeader(); };
     $("#setNew").onchange = function () { st.settings.newPerDay = +this.value; S.save(true); };
     $("#setAudio").onchange = function () { st.settings.audio = this.checked; S.save(true); };
+    $("#setCloud").onclick = function () { var pf2 = st.profile; pf2.cloudSeen = {}; pf2.cloudForce = {}; NEWS.forEach(function (n) { pf2.cloudForce[n.id] = 1; }); S.save(true); toast("Die Wolke erscheint wieder auf der Startseite."); };
     $("#setWake").onchange = function () { st.settings.wake = this.checked; S.save(true); wakeSync(); };
     if ($("#setPathOn")) $("#setPathOn").onchange = function () { st.settings.pathOn = this.checked; S.save(true); };
     if ($("#setArenaM")) $("#setArenaM").onchange = function () { st.settings.arenaMissions = this.checked; S.save(true); };
@@ -10574,7 +10577,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     else if (a === "socmode") { soc.boardMode = act.getAttribute("data-m"); render(); }
     else if (a === "howto") howtoSheet();
     else if (a === "newscloud" || a === "newsx") {
-      var nid = act.getAttribute("data-id"), pfc = S.state.profile; (pfc.cloudSeen || (pfc.cloudSeen = {}))[nid] = 1; S.save(true);
+      var nid = act.getAttribute("data-id"), pfc = S.state.profile; (pfc.cloudSeen || (pfc.cloudSeen = {}))[nid] = 1; if (pfc.cloudForce) delete pfc.cloudForce[nid]; S.save(true);
       var cl = act.closest(".newscloud"); if (cl) cl.remove();
       if (a === "newscloud" && global.VTG) global.VTG.start(nid);
     }

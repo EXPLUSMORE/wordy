@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.90.1 – 2026-10-11
+- Neuheiten-Wolke: Wer das neue Spiel schon gespielt hat, sieht die Wolke bewusst nicht mehr. Damit man sie trotzdem ansehen kann, gibt es unter Profil › Ton & Aussehen › „Neuheiten-Wolke“ den Knopf **„Wieder anzeigen“**.
+
 ## 2.90.0 – 2026-10-11
 - Startseite: **Neuheiten-Wolke** auf der Hero-Bühne („🛸 NEU: Blast 3D · Weich den Wörtern aus!“). Sie schwebt ruhig (bei „Bewegung reduzieren“ steht sie still), ein Tipp öffnet das Spiel direkt, ✕ blendet sie aus. Sie verschwindet außerdem nach dem ersten Spielen und nach 14 Tagen; pro Profil gemerkt (`profile.cloudSeen`). Neue Spiele werden in der Liste `NEWS` in app.js eingetragen (eine Wolke zur Zeit).
 
