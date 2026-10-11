@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.88.1 – 2026-10-11
+- Blast, ruhiger: Die Wörter bleiben **komplett im Feld** (links und rechts, auch gedreht und wackelnd). Fehler aus 2.88.0 behoben: Die Drehung lief als eigene Eigenschaft und drehte die Fallbewegung mit, dadurch drifteten Wörter zur Seite aus dem Bild; jetzt steckt die Drehung im `transform`. Tempo langsamer (Start 30 statt 44 Pixel pro Sekunde, je Wort 80 bis 110 %), das Level-Tempo steigt wie bisher alle 5 Treffer um 12 %. Drehung nur noch leicht (bis 12°, nie hochkant oder auf dem Kopf); manche Wörter wiegen langsam hin und her (±6 bis ±14°) statt sich zu drehen.
+
 ## 2.88.0 – 2026-10-11
 - Blast: Die Wörter sind **zufällig gedreht**: meist leicht schief (bis 15°), manchmal hochkant (±75 bis 90°), selten auf dem Kopf oder stark geneigt. Etwa jedes fünfte Wort **dreht sich langsam weiter** (12 bis 42° pro Sekunde, links oder rechts). Die Berührung mit dem Raumschiff rechnet mit dem gedrehten Feld des Wortes.
 
