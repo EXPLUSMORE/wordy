@@ -1124,7 +1124,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.89.2";window.WORDY_BUILD="144fc78154";</script>
+<script>window.WORDY_VERSION="2.89.3";window.WORDY_BUILD="679255cdf2";</script>
 </head>
 <body>
 <div id="app">
@@ -11711,7 +11711,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
 
 
   /* ================= Blast 3D (Ausweichen) ================= */
-  /* Perspektive: Tiefe d von 1 (Horizont) bis 0 (Ebene des Raumschiffs). Maßstab s = 1 / (1 + 6 d); Bildschirm-y wächst mit s, x = Mitte + Spur * Spurbreite * s. */
+  /* Perspektive: Tiefe d von 1 (Horizont) bis 0 (Ebene des Raumschiffs). Maßstab s = 1 / (1 + 2,4 d); Bildschirm-y wächst mit s, x = Mitte + Spur * Spurbreite * s. */
   var B3LANES = [-1.5, -0.5, 0.5, 1.5];
   function b3Start() {
     G.words = pickWords(60, 2, 16, G.opts && (G.opts.units || G.opts.unit), true); G.res = [];
@@ -11723,8 +11723,8 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       '<div class="bl-ship" id="blS">🚀</div><div class="bl-flash" id="blFl"></div></div>' +
       '<div class="bl-ctl"><button type="button" id="blL" aria-label="Nach links">◀</button><button type="button" id="blR" aria-label="Nach rechts">▶</button></div>';
     var F = $("#blF");
-    G.sh = { px: 0, lx: 0, dir: 0, keys: {}, lives: 3, level: 1, hits: 0, queue: [], target: null, waves: [], t: 0, last: 0, w: F.clientWidth, h: F.clientHeight, over: false, T: 4.6, hard: false, hits5: 0 };
-    G.sh.ls = G.sh.w * 0.24; G.sh.y0 = G.sh.h * 0.17; G.sh.yS = G.sh.h - 54;
+    G.sh = { px: 0, lx: 0, dir: 0, keys: {}, lives: 3, level: 1, hits: 0, queue: [], target: null, waves: [], t: 0, last: 0, w: F.clientWidth, h: F.clientHeight, over: false, T: 8.5, hard: false, hits5: 0 };
+    G.sh.ls = G.sh.w * 0.25; G.sh.y0 = G.sh.h * 0.17; G.sh.yS = G.sh.h - 54;
     G.sh.px = G.sh.w / 2; blShipPos();
     [["blL", -1], ["blR", 1]].forEach(function (b) {
       var btn = $("#" + b[0]), on = function (e) { e.preventDefault(); if (G && G.sh) G.sh.dir = b[1]; }, off = function () { if (G && G.sh && G.sh.dir === b[1]) G.sh.dir = 0; };
@@ -11742,7 +11742,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var lanes = S.shuffle([0, 1, 2, 3]), items = [t].concat(others).map(function (w, i) {
       var txt = deAnswer ? w.de : w.raw, d = document.createElement("div"), n = txt.length;
       d.className = "foe b3w"; d.textContent = txt; d.style.setProperty("--h", Math.floor(Math.random() * 360));
-      d.style.maxWidth = Math.round(sh.ls * 1.02) + "px"; d.style.fontSize = Math.max(10, Math.min(19, Math.round(sh.ls * 0.98 / Math.max(4, Math.min(n, 11)) * 1.75))) + "px"; d.style.opacity = 0;
+      d.style.maxWidth = Math.round(sh.ls * 1.08) + "px"; d.style.fontSize = Math.max(12, Math.min(26, Math.floor((sh.ls * 1.08 - 24) / (Math.max.apply(null, txt.split(/\s+/).map(function (x) { return x.length; })) * 0.74)))) + "px";   /* längstes Wort passt in die Spur, Wortgruppen brechen zwischen den Wörtern um */ d.style.opacity = 0;
       F.appendChild(d); return { w: w, lane: lanes[i], el: d, correct: i === 0 };
     });
     sh.waves.push({ d: 1, items: items, t: t, deAnswer: deAnswer, done: false, got: false });
@@ -11761,7 +11761,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
         var pts = Math.round((10 + sh.level * 2) * Math.min(3, 1 + G.streak * 0.1)); G.score += pts;
         try { if (global.WordySync) global.WordySync.ctx = { mode: "arena" }; S.grade(it.w.id, 1); } catch (e) {}
         snd(true); blFlash("+" + pts, G.streak >= 5 ? "combo" : "good"); blBoom3(it, false);
-        if (sh.hits % 5 === 0) { sh.level++; sh.T = Math.max(1.5, sh.T * 0.9); blFlash("Level " + sh.level + " · schneller!", "combo"); }
+        if (sh.hits % 5 === 0) { sh.level++; sh.T = Math.max(2.4, sh.T * 0.92); blFlash("Level " + sh.level + " · schneller!", "combo"); }
         if (sh.hits % 10 === 0 && sh.lives < 5) { sh.lives++; blFlash("♥ Extra-Herz!", "combo"); }
         blHud(); paintScore();
       } else { blBoom3(it, true); blFlash("Autsch! " + (wv.deAnswer ? it.w.de : it.w.raw) + " ist falsch", "bad"); G.items++; blLose("falsch", wv.t); }
@@ -11778,14 +11778,14 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var dt = Math.min(0.05, (now - sh.last) / 1000); sh.last = now; sh.t += dt;
     if (sh.dir) sh.lx = Math.max(-1.5, Math.min(1.5, sh.lx + sh.dir * 3.1 * dt));
     sh.px = sh.w / 2 + sh.lx * sh.ls; blShipPos();
-    var T = sh.T * (sh.hard ? 0.82 : 1);
+    var T = sh.T * (sh.hard ? 0.85 : 1);
     sh.waves.forEach(function (wv) {
       wv.d -= dt / T;
-      var s = 1 / (1 + 6 * Math.max(wv.d, -0.2)), y = sh.y0 + (sh.yS - sh.y0) * s;
+      var s = 1 / (1 + 2.4 * Math.max(wv.d, -0.2)), y = sh.y0 + (sh.yS - sh.y0) * s;
       wv.items.forEach(function (it) {
         if (it.hit && wv.d < -0.02) return;
         var x = sh.w / 2 + B3LANES[it.lane] * sh.ls * s;
-        it.el.style.transform = "translate(" + x + "px," + y + "px) translate(-50%,-50%) scale(" + s + ")"; it.el.style.zIndex = Math.round(s * 100);
+        it.el.style.transform = "translate(" + x + "px," + y + "px) translate(-50%,-50%) scale(" + (s * 1.2).toFixed(3) + ")"; it.el.style.zIndex = Math.round(s * 100);
         it.el.style.opacity = Math.max(0, Math.min(1, (1 - wv.d) * 4, wv.d < 0 ? 1 + wv.d * 6 : 1));
       });
       if (!wv.done && wv.d <= 0.02) b3Resolve(wv);
