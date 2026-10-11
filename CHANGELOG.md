@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.82.1 – 2026-10-11
+- Blast: Das Tempo steigt jetzt deutlich mit jedem Level, also alle 5 richtigen Wörter um etwa 12 % (vorher nur kleine Schritte und früh am Deckel). Obergrenze höher, Meldung „Level n · schneller!“.
+
 ## 2.82.0 – 2026-10-11
 - Grammatik: **alle geplanten Themen sind fertig**, jeweils mit Erklärkarte (Merksatz, Beispiele) und 15 Aufgaben (Auswählen, Tippen, Ordnen, Fehler finden): Simple Present und Present Progressive, have to / should / can / could, will / going to, Steigerung, some / any / there is / there are, If-Sätze (Typ 1). Zusammen mit Simple Past (2 Themen) sind es 8 Themen und 120 Aufgaben; geprüft mit `tools/check-grammatik.js`. Die Themen mit Einheit bekommen eine Grammatik-Station im Lernpfad (Zuordnung `unit` in `data/grammatik.js`, aus der Reihenfolge von Headlight 2 abgeleitet, bitte am Buch prüfen). Bestehender Pfadfortschritt bleibt erhalten.
 

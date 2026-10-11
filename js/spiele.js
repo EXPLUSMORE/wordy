@@ -424,7 +424,7 @@
       var pts = Math.round((10 + sh.level * 2) * Math.min(3, 1 + G.streak * 0.1)); G.score += pts;
       try { if (global.WordySync) global.WordySync.ctx = { mode: "arena" }; S.grade(t.id, 1); } catch (e) {}
       snd(true); blFlash("+" + pts, G.streak >= 5 ? "combo" : "good");
-      if (sh.hits % 5 === 0) { sh.level++; blFlash("Level " + sh.level + "!", "combo"); }
+      if (sh.hits % 5 === 0) { sh.level++; blFlash("Level " + sh.level + " · schneller!", "combo"); }
       if (sh.hits % 10 === 0 && sh.lives < 5) { sh.lives++; blFlash("♥ Extra-Herz!", "combo"); }
       blNextTarget(); blHud(); paintScore();
     } else {
@@ -437,7 +437,7 @@
     var sh = G.sh, dt = Math.min(0.05, (now - sh.last) / 1000); sh.last = now; sh.t += dt;
     if (sh.freeze > 0) sh.freeze -= dt;
     var F = $("#blF"); F.classList.toggle("frozen", sh.freeze > 0);
-    var v = (Math.min(125, 48 + sh.level * 7)) * (sh.freeze > 0 ? 0.2 : 1), bottom = sh.h - 54;
+    var v = Math.min(200, 44 * Math.pow(1.12, sh.level - 1)) * (sh.freeze > 0 ? 0.2 : 1)   /* alle 5 Treffer ein Level: ca. 12 % schneller */, bottom = sh.h - 54;
     sh.foes.forEach(function (o) {
       if (o.dead) return;
       o.y += v * dt; o.el.style.transform = "translate3d(" + (o.x + Math.sin(sh.t * 1.3 + o.ph) * 6) + "px," + o.y + "px,0)";
