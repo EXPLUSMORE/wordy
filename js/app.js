@@ -787,7 +787,7 @@
   }
   /* Neuheiten-Wolke auf der Startseite: kündigt ein neues Spiel an. Neues Spiel = Eintrag in NEWS (id = Spiel-ID aus VTG.GAMES, date = Datum der Veröffentlichung).
      Sie verschwindet nach dem ersten Spielen, nach ✕, nach dem Antippen oder nach 14 Tagen (pro Profil in profile.cloudSeen). */
-  var NEWS = [{ id: "blast3d", icon: "🛸", title: "NEU: Blast 3D", sub: "Weich den Wörtern aus!", date: "2026-10-11" }];
+  var NEWS = [{ id: "blast3d", icon: "🛸", title: "Blast 3D", sub: "Weich den Wörtern aus!", date: "2026-10-11" }];
   function newsCloud() {
     var pf = S.state.profile, seen = pf.cloudSeen || {}, ar = S.state.arena || {}, today = S.today();
     var n = NEWS.filter(function (x) {
@@ -797,7 +797,7 @@
       return !Object.keys(ar).some(function (k) { return k.indexOf("g_" + x.id + ":") === 0; });
     })[0];
     if (!n) return "";
-    return '<div class="newscloud" data-id="' + esc(n.id) + '"><button class="ncbody" data-act="newscloud" data-id="' + esc(n.id) + '"><span class="nci">' + n.icon + '</span><span class="nct"><b>' + esc(n.title) + '</b><small>' + esc(n.sub) + '</small></span></button><button class="ncx" data-act="newsx" data-id="' + esc(n.id) + '" aria-label="Ausblenden">✕</button></div>';
+    return '<div class="newscloud" data-id="' + esc(n.id) + '"><i class="ncs s1">✨</i><i class="ncs s2">⭐</i><i class="ncs s3">✨</i><span class="ncnew">NEU</span><button class="ncbody" data-act="newscloud" data-id="' + esc(n.id) + '"><span class="nci">' + n.icon + '</span><span class="nct"><b>' + esc(n.title) + '</b><small>' + esc(n.sub) + '</small></span></button><button class="ncx" data-act="newsx" data-id="' + esc(n.id) + '" aria-label="Ausblenden">✕</button></div>';
   }
   function dayDiff2(a, b) { return Math.round((new Date(b + "T00:00:00") - new Date(a + "T00:00:00")) / 864e5); }
   function viewHome() {

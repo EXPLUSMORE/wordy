@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.90.2 – 2026-10-11
+- Neuheiten-Wolke mit mehr Action: schwebt schneller und weiter (4,6 s pro Runde, mit leichtem Schaukeln), pulsiert mit gelbem Leuchten, ein rotes „NEU“-Schild blinkt, das UFO wippt, drei Sternchen funkeln. Bei „Bewegung reduzieren“ bleibt alles ruhig.
+
 ## 2.90.1 – 2026-10-11
 - Neuheiten-Wolke: Wer das neue Spiel schon gespielt hat, sieht die Wolke bewusst nicht mehr. Damit man sie trotzdem ansehen kann, gibt es unter Profil › Ton & Aussehen › „Neuheiten-Wolke“ den Knopf **„Wieder anzeigen“**.
 
