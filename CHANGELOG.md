@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.89.5 – 2026-10-11
+- Blast 3D: Das gesuchte Wort steht jetzt **unten**, direkt über den Pfeiltasten, statt oben. Das Spielfeld ist dadurch höher.
+
 ## 2.89.4 – 2026-10-11
 - Blast 3D: Das Raumschiff **springt pro Tipp eine Spur** (◀ ▶ oder Pfeiltasten / A, D; Gedrückthalten wiederholt nicht). Es gleitet kurz in die Spur und kippt dabei leicht. Berührt wird, was in der Spur des Schiffs liegt.
 

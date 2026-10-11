@@ -535,10 +535,10 @@
     G.words = pickWords(60, 2, 16, G.opts && (G.opts.units || G.opts.unit), true); G.res = [];
     el.innerHTML = top("Blast 3D") +
       '<div class="bl-hud"><span id="blLives"></span><span id="blLevel"></span><span id="blCombo"></span></div>' +
-      '<div class="bl-prompt" id="blP"><small id="b3Sub">Flieg in die richtige Spur</small><b id="blT"></b></div>' +
       '<div class="bl-field b3" id="blF"><svg class="b3-grid" viewBox="0 0 100 100" preserveAspectRatio="none"><g stroke="rgba(120,200,255,.28)" stroke-width=".35" fill="none"><path d="M0 17H100"/>' +
       [-2, -1, 0, 1, 2].map(function (k) { return '<path d="M50 17L' + (50 + k * 30) + ' 100"/>'; }).join("") + '</g></svg>' +
       '<div class="bl-ship" id="blS">🚀</div><div class="bl-flash" id="blFl"></div></div>' +
+      '<div class="bl-prompt" id="blP" style="margin:6px 14px 0"><small id="b3Sub">Flieg in die richtige Spur</small><b id="blT"></b></div>' +   // das gesuchte Wort steht unten, direkt über den Tasten
       '<div class="bl-ctl"><button type="button" id="blL" aria-label="Nach links">◀</button><button type="button" id="blR" aria-label="Nach rechts">▶</button></div>';
     var F = $("#blF");
     G.sh = { px: 0, lx: B3LANES[1], lane: 1, dir: 0, keys: {}, lives: 3, level: 1, hits: 0, queue: [], target: null, waves: [], t: 0, last: 0, w: F.clientWidth, h: F.clientHeight, over: false, T: 8.5, hard: false, hits5: 0 };
