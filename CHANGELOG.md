@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.89.1 – 2026-10-11
+- Blast: Wörter überlappen sich nicht mehr. Holt ein schnelleres Wort ein langsameres ein oder erscheint ein neues über einem anderen, wartet es dahinter, bis Platz ist. Im Test mit Level 8: 440 Wortpaare über 16 Sekunden, keine Überlappung.
+
 ## 2.89.0 – 2026-10-11
 - Neues Spiel **Blast 3D** (Arena › Wortspiele, 🛸): In einer 3D-Perspektive mit Fluchtpunkt kommen Wellen aus drei Wörtern in vier Spuren auf dich zu. Oben steht ein Wort (englisch oder deutsch), die Übersetzung steht in der Welle, mal deutsch, mal englisch, dazu zwei falsche Wörter. Mit ◀ ▶ (oder Pfeiltasten, A / D) steuerst du das Raumschiff in die richtige Spur und weichst den falschen aus. Falsches Wort berührt: ein Herz weg, bis die Herzen leer sind. Richtiges verpasst: nur die Serie reißt ab. Alle 5 richtigen Wörter wird es schneller (Level), alle 10 gibt es ein Extra-Herz, ab mehr als 10 in Folge wird es schwerer. Zählt wie die anderen Wortspiele für Münzen, XP, Bestwert und Lernstand. Spielbeschreibung und Erklärfilm („Blast 3D“) inklusive.
 

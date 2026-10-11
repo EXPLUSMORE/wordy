@@ -483,10 +483,22 @@
     var v = Math.min(190, 30 * Math.pow(1.12, sh.level - 1)) * (sh.freeze > 0 ? 0.2 : 1) * (sh.hard ? 1.3 : 1)   /* alle 5 Treffer ein Level: ca. 12 % schneller */, bottom = sh.h - 54;
     if (sh.dir) sh.px = Math.max(22, Math.min(sh.w - 22, sh.px + sh.dir * 300 * dt));
     blShipPos();
+    var live = sh.foes.filter(function (o) { return !o.dead; });
+    live.forEach(function (o) {
+      var pad = Math.max(0, ((o.cw || o.fw) - o.fw) / 2) + 2;
+      o.ox = Math.max(pad, Math.min(sh.w - o.fw - pad, o.x + Math.sin(sh.t * (sh.hard ? 2.2 : 1.3) + o.ph) * (sh.hard ? 28 : 6)));   // Wort bleibt komplett im Feld
+      o.y += v * dt * (o.sp || 1);
+    });
+    live.slice().sort(function (a, b) { return b.y - a.y; }).forEach(function (u, i, arr) {   // Wörter überlappen nicht: ein Wort wartet hinter dem tieferen, das ihm im Weg ist
+      for (var j = 0; j < i; j++) {
+        var l = arr[j], hu = u.ch || u.fh || 34, hl = l.ch || l.fh || 34;
+        if (Math.abs((u.ox + u.fw / 2) - (l.ox + l.fw / 2)) < ((u.cw || u.fw) + (l.cw || l.fw)) / 2 + 4 && u.y + hu + 6 > l.y && u.y < l.y + hl) u.y = Math.min(u.y, l.y - hu - 6);
+      }
+    });
     sh.foes.forEach(function (o) {
       if (o.dead) return;
-      var pad = Math.max(0, ((o.cw || o.fw) - o.fw) / 2) + 2, ox = Math.max(pad, Math.min(sh.w - o.fw - pad, o.x + Math.sin(sh.t * (sh.hard ? 2.2 : 1.3) + o.ph) * (sh.hard ? 28 : 6)));   // Wort bleibt komplett im Feld
-      o.y += v * dt * (o.sp || 1); o.el.style.transform = "translate3d(" + ox + "px," + o.y + "px,0) rotate(" + (o.rot + (o.spin ? o.spin * Math.sin(sh.t * 0.7 + o.ph) : 0)) + "deg)";   /* Drehung im transform, nicht als eigene rotate-Eigenschaft: sonst würde die Verschiebung mitgedreht und die Wörter drifteten zur Seite */
+      var ox = o.ox;
+      o.el.style.transform = "translate3d(" + ox + "px," + o.y + "px,0) rotate(" + (o.rot + (o.spin ? o.spin * Math.sin(sh.t * 0.7 + o.ph) : 0)) + "deg)";   /* Drehung im transform, nicht als eigene rotate-Eigenschaft: sonst würde die Verschiebung mitgedreht und die Wörter drifteten zur Seite */
       var cx = ox + o.fw / 2, cy = o.y + (o.fh || 34) / 2, hw = (o.cw || o.fw) / 2, hh = (o.ch || o.fh || 34) / 2;   // Berührung mit dem (gedrehten) Feld des Wortes
       if (!o.kind && cy + hh > sh.h - 46 && cy - hh < sh.h - 8 && Math.abs(cx - sh.px) < hw + 18) {   // Raumschiff berührt ein Wort: ein Herz weg
         var ct = sh.target && o.w.id === sh.target.id; blBoom(o, true);
