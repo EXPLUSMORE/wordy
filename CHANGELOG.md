@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.89.4 – 2026-10-11
+- Blast 3D: Das Raumschiff **springt pro Tipp eine Spur** (◀ ▶ oder Pfeiltasten / A, D; Gedrückthalten wiederholt nicht). Es gleitet kurz in die Spur und kippt dabei leicht. Berührt wird, was in der Spur des Schiffs liegt.
+
 ## 2.89.3 – 2026-10-11
 - Blast 3D: Wörter deutlich größer (flachere Perspektive: in der Ferne etwa 29 % statt 14 % der Größe, nahe am Schiff 120 %; Schrift passt sich dem längsten Wort an, ohne mitten im Wort umzubrechen). Anfangstempo etwa halb so schnell: eine Welle braucht 8,5 Sekunden (vorher 4,6) und wird pro Level 8 % schneller, höchstens bis 2,4 Sekunden.
 

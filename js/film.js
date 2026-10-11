@@ -129,7 +129,7 @@
     { id: "game-blast3d", icon: "🛸", title: "Blast 3D", go: { game: "blast3d" }, scenes: [
       { bg: "arena", cast: [{ av: B, x: 50, dance: 3, say: "Sie fliegen direkt auf mich zu!" }], props: [{ e: "🛸", x: 50, y: 14, s: 58, a: "bob" }], nar: "Blast 3D: Die Wörter kommen dir aus der Ferne entgegen, in vier Spuren." },
       { bg: "arena", cast: [{ av: P, x: 50, dance: 1, say: "Welches ist die Übersetzung?" }], props: [{ e: "🇩🇪", x: 26, y: 20, s: 44, a: "bob" }, { e: "🇬🇧", x: 74, y: 20, s: 44, a: "bob" }], nar: "Oben steht ein Wort. Die Übersetzung kommt mal englisch, mal deutsch, zusammen mit falschen Wörtern." },
-      { bg: "arena", cast: [{ av: K, x: 50, dance: 2, say: "Links, rechts, ausweichen!" }], props: [{ e: "◀", x: 26, y: 20, s: 46, a: "bob" }, { e: "🚀", x: 50, y: 14, s: 50, a: "bob" }, { e: "▶", x: 74, y: 20, s: 46, a: "bob" }], nar: "Steuere dein Raumschiff mit den Pfeilen in die richtige Spur. Ein falsches Wort kostet ein Herz." },
+      { bg: "arena", cast: [{ av: K, x: 50, dance: 2, say: "Links, rechts, ausweichen!" }], props: [{ e: "◀", x: 26, y: 20, s: 46, a: "bob" }, { e: "🚀", x: 50, y: 14, s: 50, a: "bob" }, { e: "▶", x: 74, y: 20, s: 46, a: "bob" }], nar: "Mit den Pfeilen springt dein Raumschiff pro Tipp eine Spur weiter. Ein falsches Wort kostet ein Herz." },
       { bg: "gold", cast: [{ av: R, x: 50, dance: 6, say: "Schneller und schneller!" }], props: [{ e: "⚡", x: 50, y: 16, s: 56, a: "bob" }], nar: "Alle 5 richtigen Wörter wird es schneller. Wie lange hältst du durch?" }
     ] },
     { id: "game-blast", icon: "🚀", title: "Blast", go: { game: "blast" }, scenes: [

@@ -12,7 +12,7 @@
     { id: "blast", icon: "🚀", name: "Blast", tag: "Wörter-Shooter", claim: "Schieß das richtige Wort ab.",
       desc: "Oben steht ein deutsches Wort. Englische Wörter fliegen auf dich zu: Tippe das richtige ab, bevor es dich erreicht. Mit den Pfeilen ◀ ▶ (oder den Pfeiltasten) steuerst du dein Raumschiff und weichst den Wörtern aus: Jede Berührung kostet ein Herz. Falsch geschossen kostet ebenfalls ein Herz. Eis-Sterne bremsen alles, Bomben räumen die falschen Wörter weg." },
     { id: "blast3d", icon: "🛸", name: "Blast 3D", tag: "Ausweichen in 3D", claim: "Flieg in die richtige Spur.",
-      desc: "Oben steht ein Wort. Die Übersetzung kommt dir in 3D entgegen, mal englisch, mal deutsch, zusammen mit falschen Wörtern. Steuere dein Raumschiff mit ◀ ▶ (oder den Pfeiltasten) in die Spur mit dem richtigen Wort und weiche den falschen aus. Ein falsches Wort kostet ein Herz, ein verpasstes richtiges nur die Serie. Alle 5 richtigen Wörter wird es schneller." },
+      desc: "Oben steht ein Wort. Die Übersetzung kommt dir in 3D entgegen, mal englisch, mal deutsch, zusammen mit falschen Wörtern. Mit ◀ ▶ (oder den Pfeiltasten) springt dein Raumschiff pro Tipp eine Spur weiter: Flieg in die Spur mit dem richtigen Wort und weiche den falschen aus. Ein falsches Wort kostet ein Herz, ein verpasstes richtiges nur die Serie. Alle 5 richtigen Wörter wird es schneller." },
     { id: "letters", icon: "🔠", name: "Letters", tag: "Buchstabensalat", claim: "Finde die versteckten Wörter.",
       desc: "Im Buchstabensalat verstecken sich englische Wörter, waagerecht, senkrecht oder diagonal, vorwärts oder rückwärts. Die Liste zeigt die deutschen Bedeutungen. Wische über die Buchstaben, um ein Wort zu markieren." },
     { id: "kreuz", icon: "🧩", name: "Xing", tag: "Kreuzworträtsel (Crossing)", claim: "Deutsche Hinweise, englische Lösungen.",
@@ -80,7 +80,7 @@
     eisi: ["Icy steht auf schmelzendem Eis. Rate das englische Wort zur deutschen Bedeutung, Buchstabe für Buchstabe.", "Tippe einen Buchstaben: Kommt er im Wort vor, erscheint er. Wenn nicht, schmilzt ein Eisstück.", "Nach 6 Fehlern fällt Icy ins Wasser. 5 Wörter pro Runde.", "💡 deckt einen Buchstaben auf, kostet aber ein Eisstück."],
     kreuz: ["Ein Kreuzworträtsel: Die Hinweise sind deutsch, geschrieben wird englisch.", "Tippe ein Feld und dann die Buchstaben. Tippst du dasselbe Feld nochmal, wechselt die Richtung (waagerecht ↔ senkrecht). Du kannst auch einen Hinweis antippen.", "<b>✓ Prüfen</b> färbt falsche Buchstaben rot, 💡 deckt ein Feld auf (−8 Punkte)."],
     blast: ["Oben steht ein deutsches Wort. Englische Wörter fliegen auf dich zu.", "Tippe das passende englische Wort an, bevor es unten ankommt.", "Falsch getippt oder das richtige verpasst: −1 ♥. Alle 5 Treffer gibt es ein neues Level, alle 10 ein Extra-Herz.", "❄️ bremst alles, 💣 räumt die falschen Wörter weg."],
-    blast3d: ["Oben steht ein Wort, englisch oder deutsch. Seine Übersetzung kommt dir in 3D entgegen, zusammen mit zwei falschen Wörtern.", "Steuere dein Raumschiff mit ◀ ▶ (am Rechner Pfeiltasten oder A / D) in die Spur mit dem richtigen Wort. Es gibt vier Spuren, in jeder Welle bleibt eine frei.", "Ein falsches Wort berührt: −1 ♥. Das richtige verpasst: nur die Serie reißt ab. Alle 5 Treffer gibt es ein neues Level (schneller), alle 10 ein Extra-Herz."],
+    blast3d: ["Oben steht ein Wort, englisch oder deutsch. Seine Übersetzung kommt dir in 3D entgegen, zusammen mit zwei falschen Wörtern.", "Mit ◀ ▶ (am Rechner Pfeiltasten oder A / D) springt dein Raumschiff pro Tipp eine Spur weiter. Flieg in die Spur mit dem richtigen Wort. Es gibt vier Spuren, in jeder Welle bleibt eine frei.", "Ein falsches Wort berührt: −1 ♥. Das richtige verpasst: nur die Serie reißt ab. Alle 5 Treffer gibt es ein neues Level (schneller), alle 10 ein Extra-Herz."],
     letters: ["Im Buchstabensalat verstecken sich englische Wörter. Die Liste zeigt die deutschen Bedeutungen.", "Wische vom ersten bis zum letzten Buchstaben eines Wortes. Es geht waagerecht, senkrecht und diagonal, auch rückwärts. Wörter dürfen sich kreuzen.", "Du kannst auch erst den Anfang und dann das Ende antippen. Ein Tipp auf einen Hinweis markiert den Anfang (−8 Punkte)."]
   };
   function helpHtml(id, btn) {
@@ -388,7 +388,9 @@
   function blKey(e, down) {
     if (!G || (G.id !== "blast" && G.id !== "blast3d") || !G.sh || G.sh.over) return;
     var k = e.key, d = k === "ArrowLeft" || k === "a" || k === "A" ? -1 : k === "ArrowRight" || k === "d" || k === "D" ? 1 : 0; if (!d) return;
-    e.preventDefault(); G.sh.keys[d] = down; G.sh.dir = G.sh.keys[1] && !G.sh.keys[-1] ? 1 : G.sh.keys[-1] && !G.sh.keys[1] ? -1 : 0;
+    e.preventDefault();
+    if (G.id === "blast3d") { if (down && !e.repeat) b3Hop(d); return; }   // Blast 3D: pro Tastendruck eine Spur
+    G.sh.keys[d] = down; G.sh.dir = G.sh.keys[1] && !G.sh.keys[-1] ? 1 : G.sh.keys[-1] && !G.sh.keys[1] ? -1 : 0;
   }
   function blShipPos() {   // das 🚀-Emoji zeigt von Haus aus schräg nach rechts oben (45°): zurückdrehen, damit es nach oben schaut; beim Steuern leicht in die Fahrtrichtung kippen
     var s = $("#blS"); if (!s || !G || !G.sh) return; s.style.left = G.sh.px + "px";
@@ -539,16 +541,16 @@
       '<div class="bl-ship" id="blS">🚀</div><div class="bl-flash" id="blFl"></div></div>' +
       '<div class="bl-ctl"><button type="button" id="blL" aria-label="Nach links">◀</button><button type="button" id="blR" aria-label="Nach rechts">▶</button></div>';
     var F = $("#blF");
-    G.sh = { px: 0, lx: 0, dir: 0, keys: {}, lives: 3, level: 1, hits: 0, queue: [], target: null, waves: [], t: 0, last: 0, w: F.clientWidth, h: F.clientHeight, over: false, T: 8.5, hard: false, hits5: 0 };
+    G.sh = { px: 0, lx: B3LANES[1], lane: 1, dir: 0, keys: {}, lives: 3, level: 1, hits: 0, queue: [], target: null, waves: [], t: 0, last: 0, w: F.clientWidth, h: F.clientHeight, over: false, T: 8.5, hard: false, hits5: 0 };
     G.sh.ls = G.sh.w * 0.25; G.sh.y0 = G.sh.h * 0.17; G.sh.yS = G.sh.h - 54;
     G.sh.px = G.sh.w / 2; blShipPos();
     [["blL", -1], ["blR", 1]].forEach(function (b) {
-      var btn = $("#" + b[0]), on = function (e) { e.preventDefault(); if (G && G.sh) G.sh.dir = b[1]; }, off = function () { if (G && G.sh && G.sh.dir === b[1]) G.sh.dir = 0; };
-      btn.addEventListener("pointerdown", on); btn.addEventListener("pointerup", off); btn.addEventListener("pointerleave", off); btn.addEventListener("pointercancel", off);
+      $("#" + b[0]).addEventListener("pointerdown", function (e) { e.preventDefault(); b3Hop(b[1]); });   // ein Tipp = eine Spur
     });
     if (!blKeys) { blKeys = true; document.addEventListener("keydown", function (e) { blKey(e, 1); }); document.addEventListener("keyup", function (e) { blKey(e, 0); }); }
     blHud(); G.sh.last = performance.now(); G.sh.raf = requestAnimationFrame(b3Loop);
   }
+  function b3Hop(d) { var sh = G && G.sh; if (!sh || sh.over || sh.paused) return; sh.lane = Math.max(0, Math.min(B3LANES.length - 1, sh.lane + d)); }
   function b3Next() {
     var sh = G.sh; if (!sh.queue.length) sh.queue = S.shuffle(G.words.slice()); return sh.queue.shift();
   }
@@ -571,7 +573,7 @@
   function b3Resolve(wv) {
     var sh = G.sh; wv.done = true;
     wv.items.forEach(function (it) {
-      if (Math.abs(sh.lx - B3LANES[it.lane]) >= 0.62) return;
+      if (it.lane !== sh.lane) return;
       if (it.correct) {
         wv.got = true; G.items++; G.correct++; G.streak++; G.maxStreak = Math.max(G.maxStreak, G.streak); sh.hits++;
         var pts = Math.round((10 + sh.level * 2) * Math.min(3, 1 + G.streak * 0.1)); G.score += pts;
@@ -583,7 +585,7 @@
       } else { blBoom3(it, true); blFlash("Autsch! " + (wv.deAnswer ? it.w.de : it.w.raw) + " ist falsch", "bad"); G.items++; blLose("falsch", wv.t); }
     });
     if (!wv.got && !sh.over) {   // richtiges Wort ausgelassen: nur die Serie reißt ab
-      var hitWrong = wv.items.some(function (it) { return !it.correct && Math.abs(sh.lx - B3LANES[it.lane]) < 0.62; });
+      var hitWrong = wv.items.some(function (it) { return !it.correct && it.lane === sh.lane; });
       if (!hitWrong) { blFlash("Verpasst: " + wv.t.raw + " = " + wv.t.de, "bad"); G.items++; G.streak = 0; try { if (global.WordySync) global.WordySync.ctx = { mode: "arena" }; S.grade(wv.t.id, 0); } catch (e) {} blHud(); }
     }
   }
@@ -592,7 +594,7 @@
     if (!G || !G.sh || G.sh.over || G.id !== "blast3d") return;
     var sh = G.sh; if (sh.paused) { sh.raf = requestAnimationFrame(b3Loop); return; }
     var dt = Math.min(0.05, (now - sh.last) / 1000); sh.last = now; sh.t += dt;
-    if (sh.dir) sh.lx = Math.max(-1.5, Math.min(1.5, sh.lx + sh.dir * 3.1 * dt));
+    var tx = B3LANES[sh.lane], dl = tx - sh.lx; sh.lx += dl * Math.min(1, dt * 16); sh.dir = Math.abs(dl) > 0.12 ? (dl > 0 ? 1 : -1) : 0;   // springt in die Spur, kippt dabei leicht
     sh.px = sh.w / 2 + sh.lx * sh.ls; blShipPos();
     var T = sh.T * (sh.hard ? 0.85 : 1);
     sh.waves.forEach(function (wv) {
