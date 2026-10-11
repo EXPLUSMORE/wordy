@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.89.2 – 2026-10-11
+- Blast 3D startete nicht: Beim ersten Öffnen fehlte die Kurzerklärung (Hilfetext) des Spiels, dadurch brach die Einführung ab und das Spiel kam nicht. Hilfetext ergänzt (gilt auch für das „?“ im Spiel).
+
 ## 2.89.1 – 2026-10-11
 - Blast: Wörter überlappen sich nicht mehr. Holt ein schnelleres Wort ein langsameres ein oder erscheint ein neues über einem anderen, wartet es dahinter, bis Platz ist. Im Test mit Level 8: 440 Wortpaare über 16 Sekunden, keine Überlappung.
 
