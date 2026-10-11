@@ -785,6 +785,20 @@
     h += '</div>' + (all.length ? '<div style="text-align:center;margin-top:4px"><button class="chip" data-act="gopfad">Ganzen Pfad ansehen →</button></div>' : "") + '</section>';
     return h;
   }
+  /* Neuheiten-Wolke auf der Startseite: kündigt ein neues Spiel an. Neues Spiel = Eintrag in NEWS (id = Spiel-ID aus VTG.GAMES, date = Datum der Veröffentlichung).
+     Sie verschwindet nach dem ersten Spielen, nach ✕, nach dem Antippen oder nach 14 Tagen (pro Profil in profile.cloudSeen). */
+  var NEWS = [{ id: "blast3d", icon: "🛸", title: "NEU: Blast 3D", sub: "Weich den Wörtern aus!", date: "2026-10-11" }];
+  function newsCloud() {
+    var pf = S.state.profile, seen = pf.cloudSeen || {}, ar = S.state.arena || {}, today = S.today();
+    var n = NEWS.filter(function (x) {
+      if (seen[x.id] || !global.VTG || !global.VTG.GAMES.some(function (g) { return g.id === x.id; })) return false;
+      if (dayDiff2(x.date, today) > 14) return false;
+      return !Object.keys(ar).some(function (k) { return k.indexOf("g_" + x.id + ":") === 0; });
+    })[0];
+    if (!n) return "";
+    return '<div class="newscloud" data-id="' + esc(n.id) + '"><button class="ncbody" data-act="newscloud" data-id="' + esc(n.id) + '"><span class="nci">' + n.icon + '</span><span class="nct"><b>' + esc(n.title) + '</b><small>' + esc(n.sub) + '</small></span></button><button class="ncx" data-act="newsx" data-id="' + esc(n.id) + '" aria-label="Ausblenden">✕</button></div>';
+  }
+  function dayDiff2(a, b) { return Math.round((new Date(b + "T00:00:00") - new Date(a + "T00:00:00")) / 864e5); }
   function viewHome() {
     var st = S.state, r = S.rankOf(st.xp);
     var goalSec = S.goalMin() * 60, pct = Math.min(100, Math.round(st.daily.sec * 100 / goalSec));
@@ -807,7 +821,7 @@
       '<div class="hhtop"><div class="hhdate">' + esc(S.today().split("-").reverse().join(".")) + ' · ' + (biz ? "Business English" : "Schule") + '</div>' +
       '<h1>' + greet + '</h1><p class="hhtip">' + esc(tip) + '</p></div>' +
       '<div class="hhgoal"><div class="hhring" style="--p:' + pct + '"><b class="tnum">' + pct + '%</b></div><small>Tagesziel</small></div>' +
-      '<div class="hhbubble" id="hhBub">' + esc(cheer) + '</div>' +
+      newsCloud() + '<div class="hhbubble" id="hhBub">' + esc(cheer) + '</div>' +
       '<div class="hhpod"><i></i></div><button class="hhfig" id="hhFig" data-act="hhdance" aria-label="Figur antippen">' + heroHtml(pf.avatar, 0) + '</button>' +
       '<div class="hhbar"><div class="hhrank"><b>' + esc(rn) + '</b><div class="hhxp"><i style="width:' + xpPct + '%"></i></div><small class="tnum">' + (r.next ? toNext + ' XP bis ' + esc(r.next.n) : "Höchster Rang") + '</small></div>' +
       '<div class="hhchips"><span class="hhc">🔥 <b class="tnum">' + st.streak.count + '</b></span><span class="hhc">🪙 <b class="tnum">' + st.coins + '</b></span></div></div>' +
@@ -3024,6 +3038,11 @@
     }
     else if (a === "socmode") { soc.boardMode = act.getAttribute("data-m"); render(); }
     else if (a === "howto") howtoSheet();
+    else if (a === "newscloud" || a === "newsx") {
+      var nid = act.getAttribute("data-id"), pfc = S.state.profile; (pfc.cloudSeen || (pfc.cloudSeen = {}))[nid] = 1; S.save(true);
+      var cl = act.closest(".newscloud"); if (cl) cl.remove();
+      if (a === "newscloud" && global.VTG) global.VTG.start(nid);
+    }
     else if (a === "film") {
       global.VTFILM.play(act.getAttribute("data-id"), { audio: S.state.settings.audio, speak: function (t) { speak(t, null, "de"); }, voice: function () { var n = S.state.settings.narrator || "auto"; return n === "dev" ? null : n === "m" ? "m" : "f"; }, onGo: function (g) {
         var b = document.createElement("button"); b.hidden = true;

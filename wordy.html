@@ -839,6 +839,13 @@ details.fold>.fbody{padding:2px 0 14px}
 @keyframes hhdr{to{transform:translateX(560px)}}
 .hhst{position:absolute;inset:0;display:none;background-image:radial-gradient(2px 2px at 20px 30px,#fff,transparent),radial-gradient(2px 2px at 90px 80px,#fff,transparent),radial-gradient(1.5px 1.5px at 160px 40px,#fff,transparent),radial-gradient(2px 2px at 250px 110px,#fff,transparent),radial-gradient(1.5px 1.5px at 320px 60px,#fff,transparent),radial-gradient(2px 2px at 60px 160px,#fff,transparent);animation:hhtw 3s ease-in-out infinite alternate}
 .sky-n .hhst{display:block}@keyframes hhtw{from{opacity:.4}to{opacity:1}}
+.newscloud{position:absolute;z-index:5;right:8px;top:9%;max-width:47%;animation:ncfloat 9s ease-in-out infinite alternate}
+.ncbody{position:relative;display:flex;align-items:center;gap:8px;padding:7px 14px 7px 10px;border:0;border-radius:999px;background:#fff;color:#14213d;box-shadow:0 5px 0 rgba(20,33,61,.22),0 8px 18px rgba(20,33,61,.18);font:inherit;text-align:left;cursor:pointer}
+.ncbody:before,.ncbody:after{content:"";position:absolute;background:#fff;border-radius:50%;z-index:-1}.ncbody:before{width:34px;height:34px;left:16px;top:-14px}.ncbody:after{width:26px;height:26px;left:48px;top:-9px}
+.nci{font-size:22px;line-height:1}.nct b{display:block;font-size:13px;white-space:nowrap;font-weight:900;line-height:1.1}.nct small{display:block;font-size:10.5px;color:#4a5a78;margin-top:2px}
+.ncx{position:absolute;right:-6px;top:-8px;width:22px;height:22px;border-radius:50%;border:2px solid #14213d;background:#ffe27a;color:#14213d;font-size:11px;font-weight:900;line-height:1;padding:0;cursor:pointer}
+@keyframes ncfloat{0%{transform:translate(0,0)}50%{transform:translate(10px,-4px)}100%{transform:translate(4px,3px)}}
+@media (prefers-reduced-motion:reduce){.newscloud{animation:none}}
 .hh .stk-corner{z-index:4;top:8px;right:8px}
 .hhtop{position:relative;z-index:3;padding:16px 16px 0;max-width:68%}
 .hhdate{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;opacity:.9;text-shadow:0 1px 0 rgba(0,0,0,.35)}
@@ -1125,7 +1132,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.89.7";window.WORDY_BUILD="e1034edadd";</script>
+<script>window.WORDY_VERSION="2.90.0";window.WORDY_BUILD="fe80fdd52a";</script>
 </head>
 <body>
 <div id="app">
@@ -8313,6 +8320,20 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     h += '</div>' + (all.length ? '<div style="text-align:center;margin-top:4px"><button class="chip" data-act="gopfad">Ganzen Pfad ansehen →</button></div>' : "") + '</section>';
     return h;
   }
+  /* Neuheiten-Wolke auf der Startseite: kündigt ein neues Spiel an. Neues Spiel = Eintrag in NEWS (id = Spiel-ID aus VTG.GAMES, date = Datum der Veröffentlichung).
+     Sie verschwindet nach dem ersten Spielen, nach ✕, nach dem Antippen oder nach 14 Tagen (pro Profil in profile.cloudSeen). */
+  var NEWS = [{ id: "blast3d", icon: "🛸", title: "NEU: Blast 3D", sub: "Weich den Wörtern aus!", date: "2026-10-11" }];
+  function newsCloud() {
+    var pf = S.state.profile, seen = pf.cloudSeen || {}, ar = S.state.arena || {}, today = S.today();
+    var n = NEWS.filter(function (x) {
+      if (seen[x.id] || !global.VTG || !global.VTG.GAMES.some(function (g) { return g.id === x.id; })) return false;
+      if (dayDiff2(x.date, today) > 14) return false;
+      return !Object.keys(ar).some(function (k) { return k.indexOf("g_" + x.id + ":") === 0; });
+    })[0];
+    if (!n) return "";
+    return '<div class="newscloud" data-id="' + esc(n.id) + '"><button class="ncbody" data-act="newscloud" data-id="' + esc(n.id) + '"><span class="nci">' + n.icon + '</span><span class="nct"><b>' + esc(n.title) + '</b><small>' + esc(n.sub) + '</small></span></button><button class="ncx" data-act="newsx" data-id="' + esc(n.id) + '" aria-label="Ausblenden">✕</button></div>';
+  }
+  function dayDiff2(a, b) { return Math.round((new Date(b + "T00:00:00") - new Date(a + "T00:00:00")) / 864e5); }
   function viewHome() {
     var st = S.state, r = S.rankOf(st.xp);
     var goalSec = S.goalMin() * 60, pct = Math.min(100, Math.round(st.daily.sec * 100 / goalSec));
@@ -8335,7 +8356,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       '<div class="hhtop"><div class="hhdate">' + esc(S.today().split("-").reverse().join(".")) + ' · ' + (biz ? "Business English" : "Schule") + '</div>' +
       '<h1>' + greet + '</h1><p class="hhtip">' + esc(tip) + '</p></div>' +
       '<div class="hhgoal"><div class="hhring" style="--p:' + pct + '"><b class="tnum">' + pct + '%</b></div><small>Tagesziel</small></div>' +
-      '<div class="hhbubble" id="hhBub">' + esc(cheer) + '</div>' +
+      newsCloud() + '<div class="hhbubble" id="hhBub">' + esc(cheer) + '</div>' +
       '<div class="hhpod"><i></i></div><button class="hhfig" id="hhFig" data-act="hhdance" aria-label="Figur antippen">' + heroHtml(pf.avatar, 0) + '</button>' +
       '<div class="hhbar"><div class="hhrank"><b>' + esc(rn) + '</b><div class="hhxp"><i style="width:' + xpPct + '%"></i></div><small class="tnum">' + (r.next ? toNext + ' XP bis ' + esc(r.next.n) : "Höchster Rang") + '</small></div>' +
       '<div class="hhchips"><span class="hhc">🔥 <b class="tnum">' + st.streak.count + '</b></span><span class="hhc">🪙 <b class="tnum">' + st.coins + '</b></span></div></div>' +
@@ -10552,6 +10573,11 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     }
     else if (a === "socmode") { soc.boardMode = act.getAttribute("data-m"); render(); }
     else if (a === "howto") howtoSheet();
+    else if (a === "newscloud" || a === "newsx") {
+      var nid = act.getAttribute("data-id"), pfc = S.state.profile; (pfc.cloudSeen || (pfc.cloudSeen = {}))[nid] = 1; S.save(true);
+      var cl = act.closest(".newscloud"); if (cl) cl.remove();
+      if (a === "newscloud" && global.VTG) global.VTG.start(nid);
+    }
     else if (a === "film") {
       global.VTFILM.play(act.getAttribute("data-id"), { audio: S.state.settings.audio, speak: function (t) { speak(t, null, "de"); }, voice: function () { var n = S.state.settings.narrator || "auto"; return n === "dev" ? null : n === "m" ? "m" : "f"; }, onGo: function (g) {
         var b = document.createElement("button"); b.hidden = true;

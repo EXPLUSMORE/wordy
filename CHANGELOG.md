@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.90.0 – 2026-10-11
+- Startseite: **Neuheiten-Wolke** auf der Hero-Bühne („🛸 NEU: Blast 3D · Weich den Wörtern aus!“). Sie schwebt ruhig (bei „Bewegung reduzieren“ steht sie still), ein Tipp öffnet das Spiel direkt, ✕ blendet sie aus. Sie verschwindet außerdem nach dem ersten Spielen und nach 14 Tagen; pro Profil gemerkt (`profile.cloudSeen`). Neue Spiele werden in der Liste `NEWS` in app.js eingetragen (eine Wolke zur Zeit).
+
 ## 2.89.7 – 2026-10-11
 - Blast 3D: Unter dem gesuchten Wort steht jetzt eine **Vorschau auf die nächsten zwei Wörter** („Danach: …“). Sie ist verbindlich: Genau diese Wörter (in genau dieser Sprache) sind als Nächstes dran.
 
