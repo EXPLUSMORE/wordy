@@ -403,11 +403,17 @@
     sh.target = sh.queue.shift(); $("#blT").textContent = sh.target.de;
     var P = $("#blP"); P.classList.remove("pop"); void P.offsetWidth; P.classList.add("pop");
   }
+  /* Lange Wörter und Redewendungen in Blast: Schrift in Stufen kleiner (bis 12 Zeichen normal, bis 18 90 %, bis 22 80 %, darüber 70 %), dazu Umbruch in zwei Zeilen */
+  function blFit(d) {
+    var n = d.textContent.length; if (n <= 12) return;
+    var base = parseFloat(getComputedStyle(d).fontSize), f = n <= 18 ? .9 : n <= 22 ? .8 : .7;
+    if (base) d.style.fontSize = (Math.round(base * f * 10) / 10) + "px";
+  }
   function blSpawn(w, kind) {
     var sh = G.sh, F = $("#blF"), d = document.createElement("div"), id = ++sh.id;
     d.className = "foe" + (kind ? " orb" : ""); d.setAttribute("data-fid", id); d.textContent = kind ? (kind === "freeze" ? "❄️" : "💣") : w.raw;
     d.style.setProperty("--h", kind ? (kind === "freeze" ? 195 : 20) : Math.floor(Math.random() * 360));
-    F.appendChild(d); if (!kind && global.VTFIT) global.VTFIT.el(d, false);
+    F.appendChild(d); if (!kind) blFit(d);
     var fw = d.offsetWidth, x = 8 + Math.random() * Math.max(1, sh.w - fw - 16);
     var o = { id: id, el: d, w: w, kind: kind || null, x: x, y: -44, fw: fw, fh: d.offsetHeight, ph: Math.random() * 6 };
     d.style.transform = "translate3d(" + x + "px," + o.y + "px,0)"; sh.foes.push(o); return o;
