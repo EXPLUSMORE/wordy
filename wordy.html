@@ -1123,7 +1123,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.86.3";window.WORDY_BUILD="e9b6c900b1";</script>
+<script>window.WORDY_VERSION="2.87.0";window.WORDY_BUILD="e8d2dcfe5d";</script>
 </head>
 <body>
 <div id="app">
@@ -11584,9 +11584,15 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
      untereinander gestapelt (ein Wort pro Zeile), schmal umgebrochen, einzeilig kleiner oder groß umgebrochen.
      Zu breite Einzeiler werden so weit verkleinert, dass sie ins Feld passen. */
   function blFit(d) {
-    var base = parseFloat(getComputedStyle(d).fontSize), t = d.textContent, n = t.length, multi = /\s/.test(t.trim()), maxW = G.sh.w * 0.92, r = Math.random(), f = 0.85 + Math.random() * 0.4;
+    var base = parseFloat(getComputedStyle(d).fontSize), t = d.textContent, n = t.length, multi = /\s/.test(t.trim()), maxW = G.sh.w * 0.92, r = Math.random(), f = 0.75 + Math.random() * 0.75;
     if (!base) return;
-    if (n > 12) f = Math.min(f, n <= 18 ? 1 : 0.9);
+    var pick = function (a) { return a[Math.floor(Math.random() * a.length)]; };   // Form und Schrift je Wort anders: Ecken, Neigung, Strichstärke, Abstand, Innenabstand
+    d.style.borderRadius = pick(["6px", "14px", "22px", "999px", "4px 18px", "18px 4px", "28px 8px 28px 8px"]);
+    d.style.rotate = pick(["0deg", "0deg", "-5deg", "4deg", "-8deg", "7deg", "-2deg"]);
+    d.style.fontWeight = pick([600, 700, 800, 900]);
+    d.style.letterSpacing = pick(["-0.02em", "0", "0.03em", "0.06em"]);
+    d.style.padding = pick(["6px 10px", "8px 14px", "10px 18px", "12px 12px", "5px 16px"]);
+    if (n > 12) f = Math.min(f, n <= 18 ? 1.05 : 0.9);
     if (multi) {
       if (r < 0.3) { d.style.width = "min-content"; if (n > 22) f = Math.min(f, 0.95); }   // alle Wörter untereinander
       else if (r < 0.55) { d.style.maxWidth = Math.round(38 + Math.random() * 22) + "%"; }   // schmal umbrechen
@@ -11602,7 +11608,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     d.style.setProperty("--h", kind ? (kind === "freeze" ? 195 : 20) : Math.floor(Math.random() * 360));
     F.appendChild(d); if (!kind) blFit(d);
     var fw = d.offsetWidth, x = 8 + Math.random() * Math.max(1, sh.w - fw - 16);
-    var o = { id: id, el: d, w: w, kind: kind || null, x: x, y: -44, fw: fw, fh: d.offsetHeight, ph: Math.random() * 6 };
+    var o = { sp: kind ? 1 : 0.82 + Math.random() * 0.4, id: id, el: d, w: w, kind: kind || null, x: x, y: -44, fw: fw, fh: d.offsetHeight, ph: Math.random() * 6 };
     d.style.transform = "translate3d(" + x + "px," + o.y + "px,0)"; sh.foes.push(o); return o;
   }
   function blBoom(o, bad) {
@@ -11653,7 +11659,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     sh.foes.forEach(function (o) {
       if (o.dead) return;
       var ox = Math.max(0, Math.min(sh.w - o.fw, o.x + Math.sin(sh.t * (sh.hard ? 2.2 : 1.3) + o.ph) * (sh.hard ? 28 : 6)));
-      o.y += v * dt; o.el.style.transform = "translate3d(" + ox + "px," + o.y + "px,0)";
+      o.y += v * dt * (o.sp || 1); o.el.style.transform = "translate3d(" + ox + "px," + o.y + "px,0)";
       if (!o.kind && o.y + (o.fh || 34) > sh.h - 46 && o.y < sh.h - 8 && ox < sh.px + 18 && ox + o.fw > sh.px - 18) {   // Raumschiff berührt ein Wort: ein Herz weg
         var ct = sh.target && o.w.id === sh.target.id; blBoom(o, true);
         if (ct) { var t0 = sh.target; blFlash("Getroffen: " + t0.en + " = " + t0.de, "bad"); G.items++; blNextTarget(); blLose("berührt", t0); }
