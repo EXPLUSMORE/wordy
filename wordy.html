@@ -1123,7 +1123,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.87.0";window.WORDY_BUILD="e8d2dcfe5d";</script>
+<script>window.WORDY_VERSION="2.88.0";window.WORDY_BUILD="62f80c09da";</script>
 </head>
 <body>
 <div id="app">
@@ -11588,7 +11588,9 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (!base) return;
     var pick = function (a) { return a[Math.floor(Math.random() * a.length)]; };   // Form und Schrift je Wort anders: Ecken, Neigung, Strichstärke, Abstand, Innenabstand
     d.style.borderRadius = pick(["6px", "14px", "22px", "999px", "4px 18px", "18px 4px", "28px 8px 28px 8px"]);
-    d.style.rotate = pick(["0deg", "0deg", "-5deg", "4deg", "-8deg", "7deg", "-2deg"]);
+    var rr = Math.random(), a = rr < 0.3 ? 0 : rr < 0.7 ? (Math.random() - 0.5) * 30 : rr < 0.85 ? pick([-90, 90, -75, 75]) : rr < 0.93 ? 180 + (Math.random() - 0.5) * 20 : (Math.random() - 0.5) * 120;   // meist leicht schief, manchmal hochkant oder auf dem Kopf
+    d._rot = a; d._spin = Math.random() < 0.22 ? (Math.random() < 0.5 ? -1 : 1) * (12 + Math.random() * 30) : 0;   // einige drehen sich langsam weiter (Grad pro Sekunde)
+    d.style.rotate = a + "deg";
     d.style.fontWeight = pick([600, 700, 800, 900]);
     d.style.letterSpacing = pick(["-0.02em", "0", "0.03em", "0.06em"]);
     d.style.padding = pick(["6px 10px", "8px 14px", "10px 18px", "12px 12px", "5px 16px"]);
@@ -11608,7 +11610,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     d.style.setProperty("--h", kind ? (kind === "freeze" ? 195 : 20) : Math.floor(Math.random() * 360));
     F.appendChild(d); if (!kind) blFit(d);
     var fw = d.offsetWidth, x = 8 + Math.random() * Math.max(1, sh.w - fw - 16);
-    var o = { sp: kind ? 1 : 0.82 + Math.random() * 0.4, id: id, el: d, w: w, kind: kind || null, x: x, y: -44, fw: fw, fh: d.offsetHeight, ph: Math.random() * 6 };
+    var rb = d.getBoundingClientRect(), o = { rot: d._rot || 0, spin: d._spin || 0, cw: d._spin ? Math.max(rb.width, rb.height) : rb.width, ch: d._spin ? Math.max(rb.width, rb.height) : rb.height, sp: kind ? 1 : 0.82 + Math.random() * 0.4, id: id, el: d, w: w, kind: kind || null, x: x, y: -44, fw: fw, fh: d.offsetHeight, ph: Math.random() * 6 };
     d.style.transform = "translate3d(" + x + "px," + o.y + "px,0)"; sh.foes.push(o); return o;
   }
   function blBoom(o, bad) {
@@ -11659,8 +11661,9 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     sh.foes.forEach(function (o) {
       if (o.dead) return;
       var ox = Math.max(0, Math.min(sh.w - o.fw, o.x + Math.sin(sh.t * (sh.hard ? 2.2 : 1.3) + o.ph) * (sh.hard ? 28 : 6)));
-      o.y += v * dt * (o.sp || 1); o.el.style.transform = "translate3d(" + ox + "px," + o.y + "px,0)";
-      if (!o.kind && o.y + (o.fh || 34) > sh.h - 46 && o.y < sh.h - 8 && ox < sh.px + 18 && ox + o.fw > sh.px - 18) {   // Raumschiff berührt ein Wort: ein Herz weg
+      o.y += v * dt * (o.sp || 1); if (o.spin) o.el.style.rotate = (o.rot + o.spin * sh.t) + "deg"; o.el.style.transform = "translate3d(" + ox + "px," + o.y + "px,0)";
+      var cx = ox + o.fw / 2, cy = o.y + (o.fh || 34) / 2, hw = (o.cw || o.fw) / 2, hh = (o.ch || o.fh || 34) / 2;   // Berührung mit dem (gedrehten) Feld des Wortes
+      if (!o.kind && cy + hh > sh.h - 46 && cy - hh < sh.h - 8 && Math.abs(cx - sh.px) < hw + 18) {   // Raumschiff berührt ein Wort: ein Herz weg
         var ct = sh.target && o.w.id === sh.target.id; blBoom(o, true);
         if (ct) { var t0 = sh.target; blFlash("Getroffen: " + t0.en + " = " + t0.de, "bad"); G.items++; blNextTarget(); blLose("berührt", t0); }
         else { blFlash("Autsch! Ausweichen!", "bad"); blLose("berührt"); }

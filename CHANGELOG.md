@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.88.0 – 2026-10-11
+- Blast: Die Wörter sind **zufällig gedreht**: meist leicht schief (bis 15°), manchmal hochkant (±75 bis 90°), selten auf dem Kopf oder stark geneigt. Etwa jedes fünfte Wort **dreht sich langsam weiter** (12 bis 42° pro Sekunde, links oder rechts). Die Berührung mit dem Raumschiff rechnet mit dem gedrehten Feld des Wortes.
+
 ## 2.87.0 – 2026-10-11
 - Blast, noch mehr Abwechslung: Jedes Wort bekommt zufällig eine eigene Form (eckig, rund, Pille, schräge Ecken), leichte Neigung (bis 8°), Strichstärke, Buchstabenabstand und Innenabstand; die Größe schwankt von 75 bis 150 % (bei langen Texten begrenzt).
 - Blast: Jedes Wort fällt mit **eigener Geschwindigkeit** (82 bis 122 % des Level-Tempos), nicht zu schnell, aber nicht im Gleichschritt. Eis-Sterne und Bomben fallen wie bisher.
