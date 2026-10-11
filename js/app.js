@@ -151,6 +151,20 @@
     document.removeEventListener("pointerdown", warm);
     if (S.state.settings.audio && window.speechSynthesis) { try { primeSpeech(null, 300); lastSpoke = Date.now(); } catch (e) {} }
   }, { passive: true });
+  /* Lange Wörter und Redewendungen: Schrift je nach Länge verkleinern (Stufen), dazu umbrechen. Gilt für Fragen, Antworten, Kacheln und Blast-Wörter.
+     Business-Redewendungen und Satzteile aus Headlight 2 sind bis zu 50 Zeichen lang, einzelne Wörter meist unter 12. */
+  var FIT_BIG = ".prompt, .ar-word, .wg-hint", FIT_SMALL = ".opt > span:last-child, .ar-opt, .ar-tile, .gr-opt, .gr-tile, .foe:not(.orb)";
+  function fitEl(el, big) {
+    var n = (el.firstChild && el.firstChild.nodeType === 3 || !el.children.length ? el.textContent : (el.querySelector("b") || el).textContent).trim().length;
+    if (el._fitN === n) return; el._fitN = n;
+    el.style.fontSize = ""; if (n <= (big ? 14 : 22)) return;
+    var f = big ? (n <= 24 ? .85 : n <= 34 ? .72 : .6) : (n <= 34 ? .9 : n <= 46 ? .8 : .72);
+    var base = parseFloat(getComputedStyle(el).fontSize); if (base) el.style.fontSize = (Math.round(base * f * 10) / 10) + "px";
+  }
+  function fitScan() { try { Array.prototype.forEach.call(document.querySelectorAll(FIT_BIG), function (e) { fitEl(e, true); }); Array.prototype.forEach.call(document.querySelectorAll(FIT_SMALL), function (e) { fitEl(e, false); }); } catch (e) {} }
+  var fitT = 0;
+  try { new MutationObserver(function () { if (!fitT) fitT = requestAnimationFrame(function () { fitT = 0; fitScan(); }); }).observe(document.body, { childList: true, subtree: true, characterData: true }); } catch (e) {}
+  global.VTFIT = { el: function (e, big) { fitEl(e, !!big); }, scan: fitScan };
   /* Bildschirm anlassen, solange Wordy offen ist (Screen Wake Lock). Das System gibt die Sperre beim Wechsel in den Hintergrund selbst frei, deshalb beim Zurückkehren neu anfordern. */
   var wakeLock = null;
   function wakeSync() {

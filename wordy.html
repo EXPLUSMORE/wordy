@@ -506,7 +506,7 @@ html.ar-open, html.ar-open body{overflow:hidden}
 .bl-field{position:relative;flex:1 1 auto;min-height:0;overflow:hidden;margin:6px 0 0;background:radial-gradient(1.5px 1.5px at 20% 30%,#fff9,transparent),radial-gradient(1.5px 1.5px at 70% 60%,#fff8,transparent),radial-gradient(2px 2px at 45% 80%,#fffa,transparent),radial-gradient(1px 1px at 85% 20%,#fff9,transparent),linear-gradient(#0A111D,#14224a);background-size:120px 160px,170px 190px,230px 210px,90px 110px,100% 100%;animation:blstars 14s linear infinite;touch-action:manipulation;user-select:none}
 @keyframes blstars{to{background-position:0 160px,0 190px,0 210px,0 110px,0 0}}
 .bl-field.frozen{box-shadow:inset 0 0 60px rgba(120,210,255,.55)}.bl-field.hurt{animation:blhurt .35s,blstars 14s linear infinite}@keyframes blhurt{30%{box-shadow:inset 0 0 70px rgba(255,60,60,.7)}}
-.foe{position:absolute;left:0;top:0;padding:8px 14px;border-radius:14px;font-weight:800;font-size:clamp(16px,5vw,20px);color:#fff;background:rgba(24,36,80,.88);border:2px solid hsl(var(--h) 80% 62%);box-shadow:0 0 14px hsl(var(--h) 90% 55%/.55);white-space:nowrap;will-change:transform;cursor:pointer}.foe.orb{font-size:30px;padding:4px 10px;border-radius:50%}
+.foe{max-width:76%;text-align:center;line-height:1.15;position:absolute;left:0;top:0;padding:8px 14px;border-radius:14px;font-weight:800;font-size:clamp(16px,5vw,20px);color:#fff;background:rgba(24,36,80,.88);border:2px solid hsl(var(--h) 80% 62%);box-shadow:0 0 14px hsl(var(--h) 90% 55%/.55);white-space:normal;overflow-wrap:break-word;will-change:transform;cursor:pointer}.foe.orb{font-size:30px;padding:4px 10px;border-radius:50%}
 .foe.boom{animation:blboom .28s forwards;pointer-events:none}.foe.boom.bad{border-color:#ff5b6b}@keyframes blboom{to{opacity:0;filter:brightness(2.4);scale:1.5}}
 .bl-ctl{display:flex;gap:12px;padding:8px 16px calc(10px + env(safe-area-inset-bottom));flex:none}.bl-ctl button{flex:1;height:56px;border-radius:16px;border:1px solid var(--ar-line);background:var(--ar-s);color:var(--ar-ink);font-size:26px;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}.bl-ctl button:active{background:var(--ar-line)}
 .bl-ship{position:absolute;left:50%;bottom:4px;margin-left:-22px;font-size:42px;line-height:1;transition:transform .12s;pointer-events:none}
@@ -1120,10 +1120,11 @@ details.fold>.fbody{padding:2px 0 14px}
 @keyframes stpPulse{0%,100%{box-shadow:0 0 0 0 rgba(30,98,115,.35)}50%{box-shadow:0 0 0 6px rgba(30,98,115,0)}}
 @media (prefers-reduced-motion:reduce){.stp.new .stpi,.stp.now .stpi{animation:none}}
 .passc .stp small{color:#c9d6f0}.passc .stpi{border-color:rgba(255,255,255,.35)}.passc .stp.ok .stpi{border-color:#e8b53c}.passc .stp.joker .stpi{border-color:#c79bff}
+.prompt,.ar-word,.wg-hint,.opt>span:last-child,.ar-opt,.ar-tile,.gr-opt,.gr-tile{overflow-wrap:break-word;text-wrap:balance;line-height:1.2}
 </style>
 
 
-<script>window.WORDY_VERSION="2.85.0";window.WORDY_BUILD="546c0a80e4";</script>
+<script>window.WORDY_VERSION="2.86.0";window.WORDY_BUILD="c931050773";</script>
 </head>
 <body>
 <div id="app">
@@ -7671,6 +7672,20 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     document.removeEventListener("pointerdown", warm);
     if (S.state.settings.audio && window.speechSynthesis) { try { primeSpeech(null, 300); lastSpoke = Date.now(); } catch (e) {} }
   }, { passive: true });
+  /* Lange Wörter und Redewendungen: Schrift je nach Länge verkleinern (Stufen), dazu umbrechen. Gilt für Fragen, Antworten, Kacheln und Blast-Wörter.
+     Business-Redewendungen und Satzteile aus Headlight 2 sind bis zu 50 Zeichen lang, einzelne Wörter meist unter 12. */
+  var FIT_BIG = ".prompt, .ar-word, .wg-hint", FIT_SMALL = ".opt > span:last-child, .ar-opt, .ar-tile, .gr-opt, .gr-tile, .foe:not(.orb)";
+  function fitEl(el, big) {
+    var n = (el.firstChild && el.firstChild.nodeType === 3 || !el.children.length ? el.textContent : (el.querySelector("b") || el).textContent).trim().length;
+    if (el._fitN === n) return; el._fitN = n;
+    el.style.fontSize = ""; if (n <= (big ? 14 : 22)) return;
+    var f = big ? (n <= 24 ? .85 : n <= 34 ? .72 : .6) : (n <= 34 ? .9 : n <= 46 ? .8 : .72);
+    var base = parseFloat(getComputedStyle(el).fontSize); if (base) el.style.fontSize = (Math.round(base * f * 10) / 10) + "px";
+  }
+  function fitScan() { try { Array.prototype.forEach.call(document.querySelectorAll(FIT_BIG), function (e) { fitEl(e, true); }); Array.prototype.forEach.call(document.querySelectorAll(FIT_SMALL), function (e) { fitEl(e, false); }); } catch (e) {} }
+  var fitT = 0;
+  try { new MutationObserver(function () { if (!fitT) fitT = requestAnimationFrame(function () { fitT = 0; fitScan(); }); }).observe(document.body, { childList: true, subtree: true, characterData: true }); } catch (e) {}
+  global.VTFIT = { el: function (e, big) { fitEl(e, !!big); }, scan: fitScan };
   /* Bildschirm anlassen, solange Wordy offen ist (Screen Wake Lock). Das System gibt die Sperre beim Wechsel in den Hintergrund selbst frei, deshalb beim Zurückkehren neu anfordern. */
   var wakeLock = null;
   function wakeSync() {
@@ -11282,7 +11297,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   function start(id, opts) {
     var seen = S.state.settings.gameIntro || (S.state.settings.gameIntro = {});
     if (!seen[id] && !(opts && opts._intro)) { if (!(S.pools().all.length || (opts && (opts.units || opts.unit)))) return; return showIntro(id, opts); }
-    var min = id === "blast" ? 2 : 3, max = 8, n = id === "kreuz" ? 14 : id === "blast" ? 40 : id === "letters" ? 7 : 5, words = pickWords(n, min, id === "blast" ? 14 : max, opts && (opts.units || opts.unit), id === "blast");
+    var min = id === "blast" ? 2 : 3, max = 8, n = id === "kreuz" ? 14 : id === "blast" ? 40 : id === "letters" ? 7 : 5, words = pickWords(n, min, id === "blast" ? 26 : max, opts && (opts.units || opts.unit), id === "blast");
     if (words.length < (id === "kreuz" ? 6 : id === "blast" ? 6 : id === "letters" ? 5 : 3)) return toast("Dafür brauchst du mehr Wörter im gewählten Bereich (einzelne Wörter ab 3 Buchstaben).");
     S.rollDay();
     G = { id: id, words: words, i: 0, score: 0, res: [], items: 0, correct: 0, wrong: 0, hints: 0, start: Date.now(), done: false, opts: opts || null, maxStreak: 0, streak: 0, cleared: 0 };
@@ -11538,7 +11553,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
 
   /* ================= Blast (Wörter-Shooter) ================= */
   function blastStart() {
-    var deck = pickWords(60, 2, 14, G.opts && (G.opts.units || G.opts.unit), true);
+    var deck = pickWords(60, 2, 26, G.opts && (G.opts.units || G.opts.unit), true);
     G.words = deck; G.res = [];
     el.innerHTML = top("Blast") +
       '<div class="bl-hud"><span id="blLives"></span><span id="blLevel"></span><span id="blCombo"></span></div>' +
@@ -11584,7 +11599,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var sh = G.sh, F = $("#blF"), d = document.createElement("div"), id = ++sh.id;
     d.className = "foe" + (kind ? " orb" : ""); d.setAttribute("data-fid", id); d.textContent = kind ? (kind === "freeze" ? "❄️" : "💣") : w.raw;
     d.style.setProperty("--h", kind ? (kind === "freeze" ? 195 : 20) : Math.floor(Math.random() * 360));
-    F.appendChild(d);
+    F.appendChild(d); if (!kind && global.VTFIT) global.VTFIT.el(d, false);
     var fw = d.offsetWidth, x = 8 + Math.random() * Math.max(1, sh.w - fw - 16);
     var o = { id: id, el: d, w: w, kind: kind || null, x: x, y: -44, fw: fw, fh: d.offsetHeight, ph: Math.random() * 6 };
     d.style.transform = "translate3d(" + x + "px," + o.y + "px,0)"; sh.foes.push(o); return o;

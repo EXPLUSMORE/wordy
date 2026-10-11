@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.86.0 – 2026-10-11
+- Lange Wörter und Redewendungen: Die Schrift wird jetzt je nach Länge in Stufen kleiner und der Text umgebrochen, statt über den Rand zu laufen. Große Texte (Frage, Wort im Spiel, Hinweis): bis 14 Zeichen unverändert, bis 24 Zeichen 85 %, bis 34 Zeichen 72 %, darüber 60 %. Kleine Texte (Antworten, Kacheln, Blast-Wörter): bis 22 Zeichen unverändert, bis 34 Zeichen 90 %, bis 46 Zeichen 80 %, darüber 72 %. Gilt in allen Lernbereichen (Schule, Business-Redewendungen, Smalltalk) für Üben, Arena, Wortspiele und Grammatik; umgesetzt zentral in `VTFIT` (app.js).
+- Blast: Redewendungen und Wortgruppen bis 26 Zeichen sind jetzt erlaubt (vorher bis 14), damit auch die Business-Einheiten spielbar sind. Die Wörter brechen bei Bedarf in zwei Zeilen um.
+
 ## 2.85.0 – 2026-10-11
 - Bildschirm bleibt an, solange Wordy offen und sichtbar ist (Screen Wake Lock): kein Abdunkeln, kein Ruhezustand. Beim Zurückkehren in die App wird die Sperre neu angefordert. Abschaltbar unter Profil › Ton & Aussehen › „Bildschirm anlassen“ (Standard: an). Geräte oder Browser ohne diese Funktion verhalten sich wie bisher.
 

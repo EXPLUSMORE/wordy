@@ -105,7 +105,7 @@
   function start(id, opts) {
     var seen = S.state.settings.gameIntro || (S.state.settings.gameIntro = {});
     if (!seen[id] && !(opts && opts._intro)) { if (!(S.pools().all.length || (opts && (opts.units || opts.unit)))) return; return showIntro(id, opts); }
-    var min = id === "blast" ? 2 : 3, max = 8, n = id === "kreuz" ? 14 : id === "blast" ? 40 : id === "letters" ? 7 : 5, words = pickWords(n, min, id === "blast" ? 14 : max, opts && (opts.units || opts.unit), id === "blast");
+    var min = id === "blast" ? 2 : 3, max = 8, n = id === "kreuz" ? 14 : id === "blast" ? 40 : id === "letters" ? 7 : 5, words = pickWords(n, min, id === "blast" ? 26 : max, opts && (opts.units || opts.unit), id === "blast");
     if (words.length < (id === "kreuz" ? 6 : id === "blast" ? 6 : id === "letters" ? 5 : 3)) return toast("Dafür brauchst du mehr Wörter im gewählten Bereich (einzelne Wörter ab 3 Buchstaben).");
     S.rollDay();
     G = { id: id, words: words, i: 0, score: 0, res: [], items: 0, correct: 0, wrong: 0, hints: 0, start: Date.now(), done: false, opts: opts || null, maxStreak: 0, streak: 0, cleared: 0 };
@@ -361,7 +361,7 @@
 
   /* ================= Blast (Wörter-Shooter) ================= */
   function blastStart() {
-    var deck = pickWords(60, 2, 14, G.opts && (G.opts.units || G.opts.unit), true);
+    var deck = pickWords(60, 2, 26, G.opts && (G.opts.units || G.opts.unit), true);
     G.words = deck; G.res = [];
     el.innerHTML = top("Blast") +
       '<div class="bl-hud"><span id="blLives"></span><span id="blLevel"></span><span id="blCombo"></span></div>' +
@@ -407,7 +407,7 @@
     var sh = G.sh, F = $("#blF"), d = document.createElement("div"), id = ++sh.id;
     d.className = "foe" + (kind ? " orb" : ""); d.setAttribute("data-fid", id); d.textContent = kind ? (kind === "freeze" ? "❄️" : "💣") : w.raw;
     d.style.setProperty("--h", kind ? (kind === "freeze" ? 195 : 20) : Math.floor(Math.random() * 360));
-    F.appendChild(d);
+    F.appendChild(d); if (!kind && global.VTFIT) global.VTFIT.el(d, false);
     var fw = d.offsetWidth, x = 8 + Math.random() * Math.max(1, sh.w - fw - 16);
     var o = { id: id, el: d, w: w, kind: kind || null, x: x, y: -44, fw: fw, fh: d.offsetHeight, ph: Math.random() * 6 };
     d.style.transform = "translate3d(" + x + "px," + o.y + "px,0)"; sh.foes.push(o); return o;
