@@ -80,7 +80,7 @@
     eisi: ["Icy steht auf schmelzendem Eis. Rate das englische Wort zur deutschen Bedeutung, Buchstabe für Buchstabe.", "Tippe einen Buchstaben: Kommt er im Wort vor, erscheint er. Wenn nicht, schmilzt ein Eisstück.", "Nach 6 Fehlern fällt Icy ins Wasser. 5 Wörter pro Runde.", "💡 deckt einen Buchstaben auf, kostet aber ein Eisstück."],
     kreuz: ["Ein Kreuzworträtsel: Die Hinweise sind deutsch, geschrieben wird englisch.", "Tippe ein Feld und dann die Buchstaben. Tippst du dasselbe Feld nochmal, wechselt die Richtung (waagerecht ↔ senkrecht). Du kannst auch einen Hinweis antippen.", "<b>✓ Prüfen</b> färbt falsche Buchstaben rot, 💡 deckt ein Feld auf (−8 Punkte)."],
     blast: ["Oben steht ein deutsches Wort. Englische Wörter fliegen auf dich zu.", "Tippe das passende englische Wort an, bevor es unten ankommt.", "Falsch getippt oder das richtige verpasst: −1 ♥. Alle 5 Treffer gibt es ein neues Level, alle 10 ein Extra-Herz.", "❄️ bremst alles, 💣 räumt die falschen Wörter weg."],
-    blast3d: ["Oben steht ein Wort, englisch oder deutsch. Seine Übersetzung kommt dir in 3D entgegen, zusammen mit zwei falschen Wörtern.", "Mit ◀ ▶ (am Rechner Pfeiltasten oder A / D) springt dein Raumschiff pro Tipp eine Spur weiter. Flieg in die Spur mit dem richtigen Wort. Es gibt vier Spuren, in jeder Welle bleibt eine frei.", "Ein falsches Wort berührt: −1 ♥. Das richtige verpasst: nur die Serie reißt ab. Alle 5 Treffer gibt es ein neues Level (schneller), alle 10 ein Extra-Herz."],
+    blast3d: ["Oben steht ein Wort, englisch oder deutsch. Seine Übersetzung kommt dir in 3D entgegen, zusammen mit zwei falschen Wörtern.", "Mit ◀ ▶ (am Rechner Pfeiltasten oder A / D) springt dein Raumschiff pro Tipp eine Spur weiter. Flieg in die Spur mit dem richtigen Wort. Es gibt drei Spuren, in jeder Welle bleibt eine frei.", "Ein falsches Wort berührt: −1 ♥. Das richtige verpasst: nur die Serie reißt ab. Alle 5 Treffer gibt es ein neues Level (schneller), alle 10 ein Extra-Herz."],
     letters: ["Im Buchstabensalat verstecken sich englische Wörter. Die Liste zeigt die deutschen Bedeutungen.", "Wische vom ersten bis zum letzten Buchstaben eines Wortes. Es geht waagerecht, senkrecht und diagonal, auch rückwärts. Wörter dürfen sich kreuzen.", "Du kannst auch erst den Anfang und dann das Ende antippen. Ein Tipp auf einen Hinweis markiert den Anfang (−8 Punkte)."]
   };
   function helpHtml(id, btn) {
@@ -529,20 +529,20 @@
 
 
   /* ================= Blast 3D (Ausweichen) ================= */
-  /* Perspektive: Tiefe d von 1 (Horizont) bis 0 (Ebene des Raumschiffs). Maßstab s = 1 / (1 + 2,4 d); Bildschirm-y wächst mit s, x = Mitte + Spur * Spurbreite * s. */
-  var B3LANES = [-1.5, -0.5, 0.5, 1.5];
+  /* Perspektive: Tiefe d von 1 (Horizont, ganz oben) bis 0 (Ebene des Raumschiffs). Maßstab s = 1 / (1 + 3 d), Darstellung 1,25 s; Bildschirm-y wächst mit s, x = Mitte + Spur * Spurbreite * s. */
+  var B3LANES = [-1, 0, 1];
   function b3Start() {
     G.words = pickWords(60, 2, 16, G.opts && (G.opts.units || G.opts.unit), true); G.res = [];
     el.innerHTML = top("Blast 3D") +
       '<div class="bl-hud"><span id="blLives"></span><span id="blLevel"></span><span id="blCombo"></span></div>' +
-      '<div class="bl-field b3" id="blF"><svg class="b3-grid" viewBox="0 0 100 100" preserveAspectRatio="none"><g stroke="rgba(120,200,255,.28)" stroke-width=".35" fill="none"><path d="M0 17H100"/>' +
-      [-2, -1, 0, 1, 2].map(function (k) { return '<path d="M50 17L' + (50 + k * 30) + ' 100"/>'; }).join("") + '</g></svg>' +
+      '<div class="bl-field b3" id="blF"><svg class="b3-grid" viewBox="0 0 100 100" preserveAspectRatio="none"><g stroke="rgba(120,200,255,.28)" stroke-width=".35" fill="none"><path d="M0 8H100"/>' +
+      [-1.5, -0.5, 0.5, 1.5].map(function (k) { return '<path d="M50 8L' + (50 + k * 32) + ' 100"/>'; }).join("") + '</g></svg>' +
       '<div class="bl-ship" id="blS">🚀</div><div class="bl-flash" id="blFl"></div></div>' +
       '<div class="bl-prompt" id="blP" style="margin:6px 14px 0"><small id="b3Sub">Flieg in die richtige Spur</small><b id="blT"></b></div>' +   // das gesuchte Wort steht unten, direkt über den Tasten
       '<div class="bl-ctl"><button type="button" id="blL" aria-label="Nach links">◀</button><button type="button" id="blR" aria-label="Nach rechts">▶</button></div>';
     var F = $("#blF");
-    G.sh = { px: 0, lx: B3LANES[1], lane: 1, dir: 0, keys: {}, lives: 3, level: 1, hits: 0, queue: [], target: null, waves: [], t: 0, last: 0, w: F.clientWidth, h: F.clientHeight, over: false, T: 8.5, hard: false, hits5: 0 };
-    G.sh.ls = G.sh.w * 0.25; G.sh.y0 = G.sh.h * 0.17; G.sh.yS = G.sh.h - 54;
+    G.sh = { px: 0, lx: 0, lane: 1, dir: 0, keys: {}, lives: 3, level: 1, hits: 0, queue: [], target: null, waves: [], t: 0, last: 0, w: F.clientWidth, h: F.clientHeight, over: false, T: 8.5, hard: false, hits5: 0 };
+    G.sh.ls = G.sh.w * 0.31; G.sh.y0 = G.sh.h * 0.07; G.sh.yS = G.sh.h - 54;
     G.sh.px = G.sh.w / 2; blShipPos();
     [["blL", -1], ["blR", 1]].forEach(function (b) {
       $("#" + b[0]).addEventListener("pointerdown", function (e) { e.preventDefault(); b3Hop(b[1]); });   // ein Tipp = eine Spur
@@ -556,11 +556,11 @@
   }
   function b3Spawn() {
     var sh = G.sh, F = $("#blF"), t = b3Next(), deAnswer = Math.random() < 0.5;   // deAnswer: die Antworten sind deutsch, oben steht das englische Wort
-    var others = S.shuffle(G.words.filter(function (x) { return x.id !== t.id && x.en !== t.en && x.de !== t.de; })).slice(0, 2);
-    var lanes = S.shuffle([0, 1, 2, 3]), items = [t].concat(others).map(function (w, i) {
+    var others = S.shuffle(G.words.filter(function (x) { return x.id !== t.id && x.en !== t.en && x.de !== t.de; })).slice(0, sh.hard ? 2 : 1);
+    var lanes = S.shuffle([0, 1, 2]), items = [t].concat(others).map(function (w, i) {
       var txt = deAnswer ? w.de : w.raw, d = document.createElement("div"), n = txt.length;
       d.className = "foe b3w"; d.textContent = txt; d.style.setProperty("--h", Math.floor(Math.random() * 360));
-      d.style.maxWidth = Math.round(sh.ls * 1.08) + "px"; d.style.fontSize = Math.max(12, Math.min(26, Math.floor((sh.ls * 1.08 - 24) / (Math.max.apply(null, txt.split(/\s+/).map(function (x) { return x.length; })) * 0.74)))) + "px";   /* längstes Wort passt in die Spur, Wortgruppen brechen zwischen den Wörtern um */ d.style.opacity = 0;
+      d.style.maxWidth = Math.round(sh.ls * 0.97 / 1.25) + "px"; d.style.fontSize = Math.max(12, Math.min(26, Math.floor((sh.ls * 0.97 / 1.25 - 22) / (Math.max.apply(null, txt.split(/\s+/).map(function (x) { return x.length; })) * 0.74)))) + "px";   /* längstes Wort passt in die Spur, Wortgruppen brechen zwischen den Wörtern um */ d.style.opacity = 0;
       F.appendChild(d); return { w: w, lane: lanes[i], el: d, correct: i === 0 };
     });
     sh.waves.push({ d: 1, items: items, t: t, deAnswer: deAnswer, done: false, got: false });
@@ -599,12 +599,12 @@
     var T = sh.T * (sh.hard ? 0.85 : 1);
     sh.waves.forEach(function (wv) {
       wv.d -= dt / T;
-      var s = 1 / (1 + 2.4 * Math.max(wv.d, -0.2)), y = sh.y0 + (sh.yS - sh.y0) * s;
+      var s = 1 / (1 + 3 * Math.max(wv.d, -0.2)), y = sh.y0 + (sh.yS - sh.y0) * s;
       wv.items.forEach(function (it) {
         if (it.hit && wv.d < -0.02) return;
         var x = sh.w / 2 + B3LANES[it.lane] * sh.ls * s;
-        it.el.style.transform = "translate(" + x + "px," + y + "px) translate(-50%,-50%) scale(" + (s * 1.2).toFixed(3) + ")"; it.el.style.zIndex = Math.round(s * 100);
-        it.el.style.opacity = Math.max(0, Math.min(1, (1 - wv.d) * 4, wv.d < 0 ? 1 + wv.d * 6 : 1));
+        it.el.style.transform = "translate(" + x + "px," + y + "px) translate(-50%,-50%) scale(" + (s * 1.25).toFixed(3) + ")"; it.el.style.zIndex = Math.round(s * 100);
+        it.el.style.opacity = Math.max(0, Math.min(1, (1 - wv.d) * 14 + 0.25, wv.d < 0 ? 1 + wv.d * 6 : 1));   // erscheint sofort am Horizont, wächst beim Näherkommen
       });
       if (!wv.done && wv.d <= 0.02) b3Resolve(wv);
     });
