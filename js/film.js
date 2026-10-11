@@ -130,6 +130,7 @@
       { bg: "arena", cast: [{ av: B, x: 50, dance: 0, say: "Sie kommen auf mich zu!" }], props: [{ e: "🚀", x: 50, y: 14, s: 60, a: "bob" }], nar: "Blast: Englische Wörter fliegen auf dich zu." },
       { bg: "arena", cast: [{ av: P, x: 50, dance: 3, say: "Das passende Wort abschießen!" }], props: [{ e: "🎯", x: 50, y: 18, s: 52, a: "spin" }], nar: "Oben steht ein deutsches Wort. Tippe das richtige englische Wort ab, bevor es dich erreicht." },
       { bg: "arena", cast: [{ av: K, x: 50, dance: 0, say: "Falsch geschossen? Ein Herz weg." }], props: [{ e: "💔", x: 28, y: 22, s: 46, a: "shake" }, { e: "❄️", x: 52, y: 12, s: 40, a: "spin" }, { e: "💣", x: 74, y: 22, s: 46, a: "bob" }], nar: "Falsch geschossen kostet ein Herz. Eis-Sterne bremsen alles, Bomben räumen die falschen Wörter weg." },
+      { bg: "arena", cast: [{ av: B, x: 50, dance: 3, say: "Links, rechts, ausweichen!" }], props: [{ e: "◀", x: 26, y: 20, s: 46, a: "bob" }, { e: "🚀", x: 50, y: 14, s: 52, a: "bob" }, { e: "▶", x: 74, y: 20, s: 46, a: "bob" }], nar: "Mit den Pfeilen steuerst du dein Raumschiff. Berührt dich ein Wort, kostet das ein Herz. Weich ihnen aus!" },
       { bg: "gold", cast: [{ av: R, x: 50, dance: 6, say: "Neuer Rekord!" }], props: [{ e: "🏆", x: 50, y: 16, s: 58, a: "bob" }], nar: "Je länger du durchhältst, desto höher der Bestwert." }
     ] }
   ];

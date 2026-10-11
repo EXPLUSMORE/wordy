@@ -10,7 +10,7 @@
     { id: "eisi", icon: "🐻‍❄️", name: "Freezy", tag: "Rette Icy · 5 Wörter", claim: "Rate Buchstabe für Buchstabe.",
       desc: "Icy steht auf schmelzendem Eis. Tippe Buchstaben, die im englischen Wort vorkommen. Jeder falsche Buchstabe lässt ein Stück Eis schmelzen." },
     { id: "blast", icon: "🚀", name: "Blast", tag: "Wörter-Shooter", claim: "Schieß das richtige Wort ab.",
-      desc: "Oben steht ein deutsches Wort. Englische Wörter fliegen auf dich zu: Tippe das richtige ab, bevor es dich erreicht. Falsch geschossen kostet ein Herz. Eis-Sterne bremsen alles, Bomben räumen die falschen Wörter weg." },
+      desc: "Oben steht ein deutsches Wort. Englische Wörter fliegen auf dich zu: Tippe das richtige ab, bevor es dich erreicht. Mit den Pfeilen ◀ ▶ (oder den Pfeiltasten) steuerst du dein Raumschiff und weichst den Wörtern aus: Jede Berührung kostet ein Herz. Falsch geschossen kostet ebenfalls ein Herz. Eis-Sterne bremsen alles, Bomben räumen die falschen Wörter weg." },
     { id: "letters", icon: "🔠", name: "Letters", tag: "Buchstabensalat", claim: "Finde die versteckten Wörter.",
       desc: "Im Buchstabensalat verstecken sich englische Wörter, waagerecht, senkrecht oder diagonal, vorwärts oder rückwärts. Die Liste zeigt die deutschen Bedeutungen. Wische über die Buchstaben, um ein Wort zu markieren." },
     { id: "kreuz", icon: "🧩", name: "Xing", tag: "Kreuzworträtsel (Crossing)", claim: "Deutsche Hinweise, englische Lösungen.",
@@ -366,14 +366,27 @@
     el.innerHTML = top("Blast") +
       '<div class="bl-hud"><span id="blLives"></span><span id="blLevel"></span><span id="blCombo"></span></div>' +
       '<div class="bl-prompt" id="blP"><small>Schieß das englische Wort ab</small><b id="blT"></b></div>' +
-      '<div class="bl-field" id="blF"><div class="bl-ship" id="blS">🚀</div><div class="bl-flash" id="blFl"></div></div>';
+      '<div class="bl-field" id="blF"><div class="bl-ship" id="blS">🚀</div><div class="bl-flash" id="blFl"></div></div>' +
+      '<div class="bl-ctl"><button type="button" id="blL" aria-label="Nach links">◀</button><button type="button" id="blR" aria-label="Nach rechts">▶</button></div>';
     var F = $("#blF");
-    G.sh = { lives: 3, level: 1, hits: 0, queue: [], target: null, foes: [], freeze: 0, lastSpawn: 0, nextOrb: 9, t: 0, last: 0, id: 0, w: 0, h: 0, over: false };
-    G.sh.w = F.clientWidth; G.sh.h = F.clientHeight;
+    G.sh = { px: 0, dir: 0, keys: {}, lives: 3, level: 1, hits: 0, queue: [], target: null, foes: [], freeze: 0, lastSpawn: 0, nextOrb: 9, t: 0, last: 0, id: 0, w: 0, h: 0, over: false };
+    G.sh.w = F.clientWidth; G.sh.h = F.clientHeight; G.sh.px = G.sh.w / 2; blShipPos();
+    [["blL", -1], ["blR", 1]].forEach(function (b) {   // Raumschiff steuern: Knopf gedrückt halten (oder Pfeiltasten / A und D)
+      var btn = $("#" + b[0]), on = function (e) { e.preventDefault(); if (G && G.sh) G.sh.dir = b[1]; }, off = function () { if (G && G.sh && G.sh.dir === b[1]) G.sh.dir = 0; };
+      btn.addEventListener("pointerdown", on); btn.addEventListener("pointerup", off); btn.addEventListener("pointerleave", off); btn.addEventListener("pointercancel", off);
+    });
+    if (!blKeys) { blKeys = true; document.addEventListener("keydown", function (e) { blKey(e, 1); }); document.addEventListener("keyup", function (e) { blKey(e, 0); }); }
     F.addEventListener("pointerdown", function (e) { if (!G || !G.sh || G.sh.over) return; var f = e.target.closest(".foe"); if (!f) return; e.preventDefault(); blShoot(+f.getAttribute("data-fid"), e.clientX, e.clientY); });
     blNextTarget(); blHud();
     G.sh.last = performance.now(); G.sh.raf = requestAnimationFrame(blLoop);
   }
+  var blKeys = false;
+  function blKey(e, down) {
+    if (!G || G.id !== "blast" || !G.sh || G.sh.over) return;
+    var k = e.key, d = k === "ArrowLeft" || k === "a" || k === "A" ? -1 : k === "ArrowRight" || k === "d" || k === "D" ? 1 : 0; if (!d) return;
+    e.preventDefault(); G.sh.keys[d] = down; G.sh.dir = G.sh.keys[1] && !G.sh.keys[-1] ? 1 : G.sh.keys[-1] && !G.sh.keys[1] ? -1 : 0;
+  }
+  function blShipPos() { var s = $("#blS"); if (s && G && G.sh) s.style.left = G.sh.px + "px"; }
   function blHud() {
     var sh = G.sh, l = "", i; for (i = 0; i < Math.max(3, sh.lives); i++) l += '<i class="' + (i < sh.lives ? "" : "off") + '">♥</i>';
     $("#blLives").innerHTML = l; $("#blLevel").textContent = "Level " + sh.level;
@@ -391,7 +404,7 @@
     d.style.setProperty("--h", kind ? (kind === "freeze" ? 195 : 20) : Math.floor(Math.random() * 360));
     F.appendChild(d);
     var fw = d.offsetWidth, x = 8 + Math.random() * Math.max(1, sh.w - fw - 16);
-    var o = { id: id, el: d, w: w, kind: kind || null, x: x, y: -44, fw: fw, ph: Math.random() * 6 };
+    var o = { id: id, el: d, w: w, kind: kind || null, x: x, y: -44, fw: fw, fh: d.offsetHeight, ph: Math.random() * 6 };
     d.style.transform = "translate3d(" + x + "px," + o.y + "px,0)"; sh.foes.push(o); return o;
   }
   function blBoom(o, bad) {
@@ -400,7 +413,7 @@
     try { global.VTC.burst(bad ? "stars" : S.state.profile.fx, r.left + r.width / 2, r.top + r.height / 2, bad ? 6 : 12, .9); } catch (e) {}
   }
   function blLaser(px, py) {
-    var F = $("#blF"), fr = F.getBoundingClientRect(), sx = fr.width / 2, sy = fr.height - 24, tx = px - fr.left, ty = py - fr.top, dx = tx - sx, dy = ty - sy;
+    var F = $("#blF"), fr = F.getBoundingClientRect(), sx = G.sh.px, sy = fr.height - 24, tx = px - fr.left, ty = py - fr.top, dx = tx - sx, dy = ty - sy;
     var L = document.createElement("div"); L.className = "bl-laser"; L.style.cssText = "left:" + sx + "px;top:" + sy + "px;width:" + Math.sqrt(dx * dx + dy * dy) + "px;transform:rotate(" + Math.atan2(dy, dx) + "rad)";
     F.appendChild(L); setTimeout(function () { if (L.parentNode) L.parentNode.removeChild(L); }, 130);
     var sp = $("#blS"); if (sp) sp.style.transform = "rotate(" + (Math.atan2(dy, dx) + Math.PI / 2) + "rad)";
@@ -438,9 +451,17 @@
     if (sh.freeze > 0) sh.freeze -= dt;
     var F = $("#blF"); F.classList.toggle("frozen", sh.freeze > 0);
     var v = Math.min(200, 44 * Math.pow(1.12, sh.level - 1)) * (sh.freeze > 0 ? 0.2 : 1)   /* alle 5 Treffer ein Level: ca. 12 % schneller */, bottom = sh.h - 54;
+    if (sh.dir) { sh.px = Math.max(22, Math.min(sh.w - 22, sh.px + sh.dir * 300 * dt)); blShipPos(); }
     sh.foes.forEach(function (o) {
       if (o.dead) return;
-      o.y += v * dt; o.el.style.transform = "translate3d(" + (o.x + Math.sin(sh.t * 1.3 + o.ph) * 6) + "px," + o.y + "px,0)";
+      var ox = o.x + Math.sin(sh.t * 1.3 + o.ph) * 6;
+      o.y += v * dt; o.el.style.transform = "translate3d(" + ox + "px," + o.y + "px,0)";
+      if (!o.kind && o.y + (o.fh || 34) > sh.h - 46 && o.y < sh.h - 8 && ox < sh.px + 18 && ox + o.fw > sh.px - 18) {   // Raumschiff berührt ein Wort: ein Herz weg
+        var ct = sh.target && o.w.id === sh.target.id; blBoom(o, true);
+        if (ct) { var t0 = sh.target; blFlash("Getroffen: " + t0.en + " = " + t0.de, "bad"); G.items++; blNextTarget(); blLose("berührt", t0); }
+        else { blFlash("Autsch! Ausweichen!", "bad"); blLose("berührt"); }
+        return;
+      }
       if (o.y > bottom) {
         o.dead = true; if (o.el.parentNode) o.el.parentNode.removeChild(o.el);
         if (!o.kind && sh.target && o.w.id === sh.target.id) { var t = sh.target; blFlash("Verpasst: " + t.en + " = " + t.de, "bad"); G.items++; blNextTarget(); blLose("verpasst", t); }

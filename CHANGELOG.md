@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.83.0 – 2026-10-11
+- Blast: Das **Raumschiff lässt sich steuern**. Zwei große Pfeiltasten ◀ ▶ unter dem Spielfeld (gedrückt halten), am Rechner auch Pfeiltasten oder A / D. Die Wörter fliegen jetzt auf das Schiff zu: Wer eins berührt, verliert ein Herz („Autsch! Ausweichen!“), bis die Herzen weg sind und die Runde endet. Wird dabei das gesuchte Wort getroffen, zählt es als verpasst. Eis-Sterne und Bomben bleiben harmlos. Der Laser schießt von der aktuellen Position des Schiffs. Spielbeschreibung und Erklärfilm sind ergänzt.
+
 ## 2.82.1 – 2026-10-11
 - Blast: Das Tempo steigt jetzt deutlich mit jedem Level, also alle 5 richtigen Wörter um etwa 12 % (vorher nur kleine Schritte und früh am Deckel). Obergrenze höher, Meldung „Level n · schneller!“.
 

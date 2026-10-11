@@ -508,6 +508,7 @@ html.ar-open, html.ar-open body{overflow:hidden}
 .bl-field.frozen{box-shadow:inset 0 0 60px rgba(120,210,255,.55)}.bl-field.hurt{animation:blhurt .35s,blstars 14s linear infinite}@keyframes blhurt{30%{box-shadow:inset 0 0 70px rgba(255,60,60,.7)}}
 .foe{position:absolute;left:0;top:0;padding:8px 14px;border-radius:14px;font-weight:800;font-size:clamp(16px,5vw,20px);color:#fff;background:rgba(24,36,80,.88);border:2px solid hsl(var(--h) 80% 62%);box-shadow:0 0 14px hsl(var(--h) 90% 55%/.55);white-space:nowrap;will-change:transform;cursor:pointer}.foe.orb{font-size:30px;padding:4px 10px;border-radius:50%}
 .foe.boom{animation:blboom .28s forwards;pointer-events:none}.foe.boom.bad{border-color:#ff5b6b}@keyframes blboom{to{opacity:0;filter:brightness(2.4);scale:1.5}}
+.bl-ctl{display:flex;gap:12px;padding:8px 16px calc(10px + env(safe-area-inset-bottom));flex:none}.bl-ctl button{flex:1;height:56px;border-radius:16px;border:1px solid var(--ar-line);background:var(--ar-s);color:var(--ar-ink);font-size:26px;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}.bl-ctl button:active{background:var(--ar-line)}
 .bl-ship{position:absolute;left:50%;bottom:4px;margin-left:-22px;font-size:42px;line-height:1;transition:transform .12s;pointer-events:none}
 .bl-laser{position:absolute;height:3px;border-radius:2px;background:linear-gradient(90deg,#fff,#4FC3D9);box-shadow:0 0 8px #4FC3D9;transform-origin:0 50%;pointer-events:none;z-index:3}
 .bl-flash{position:absolute;left:0;right:0;top:36%;text-align:center;font-weight:900;font-size:26px;opacity:0;pointer-events:none;text-shadow:0 2px 14px #000a;padding:0 12px;overflow-wrap:anywhere}.bl-flash.show{opacity:1;transition:opacity .08s}.bl-flash.good{color:var(--ar-good)}.bl-flash.bad{color:var(--ar-bad);font-size:20px}.bl-flash.combo{color:var(--ar-gold);font-size:32px}
@@ -1122,7 +1123,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.82.1";window.WORDY_BUILD="b959a08477";</script>
+<script>window.WORDY_VERSION="2.83.0";window.WORDY_BUILD="3c70ae52d4";</script>
 </head>
 <body>
 <div id="app">
@@ -7425,6 +7426,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       { bg: "arena", cast: [{ av: B, x: 50, dance: 0, say: "Sie kommen auf mich zu!" }], props: [{ e: "🚀", x: 50, y: 14, s: 60, a: "bob" }], nar: "Blast: Englische Wörter fliegen auf dich zu." },
       { bg: "arena", cast: [{ av: P, x: 50, dance: 3, say: "Das passende Wort abschießen!" }], props: [{ e: "🎯", x: 50, y: 18, s: 52, a: "spin" }], nar: "Oben steht ein deutsches Wort. Tippe das richtige englische Wort ab, bevor es dich erreicht." },
       { bg: "arena", cast: [{ av: K, x: 50, dance: 0, say: "Falsch geschossen? Ein Herz weg." }], props: [{ e: "💔", x: 28, y: 22, s: 46, a: "shake" }, { e: "❄️", x: 52, y: 12, s: 40, a: "spin" }, { e: "💣", x: 74, y: 22, s: 46, a: "bob" }], nar: "Falsch geschossen kostet ein Herz. Eis-Sterne bremsen alles, Bomben räumen die falschen Wörter weg." },
+      { bg: "arena", cast: [{ av: B, x: 50, dance: 3, say: "Links, rechts, ausweichen!" }], props: [{ e: "◀", x: 26, y: 20, s: 46, a: "bob" }, { e: "🚀", x: 50, y: 14, s: 52, a: "bob" }, { e: "▶", x: 74, y: 20, s: 46, a: "bob" }], nar: "Mit den Pfeilen steuerst du dein Raumschiff. Berührt dich ein Wort, kostet das ein Herz. Weich ihnen aus!" },
       { bg: "gold", cast: [{ av: R, x: 50, dance: 6, say: "Neuer Rekord!" }], props: [{ e: "🏆", x: 50, y: 16, s: 58, a: "bob" }], nar: "Je länger du durchhältst, desto höher der Bestwert." }
     ] }
   ];
@@ -11169,7 +11171,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     { id: "eisi", icon: "🐻‍❄️", name: "Freezy", tag: "Rette Icy · 5 Wörter", claim: "Rate Buchstabe für Buchstabe.",
       desc: "Icy steht auf schmelzendem Eis. Tippe Buchstaben, die im englischen Wort vorkommen. Jeder falsche Buchstabe lässt ein Stück Eis schmelzen." },
     { id: "blast", icon: "🚀", name: "Blast", tag: "Wörter-Shooter", claim: "Schieß das richtige Wort ab.",
-      desc: "Oben steht ein deutsches Wort. Englische Wörter fliegen auf dich zu: Tippe das richtige ab, bevor es dich erreicht. Falsch geschossen kostet ein Herz. Eis-Sterne bremsen alles, Bomben räumen die falschen Wörter weg." },
+      desc: "Oben steht ein deutsches Wort. Englische Wörter fliegen auf dich zu: Tippe das richtige ab, bevor es dich erreicht. Mit den Pfeilen ◀ ▶ (oder den Pfeiltasten) steuerst du dein Raumschiff und weichst den Wörtern aus: Jede Berührung kostet ein Herz. Falsch geschossen kostet ebenfalls ein Herz. Eis-Sterne bremsen alles, Bomben räumen die falschen Wörter weg." },
     { id: "letters", icon: "🔠", name: "Letters", tag: "Buchstabensalat", claim: "Finde die versteckten Wörter.",
       desc: "Im Buchstabensalat verstecken sich englische Wörter, waagerecht, senkrecht oder diagonal, vorwärts oder rückwärts. Die Liste zeigt die deutschen Bedeutungen. Wische über die Buchstaben, um ein Wort zu markieren." },
     { id: "kreuz", icon: "🧩", name: "Xing", tag: "Kreuzworträtsel (Crossing)", claim: "Deutsche Hinweise, englische Lösungen.",
@@ -11525,14 +11527,27 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     el.innerHTML = top("Blast") +
       '<div class="bl-hud"><span id="blLives"></span><span id="blLevel"></span><span id="blCombo"></span></div>' +
       '<div class="bl-prompt" id="blP"><small>Schieß das englische Wort ab</small><b id="blT"></b></div>' +
-      '<div class="bl-field" id="blF"><div class="bl-ship" id="blS">🚀</div><div class="bl-flash" id="blFl"></div></div>';
+      '<div class="bl-field" id="blF"><div class="bl-ship" id="blS">🚀</div><div class="bl-flash" id="blFl"></div></div>' +
+      '<div class="bl-ctl"><button type="button" id="blL" aria-label="Nach links">◀</button><button type="button" id="blR" aria-label="Nach rechts">▶</button></div>';
     var F = $("#blF");
-    G.sh = { lives: 3, level: 1, hits: 0, queue: [], target: null, foes: [], freeze: 0, lastSpawn: 0, nextOrb: 9, t: 0, last: 0, id: 0, w: 0, h: 0, over: false };
-    G.sh.w = F.clientWidth; G.sh.h = F.clientHeight;
+    G.sh = { px: 0, dir: 0, keys: {}, lives: 3, level: 1, hits: 0, queue: [], target: null, foes: [], freeze: 0, lastSpawn: 0, nextOrb: 9, t: 0, last: 0, id: 0, w: 0, h: 0, over: false };
+    G.sh.w = F.clientWidth; G.sh.h = F.clientHeight; G.sh.px = G.sh.w / 2; blShipPos();
+    [["blL", -1], ["blR", 1]].forEach(function (b) {   // Raumschiff steuern: Knopf gedrückt halten (oder Pfeiltasten / A und D)
+      var btn = $("#" + b[0]), on = function (e) { e.preventDefault(); if (G && G.sh) G.sh.dir = b[1]; }, off = function () { if (G && G.sh && G.sh.dir === b[1]) G.sh.dir = 0; };
+      btn.addEventListener("pointerdown", on); btn.addEventListener("pointerup", off); btn.addEventListener("pointerleave", off); btn.addEventListener("pointercancel", off);
+    });
+    if (!blKeys) { blKeys = true; document.addEventListener("keydown", function (e) { blKey(e, 1); }); document.addEventListener("keyup", function (e) { blKey(e, 0); }); }
     F.addEventListener("pointerdown", function (e) { if (!G || !G.sh || G.sh.over) return; var f = e.target.closest(".foe"); if (!f) return; e.preventDefault(); blShoot(+f.getAttribute("data-fid"), e.clientX, e.clientY); });
     blNextTarget(); blHud();
     G.sh.last = performance.now(); G.sh.raf = requestAnimationFrame(blLoop);
   }
+  var blKeys = false;
+  function blKey(e, down) {
+    if (!G || G.id !== "blast" || !G.sh || G.sh.over) return;
+    var k = e.key, d = k === "ArrowLeft" || k === "a" || k === "A" ? -1 : k === "ArrowRight" || k === "d" || k === "D" ? 1 : 0; if (!d) return;
+    e.preventDefault(); G.sh.keys[d] = down; G.sh.dir = G.sh.keys[1] && !G.sh.keys[-1] ? 1 : G.sh.keys[-1] && !G.sh.keys[1] ? -1 : 0;
+  }
+  function blShipPos() { var s = $("#blS"); if (s && G && G.sh) s.style.left = G.sh.px + "px"; }
   function blHud() {
     var sh = G.sh, l = "", i; for (i = 0; i < Math.max(3, sh.lives); i++) l += '<i class="' + (i < sh.lives ? "" : "off") + '">♥</i>';
     $("#blLives").innerHTML = l; $("#blLevel").textContent = "Level " + sh.level;
@@ -11550,7 +11565,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     d.style.setProperty("--h", kind ? (kind === "freeze" ? 195 : 20) : Math.floor(Math.random() * 360));
     F.appendChild(d);
     var fw = d.offsetWidth, x = 8 + Math.random() * Math.max(1, sh.w - fw - 16);
-    var o = { id: id, el: d, w: w, kind: kind || null, x: x, y: -44, fw: fw, ph: Math.random() * 6 };
+    var o = { id: id, el: d, w: w, kind: kind || null, x: x, y: -44, fw: fw, fh: d.offsetHeight, ph: Math.random() * 6 };
     d.style.transform = "translate3d(" + x + "px," + o.y + "px,0)"; sh.foes.push(o); return o;
   }
   function blBoom(o, bad) {
@@ -11559,7 +11574,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     try { global.VTC.burst(bad ? "stars" : S.state.profile.fx, r.left + r.width / 2, r.top + r.height / 2, bad ? 6 : 12, .9); } catch (e) {}
   }
   function blLaser(px, py) {
-    var F = $("#blF"), fr = F.getBoundingClientRect(), sx = fr.width / 2, sy = fr.height - 24, tx = px - fr.left, ty = py - fr.top, dx = tx - sx, dy = ty - sy;
+    var F = $("#blF"), fr = F.getBoundingClientRect(), sx = G.sh.px, sy = fr.height - 24, tx = px - fr.left, ty = py - fr.top, dx = tx - sx, dy = ty - sy;
     var L = document.createElement("div"); L.className = "bl-laser"; L.style.cssText = "left:" + sx + "px;top:" + sy + "px;width:" + Math.sqrt(dx * dx + dy * dy) + "px;transform:rotate(" + Math.atan2(dy, dx) + "rad)";
     F.appendChild(L); setTimeout(function () { if (L.parentNode) L.parentNode.removeChild(L); }, 130);
     var sp = $("#blS"); if (sp) sp.style.transform = "rotate(" + (Math.atan2(dy, dx) + Math.PI / 2) + "rad)";
@@ -11597,9 +11612,17 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (sh.freeze > 0) sh.freeze -= dt;
     var F = $("#blF"); F.classList.toggle("frozen", sh.freeze > 0);
     var v = Math.min(200, 44 * Math.pow(1.12, sh.level - 1)) * (sh.freeze > 0 ? 0.2 : 1)   /* alle 5 Treffer ein Level: ca. 12 % schneller */, bottom = sh.h - 54;
+    if (sh.dir) { sh.px = Math.max(22, Math.min(sh.w - 22, sh.px + sh.dir * 300 * dt)); blShipPos(); }
     sh.foes.forEach(function (o) {
       if (o.dead) return;
-      o.y += v * dt; o.el.style.transform = "translate3d(" + (o.x + Math.sin(sh.t * 1.3 + o.ph) * 6) + "px," + o.y + "px,0)";
+      var ox = o.x + Math.sin(sh.t * 1.3 + o.ph) * 6;
+      o.y += v * dt; o.el.style.transform = "translate3d(" + ox + "px," + o.y + "px,0)";
+      if (!o.kind && o.y + (o.fh || 34) > sh.h - 46 && o.y < sh.h - 8 && ox < sh.px + 18 && ox + o.fw > sh.px - 18) {   // Raumschiff berührt ein Wort: ein Herz weg
+        var ct = sh.target && o.w.id === sh.target.id; blBoom(o, true);
+        if (ct) { var t0 = sh.target; blFlash("Getroffen: " + t0.en + " = " + t0.de, "bad"); G.items++; blNextTarget(); blLose("berührt", t0); }
+        else { blFlash("Autsch! Ausweichen!", "bad"); blLose("berührt"); }
+        return;
+      }
       if (o.y > bottom) {
         o.dead = true; if (o.el.parentNode) o.el.parentNode.removeChild(o.el);
         if (!o.kind && sh.target && o.w.id === sh.target.id) { var t = sh.target; blFlash("Verpasst: " + t.en + " = " + t.de, "bad"); G.items++; blNextTarget(); blLose("verpasst", t); }
