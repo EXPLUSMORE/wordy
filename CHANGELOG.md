@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.94.0 – 2026-10-12
+- **Datenschutzerklärung aktualisiert** (Prüfung): neue Abschnitte 5a „Tägliche Erinnerung (Push)“ und 5b „Feedback“, Tabellenzeilen für Arena-Spiele, Push-Adresse und Feedback, Push-Dienste als Empfänger und Drittland-Übermittlung, Speicherdauer ergänzt, Aussage „keine freien Texte“ präzisiert, Rechtsgrundlage Art. 6 Abs. 1 lit. b bei den Kinderdaten entfernt. `CONSENT_VER` auf 2026-10e: Eltern stimmen der neuen Fassung neu zu. App: Hinweis im Feedback-Formular („keine Namen, Adressen, Telefonnummern“). Server-Update nötig.
+
 ## 2.93.3 – 2026-10-12
 - **Serien-Spruch „Lass die Serie nicht sterben“ entfernt** (Server). Es bleiben 4 Serien-Sprüche.
 

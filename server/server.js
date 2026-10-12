@@ -190,7 +190,7 @@ const kq = {
   tasks: db.prepare("SELECT * FROM class_tasks WHERE class = ? ORDER BY d_from DESC, id DESC"), active: db.prepare("SELECT * FROM class_tasks WHERE class = ? AND d_from <= ? AND d_to >= ? ORDER BY d_to, id"), task: db.prepare("SELECT * FROM class_tasks WHERE id = ?"),
   addTask: db.prepare("INSERT INTO class_tasks(class, title, units, d_from, d_to, goal, created) VALUES (?, ?, ?, ?, ?, ?, ?)"), delTask: db.prepare("DELETE FROM class_tasks WHERE id = ?")
 };
-const MAX_KIDS = 6, LINK_MIN = 20, SESSION_DAYS = 30, CONSENT_VER = "2026-10d";   // Version der Datenschutzerklärung, der zugestimmt wird
+const MAX_KIDS = 6, LINK_MIN = 20, SESSION_DAYS = 30, CONSENT_VER = "2026-10e";   // Version der Datenschutzerklärung, der zugestimmt wird
 const q = {
   player: db.prepare("SELECT * FROM players WHERE id = ?"),
   players: db.prepare("SELECT * FROM players ORDER BY id"),
@@ -994,7 +994,7 @@ function famAuth(req) {   // Familie aus dem Sitzungs-Cookie, nur aktive Konten
 const cookieHdr = (v, maxAge) => "wf=" + v + "; Path=/; HttpOnly; SameSite=Lax; Max-Age=" + maxAge + (DASH_URL.startsWith("https") ? "; Secure" : "");
 /* Datenschutzerklärung: Angaben des Betreibers kommen aus .env (PRIVACY_*), fehlende werden gelb markiert */
 const PRIVACY = { name: process.env.PRIVACY_NAME || "", addr: process.env.PRIVACY_ADDRESS || "", email: process.env.PRIVACY_EMAIL || "", host: process.env.PRIVACY_HOSTER || "", hostort: process.env.PRIVACY_HOSTORT || "", mail: process.env.PRIVACY_MAIL_PROVIDER || "", auth: process.env.PRIVACY_AUTHORITY || "", log: process.env.PRIVACY_LOG_DAYS || "" };
-const PRIVACY_STAND = "8. Oktober 2026";
+const PRIVACY_STAND = "12. Oktober 2026";
 function privacyPage() {
   const miss = [], v = (x, label) => x ? esc(x) : (miss.push(label), "<mark>[" + esc(label) + " eintragen]</mark>");
   const map = { VERANTWORTLICHER: v(PRIVACY.name, "Name des Verantwortlichen"), ADRESSE: v(PRIVACY.addr, "Anschrift"), EMAIL: v(PRIVACY.email, "E-Mail-Adresse"), HOSTER: v(PRIVACY.host, "Hosting-Anbieter"), HOSTORT: v(PRIVACY.hostort, "Standort des Servers"),

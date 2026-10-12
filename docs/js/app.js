@@ -1994,6 +1994,7 @@
     var el = $("#fbApp"); if (!el) return;
     el.innerHTML = '<div class="row wrap" style="gap:6px">' + Object.keys(FB_LBL).map(function (k) { return '<button class="chip" data-act="fbkind" data-k="' + k + '" aria-pressed="' + (fbKind === k) + '">' + FB_LBL[k] + '</button>'; }).join("") + '</div>' +
       '<textarea id="fbTxt" rows="4" maxlength="2000" style="width:100%;margin-top:10px" placeholder="Was sollen wir wissen oder verbessern?"></textarea>' +
+      '<p class="small muted" style="margin:4px 0 0">Bitte keine Namen, Adressen oder Telefonnummern schreiben.</p>' +
       '<button class="btn wide" data-act="fbsend" style="margin-top:8px">Senden</button><div id="fbMsg" class="small muted" style="margin-top:6px"></div><div id="fbList" style="margin-top:10px"></div>';
     window.WordySync.fbList().then(function (l) {
       var box = $("#fbList"); if (!box || !l.length) return;
