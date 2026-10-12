@@ -785,12 +785,33 @@ const PUSH_LINES = [
   "Nur 10 Minuten, {name}. Danach darfst du wieder alles andere. 🎮",
   "Wordy ruft: Kommst du, {name}? Die Wörter sind fertig geschminkt. 💄",
   "{name}, die Wörter spielen Verstecken. Du findest sie bestimmt! 🔍",
-  "Tagesziel in Reichweite, {name}. Schnapp es dir, bevor es jemand anderes tut! 🏆"
+  "Tagesziel in Reichweite, {name}. Schnapp es dir, bevor es jemand anderes tut! 🏆",
+  "Dein Tagesziel wartet, {name}. Fünf Minuten, dann hast du Ruhe. Versprochen! 🤝",
+  "Psst, {name} … die Vokabeln vermissen dich schon. Besuch sie kurz! 👀",
+  "Heute schon gelernt, {name}? Nein? Dann los, Champion, die Münzen liegen auf dem Tisch. 🪙",
+  "Kleiner Schritt, großer Boss, {name}. Eine Runde Wordy und du bist wieder im Spiel. 🎯",
+  "Eis-Alarm! ❄️ Bruno und Pingo warten auf dich, {name}. Lass sie nicht im Schnee stehen.",
+  "Wer heute übt, ist morgen der Held in Englisch, {name}. Jetzt kurz Superheld sein? 🦸",
+  "Hausaufgaben erledigt, {name}? Dann gönn dir jetzt die schönste Pause: eine Runde Wordy! 😌",
+  "Ein Wort pro Tag hält die Fünf im Zeugnis fern, {name}. Heute: ein paar mehr! 📈",
+  "Ping! Dein Gehirn will Muskeln bauen, {name}. Zeit fürs Vokabel-Training! 💪",
+  "Digga {name}, 5 Minuten Wordy und dein Tag ist safe. Kein Cap. 😎",
+  "{name}, deine Aura sagt: heute wird gelernt. Lass sie nicht lügen. ✨",
+  "Lowkey wartet Wordy auf dich, {name}. Highkey sollte man das heute noch machen. 😏",
+  "Nicht cringe, sondern smart: eine Runde Vokabeln, {name}. Kommst du? 🧠",
+  "{name}, du bist doch kein NPC. Hol dir dein Tagesziel und level up! 🎮",
+  "Slay den Tag, {name}! Erst Wordy, dann Chillen. 💅",
+  "Alter, {name}, die Münzen zocken sich nicht von allein. Rein in die Runde! 🪙",
+  "Das ist doch wild, {name}: Dein Tagesziel ist noch offen. Dabei schaffst du das locker! 🔥",
+  "Sus, {name}: Wer hat das Tagesziel noch nicht geholt? Genau, du. Aber nur noch kurz. 🕵️",
+  "Bro {name}, Englisch geht heute zack-zack. Eine Runde, dann Feierabend. 🚀"
 ];
 const PUSH_STREAK = [
   "🔥 {streak} Tage am Stück, {name}! Lass die Serie nicht sterben.",
   "{streak} Tage Serie, {name}. Das wäre ja gelacht, wenn heute Schluss wäre. 🔥",
-  "Dein Streak steht bei {streak}, {name}. Heute wird er {next}! 💪"
+  "Dein Streak steht bei {streak}, {name}. Heute wird er {next}! 💪",
+  "{streak} Tage Streak, {name}. Das ist schon richtig Sigma. Heute wird's {next}! 😎",
+  "Deine Serie lebt, {name}: {streak} Tage! Lass sie heute nicht ghosten. 🔥"
 ];
 function pushMessage(pid, name, streak, seed) {
   const nm = clean(name, 24) || "du", i = Math.abs(seed == null ? Date.now() / 86400000 | 0 : seed) + pid;
