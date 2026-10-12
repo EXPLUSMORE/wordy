@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.93.2 – 2026-10-12
+- **Erinnerungssprüche nur noch im Schülerjargon**: Die Tagessprüche sind jetzt alle in Jugendsprache (25 Stück, neu u. a. Rizz, mid, Skill-Issue, Bruh, Flex, Glow-up, Main Character). Die Serien-Sprüche bleiben. Nur Server-Änderung.
+
 ## 2.93.1 – 2026-10-12
 - **Mehr Erinnerungssprüche**: 10 neue freigegebene Sprüche und 10 im Schülerjargon (Digga, Aura, lowkey, NPC, slay, sus, Bro, Sigma …), dazu 2 neue Serien-Sprüche. Jetzt 42 Tagessprüche plus 5 Serien-Sprüche. Nur Server-Änderung (`PUSH_LINES`/`PUSH_STREAK`).
 
