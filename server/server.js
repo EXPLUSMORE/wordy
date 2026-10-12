@@ -500,8 +500,51 @@ function analysis(pid, days) {
   return {
     days, answers: ans, runs, sec: allSec, activeDays: activeDays.size, last14, acc: ans ? Object.values(types).reduce((a, v) => a + v.ok, 0) / ans : null,
     games: gl, modes: ml, types: Object.entries(types).map(([k, v]) => ({ name: k, n: v.n, acc: ratio(v.ok, v.n) })), units: unitList, stuck, hours: hourList,
-    wdays: wdays.map((w, i) => ({ d: i, n: w.n, acc: ratio(w.ok, w.n) })), tips
+    wdays: wdays.map((w, i) => ({ d: i, n: w.n, acc: ratio(w.ok, w.n) })), tips, stuckRaw: stuck.length
   };
+}
+
+
+/* ---------- Persönlicher Tagesplan: aus der Analyse die Übungen für die Tageszeit des Kindes (Standard 10 Minuten) ----------
+   Vier Bausteine (Wiederholen, schwächste Einheit, schwache Aufgabenart, Spiel), Minuten nach Gewicht verteilt. Die App zeigt ihn auf der Startseite (kommt über /api/sync). */
+const dayplanOn = pid => { const r = q.kvGet.get("dayplan:" + pid); try { return r ? JSON.parse(r.val).on !== false : true; } catch (e) { return true; } };
+const ARENA_IDS = ["match", "blitz", "survival", "hunt"];
+function buildDayplan(A, total, biz) {
+  const pc = x => Math.round(x * 100) + " %", T = Object.fromEntries(A.types.map(t => [t.name, t])), blocks = [];
+  const doy = Math.floor(Date.now() / 86400000);
+  // 1. Wiederholen
+  if (A.stuck.length >= 3) blocks.push({ id: "box", w: 3, icon: "♻️", title: "Fehlerkartei", sub: "Hängende Wörter: " + A.stuck.slice(0, 3).map(b => b.en).join(", "), act: "start", mode: "box" });
+  else blocks.push({ id: "mix", w: 3, icon: "🏆", title: "Daily Challenge", sub: "Bunte Wiederholung: Wörter, die heute dran sind", act: "start", mode: "mix" });
+  // 2. Schwächste Einheit, sonst Neues
+  const wu = A.units[0];
+  if (wu && wu.acc < 0.85) blocks.push({ id: "unit", w: 3, icon: "📚", title: wu.title, sub: "Schwächste Einheit: " + pc(wu.acc) + " richtig", act: "start", mode: "unit", unit: wu.id });
+  else blocks.push({ id: "new", w: 3, icon: "✨", title: "Neue Wörter", sub: "Nichts Schwaches offen: Zeit für Neues", act: "start", mode: "new" });
+  // 3. Aufgabenart: schwächste von Sätze/Verben, sonst abwechselnd
+  const cand = ["Sätze"].concat(biz ? [] : ["Verben"]).map(k => T[k]).filter(t => t && t.n >= 20 && t.acc < 0.8).sort((a, b) => a.acc - b.acc)[0];
+  if (cand) blocks.push({ id: "type", w: 2, icon: cand.name === "Sätze" ? "💬" : "🔀", title: cand.name, sub: cand.name + " klappen erst zu " + pc(cand.acc), act: "start", mode: cand.name === "Sätze" ? "sent" : "verbs" });
+  else { const rot = [{ t: "Sätze", i: "💬", m: "sent" }].concat(biz ? [] : [{ t: "Verben", i: "🔀", m: "verbs" }]).concat([{ t: "Tippen", i: "⌨️", m: "focus", f: "type" }]), r = rot[doy % rot.length];
+    blocks.push({ id: "type", w: 2, icon: r.i, title: r.t, sub: "Abwechslung: heute " + r.t, act: "start", mode: r.m, focus: r.f || null }); }
+  // 4. Spiel (nur wenn nicht schon fast nur gespielt wird)
+  const gshare = A.sec ? A.games.reduce((a, g) => a + g.sec, 0) / A.sec : 0;
+  if (gshare <= 0.7) {
+    let g = null;
+    if (A.stuck.length >= 3) g = { id: "hunt", name: "Fehlerjagd", why: "Jagt die hängenden Wörter" };
+    else { const f = A.games.filter(x => x.id !== "grammar" && (x.acc == null || x.acc >= 0.55)).sort((a, b) => b.runs - a.runs)[0]; g = f ? { id: f.id, name: f.name, why: "Dein Lieblingsspiel (" + f.runs + " Runden)" } : { id: "blast", name: "Blast", why: "Zum Ausprobieren" }; }
+    blocks.push({ id: "game", w: 2, icon: "🎮", title: g.name, sub: g.why, act: ARENA_IDS.includes(g.id) ? "arena" : "wgame", gid: g.id });
+  } else blocks[1].w += 2;
+  // Minuten verteilen (mindestens 1, Summe = total)
+  const sw = blocks.reduce((a, b) => a + b.w, 0); let used = 0;
+  blocks.forEach(b => { b.min = Math.max(1, Math.round(b.w * total / sw)); used += b.min; });
+  for (let i = 0; used !== total && i < 40; i++) { const b = blocks[i % blocks.length]; if (used < total) { b.min++; used++; } else if (b.min > 1) { b.min--; used--; } }
+  blocks.forEach(b => delete b.w);
+  return { total, blocks, why: A.tips.filter(t => t.prio === 1).slice(0, 2).map(t => t.title), made: Date.now() };
+}
+const dayplanCache = new Map();
+function dayplanOf(pid) {
+  const c = dayplanCache.get(pid); if (c && Date.now() - c.ts < 20 * 60000) return c.v;
+  const meta = snap(pid, "meta"), total = Math.min(20, Math.max(5, Math.round(meta && meta.d && meta.d.goalMin) || 10)), biz = !!(meta && meta.d && meta.d.track === "business");
+  const A = analysis(pid, 60), v = A.answers + A.runs < 15 ? null : buildDayplan(A, total, biz);
+  dayplanCache.set(pid, { ts: Date.now(), v }); return v;
 }
 
 /* ---------- Wochen, Ziele, Lernpläne ---------- */
@@ -605,7 +648,8 @@ function apiSync(pid) {
     shop: shopPlan(),
     coinFactor: coinFactorOf(pid),
     gifts: giftsOf(pid).slice(-20),
-    season: seasonOf(pid)
+    season: seasonOf(pid),
+    dayplan: dayplanOn(pid) ? dayplanOf(pid) : null
   }];
 }
 /* Wochenzeitplan: Minuten pro Wochentag (Mo bis So), gilt jede Woche gleich, dazu Wochenbonus in Münzen */
@@ -1715,6 +1759,8 @@ const server = http.createServer(async (req, res) => {
         if (!m[2] && req.method === "GET") return send(res, 200, { id: pid, name: pl.name });
         if (m[2] === "report" && req.method === "GET") return send(res, 200, report(pid, Math.min(90, Math.max(7, +url.searchParams.get("days") || 30))));
         if (m[2] === "analysis" && req.method === "GET") return send(res, 200, analysis(pid, +url.searchParams.get("days") || 90));
+        if (m[2] === "dayplan" && req.method === "GET") { dayplanCache.delete(pid); return send(res, 200, { on: dayplanOn(pid), plan: dayplanOf(pid) }); }
+        if (m[2] === "dayplan" && req.method === "POST") { const b = await readJson(req); q.kvSet.run("dayplan:" + pid, JSON.stringify({ on: b.on !== false })); return send(res, 200, { ok: true, on: b.on !== false }); }
         if (m[2] === "states" && req.method === "GET") return send(res, 200, q.stateList.all(pid).map(stateMeta));
         if (m[2] === "state" && req.method === "GET") {
           const day = url.searchParams.get("day"); if (day && !/^\d{4}-\d\d-\d\d$/.test(day)) return send(res, 400, { error: "Datum ungültig." });

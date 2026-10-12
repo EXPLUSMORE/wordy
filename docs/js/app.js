@@ -831,6 +831,23 @@
     if (p.fresh.length) return { icon: "✨", title: "Neue Wörter", sub: "Nichts ist fällig. Zeit für etwas Neues.", opts: { minutes: mins, mode: "new" } };
     return { icon: "🏆", title: "Daily Challenge", sub: "Eine bunte Runde aus allem.", opts: { minutes: mins, mode: "mix" } };
   }
+  /* Persönlicher Tagesplan („Dein 10-Minuten-Plan“): kommt aus der Analyse des Servers (WordySync.dayplan), Fortschritt je Tag in profile.planDone */
+  var curPlanBlock = null;
+  function planDoneMap() { var pf = S.state.profile, t = S.today(); if (!pf.planDone || pf.planDone.date !== t) pf.planDone = { date: t, ids: {} }; return pf.planDone.ids; }
+  function planMarkDone(id) { var m = planDoneMap(); if (!m[id]) { m[id] = 1; S.save(true); } }
+  function planCard() {
+    var W = global.WordySync, dp = W && W.connected() ? W.dayplan() : null; if (!dp) return "";
+    var done = planDoneMap(), n = dp.blocks.filter(function (b) { return done[b.id]; }).length, all = n === dp.blocks.length, nowIx = -1;
+    dp.blocks.forEach(function (b, i) { if (nowIx < 0 && !done[b.id]) nowIx = i; });
+    var h = '<section class="card dayw planw"><div class="row" style="align-items:baseline"><div class="eyebrow" style="flex:1 1 auto">Dein ' + dp.total + '-Minuten-Plan</div><span class="small muted tnum">' + n + ' von ' + dp.blocks.length + '</span></div>' +
+      (dp.why && dp.why.length ? '<p class="small muted" style="margin:4px 0 8px">Gebaut aus deinen Ergebnissen: ' + esc(dp.why.join(" · ")) + '</p>' : "") + '<div class="dwl">';
+    dp.blocks.forEach(function (b, i) {
+      var d = !!done[b.id], now = i === nowIx;
+      h += '<div class="dws' + (d ? " d" : "") + (now ? " now" : "") + '"><div class="dwd">' + (d ? "✓" : now ? (i + 1) : b.icon) + '</div><div class="dwc"><div class="dwt"><b>' + b.icon + " " + esc(b.title) + '</b><span class="small muted" style="display:block"><b style="white-space:nowrap">' + b.min + ' Min.</b> · ' + esc(b.sub) + '</span></div>' +
+        (d ? "" : '<button class="' + (now ? "btn" : "chip") + ' dwb" data-act="planblock" data-i="' + i + '">Los ▶</button>') + '</div></div>';
+    });
+    return h + '</div>' + (all ? '<p class="small" style="text-align:center;margin:6px 0 0">🎉 Plan geschafft! Alles Weitere ist Bonus.</p>' : "") + '</section>';
+  }
   /* „Dein Tag“: feste Reihenfolge der Dinge, die heute dran sind (Daily Challenge, Pfad, Lernplan/Klassenaufgabe, Tagesziel) */
   function dayCard(pct) {
     var st = S.state, W = window.WordySync, steps = [], goalSec = S.goalMin() * 60, d = st.daily || {};
@@ -942,7 +959,7 @@
       '<div class="hhchips"><span class="hhc">🔥 <b class="tnum">' + st.streak.count + '</b></span><span class="hhc">🪙 <b class="tnum">' + st.coins + '</b></span></div></div>' +
       '</section>';
 
-    html += dayCard(pct);
+    html += planCard() + dayCard(pct);
 
     var wish = S.wish();
     html += '<section class="card"><div class="eyebrow">Tagesmissionen</div><div style="margin-top:6px">' +
@@ -2263,7 +2280,7 @@
     return S.shuffle(out);
   }
   function startSession(opts) {
-    S.rollDay(); S.regenHearts();
+    S.rollDay(); S.regenHearts(); curPlanBlock = opts.planBlock || null;
     var sentOnly = opts.mode === "sent";
     if (opts.mode === "verbs") {
       var vl = opts.verb ? S.verbs().filter(function (x) { return x.id === opts.verb; })
@@ -2321,6 +2338,7 @@
     var sec = Math.round((Date.now() - SS.start) / 1000);
     if (reason === "done" && SS.planned) S.recordPace(sec, SS.planned);
     var rw = S.finishSession({ items: SS.items, correct: SS.correct, sec: sec, maxChain: SS.maxChain, newSeen: SS.newSeen, deep: SS.deep || 0, daily: SS.mode === "mix" || !!SS.cls, boxSolved: SS.boxSolved, mastered: SS.mastered, sentOk: SS.sentOk });
+    if (curPlanBlock) { if (reason === "done" || SS.items >= 4) planMarkDone(curPlanBlock); curPlanBlock = null; }
     var st = S.state, acc = SS.items ? Math.round(SS.correct * 100 / SS.items) : 0;
     var head = reason === "hearts" ? "Kurze Pause" : SS.correct === SS.items && SS.items > 3 ? "Fehlerfrei!" : "Runde geschafft";
     var msg = reason === "hearts"
@@ -3062,6 +3080,11 @@
         else if (gl.kind === "days") startSession({ minutes: Math.max(5, S.goalMin()), mode: "mix" });
         else startSession({ minutes: Math.min(15, Math.max(5, gleft)), mode: "mix" });
       }
+    }
+    else if (a === "planblock") {
+      var pdp = window.WordySync.dayplan(), pb = pdp && pdp.blocks[+act.getAttribute("data-i")]; if (!pb) return;
+      if (pb.act === "start") startSession({ minutes: pb.min, mode: pb.mode, unit: pb.unit || null, focus: pb.focus || null, planBlock: pb.id });
+      else { planMarkDone(pb.id); var gb = document.createElement("button"); gb.hidden = true; gb.setAttribute("data-act", pb.act); gb.setAttribute("data-id", pb.gid); view.appendChild(gb); gb.click(); gb.remove(); }
     }
     else if (a === "startplan") {
       var pl = window.WordySync.activePlans().filter(function (x) { return String(x.id) === act.getAttribute("data-id"); })[0];
