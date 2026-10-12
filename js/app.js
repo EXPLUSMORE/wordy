@@ -886,6 +886,8 @@
     var ib = socOn() && soc.inbox; if (!ib) return null;
     var seen = S.state.profile.duelSeen || {}, o = ib.open.filter(function (c) { return !duelHide[c.id]; })[0];
     if (o) return { kind: "open", c: o, key: "o" + o.id };
+    var ci = ((soc.crew && soc.crew.invites) || []).filter(function (i) { return !duelHide["c" + i.crew]; })[0];   // Crew-Einladung
+    if (ci) return { kind: "crew", c: ci, key: "c" + ci.crew };
     var r = ib.recent.filter(function (c) { return c.mine === "a" && c.done && Date.now() - c.done < 3 * 864e5 && !seen[c.id]; })[0];
     if (r) return { kind: "res", c: r, key: "r" + r.id };
     var w = ib.waiting.filter(function (c) { return c.created && Date.now() - c.created < 2 * 864e5 && !seen["w" + c.id]; })[0];   // von dir gesendet, noch unbeantwortet
@@ -900,15 +902,16 @@
   }
   function duelCloud() {
     var it = duelCloudItem(); homeDuelKey = it ? it.key : ""; if (!it) return "";
-    var c = it.c, head, sub, icon, tag;
-    if (it.kind === "open") { icon = "⚔️"; tag = "DUELL"; head = esc(shortName(c.from.name)) + " fordert dich heraus!"; sub = MODE_NAME[c.mode] + " · schlag " + c.aScore; }
+    var c = it.c, head, sub, icon, tag, cid = it.kind === "crew" ? c.crew : c.id;
+    if (it.kind === "crew") { icon = esc(c.emoji || "🛡️"); tag = "CREW"; head = esc(shortName(c.from)) + " lädt dich ein!"; sub = "Crew " + esc(shortName(c.name)) + " · Tippen zum Ansehen"; }
+    else if (it.kind === "open") { icon = "⚔️"; tag = "DUELL"; head = esc(shortName(c.from.name)) + " fordert dich heraus!"; sub = MODE_NAME[c.mode] + " · schlag " + c.aScore; }
     else if (it.kind === "wait") { icon = "📨"; tag = "GESENDET"; head = "Duell an " + esc(shortName(c.to.name)) + " läuft"; sub = MODE_NAME[c.mode] + " · dein Wert " + c.aScore + " · wartet auf Antwort"; }
     else {
       var r = duelResult(c); tag = "ERGEBNIS"; icon = r.tie ? "🤝" : r.win ? "🏆" : "💪";
       head = r.tie ? "Unentschieden gegen " + esc(shortName(r.other.name)) : r.win ? "Du hast " + esc(shortName(r.other.name)) + " besiegt!" : esc(shortName(r.other.name)) + " war besser!";
       sub = "Du " + r.me + " : " + r.they + " " + esc(shortName(r.other.name)) + " · " + MODE_NAME[c.mode];
     }
-    return '<div class="newscloud duelcl ' + it.kind + '" data-id="' + c.id + '"><i class="ncs s1">⚡</i><i class="ncs s2">⭐</i><i class="ncs s3">⚡</i><span class="ncnew">' + tag + '</span><button class="ncbody" data-act="duelcloud" data-kind="' + it.kind + '" data-id="' + c.id + '"><span class="nci">' + icon + '</span><span class="nct"><b>' + head + '</b><small>' + sub + '</small></span></button><button class="ncx" data-act="duelx" data-kind="' + it.kind + '" data-id="' + c.id + '" aria-label="Ausblenden">✕</button></div>';
+    return '<div class="newscloud duelcl ' + it.kind + '" data-id="' + cid + '"><i class="ncs s1">⚡</i><i class="ncs s2">⭐</i><i class="ncs s3">⚡</i><span class="ncnew">' + tag + '</span><button class="ncbody" data-act="duelcloud" data-kind="' + it.kind + '" data-id="' + cid + '"><span class="nci">' + icon + '</span><span class="nct"><b>' + head + '</b><small>' + sub + '</small></span></button><button class="ncx" data-act="duelx" data-kind="' + it.kind + '" data-id="' + cid + '" aria-label="Ausblenden">✕</button></div>';
   }
   function dayDiff2(a, b) { return Math.round((new Date(b + "T00:00:00") - new Date(a + "T00:00:00")) / 864e5); }
   function viewHome() {
@@ -3159,7 +3162,8 @@
     else if (a === "duelcloud" || a === "duelx") {
       var did = act.getAttribute("data-id"), dk2 = act.getAttribute("data-kind"), dcl = act.closest(".newscloud"), pfd = S.state.profile;
       if (dcl) dcl.remove();
-      if (dk2 === "res" || dk2 === "wait") { (pfd.duelSeen || (pfd.duelSeen = {}))[(dk2 === "wait" ? "w" : "") + did] = 1; S.save(true); if (a === "duelcloud") { tab = "spielen"; spielSeg = "freunde"; render(); } }
+      if (dk2 === "crew") { duelHide["c" + did] = 1; if (a === "duelcloud") { tab = "spielen"; spielSeg = "crew"; render(); } }
+      else if (dk2 === "res" || dk2 === "wait") { (pfd.duelSeen || (pfd.duelSeen = {}))[(dk2 === "wait" ? "w" : "") + did] = 1; S.save(true); if (a === "duelcloud") { tab = "spielen"; spielSeg = "freunde"; render(); } }
       else if (a === "duelx") duelHide[did] = 1;
       else { var dch = ((soc.inbox && soc.inbox.open) || []).filter(function (c) { return String(c.id) === did; })[0]; if (dch) acceptDuel(dch); else { tab = "spielen"; spielSeg = "freunde"; render(); } }
     }

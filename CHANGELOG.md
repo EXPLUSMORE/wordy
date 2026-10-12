@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.96.0 – 2026-10-12
+- **Crew-Einladung als Wolke auf der Startseite**: Lädt jemand dein Kind in eine Crew ein, schwebt eine violette Wolke „<Name> lädt dich ein!“ (Crew-Name und -Symbol) auf der Startseite. Tippen öffnet Spielen › Crew mit „Beitreten“ oder ✕; die Wolke verschwindet dabei bis zum nächsten Öffnen der App und endgültig, sobald die Einladung beantwortet ist. Rangfolge der Duell-Wolken: offene Herausforderung, Crew-Einladung, Ergebnis, gesendet. Kein Server-Update nötig.
+
 ## 2.95.2 – 2026-10-12
 - **Dashboard › Verlauf: letzte Aktivität zuerst**: In „Tage einzeln“ steht der neueste Tag oben (wie bisher), jetzt stehen auch die Runden eines aufgeklappten Tages mit der letzten Runde zuerst. Das Balkendiagramm bleibt zeitlich von links (alt) nach rechts (neu). Server-Update nötig (Dashboard-Datei).
 
