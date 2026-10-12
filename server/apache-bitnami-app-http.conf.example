@@ -1,0 +1,13 @@
+# Bitnami-Apache, Privat-Betrieb der App, Schritt 1 (vor dem Zertifikat): als /opt/bitnami/apache/conf/vhosts/wordy-app-http.conf ablegen.
+# Betrifft nur den Namen wordy.explusmore.com. Danach "apachectl configtest" und "apachectl graceful".
+# Der Ordner wordy-acme ist derselbe wie beim track-Host (nur für die Let's-Encrypt-Prüfung).
+<VirtualHost *:80>
+    ServerName wordy.explusmore.com
+    DocumentRoot "/opt/bitnami/apache/htdocs/wordy-acme"
+    <Directory "/opt/bitnami/apache/htdocs/wordy-acme">
+        Require all granted
+    </Directory>
+    RewriteEngine On
+    RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+</VirtualHost>

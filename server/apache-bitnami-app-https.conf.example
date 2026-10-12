@@ -1,0 +1,40 @@
+# Bitnami-Apache, Privat-Betrieb der App, Schritt 2 (erst wenn das Zertifikat existiert):
+# als /opt/bitnami/apache/conf/vhosts/wordy-app-https.conf ablegen.
+# Die App (der Ordner docs/ aus dem Git-Checkout) wird hinter einer Anmeldung (HTTP Basic über https) ausgeliefert.
+# Ausgenommen sind nur Manifest und Symbole (enthalten keine Lerninhalte), damit "Zum Home-Bildschirm" funktioniert.
+<VirtualHost *:443>
+    ServerName wordy.explusmore.com
+    SSLEngine on
+    SSLCertificateFile    "/etc/letsencrypt/live/wordy.explusmore.com/fullchain.pem"
+    SSLCertificateKeyFile "/etc/letsencrypt/live/wordy.explusmore.com/privkey.pem"
+
+    DocumentRoot "/opt/wordy/docs"
+    <Directory "/opt/wordy/docs">
+        Options -Indexes
+        AllowOverride None
+        AuthType Basic
+        AuthName "Wordy (privat)"
+        AuthBasicProvider file
+        AuthUserFile "/opt/bitnami/apache/conf/wordy.htpasswd"
+        Require valid-user
+    </Directory>
+    # Ohne Anmeldung erreichbar: nur Manifest und Symbole
+    <Files "manifest.webmanifest">
+        Require all granted
+    </Files>
+    <Directory "/opt/wordy/docs/icons">
+        Require all granted
+    </Directory>
+
+    AddType application/manifest+json .webmanifest
+    # Nicht in Suchmaschinen oder Archiven ablegen
+    Header always set X-Robots-Tag "noindex, nofollow, noarchive"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Referrer-Policy "same-origin"
+    # Neue Versionen sollen sofort erkannt werden
+    <FilesMatch "^(sw\.js|manifest\.webmanifest|index\.html)$">
+        Header set Cache-Control "no-cache"
+    </FilesMatch>
+    # Git-Reste nie ausliefern
+    RedirectMatch 404 "/\.git"
+</VirtualHost>

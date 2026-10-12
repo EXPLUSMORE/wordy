@@ -54,6 +54,11 @@ Lernfortschritts-Server: https://track.wordy.explusmore.com (eigenständig, Node
 - Designs (v2.51): `html[data-design]` = `gold` (Standard), `sun`, `aurora`; `klassisch` = kein Attribut (Shop-Farbwelten greifen nur dort, sonst `data-x`). Variablen und Bausteine am Ende von `<style>` in `index.html` („DESIGNS“); `VTC.applyLook(profile, mode, design)` und `VTC.DESIGNS` in cosmetics.js, Einstellung `settings.design`. Neues Design = Variablenblock + Eintrag in `DESIGNS`. Dashboard/`family.html`/`datenschutz.html` folgen Nachtgold (Hell/Dunkel nach Gerät); dort keine Webfonts (CSP).
 - App-Symbole (v2.52): `tools/make-icons.js` (Playwright, braucht gebautes `docs/`) erzeugt `icons/*` (Wordy) und `server/public/app/*` (Dashboard); Server liefert `/app/*` öffentlich (`manifest.webmanifest` Betreiber, `family.webmanifest` Eltern). Startbild: `#boot` in index.html, Manifest-Hintergrund = Dunkelblau `#0E1320`.
 
+## Privat-Betrieb (Phase 0, Konzept „Wordy Open“)
+- Ziel: Repository privat, App nicht mehr über GitHub Pages, sondern auf dem Lightsail-Apache hinter Basic-Auth (`server/apache-bitnami-app-*.conf.example`, Schritte in `server/README.md` „Privat-Betrieb“). Der Server holt `main` per `deploy.sh` (Deploy-Key, nur lesen) und liefert `/opt/wordy/docs` aus; Manifest und `icons/` sind ohne Anmeldung erreichbar.
+- **Stand: vorbereitet, Umstellung macht der Betreiber** (DNS, Zertifikat, Repo privat). Bis zur Bestätigung gilt weiter GitHub Pages und die Zwei-Push-Regel (zuerst `main`). Nach der Umstellung entfällt der Pages-Grund dafür; die Reihenfolge schadet aber nicht.
+- Schulbuchdaten (`data/lernbuch.js`, Headlight-Bezüge in `grammatik.js`) gehören nicht in öffentliche Repositories. Weitere Phasen (Pack-Schnittstelle, sauberes Repo ohne Historie, freie Inhalte) nur nach ausdrücklicher Zusage des Betreibers.
+
 ## Shop und Belohnungen: Vorgaben des Betreibers (MERKEN, verbindlich)
 - **Vier Stufen in jedem Bereich** (gewöhnlich, selten, episch, legendär), **gleich viele Artikel je Stufe**, besonders in den oberen zwei Stufen.
 - **Sortierung immer:** gewöhnlich → selten → episch → legendär (dann nach Preis). Gilt im Shop und im Showroom (`RAR_ORDER` in engine.js, Sortierung in `shopCard()`).

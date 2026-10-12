@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.94.1 – 2026-10-12
+- **Privat-Betrieb vorbereitet (Phase 0)**: Apache-Vorlagen `apache-bitnami-app-http/https.conf.example` (App aus `/opt/wordy/docs` hinter Anmeldung, Manifest und Symbole frei, noindex), Schritt-für-Schritt-Anleitung in `server/README.md` (Deploy-Schlüssel, Zugänge, DNS, Zertifikat, GitHub Pages aus, Repository privat, Rückweg). Im Test (Anmeldung, Service Worker, Offline) geprüft. Keine App-Änderung; umgeschaltet wird erst durch den Betreiber.
+
 ## 2.94.0 – 2026-10-12
 - **Datenschutzerklärung aktualisiert** (Prüfung): neue Abschnitte 5a „Tägliche Erinnerung (Push)“ und 5b „Feedback“, Tabellenzeilen für Arena-Spiele, Push-Adresse und Feedback, Push-Dienste als Empfänger und Drittland-Übermittlung, Speicherdauer ergänzt, Aussage „keine freien Texte“ präzisiert, Rechtsgrundlage Art. 6 Abs. 1 lit. b bei den Kinderdaten entfernt. `CONSENT_VER` auf 2026-10e: Eltern stimmen der neuen Fassung neu zu. App: Hinweis im Feedback-Formular („keine Namen, Adressen, Telefonnummern“). Server-Update nötig.
 

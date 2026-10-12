@@ -28,9 +28,9 @@ Ohne SMTP-Passwort, mit einer App-Registrierung. Einmalig im Entra-Admin-Center 
 Für Erwachsene, die nur ihre Sicherung wollen: Beim Anlegen im Dashboard „Nur sichern, nicht anzeigen“ ankreuzen. Der Server nimmt dann nur den Lernstand an (Wiederherstellen funktioniert wie sonst), speichert aber keine Antworten, Zeiten, Käufe oder Ziele. Der Spieler ist in der Übersicht und der Wochenmail unsichtbar und steht unter „＋ Spieler → Nur gesicherte Spieler“.
 
 ## Adressen
-- **App:** `https://wordy.explusmore.com` bleibt unverändert (GitHub Pages).
+- **App:** `https://wordy.explusmore.com` (bisher GitHub Pages; Umstellung auf den eigenen Server hinter Anmeldung: Abschnitt „Privat-Betrieb“).
 - **Server und Dashboard:** eigene Subdomain `https://track.wordy.explusmore.com` (ein zusätzlicher DNS-Eintrag auf den Server, die App-Adresse wird nicht berührt).
-  `wordy.explusmore.com` selbst darf nicht auf den Server zeigen, sonst wäre die App weg.
+  Solange die App über GitHub Pages läuft, darf `wordy.explusmore.com` nicht auf den Server zeigen. Nach der Umstellung auf den Privat-Betrieb (siehe unten) zeigt sie bewusst auf den Server.
 
 ## Völlig eigenständig
 Der Wordy-Server teilt sich nichts mit anderen Diensten auf dem Rechner (auch nicht mit dem Admintool):
@@ -75,6 +75,26 @@ Der Server hört nur auf `127.0.0.1`, von außen erreichbar ist er ausschließli
 ## Variante: Server mit Bitnami-Apache (statt nginx)
 Läuft auf dem Rechner bereits ein Bitnami-Apache auf Port 80/443, gibt es keinen nginx. Dann übernimmt Apache die Rolle von nginx:
 `apache-bitnami-http.conf.example` (vor dem Zertifikat) und `apache-bitnami-https.conf.example` (danach) sind die Vorlagen, je ein eigener virtueller Host nur für die Wordy-Subdomain. Zertifikat per Let's Encrypt im Webroot-Verfahren, ohne bestehende Seiten anzufassen.
+
+## Privat-Betrieb: App auf dem eigenen Server (Phase 0)
+Ziel: Das GitHub-Repository ist **privat**, die App läuft nicht mehr über GitHub Pages (das braucht ein öffentliches Repository), sondern auf dem Lightsail-Apache hinter einer Anmeldung. Der Server holt neue Stände wie bisher selbst per `deploy.sh` (nur lesen); `docs/` wird direkt aus dem Checkout `/opt/wordy/docs` ausgeliefert, App-Änderungen sind also nach spätestens 5 Minuten live.
+Vorlagen: `apache-bitnami-app-http.conf.example`, `apache-bitnami-app-https.conf.example`. **Alle Schritte führt der Betreiber selbst aus** (Reihenfolge einhalten; die App ist dabei etwa 10 Minuten nicht erreichbar):
+
+1. **Vorher (einen Tag früher):** Beim DNS-Anbieter die TTL des Eintrags `wordy.explusmore.com` auf 300 Sekunden stellen. Bei GitHub unter *Insights → Forks* prüfen, ob es Forks gibt (öffentliche Forks bleiben öffentlich, wenn das Repository privat wird).
+2. **Deploy-Schlüssel (Nur-Lesen), solange das Repository noch erreichbar ist:** die Befehle aus dem Abschnitt „Nur falls das Repository einmal privat wird“ oben ausführen (Schlüssel anlegen, bei GitHub *Settings → Deploy keys* ohne Schreibrecht eintragen, `git remote set-url` auf `git@github.com:EXPLUSMORE/wordy.git`, `DEPLOY_KEY=…` in `/etc/default/wordy-deploy`). Testen: `sudo -u wordy GIT_SSH_COMMAND="ssh -i /etc/wordy-deploy/id_ed25519 -o IdentitiesOnly=yes" git -C /opt/wordy fetch` muss ohne Fehler laufen.
+3. **Zugangsdaten anlegen** (ein Konto pro Person, damit sich einzelne Zugänge sperren lassen; lange Passwörter verwenden):
+   `sudo /opt/bitnami/apache/bin/htpasswd -B -c /opt/bitnami/apache/conf/wordy.htpasswd magnus` (weitere Personen ohne `-c`), danach `sudo chmod 640 /opt/bitnami/apache/conf/wordy.htpasswd && sudo chgrp daemon /opt/bitnami/apache/conf/wordy.htpasswd`.
+4. **Dateirechte für Apache:** `sudo chmod o+x /opt/wordy && sudo chmod -R o+rX /opt/wordy/docs`. Prüfen, dass die `.env` des Servers nicht für alle lesbar ist (`ls -l`, soll `-rw-------` sein) und dass Apache lesen kann: `sudo -u daemon test -r /opt/wordy/docs/index.html && echo ok`.
+5. **Apache, Schritt 1:** `apache-bitnami-app-http.conf.example` nach `/opt/bitnami/apache/conf/vhosts/wordy-app-http.conf`, dann `sudo /opt/bitnami/apache/bin/apachectl configtest && sudo /opt/bitnami/apache/bin/apachectl graceful`.
+6. **DNS umstellen:** `wordy.explusmore.com` von GitHub Pages (CNAME auf `….github.io`) auf die feste IP des Lightsail-Servers setzen (A-Eintrag, dieselbe IP wie `track.wordy.explusmore.com`). Warten, bis `nslookup wordy.explusmore.com` die neue IP zeigt.
+7. **Zertifikat** wie beim track-Host (Webroot): `sudo certbot certonly --webroot -w /opt/bitnami/apache/htdocs/wordy-acme -d wordy.explusmore.com`.
+8. **Apache, Schritt 2:** `apache-bitnami-app-https.conf.example` nach `/opt/bitnami/apache/conf/vhosts/wordy-app-https.conf`, `configtest`, `graceful`.
+9. **Prüfen:** `curl -sI https://wordy.explusmore.com/` muss `401` melden, `curl -sI https://wordy.explusmore.com/data/lernbuch.js` ebenfalls `401`, mit `-u magnus` dagegen `200`, und `curl -sI https://wordy.explusmore.com/manifest.webmanifest` darf ohne Anmeldung `200` melden.
+10. **GitHub:** *Settings → Pages → Unpublish site* (und die Domain dort entfernen), danach *Settings → General → Danger Zone → Change visibility → Private*. Danach prüfen: `journalctl -u wordy-deploy -n 20 --no-pager` zeigt weiter „Neuer Stand …“ bzw. keine Fehler.
+11. **Geräte:** Wordy einmal im Browser öffnen und anmelden, dann die Home-Bildschirm-App neu öffnen („Neue Version verfügbar“). Wenn eine installierte App nur noch die Anmeldung zeigt: im Browser anmelden, danach die App erneut öffnen. iPhone: Passwort im Schlüsselbund speichern lassen.
+
+**Zurück (falls etwas klemmt):** DNS wieder auf GitHub Pages stellen; dafür muss das Repository vorübergehend öffentlich und Pages wieder aktiv sein.
+**Hinweise:** Der Lernfortschritts-Server (`track.wordy…`) bleibt unverändert und hat seine eigene Anmeldung; `ALLOW_ORIGIN` bleibt `https://wordy.explusmore.com`. Fehlversuche begrenzt Apache nicht von selbst: lange Passwörter verwenden, optional fail2ban. Der Service Worker legt die Dateien nach der Anmeldung im Gerät ab, die App läuft danach auch offline.
 
 ## Sicherung
 Es gibt drei Ebenen:
