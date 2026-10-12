@@ -260,6 +260,28 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     assert.ok(rp3.problems.some(x => x.id === "s0" && /sister|My/.test(x.en) && x.de), "Satz-ID wird zum Satz");
     assert.ok(rp3.problems.some(x => x.id === "v#0" && /be, was, been/.test(x.en) && x.de === "sein"), "Verb-ID wird zum Verb");
     assert.ok(rp3.problems.every(x => !/^(s\d+|v#\d+)$/.test(x.en)), "keine nackten Nummern mehr");
+    // Analyse: eigener Spieler mit erfundenen Ereignissen (wird danach wieder gelöscht)
+    {
+      const an = await J("/api/admin/players", { method: "POST", headers: H, body: JSON.stringify({ name: "Analyse" }) });
+      const ap = await J("/api/pair", { method: "POST", body: JSON.stringify({ code: an.j.invite.code, device: "Analyse" }) });
+      const t0 = Date.now() - 3600000, ae = []; let n = 0;
+      const add = (k, d, dt) => ae.push({ i: "an" + (n++), t: t0 - (dt || 0), k, d });
+      for (let i = 0; i < 40; i++) add("s", { id: "s" + (i % 8), g: i % 5 === 0 ? 1 : 0, en: "Satz " + (i % 8), de: "x" }, i * 1000);          // Sätze: meist falsch
+      for (let i = 0; i < 60; i++) add("a", { id: "H2-1a#" + (i % 5), g: i % 10 === 0 ? 0 : 2, h: i % 2, en: "w" + (i % 5), de: "w", u: "H2-1a" }, i * 1000);
+      for (let i = 0; i < 4; i++) add("ss", { sec: 300, items: 10, correct: 3, mode: "arena", sub: "blast", score: 40 + i * 10, coins: 1 }, i * 86400000);
+      add("ss", { sec: 200, items: 10, correct: 9, mode: "mix", coins: 1 });
+      const sent = await J("/api/events", { method: "POST", headers: T2(ap.j.token), body: JSON.stringify({ events: ae }) });
+      assert.ok(sent.j.stored > 100, "Analyse-Ereignisse gespeichert");
+      const A = await J("/api/admin/players/" + an.j.id + "/analysis", { headers: H });
+      assert.equal(A.s, 200); assert.equal(A.j.answers, 100, "alle Antworten gezählt");
+      assert.equal(A.j.runs, 5, "Runden gezählt");
+      const blast = A.j.games.find(g => g.id === "blast"); assert.ok(blast && blast.runs === 4 && blast.best === 70, "Spiel Blast ausgewertet");
+      assert.ok(A.j.types.find(x => x.name === "Sätze").acc < 0.3, "Sätze als schwach erkannt");
+      assert.ok(A.j.tips.some(t => /Sätze fallen am schwersten/.test(t.title)), "Vorschlag zu schwacher Aufgabenart");
+      assert.ok(A.j.tips.some(t => /Nur an \d+ von 14 Tagen/.test(t.title)), "Vorschlag zur Regelmäßigkeit");
+      assert.equal((await J("/api/admin/players/" + an.j.id, { method: "DELETE", headers: H })).s, 200);
+    }
+
     assert.ok(rp3.problems.some(x => x.id === "s1" && x.en === "Neue App schickt den Text mit."), "mitgeschickter Text hat Vorrang");
 
     // ---- "Nur sichern, nicht anzeigen"
@@ -347,6 +369,7 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     assert.ok(!(await J("/api/admin/players", { headers: H })).j.some(x => x.name === "Lena"), "Betreiber sieht fremde Kinder nicht");
     assert.equal((await J("/api/admin/players/" + kid.j.id + "/report", { headers: H })).s, 404, "Betreiber kommt nicht an fremde Berichte");
     assert.equal((await J("/api/fam/players/" + mk.j.id + "/report", { headers: F })).s, 404, "Familie kommt nicht an Spieler des Betreibers");
+    assert.equal((await J("/api/fam/players/" + mk.j.id + "/analysis", { headers: F })).s, 404, "Familie kommt nicht an die Analyse des Betreibers");
     assert.equal((await J("/api/fam/players/" + kid.j.id + "/goals", { method: "POST", headers: F, body: JSON.stringify({ kind: "minutes", target: 20 }) })).s, 200, "Familie setzt Ziele für ihr Kind");
     assert.equal((await J("/api/fam/families", { headers: F })).s, 403, "Betreiber-Funktionen gesperrt");
     assert.equal((await J("/api/fam/players/" + kid.j.id + "/season", { method: "POST", headers: F, body: JSON.stringify({ title: "Eigener Pass" }) })).s, 403, "Eltern stellen den Wochenpass nicht zusammen");

@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.97.0 – 2026-10-12
+- **Dashboard: neuer Reiter „Analyse“** (pro Kind, neben Überblick/Verlauf/Wörter/Aktivität): wertet die letzten 30 oder 90 Tage aus. Kennzahlen (Antworten, Trefferquote, Runden, Zeit, aktive Tage von 14), **Spiele (Arena)** je Spiel mit Runden, Zeit, Ø und Bestpunkten, Trend und Trefferquote, Lernarten, Aufgabenarten (Wörter/Sätze/Verben), schwächste Einheiten, Wörter, die hängen bleiben (≥ 3 Fehler), Trefferquote nach Uhrzeit. Dazu **Vorschläge** als Regeln mit Mindestmengen (z. B. schwache Aufgabenart oder Einheit → Lernplan/Wochenziel, zu viele oder zu wenige Spiele, nie gespielte Spiele, Regelmäßigkeit, Rundenlänge, Hilfen, Trend, beste Uhrzeit für die Erinnerung). Server: `analysis()` und `GET /api/admin/players/:id/analysis` (nur Lesen, speichert nichts; Familien sehen nur ihre Kinder). Test in `server/test.js`. Server-Update nötig.
+
 ## 2.96.0 – 2026-10-12
 - **Crew-Einladung als Wolke auf der Startseite**: Lädt jemand dein Kind in eine Crew ein, schwebt eine violette Wolke „<Name> lädt dich ein!“ (Crew-Name und -Symbol) auf der Startseite. Tippen öffnet Spielen › Crew mit „Beitreten“ oder ✕; die Wolke verschwindet dabei bis zum nächsten Öffnen der App und endgültig, sobald die Einladung beantwortet ist. Rangfolge der Duell-Wolken: offene Herausforderung, Crew-Einladung, Ergebnis, gesendet. Kein Server-Update nötig.
 

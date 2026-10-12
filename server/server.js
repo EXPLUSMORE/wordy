@@ -421,6 +421,89 @@ function report(pid, days) {
 }
 
 
+
+/* ---------- Analyse: Spielergebnisse und Lernverhalten der letzten Wochen, mit Vorschlägen ----------
+   Reine Auswertung der Lernereignisse (nichts wird gespeichert). Die Vorschläge sind Regeln mit Mindestmengen, damit wenige Daten nicht täuschen. */
+const hourFmt = new Intl.DateTimeFormat("en-GB", { timeZone: TZ, hour: "2-digit", hour12: false });
+const GAME_NAME = { match: "Match-Rausch", blitz: "Blitzrunde", survival: "Letztes Herz", hunt: "Fehlerjagd", detective: "Wort-Detektiv", eisi: "Freezy", kreuz: "Xing", letters: "Letters", blast: "Blast", blast3d: "Blast 3D", grammar: "Grammatik" };
+const MODE_NAME_DE = { mix: "Gemischt", new: "Neue Wörter", box: "Fehlerkartei", sent: "Sätze", verbs: "Verben", unit: "Einheit", plan: "Lernplan", focus: "Gezielt üben", master: "Meistern", path: "Lernpfad" };
+function analysis(pid, days) {
+  days = Math.min(120, Math.max(14, days || 90));
+  const now = Date.now(), from = now - days * 86400000;
+  const evs = q.events.all(pid, from).map(r => ({ ts: r.ts, k: r.k, d: JSON.parse(r.d) }));
+  const words = snap(pid, "words"), lvOf = id => (words && words.d[id]) ? words.d[id][0] : 0;
+  const ratio = (a, b) => b ? a / b : null;
+  /* 1. Runden je Spiel bzw. Lernart */
+  const games = {}, modes = {}, perDayRuns = {};
+  for (const e of evs) if (e.k === "ss") {
+    const d = e.d, arena = d.mode === "arena", raw = String(d.sub || ""), key = arena ? (raw.startsWith("grammar:") ? "grammar" : raw || "arena") : (d.mode || "mix");
+    const bag = arena ? games : modes, g = bag[key] = bag[key] || { id: key, name: arena ? (GAME_NAME[key] || key) : (MODE_NAME_DE[key] || key), runs: 0, sec: 0, items: 0, correct: 0, scores: [], last: 0 };
+    g.runs++; g.sec += d.sec || 0; g.items += d.items || 0; g.correct += d.correct || 0; g.last = Math.max(g.last, e.ts);
+    if (arena && d.score > 0) g.scores.push(d.score);
+    (perDayRuns[dayOf(e.ts)] = perDayRuns[dayOf(e.ts)] || 0);
+    perDayRuns[dayOf(e.ts)]++;
+  }
+  const fin = bag => Object.values(bag).map(g => {
+    const sc = g.scores, n = sc.length, half = Math.floor(n / 2);
+    const avg = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : 0;
+    const trend = n >= 6 ? Math.round((avg(sc.slice(n - half)) - avg(sc.slice(0, half))) / Math.max(1, avg(sc.slice(0, half))) * 100) : null;
+    return { id: g.id, name: g.name, runs: g.runs, sec: g.sec, items: g.items, acc: ratio(g.correct, g.items), best: n ? Math.max.apply(null, sc) : null, avg: n ? Math.round(avg(sc)) : null, trend, last: g.last };
+  }).sort((a, b) => b.sec - a.sec);
+  /* 2. Einzelantworten: Art (Wörter/Sätze/Verben), Einheit, Wörter, Tageszeit, Hilfen */
+  const types = { Wörter: { n: 0, ok: 0 }, Sätze: { n: 0, ok: 0 }, Verben: { n: 0, ok: 0 } }, units = {}, bad = {}, hours = Array.from({ length: 24 }, () => ({ n: 0, ok: 0 })), wdays = Array.from({ length: 7 }, () => ({ n: 0, ok: 0 }));
+  let hints = 0, ans = 0;
+  const half = now - Math.round(days / 2) * 86400000, per = [{ n: 0, ok: 0 }, { n: 0, ok: 0 }];
+  for (const e of evs) if (e.k === "a" || e.k === "s") {
+    const d = e.d, id = String(d.id || ""), good = d.g > 0 ? 1 : 0, t = /^s\d+$/.test(id) ? "Sätze" : /^v#/.test(id) ? "Verben" : "Wörter";
+    types[t].n++; types[t].ok += good; ans++; if (d.h) hints++;
+    const h = hours[+hourFmt.format(new Date(e.ts)) % 24]; h.n++; h.ok += good;
+    const w = wdays[(new Date(dayOf(e.ts) + "T12:00:00Z").getUTCDay() + 6) % 7]; w.n++; w.ok += good;
+    const pp = per[e.ts >= half ? 1 : 0]; pp.n++; pp.ok += good;
+    if (t === "Wörter") { const u = String(d.u || id.split("#")[0]); const x = units[u] = units[u] || { id: u, n: 0, ok: 0 }; x.n++; x.ok += good; }
+    if (!good && id) { const b = bad[id] = bad[id] || Object.assign({ id, n: 0 }, nameOf(d)); b.n++; }
+  }
+  const unitList = Object.values(units).filter(u => u.n >= 15).map(u => ({ id: u.id, title: ((UNIT_BY[u.id] && UNIT_BY[u.id].title) || u.id).replace(/^Headlight 2 · /, ""), n: u.n, acc: u.ok / u.n })).sort((a, b) => a.acc - b.acc).slice(0, 6);
+  const stuck = Object.values(bad).filter(b => b.n >= 3).map(b => Object.assign(b, { lv: lvOf(b.id) })).sort((a, b) => b.n - a.n).slice(0, 10);
+  const hourList = hours.map((h, i) => ({ h: i, n: h.n, acc: ratio(h.ok, h.n) })).filter(h => h.n > 0);
+  /* 3. Rhythmus */
+  const activeDays = new Set(evs.filter(e => e.k === "ss" || e.k === "a" || e.k === "s").map(e => dayOf(e.ts)));
+  const last14 = Array.from({ length: 14 }, (_, i) => dayOf(now - i * 86400000)).filter(k => activeDays.has(k)).length;
+  const allSec = Object.values(Object.assign({}, games, modes)).reduce((a, g) => a + g.sec, 0), runs = Object.values(Object.assign({}, games, modes)).reduce((a, g) => a + g.runs, 0);
+  const arenaSec = Object.values(games).reduce((a, g) => a + g.sec, 0);
+  const gl = fin(games), ml = fin(modes);
+  /* 4. Vorschläge */
+  const tips = [], tip = (prio, icon, title, text) => tips.push({ prio, icon, title, text });
+  const pc = x => Math.round(x * 100) + " %";
+  if (ans < 40 && runs < 5) tip(3, "ℹ️", "Noch wenig Daten", "Es gibt erst " + ans + " Antworten und " + runs + " Runden in diesem Zeitraum. Die Vorschläge werden besser, sobald mehr geübt wurde.");
+  const weakType = Object.entries(types).filter(([, v]) => v.n >= 30).map(([k, v]) => ({ k, acc: v.ok / v.n, n: v.n })).sort((a, b) => a.acc - b.acc)[0];
+  if (weakType && weakType.acc < 0.72) tip(1, "🎯", weakType.k + " fallen am schwersten (" + pc(weakType.acc) + " richtig)", "Lege dafür im Dashboard unter „Lernstoff steuern“ einen Lernplan an oder stelle eine Einheit als Wochenziel ein. In der App hilft „Gezielt üben“ gezielt für diese Aufgabenform.");
+  if (unitList.length && unitList[0].acc < 0.7) tip(1, "📚", "Schwächste Einheiten: " + unitList.slice(0, 3).filter(u => u.acc < 0.75).map(u => u.title).join(", "), "Dort liegt die Trefferquote unter 75 %. Diese Einheiten als Lernplan oder Wochenziel (Einheit sicher) setzen, bevor der Pfad weiterläuft.");
+  if (stuck.length >= 3) tip(1, "♻️", stuck.length + " Wörter bleiben hängen", "Sie wurden mindestens dreimal falsch beantwortet: " + stuck.slice(0, 5).map(b => b.en).join(", ") + ". Täglich 5 Minuten Fehlerkartei oder „Mitlesen“ dafür einplanen; alternativ eine eigene Lernliste mit diesen Wörtern.");
+  const badGame = gl.filter(g => g.runs >= 3 && g.acc != null && g.acc < 0.55).sort((a, b) => a.acc - b.acc)[0];
+  if (badGame) tip(2, "🎮", badGame.name + " klappt noch nicht gut (" + pc(badGame.acc) + " richtig)", "Das Spiel ist offenbar zu schwer oder zu schnell. Erst die Wörter in „Lernen“ festigen, dann noch einmal spielen. Vorschlag: im Wechsel mit Fehlerjagd (Fehlerkartei) üben.");
+  const unplayed = Object.keys(GAME_NAME).filter(k => k !== "grammar" && !games[k]);
+  if (runs >= 5 && unplayed.length >= 3) tip(3, "🧩", unplayed.length + " Spiele noch nie gespielt", unplayed.slice(0, 5).map(k => GAME_NAME[k]).join(", ") + ". Spiele bringen Abwechslung; ein Wochenziel „Tage üben“ mit einem Spiel pro Tag macht neugierig.");
+  const gram = games.grammar; if (runs >= 10 && !gram) tip(3, "✏️", "Grammatik noch nicht ausprobiert", "Unter Lernen › Grammatik gibt es 8 Themen passend zum Schulbuch. Ein Thema pro Woche als Lernplan-Ergänzung.");
+  if (allSec > 600 && arenaSec / allSec > 0.7) tip(2, "⚖️", "Fast nur Spiele (" + pc(arenaSec / allSec) + " der Zeit)", "Spiele sind flache Wiederholung. Damit Wörter wirklich sitzen, sollte mindestens die Hälfte der Zeit in Lernen (Daily Challenge, Lernpfad, Fehlerkartei) laufen. Dafür eine Mindestzeit als Wochenziel (Minuten üben) setzen.");
+  if (allSec > 600 && arenaSec / allSec < 0.08 && runs >= 8) tip(3, "🎲", "Kaum Spiele", "Fast nur Standardrunden. Zwei kurze Spielrunden pro Woche halten die Motivation hoch.");
+  if (last14 < 6 && days >= 14) tip(1, "📅", "Nur an " + last14 + " von 14 Tagen geübt", "Regelmäßigkeit zählt mehr als Länge. Ein Wochenziel „An 5 Tagen üben“ und die tägliche Erinnerung zur besten Uhrzeit (siehe unten) einstellen.");
+  const avgRun = runs ? allSec / runs / 60 : 0;
+  if (runs >= 8 && avgRun < 3) tip(2, "⏱️", "Sehr kurze Runden (Ø " + avgRun.toFixed(1).replace(".", ",") + " Min.)", "Ab etwa 5 Minuten wird die Wiederholung wirksam. Tagesziel auf 10 Minuten stellen und Daily Challenge fest einplanen.");
+  if (runs >= 8 && avgRun > 25) tip(3, "☕", "Sehr lange Runden (Ø " + Math.round(avgRun) + " Min.)", "Nach etwa 15 Minuten lässt die Konzentration nach. Zwei kürzere Runden am Tag bringen mehr.");
+  if (ans >= 60 && hints / ans > 0.25) tip(2, "💡", "Viele Hilfen (" + pc(hints / ans) + " der Antworten)", "Hilfen schützen vor Frust, ersetzen aber das Erinnern. Schwierigkeit senken (nur bekannte Einheiten) und die Hilfen nur nach dem zweiten Fehler anbieten.");
+  if (per[0].n >= 40 && per[1].n >= 40) { const a0 = per[0].ok / per[0].n, a1 = per[1].ok / per[1].n; if (a1 - a0 >= 0.05) tip(3, "📈", "Trefferquote steigt", pc(a0) + " → " + pc(a1) + " in der zweiten Hälfte des Zeitraums. Weiter so; neue Einheiten hinzunehmen."); else if (a0 - a1 >= 0.05) tip(2, "📉", "Trefferquote sinkt", pc(a0) + " → " + pc(a1) + ". Wahrscheinlich kam neuer Stoff dazu. Neue Wörter pro Tag begrenzen und die Fehlerkartei zuerst leeren."); }
+  const goodHours = hourList.filter(h => h.n >= 25).sort((a, b) => b.acc - a.acc), badHours = hourList.filter(h => h.n >= 25).sort((a, b) => a.acc - b.acc);
+  if (goodHours.length >= 3 && goodHours[0].acc - badHours[0].acc >= 0.1) tip(3, "🕒", "Beste Uhrzeit: " + goodHours[0].h + " Uhr", "Dort liegt die Trefferquote bei " + pc(goodHours[0].acc) + " (am schwächsten um " + badHours[0].h + " Uhr: " + pc(badHours[0].acc) + "). Erinnerung dafür im Dashboard unter Einstellungen › Tägliche Erinnerung setzen.");
+  const sentN = types["Sätze"].n, wordN = types["Wörter"].n;
+  if (ans >= 100 && sentN / ans < 0.05) tip(3, "🧱", "Fast keine Sätze", "Satzbau-Übungen trainieren Grammatik im Zusammenhang. Eine Satzrunde (Modus Sätze) pro Tag zusätzlich anstoßen.");
+  tips.sort((a, b) => a.prio - b.prio);
+  return {
+    days, answers: ans, runs, sec: allSec, activeDays: activeDays.size, last14, acc: ans ? Object.values(types).reduce((a, v) => a + v.ok, 0) / ans : null,
+    games: gl, modes: ml, types: Object.entries(types).map(([k, v]) => ({ name: k, n: v.n, acc: ratio(v.ok, v.n) })), units: unitList, stuck, hours: hourList,
+    wdays: wdays.map((w, i) => ({ d: i, n: w.n, acc: ratio(w.ok, w.n) })), tips
+  };
+}
+
 /* ---------- Wochen, Ziele, Lernpläne ---------- */
 const ymdAdd = (d, n) => { const [y, m, x] = d.split("-").map(Number); return new Date(Date.UTC(y, m - 1, x + n)).toISOString().slice(0, 10); };
 function mondayOf(d) { const [y, m, x] = d.split("-").map(Number); return ymdAdd(d, -((new Date(Date.UTC(y, m - 1, x)).getUTCDay() + 6) % 7)); }
@@ -1631,6 +1714,7 @@ const server = http.createServer(async (req, res) => {
         if (!famPlayer(pl, scope)) return send(res, 404, { error: "Unbekannt." });
         if (!m[2] && req.method === "GET") return send(res, 200, { id: pid, name: pl.name });
         if (m[2] === "report" && req.method === "GET") return send(res, 200, report(pid, Math.min(90, Math.max(7, +url.searchParams.get("days") || 30))));
+        if (m[2] === "analysis" && req.method === "GET") return send(res, 200, analysis(pid, +url.searchParams.get("days") || 90));
         if (m[2] === "states" && req.method === "GET") return send(res, 200, q.stateList.all(pid).map(stateMeta));
         if (m[2] === "state" && req.method === "GET") {
           const day = url.searchParams.get("day"); if (day && !/^\d{4}-\d\d-\d\d$/.test(day)) return send(res, 400, { error: "Datum ungültig." });
