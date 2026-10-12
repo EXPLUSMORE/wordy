@@ -791,7 +791,6 @@ const PUSH_LINES = [
   "Ehrenmann-Alarm, {name}: Wer jetzt übt, hat später Ruhe. Bist du dabei? 🤝"
 ];
 const PUSH_STREAK = [
-  "🔥 {streak} Tage am Stück, {name}! Lass die Serie nicht sterben.",
   "{streak} Tage Serie, {name}. Das wäre ja gelacht, wenn heute Schluss wäre. 🔥",
   "Dein Streak steht bei {streak}, {name}. Heute wird er {next}! 💪",
   "{streak} Tage Streak, {name}. Das ist schon richtig Sigma. Heute wird's {next}! 😎",

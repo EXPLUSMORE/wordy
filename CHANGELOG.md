@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.93.3 – 2026-10-12
+- **Serien-Spruch „Lass die Serie nicht sterben“ entfernt** (Server). Es bleiben 4 Serien-Sprüche.
+
 ## 2.93.2 – 2026-10-12
 - **Erinnerungssprüche nur noch im Schülerjargon**: Die Tagessprüche sind jetzt alle in Jugendsprache (25 Stück, neu u. a. Rizz, mid, Skill-Issue, Bruh, Flex, Glow-up, Main Character). Die Serien-Sprüche bleiben. Nur Server-Änderung.
 
