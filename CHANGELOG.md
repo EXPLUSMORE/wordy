@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.95.0 – 2026-10-12
+- **Duell-Wolke auf der Startseite**: Wird dein Kind herausgefordert, schwebt eine Wolke „⚔️ <Name> fordert dich heraus!“ (Spielart, Wert zum Schlagen) im Hero; Tippen startet das Duell. Hat ein Freund eine Herausforderung gespielt, die du gestartet hast, zeigt die Wolke das Ergebnis („Du hast … besiegt!“ / „… war besser!“ / Unentschieden, mit Stand). Sie verschwindet nach dem Antippen (öffnet Spielen › Freunde), nach ✕ oder wenn man die Freunde-Seite ansieht (`profile.duelSeen`); eine offene Herausforderung blendet ✕ nur für diese Sitzung aus. Läuft über die vorhandene Freunde-Abfrage (alle 2 Minuten und beim Öffnen), kein Server-Update nötig.
+
 ## 2.94.1 – 2026-10-12
 - **Privat-Betrieb vorbereitet (Phase 0)**: Apache-Vorlagen `apache-bitnami-app-http/https.conf.example` (App aus `/opt/wordy/docs` hinter Anmeldung, Manifest und Symbole frei, noindex), Schritt-für-Schritt-Anleitung in `server/README.md` (Deploy-Schlüssel, Zugänge, DNS, Zertifikat, GitHub Pages aus, Repository privat, Rückweg). Im Test (Anmeldung, Service Worker, Offline) geprüft. Keine App-Änderung; umgeschaltet wird erst durch den Betreiber.
 

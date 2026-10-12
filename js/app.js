@@ -879,6 +879,33 @@
     if (!n) return "";
     return '<div class="newscloud" data-id="' + esc(n.id) + '"><i class="ncs s1">✨</i><i class="ncs s2">⭐</i><i class="ncs s3">✨</i><span class="ncnew">NEU</span><button class="ncbody" data-act="newscloud" data-id="' + esc(n.id) + '"><span class="nci">' + n.icon + '</span><span class="nct"><b>' + esc(n.title) + '</b><small>' + esc(n.sub) + '</small></span></button><button class="ncx" data-act="newsx" data-id="' + esc(n.id) + '" aria-label="Ausblenden">✕</button></div>';
   }
+  /* Duell-Wolke auf der Startseite: oben eine offene Herausforderung (Tippen = annehmen), sonst das Ergebnis eines Duells, das ein Freund gerade gegen dich gespielt hat
+     (nur Duelle, die du gestartet hast; verschwindet nach dem Antippen, nach ✕ oder wenn du die Freunde-Seite ansiehst; Merkliste profile.duelSeen). */
+  var duelHide = {}, homeDuelKey = "";
+  function duelCloudItem() {
+    var ib = socOn() && soc.inbox; if (!ib) return null;
+    var seen = S.state.profile.duelSeen || {}, o = ib.open.filter(function (c) { return !duelHide[c.id]; })[0];
+    if (o) return { kind: "open", c: o, key: "o" + o.id };
+    var r = ib.recent.filter(function (c) { return c.mine === "a" && c.done && Date.now() - c.done < 3 * 864e5 && !seen[c.id]; })[0];
+    return r ? { kind: "res", c: r, key: "r" + r.id } : null;
+  }
+  function shortName(n) { n = String(n || ""); return n.length > 12 ? n.slice(0, 11) + "…" : n; }
+  function duelSeenAll() {
+    var ib = soc.inbox; if (!ib) return; var pf = S.state.profile, m = pf.duelSeen || (pf.duelSeen = {}), ch = false;
+    ib.recent.forEach(function (c) { if (c.mine === "a" && !m[c.id]) { m[c.id] = 1; ch = true; } });
+    if (ch) { Object.keys(m).slice(0, -60).forEach(function (k) { delete m[k]; }); S.save(true); }
+  }
+  function duelCloud() {
+    var it = duelCloudItem(); homeDuelKey = it ? it.key : ""; if (!it) return "";
+    var c = it.c, head, sub, icon, tag;
+    if (it.kind === "open") { icon = "⚔️"; tag = "DUELL"; head = esc(shortName(c.from.name)) + " fordert dich heraus!"; sub = MODE_NAME[c.mode] + " · schlag " + c.aScore; }
+    else {
+      var r = duelResult(c); tag = "ERGEBNIS"; icon = r.tie ? "🤝" : r.win ? "🏆" : "💪";
+      head = r.tie ? "Unentschieden gegen " + esc(shortName(r.other.name)) : r.win ? "Du hast " + esc(shortName(r.other.name)) + " besiegt!" : esc(shortName(r.other.name)) + " war besser!";
+      sub = "Du " + r.me + " : " + r.they + " " + esc(shortName(r.other.name)) + " · " + MODE_NAME[c.mode];
+    }
+    return '<div class="newscloud duelcl ' + it.kind + '" data-id="' + c.id + '"><i class="ncs s1">⚡</i><i class="ncs s2">⭐</i><i class="ncs s3">⚡</i><span class="ncnew">' + tag + '</span><button class="ncbody" data-act="duelcloud" data-kind="' + it.kind + '" data-id="' + c.id + '"><span class="nci">' + icon + '</span><span class="nct"><b>' + head + '</b><small>' + sub + '</small></span></button><button class="ncx" data-act="duelx" data-kind="' + it.kind + '" data-id="' + c.id + '" aria-label="Ausblenden">✕</button></div>';
+  }
   function dayDiff2(a, b) { return Math.round((new Date(b + "T00:00:00") - new Date(a + "T00:00:00")) / 864e5); }
   function viewHome() {
     var st = S.state, r = S.rankOf(st.xp);
@@ -902,7 +929,7 @@
       '<div class="hhtop"><div class="hhdate">' + esc(S.today().split("-").reverse().join(".")) + ' · ' + (biz ? "Business English" : "Schule") + '</div>' +
       '<h1>' + greet + '</h1><p class="hhtip">' + esc(tip) + '</p></div>' +
       '<div class="hhgoal"><div class="hhring" style="--p:' + pct + '"><b class="tnum">' + pct + '%</b></div><small>Tagesziel</small></div>' +
-      newsCloud() + '<div class="hhbubble" id="hhBub">' + esc(cheer) + '</div>' +
+      newsCloud() + duelCloud() + '<div class="hhbubble" id="hhBub">' + esc(cheer) + '</div>' +
       '<div class="hhpod"><i></i></div><button class="hhfig" id="hhFig" data-act="hhdance" aria-label="Figur antippen">' + heroHtml(pf.avatar, 0) + '</button>' +
       '<div class="hhbar"><div class="hhrank"><b>' + esc(rn) + '</b><div class="hhxp"><i style="width:' + xpPct + '%"></i></div><small class="tnum">' + (r.next ? toNext + ' XP bis ' + esc(r.next.n) : "Höchster Rang") + '</small></div>' +
       '<div class="hhchips"><span class="hhc">🔥 <b class="tnum">' + st.streak.count + '</b></span><span class="hhc">🪙 <b class="tnum">' + st.coins + '</b></span></div></div>' +
@@ -990,6 +1017,7 @@
         soc.loading = false; soc.ts = Date.now();
         if (soc.inbox) { var gained = 0, wins = 0; soc.inbox.recent.forEach(function (c) { var r = duelResult(c), o = S.duelDone(c.id, r.win && !r.tie); if (o.fresh) { gained += o.coins; if (o.win) wins++; } }); if (wins) { toast("🏆 " + (wins === 1 ? "Duell gewonnen" : wins + " Duelle gewonnen") + (gained ? "! +" + gained + " 🪙" : "!"), 3600); renderHeader(); } }
         var n = soc.inbox ? soc.inbox.open.length : 0, b = $('#tabs [data-tab="spielen"]'); if (b) b.classList.toggle("dot", n > 0 || crewDot());
+        var dk = duelCloudItem(); if (tab === "home" && sessionEl.hidden && (dk ? dk.key : "") !== homeDuelKey) render();
         if (socViewing()) render();
       });
   }
@@ -1013,7 +1041,7 @@
   }
   function friendsHtml() {
     var gate = socGate(); if (gate) return gate;
-    socLoad();
+    socLoad(); duelSeenAll();
     var me = soc.me, ib = soc.inbox || { open: [], waiting: [], recent: [] }, h = "";
     if (ib.open.length) h += '<section class="card duelcard"><div class="eyebrow">⚔️ Herausforderungen für dich</div>' + ib.open.map(function (c) {
       return '<div class="drow">' + who(c.from) + '<div class="grow"><b>' + esc(c.from.name) + '</b><div class="small muted">' + MODE_NAME[c.mode] + ' · schlag <b class="tnum">' + c.aScore + '</b></div></div><button class="btn" data-act="socaccept" data-id="' + c.id + '">Annehmen ▶</button></div>';
@@ -3124,6 +3152,13 @@
     }
     else if (a === "socmode") { soc.boardMode = act.getAttribute("data-m"); render(); }
     else if (a === "howto") howtoSheet();
+    else if (a === "duelcloud" || a === "duelx") {
+      var did = act.getAttribute("data-id"), dk2 = act.getAttribute("data-kind"), dcl = act.closest(".newscloud"), pfd = S.state.profile;
+      if (dcl) dcl.remove();
+      if (dk2 === "res") { (pfd.duelSeen || (pfd.duelSeen = {}))[did] = 1; S.save(true); if (a === "duelcloud") { tab = "spielen"; spielSeg = "freunde"; render(); } }
+      else if (a === "duelx") duelHide[did] = 1;
+      else { var dch = ((soc.inbox && soc.inbox.open) || []).filter(function (c) { return String(c.id) === did; })[0]; if (dch) acceptDuel(dch); else { tab = "spielen"; spielSeg = "freunde"; render(); } }
+    }
     else if (a === "newscloud" || a === "newsx") {
       var nid = act.getAttribute("data-id"), pfc = S.state.profile; (pfc.cloudSeen || (pfc.cloudSeen = {}))[nid] = 1; if (pfc.cloudForce) delete pfc.cloudForce[nid]; S.save(true);
       var cl = act.closest(".newscloud"); if (cl) cl.remove();
