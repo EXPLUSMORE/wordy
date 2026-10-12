@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.95.2 – 2026-10-12
+- **Dashboard › Verlauf: letzte Aktivität zuerst**: In „Tage einzeln“ steht der neueste Tag oben (wie bisher), jetzt stehen auch die Runden eines aufgeklappten Tages mit der letzten Runde zuerst. Das Balkendiagramm bleibt zeitlich von links (alt) nach rechts (neu). Server-Update nötig (Dashboard-Datei).
+
 ## 2.95.1 – 2026-10-12
 - **Duell-Wolke auch für gesendete Duelle**: Hat dein Kind jemanden herausgefordert und es kommt noch keine Antwort, zeigt die Startseite eine blaue Wolke „📨 Duell an <Name> läuft“ (Spielart, dein Wert, „wartet auf Antwort“) für 2 Tage. Sie verschwindet nach dem Antippen (öffnet Spielen › Freunde), nach ✕ oder beim Ansehen der Freunde-Seite. Rangfolge der Wolken: offene Herausforderung, dann Ergebnis, dann gesendet. Nach dem Senden wird die Freunde-Abfrage sofort neu geladen. Kein Server-Update nötig.
 

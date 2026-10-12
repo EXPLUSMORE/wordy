@@ -417,7 +417,7 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
       var det = "";
       if (has) {
         det = '<div class="small" style="padding:4px 0 10px 4px"><div class="muted">' + d.sessions + (d.sessions === 1 ? " Runde" : " Runden") + " · " + d.neu + (d.neu === 1 ? " neues Wort" : " neue Wörter") + " · 🪙 " + d.coins + "</div>" +
-          (d.runs.length ? "<table><tr><th>Uhr</th><th>Art</th><th class=\"n\">Dauer</th><th class=\"n\">Aufgaben</th><th class=\"n\">Richtig</th></tr>" + d.runs.map(function (s) {
+          (d.runs.length ? "<table><tr><th>Uhr</th><th>Art</th><th class=\"n\">Dauer</th><th class=\"n\">Aufgaben</th><th class=\"n\">Richtig</th></tr>" + d.runs.slice().reverse().map(function (s) {
             return "<tr><td>" + hhmm(s.ts) + "</td><td>" + esc(modeLabel(s)) + '</td><td class="n">' + fmtMin(s.sec) + '</td><td class="n">' + s.items + '</td><td class="n">' + pct(s.correct, s.items) + "</td></tr>";
           }).join("") + "</table>" : "") +
           (d.problems.length ? '<div class="muted" style="margin-top:6px">Fehler: ' + d.problems.map(function (x) { return "<b>" + esc(x.en) + "</b> (" + x.n + "×)"; }).join(", ") + "</div>" : "") + "</div>";
