@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.93.0 – 2026-10-12
+- **Erinnerung als Fenster zum Wegklicken**: Ist Wordy gerade offen, erscheint der Spruch als Fenster in der App („Los geht’s“ / „Später“). Ist Wordy im Hintergrund, bleibt die Mitteilung stehen, bis man sie wegwischt (mit Knöpfen „Los geht’s“ und „Später“, Vibration). Der Server sendet jetzt mit hoher Dringlichkeit (`Urgency: high`).
+- **Erinnerung standardmäßig an**: Hat das Gerät die Erlaubnis schon, meldet es sich still an. Sonst fragt einmal ein freundliches Fenster („Soll Wordy dich erinnern?“). Ausschalten unter Profil › Ton & Aussehen bleibt dauerhaft aus (`profile.pushOff`). Server-Update nötig (nur Dringlichkeit).
+
 ## 2.92.0 – 2026-10-12
 - **Tägliche Erinnerung per Mitteilung (Web Push)**: Jeden Tag zur eingestellten Uhrzeit (Standard 15:00, nach der Schule) kommt ein persönlicher, frecher Spruch aufs Handy („Na Magnus, die Vokabeln warten schon. Fünf Minuten, dann hast du Ruhe. 😏“; 22 Sprüche plus Serien-Sprüche ab 2 Tagen). Er kommt nicht, wenn das Tagesziel schon geschafft ist. Das Gerät schaltet es in der App unter Profil › Ton & Aussehen › „Tägliche Erinnerung“ frei (mit „Test senden“); die Eltern stellen Uhrzeit und An/Aus im Dashboard unter Einstellungen › „Tägliche Erinnerung“ ein. Auf dem iPhone nur, wenn Wordy auf dem Home-Bildschirm installiert ist. Technik: neues `server/push.js` (VAPID und Verschlüsselung nach RFC 8291 mit `node:crypto`, keine Fremdbibliothek), Tabelle `push_subs`, Schlüsselpaar wird beim ersten Start automatisch erzeugt (kv `vapid`), Endpunkte `/api/push[/key]` und `/api/admin|fam/players/:id/push`, Service Worker zeigt die Mitteilung. **Server-Update nötig**, der Server muss ins Internet senden dürfen (Google/Apple-Push-Dienste).
 

@@ -1,36 +1,36 @@
 /* Wordy – Offline-Cache. Automatisch erzeugt, nicht von Hand ändern. */
-const CACHE = 'wordy-9c8f439db8';
+const CACHE = 'wordy-e6c10ea52b';
 const FILES = [
   "./",
   "index.html",
   "manifest.webmanifest",
-  "data/klasse6.js?v=9c8f439db8",
-  "data/klasse7.js?v=9c8f439db8",
-  "data/klasse8.js?v=9c8f439db8",
-  "data/business.js?v=9c8f439db8",
-  "data/business-basis2.js?v=9c8f439db8",
-  "data/business-aufbau2.js?v=9c8f439db8",
-  "data/business-profi2.js?v=9c8f439db8",
-  "data/smalltalk.js?v=9c8f439db8",
-  "data/idioms.js?v=9c8f439db8",
-  "data/saetze.js?v=9c8f439db8",
-  "data/saetze2.js?v=9c8f439db8",
-  "data/lernbuch.js?v=9c8f439db8",
-  "data/verben.js?v=9c8f439db8",
-  "data/grammatik.js?v=9c8f439db8",
-  "js/engine.js?v=9c8f439db8",
-  "js/cosmetics.js?v=9c8f439db8",
-  "js/fortnite.js?v=9c8f439db8",
-  "js/figur.js?v=9c8f439db8",
-  "js/stila.js?v=9c8f439db8",
-  "js/stilb.js?v=9c8f439db8",
-  "js/loot.js?v=9c8f439db8",
-  "js/film.js?v=9c8f439db8",
-  "js/app.js?v=9c8f439db8",
-  "js/arena.js?v=9c8f439db8",
-  "js/spiele.js?v=9c8f439db8",
-  "js/grammatik.js?v=9c8f439db8",
-  "js/sync.js?v=9c8f439db8",
+  "data/klasse6.js?v=e6c10ea52b",
+  "data/klasse7.js?v=e6c10ea52b",
+  "data/klasse8.js?v=e6c10ea52b",
+  "data/business.js?v=e6c10ea52b",
+  "data/business-basis2.js?v=e6c10ea52b",
+  "data/business-aufbau2.js?v=e6c10ea52b",
+  "data/business-profi2.js?v=e6c10ea52b",
+  "data/smalltalk.js?v=e6c10ea52b",
+  "data/idioms.js?v=e6c10ea52b",
+  "data/saetze.js?v=e6c10ea52b",
+  "data/saetze2.js?v=e6c10ea52b",
+  "data/lernbuch.js?v=e6c10ea52b",
+  "data/verben.js?v=e6c10ea52b",
+  "data/grammatik.js?v=e6c10ea52b",
+  "js/engine.js?v=e6c10ea52b",
+  "js/cosmetics.js?v=e6c10ea52b",
+  "js/fortnite.js?v=e6c10ea52b",
+  "js/figur.js?v=e6c10ea52b",
+  "js/stila.js?v=e6c10ea52b",
+  "js/stilb.js?v=e6c10ea52b",
+  "js/loot.js?v=e6c10ea52b",
+  "js/film.js?v=e6c10ea52b",
+  "js/app.js?v=e6c10ea52b",
+  "js/arena.js?v=e6c10ea52b",
+  "js/spiele.js?v=e6c10ea52b",
+  "js/grammatik.js?v=e6c10ea52b",
+  "js/sync.js?v=e6c10ea52b",
   "icons/icon-192.png",
   "icons/icon-512.png",
   "icons/icon-maskable-512.png",
@@ -48,10 +48,16 @@ self.addEventListener('activate', e => {
 });
 self.addEventListener('push', e => {
   let d = {}; try { d = e.data.json(); } catch (x) { d = { body: e.data ? e.data.text() : '' }; }
-  e.waitUntil(self.registration.showNotification(d.title || 'Wordy', { body: d.body || '', icon: 'icons/icon-192.png', badge: 'icons/favicon-32.png', tag: d.tag || 'wordy', renotify: true, data: { url: d.url || './' } }));
+  /* Ist Wordy gerade offen und sichtbar, erscheint die Erinnerung als Fenster in der App (muss weggeklickt werden); sonst als Mitteilung, die stehen bleibt. */
+  e.waitUntil(clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+    const vis = list.filter(c => c.visibilityState === 'visible');
+    if (vis.length) { vis.forEach(c => c.postMessage({ type: 'wordy-push', title: d.title || 'Wordy', body: d.body || '' })); return; }
+    return self.registration.showNotification(d.title || 'Wordy', { body: d.body || '', icon: 'icons/icon-192.png', badge: 'icons/favicon-32.png', tag: d.tag || 'wordy', renotify: true, requireInteraction: true, vibrate: [200, 100, 200], actions: [{ action: 'open', title: "Los geht's ▶" }, { action: 'later', title: 'Später' }], data: { url: d.url || './' } });
+  }));
 });
 self.addEventListener('notificationclick', e => {
   e.notification.close();
+  if (e.action === 'later') return;
   e.waitUntil(clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
     for (const c of list) if ('focus' in c) return c.focus();
     return clients.openWindow((e.notification.data && e.notification.data.url) || './');

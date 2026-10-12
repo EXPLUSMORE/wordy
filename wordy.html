@@ -1138,7 +1138,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.92.0";window.WORDY_BUILD="9c8f439db8";</script>
+<script>window.WORDY_VERSION="2.93.0";window.WORDY_BUILD="e6c10ea52b";</script>
 </head>
 <body>
 <div id="app">
@@ -7696,6 +7696,53 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   function b64uToBytes(b) { var p = (b + "====").slice(0, b.length + (4 - b.length % 4) % 4).replace(/-/g, "+").replace(/_/g, "/"), r = atob(p), a = new Uint8Array(r.length), i; for (i = 0; i < r.length; i++) a[i] = r.charCodeAt(i); return a; }
   function pushSupported() { return !!(global.Notification && navigator.serviceWorker && global.PushManager); }
   function pushIosHint() { return /iPhone|iPad|iPod/.test(navigator.userAgent) && !(navigator.standalone || (global.matchMedia && global.matchMedia("(display-mode: standalone)").matches)); }
+  /* Gerät für die Erinnerung anmelden (Erlaubnis, Abo, Server). Braucht beim ersten Mal einen Klick, weil der Browser sonst nicht fragt. */
+  function pushEnable(W, time) {
+    return W.push("GET").then(function (v) {
+      return global.Notification.requestPermission().then(function (perm) {
+        if (perm !== "granted") throw new Error("Ohne Erlaubnis geht es leider nicht.");
+        return navigator.serviceWorker.ready.then(function (reg) {
+          return reg.pushManager.getSubscription().then(function (ex) { return ex || reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64uToBytes(v.key) }); });
+        }).then(function (sb) { return W.push("POST", { action: "subscribe", sub: sb.toJSON(), time: time || v.time, ua: (navigator.userAgent || "").slice(0, 70) }); });
+      });
+    });
+  }
+  /* Erinnerung ist standardmäßig an: Ist die Erlaubnis schon da, meldet sich das Gerät still an; sonst fragt einmal ein freundliches Fenster. */
+  function pushAuto() {
+    try {
+      var W = global.WordySync, pf = S.state.profile;
+      if (!W || !W.connected() || !pushSupported() || pushIosHint() || pf.pushOff || global.Notification.permission === "denied") return;
+      navigator.serviceWorker.ready.then(function (reg) { return reg.pushManager.getSubscription(); }).then(function (sub) {
+        if (sub) return;
+        if (global.Notification.permission === "granted") { pushEnable(W).catch(function () {}); return; }
+        if (pf.pushAsked) return;
+        if ($(".srmd")) { setTimeout(pushAuto, 20000); return; }   // erst wenn kein anderes Fenster offen ist
+        var ov = document.createElement("div"); ov.className = "srmd"; ov.id = "pushAsk";
+        ov.innerHTML = '<div class="dsh" style="text-align:center"><div class="dshg"></div><div style="font-size:46px">⏰</div><h3>Soll Wordy dich erinnern?</h3><p>Jeden Tag kommt ein kurzer, frecher Spruch aufs Handy, damit du dein Tagesziel nicht vergisst. Du kannst es jederzeit unter Profil ausschalten.</p><button class="btn" data-ok="1">Ja, erinnere mich</button><button class="dshx" data-close="1">Nicht jetzt</button></div>';
+        document.body.appendChild(ov);
+        ov.addEventListener("click", function (e) {
+          var ok = e.target.closest("[data-ok]");
+          if (!ok && e.target !== ov && !e.target.closest("[data-close]")) return;
+          pf.pushAsked = 1; S.save(true); ov.remove();
+          if (ok) pushEnable(W).then(function () { toast("Erinnerung ist an. Einstellung: Profil › Ton & Aussehen."); }).catch(function (er) { toast(er.message || "Das hat nicht geklappt."); });
+        });
+      }).catch(function () {});
+    } catch (e) {}
+  }
+  /* Erinnerung als Fenster in der App, bleibt stehen bis zum Wegklicken */
+  function pushPopup(title, body) {
+    var old = $("#pushPop"); if (old) old.remove();
+    var ov = document.createElement("div"); ov.className = "srmd"; ov.id = "pushPop";
+    ov.innerHTML = '<div class="dsh" style="text-align:center"><div class="dshg"></div><div style="font-size:46px">⏰</div><div class="eyebrow">' + esc(title || "Wordy") + '</div><h3>' + esc(body || "") + '</h3><button class="btn" data-go="1">Los geht’s</button><button class="dshx" data-close="1">Später</button></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener("click", function (e) {
+      if (e.target.closest("[data-go]")) { ov.remove(); if (!SS && tab !== "home") { tab = "home"; render(); } return; }
+      if (e.target.closest("[data-close]")) ov.remove();
+    });
+    try { if (navigator.vibrate) navigator.vibrate([200, 100, 200]); } catch (e) {}
+  }
+  if (navigator.serviceWorker) navigator.serviceWorker.addEventListener("message", function (e) { if (e.data && e.data.type === "wordy-push") pushPopup(e.data.title, e.data.body); });
+  setTimeout(pushAuto, 4500);
   function pushInit() {
     var box = $("#pushBox"); if (!box) return;
     var W = global.WordySync, head = '<span style="flex:1 1 auto"><b>Tägliche Erinnerung</b><br><span class="small muted">Ein frecher Spruch als Mitteilung, zum Beispiel nach der Schule</span></span>';
@@ -7710,19 +7757,15 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
           '<p class="small muted" id="pushMsg" style="margin:6px 0 0">' + (denied ? "Mitteilungen sind für Wordy im Browser gesperrt. Erlaube sie in den Einstellungen des Browsers." : "") + "</p>";
         var msg = function (t, bad) { var m = $("#pushMsg"); if (m) { m.textContent = t; m.style.color = bad ? "var(--bad)" : ""; } };
         $("#pushOn").onchange = function () {
-          var on = this.checked, sw = this;
+          var on = this.checked, sw = this, pf = S.state.profile;
+          pf.pushOff = !on; S.save(true);
           if (!on) {
             navigator.serviceWorker.ready.then(function (reg) { return reg.pushManager.getSubscription(); }).then(function (sb) { var ep = sb && sb.endpoint; return (sb ? sb.unsubscribe() : Promise.resolve()).then(function () { return W.push("POST", ep ? { action: "unsubscribe", endpoint: ep } : { action: "settings", on: false }); }); })
               .then(function () { $("#pushRow").hidden = true; msg("Erinnerung ausgeschaltet."); }).catch(function (e) { msg(e.message, true); });
             return;
           }
-          global.Notification.requestPermission().then(function (perm) {
-            if (perm !== "granted") { sw.checked = false; msg("Ohne Erlaubnis geht es leider nicht.", true); return; }
-            return navigator.serviceWorker.ready.then(function (reg) {
-              return reg.pushManager.getSubscription().then(function (ex) { return ex || reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64uToBytes(v.key) }); });
-            }).then(function (sb) { return W.push("POST", { action: "subscribe", sub: sb.toJSON(), time: $("#pushT").value, ua: (navigator.userAgent || "").slice(0, 70) }); })
-              .then(function () { $("#pushRow").hidden = false; msg("Fertig! Die Erinnerung kommt jeden Tag um " + $("#pushT").value + " Uhr."); });
-          }).catch(function (e) { sw.checked = false; msg(e.message || "Das hat nicht geklappt.", true); });
+          pushEnable(W, $("#pushT").value).then(function () { $("#pushRow").hidden = false; msg("Fertig! Die Erinnerung kommt jeden Tag um " + $("#pushT").value + " Uhr."); })
+            .catch(function (e) { sw.checked = false; pf.pushOff = true; S.save(true); msg(e.message || "Das hat nicht geklappt.", true); });
         };
         $("#pushT").onchange = function () { W.push("POST", { action: "settings", time: this.value }).then(function () { msg("Uhrzeit gespeichert."); }).catch(function (e) { msg(e.message, true); }); };
         $("#pushTest").onclick = function () { msg("Wird gesendet …"); W.push("POST", { action: "test" }).then(function (r) { msg(r.sent ? "Gesendet. Sie sollte gleich ankommen." : "Es ist kein Gerät angemeldet.", !r.sent); }).catch(function (e) { msg(e.message, true); }); };

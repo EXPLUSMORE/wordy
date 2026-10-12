@@ -49,7 +49,7 @@ function decrypt(body, receiver) {
 /* Senden. Ergebnis: { ok, status, gone } – gone = Abo ist ungültig (404/410) und kann gelöscht werden */
 async function send(vapid, subject, sub, message, ttl) {
   const body = encrypt(sub, JSON.stringify(message));
-  const r = await fetch(sub.endpoint, { method: "POST", headers: { "Content-Encoding": "aes128gcm", "Content-Type": "application/octet-stream", TTL: String(ttl || 14400), Urgency: "normal", Authorization: vapidHeader(vapid, sub.endpoint, subject) }, body, signal: AbortSignal.timeout(15000) });
+  const r = await fetch(sub.endpoint, { method: "POST", headers: { "Content-Encoding": "aes128gcm", "Content-Type": "application/octet-stream", TTL: String(ttl || 14400), Urgency: "high", Authorization: vapidHeader(vapid, sub.endpoint, subject) }, body, signal: AbortSignal.timeout(15000) });
   return { ok: r.status >= 200 && r.status < 300, status: r.status, gone: r.status === 404 || r.status === 410 };
 }
 module.exports = { generateVapid, vapidHeader, encrypt, decrypt, send, b64u, unb64u };
