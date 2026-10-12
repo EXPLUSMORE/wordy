@@ -151,6 +151,43 @@
     document.removeEventListener("pointerdown", warm);
     if (S.state.settings.audio && window.speechSynthesis) { try { primeSpeech(null, 300); lastSpoke = Date.now(); } catch (e) {} }
   }, { passive: true });
+  /* Tägliche Erinnerung (Web Push). Der Server schickt zur gewählten Uhrzeit einen Spruch; hier meldet sich das Gerät an. */
+  function b64uToBytes(b) { var p = (b + "====").slice(0, b.length + (4 - b.length % 4) % 4).replace(/-/g, "+").replace(/_/g, "/"), r = atob(p), a = new Uint8Array(r.length), i; for (i = 0; i < r.length; i++) a[i] = r.charCodeAt(i); return a; }
+  function pushSupported() { return !!(global.Notification && navigator.serviceWorker && global.PushManager); }
+  function pushIosHint() { return /iPhone|iPad|iPod/.test(navigator.userAgent) && !(navigator.standalone || (global.matchMedia && global.matchMedia("(display-mode: standalone)").matches)); }
+  function pushInit() {
+    var box = $("#pushBox"); if (!box) return;
+    var W = global.WordySync, head = '<span style="flex:1 1 auto"><b>Tägliche Erinnerung</b><br><span class="small muted">Ein frecher Spruch als Mitteilung, zum Beispiel nach der Schule</span></span>';
+    if (!W || !W.connected()) { box.innerHTML = '<div class="row">' + head + '</div><p class="small muted" style="margin:6px 0 0">Dafür muss Wordy erst mit dem Server verbunden sein (Profil › Server).</p>'; return; }
+    if (!pushSupported()) { box.innerHTML = '<div class="row">' + head + '</div><p class="small muted" style="margin:6px 0 0">Dieses Gerät oder dieser Browser kann leider keine Mitteilungen von Webseiten empfangen.</p>'; return; }
+    if (pushIosHint()) { box.innerHTML = '<div class="row">' + head + '</div><p class="small muted" style="margin:6px 0 0">Auf dem iPhone geht das nur, wenn Wordy auf dem Home-Bildschirm liegt: In Safari auf Teilen tippen, „Zum Home-Bildschirm“ wählen und Wordy von dort öffnen.</p>'; return; }
+    W.push("GET").then(function (v) {
+      navigator.serviceWorker.ready.then(function (reg) { return reg.pushManager.getSubscription(); }).then(function (sub) {
+        var active = !!sub && v.on && v.devices > 0, denied = global.Notification.permission === "denied";
+        box.innerHTML = '<div class="row">' + head + '<input type="checkbox" id="pushOn" ' + (active ? "checked" : "") + (denied ? " disabled" : "") + ' style="width:auto"></div>' +
+          '<div class="row" id="pushRow" style="margin-top:8px;gap:8px;align-items:center;flex-wrap:wrap"' + (active ? "" : " hidden") + '><label class="small" for="pushT">Uhrzeit</label><input id="pushT" type="time" value="' + esc(v.time) + '" style="width:auto"><button class="chip" id="pushTest">Test senden</button></div>' +
+          '<p class="small muted" id="pushMsg" style="margin:6px 0 0">' + (denied ? "Mitteilungen sind für Wordy im Browser gesperrt. Erlaube sie in den Einstellungen des Browsers." : "") + "</p>";
+        var msg = function (t, bad) { var m = $("#pushMsg"); if (m) { m.textContent = t; m.style.color = bad ? "var(--bad)" : ""; } };
+        $("#pushOn").onchange = function () {
+          var on = this.checked, sw = this;
+          if (!on) {
+            navigator.serviceWorker.ready.then(function (reg) { return reg.pushManager.getSubscription(); }).then(function (sb) { var ep = sb && sb.endpoint; return (sb ? sb.unsubscribe() : Promise.resolve()).then(function () { return W.push("POST", ep ? { action: "unsubscribe", endpoint: ep } : { action: "settings", on: false }); }); })
+              .then(function () { $("#pushRow").hidden = true; msg("Erinnerung ausgeschaltet."); }).catch(function (e) { msg(e.message, true); });
+            return;
+          }
+          global.Notification.requestPermission().then(function (perm) {
+            if (perm !== "granted") { sw.checked = false; msg("Ohne Erlaubnis geht es leider nicht.", true); return; }
+            return navigator.serviceWorker.ready.then(function (reg) {
+              return reg.pushManager.getSubscription().then(function (ex) { return ex || reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64uToBytes(v.key) }); });
+            }).then(function (sb) { return W.push("POST", { action: "subscribe", sub: sb.toJSON(), time: $("#pushT").value, ua: (navigator.userAgent || "").slice(0, 70) }); })
+              .then(function () { $("#pushRow").hidden = false; msg("Fertig! Die Erinnerung kommt jeden Tag um " + $("#pushT").value + " Uhr."); });
+          }).catch(function (e) { sw.checked = false; msg(e.message || "Das hat nicht geklappt.", true); });
+        };
+        $("#pushT").onchange = function () { W.push("POST", { action: "settings", time: this.value }).then(function () { msg("Uhrzeit gespeichert."); }).catch(function (e) { msg(e.message, true); }); };
+        $("#pushTest").onclick = function () { msg("Wird gesendet …"); W.push("POST", { action: "test" }).then(function (r) { msg(r.sent ? "Gesendet. Sie sollte gleich ankommen." : "Es ist kein Gerät angemeldet.", !r.sent); }).catch(function (e) { msg(e.message, true); }); };
+      });
+    }).catch(function (e) { box.innerHTML = '<div class="row">' + head + '</div><p class="small muted" style="margin:6px 0 0">' + esc(e.message) + "</p>"; });
+  }
   /* Bildschirm anlassen, solange Wordy offen ist (Screen Wake Lock). Das System gibt die Sperre beim Wechsel in den Hintergrund selbst frei, deshalb beim Zurückkehren neu anfordern. */
   var wakeLock = null;
   function wakeSync() {
@@ -1955,6 +1992,7 @@
     html += fold("ton", "🔊", "Ton &amp; Aussehen", "Vorlesen, Hell oder Dunkel",
       '<label class="row" style="margin-top:4px"><span style="flex:1 1 auto">Aussprache vorlesen<br><span class="small muted">Nutzt die englische Stimme des Geräts</span></span>' +
       '<input type="checkbox" id="setAudio" ' + (st.settings.audio ? "checked" : "") + ' style="width:auto"></label>' +
+      '<div id="pushBox" style="margin-top:10px"></div>' +
       '<div class="row" style="margin-top:10px"><span style="flex:1 1 auto">Neuheiten-Wolke<br><span class="small muted">Zeigt die Ankündigung neuer Spiele auf der Startseite wieder an</span></span><button class="chip" id="setCloud">Wieder anzeigen</button></div>' +
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Bildschirm anlassen<br><span class="small muted">Das Handy dunkelt nicht ab, solange Wordy offen ist</span></span>' +
       '<input type="checkbox" id="setWake" ' + (st.settings.wake !== false ? "checked" : "") + ' style="width:auto"></label>' +
@@ -2008,6 +2046,7 @@
     $("#setGoal").onchange = function () { st.settings.goalMin = +this.value; S.save(true); renderHeader(); };
     $("#setNew").onchange = function () { st.settings.newPerDay = +this.value; S.save(true); };
     $("#setAudio").onchange = function () { st.settings.audio = this.checked; S.save(true); };
+    pushInit();
     $("#setCloud").onclick = function () { var pf2 = st.profile; pf2.cloudSeen = {}; pf2.cloudForce = {}; NEWS.forEach(function (n) { pf2.cloudForce[n.id] = 1; }); S.save(true); toast("Die Wolke erscheint wieder auf der Startseite."); };
     $("#setWake").onchange = function () { st.settings.wake = this.checked; S.save(true); wakeSync(); };
     if ($("#setPathOn")) $("#setPathOn").onchange = function () { st.settings.pathOn = this.checked; S.save(true); };

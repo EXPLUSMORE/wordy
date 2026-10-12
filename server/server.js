@@ -7,6 +7,7 @@ const path = require("node:path");
 const crypto = require("node:crypto");
 const { DatabaseSync } = require("node:sqlite");
 const { sendMail, sendGraph } = require("./mail");
+const webpush = require("./push");
 
 /* Welche Version und welcher Git-Stand läuft hier? (für die Zeile am Ende des Dashboards) */
 const SERVER_INFO = (() => {
@@ -671,8 +672,8 @@ async function sendWeekly() {
   await sendMail({ host: MAIL.host, port: MAIL.port, secure: MAIL.secure, user: MAIL.user, pass: MAIL.pass, from: MAIL.from, to: mailTo(), subject: c.subject, text: c.text, html: c.html });
 }
 const localNow = () => {
-  const f = new Intl.DateTimeFormat("en-GB", { timeZone: TZ, weekday: "short", hour: "2-digit", hourCycle: "h23" }).formatToParts(new Date());
-  return { wd: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(f.find(x => x.type === "weekday").value), h: +f.find(x => x.type === "hour").value };
+  const f = new Intl.DateTimeFormat("en-GB", { timeZone: TZ, weekday: "short", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).formatToParts(new Date());
+  return { wd: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(f.find(x => x.type === "weekday").value), h: +f.find(x => x.type === "hour").value, m: +f.find(x => x.type === "minute").value };
 };
 let mailTries = { key: "", n: 0 };
 function mailTick() {
@@ -741,6 +742,101 @@ function newInvite(pid) {
   return { code, validDays: INVITE_DAYS, link: APP_URL + "/#verbinden=" + encodeURIComponent(DASH_URL + "#" + code) };
 }
 
+
+
+/* ---------- Tägliche Erinnerung (Web Push) ----------
+   Das Gerät meldet sich mit seinem Push-Abo an (Bearer), die Eltern stellen Uhrzeit und An/Aus im Dashboard ein.
+   Jeden Tag zur Uhrzeit (Europe/Berlin) kommt ein persönlicher Spruch, außer das Tagesziel ist schon geschafft. */
+db.exec(`CREATE TABLE IF NOT EXISTS push_subs (id INTEGER PRIMARY KEY, player INTEGER NOT NULL REFERENCES players(id) ON DELETE CASCADE, endpoint TEXT NOT NULL UNIQUE, p256dh TEXT NOT NULL, auth TEXT NOT NULL, created INTEGER NOT NULL, ua TEXT NOT NULL DEFAULT '')`);
+const pq = {
+  add: db.prepare("INSERT OR REPLACE INTO push_subs(player, endpoint, p256dh, auth, created, ua) VALUES (?, ?, ?, ?, ?, ?)"),
+  of: db.prepare("SELECT * FROM push_subs WHERE player = ?"),
+  del: db.prepare("DELETE FROM push_subs WHERE endpoint = ?"),
+  delId: db.prepare("DELETE FROM push_subs WHERE id = ?"),
+  players: db.prepare("SELECT DISTINCT player FROM push_subs")
+};
+const VAPID = (() => {
+  const r = q.kvGet.get("vapid"); try { const v = r ? JSON.parse(r.val) : null; if (v && v.publicKey && v.privateKey) return v; } catch (e) {}
+  const v = webpush.generateVapid(); q.kvSet.run("vapid", JSON.stringify(v)); return v;
+})();
+const PUSH_SUBJECT = process.env.PUSH_SUBJECT || DASH_URL || "mailto:admin@example.org";
+const PUSH_HTTP = process.env.PUSH_ALLOW_HTTP === "1";   // nur für Tests
+const pushState = pid => { const r = q.kvGet.get("push:" + pid); let v = {}; try { v = r ? JSON.parse(r.val) : {}; } catch (e) {} return { on: v.on !== false, time: /^([01]\d|2[0-3]):[0-5]\d$/.test(v.time || "") ? v.time : "15:00", last: v.last || "" }; };
+const pushSave = (pid, st) => q.kvSet.run("push:" + pid, JSON.stringify(st));
+const PUSH_LINES = [
+  "Na {name}, die Vokabeln warten schon. Fünf Minuten, dann hast du Ruhe. 😏",
+  "{name}! Dein Gehirn hat Hunger. Füttern wir es kurz? 🧠",
+  "Schule vorbei, Kopf noch warm: perfekt für ein paar Wörter, {name}.",
+  "Psst, {name}: Wordy vermisst dich. Nur ein bisschen. Okay, sehr. 🥺",
+  "Heute schon Englisch gesprochen, {name}? Dann ran, bevor es vergisst, wer du bist. 🇬🇧",
+  "{name}, ein Level pro Tag hält die Fünf fern. Los geht's! 🚀",
+  "Münzen liegen auf dem Boden, {name}. Du musst sie nur einsammeln. 🪙",
+  "Zehn Minuten Wordy sind weniger als ein Video. Sagt die Wissenschaft. Ungefähr. 😄",
+  "Hey {name}, die Fehlerkartei hat sich beschwert. Sie fühlt sich vernachlässigt. ♻️",
+  "Kurze Runde, {name}? Dein zukünftiges Ich sagt danke. 🙌",
+  "{name}, Blast wartet. Die Wörter fliegen schon. Weichst du aus? 🛸",
+  "Dein Fuchs steht schon bereit und tippt mit dem Fuß, {name}. 🦊",
+  "Wetten, du schaffst heute dein Tagesziel, {name}? Ich wette dagegen. Beweis mir das Gegenteil! 😎",
+  "Ein paar Wörter jetzt, mehr Freizeit später, {name}. Rechnung geht auf. ✅",
+  "{name}, Englisch ist wie Pizza: Man braucht jeden Tag ein Stück. 🍕",
+  "Pause vorbei, {name}. Der Wortschatz wächst nicht von allein. 🌱",
+  "Hallo {name}! Heute schon was gelernt? Nein? Dann jetzt! 📚",
+  "{name}, deine Serie mag keinen Besuch von der Pause. Kurz üben? 🔥",
+  "Nur 10 Minuten, {name}. Danach darfst du wieder alles andere. 🎮",
+  "Wordy ruft: Kommst du, {name}? Die Wörter sind fertig geschminkt. 💄",
+  "{name}, die Wörter spielen Verstecken. Du findest sie bestimmt! 🔍",
+  "Tagesziel in Reichweite, {name}. Schnapp es dir, bevor es jemand anderes tut! 🏆"
+];
+const PUSH_STREAK = [
+  "🔥 {streak} Tage am Stück, {name}! Lass die Serie nicht sterben.",
+  "{streak} Tage Serie, {name}. Das wäre ja gelacht, wenn heute Schluss wäre. 🔥",
+  "Dein Streak steht bei {streak}, {name}. Heute wird er {next}! 💪"
+];
+function pushMessage(pid, name, streak, seed) {
+  const nm = clean(name, 24) || "du", i = Math.abs(seed == null ? Date.now() / 86400000 | 0 : seed) + pid;
+  const useStreak = streak >= 2 && i % 3 === 0, pool = useStreak ? PUSH_STREAK : PUSH_LINES;
+  const body = pool[i % pool.length].replace(/\{name\}/g, nm).replace(/\{streak\}/g, streak).replace(/\{next\}/g, streak + 1);
+  return { title: "Wordy", body, url: "./", tag: "wordy-daily" };
+}
+async function pushSendTo(pid, message) {
+  let sent = 0;
+  for (const sub of pq.of.all(pid)) {
+    try {
+      const r = await webpush.send(VAPID, PUSH_SUBJECT, { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } }, message);
+      if (r.gone) pq.delId.run(sub.id); else if (r.ok) sent++; else console.error("Push:", r.status);
+    } catch (e) { console.error("Push-Fehler:", e.message); }
+  }
+  return sent;
+}
+function pushTodayInfo(pid) {
+  const m = snap(pid, "meta"), today = dayOf(Date.now()); let sec = 0;
+  for (const r of q.events.all(pid, Date.now() - 36 * 3600000)) { if (r.k !== "ss" || dayOf(r.ts) !== today) continue; try { sec += JSON.parse(r.d).sec || 0; } catch (e) {} }
+  return { sec, goal: ((m && m.d && m.d.goalMin) || 10) * 60, streak: (m && m.d && m.d.streak) || 0 };
+}
+let pushBusy = false;
+async function pushTick() {
+  if (pushBusy) return; pushBusy = true;
+  try {
+    const ln = localNow(), hhmm = String(ln.h).padStart(2, "0") + ":" + String(ln.m).padStart(2, "0"), day = dayOf(Date.now());
+    for (const { player: pid } of pq.players.all()) {
+      const st = pushState(pid); if (!st.on || st.last === day || hhmm < st.time) continue;
+      const late = (ln.h * 60 + ln.m) - (+st.time.slice(0, 2) * 60 + +st.time.slice(3));
+      st.last = day; pushSave(pid, st);
+      if (late > 120) continue;   // Server war lange weg: nicht mehr nachträglich nerven
+      const t = pushTodayInfo(pid); if (t.sec >= t.goal) continue;   // Tagesziel schon geschafft
+      const pl = q.player.get(pid); if (!pl) continue;
+      await pushSendTo(pid, pushMessage(pid, pl.name, t.streak));
+    }
+  } catch (e) { console.error("Push-Tick:", e.message); } finally { pushBusy = false; }
+}
+setInterval(() => pushTick(), 60000).unref();
+function pushView(pid) { const st = pushState(pid); return { on: st.on, time: st.time, devices: pq.of.all(pid).length, lastSent: st.last || null, key: VAPID.publicKey }; }
+const SUB_OK = sub => {
+  try {
+    const u = new URL(sub.endpoint); if (!(u.protocol === "https:" || (PUSH_HTTP && u.protocol === "http:")) || String(sub.endpoint).length > 600) return false;
+    return webpush.unb64u(sub.keys.p256dh).length === 65 && webpush.unb64u(sub.keys.auth).length >= 16;
+  } catch (e) { return false; }
+};
 
 /* ---------- Elternkonten ---------- */
 const transportOn = () => !!((GRAPH.tenant && GRAPH.clientId && GRAPH.clientSecret && MAIL.from) || (MAIL.host && MAIL.from));
@@ -1261,6 +1357,31 @@ const server = http.createServer(async (req, res) => {
     }
     if (p === "/api/pair/request" && req.method === "POST") { const [c, b] = pairRequest(await readJson(req), ip); return send(res, c, b); }
     { const mp = p.match(/^\/api\/pair\/request\/([0-9a-f]{32})$/); if (mp && req.method === "GET") { const [c, b] = pairPoll(mp[1], url.searchParams.get("secret"), ip); return send(res, c, b); } }
+    if (p === "/api/push/key" && req.method === "GET") return send(res, 200, { key: VAPID.publicKey });
+    if (p === "/api/push" && (req.method === "GET" || req.method === "POST")) {
+      const pid = playerOf(req); if (!pid) return send(res, 401, { error: "Nicht verbunden." });
+      if (req.method === "GET") return send(res, 200, pushView(pid));
+      if (limited(ip, "push", 30, 3600000)) return send(res, 429, { error: "Zu viele Versuche. Bitte später noch einmal." });
+      const b = await readJson(req), st = pushState(pid);
+      if (b.action === "subscribe") {
+        if (!SUB_OK(b.sub || {})) return send(res, 400, { error: "Das Gerät hat kein gültiges Push-Abo geliefert." });
+        if (pq.of.all(pid).length >= 5 && !pq.of.all(pid).some(x => x.endpoint === b.sub.endpoint)) return send(res, 400, { error: "Es sind höchstens 5 Geräte möglich." });
+        pq.add.run(pid, b.sub.endpoint, b.sub.keys.p256dh, b.sub.keys.auth, Date.now(), clean(b.ua, 80));
+        st.on = true; if (/^([01]\d|2[0-3]):[0-5]\d$/.test(b.time || "")) st.time = b.time; pushSave(pid, st);
+        return send(res, 200, pushView(pid));
+      }
+      if (b.action === "settings") {   // Gerät stellt Uhrzeit oder An/Aus ein
+        if (typeof b.on === "boolean") st.on = b.on;
+        if (/^([01]\d|2[0-3]):[0-5]\d$/.test(b.time || "")) st.time = b.time;
+        pushSave(pid, st); return send(res, 200, pushView(pid));
+      }
+      if (b.action === "unsubscribe") { if (b.endpoint) pq.del.run(String(b.endpoint)); return send(res, 200, pushView(pid)); }
+      if (b.action === "test") {
+        const pl = q.player.get(pid), t = pushTodayInfo(pid), n = await pushSendTo(pid, pushMessage(pid, pl.name, t.streak, Math.floor(Math.random() * 1000)));
+        return send(res, 200, Object.assign(pushView(pid), { sent: n }));
+      }
+      return send(res, 400, { error: "Unbekannte Aktion." });
+    }
     if (p === "/api/feedback" && (req.method === "GET" || req.method === "POST")) {
       const pid = playerOf(req); if (!pid) return send(res, 401, { error: "Nicht verbunden." });
       if (req.method === "GET") return send(res, 200, { items: fbq.ofPlayer.all(pid).map(fbOwn), kinds: FB_KINDS });
@@ -1528,6 +1649,13 @@ const server = http.createServer(async (req, res) => {
         if (m[2] === "goals" && req.method === "POST") { const gb = await readJson(req); if (scope) { gb.coins = 0; gb.item = ""; } const [c, b] = createGoal(pid, gb); return send(res, c, b); }
         if (m[2] === "plans" && req.method === "GET") return send(res, 200, plansOf(pid));
         if (m[2] === "plans" && req.method === "POST") { const pb = await readJson(req); if (scope) { pb.coins = 0; pb.item = ""; } const [c, b] = createPlan(pid, pb); return send(res, c, b); }
+        if (m[2] === "push" && req.method === "GET") return send(res, 200, pushView(pid));
+        if (m[2] === "push" && req.method === "POST") {
+          const b = await readJson(req), st = pushState(pid);
+          if (typeof b.on === "boolean") st.on = b.on;
+          if (/^([01]\d|2[0-3]):[0-5]\d$/.test(b.time || "")) st.time = b.time;
+          pushSave(pid, st); return send(res, 200, pushView(pid));
+        }
         if (m[2] === "weekplan" && req.method === "GET") return send(res, 200, weekPlanOf(pid));
         if (m[2] === "weekplan" && req.method === "POST") { const [c, b] = setWeekPlan(pid, await readJson(req)); return send(res, c, b); }
         if (m[2] === "season" && scope) return send(res, 403, { error: "Der Wochenpass wird vom Betreiber zusammengestellt." });

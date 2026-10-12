@@ -25,7 +25,7 @@ const fake = net.createServer(c => {
     }
   });
 }).listen(smtpPort, "127.0.0.1");
-const srv = spawn(process.execPath, [path.join(__dirname, "server.js")], { env: Object.assign({}, process.env, { PORT, DB_FILE: path.join(dir, "t.db"), ADMIN_PASSWORD: "test-passwort-123", SMTP_HOST: "127.0.0.1", SMTP_PORT: String(smtpPort), SMTP_SECURE: "none", SMTP_USER: "u", SMTP_PASSWORD: "p", MAIL_FROM: "Wordy <w@example.org>", MAIL_TO: "eltern@example.org" }), stdio: "inherit" });
+const srv = spawn(process.execPath, [path.join(__dirname, "server.js")], { env: Object.assign({}, process.env, { PORT, DB_FILE: path.join(dir, "t.db"), ADMIN_PASSWORD: "test-passwort-123", SMTP_HOST: "127.0.0.1", SMTP_PORT: String(smtpPort), SMTP_SECURE: "none", SMTP_USER: "u", SMTP_PASSWORD: "p", MAIL_FROM: "Wordy <w@example.org>", MAIL_TO: "eltern@example.org", PUSH_ALLOW_HTTP: "1" }), stdio: "inherit" });
 const wait = ms => new Promise(r => setTimeout(r, ms));
 const T2 = t => ({ Authorization: "Bearer " + t, "Content-Type": "application/json" });
 const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await r.json().catch(() => null) }));
@@ -57,6 +57,31 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     await J("/api/snapshot", { method: "POST", headers: T, body: JSON.stringify({
       words: { "H2-1a#0": [1, 1, 0, now], "H2-1a#1": [0, 0, 1, now], "H2-1a#2": [4, 5, 0, now] },
       catalog: [{ id: "H2-1a", title: "Unit 1", k: "Headlight 2", total: 37 }], meta: { coins: 12, rank: "Bronze I", streak: 3, goalMin: 10 } }) });
+    /* Tägliche Erinnerung (Web Push): Abo anmelden, Testnachricht kommt verschlüsselt an und lässt sich entschlüsseln */
+    { const cr = require("node:crypto"), http = require("node:http"), PUSH = require("./push.js");
+      const got = [], mock = http.createServer((rq, rs) => { const ch = []; rq.on("data", c => ch.push(c)); rq.on("end", () => { got.push({ h: rq.headers, body: Buffer.concat(ch), url: rq.url }); rs.statusCode = rq.url === "/gone" ? 410 : 201; rs.end(); }); });
+      await new Promise(r => mock.listen(0, "127.0.0.1", r)); const mp = mock.address().port;
+      const rec = { ecdh: cr.createECDH("prime256v1"), auth: cr.randomBytes(16) }; rec.ecdh.generateKeys();
+      const sub = { endpoint: "http://127.0.0.1:" + mp + "/ok", keys: { p256dh: PUSH.b64u(rec.ecdh.getPublicKey()), auth: PUSH.b64u(rec.auth) } };
+      const kk = await J("/api/push/key"); assert.equal(kk.s, 200); assert.equal(PUSH.unb64u(kk.j.key).length, 65, "VAPID-Schlüssel (öffentlich)");
+      assert.equal((await J("/api/push", { headers: {} })).s, 401, "ohne Anmeldung kein Push-Zugriff");
+      assert.equal((await J("/api/push", { method: "POST", headers: T, body: JSON.stringify({ action: "subscribe", sub: { endpoint: "javascript:x", keys: {} } }) })).s, 400, "ungültiges Abo abgelehnt");
+      const sb = await J("/api/push", { method: "POST", headers: T, body: JSON.stringify({ action: "subscribe", sub, time: "15:30", ua: "Test" }) });
+      assert.equal(sb.s, 200); assert.equal(sb.j.devices, 1); assert.equal(sb.j.time, "15:30"); assert.equal(sb.j.on, true);
+      const ts = await J("/api/push", { method: "POST", headers: T, body: JSON.stringify({ action: "test" }) });
+      assert.equal(ts.s, 200); assert.equal(ts.j.sent, 1, "Testnachricht gesendet");
+      const m1 = got.find(x => x.url === "/ok"); assert.ok(m1, "Push-Dienst hat die Nachricht bekommen");
+      assert.equal(m1.h["content-encoding"], "aes128gcm"); assert.ok(/^vapid t=[\w-]+\.[\w-]+\.[\w-]+, k=/.test(m1.h.authorization), "VAPID-Kopf");
+      const msg = JSON.parse(PUSH.decrypt(m1.body, rec)); assert.equal(msg.title, "Wordy"); assert.ok(msg.body.length > 10, "Spruch: " + msg.body);
+      const ad = await J("/api/admin/players/" + mk.j.id + "/push", { headers: H }); assert.equal(ad.s, 200); assert.equal(ad.j.devices, 1); assert.equal(ad.j.time, "15:30");
+      assert.equal((await J("/api/admin/players/" + mk.j.id + "/push", { method: "POST", headers: H, body: JSON.stringify({ on: false, time: "16:45" }) })).j.time, "16:45", "Eltern ändern die Uhrzeit");
+      assert.equal((await J("/api/push", { headers: T })).j.on, false, "und schalten ab");
+      const gone = Object.assign({}, sub, { endpoint: "http://127.0.0.1:" + mp + "/gone" });
+      await J("/api/push", { method: "POST", headers: T, body: JSON.stringify({ action: "subscribe", sub: gone }) });
+      await J("/api/push", { method: "POST", headers: T, body: JSON.stringify({ action: "test" }) });
+      assert.equal((await J("/api/push", { headers: T })).j.devices, 1, "abgelaufenes Abo (410) wird gelöscht");
+      assert.equal((await J("/api/push", { method: "POST", headers: T, body: JSON.stringify({ action: "unsubscribe", endpoint: sub.endpoint }) })).j.devices, 0, "Abmelden");
+      mock.close(); }
     const rep = await J("/api/admin/players/" + mk.j.id + "/report?days=14", { headers: H });
     assert.equal(rep.s, 200);
     const today = rep.j.days[rep.j.days.length - 1];

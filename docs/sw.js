@@ -1,36 +1,36 @@
 /* Wordy – Offline-Cache. Automatisch erzeugt, nicht von Hand ändern. */
-const CACHE = 'wordy-f098af2ced';
+const CACHE = 'wordy-9c8f439db8';
 const FILES = [
   "./",
   "index.html",
   "manifest.webmanifest",
-  "data/klasse6.js?v=f098af2ced",
-  "data/klasse7.js?v=f098af2ced",
-  "data/klasse8.js?v=f098af2ced",
-  "data/business.js?v=f098af2ced",
-  "data/business-basis2.js?v=f098af2ced",
-  "data/business-aufbau2.js?v=f098af2ced",
-  "data/business-profi2.js?v=f098af2ced",
-  "data/smalltalk.js?v=f098af2ced",
-  "data/idioms.js?v=f098af2ced",
-  "data/saetze.js?v=f098af2ced",
-  "data/saetze2.js?v=f098af2ced",
-  "data/lernbuch.js?v=f098af2ced",
-  "data/verben.js?v=f098af2ced",
-  "data/grammatik.js?v=f098af2ced",
-  "js/engine.js?v=f098af2ced",
-  "js/cosmetics.js?v=f098af2ced",
-  "js/fortnite.js?v=f098af2ced",
-  "js/figur.js?v=f098af2ced",
-  "js/stila.js?v=f098af2ced",
-  "js/stilb.js?v=f098af2ced",
-  "js/loot.js?v=f098af2ced",
-  "js/film.js?v=f098af2ced",
-  "js/app.js?v=f098af2ced",
-  "js/arena.js?v=f098af2ced",
-  "js/spiele.js?v=f098af2ced",
-  "js/grammatik.js?v=f098af2ced",
-  "js/sync.js?v=f098af2ced",
+  "data/klasse6.js?v=9c8f439db8",
+  "data/klasse7.js?v=9c8f439db8",
+  "data/klasse8.js?v=9c8f439db8",
+  "data/business.js?v=9c8f439db8",
+  "data/business-basis2.js?v=9c8f439db8",
+  "data/business-aufbau2.js?v=9c8f439db8",
+  "data/business-profi2.js?v=9c8f439db8",
+  "data/smalltalk.js?v=9c8f439db8",
+  "data/idioms.js?v=9c8f439db8",
+  "data/saetze.js?v=9c8f439db8",
+  "data/saetze2.js?v=9c8f439db8",
+  "data/lernbuch.js?v=9c8f439db8",
+  "data/verben.js?v=9c8f439db8",
+  "data/grammatik.js?v=9c8f439db8",
+  "js/engine.js?v=9c8f439db8",
+  "js/cosmetics.js?v=9c8f439db8",
+  "js/fortnite.js?v=9c8f439db8",
+  "js/figur.js?v=9c8f439db8",
+  "js/stila.js?v=9c8f439db8",
+  "js/stilb.js?v=9c8f439db8",
+  "js/loot.js?v=9c8f439db8",
+  "js/film.js?v=9c8f439db8",
+  "js/app.js?v=9c8f439db8",
+  "js/arena.js?v=9c8f439db8",
+  "js/spiele.js?v=9c8f439db8",
+  "js/grammatik.js?v=9c8f439db8",
+  "js/sync.js?v=9c8f439db8",
   "icons/icon-192.png",
   "icons/icon-512.png",
   "icons/icon-maskable-512.png",
@@ -45,6 +45,17 @@ self.addEventListener('activate', e => {
   e.waitUntil(caches.keys()
     .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
     .then(() => self.clients.claim()));
+});
+self.addEventListener('push', e => {
+  let d = {}; try { d = e.data.json(); } catch (x) { d = { body: e.data ? e.data.text() : '' }; }
+  e.waitUntil(self.registration.showNotification(d.title || 'Wordy', { body: d.body || '', icon: 'icons/icon-192.png', badge: 'icons/favicon-32.png', tag: d.tag || 'wordy', renotify: true, data: { url: d.url || './' } }));
+});
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  e.waitUntil(clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+    for (const c of list) if ('focus' in c) return c.focus();
+    return clients.openWindow((e.notification.data && e.notification.data.url) || './');
+  }));
 });
 self.addEventListener('fetch', e => {
   const req = e.request;

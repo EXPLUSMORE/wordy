@@ -503,6 +503,7 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
     var SET = sg("conn", "🔗", "Verbindung &amp; Geräte", "Neuer Code oder Link · Geräte trennen · Nur sichern", '<div class="row" style="gap:8px;flex-wrap:wrap"><button class="ghost" id="inv">Neuer Code / Link</button><button class="ghost" id="rev">Geräte trennen</button><button class="ghost" id="hid">Nur sichern</button></div>' + (window.WT ? "" : '<div style="margin-top:12px">' + pairCard("pairKid") + "</div>"), true) +
       sg("stoff", "🧭", "Lernstoff steuern", "Pfad-Einheiten · „Kind wählt selbst“ · Lernplan · Wochenziele · Boss", '<div class="card" id="pathCard"></div><div class="card" id="plansCard"></div><div class="card" id="goalsCard"></div>', true) +
       sg("ziel", "⏱️", "Tagesziel &amp; Wochenzeitplan", "Minuten je Tag · freie Tage", '<div class="card" id="wpCard"></div>', false) +
+      sg("push", "🔔", "Tägliche Erinnerung", "Uhrzeit · An / Aus · Geräte", '<div class="card" id="pushCard"></div>', false) +
       sg("belohn", "🎁", "Belohnungen", "Extramünzen · Pass (nur Betreiber)", '<div class="card" id="giftCard"></div><div class="card" id="passCard"></div>', false) +
       sg("sozial", "👥", "Freunde, Klasse, Crew", "Freigaben der Eltern", '<div class="card" id="friendCard"></div><div class="card" id="classCard"></div>', false) +
       sg("daten", "💾", "Sicherung &amp; Daten", "Lernstand wiederherstellen · Herunterladen", '<div class="card" id="backupCard"></div>', false) +
@@ -523,7 +524,7 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
     document.getElementById("rev").onclick = function () { if (confirm("Alle verbundenen Geräte von " + p.name + " trennen? Neu verbinden geht mit einem neuen Code.")) post("/api/admin/players/" + p.id + "/revoke").then(function () { loadPlayers(p.id); }); };
     document.getElementById("del").onclick = function () { if (confirm(p.name + " und alle gespeicherten Lerndaten endgültig löschen?")) api("/api/admin/players/" + p.id, { method: "DELETE" }).then(function () { cur = null; loadPlayers(); }); };
     wirePair("pairKid", p.id, "");
-    drawFriends(p); drawClass(p); drawGifts(p, r); drawPass(p, r); drawWeekPlan(p, r); drawPath(p, r); drawGoals(p, r); drawPlans(p, r); drawBackups(p, r);
+    drawPush(p); drawFriends(p); drawClass(p); drawGifts(p, r); drawPass(p, r); drawWeekPlan(p, r); drawPath(p, r); drawGoals(p, r); drawPlans(p, r); drawBackups(p, r);
     function pane() { document.getElementById("paneDash").hidden = mainTab !== "dash"; document.getElementById("paneSet").hidden = mainTab !== "set"; document.getElementById("paneFb").hidden = mainTab !== "fb"; if (mainTab === "fb") drawFeedback(document.getElementById("paneFb")); Array.prototype.forEach.call(view.querySelectorAll("#mainTabs button"), function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-mt") === mainTab)); }); Array.prototype.forEach.call(view.querySelectorAll("#subTabs button"), function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-st") === subTab)); }); Array.prototype.forEach.call(view.querySelectorAll("[data-sp]"), function (e) { e.hidden = e.getAttribute("data-sp") !== subTab; }); }
     Array.prototype.forEach.call(view.querySelectorAll("#mainTabs button"), function (b) { b.onclick = function () { mainTab = b.getAttribute("data-mt"); pane(); }; });
     Array.prototype.forEach.call(view.querySelectorAll("#subTabs button"), function (b) { b.onclick = function () { subTab = b.getAttribute("data-st"); pane(); }; });
@@ -817,6 +818,19 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
       var l = shop.filter(function (x) { return x[2] === k; }); if (!l.length) return "";
       return '<optgroup label="' + KIND_DE[k] + '">' + l.map(function (x) { return '<option value="' + esc(x[0]) + '">' + esc(x[1]) + "</option>"; }).join("") + "</optgroup>";
     }).join("") + "</select>";
+  }
+  /* Tägliche Erinnerung (Web Push): Eltern stellen Uhrzeit und An/Aus ein; das Gerät meldet sich selbst an (App: Profil › Ton & Aussehen) */
+  function drawPush(p) {
+    var el = document.getElementById("pushCard"); if (!el) return;
+    api("/api/admin/players/" + p.id + "/push").then(function (v) {
+      el.innerHTML = '<h2>Tägliche Erinnerung</h2><p class="small muted" style="margin:0 0 10px">Ein persönlicher, frecher Spruch als Mitteilung aufs Handy, zur gewählten Uhrzeit. Er kommt nicht, wenn das Tagesziel schon geschafft ist. ' + esc(nm()) + ' schaltet die Mitteilungen in der App unter Profil › Ton &amp; Aussehen am Handy frei.</p>' +
+        '<label class="row" style="gap:8px;margin-bottom:8px"><input type="checkbox" id="pxOn"' + (v.on ? " checked" : "") + '><span>Erinnerung aktiv</span></label>' +
+        '<div class="row" style="gap:8px;align-items:center;flex-wrap:wrap"><label class="small" for="pxT">Uhrzeit (Berlin)</label><input id="pxT" type="time" value="' + esc(v.time) + '" style="width:auto"><button id="pxS">Speichern</button><span id="pxM" class="small"></span></div>' +
+        '<p class="small muted" style="margin:10px 0 0">Geräte mit Mitteilungen: <b>' + v.devices + '</b>' + (v.devices ? "" : " (noch keins freigeschaltet)") + (v.lastSent ? " · zuletzt " + v.lastSent.split("-").reverse().join(".") : "") + "</p>";
+      document.getElementById("pxS").onclick = function () {
+        post("/api/admin/players/" + p.id + "/push", { on: document.getElementById("pxOn").checked, time: document.getElementById("pxT").value }).then(function () { var m = document.getElementById("pxM"); m.className = "small"; m.textContent = "Gespeichert."; }).catch(function (e) { var m = document.getElementById("pxM"); m.className = "small err"; m.textContent = e.message; });
+      };
+    }).catch(function (e) { el.innerHTML = '<p class="small err">' + esc(e.message) + "</p>"; });
   }
   function drawGoals(p, r) {
     var el = document.getElementById("goalsCard"); if (!el) return;
