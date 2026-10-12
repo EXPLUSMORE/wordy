@@ -887,18 +887,22 @@
     var seen = S.state.profile.duelSeen || {}, o = ib.open.filter(function (c) { return !duelHide[c.id]; })[0];
     if (o) return { kind: "open", c: o, key: "o" + o.id };
     var r = ib.recent.filter(function (c) { return c.mine === "a" && c.done && Date.now() - c.done < 3 * 864e5 && !seen[c.id]; })[0];
-    return r ? { kind: "res", c: r, key: "r" + r.id } : null;
+    if (r) return { kind: "res", c: r, key: "r" + r.id };
+    var w = ib.waiting.filter(function (c) { return c.created && Date.now() - c.created < 2 * 864e5 && !seen["w" + c.id]; })[0];   // von dir gesendet, noch unbeantwortet
+    return w ? { kind: "wait", c: w, key: "w" + w.id } : null;
   }
   function shortName(n) { n = String(n || ""); return n.length > 12 ? n.slice(0, 11) + "…" : n; }
   function duelSeenAll() {
     var ib = soc.inbox; if (!ib) return; var pf = S.state.profile, m = pf.duelSeen || (pf.duelSeen = {}), ch = false;
     ib.recent.forEach(function (c) { if (c.mine === "a" && !m[c.id]) { m[c.id] = 1; ch = true; } });
+    ib.waiting.forEach(function (c) { if (!m["w" + c.id]) { m["w" + c.id] = 1; ch = true; } });
     if (ch) { Object.keys(m).slice(0, -60).forEach(function (k) { delete m[k]; }); S.save(true); }
   }
   function duelCloud() {
     var it = duelCloudItem(); homeDuelKey = it ? it.key : ""; if (!it) return "";
     var c = it.c, head, sub, icon, tag;
     if (it.kind === "open") { icon = "⚔️"; tag = "DUELL"; head = esc(shortName(c.from.name)) + " fordert dich heraus!"; sub = MODE_NAME[c.mode] + " · schlag " + c.aScore; }
+    else if (it.kind === "wait") { icon = "📨"; tag = "GESENDET"; head = "Duell an " + esc(shortName(c.to.name)) + " läuft"; sub = MODE_NAME[c.mode] + " · dein Wert " + c.aScore + " · wartet auf Antwort"; }
     else {
       var r = duelResult(c); tag = "ERGEBNIS"; icon = r.tie ? "🤝" : r.win ? "🏆" : "💪";
       head = r.tie ? "Unentschieden gegen " + esc(shortName(r.other.name)) : r.win ? "Du hast " + esc(shortName(r.other.name)) + " besiegt!" : esc(shortName(r.other.name)) + " war besser!";
@@ -1138,7 +1142,7 @@
     var ids = deck.map(function (w) { return w.id; }), seed = Math.floor(Math.random() * 2000000000);
     global.ARENA.start(mode, { words: deck, seed: seed, duel: { wait: "Herausforderung wird gesendet …" }, onFinish: function (res, show) {
       global.WordySync.social("POST", "/challenges", { to: friend.id, mode: mode, words: ids, seed: seed, score: res.score })
-        .then(function () { soc.ts = 0; show("📨 <b>Gesendet!</b> " + esc(friend.name) + " muss jetzt deine <b>" + res.score + "</b> schlagen."); })
+        .then(function () { soc.ts = 0; socLoad(true); show("📨 <b>Gesendet!</b> " + esc(friend.name) + " muss jetzt deine <b>" + res.score + "</b> schlagen."); })
         .catch(function (e) { show("⚠️ " + esc(e.message)); });
     } });
   }
@@ -3155,7 +3159,7 @@
     else if (a === "duelcloud" || a === "duelx") {
       var did = act.getAttribute("data-id"), dk2 = act.getAttribute("data-kind"), dcl = act.closest(".newscloud"), pfd = S.state.profile;
       if (dcl) dcl.remove();
-      if (dk2 === "res") { (pfd.duelSeen || (pfd.duelSeen = {}))[did] = 1; S.save(true); if (a === "duelcloud") { tab = "spielen"; spielSeg = "freunde"; render(); } }
+      if (dk2 === "res" || dk2 === "wait") { (pfd.duelSeen || (pfd.duelSeen = {}))[(dk2 === "wait" ? "w" : "") + did] = 1; S.save(true); if (a === "duelcloud") { tab = "spielen"; spielSeg = "freunde"; render(); } }
       else if (a === "duelx") duelHide[did] = 1;
       else { var dch = ((soc.inbox && soc.inbox.open) || []).filter(function (c) { return String(c.id) === did; })[0]; if (dch) acceptDuel(dch); else { tab = "spielen"; spielSeg = "freunde"; render(); } }
     }

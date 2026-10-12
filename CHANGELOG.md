@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.95.1 – 2026-10-12
+- **Duell-Wolke auch für gesendete Duelle**: Hat dein Kind jemanden herausgefordert und es kommt noch keine Antwort, zeigt die Startseite eine blaue Wolke „📨 Duell an <Name> läuft“ (Spielart, dein Wert, „wartet auf Antwort“) für 2 Tage. Sie verschwindet nach dem Antippen (öffnet Spielen › Freunde), nach ✕ oder beim Ansehen der Freunde-Seite. Rangfolge der Wolken: offene Herausforderung, dann Ergebnis, dann gesendet. Nach dem Senden wird die Freunde-Abfrage sofort neu geladen. Kein Server-Update nötig.
+
 ## 2.95.0 – 2026-10-12
 - **Duell-Wolke auf der Startseite**: Wird dein Kind herausgefordert, schwebt eine Wolke „⚔️ <Name> fordert dich heraus!“ (Spielart, Wert zum Schlagen) im Hero; Tippen startet das Duell. Hat ein Freund eine Herausforderung gespielt, die du gestartet hast, zeigt die Wolke das Ergebnis („Du hast … besiegt!“ / „… war besser!“ / Unentschieden, mit Stand). Sie verschwindet nach dem Antippen (öffnet Spielen › Freunde), nach ✕ oder wenn man die Freunde-Seite ansieht (`profile.duelSeen`); eine offene Herausforderung blendet ✕ nur für diese Sitzung aus. Läuft über die vorhandene Freunde-Abfrage (alle 2 Minuten und beim Öffnen), kein Server-Update nötig.
 
