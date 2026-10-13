@@ -1140,7 +1140,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.98.0";window.WORDY_BUILD="389fc2ec75";</script>
+<script>window.WORDY_VERSION="2.99.0";window.WORDY_BUILD="96ae1827d0";</script>
 </head>
 <body>
 <div id="app">
@@ -8382,7 +8382,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var W = global.WordySync, dp = W && W.connected() ? W.dayplan() : null; if (!dp) return "";
     var done = planDoneMap(), n = dp.blocks.filter(function (b) { return done[b.id]; }).length, all = n === dp.blocks.length, nowIx = -1;
     dp.blocks.forEach(function (b, i) { if (nowIx < 0 && !done[b.id]) nowIx = i; });
-    var h = '<section class="card dayw planw"><div class="row" style="align-items:baseline"><div class="eyebrow" style="flex:1 1 auto">Dein ' + dp.total + '-Minuten-Plan</div><span class="small muted tnum">' + n + ' von ' + dp.blocks.length + '</span></div>' +
+    var h = '<section class="card dayw planw"><div class="row" style="align-items:baseline"><div class="eyebrow" style="flex:1 1 auto">' + (dp.custom ? "Dein Plan von den Eltern · " + dp.total + " Min." : "Dein " + dp.total + "-Minuten-Plan") + '</div><span class="small muted tnum">' + n + ' von ' + dp.blocks.length + '</span></div>' +
       (dp.why && dp.why.length ? '<p class="small muted" style="margin:4px 0 8px">Gebaut aus deinen Ergebnissen: ' + esc(dp.why.join(" · ")) + '</p>' : "") + '<div class="dwl">';
     dp.blocks.forEach(function (b, i) {
       var d = !!done[b.id], now = i === nowIx;
@@ -10627,6 +10627,13 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     else if (a === "planblock") {
       var pdp = window.WordySync.dayplan(), pb = pdp && pdp.blocks[+act.getAttribute("data-i")]; if (!pb) return;
       if (pb.act === "start") startSession({ minutes: pb.min, mode: pb.mode, unit: pb.unit || null, focus: pb.focus || null, planBlock: pb.id });
+      else if (pb.act === "mitlesen") { var pml = mitlesenList(pb.unit || null, null); if (!pml.list.length) { toast("Dafür gibt es noch keine Wörter zum Mitlesen."); return; } planMarkDone(pb.id); openMitlesen(pml.list, pml.title); }
+      else if (pb.act === "gram") { if (!global.VTGR) return; planMarkDone(pb.id); global.VTGR.start(pb.topic); }
+      else if (pb.act === "duel") {
+        if (!socOn() || !soc.me || !soc.me.enabled || !(soc.me.friends || []).some(function (f) { return f.state === "ok"; })) { toast("Für ein Duell braucht es einen Freund, den die Eltern freigegeben haben."); return; }
+        planMarkDone(pb.id); tab = "spielen"; spielSeg = "freunde"; render();
+      }
+      else if (pb.act === "unitgame") { planMarkDone(pb.id); var ub = document.createElement("button"); ub.hidden = true; ub.setAttribute("data-act", "unitgame"); ub.setAttribute("data-unit", pb.unit); ub.setAttribute("data-arena", pb.gid); view.appendChild(ub); ub.click(); ub.remove(); }
       else { planMarkDone(pb.id); var gb = document.createElement("button"); gb.hidden = true; gb.setAttribute("data-act", pb.act); gb.setAttribute("data-id", pb.gid); view.appendChild(gb); gb.click(); gb.remove(); }
     }
     else if (a === "startplan") {

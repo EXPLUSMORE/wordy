@@ -547,6 +547,53 @@ function dayplanOf(pid) {
   dayplanCache.set(pid, { ts: Date.now(), v }); return v;
 }
 
+
+/* ---------- Plan-Generator: Eltern stellen den Tagesplan selbst zusammen (ersetzt den automatischen Plan, bis er gelöscht wird) ----------
+   Bausteine: Mitlesen/Einheit je Einheit, Lernarten, Spiele (optional je Einheit), Grammatik-Thema, Duell nach Wahl. Die Texte baut der Server, die App führt nur aus. */
+const GRAM_TOPICS = { pres1: ["🕒", "Simple Present und Present Progressive"], past1: ["⏪", "Simple Past: Das ist passiert"], past2: ["❓", "Simple Past: Fragen und Verneinung"], modal1: ["💪", "have to, should, can / could"], will1: ["🔮", "will, going to, I'll"], comp1: ["📈", "Steigerung"], quant1: ["🍎", "some, any, there is / there are"], if1: ["🔀", "If-Sätze (Typ 1)"] };
+const PLAN_GAMES = { match: ["⚡", "Match-Rausch", "arena"], blitz: ["🔥", "Blitzrunde", "arena"], survival: ["💠", "Letztes Herz", "arena"], hunt: ["🎯", "Fehlerjagd", "arena"], detective: ["🕵️", "Wort-Detektiv", "wgame"], eisi: ["🧊", "Freezy", "wgame"], kreuz: ["✖️", "Xing", "wgame"], letters: ["🔤", "Letters", "wgame"], blast: ["🚀", "Blast", "wgame"], blast3d: ["🛸", "Blast 3D", "wgame"] };
+const PLAN_TYPES = {
+  mitlesen: { label: "Mitlesen", group: "Lernen", unit: "opt" }, unit: { label: "Einheit üben", group: "Lernen", unit: "req" },
+  box: { label: "Fehlerkartei", group: "Lernen" }, mix: { label: "Daily Challenge (gemischt)", group: "Lernen" }, new: { label: "Neue Wörter", group: "Lernen" },
+  sent: { label: "Sätze", group: "Lernen" }, verbs: { label: "Unregelmäßige Verben", group: "Lernen" },
+  listen: { label: "Hören", group: "Gezielt üben" }, type: { label: "Tippen", group: "Gezielt üben" }, gap: { label: "Lücken", group: "Gezielt üben" }, match: { label: "Zuordnen", group: "Gezielt üben" },
+  grammar: { label: "Grammatik", group: "Lernen", topic: true }, game: { label: "Spiel", group: "Spiele", game: true, unit: "opt" }, duel: { label: "Duell nach Wahl", group: "Spiele" }
+};
+const unitShort = id => { const u = UNIT_BY[id]; return u ? u.title.replace(/^Headlight 2 · /, "") : String(id); };
+function planBlocks(raw) {
+  const out = [], err = (m) => ({ error: m });
+  if (!Array.isArray(raw) || !raw.length) return err("Bitte mindestens einen Baustein angeben.");
+  if (raw.length > 12) return err("Höchstens 12 Bausteine.");
+  for (let i = 0; i < raw.length; i++) {
+    const r = raw[i] || {}, t = String(r.t || ""), def = PLAN_TYPES[t], min = Math.round(+r.min);
+    if (!def) return err("Unbekannter Baustein " + (i + 1) + ".");
+    if (!(min >= 1 && min <= 30)) return err("Minuten bei Baustein " + (i + 1) + ": 1 bis 30.");
+    const unit = r.unit ? String(r.unit) : "";
+    if (unit && !SAFE_ID.test(unit)) return err("Einheit bei Baustein " + (i + 1) + " ungültig.");
+    if (def.unit === "req" && !unit) return err("Baustein " + (i + 1) + ": bitte eine Einheit wählen.");
+    if (unit && UNIT_BY[unit] === undefined && !/^(eigen|own)/i.test(unit)) return err("Einheit bei Baustein " + (i + 1) + " ist dem Server unbekannt.");
+    const b = { id: "c" + i, min, icon: "📚", title: def.label, sub: "", act: "start", mode: t, unit: "", focus: null, gid: "", topic: "" };
+    if (t === "mitlesen") { b.act = "mitlesen"; b.icon = "🗣️"; b.unit = unit; b.title = unit ? "Mitlesen: " + unitShort(unit) : "Mitlesen: alle gelernten Wörter"; b.sub = "Wörter hören und laut mitsprechen"; }
+    else if (t === "unit") { b.mode = "unit"; b.unit = unit; b.title = unitShort(unit); b.sub = "Einheit üben"; }
+    else if (t === "box") { b.icon = "♻️"; b.sub = "Fehlerkartei: Wörter, die noch wackeln"; }
+    else if (t === "mix") { b.icon = "🏆"; b.sub = "Bunte Wiederholung, was heute dran ist"; }
+    else if (t === "new") { b.icon = "✨"; b.sub = "Neue Wörter kennenlernen"; }
+    else if (t === "sent") { b.icon = "💬"; b.sub = "Sätze bauen"; }
+    else if (t === "verbs") { b.icon = "🔀"; b.sub = "Unregelmäßige Verben"; }
+    else if (["listen", "type", "gap", "match"].includes(t)) { b.mode = "focus"; b.focus = t; b.icon = { listen: "👂", type: "⌨️", gap: "🧩", match: "🔗" }[t]; b.sub = "Gezielt üben: " + def.label; }
+    else if (t === "grammar") { const g = GRAM_TOPICS[String(r.topic || "")]; if (!g) return err("Grammatik-Thema bei Baustein " + (i + 1) + " unbekannt."); b.act = "gram"; b.topic = String(r.topic); b.icon = g[0]; b.title = g[1]; b.sub = "Grammatik: erklären und üben"; }
+    else if (t === "game") {
+      const g = PLAN_GAMES[String(r.game || "")]; if (!g) return err("Spiel bei Baustein " + (i + 1) + " unbekannt.");
+      b.gid = String(r.game); b.icon = g[0]; b.title = g[1]; b.sub = "Spiel";
+      if (g[2] === "arena" && unit && b.gid !== "hunt") { b.act = "unitgame"; b.unit = unit; b.sub = "Spiel mit Wörtern aus " + unitShort(unit); } else b.act = g[2];
+    }
+    else if (t === "duel") { b.act = "duel"; b.icon = "⚔️"; b.title = "Ein Duell deiner Wahl"; b.sub = "Fordere einen Freund heraus"; }
+    out.push(b);
+  }
+  return { blocks: out };
+}
+const customplanOf = pid => { const r = q.kvGet.get("customplan:" + pid); try { const v = r ? JSON.parse(r.val) : null; if (!v || !Array.isArray(v.raw)) return null; const b = planBlocks(v.raw); return b.error ? null : { custom: true, total: b.blocks.reduce((a, x) => a + x.min, 0), blocks: b.blocks, why: [], made: v.ts || 0 }; } catch (e) { return null; } };
+
 /* ---------- Wochen, Ziele, Lernpläne ---------- */
 const ymdAdd = (d, n) => { const [y, m, x] = d.split("-").map(Number); return new Date(Date.UTC(y, m - 1, x + n)).toISOString().slice(0, 10); };
 function mondayOf(d) { const [y, m, x] = d.split("-").map(Number); return ymdAdd(d, -((new Date(Date.UTC(y, m - 1, x)).getUTCDay() + 6) % 7)); }
@@ -649,7 +696,7 @@ function apiSync(pid) {
     coinFactor: coinFactorOf(pid),
     gifts: giftsOf(pid).slice(-20),
     season: seasonOf(pid),
-    dayplan: dayplanOn(pid) ? dayplanOf(pid) : null
+    dayplan: customplanOf(pid) || (dayplanOn(pid) ? dayplanOf(pid) : null)
   }];
 }
 /* Wochenzeitplan: Minuten pro Wochentag (Mo bis So), gilt jede Woche gleich, dazu Wochenbonus in Münzen */
@@ -1759,6 +1806,17 @@ const server = http.createServer(async (req, res) => {
         if (!m[2] && req.method === "GET") return send(res, 200, { id: pid, name: pl.name });
         if (m[2] === "report" && req.method === "GET") return send(res, 200, report(pid, Math.min(90, Math.max(7, +url.searchParams.get("days") || 30))));
         if (m[2] === "analysis" && req.method === "GET") return send(res, 200, analysis(pid, +url.searchParams.get("days") || 90));
+        if (m[2] === "customplan" && req.method === "GET") {
+          const r = q.kvGet.get("customplan:" + pid); let raw = null; try { raw = r ? JSON.parse(r.val).raw : null; } catch (e) {}
+          return send(res, 200, { raw: Array.isArray(raw) ? raw : null, types: PLAN_TYPES, games: Object.entries(PLAN_GAMES).map(([id, g]) => ({ id, icon: g[0], name: g[1], kind: g[2] })), grammar: Object.entries(GRAM_TOPICS).map(([id, g]) => ({ id, icon: g[0], title: g[1] })), units: UNITS.map(u => ({ id: u.id, k: u.k, title: u.title })), active: !!customplanOf(pid) });
+        }
+        if (m[2] === "customplan" && req.method === "POST") {
+          const b = await readJson(req);
+          if (b.clear) { q.kvSet.run("customplan:" + pid, "null"); return send(res, 200, { ok: true, active: false }); }
+          const v = planBlocks(b.blocks); if (v.error) return send(res, 400, { error: v.error });
+          q.kvSet.run("customplan:" + pid, JSON.stringify({ raw: b.blocks.map(x => ({ t: String(x.t), min: Math.round(+x.min), unit: x.unit ? String(x.unit) : "", game: x.game ? String(x.game) : "", topic: x.topic ? String(x.topic) : "" })), ts: Date.now() }));
+          return send(res, 200, { ok: true, active: true, total: v.blocks.reduce((a, x) => a + x.min, 0), blocks: v.blocks });
+        }
         if (m[2] === "dayplan" && req.method === "GET") { dayplanCache.delete(pid); return send(res, 200, { on: dayplanOn(pid), plan: dayplanOf(pid) }); }
         if (m[2] === "dayplan" && req.method === "POST") { const b = await readJson(req); q.kvSet.run("dayplan:" + pid, JSON.stringify({ on: b.on !== false })); return send(res, 200, { ok: true, on: b.on !== false }); }
         if (m[2] === "states" && req.method === "GET") return send(res, 200, q.stateList.all(pid).map(stateMeta));

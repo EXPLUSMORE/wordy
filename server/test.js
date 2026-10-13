@@ -287,6 +287,21 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
       assert.ok((await J("/api/sync", { headers: T2(ap.j.token) })).j.dayplan, "App bekommt den Tagesplan");
       await J("/api/admin/players/" + an.j.id + "/dayplan", { method: "POST", headers: H, body: JSON.stringify({ on: false }) });
       assert.equal((await J("/api/sync", { headers: T2(ap.j.token) })).j.dayplan, null, "ausgeschaltet kommt kein Plan");
+      const CP = "/api/admin/players/" + an.j.id + "/customplan";
+      assert.equal((await J(CP, { method: "POST", headers: H, body: JSON.stringify({ blocks: [{ t: "unit", min: 3 }] }) })).s, 400, "Einheit ist Pflicht bei „Einheit üben“");
+      assert.equal((await J(CP, { method: "POST", headers: H, body: JSON.stringify({ blocks: [{ t: "mitlesen", unit: "gibtsnicht", min: 3 }] }) })).s, 400, "unbekannte Einheit abgelehnt");
+      assert.equal((await J(CP, { method: "POST", headers: H, body: JSON.stringify({ blocks: [{ t: "mitlesen", unit: "H2-1a", min: 99 }] }) })).s, 400, "Minuten begrenzt");
+      const sv = await J(CP, { method: "POST", headers: H, body: JSON.stringify({ blocks: [{ t: "mitlesen", unit: "H2-1a", min: 3 }, { t: "mitlesen", unit: "H2-1b", min: 3 }, { t: "game", game: "blitz", unit: "H2-1a", min: 2 }, { t: "grammar", topic: "past1", min: 1 }, { t: "duel", min: 1 }] }) });
+      assert.equal(sv.s, 200); assert.equal(sv.j.total, 10, "Summe 10 Minuten");
+      const cs = (await J("/api/sync", { headers: T2(ap.j.token) })).j.dayplan;
+      assert.ok(cs && cs.custom && cs.blocks.length === 5, "App bekommt den Elternplan, auch wenn der automatische aus ist");
+      assert.ok(/^Mitlesen: /.test(cs.blocks[0].title) && cs.blocks[0].act === "mitlesen" && cs.blocks[0].unit === "H2-1a", "Mitlesen mit Einheit");
+      assert.ok(cs.blocks[2].act === "unitgame" && cs.blocks[2].gid === "blitz", "Spiel mit Einheit");
+      assert.ok(cs.blocks[3].act === "gram" && cs.blocks[3].topic === "past1" && cs.blocks[4].act === "duel", "Grammatik und Duell");
+      assert.equal((await J(CP, { headers: H })).j.raw.length, 5, "Plan lässt sich wieder laden");
+      await J(CP, { method: "POST", headers: H, body: JSON.stringify({ clear: true }) });
+      assert.equal((await J("/api/sync", { headers: T2(ap.j.token) })).j.dayplan, null, "nach „automatisch“ (aus) kein Plan mehr");
+      assert.equal((await J("/api/fam/players/" + mk.j.id + "/customplan", { headers: { Cookie: "x=1" } })).s, 401, "ohne Anmeldung gesperrt");
       assert.equal((await J("/api/admin/players/" + an.j.id, { method: "DELETE", headers: H })).s, 200);
     }
 
