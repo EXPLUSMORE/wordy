@@ -280,10 +280,10 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
       assert.ok(A.j.tips.some(t => /Sätze fallen am schwersten/.test(t.title)), "Vorschlag zu schwacher Aufgabenart");
       assert.ok(A.j.tips.some(t => /Nur an \d+ von 14 Tagen/.test(t.title)), "Vorschlag zur Regelmäßigkeit");
       const DP = (await J("/api/admin/players/" + an.j.id + "/dayplan", { headers: H })).j;
-      assert.ok(DP.on && DP.plan && DP.plan.blocks.length === 3 && !DP.plan.blocks.some(b => b.id === "game"), "fast nur Spiele gespielt: Plan ohne Spiel-Baustein");
+      assert.ok(DP.on && DP.plan && DP.plan.blocks.length === 4 && !DP.plan.blocks.some(b => b.id === "game"), "fast nur Spiele gespielt: Plan ohne Spiel-Baustein");
       assert.equal(DP.plan.blocks.reduce((x, b) => x + b.min, 0), DP.plan.total, "Minuten ergeben die Gesamtzeit");
       assert.equal(DP.plan.blocks[0].mode, "box", "hängende Wörter: Fehlerkartei zuerst");
-      assert.ok(DP.plan.blocks.some(b => b.mode === "sent"), "schwache Sätze bekommen einen Baustein");
+      assert.equal(DP.plan.blocks.filter(b => b.mode === "sent").length, 1, "Sätze sind immer genau einmal im Plan");
       assert.ok((await J("/api/sync", { headers: T2(ap.j.token) })).j.dayplan, "App bekommt den Tagesplan");
       await J("/api/admin/players/" + an.j.id + "/dayplan", { method: "POST", headers: H, body: JSON.stringify({ on: false }) });
       assert.equal((await J("/api/sync", { headers: T2(ap.j.token) })).j.dayplan, null, "ausgeschaltet kommt kein Plan");

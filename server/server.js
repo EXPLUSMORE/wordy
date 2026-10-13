@@ -519,10 +519,13 @@ function buildDayplan(A, total, biz) {
   const wu = A.units[0];
   if (wu && wu.acc < 0.85) blocks.push({ id: "unit", w: 3, icon: "📚", title: wu.title, sub: "Schwächste Einheit: " + pc(wu.acc) + " richtig", act: "start", mode: "unit", unit: wu.id });
   else blocks.push({ id: "new", w: 3, icon: "✨", title: "Neue Wörter", sub: "Nichts Schwaches offen: Zeit für Neues", act: "start", mode: "new" });
-  // 3. Aufgabenart: schwächste von Sätze/Verben, sonst abwechselnd
-  const cand = ["Sätze"].concat(biz ? [] : ["Verben"]).map(k => T[k]).filter(t => t && t.n >= 20 && t.acc < 0.8).sort((a, b) => a.acc - b.acc)[0];
-  if (cand) blocks.push({ id: "type", w: 2, icon: cand.name === "Sätze" ? "💬" : "🔀", title: cand.name, sub: cand.name + " klappen erst zu " + pc(cand.acc), act: "start", mode: cand.name === "Sätze" ? "sent" : "verbs" });
-  else { const rot = [{ t: "Sätze", i: "💬", m: "sent" }].concat(biz ? [] : [{ t: "Verben", i: "🔀", m: "verbs" }]).concat([{ t: "Tippen", i: "⌨️", m: "focus", f: "type" }]), r = rot[doy % rot.length];
+  // 3. Sätze gehören immer dazu (Satzbau übt Grammatik im Zusammenhang); schwach = mehr Zeit
+  const sw0 = T["Sätze"] && T["Sätze"].n >= 20 && T["Sätze"].acc < 0.8;
+  blocks.push({ id: "sent", w: sw0 ? 3 : 2, icon: "💬", title: "Sätze", sub: sw0 ? "Sätze klappen erst zu " + pc(T["Sätze"].acc) : "Satzbau: Grammatik im Zusammenhang üben", act: "start", mode: "sent" });
+  // 4. Weitere Aufgabenart: Verben, wenn sie schwach sind, sonst abwechselnd Verben und Tippen
+  const vw = !biz && T["Verben"] && T["Verben"].n >= 20 && T["Verben"].acc < 0.8;
+  if (vw) blocks.push({ id: "type", w: 2, icon: "🔀", title: "Verben", sub: "Verben klappen erst zu " + pc(T["Verben"].acc), act: "start", mode: "verbs" });
+  else { const rot = (biz ? [] : [{ t: "Verben", i: "🔀", m: "verbs" }]).concat([{ t: "Tippen", i: "⌨️", m: "focus", f: "type" }]), r = rot[doy % rot.length];
     blocks.push({ id: "type", w: 2, icon: r.i, title: r.t, sub: "Abwechslung: heute " + r.t, act: "start", mode: r.m, focus: r.f || null }); }
   // 4. Spiel (nur wenn nicht schon fast nur gespielt wird)
   const gshare = A.sec ? A.games.reduce((a, g) => a + g.sec, 0) / A.sec : 0;
@@ -531,7 +534,7 @@ function buildDayplan(A, total, biz) {
     if (A.stuck.length >= 3) g = { id: "hunt", name: "Fehlerjagd", why: "Jagt die hängenden Wörter" };
     else { const f = A.games.filter(x => x.id !== "grammar" && (x.acc == null || x.acc >= 0.55)).sort((a, b) => b.runs - a.runs)[0]; g = f ? { id: f.id, name: f.name, why: "Dein Lieblingsspiel (" + f.runs + " Runden)" } : { id: "blast", name: "Blast", why: "Zum Ausprobieren" }; }
     blocks.push({ id: "game", w: 2, icon: "🎮", title: g.name, sub: g.why, act: ARENA_IDS.includes(g.id) ? "arena" : "wgame", gid: g.id });
-  } else blocks[1].w += 2;
+  } else blocks[1].w += 2;   // kein Spiel: die Minuten gehen an die schwächste Einheit
   // Minuten verteilen (mindestens 1, Summe = total)
   const sw = blocks.reduce((a, b) => a + b.w, 0); let used = 0;
   blocks.forEach(b => { b.min = Math.max(1, Math.round(b.w * total / sw)); used += b.min; });
