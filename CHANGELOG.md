@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.100.2 – 2026-10-13
+- **Mitlesen kürzer**: Die Vorlese-Schleife vorab ist weg. Es gibt nur noch einen Durchgang: Jedes Wort wird vorgelesen, dann spricht das Kind laut nach („Wort 3 von 15“), danach „Geschafft“. Das halbiert die Dauer. Tempo-Regler, Pause, Vor und Zurück bleiben. Gilt überall (Lernen, Einheit, Lernpfad, Tagesplan); als erledigt zählt der Plan-Baustein erst am Ende des Durchgangs. Nur App-Änderung.
+
 ## 2.100.1 – 2026-10-13
 - **Automatischer Tagesplan: Sätze immer dabei**: Der Plan hat jetzt bis zu fünf Bausteine: Wiederholen, schwächste Einheit, **Sätze (immer, bei schwacher Trefferquote mit mehr Zeit)**, eine weitere Aufgabenart (Verben bei Schwäche, sonst abwechselnd Verben/Tippen) und ein Spiel (entfällt bei über 70 % Spielzeit). Bei 10 Minuten sind das meist je 2 Minuten. Server-Update nötig.
 

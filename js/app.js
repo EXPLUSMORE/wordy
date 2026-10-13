@@ -1420,11 +1420,11 @@
     }
     next();
   }
-  /* ---------- Mitlesen: erst alle Wörter hören, dann laut mitsprechen (kein Wertungsmodus, ohne Münzen) ---------- */
+  /* ---------- Mitlesen: jedes Wort wird vorgelesen, dann spricht das Kind laut nach (ein Durchgang, kein Wertungsmodus, ohne Münzen) ---------- */
   function openMitlesen(list, title, unitId) {
     if (!list.length) return toast("Dafür gibt es noch keine Wörter. Übe erst ein paar neue.");
     stopReading();
-    var SP = [null, { rate: .5, gap: 2800 }, { rate: .6, gap: 2000 }, { rate: .7, gap: 1400 }, { rate: .85, gap: 900 }, { rate: 1, gap: 600 }], sp = Math.min(5, Math.max(1, +S.state.settings.mlSpeed || 3)), pace = SP[sp], tok = 0, phase = 1, idx = 0, paused = false, closed = false, ov = document.createElement("div");
+    var SP = [null, { rate: .5, gap: 2800 }, { rate: .6, gap: 2000 }, { rate: .7, gap: 1400 }, { rate: .85, gap: 900 }, { rate: 1, gap: 600 }], sp = Math.min(5, Math.max(1, +S.state.settings.mlSpeed || 3)), pace = SP[sp], tok = 0, idx = 0, paused = false, closed = false, ov = document.createElement("div");
     ov.className = "mlov";
     ov.innerHTML = '<div class="mlh"><b id="mlT"></b><button class="btn ghost" id="mlX" aria-label="Schließen">✕</button></div><div class="mlp" id="mlP"></div><div class="mlc" id="mlC"></div><div class="mlst" id="mlSt"></div><div class="mlbar"><i id="mlB"></i></div>' +
       '<div class="mlsp"><span>🐢</span><input type="range" id="mlS" min="1" max="5" step="1" value="' + sp + '" aria-label="Tempo"><span>🐇</span></div><div class="mlf"><button class="btn ghost" id="mlPrev">⏮</button><button class="btn" id="mlPause">⏸ Pause</button><button class="btn ghost" id="mlNext">⏭</button></div><div class="mll" id="mlL"></div>';
@@ -1442,32 +1442,19 @@
       tok++; bar(0); status(""); $c("mlP").textContent = "Geschafft";
       $c("mlC").innerHTML = '<div class="mlen">🎉</div><div class="mlde">Alle ' + list.length + ' Wörter gehört und mitgesprochen.</div>';
       var st0 = $c("mlSt"); st0.className = "mlst"; st0.innerHTML = '<div class="row" style="justify-content:center;gap:8px"><button class="btn lg" id="mlAgain">Nochmal</button><button class="btn ghost lg" id="mlEnd">Fertig</button></div>';
-      $c("mlAgain").onclick = function () { phase = 1; idx = 0; step(); }; $c("mlEnd").onclick = close;
+      $c("mlAgain").onclick = function () { idx = 0; step(); }; $c("mlEnd").onclick = close;
     }
     function step() {
       if (closed || paused) return;
       var t = ++tok, w = list[idx]; ov.classList.remove("mlnof");
-      if (idx >= list.length) {
-        ov.classList.add("mlnof");
-        if (phase === 1) {
-          bar(0); status(""); $c("mlP").textContent = "Teil 2 von 2";
-          $c("mlC").innerHTML = '<div class="mlen">🎤</div><div class="mlde">Jetzt du: Ich sage jedes Wort vor, du sprichst laut mit.</div>';
-          var st1 = $c("mlSt"); st1.className = "mlst"; st1.innerHTML = '<button class="btn lg" id="mlGo" style="width:100%">Los geht\'s ▶</button>';
-          $c("mlGo").onclick = function () { phase = 2; idx = 0; step(); }; return;
-        }
-        return finish();
-      }
+      if (idx >= list.length) { ov.classList.add("mlnof"); return finish(); }
       mark();
-      if (phase === 1) {
-        $c("mlP").textContent = "Teil 1 von 2 · Zuhören (" + (idx + 1) + "/" + list.length + ")"; bar(0); show(w); status("👂 Zuhören", false);
-        say(w, function () { setTimeout(function () { if (t === tok) { idx++; step(); } }, Math.round(pace.gap / 2)); }, t);
-      } else {
-        $c("mlP").textContent = "Teil 2 von 2 · Sprich mit (" + (idx + 1) + "/" + list.length + ")"; bar(0); show(w); status("👂 Erst zuhören …", false);
-        say(w, function () {
-          var ms = Math.max(2200, pace.gap + 900); status("🎤 Jetzt du! Sprich laut nach", true); bar(ms);
-          setTimeout(function () { if (t === tok) { idx++; step(); } }, ms);
-        }, t);
-      }
+      /* Ein Durchgang: Wort vorlesen, dann spricht das Kind laut nach */
+      $c("mlP").textContent = "Wort " + (idx + 1) + " von " + list.length; bar(0); show(w); status("👂 Erst zuhören …", false);
+      say(w, function () {
+        var ms = Math.max(2200, pace.gap + 900); status("🎤 Jetzt du! Sprich laut nach", true); bar(ms);
+        setTimeout(function () { if (t === tok) { idx++; step(); } }, ms);
+      }, t);
     }
     $c("mlS").oninput = function () { sp = +this.value; pace = SP[sp]; S.state.settings.mlSpeed = sp; try { S.save && S.save(); } catch (e) {} };
     $c("mlT").textContent = title;
