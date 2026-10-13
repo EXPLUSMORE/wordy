@@ -108,7 +108,12 @@
     return { total: total, ok: ok, pct: total ? Math.round(ok * 100 / total) : 0, days: days, quota: Math.ceil((total - ok) / learnDays) };
   };
   W.currentGoals = function () { var mon = monday(VT.today()); return W.remote().goals.filter(function (g) { return g.week === mon; }); };
-  W.dayplan = function () { var r = W.remote(); return r && r.dayplan && r.dayplan.blocks && r.dayplan.blocks.length ? r.dayplan : null; };
+  /* Plan für heute: Elternplan des lokalen Wochentags (Mo = 0), sonst der automatische Plan */
+  W.dayplan = function () {
+    var r = W.remote(), ok = function (x) { return x && x.blocks && x.blocks.length ? x : null; }, wk = r && r.dayplanWeek;
+    if (wk && wk.some(Boolean)) return ok(wk[(new Date().getDay() + 6) % 7]) || ok(r.dayplanAuto);
+    return ok(r && r.dayplan);
+  };
   W.activePlans = function () { var t = VT.today(); return W.remote().plans.filter(function (p) { return p.exam >= t; }); };
 
   /* Shop-Artikel als Belohnung: ins Eigentum legen (falls noch nicht vorhanden), gibt den Namen für die Meldung zurück */
@@ -171,7 +176,7 @@
     lastPull = Date.now();
     return g.fetch(c.url + "/api/sync", { headers: { Authorization: "Bearer " + c.token } })
       .then(function (r) { if (!r.ok) throw new Error(String(r.status)); return r.json(); })
-      .then(function (j) { lsSet("wordy.cfg." + pid(), { goals: j.goals || [], plans: j.plans || [], pathUnits: j.pathUnits || [], weekPlan: j.weekPlan || null, bossDiff: j.bossDiff || "normal", selfChoose: !!j.selfChoose, shop: j.shop || null, coinFactor: j.coinFactor || 1, gifts: j.gifts || [], season: j.season || null, dayplan: j.dayplan || null, t: Date.now() }); W.check(); if (g.WordyHooks && g.WordyHooks.onChange) g.WordyHooks.onChange(); return true; })
+      .then(function (j) { lsSet("wordy.cfg." + pid(), { goals: j.goals || [], plans: j.plans || [], pathUnits: j.pathUnits || [], weekPlan: j.weekPlan || null, bossDiff: j.bossDiff || "normal", selfChoose: !!j.selfChoose, shop: j.shop || null, coinFactor: j.coinFactor || 1, gifts: j.gifts || [], season: j.season || null, dayplan: j.dayplan || null, dayplanWeek: j.dayplanWeek || null, dayplanAuto: j.dayplanAuto || null, t: Date.now() }); W.check(); if (g.WordyHooks && g.WordyHooks.onChange) g.WordyHooks.onChange(); return true; })
       .catch(function () { return false; });
   };
 
@@ -282,6 +287,7 @@
 
   /* Aus der App: Ende einer Lernrunde */
   W.sessionEnd = function (d) {
+    try { if (g.WordyHooks && g.WordyHooks.onSession) g.WordyHooks.onSession(d); } catch (e) {}   // z. B. Tagesplan abhaken
     if (!W.connected()) return;
     if ((cfg() || {}).hidden) { W.pushState(true); return; }
     W.log("ss", d);

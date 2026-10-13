@@ -504,7 +504,8 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
     }).catch(function (e) { el.innerHTML = '<div class="card err">' + esc(e.message) + '</div>'; });
   }
   /* ---------- 10-Minuten-Plan-Generator: Eltern setzen den Tagesplan aus Einheiten, Lernarten, Spielen und Duell zusammen ---------- */
-  var pgRows = null, pgUnits = [];
+  var pgRows = null, pgUnits = [], pgSlots = null, pgDay = "all", PGDAYS = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
+  function pgToRows(raw) { return (raw || []).map(function (x) { return { t: x.t, unit: x.unit || "", game: x.game || "", topic: x.topic || "", min: x.min }; }); }
   function pgUnitOpts(sel, withAll) {
     var groups = {}, order = [];
     (pgUnits || []).forEach(function (u) { if (!groups[u.k]) { groups[u.k] = []; order.push(u.k); } groups[u.k].push(u); });
@@ -518,14 +519,21 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
     el.innerHTML = '<div class="card muted">Lade …</div>';
     api("/api/admin/players/" + p.id + "/customplan").then(function (cfg) {
       pgUnits = cfg.units;
-      if (pgRows === null || pgRows.pid !== p.id) { pgRows = (cfg.raw || []).map(function (x) { return { t: x.t, unit: x.unit || "", game: x.game || "", topic: x.topic || "", min: x.min }; }); pgRows.pid = p.id; }
+      if (pgSlots === null || pgSlots.pid !== p.id) { pgSlots = { pid: p.id, all: cfg.raw ? pgToRows(cfg.raw) : null }; for (var d0 = 0; d0 < 7; d0++) pgSlots[d0] = Array.isArray(cfg.days[d0]) ? pgToRows(cfg.days[d0]) : null; pgDay = "all"; }
       var goal = (r.meta && r.meta.goalMin) || 10, types = cfg.types, groupsT = {}, gorder = [];
       Object.keys(types).forEach(function (k) { var g = types[k].group; if (!groupsT[g]) { groupsT[g] = []; gorder.push(g); } groupsT[g].push(k); });
       function typeSel(sel) { return gorder.map(function (g) { return '<optgroup label="' + esc(g) + '">' + groupsT[g].map(function (k) { return '<option value="' + k + '"' + (k === sel ? " selected" : "") + '>' + esc(types[k].label) + '</option>'; }).join("") + '</optgroup>'; }).join(""); }
       function draw(msg, bad) {
+        if (pgSlots[pgDay] === null) pgRows = pgSlots[pgDay] = []; else pgRows = pgSlots[pgDay];
+        var own = pgDay === "all" ? !!cfg.raw : Array.isArray(cfg.days[pgDay]), dname = pgDay === "all" ? "alle Tage" : PGDAYS[pgDay];
         var sum = pgRows.reduce(function (a, x) { return a + (+x.min || 0); }, 0);
-        var h = '<div class="card"><h2>10-Minuten-Plan für ' + esc(p.name) + '</h2><p class="small muted" style="margin:0 0 8px">Setze die Reihenfolge selbst zusammen. Der Plan steht auf der Startseite von ' + esc(p.name) + ' („Dein Plan von den Eltern“) und ersetzt den automatischen Plan, bis du ihn wieder abschaltest. ' + (cfg.active ? '<b>Dein Plan ist gerade aktiv.</b>' : "Gerade gilt der automatische Plan aus der Analyse.") + '</p>';
-        h += '<div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:6px"><button class="ghost sm" id="pgTpl">Vorlage: schwächste 3 Einheiten mitlesen + Duell</button><button class="ghost sm" id="pgSug">Vorschlag aus der Analyse</button><button class="ghost sm" id="pgClr">Leeren</button></div>';
+        var h = '<div class="card"><h2>10-Minuten-Plan für ' + esc(p.name) + '</h2><p class="small muted" style="margin:0 0 8px">Setze die Reihenfolge selbst zusammen, für alle Tage oder pro Wochentag. Der Plan steht auf der Startseite von ' + esc(p.name) + ' („Dein Plan von den Eltern“) und ersetzt den automatischen Plan. Ein Baustein zählt erst als erledigt, wenn er komplett gemacht wurde; ein Start oder Abbruch zählt nicht.</p>';
+        h += '<div class="tabs2 sub" id="pgDays">' + [["all", "Alle Tage"]].concat(PGDAYS.map(function (n, i) { return [i, n]; })).map(function (d) {
+          var has = d[0] === "all" ? !!cfg.raw : Array.isArray(cfg.days[d[0]]);
+          return '<button data-pgd="' + d[0] + '" aria-pressed="' + (String(pgDay) === String(d[0])) + '">' + d[1] + (has ? " •" : "") + '</button>';
+        }).join("") + '</div>';
+        h += '<p class="small muted" style="margin:6px 0 8px">' + (pgDay === "all" ? "Standardplan: gilt an allen Tagen ohne eigenen Plan." + (cfg.raw ? "" : " Noch keiner angelegt; ohne Plan gilt der automatische Plan aus der Analyse.") : own ? "Eigener Plan für " + dname + " (• = hat einen eigenen Plan)." : "Für " + dname + " gilt der Standardplan" + (cfg.raw ? "" : " bzw. der automatische Plan") + ". Sobald du hier etwas speicherst, hat dieser Tag einen eigenen Plan.") + '</p>';
+        h += '<div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:6px"><button class="ghost sm" id="pgTpl">Vorlage: schwächste 3 Einheiten mitlesen + Duell</button><button class="ghost sm" id="pgSug">Vorschlag aus der Analyse</button><button class="ghost sm" id="pgClr">Leeren</button>' + (pgDay !== "all" && cfg.raw ? '<button class="ghost sm" id="pgStd">Standardplan als Vorlage</button>' : "") + '</div>';
         h += pgRows.length ? pgRows.map(function (x, i) {
           var d = types[x.t] || { unit: "" }, isG = x.t === "game", gm = isG ? cfg.games.filter(function (g) { return g.id === x.game; })[0] : null, unitOk = d.unit === "req" || d.unit === "opt" && !isG || (isG && gm && gm.kind === "arena" && x.game !== "hunt");
           return '<div class="pgrow" style="display:grid;grid-template-columns:24px 1fr;gap:6px 8px;padding:8px 0;border-top:1px solid var(--line)"><b>' + (i + 1) + ')</b><div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">' +
@@ -537,7 +545,7 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
             '<button class="ghost sm" data-pgb="up" data-i="' + i + '" ' + (i === 0 ? "disabled" : "") + ' aria-label="nach oben">↑</button><button class="ghost sm" data-pgb="dn" data-i="' + i + '" ' + (i === pgRows.length - 1 ? "disabled" : "") + ' aria-label="nach unten">↓</button><button class="ghost sm" data-pgb="del" data-i="' + i + '" aria-label="entfernen">✕</button></div></div>';
         }).join("") : '<p class="small muted" style="margin:10px 0">Noch kein Baustein. Mit „＋ Baustein“ oder einer Vorlage anfangen.</p>';
         h += '<div class="row" style="gap:8px;flex-wrap:wrap;margin-top:8px;align-items:center"><button class="ghost" id="pgAdd">＋ Baustein</button><span class="small ' + (sum === goal ? "" : "muted") + '" style="margin-left:auto"><b>Summe ' + sum + ' Min.</b> · Tagesziel ' + goal + ' Min.' + (sum !== goal && pgRows.length ? ' <span style="color:var(--warn)">(weicht ab)</span>' : "") + '</span></div>';
-        h += '<div class="row" style="gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center"><button id="pgSave" ' + (pgRows.length ? "" : "disabled") + '>Speichern &amp; an die App senden</button>' + (cfg.active ? '<button class="ghost" id="pgOff">Automatischen Plan verwenden</button>' : "") + '<span class="small ' + (bad ? "err" : "muted") + '" id="pgMsg">' + esc(msg || "") + '</span></div>';
+        h += '<div class="row" style="gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center"><button id="pgSave" ' + (pgRows.length ? "" : "disabled") + '>Speichern für ' + esc(dname) + '</button>' + (own ? '<button class="ghost" id="pgOff">' + (pgDay === "all" ? "Standardplan entfernen" : "Eigenen Plan für " + esc(dname) + " entfernen") + '</button>' : "") + (pgRows.length ? '<select id="pgCopy" style="width:auto"><option value="">Kopieren nach …</option><option value="wk">Montag bis Freitag</option><option value="we">Samstag und Sonntag</option><option value="all7">alle sieben Tage</option></select>' : "") + '<span class="small ' + (bad ? "err" : "muted") + '" id="pgMsg">' + esc(msg || "") + '</span></div>';
         h += '<p class="small muted" style="margin:10px 0 0">Duell nach Wahl: ' + esc(p.name) + ' sucht sich selbst einen freigegebenen Freund aus (Freunde müssen unter „Freunde, Klasse, Crew“ freigeschaltet sein). Mitlesen: die Wörter der Einheit werden vorgelesen und laut mitgesprochen.</p></div>';
         el.innerHTML = h;
         function pick(sel, fn) { Array.prototype.forEach.call(el.querySelectorAll(sel), fn); }
@@ -549,6 +557,7 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
         }; });
         pick("[data-pgb]", function (b) { b.onclick = function () { var i = +b.getAttribute("data-i"), k = b.getAttribute("data-pgb"); if (k === "del") pgRows.splice(i, 1); else { var j = k === "up" ? i - 1 : i + 1, t = pgRows[i]; pgRows[i] = pgRows[j]; pgRows[j] = t; } draw(); }; });
         el.querySelector("#pgAdd").onclick = function () { if (pgRows.length >= 12) return draw("Höchstens 12 Bausteine.", true); pgRows.push({ t: "mix", unit: "", game: "", topic: "", min: 2 }); draw(); };
+        var std = el.querySelector("#pgStd"); if (std) std.onclick = function () { pgRows.length = 0; pgToRows(cfg.raw).forEach(function (x) { pgRows.push(x); }); draw("Standardplan geladen. Anpassen und speichern."); };
         el.querySelector("#pgClr").onclick = function () { pgRows.length = 0; draw(); };
         el.querySelector("#pgTpl").onclick = function () {
           api("/api/admin/players/" + p.id + "/analysis?days=90").then(function (a) {
@@ -569,12 +578,22 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
             draw("Vorschlag aus der Analyse geladen. Anpassen und speichern.");
           }).catch(function (e) { draw(e.message, true); });
         };
+        function payload() { return pgRows.map(function (x) { return { t: x.t, unit: x.unit, game: x.game, topic: x.topic, min: x.min }; }); }
+        function store(day, rows) { if (day === "all") cfg.raw = rows; else cfg.days[day] = rows; pgSlots[day] = pgToRows(rows); }
         el.querySelector("#pgSave").onclick = function () {
-          post("/api/admin/players/" + p.id + "/customplan", { blocks: pgRows.map(function (x) { return { t: x.t, unit: x.unit, game: x.game, topic: x.topic, min: x.min }; }) })
-            .then(function (res2) { cfg.active = true; draw("Gespeichert. " + esc(p.name) + " sieht den Plan beim nächsten Abgleich der App (spätestens nach einigen Minuten)."); })
+          var rows = payload();
+          post("/api/admin/players/" + p.id + "/customplan", { day: pgDay, blocks: rows })
+            .then(function () { store(pgDay, rows); pgSlots[pgDay] = pgRows; draw("Gespeichert für " + dname + ". " + p.name + " sieht den Plan beim nächsten Abgleich der App."); })
             .catch(function (e) { draw(e.message, true); });
         };
-        var off = el.querySelector("#pgOff"); if (off) off.onclick = function () { post("/api/admin/players/" + p.id + "/customplan", { clear: true }).then(function () { cfg.active = false; draw("Der automatische Plan gilt wieder."); }).catch(function (e) { draw(e.message, true); }); };
+        var off = el.querySelector("#pgOff"); if (off) off.onclick = function () { post("/api/admin/players/" + p.id + "/customplan", { day: pgDay, clear: true }).then(function () { if (pgDay === "all") cfg.raw = null; else delete cfg.days[pgDay]; pgSlots[pgDay] = null; draw("Entfernt: " + (pgDay === "all" ? "kein Standardplan mehr." : "für " + dname + " gilt wieder der Standard.")); }).catch(function (e) { draw(e.message, true); }); };
+        var cp = el.querySelector("#pgCopy"); if (cp) cp.onchange = function () {
+          var to = cp.value === "wk" ? [0, 1, 2, 3, 4] : cp.value === "we" ? [5, 6] : cp.value === "all7" ? [0, 1, 2, 3, 4, 5, 6] : []; if (!to.length) return;
+          var rows = payload(); to = to.filter(function (d) { return String(d) !== String(pgDay); });
+          Promise.all(to.map(function (d) { return post("/api/admin/players/" + p.id + "/customplan", { day: d, blocks: rows }).then(function () { cfg.days[d] = rows; pgSlots[d] = pgToRows(rows); }); }))
+            .then(function () { draw("Kopiert auf " + to.map(function (d) { return PGDAYS[d]; }).join(", ") + "."); }).catch(function (e) { draw(e.message, true); });
+        };
+        pick("[data-pgd]", function (b) { b.onclick = function () { var v = b.getAttribute("data-pgd"); pgDay = v === "all" ? "all" : +v; draw(); }; });
       }
       draw();
     }).catch(function (e) { el.innerHTML = '<div class="card err">' + esc(e.message) + '</div>'; });

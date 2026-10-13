@@ -592,7 +592,13 @@ function planBlocks(raw) {
   }
   return { blocks: out };
 }
-const customplanOf = pid => { const r = q.kvGet.get("customplan:" + pid); try { const v = r ? JSON.parse(r.val) : null; if (!v || !Array.isArray(v.raw)) return null; const b = planBlocks(v.raw); return b.error ? null : { custom: true, total: b.blocks.reduce((a, x) => a + x.min, 0), blocks: b.blocks, why: [], made: v.ts || 0 }; } catch (e) { return null; } };
+/* Gespeichert: { raw: Standard-Plan | null, days: { "0".."6": Plan } (Mo = 0), ts }. Ältere Daten ({ raw, ts }) gelten als Standard. */
+function customplanStore(pid) { const r = q.kvGet.get("customplan:" + pid); let v = null; try { v = r ? JSON.parse(r.val) : null; } catch (e) {} if (!v || typeof v !== "object") v = {}; return { raw: Array.isArray(v.raw) ? v.raw : null, days: v.days && typeof v.days === "object" ? v.days : {}, ts: v.ts || 0 }; }
+const planOfRaw = (raw, ts) => { if (!Array.isArray(raw)) return null; const b = planBlocks(raw); return b.error ? null : { custom: true, total: b.blocks.reduce((a, x) => a + x.min, 0), blocks: b.blocks, why: [], made: ts || 0 }; };
+const planDow = () => (new Date(dayOf(Date.now()) + "T12:00:00Z").getUTCDay() + 6) % 7;
+/* Plan der Eltern für einen Wochentag (0 = Montag): eigener Tagesplan, sonst der Standard */
+function customplanOf(pid, dow) { const st = customplanStore(pid), d = dow == null ? planDow() : dow; return planOfRaw(Array.isArray(st.days[d]) ? st.days[d] : st.raw, st.ts); }
+function customplanWeek(pid) { return Array.from({ length: 7 }, (_, d) => customplanOf(pid, d)); }
 
 /* ---------- Wochen, Ziele, Lernpläne ---------- */
 const ymdAdd = (d, n) => { const [y, m, x] = d.split("-").map(Number); return new Date(Date.UTC(y, m - 1, x + n)).toISOString().slice(0, 10); };
@@ -696,7 +702,9 @@ function apiSync(pid) {
     coinFactor: coinFactorOf(pid),
     gifts: giftsOf(pid).slice(-20),
     season: seasonOf(pid),
-    dayplan: customplanOf(pid) || (dayplanOn(pid) ? dayplanOf(pid) : null)
+    dayplan: customplanOf(pid) || (dayplanOn(pid) ? dayplanOf(pid) : null),
+    dayplanWeek: customplanWeek(pid),
+    dayplanAuto: dayplanOn(pid) ? dayplanOf(pid) : null
   }];
 }
 /* Wochenzeitplan: Minuten pro Wochentag (Mo bis So), gilt jede Woche gleich, dazu Wochenbonus in Münzen */
@@ -1807,15 +1815,20 @@ const server = http.createServer(async (req, res) => {
         if (m[2] === "report" && req.method === "GET") return send(res, 200, report(pid, Math.min(90, Math.max(7, +url.searchParams.get("days") || 30))));
         if (m[2] === "analysis" && req.method === "GET") return send(res, 200, analysis(pid, +url.searchParams.get("days") || 90));
         if (m[2] === "customplan" && req.method === "GET") {
-          const r = q.kvGet.get("customplan:" + pid); let raw = null; try { raw = r ? JSON.parse(r.val).raw : null; } catch (e) {}
-          return send(res, 200, { raw: Array.isArray(raw) ? raw : null, types: PLAN_TYPES, games: Object.entries(PLAN_GAMES).map(([id, g]) => ({ id, icon: g[0], name: g[1], kind: g[2] })), grammar: Object.entries(GRAM_TOPICS).map(([id, g]) => ({ id, icon: g[0], title: g[1] })), units: UNITS.map(u => ({ id: u.id, k: u.k, title: u.title })), active: !!customplanOf(pid) });
+          const st = customplanStore(pid);
+          return send(res, 200, { raw: st.raw, days: st.days, types: PLAN_TYPES, games: Object.entries(PLAN_GAMES).map(([id, g]) => ({ id, icon: g[0], name: g[1], kind: g[2] })), grammar: Object.entries(GRAM_TOPICS).map(([id, g]) => ({ id, icon: g[0], title: g[1] })), units: UNITS.map(u => ({ id: u.id, k: u.k, title: u.title })), active: !!(st.raw || Object.keys(st.days).length) });
         }
         if (m[2] === "customplan" && req.method === "POST") {
-          const b = await readJson(req);
-          if (b.clear) { q.kvSet.run("customplan:" + pid, "null"); return send(res, 200, { ok: true, active: false }); }
-          const v = planBlocks(b.blocks); if (v.error) return send(res, 400, { error: v.error });
-          q.kvSet.run("customplan:" + pid, JSON.stringify({ raw: b.blocks.map(x => ({ t: String(x.t), min: Math.round(+x.min), unit: x.unit ? String(x.unit) : "", game: x.game ? String(x.game) : "", topic: x.topic ? String(x.topic) : "" })), ts: Date.now() }));
-          return send(res, 200, { ok: true, active: true, total: v.blocks.reduce((a, x) => a + x.min, 0), blocks: v.blocks });
+          const b = await readJson(req), st = customplanStore(pid), day = String(b.day == null ? "all" : b.day);
+          if (day !== "all" && !/^[0-6]$/.test(day)) return send(res, 400, { error: "Wochentag ungültig." });
+          if (b.clear) { if (day === "all") st.raw = null; else delete st.days[day]; }
+          else {
+            const v = planBlocks(b.blocks); if (v.error) return send(res, 400, { error: v.error });
+            const raw = b.blocks.map(x => ({ t: String(x.t), min: Math.round(+x.min), unit: x.unit ? String(x.unit) : "", game: x.game ? String(x.game) : "", topic: x.topic ? String(x.topic) : "" }));
+            if (day === "all") st.raw = raw; else st.days[day] = raw;
+          }
+          st.ts = Date.now(); q.kvSet.run("customplan:" + pid, JSON.stringify(st));
+          return send(res, 200, { ok: true, active: !!(st.raw || Object.keys(st.days).length), days: st.days, raw: st.raw });
         }
         if (m[2] === "dayplan" && req.method === "GET") { dayplanCache.delete(pid); return send(res, 200, { on: dayplanOn(pid), plan: dayplanOf(pid) }); }
         if (m[2] === "dayplan" && req.method === "POST") { const b = await readJson(req); q.kvSet.run("dayplan:" + pid, JSON.stringify({ on: b.on !== false })); return send(res, 200, { ok: true, on: b.on !== false }); }

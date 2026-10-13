@@ -832,7 +832,28 @@
     return { icon: "🏆", title: "Daily Challenge", sub: "Eine bunte Runde aus allem.", opts: { minutes: mins, mode: "mix" } };
   }
   /* Persönlicher Tagesplan („Dein 10-Minuten-Plan“): kommt aus der Analyse des Servers (WordySync.dayplan), Fortschritt je Tag in profile.planDone */
-  var curPlanBlock = null;
+  var lastStartOpts = null;
+  /* Ein Baustein ist erst erledigt, wenn die Aktivität komplett gemacht wurde (Runde zu Ende, alle Wörter gehört, Spiel zu Ende, Lektion fertig, Duell gesendet oder gespielt). Ein Start oder Abbruch zählt nicht.
+     Abgehakt wird der erste offene Baustein von heute, der zur Aktivität passt, auch wenn sie nicht über den Plan gestartet wurde. */
+  function planComplete(spec) {
+    var W = global.WordySync, dp = W && W.connected() ? W.dayplan() : null; if (!dp) return;
+    var done = planDoneMap(), hit = dp.blocks.filter(function (b) {
+      if (done[b.id]) return false;
+      if (b.act === "start") return spec.act === "start" && b.mode === spec.mode && (b.mode !== "unit" || b.unit === spec.unit) && (b.focus || null) === (spec.focus || null);
+      if (b.act === "mitlesen") return spec.act === "mitlesen" && (b.unit || "") === (spec.unit || "");
+      if (b.act === "gram") return spec.act === "gram" && b.topic === spec.topic;
+      if (b.act === "arena" || b.act === "wgame" || b.act === "unitgame") return spec.act === "game" && b.gid === spec.gid;
+      if (b.act === "duel") return spec.act === "duel";
+      return false;
+    })[0];
+    if (hit) { planMarkDone(hit.id); if (tab === "home" && sessionEl.hidden) render(); }
+  }
+  function planOnSession(d) {
+    if (!d || d.mode !== "arena" || d.end === "quit") return;
+    var sub = String(d.sub || "");
+    planComplete(/^grammar:/.test(sub) ? { act: "gram", topic: sub.slice(8) } : { act: "game", gid: sub });
+  }
+
   function planDoneMap() { var pf = S.state.profile, t = S.today(); if (!pf.planDone || pf.planDone.date !== t) pf.planDone = { date: t, ids: {} }; return pf.planDone.ids; }
   function planMarkDone(id) { var m = planDoneMap(); if (!m[id]) { m[id] = 1; S.save(true); } }
   function planCard() {
@@ -1162,7 +1183,7 @@
     var ids = deck.map(function (w) { return w.id; }), seed = Math.floor(Math.random() * 2000000000);
     global.ARENA.start(mode, { words: deck, seed: seed, duel: { wait: "Herausforderung wird gesendet …" }, onFinish: function (res, show) {
       global.WordySync.social("POST", "/challenges", { to: friend.id, mode: mode, words: ids, seed: seed, score: res.score })
-        .then(function () { soc.ts = 0; socLoad(true); show("📨 <b>Gesendet!</b> " + esc(friend.name) + " muss jetzt deine <b>" + res.score + "</b> schlagen."); })
+        .then(function () { soc.ts = 0; socLoad(true); planComplete({ act: "duel" }); show("📨 <b>Gesendet!</b> " + esc(friend.name) + " muss jetzt deine <b>" + res.score + "</b> schlagen."); })
         .catch(function (e) { show("⚠️ " + esc(e.message)); });
     } });
   }
@@ -1172,7 +1193,7 @@
     var other = ch.from;
     global.ARENA.start(ch.mode, { words: words, seed: ch.seed, duel: { wait: "Dein Ergebnis wird übertragen …", nextLabel: "🔁 Revanche", next: function () { soc.ts = 0; startChallenge(other, ch.mode); } }, onFinish: function (res, show) {
       global.WordySync.social("POST", "/challenges/" + ch.id + "/result", { score: res.score }).then(function (r) {
-        var v = r.view, mine = v.bScore, theirs = v.aScore; soc.ts = 0;
+        var v = r.view, mine = v.bScore, theirs = v.aScore; soc.ts = 0; planComplete({ act: "duel" });
         show((mine > theirs ? "🏆 <b>Gewonnen!</b>" : mine === theirs ? "🤝 <b>Unentschieden!</b>" : "💪 <b>Knapp verloren.</b>") + " Du <b>" + mine + "</b> : " + theirs + " " + esc(other.name), true);
         if (mine > theirs) try { global.VTC.burst("stars", innerWidth / 2, innerHeight / 3, 30, 1.4); } catch (e) {}
       }).catch(function (e) { show("⚠️ " + esc(e.message)); });
@@ -1400,7 +1421,7 @@
     next();
   }
   /* ---------- Mitlesen: erst alle Wörter hören, dann laut mitsprechen (kein Wertungsmodus, ohne Münzen) ---------- */
-  function openMitlesen(list, title) {
+  function openMitlesen(list, title, unitId) {
     if (!list.length) return toast("Dafür gibt es noch keine Wörter. Übe erst ein paar neue.");
     stopReading();
     var SP = [null, { rate: .5, gap: 2800 }, { rate: .6, gap: 2000 }, { rate: .7, gap: 1400 }, { rate: .85, gap: 900 }, { rate: 1, gap: 600 }], sp = Math.min(5, Math.max(1, +S.state.settings.mlSpeed || 3)), pace = SP[sp], tok = 0, phase = 1, idx = 0, paused = false, closed = false, ov = document.createElement("div");
@@ -1417,6 +1438,7 @@
     function show(w) { $c("mlC").innerHTML = '<div class="mlen">' + esc(w.en) + '</div><div class="mlde">' + esc(w.de) + '</div>'; }
     function status(txt, you) { var e = $c("mlSt"); e.textContent = txt; e.className = "mlst" + (you ? " you" : ""); $c("mlB").style.background = you ? "#4caf50" : ""; }
     function finish() {
+      planComplete({ act: "mitlesen", unit: unitId || "" });
       tok++; bar(0); status(""); $c("mlP").textContent = "Geschafft";
       $c("mlC").innerHTML = '<div class="mlen">🎉</div><div class="mlde">Alle ' + list.length + ' Wörter gehört und mitgesprochen.</div>';
       var st0 = $c("mlSt"); st0.className = "mlst"; st0.innerHTML = '<div class="row" style="justify-content:center;gap:8px"><button class="btn lg" id="mlAgain">Nochmal</button><button class="btn ghost lg" id="mlEnd">Fertig</button></div>';
@@ -1504,6 +1526,7 @@
   /* ---------- Auto-Save / Lernfortschritt: Verbindung zum Server ---------- */
   {   // sync.js wird nach app.js geladen und ruft diese Hooks auf
     window.WordyHooks = {};
+    window.WordyHooks.onSession = planOnSession;
     window.WordyHooks.onChange = function () { if ((tab === "home" || tab === "parent") && sessionEl.hidden) render(); };
     window.WordyHooks.onMode = function (hidden) {
       toast(hidden ? "Dein Fortschritt wird jetzt nur noch gesichert, nicht mehr angezeigt." : "Dein Fortschritt ist jetzt für die Eltern im Dashboard sichtbar.", 6000);
@@ -2280,7 +2303,7 @@
     return S.shuffle(out);
   }
   function startSession(opts) {
-    S.rollDay(); S.regenHearts(); curPlanBlock = opts.planBlock || null;
+    S.rollDay(); S.regenHearts(); lastStartOpts = opts;
     var sentOnly = opts.mode === "sent";
     if (opts.mode === "verbs") {
       var vl = opts.verb ? S.verbs().filter(function (x) { return x.id === opts.verb; })
@@ -2338,7 +2361,7 @@
     var sec = Math.round((Date.now() - SS.start) / 1000);
     if (reason === "done" && SS.planned) S.recordPace(sec, SS.planned);
     var rw = S.finishSession({ items: SS.items, correct: SS.correct, sec: sec, maxChain: SS.maxChain, newSeen: SS.newSeen, deep: SS.deep || 0, daily: SS.mode === "mix" || !!SS.cls, boxSolved: SS.boxSolved, mastered: SS.mastered, sentOk: SS.sentOk });
-    if (curPlanBlock) { if (reason === "done" || SS.items >= 4) planMarkDone(curPlanBlock); curPlanBlock = null; }
+    if (reason === "done" && lastStartOpts) planComplete({ act: "start", mode: lastStartOpts.mode || (lastStartOpts.focus ? "focus" : "mix"), unit: lastStartOpts.unit || null, focus: lastStartOpts.focus || null });
     var st = S.state, acc = SS.items ? Math.round(SS.correct * 100 / SS.items) : 0;
     var head = reason === "hearts" ? "Kurze Pause" : SS.correct === SS.items && SS.items > 3 ? "Fehlerfrei!" : "Runde geschafft";
     var msg = reason === "hearts"
@@ -3014,7 +3037,7 @@
       toast(okV ? (voice ? "Stimme: " + voice.name + " (" + voice.lang + ")" : "Standardstimme des Browsers wird genutzt.") : "Der Browser bietet hier keine Sprachausgabe an.");
       return;
     }
-    if (a === "mitlesen") { var ml = mitlesenList(act.getAttribute("data-unit"), act.getAttribute("data-sec")); openMitlesen(ml.list, ml.title); return; }
+    if (a === "mitlesen") { var ml = mitlesenList(act.getAttribute("data-unit"), act.getAttribute("data-sec")); openMitlesen(ml.list, ml.title, act.getAttribute("data-unit") || ""); return; }
     if (a === "gramstart") { if (global.VTGR) global.VTGR.start(act.getAttribute("data-id")); return; }
     if (a === "unitgame") {
       var ids = (act.getAttribute("data-scope") || act.getAttribute("data-unit") || "").split(",").filter(Boolean), uws = [];
@@ -3084,14 +3107,14 @@
     else if (a === "planblock") {
       var pdp = window.WordySync.dayplan(), pb = pdp && pdp.blocks[+act.getAttribute("data-i")]; if (!pb) return;
       if (pb.act === "start") startSession({ minutes: pb.min, mode: pb.mode, unit: pb.unit || null, focus: pb.focus || null, planBlock: pb.id });
-      else if (pb.act === "mitlesen") { var pml = mitlesenList(pb.unit || null, null); if (!pml.list.length) { toast("Dafür gibt es noch keine Wörter zum Mitlesen."); return; } planMarkDone(pb.id); openMitlesen(pml.list, pml.title); }
-      else if (pb.act === "gram") { if (!global.VTGR) return; planMarkDone(pb.id); global.VTGR.start(pb.topic); }
+      else if (pb.act === "mitlesen") { var pml = mitlesenList(pb.unit || null, null); if (!pml.list.length) { toast("Dafür gibt es noch keine Wörter zum Mitlesen."); return; } openMitlesen(pml.list, pml.title, pb.unit || ""); }
+      else if (pb.act === "gram") { if (!global.VTGR) return; global.VTGR.start(pb.topic); }
       else if (pb.act === "duel") {
         if (!socOn() || !soc.me || !soc.me.enabled || !(soc.me.friends || []).some(function (f) { return f.state === "ok"; })) { toast("Für ein Duell braucht es einen Freund, den die Eltern freigegeben haben."); return; }
-        planMarkDone(pb.id); tab = "spielen"; spielSeg = "freunde"; render();
+        tab = "spielen"; spielSeg = "freunde"; render();
       }
-      else if (pb.act === "unitgame") { planMarkDone(pb.id); var ub = document.createElement("button"); ub.hidden = true; ub.setAttribute("data-act", "unitgame"); ub.setAttribute("data-unit", pb.unit); ub.setAttribute("data-arena", pb.gid); view.appendChild(ub); ub.click(); ub.remove(); }
-      else { planMarkDone(pb.id); var gb = document.createElement("button"); gb.hidden = true; gb.setAttribute("data-act", pb.act); gb.setAttribute("data-id", pb.gid); view.appendChild(gb); gb.click(); gb.remove(); }
+      else if (pb.act === "unitgame") { var ub = document.createElement("button"); ub.hidden = true; ub.setAttribute("data-act", "unitgame"); ub.setAttribute("data-unit", pb.unit); ub.setAttribute("data-arena", pb.gid); view.appendChild(ub); ub.click(); ub.remove(); }
+      else { var gb = document.createElement("button"); gb.hidden = true; gb.setAttribute("data-act", pb.act); gb.setAttribute("data-id", pb.gid); view.appendChild(gb); gb.click(); gb.remove(); }
     }
     else if (a === "startplan") {
       var pl = window.WordySync.activePlans().filter(function (x) { return String(x.id) === act.getAttribute("data-id"); })[0];

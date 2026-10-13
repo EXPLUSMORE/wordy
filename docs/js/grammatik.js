@@ -157,7 +157,7 @@
     var t = L.t, r = rec(t.id), sec = Math.round((Date.now() - L.start) / 1000), items = L.right + L.wrong, correct = L.right;
     r.lessons++; r.best = Math.max(r.best || 0, L.score); r.last = Date.now();
     var coins = Math.min(12, Math.floor(L.score / 8));
-    if (global.WordySync) { global.WordySync.sessionEnd({ sec: sec, items: items, correct: correct, mode: "arena", sub: "grammar:" + t.id, score: L.score, coins: coins }); global.WordySync.ctx = null; }
+    if (global.WordySync) { global.WordySync.sessionEnd({ sec: sec, items: items, correct: correct, mode: "arena", sub: "grammar:" + t.id, score: L.score, coins: coins, end: L.quit ? "quit" : "done" }); global.WordySync.ctx = null; }
     S.rollDay();
     var left = Math.max(0, 30 - (S.state.daily.arenaCoins || 0)), capped = coins > left; coins = Math.min(coins, left);
     S.state.daily.arenaCoins = (S.state.daily.arenaCoins || 0) + coins;
