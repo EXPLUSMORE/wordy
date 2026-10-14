@@ -92,9 +92,14 @@
     }
   }
   function fbBox() { return '<div class="gr-fb" id="grFb" hidden></div>'; }
-  function orderPaint() {
-    var c = L.cur;
-    $("#grAns").innerHTML = c.ans.map(function (o, k) { return '<button class="gr-tile on" data-gr="untile" data-k="' + k + '">' + esc(o.w) + '</button>'; }).join("") || '<span class="gr-hint">Tippe die Wörter unten an</span>';
+  function orderPaint(dropIdx, dragIdx) {
+    var c = L.cur, h = "", k;
+    for (k = 0; k < c.ans.length; k++) {
+      if (k === dropIdx) h += '<i class="dropbar"></i>';
+      h += '<button class="gr-tile on' + (k === dragIdx ? " dragging" : "") + '" data-gr="untile" data-k="' + k + '">' + esc(c.ans[k].w) + '</button>';
+    }
+    if (dropIdx != null && dropIdx >= c.ans.length) h += '<i class="dropbar"></i>';
+    $("#grAns").innerHTML = h || '<span class="gr-hint">Tippe die Wörter unten an oder ziehe sie hierher</span>';
     $("#grPool").innerHTML = c.pool.map(function (o, k) { return '<button class="gr-tile" data-gr="tile" data-k="' + k + '">' + esc(o.w) + '</button>'; }).join("");
   }
   function lock() { $$(".gr-opt,.gr-tile,.gr-tok,[data-gr=check],.gr-in").forEach(function (b) { b.disabled = true; }); }
@@ -201,6 +206,44 @@
     if (a === "untile") { var c3 = L.cur, k3 = +t.getAttribute("data-k"); c3.pool.push(c3.ans.splice(k3, 1)[0]); return orderPaint(); }
   });
   el.addEventListener("keydown", function (e) { if (L && !L.done && e.key === "Enter" && e.target && e.target.id === "grIn" && !L.answered) { e.preventDefault(); onCheckType(); } });
+
+  /* Wörter ziehen (Maus und Finger): aus dem Vorrat in die Antwort, in der Antwort umsortieren, aus der Antwort zurück in den Vorrat. Antippen geht weiter. */
+  var gd = null, gSwallow = false;
+  function gDropIndex(x, y) {
+    var chips = $$("#grAns .gr-tile");
+    for (var i = 0; i < chips.length; i++) { var r = chips[i].getBoundingClientRect(); if (y < r.top || (y <= r.bottom && x < r.left + r.width / 2)) return i; }
+    return chips.length;
+  }
+  function gInAns(x, y) { var a = $("#grAns"); if (!a) return false; var r = a.getBoundingClientRect(); return x >= r.left - 12 && x <= r.right + 12 && y >= r.top - 24 && y <= r.bottom + 24; }
+  function gMove(e) {
+    if (!gd) return;
+    if (!gd.moved) {
+      if (Math.abs(e.clientX - gd.x0) + Math.abs(e.clientY - gd.y0) < 9) return;
+      gd.moved = true; gd.ghost = document.createElement("div"); gd.ghost.className = "dragghost"; gd.ghost.style.zIndex = "9999"; gd.ghost.textContent = gd.el.textContent; document.body.appendChild(gd.ghost);
+    }
+    gd.ghost.style.left = e.clientX + "px"; gd.ghost.style.top = e.clientY + "px";
+    if (L && L.cur && L.cur.it.t === "order") orderPaint(gInAns(e.clientX, e.clientY) ? gDropIndex(e.clientX, e.clientY) : null, gd.from === "ans" ? gd.k : null);
+  }
+  function gEnd(commit, e) {
+    if (!gd) return;
+    var d = gd; gd = null;
+    document.removeEventListener("pointermove", gMove); document.removeEventListener("pointerup", gUp); document.removeEventListener("pointercancel", gCancel);
+    if (d.ghost) { d.ghost.remove(); gSwallow = true; setTimeout(function () { gSwallow = false; }, 350); }
+    if (!d.moved || !L || !L.cur || L.answered || L.cur.it.t !== "order") { if (d.moved && L && L.cur && L.cur.it.t === "order") orderPaint(); return; }
+    var c = L.cur, over = commit && gInAns(e.clientX, e.clientY), at = gDropIndex(e.clientX, e.clientY), item;
+    if (d.from === "pool") { if (over) { item = c.pool.splice(d.k, 1)[0]; c.ans.splice(at, 0, item); } }
+    else { item = c.ans.splice(d.k, 1)[0]; if (over) { if (at > d.k) at--; c.ans.splice(at, 0, item); } else c.pool.push(item); }
+    orderPaint();
+  }
+  function gUp(e) { gEnd(true, e); }
+  function gCancel(e) { gEnd(false, e); }
+  el.addEventListener("pointerdown", function (e) {
+    if (!L || L.done || L.answered || e.button > 0 || !L.cur || L.cur.it.t !== "order") return;
+    var tl = e.target.closest(".gr-tile"); if (!tl || tl.disabled) return;
+    gd = { el: tl, from: tl.getAttribute("data-gr") === "untile" ? "ans" : "pool", k: +tl.getAttribute("data-k"), x0: e.clientX, y0: e.clientY, moved: false, ghost: null };
+    document.addEventListener("pointermove", gMove); document.addEventListener("pointerup", gUp); document.addEventListener("pointercancel", gCancel);
+  });
+  el.addEventListener("click", function (e) { if (gSwallow) { gSwallow = false; e.stopPropagation(); e.preventDefault(); } }, true);   // nach dem Ziehen kein Antippen auslösen
 
   global.VTGR = { list: list, next: next, start: start, topic: topic, _state: function () { return L; } };
 })(window);

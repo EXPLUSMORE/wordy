@@ -2615,7 +2615,7 @@
       body.innerHTML = '<div class="stack" style="padding-top:8px"><div class="eyebrow">Rechtschreibung</div>' +
         '<div class="row" style="gap:12px">' + (audioAvailable() ? speakBtn(w.en) : "") + '<div class="prompt de">' + esc(w.de) + '</div></div>' +
         '<div class="slot" id="slot" data-len="' + target.length + '"></div>' +
-        '<p class="small muted" style="margin:0">Tipp auf einen Buchstaben, um davor oder danach etwas einzufügen.</p>' +
+        '<p class="small muted" style="margin:0">Tippe die Buchstaben an oder ziehe sie in die Reihe; auch in der Reihe lassen sie sich verschieben.</p>' +
         '<div class="tiles" id="tiles">' + letters.map(function (l, i) {
           return '<button class="tile" data-tile="' + i + '" data-ch="' + esc(l.ch) + '">' + (l.ch === " " ? "␣" : esc(l.ch)) + '</button>';
         }).join("") + '</div>' +
@@ -2676,12 +2676,12 @@
         (t.punct ? '<span style="font-size:19px;color:var(--ink-3)">' + esc(t.punct) + '</span>' : "");
     } else {
       /* Buchstaben einzeln antippbar: Tipp auf einen Buchstaben setzt den Cursor davor (linke Hälfte) oder dahinter (rechte Hälfte) */
-      var cur = t.cursor == null ? t.built.length : Math.min(t.cursor, t.built.length), h = "", k;
+      var cur = t.cursor == null ? t.built.length : Math.min(t.cursor, t.built.length), h = "", k, dragging = dropIdx != null || dragIdx != null;
       for (k = 0; k < t.built.length; k++) {
-        if (k === cur) h += '<i class="caret"></i>';
-        h += '<span class="sl" data-i="' + k + '">' + (t.built[k] === " " ? "&nbsp;" : esc(t.built[k])) + '</span>';
+        if (dragging ? k === dropIdx : k === cur) h += dragging ? '<i class="dropbar"></i>' : '<i class="caret"></i>';
+        h += '<span class="sl' + (k === dragIdx ? " dragging" : "") + '" data-i="' + k + '">' + (t.built[k] === " " ? "&nbsp;" : esc(t.built[k])) + '</span>';
       }
-      if (cur >= t.built.length) h += '<i class="caret"></i>';
+      if (dragging ? (dropIdx != null && dropIdx >= t.built.length) : cur >= t.built.length) h += dragging ? '<i class="dropbar"></i>' : '<i class="caret"></i>';
       el.innerHTML = h + '<span style="color:var(--ink-3);letter-spacing:.18em">' + "·".repeat(rest) + '</span>';
     }
   }
@@ -2916,7 +2916,7 @@
   /* ---------- Satzbau: Wörter ziehen ---------- */
   var drag = null, swallowClick = false;
   function dropIndex(x, y) {
-    var chips = $$("#slot .sw");
+    var chips = $$("#slot .sw, #slot .sl");
     for (var i = 0; i < chips.length; i++) {
       var r = chips[i].getBoundingClientRect();
       if (y < r.top || (y <= r.bottom && x < r.left + r.width / 2)) return i;
@@ -2936,16 +2936,17 @@
     if (!d.moved) return;
     if (commit && SS && !SS.answered && SS.tasks[SS.i] === t) {
       var over = inSlot(e.clientX, e.clientY), at = dropIndex(e.clientX, e.clientY);
+      t.usedTiles = t.usedTiles || [];
       if (d.fromSlot) {
         var wd = t.built.splice(d.idx, 1)[0], tl = t.usedTiles.splice(d.idx, 1)[0];
-        if (over) { if (at > d.idx) at--; t.built.splice(at, 0, wd); t.usedTiles.splice(at, 0, tl); }
-        else if (tl) tl.classList.remove("used");   // aus der Reihe gezogen: zurück in die Auswahl
+        if (over) { if (at > d.idx) at--; t.built.splice(at, 0, wd); t.usedTiles.splice(at, 0, tl); if (t.type === "spell") t.cursor = at + 1; }
+        else { if (tl) tl.classList.remove("used"); if (t.type === "spell") t.cursor = Math.min(d.idx, t.built.length); }   // aus der Reihe gezogen: zurück in die Auswahl
       } else if (over) {
-        t.built.splice(at, 0, d.el.getAttribute("data-ch")); t.usedTiles.splice(at, 0, d.el); d.el.classList.add("used");
+        t.built.splice(at, 0, d.el.getAttribute("data-ch")); t.usedTiles.splice(at, 0, d.el); d.el.classList.add("used"); if (t.type === "spell") t.cursor = at + 1;
       }
       $("#mainBtn").disabled = t.built.length !== t.target.length;
     }
-    if (SS && SS.tasks[SS.i] === t) paintSlot(t, true);
+    if (SS && SS.tasks[SS.i] === t) paintSlot(t, t.type === "build");
   }
   function dragMove(e) {
     if (!drag) return;
@@ -2958,14 +2959,14 @@
     }
     d.ghost.style.left = e.clientX + "px"; d.ghost.style.top = e.clientY + "px";
     var over = inSlot(e.clientX, e.clientY);
-    paintSlot(d.t, true, over ? dropIndex(e.clientX, e.clientY) : null, d.fromSlot ? d.idx : null);
+    paintSlot(d.t, d.t.type === "build", over ? dropIndex(e.clientX, e.clientY) : null, d.fromSlot ? d.idx : null);
   }
   function dragUp(e) { dragEnd(true, e); }
   function dragCancel(e) { dragEnd(false, e); }
   sessionEl.addEventListener("pointerdown", function (e) {
-    var t = SS && SS.tasks[SS.i]; if (!t || t.type !== "build" || SS.answered || e.button > 0) return;
-    var el = e.target.closest(".sw, .tile.word"); if (!el || el.classList.contains("used")) return;
-    drag = { el: el, t: t, fromSlot: el.classList.contains("sw"), idx: +(el.getAttribute("data-i") || 0), x0: e.clientX, y0: e.clientY, moved: false, ghost: null };
+    var t = SS && SS.tasks[SS.i]; if (!t || (t.type !== "build" && t.type !== "spell") || SS.answered || e.button > 0) return;
+    var el = e.target.closest(t.type === "build" ? ".sw, .tile.word" : ".sl, .tile[data-ch]"); if (!el || el.classList.contains("used")) return;
+    drag = { el: el, t: t, fromSlot: el.classList.contains("sw") || el.classList.contains("sl"), idx: +(el.getAttribute("data-i") || 0), x0: e.clientX, y0: e.clientY, moved: false, ghost: null };
     document.addEventListener("pointermove", dragMove); document.addEventListener("pointerup", dragUp); document.addEventListener("pointercancel", dragCancel);
   });
   sessionEl.addEventListener("click", function (e) { if (swallowClick) { swallowClick = false; e.stopPropagation(); e.preventDefault(); } }, true);   // nach dem Ziehen kein Antippen auslösen

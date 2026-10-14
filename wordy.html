@@ -350,7 +350,7 @@ hr.sep{border:0;border-top:1px solid var(--line);margin:4px 0}
 @keyframes cshake{0%,100%{transform:rotate(0)}25%{transform:rotate(-7deg)}75%{transform:rotate(7deg)}}
 @keyframes cpop{0%{transform:scale(.9)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
 @media (prefers-reduced-motion:reduce){.pnode.cur,.pme,.pchest.ready,.chestov svg.chestsvg,.chestov .cray{animation:none}}
-.tile.word,.slot .sw{touch-action:none;-webkit-user-select:none;user-select:none}
+.tile.word,.slot .sw,.slot .sl,#session .tile[data-ch]{touch-action:none;-webkit-user-select:none;user-select:none}.slot .sl{cursor:grab}.slot .sl.dragging{opacity:.3}
 .slot .sw{font:inherit;font-size:16px;font-weight:600;padding:8px 12px;margin:2px 3px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:inherit;cursor:grab}
 .slot .sw.dragging{opacity:.3}
 .slot .dropbar{display:inline-block;width:3px;height:34px;border-radius:2px;background:var(--accent);margin:0 1px;vertical-align:middle}
@@ -531,7 +531,7 @@ html.ar-open, html.ar-open body{overflow:hidden}
 .gr-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}.gr-opt{padding:14px 8px;border-radius:12px;background:var(--ar-s);border:2px solid var(--ar-line);color:var(--ar-ink);font-weight:800;font-size:18px}.gr-opt.right{background:#2f6e43;border-color:#5fd3a0}.gr-opt.wrong{background:#7a2b2b;border-color:#f2776e}
 .gr-in{width:100%;max-width:420px;padding:14px;border-radius:12px;background:var(--ar-s);border:2px solid var(--ar-line);color:var(--ar-ink);font-size:20px;text-align:center}.gr-in.right{border-color:#5fd3a0}.gr-in.wrong{border-color:#f2776e}
 .gr-ans{width:100%;min-height:60px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:center;background:var(--ar-s);border:2px dashed var(--ar-line);border-radius:12px;padding:8px}.gr-ans.right{border-color:#5fd3a0}.gr-ans.wrong{border-color:#f2776e}.gr-hint{color:var(--ar-ink2);font-size:14px}
-.gr-pool{width:100%;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}.gr-tile{padding:10px 14px;border-radius:10px;background:#EDE3C8;color:#14213d;font-weight:800;font-size:18px}.gr-tile.on{background:#FFD98A}
+.gr-pool{width:100%;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}.gr-tile{padding:10px 14px;border-radius:10px;background:#EDE3C8;color:#14213d;font-weight:800;font-size:18px}.gr-tile.on{background:#FFD98A}.gr-tile{touch-action:none;-webkit-user-select:none;user-select:none;cursor:grab}.gr-tile.dragging{opacity:.3}.gr-ans .dropbar{display:inline-block;width:3px;height:36px;border-radius:2px;background:#FFD98A;margin:0 1px}
 .gr-toks{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}.gr-tok{padding:8px 11px;border-radius:10px;background:var(--ar-s);border:2px solid var(--ar-line);color:var(--ar-ink);font-size:19px;font-weight:700}.gr-tok.sel{border-color:var(--ar-gold)}.gr-tok.wrong{background:#7a2b2b}.gr-tok.right{background:#2f6e43}
 .gr-fb{width:100%;border-radius:14px;padding:12px;text-align:left}.gr-fb.good{background:rgba(47,110,67,.35);border:1px solid #5fd3a0}.gr-fb.bad{background:rgba(122,43,43,.35);border:1px solid #f2776e}.gr-fb b{font-size:17px}.gr-full{margin-top:4px;font-weight:700}.gr-why{margin-top:4px;color:var(--ar-ink2);font-size:14px}
 .unit.soonu{opacity:.55}.unit.gru .t b{white-space:normal;overflow:visible;text-overflow:clip}.unit.gru .pill{white-space:nowrap}
@@ -1140,7 +1140,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.100.2";window.WORDY_BUILD="5a8e203e3b";</script>
+<script>window.WORDY_VERSION="2.101.0";window.WORDY_BUILD="1c6fc391f1";</script>
 </head>
 <body>
 <div id="app">
@@ -10158,7 +10158,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       body.innerHTML = '<div class="stack" style="padding-top:8px"><div class="eyebrow">Rechtschreibung</div>' +
         '<div class="row" style="gap:12px">' + (audioAvailable() ? speakBtn(w.en) : "") + '<div class="prompt de">' + esc(w.de) + '</div></div>' +
         '<div class="slot" id="slot" data-len="' + target.length + '"></div>' +
-        '<p class="small muted" style="margin:0">Tipp auf einen Buchstaben, um davor oder danach etwas einzufügen.</p>' +
+        '<p class="small muted" style="margin:0">Tippe die Buchstaben an oder ziehe sie in die Reihe; auch in der Reihe lassen sie sich verschieben.</p>' +
         '<div class="tiles" id="tiles">' + letters.map(function (l, i) {
           return '<button class="tile" data-tile="' + i + '" data-ch="' + esc(l.ch) + '">' + (l.ch === " " ? "␣" : esc(l.ch)) + '</button>';
         }).join("") + '</div>' +
@@ -10219,12 +10219,12 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
         (t.punct ? '<span style="font-size:19px;color:var(--ink-3)">' + esc(t.punct) + '</span>' : "");
     } else {
       /* Buchstaben einzeln antippbar: Tipp auf einen Buchstaben setzt den Cursor davor (linke Hälfte) oder dahinter (rechte Hälfte) */
-      var cur = t.cursor == null ? t.built.length : Math.min(t.cursor, t.built.length), h = "", k;
+      var cur = t.cursor == null ? t.built.length : Math.min(t.cursor, t.built.length), h = "", k, dragging = dropIdx != null || dragIdx != null;
       for (k = 0; k < t.built.length; k++) {
-        if (k === cur) h += '<i class="caret"></i>';
-        h += '<span class="sl" data-i="' + k + '">' + (t.built[k] === " " ? "&nbsp;" : esc(t.built[k])) + '</span>';
+        if (dragging ? k === dropIdx : k === cur) h += dragging ? '<i class="dropbar"></i>' : '<i class="caret"></i>';
+        h += '<span class="sl' + (k === dragIdx ? " dragging" : "") + '" data-i="' + k + '">' + (t.built[k] === " " ? "&nbsp;" : esc(t.built[k])) + '</span>';
       }
-      if (cur >= t.built.length) h += '<i class="caret"></i>';
+      if (dragging ? (dropIdx != null && dropIdx >= t.built.length) : cur >= t.built.length) h += dragging ? '<i class="dropbar"></i>' : '<i class="caret"></i>';
       el.innerHTML = h + '<span style="color:var(--ink-3);letter-spacing:.18em">' + "·".repeat(rest) + '</span>';
     }
   }
@@ -10459,7 +10459,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   /* ---------- Satzbau: Wörter ziehen ---------- */
   var drag = null, swallowClick = false;
   function dropIndex(x, y) {
-    var chips = $$("#slot .sw");
+    var chips = $$("#slot .sw, #slot .sl");
     for (var i = 0; i < chips.length; i++) {
       var r = chips[i].getBoundingClientRect();
       if (y < r.top || (y <= r.bottom && x < r.left + r.width / 2)) return i;
@@ -10479,16 +10479,17 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (!d.moved) return;
     if (commit && SS && !SS.answered && SS.tasks[SS.i] === t) {
       var over = inSlot(e.clientX, e.clientY), at = dropIndex(e.clientX, e.clientY);
+      t.usedTiles = t.usedTiles || [];
       if (d.fromSlot) {
         var wd = t.built.splice(d.idx, 1)[0], tl = t.usedTiles.splice(d.idx, 1)[0];
-        if (over) { if (at > d.idx) at--; t.built.splice(at, 0, wd); t.usedTiles.splice(at, 0, tl); }
-        else if (tl) tl.classList.remove("used");   // aus der Reihe gezogen: zurück in die Auswahl
+        if (over) { if (at > d.idx) at--; t.built.splice(at, 0, wd); t.usedTiles.splice(at, 0, tl); if (t.type === "spell") t.cursor = at + 1; }
+        else { if (tl) tl.classList.remove("used"); if (t.type === "spell") t.cursor = Math.min(d.idx, t.built.length); }   // aus der Reihe gezogen: zurück in die Auswahl
       } else if (over) {
-        t.built.splice(at, 0, d.el.getAttribute("data-ch")); t.usedTiles.splice(at, 0, d.el); d.el.classList.add("used");
+        t.built.splice(at, 0, d.el.getAttribute("data-ch")); t.usedTiles.splice(at, 0, d.el); d.el.classList.add("used"); if (t.type === "spell") t.cursor = at + 1;
       }
       $("#mainBtn").disabled = t.built.length !== t.target.length;
     }
-    if (SS && SS.tasks[SS.i] === t) paintSlot(t, true);
+    if (SS && SS.tasks[SS.i] === t) paintSlot(t, t.type === "build");
   }
   function dragMove(e) {
     if (!drag) return;
@@ -10501,14 +10502,14 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     }
     d.ghost.style.left = e.clientX + "px"; d.ghost.style.top = e.clientY + "px";
     var over = inSlot(e.clientX, e.clientY);
-    paintSlot(d.t, true, over ? dropIndex(e.clientX, e.clientY) : null, d.fromSlot ? d.idx : null);
+    paintSlot(d.t, d.t.type === "build", over ? dropIndex(e.clientX, e.clientY) : null, d.fromSlot ? d.idx : null);
   }
   function dragUp(e) { dragEnd(true, e); }
   function dragCancel(e) { dragEnd(false, e); }
   sessionEl.addEventListener("pointerdown", function (e) {
-    var t = SS && SS.tasks[SS.i]; if (!t || t.type !== "build" || SS.answered || e.button > 0) return;
-    var el = e.target.closest(".sw, .tile.word"); if (!el || el.classList.contains("used")) return;
-    drag = { el: el, t: t, fromSlot: el.classList.contains("sw"), idx: +(el.getAttribute("data-i") || 0), x0: e.clientX, y0: e.clientY, moved: false, ghost: null };
+    var t = SS && SS.tasks[SS.i]; if (!t || (t.type !== "build" && t.type !== "spell") || SS.answered || e.button > 0) return;
+    var el = e.target.closest(t.type === "build" ? ".sw, .tile.word" : ".sl, .tile[data-ch]"); if (!el || el.classList.contains("used")) return;
+    drag = { el: el, t: t, fromSlot: el.classList.contains("sw") || el.classList.contains("sl"), idx: +(el.getAttribute("data-i") || 0), x0: e.clientX, y0: e.clientY, moved: false, ghost: null };
     document.addEventListener("pointermove", dragMove); document.addEventListener("pointerup", dragUp); document.addEventListener("pointercancel", dragCancel);
   });
   sessionEl.addEventListener("click", function (e) { if (swallowClick) { swallowClick = false; e.stopPropagation(); e.preventDefault(); } }, true);   // nach dem Ziehen kein Antippen auslösen
@@ -12294,9 +12295,14 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     }
   }
   function fbBox() { return '<div class="gr-fb" id="grFb" hidden></div>'; }
-  function orderPaint() {
-    var c = L.cur;
-    $("#grAns").innerHTML = c.ans.map(function (o, k) { return '<button class="gr-tile on" data-gr="untile" data-k="' + k + '">' + esc(o.w) + '</button>'; }).join("") || '<span class="gr-hint">Tippe die Wörter unten an</span>';
+  function orderPaint(dropIdx, dragIdx) {
+    var c = L.cur, h = "", k;
+    for (k = 0; k < c.ans.length; k++) {
+      if (k === dropIdx) h += '<i class="dropbar"></i>';
+      h += '<button class="gr-tile on' + (k === dragIdx ? " dragging" : "") + '" data-gr="untile" data-k="' + k + '">' + esc(c.ans[k].w) + '</button>';
+    }
+    if (dropIdx != null && dropIdx >= c.ans.length) h += '<i class="dropbar"></i>';
+    $("#grAns").innerHTML = h || '<span class="gr-hint">Tippe die Wörter unten an oder ziehe sie hierher</span>';
     $("#grPool").innerHTML = c.pool.map(function (o, k) { return '<button class="gr-tile" data-gr="tile" data-k="' + k + '">' + esc(o.w) + '</button>'; }).join("");
   }
   function lock() { $$(".gr-opt,.gr-tile,.gr-tok,[data-gr=check],.gr-in").forEach(function (b) { b.disabled = true; }); }
@@ -12403,6 +12409,44 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (a === "untile") { var c3 = L.cur, k3 = +t.getAttribute("data-k"); c3.pool.push(c3.ans.splice(k3, 1)[0]); return orderPaint(); }
   });
   el.addEventListener("keydown", function (e) { if (L && !L.done && e.key === "Enter" && e.target && e.target.id === "grIn" && !L.answered) { e.preventDefault(); onCheckType(); } });
+
+  /* Wörter ziehen (Maus und Finger): aus dem Vorrat in die Antwort, in der Antwort umsortieren, aus der Antwort zurück in den Vorrat. Antippen geht weiter. */
+  var gd = null, gSwallow = false;
+  function gDropIndex(x, y) {
+    var chips = $$("#grAns .gr-tile");
+    for (var i = 0; i < chips.length; i++) { var r = chips[i].getBoundingClientRect(); if (y < r.top || (y <= r.bottom && x < r.left + r.width / 2)) return i; }
+    return chips.length;
+  }
+  function gInAns(x, y) { var a = $("#grAns"); if (!a) return false; var r = a.getBoundingClientRect(); return x >= r.left - 12 && x <= r.right + 12 && y >= r.top - 24 && y <= r.bottom + 24; }
+  function gMove(e) {
+    if (!gd) return;
+    if (!gd.moved) {
+      if (Math.abs(e.clientX - gd.x0) + Math.abs(e.clientY - gd.y0) < 9) return;
+      gd.moved = true; gd.ghost = document.createElement("div"); gd.ghost.className = "dragghost"; gd.ghost.style.zIndex = "9999"; gd.ghost.textContent = gd.el.textContent; document.body.appendChild(gd.ghost);
+    }
+    gd.ghost.style.left = e.clientX + "px"; gd.ghost.style.top = e.clientY + "px";
+    if (L && L.cur && L.cur.it.t === "order") orderPaint(gInAns(e.clientX, e.clientY) ? gDropIndex(e.clientX, e.clientY) : null, gd.from === "ans" ? gd.k : null);
+  }
+  function gEnd(commit, e) {
+    if (!gd) return;
+    var d = gd; gd = null;
+    document.removeEventListener("pointermove", gMove); document.removeEventListener("pointerup", gUp); document.removeEventListener("pointercancel", gCancel);
+    if (d.ghost) { d.ghost.remove(); gSwallow = true; setTimeout(function () { gSwallow = false; }, 350); }
+    if (!d.moved || !L || !L.cur || L.answered || L.cur.it.t !== "order") { if (d.moved && L && L.cur && L.cur.it.t === "order") orderPaint(); return; }
+    var c = L.cur, over = commit && gInAns(e.clientX, e.clientY), at = gDropIndex(e.clientX, e.clientY), item;
+    if (d.from === "pool") { if (over) { item = c.pool.splice(d.k, 1)[0]; c.ans.splice(at, 0, item); } }
+    else { item = c.ans.splice(d.k, 1)[0]; if (over) { if (at > d.k) at--; c.ans.splice(at, 0, item); } else c.pool.push(item); }
+    orderPaint();
+  }
+  function gUp(e) { gEnd(true, e); }
+  function gCancel(e) { gEnd(false, e); }
+  el.addEventListener("pointerdown", function (e) {
+    if (!L || L.done || L.answered || e.button > 0 || !L.cur || L.cur.it.t !== "order") return;
+    var tl = e.target.closest(".gr-tile"); if (!tl || tl.disabled) return;
+    gd = { el: tl, from: tl.getAttribute("data-gr") === "untile" ? "ans" : "pool", k: +tl.getAttribute("data-k"), x0: e.clientX, y0: e.clientY, moved: false, ghost: null };
+    document.addEventListener("pointermove", gMove); document.addEventListener("pointerup", gUp); document.addEventListener("pointercancel", gCancel);
+  });
+  el.addEventListener("click", function (e) { if (gSwallow) { gSwallow = false; e.stopPropagation(); e.preventDefault(); } }, true);   // nach dem Ziehen kein Antippen auslösen
 
   global.VTGR = { list: list, next: next, start: start, topic: topic, _state: function () { return L; } };
 })(window);

@@ -357,7 +357,7 @@ hr.sep{border:0;border-top:1px solid var(--line);margin:4px 0}
 @keyframes cshake{0%,100%{transform:rotate(0)}25%{transform:rotate(-7deg)}75%{transform:rotate(7deg)}}
 @keyframes cpop{0%{transform:scale(.9)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
 @media (prefers-reduced-motion:reduce){.pnode.cur,.pme,.pchest.ready,.chestov svg.chestsvg,.chestov .cray{animation:none}}
-.tile.word,.slot .sw{touch-action:none;-webkit-user-select:none;user-select:none}
+.tile.word,.slot .sw,.slot .sl,#session .tile[data-ch]{touch-action:none;-webkit-user-select:none;user-select:none}.slot .sl{cursor:grab}.slot .sl.dragging{opacity:.3}
 .slot .sw{font:inherit;font-size:16px;font-weight:600;padding:8px 12px;margin:2px 3px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:inherit;cursor:grab}
 .slot .sw.dragging{opacity:.3}
 .slot .dropbar{display:inline-block;width:3px;height:34px;border-radius:2px;background:var(--accent);margin:0 1px;vertical-align:middle}
@@ -538,7 +538,7 @@ html.ar-open, html.ar-open body{overflow:hidden}
 .gr-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}.gr-opt{padding:14px 8px;border-radius:12px;background:var(--ar-s);border:2px solid var(--ar-line);color:var(--ar-ink);font-weight:800;font-size:18px}.gr-opt.right{background:#2f6e43;border-color:#5fd3a0}.gr-opt.wrong{background:#7a2b2b;border-color:#f2776e}
 .gr-in{width:100%;max-width:420px;padding:14px;border-radius:12px;background:var(--ar-s);border:2px solid var(--ar-line);color:var(--ar-ink);font-size:20px;text-align:center}.gr-in.right{border-color:#5fd3a0}.gr-in.wrong{border-color:#f2776e}
 .gr-ans{width:100%;min-height:60px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:center;background:var(--ar-s);border:2px dashed var(--ar-line);border-radius:12px;padding:8px}.gr-ans.right{border-color:#5fd3a0}.gr-ans.wrong{border-color:#f2776e}.gr-hint{color:var(--ar-ink2);font-size:14px}
-.gr-pool{width:100%;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}.gr-tile{padding:10px 14px;border-radius:10px;background:#EDE3C8;color:#14213d;font-weight:800;font-size:18px}.gr-tile.on{background:#FFD98A}
+.gr-pool{width:100%;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}.gr-tile{padding:10px 14px;border-radius:10px;background:#EDE3C8;color:#14213d;font-weight:800;font-size:18px}.gr-tile.on{background:#FFD98A}.gr-tile{touch-action:none;-webkit-user-select:none;user-select:none;cursor:grab}.gr-tile.dragging{opacity:.3}.gr-ans .dropbar{display:inline-block;width:3px;height:36px;border-radius:2px;background:#FFD98A;margin:0 1px}
 .gr-toks{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}.gr-tok{padding:8px 11px;border-radius:10px;background:var(--ar-s);border:2px solid var(--ar-line);color:var(--ar-ink);font-size:19px;font-weight:700}.gr-tok.sel{border-color:var(--ar-gold)}.gr-tok.wrong{background:#7a2b2b}.gr-tok.right{background:#2f6e43}
 .gr-fb{width:100%;border-radius:14px;padding:12px;text-align:left}.gr-fb.good{background:rgba(47,110,67,.35);border:1px solid #5fd3a0}.gr-fb.bad{background:rgba(122,43,43,.35);border:1px solid #f2776e}.gr-fb b{font-size:17px}.gr-full{margin-top:4px;font-weight:700}.gr-why{margin-top:4px;color:var(--ar-ink2);font-size:14px}
 .unit.soonu{opacity:.55}.unit.gru .t b{white-space:normal;overflow:visible;text-overflow:clip}.unit.gru .pill{white-space:nowrap}
@@ -1147,7 +1147,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.100.2";window.WORDY_BUILD="5a8e203e3b";</script>
+<script>window.WORDY_VERSION="2.101.0";window.WORDY_BUILD="1c6fc391f1";</script>
 </head>
 <body>
 <div id="app">
@@ -1175,33 +1175,33 @@ details.fold>.fbody{padding:2px 0 14px}
   <div id="session" hidden></div>
 </div>
 <div id="arena" hidden></div>
-<script src="data/klasse6.js?v=5a8e203e3b"></script>
-<script src="data/klasse7.js?v=5a8e203e3b"></script>
-<script src="data/klasse8.js?v=5a8e203e3b"></script>
-<script src="data/business.js?v=5a8e203e3b"></script>
-<script src="data/business-basis2.js?v=5a8e203e3b"></script>
-<script src="data/business-aufbau2.js?v=5a8e203e3b"></script>
-<script src="data/business-profi2.js?v=5a8e203e3b"></script>
-<script src="data/smalltalk.js?v=5a8e203e3b"></script>
-<script src="data/idioms.js?v=5a8e203e3b"></script>
-<script src="data/saetze.js?v=5a8e203e3b"></script>
-<script src="data/grammatik.js?v=5a8e203e3b"></script>
-<script src="data/saetze2.js?v=5a8e203e3b"></script>
-<script src="data/lernbuch.js?v=5a8e203e3b"></script>
-<script src="data/verben.js?v=5a8e203e3b"></script>
-<script src="js/engine.js?v=5a8e203e3b"></script>
-<script src="js/cosmetics.js?v=5a8e203e3b"></script>
-<script src="js/fortnite.js?v=5a8e203e3b"></script>
-<script src="js/figur.js?v=5a8e203e3b"></script>
-<script src="js/stila.js?v=5a8e203e3b"></script>
-<script src="js/stilb.js?v=5a8e203e3b"></script>
-<script src="js/loot.js?v=5a8e203e3b"></script>
-<script src="js/film.js?v=5a8e203e3b"></script>
-<script src="js/app.js?v=5a8e203e3b"></script>
-<script src="js/arena.js?v=5a8e203e3b"></script>
-<script src="js/spiele.js?v=5a8e203e3b"></script>
-<script src="js/grammatik.js?v=5a8e203e3b"></script>
-<script src="js/sync.js?v=5a8e203e3b"></script>
+<script src="data/klasse6.js?v=1c6fc391f1"></script>
+<script src="data/klasse7.js?v=1c6fc391f1"></script>
+<script src="data/klasse8.js?v=1c6fc391f1"></script>
+<script src="data/business.js?v=1c6fc391f1"></script>
+<script src="data/business-basis2.js?v=1c6fc391f1"></script>
+<script src="data/business-aufbau2.js?v=1c6fc391f1"></script>
+<script src="data/business-profi2.js?v=1c6fc391f1"></script>
+<script src="data/smalltalk.js?v=1c6fc391f1"></script>
+<script src="data/idioms.js?v=1c6fc391f1"></script>
+<script src="data/saetze.js?v=1c6fc391f1"></script>
+<script src="data/grammatik.js?v=1c6fc391f1"></script>
+<script src="data/saetze2.js?v=1c6fc391f1"></script>
+<script src="data/lernbuch.js?v=1c6fc391f1"></script>
+<script src="data/verben.js?v=1c6fc391f1"></script>
+<script src="js/engine.js?v=1c6fc391f1"></script>
+<script src="js/cosmetics.js?v=1c6fc391f1"></script>
+<script src="js/fortnite.js?v=1c6fc391f1"></script>
+<script src="js/figur.js?v=1c6fc391f1"></script>
+<script src="js/stila.js?v=1c6fc391f1"></script>
+<script src="js/stilb.js?v=1c6fc391f1"></script>
+<script src="js/loot.js?v=1c6fc391f1"></script>
+<script src="js/film.js?v=1c6fc391f1"></script>
+<script src="js/app.js?v=1c6fc391f1"></script>
+<script src="js/arena.js?v=1c6fc391f1"></script>
+<script src="js/spiele.js?v=1c6fc391f1"></script>
+<script src="js/grammatik.js?v=1c6fc391f1"></script>
+<script src="js/sync.js?v=1c6fc391f1"></script>
 
 <script>
 if ('serviceWorker' in navigator) {

@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.101.0 – 2026-10-14
+- **Drag and drop bei Rechtschreibung und Grammatik**: In der Übung **Rechtschreibung** lassen sich die Buchstaben jetzt mit Maus oder Finger aus dem Vorrat in die Reihe ziehen, in der Reihe an eine andere Stelle schieben und wieder herausziehen (zurück in den Vorrat). Eine Einfügemarke zeigt, wo der Buchstabe landet. In der **Grammatik**-Übung „Wörter in die richtige Reihenfolge bringen“ gilt dasselbe für die Wörter (Vorrat → Antwort, in der Antwort umsortieren, zurück in den Vorrat). Antippen funktioniert weiter wie bisher; die Satzbau-Übung („Sätze bauen“) konnte schon ziehen. Nur App-Änderung.
+
 ## 2.100.2 – 2026-10-13
 - **Mitlesen kürzer**: Die Vorlese-Schleife vorab ist weg. Es gibt nur noch einen Durchgang: Jedes Wort wird vorgelesen, dann spricht das Kind laut nach („Wort 3 von 15“), danach „Geschafft“. Das halbiert die Dauer. Tempo-Regler, Pause, Vor und Zurück bleiben. Gilt überall (Lernen, Einheit, Lernpfad, Tagesplan); als erledigt zählt der Plan-Baustein erst am Ende des Durchgangs. Nur App-Änderung.
 
