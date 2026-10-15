@@ -180,6 +180,43 @@
     S.save(true);
     if (global.VTUI && global.VTUI.refreshHeader) global.VTUI.refreshHeader();
   }
+  /* ---------- Später weitermachen ---------- */
+  function park() {
+    if (!L || L.done || L.right + L.wrong < 1) return false;
+    try {
+      var q = L.queue.slice();
+      if (L.cur && !L.answered) q.unshift(L.cur);   // die offene Aufgabe kommt beim Fortsetzen wieder
+      var d = { id: L.t.id, opts: L.opts || null, queue: q.map(function (x) { return { i: x.i, tries: 0, retry: !!x.retry }; }), n: L.n, score: L.score, right: L.right, wrong: L.wrong, first: L.first,
+        streak: L.streak, maxStreak: L.maxStreak, total: L.total, orig: L.orig, res: L.res || [], el: Date.now() - L.start };
+      S.resumeSave({ key: "gram", kind: "gram", title: (L.t.icon || "📘") + " Grammatik · " + L.t.title, sub: L.score + " Punkte · Aufgabe " + Math.min(L.n + 1, L.total) + " von " + L.total, data: S.resumePack(d) });
+      return true;
+    } catch (e) { try { console.error("gram park:", e); } catch (x) {} return false; }
+  }
+  function resume(d, end) {
+    var t = topic(d.id); if (!t || t.soon) return false;
+    S.rollDay();
+    L = { t: t, opts: d.opts || null, queue: d.queue.map(function (x) { return { i: x.i, it: t.items[x.i], tries: 0, retry: x.retry }; }).filter(function (x) { return x.it; }),
+      n: d.n, score: d.score, right: d.right, wrong: d.wrong, first: d.first, start: Date.now() - (d.el || 0), done: false, retry: [], cur: null, answered: false,
+      streak: d.streak || 0, maxStreak: d.maxStreak || 0, total: d.total, orig: d.orig, res: d.res || [] };
+    el.hidden = false; document.documentElement.classList.add("ar-open");
+    if (end) { L.queue = []; L.quit = true; finish(); return true; }
+    nextTask();
+    return true;
+  }
+  function leave() {
+    if (!L) return;
+    if (L.done) return close();
+    var g = L;
+    if (L.right + L.wrong < 1) return close();
+    if (!global.VTUI || !global.VTUI.leave) { L.queue = []; L.quit = true; return finish(); }
+    global.VTUI.leave({}, function (pick) {
+      if (L !== g || g.done) return;
+      if (pick === "stay") return;
+      if (pick === "pause" && park()) { close(); try { global.VTUI.toast("Gespeichert. Du findest die Lektion auf der Startseite."); } catch (x) {} return; }
+      g.queue = []; g.quit = true; finish();
+    });
+  }
+
   function close() {
     L = null; el.hidden = true; el.innerHTML = ""; document.documentElement.classList.remove("ar-open");
     if (global.VTUI && global.VTUI.afterArena) global.VTUI.afterArena();
@@ -189,7 +226,7 @@
   el.addEventListener("click", function (e) {
     var t = e.target.closest("[data-gr]"); if (!t || !L) { if (t && !L && /^(exit|quit|again)$/.test(t.getAttribute("data-gr"))) close(); return; }
     var a = t.getAttribute("data-gr");
-    if (a === "quit") { if (L.done) return close(); if (L.right + L.wrong > 0) { L.queue = []; L.quit = true; return finish(); } return close(); }
+    if (a === "quit") return leave();
     if (a === "exit") return close();
     if (a === "again") { var id = L.t.id, o0 = L.opts; L = null; return start(id, o0); }
     if (a === "help") return showExplain(false);
@@ -246,5 +283,5 @@
   });
   el.addEventListener("click", function (e) { if (gSwallow) { gSwallow = false; e.stopPropagation(); e.preventDefault(); } }, true);   // nach dem Ziehen kein Antippen auslösen
 
-  global.VTGR = { list: list, next: next, start: start, topic: topic, _state: function () { return L; } };
+  global.VTGR = { list: list, next: next, start: start, resume: resume, topic: topic, _state: function () { return L; } };
 })(window);

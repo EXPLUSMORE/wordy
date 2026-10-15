@@ -984,7 +984,7 @@
       '<div class="hhchips"><span class="hhc">🔥 <b class="tnum">' + st.streak.count + '</b></span><span class="hhc">🪙 <b class="tnum">' + st.coins + '</b></span></div></div>' +
       '</section>';
 
-    html += planCard() + dayCard(pct);
+    html += resumeCard() + planCard() + dayCard(pct);
 
     var wish = S.wish();
     html += '<section class="card"><div class="eyebrow">Tagesmissionen</div><div style="margin-top:6px">' +
@@ -2436,6 +2436,71 @@
     render();
   }
 
+  /* ---------- Später weitermachen ----------
+     Eine angefangene Runde (Aufgaben, Spiele, Lektionen) lässt sich pausieren und am selben Tag fortsetzen.
+     Gespeichert wird über S.resumeSave; Spiele und Lektionen liefern ihren Stand selbst (park/resume in arena.js, spiele.js, grammatik.js). */
+  function leaveAsk(o, cb) {
+    var old = $("#leaveAsk"); if (old) old.remove();
+    var ov = document.createElement("div"); ov.className = "srmd"; ov.id = "leaveAsk";
+    ov.innerHTML = '<div class="dsh"><div class="dshg"></div><div style="font-size:42px">⏸️</div><h3>Pause machen?</h3>' +
+      '<p>' + esc(o && o.text || "Du kannst heute noch genau hier weitermachen.") + '</p>' +
+      '<button class="btn" data-pick="pause">Später weitermachen</button>' +
+      '<button class="dshx" data-pick="end">Beenden – zählt nicht als geschafft</button>' +
+      '<button class="dshx" data-pick="stay" style="border-color:transparent">Weiterspielen</button></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-pick]"); if (!b && e.target !== ov) return;
+      var pick = b ? b.getAttribute("data-pick") : "stay";
+      ov.remove(); try { cb(pick); } catch (x) { try { console.error("leave:", x); } catch (y) {} }
+    });
+  }
+  var MODE_NAME = { mix: "Daily Challenge", box: "Fehlerkartei", "new": "Neue Wörter", master: "Meistern", sent: "Sätze", verbs: "Unregelmäßige Verben", focus: "Gezielt üben", path: "Lernpfad" };
+  function parkSession() {
+    if (!SS || SS.ended) return false;
+    try {
+      var d = Object.assign({}, SS);
+      delete d.station; delete d.pick;
+      d.i = SS.answered ? SS.i + 1 : SS.i; d.answered = false;
+      d.el = Date.now() - SS.start; d.stationId = SS.station ? SS.station.id : null; d.lopts = lastStartOpts || null;
+      var name = SS.station ? "Lernpfad · Station " + SS.station.n : MODE_NAME[(lastStartOpts && lastStartOpts.focus ? "focus" : SS.mode)] || "Runde";
+      S.resumeSave({ key: "session", kind: "session", title: name, sub: "Aufgabe " + Math.min(d.i + 1, SS.tasks.length) + " von " + SS.tasks.length, data: S.resumePack(d) });
+      return true;
+    } catch (e) { try { console.error("park:", e); } catch (x) {} return false; }
+  }
+  function resumeSession(d, end) {
+    var st = null;
+    if (d.stationId) { st = S.pathStations().filter(function (x) { return x.id === d.stationId; })[0]; if (!st) { toast("Diese Station gibt es nicht mehr."); return; } }
+    S.rollDay(); S.regenHearts();
+    lastStartOpts = d.lopts || null; delete d.lopts;
+    SS = d; SS.station = st || undefined; SS.start = Date.now() - (d.el || 0); SS.ended = false; SS.answered = false;
+    if (window.WordySync) window.WordySync.ctx = { mode: SS.mode || "mix" };
+    sessionEl.hidden = false; document.body.style.overflow = "hidden";
+    if (end) return endSession("quit");
+    renderTask();
+  }
+  /* Karte auf der Startseite: angefangene Runden von heute */
+  function resumeCard() {
+    var l = S.resumeList(); if (!l.length) return "";
+    return '<section class="card rescard"><div class="eyebrow">⏸ Angefangen – mach weiter</div>' + l.map(function (e) {
+      return '<div class="row" style="gap:10px;margin-top:10px;align-items:center"><div style="flex:1 1 auto;min-width:0"><b>' + esc(e.title) + '</b><div class="small muted">' + esc(e.sub || "") + '</div></div>' +
+        '<button class="btn" data-act="resumego" data-k="' + esc(e.key) + '">Weiter</button>' +
+        '<button class="chip" data-act="resumeend" data-k="' + esc(e.key) + '" aria-label="Runde beenden">✕</button></div>';
+    }).join("") + '<p class="small muted" style="margin:10px 0 0">Der Stand gilt nur heute. ✕ beendet die Runde (XP bleiben, keine Münzen).</p></section>';
+  }
+  /* end = true: Runde wiederherstellen und sofort als abgebrochen beenden (XP für die Antworten) */
+  function resumeGo(key, end) {
+    var e = S.resumeList().filter(function (x) { return x.key === key; })[0]; if (!e) { render(); return; }
+    if (!end && (e.kind === "session") && S.state.settings.hearts && S.state.hearts <= 0) { toast("Die Herzen sind alle. Sie füllen sich bald wieder auf."); return; }
+    var d = S.resumeUnpack(e.data);
+    if (!d) { S.resumeTake(key); toast("Die Runde lässt sich nicht mehr öffnen (Wörter geändert)."); render(); return; }
+    S.resumeTake(key);
+    var ok = e.kind === "session" ? (resumeSession(d, end), true)
+      : e.kind === "arena" && global.ARENA ? global.ARENA.resume(d, end)
+      : e.kind === "game" && global.VTG ? global.VTG.resume(d, end)
+      : e.kind === "gram" && global.VTGR ? global.VTGR.resume(d, end) : false;
+    if (ok === false) { toast("Die Runde lässt sich nicht mehr öffnen."); render(); }
+  }
+
   function renderTask() {
     if (!SS) return;
     if (SS.i >= SS.tasks.length) {
@@ -2906,7 +2971,14 @@
     var a = act.getAttribute("data-act");
     if (a === "check") check();
     else if (a === "next") next();
-    else if (a === "quit") { if (SS && SS.items) endSession("quit"); else closeSession(); }
+    else if (a === "quit") {
+      if (SS && SS.items) leaveAsk({}, function (pick) {
+        if (pick === "stay") return;
+        if (pick === "pause" && parkSession()) { toast("Gespeichert. Du findest die Runde auf der Startseite."); return closeSession(); }
+        endSession("quit");
+      });
+      else closeSession();
+    }
     else if (a === "close") closeSession();
     else if (a === "openchest") openChest();
     else if (a === "again") { closeSession(); startSession({ minutes: S.goalMin() }); }
@@ -3098,6 +3170,8 @@
         else startSession({ minutes: Math.min(15, Math.max(5, gleft)), mode: "mix" });
       }
     }
+    else if (a === "resumego") resumeGo(act.getAttribute("data-k"), false);
+    else if (a === "resumeend") { if (confirm("Angefangene Runde beenden? Sie zählt dann nicht als geschafft (die XP für schon beantwortete Aufgaben bleiben).")) resumeGo(act.getAttribute("data-k"), true); }
     else if (a === "planblock") {
       var pdp = window.WordySync.dayplan(), pb = pdp && pdp.blocks[+act.getAttribute("data-i")]; if (!pb) return;
       if (pb.act === "start") startSession({ minutes: pb.min, mode: pb.mode, unit: pb.unit || null, focus: pb.focus || null, planBlock: pb.id });
@@ -3365,6 +3439,7 @@
   global.VTUI = {
     speechText: speechClean,
     speak: function (t) { speak(t); },
+    leave: leaveAsk,
     toast: toast,
     refreshHeader: renderHeader,
     afterArena: function () { render(); },

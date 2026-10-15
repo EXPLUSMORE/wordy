@@ -364,9 +364,9 @@
 
 
   /* ================= Blast (Wörter-Shooter) ================= */
-  function blastStart() {
-    var deck = pickWords(60, 2, 26, G.opts && (G.opts.units || G.opts.unit), true);
-    G.words = deck; G.res = [];
+  function blastStart(rs) {
+    var deck = rs ? rs.words : pickWords(60, 2, 26, G.opts && (G.opts.units || G.opts.unit), true);
+    G.words = deck; G.res = rs ? G.res : [];
     el.innerHTML = top("Blast") +
       '<div class="bl-hud"><span id="blLives"></span><span id="blLevel"></span><span id="blCombo"></span></div>' +
       '<div class="bl-prompt" id="blP"><small>Schieß das englische Wort ab</small><b id="blT"></b></div>' +
@@ -375,6 +375,7 @@
     var F = $("#blF");
     G.sh = { px: 0, dir: 0, keys: {}, lives: 3, level: 1, hits: 0, queue: [], target: null, foes: [], freeze: 0, lastSpawn: 0, nextOrb: 9, t: 0, last: 0, id: 0, w: 0, h: 0, over: false };
     G.sh.w = F.clientWidth; G.sh.h = F.clientHeight; G.sh.px = G.sh.w / 2; blShipPos();
+    if (rs && rs.sh) Object.keys(rs.sh).forEach(function (k) { G.sh[k] = rs.sh[k]; });
     [["blL", -1], ["blR", 1]].forEach(function (b) {   // Raumschiff steuern: Knopf gedrückt halten (oder Pfeiltasten / A und D)
       var btn = $("#" + b[0]), on = function (e) { e.preventDefault(); if (G && G.sh) G.sh.dir = b[1]; }, off = function () { if (G && G.sh && G.sh.dir === b[1]) G.sh.dir = 0; };
       btn.addEventListener("pointerdown", on); btn.addEventListener("pointerup", off); btn.addEventListener("pointerleave", off); btn.addEventListener("pointercancel", off);
@@ -531,8 +532,8 @@
   /* ================= Blast 3D (Ausweichen) ================= */
   /* Perspektive: Tiefe d von 1 (Horizont, ganz oben) bis 0 (Ebene des Raumschiffs). Maßstab s = 1 / (1 + 3 d), Darstellung 1,25 s; Bildschirm-y wächst mit s, x = Mitte + Spur * Spurbreite * s. */
   var B3LANES = [-1, 0, 1];
-  function b3Start() {
-    G.words = pickWords(60, 2, 16, G.opts && (G.opts.units || G.opts.unit), true); G.res = [];
+  function b3Start(rs) {
+    G.words = rs ? rs.words : pickWords(60, 2, 16, G.opts && (G.opts.units || G.opts.unit), true); G.res = rs ? G.res : [];
     el.innerHTML = top("Blast 3D") +
       '<div class="bl-hud"><span id="blLives"></span><span id="blLevel"></span><span id="blCombo"></span></div>' +
       '<div class="bl-field b3" id="blF"><svg class="b3-grid" viewBox="0 0 100 100" preserveAspectRatio="none"><g stroke="rgba(120,200,255,.28)" stroke-width=".35" fill="none"><path d="M0 8H100"/>' +
@@ -544,6 +545,7 @@
     G.sh = { px: 0, lx: 0, lane: 1, dir: 0, keys: {}, lives: 3, level: 1, hits: 0, queue: [], target: null, waves: [], t: 0, last: 0, w: F.clientWidth, h: F.clientHeight, over: false, T: 8.5, hard: false, hits5: 0 };
     G.sh.ls = G.sh.w * 0.31; G.sh.y0 = G.sh.h * 0.07; G.sh.yS = G.sh.h - 54;
     G.sh.px = G.sh.w / 2; blShipPos();
+    if (rs && rs.sh) Object.keys(rs.sh).forEach(function (k) { G.sh[k] = rs.sh[k]; });
     [["blL", -1], ["blR", 1]].forEach(function (b) {
       $("#" + b[0]).addEventListener("pointerdown", function (e) { e.preventDefault(); b3Hop(b[1]); });   // ein Tipp = eine Spur
     });
@@ -660,6 +662,10 @@
     B.placed.forEach(function (p, i) { p.hue = Math.round(i * 360 / B.placed.length + 20); });
     G.words = B.placed.map(function (p) { return p.w; }); G.res = [];
     G.ls = { N: N, grid: B.grid, placed: B.placed, found: 0, sel: [], start: null, drag: false, last: Date.now(), hintsAt: null, cellOf: {} };
+    lettersDraw();
+  }
+  function lettersDraw() {
+    var N = G.ls.N, B = G.ls;
     var h = top("Letters") +
       '<div class="wg-body"><div class="ls-cur" id="lsCur">&nbsp;</div>' +
       '<div class="ls-grid" id="lsGrid" style="--n:' + N + '">';
@@ -761,6 +767,62 @@
     S.save(true);
     if (global.VTUI && global.VTUI.refreshHeader) global.VTUI.refreshHeader();
   }
+  /* ---------- Später weitermachen ---------- */
+  function hasProgress() {
+    if (!G || G.done) return false;
+    if (G.items || G.score) return true;
+    if (G.kr && Object.keys(G.kr.cells).some(function (k) { return G.kr.cells[k].ent; })) return true;
+    return !!(G.ls && G.ls.found);
+  }
+  var SH_KEYS = ["lives", "level", "hits", "hits5", "T", "hard"];
+  function park() {
+    if (!hasProgress()) return false;
+    try {
+      var d = { id: G.id, words: G.words, i: G.i, score: G.score, res: G.res, items: G.items, correct: G.correct, wrong: G.wrong, hints: G.hints, maxStreak: G.maxStreak, streak: G.streak, cleared: G.cleared,
+        opts: G.opts || null, el: Date.now() - G.start };
+      if (G.kr) d.kr = G.kr;
+      if (G.ls) d.ls = { N: G.ls.N, grid: G.ls.grid, placed: G.ls.placed, found: G.ls.found };
+      if (G.sh) { d.sh = {}; SH_KEYS.forEach(function (k) { if (G.sh[k] !== undefined) d.sh[k] = G.sh[k]; }); }
+      var m = GAMES.filter(function (x) { return x.id === G.id; })[0];
+      S.resumeSave({ key: "game:" + G.id, kind: "game", title: (m ? m.icon + " " + m.name : G.id), sub: G.score + " Punkte" + (G.words && G.words.length && G.id !== "blast" && G.id !== "blast3d" ? " · Wort " + Math.min(G.i + 1, G.words.length) + " von " + G.words.length : ""), data: S.resumePack(d) });
+      return true;
+    } catch (e) { try { console.error("game park:", e); } catch (x) {} return false; }
+  }
+  function resume(d, end) {
+    S.rollDay();
+    G = { id: d.id, words: d.words, i: d.i || 0, score: d.score || 0, res: d.res || [], items: d.items || 0, correct: d.correct || 0, wrong: d.wrong || 0, hints: d.hints || 0,
+      start: Date.now() - (d.el || 0), done: false, opts: d.opts || null, maxStreak: d.maxStreak || 0, streak: d.streak || 0, cleared: d.cleared || 0 };
+    el.hidden = false; document.documentElement.classList.add("ar-open");
+    if (end) { finish("quit"); return true; }
+    if (d.id === "detective") detRound();
+    else if (d.id === "eisi") eisRound();
+    else if (d.id === "kreuz" && d.kr) { G.kr = d.kr; G.words = d.kr.words.map(function (x) { return x.w; }); kreuzDraw(); }
+    else if (d.id === "letters" && d.ls) {
+      G.ls = { N: d.ls.N, grid: d.ls.grid, placed: d.ls.placed, found: d.ls.found, sel: [], start: null, drag: false, last: Date.now(), hintsAt: null, cellOf: {} };
+      G.words = d.ls.placed.map(function (p) { return p.w; });
+      lettersDraw();
+      G.ls.placed.forEach(function (p) { if (!p.found) return; for (var i = 0; i < p.w.en.length; i++) { var e = lsCell(p.r + p.d[0] * i, p.c + p.d[1] * i); if (e) { e.style.setProperty("--fh", p.hue); e.classList.add("f"); } } });
+    }
+    else if (d.id === "blast") blastStart(d);
+    else if (d.id === "blast3d") b3Start(d);
+    else { G = null; el.hidden = true; el.innerHTML = ""; document.documentElement.classList.remove("ar-open"); return false; }
+    return true;
+  }
+  /* Verlassen: mit Fortschritt erst fragen (pausieren / beenden / weiter), sonst wie bisher */
+  function leave() {
+    if (!G) return;
+    if (G.done) return close();
+    var g = G;
+    if (!hasProgress() || !global.VTUI || !global.VTUI.leave) return G.items || G.score ? finish("quit") : close();
+    if (G.sh) G.sh.paused = true;
+    global.VTUI.leave({}, function (pick) {
+      if (G !== g || g.done) return;
+      if (pick === "stay") { if (g.sh && g.sh.paused) { g.sh.paused = false; g.sh.last = performance.now(); } return; }
+      if (pick === "pause" && park()) { close(); try { global.VTUI.toast("Gespeichert. Du findest die Runde auf der Startseite."); } catch (x) {} return; }
+      finish("quit");
+    });
+  }
+
   function close() {
     if (G && G.sh) { G.sh.over = true; cancelAnimationFrame(G.sh.raf); }
     G = null; el.hidden = true; el.innerHTML = ""; document.documentElement.classList.remove("ar-open");
@@ -781,7 +843,7 @@
     if (a0 === "helpx") return hideHelp();
     var t = e.target.closest("[data-g]"); if (!t || !G) { if (t && !G && /^(exit|again|quit)$/.test(t.getAttribute("data-g"))) close(); return; }
     var a = t.getAttribute("data-g");
-    if (a === "quit") { if (G.done) return close(); return G.items || G.score ? finish("quit") : close(); }
+    if (a === "quit") return leave();
     if (a === "exit") return close();
     if (a === "again") { var id = G.id, o = G.opts; G = null; return start(id, o); }
     if (G.done) return;
@@ -802,7 +864,7 @@
   });
   document.addEventListener("keydown", function (e) {
     if (!G || el.hidden || G.done) return;
-    if (e.key === "Escape") return finish("quit");
+    if (e.key === "Escape") return leave();
     if (e.ctrlKey || e.metaKey || e.altKey) return;
     if (G.id === "blast") { if (/^[1-9]$/.test(e.key) && G.sh && !G.sh.over) { var fs = G.sh.foes.filter(function (f) { return !f.dead; }).sort(function (a, b) { return a.x - b.x; }), f = fs[+e.key - 1]; if (f) { var r = f.el.getBoundingClientRect(); blShoot(f.id, r.left + r.width / 2, r.top + r.height / 2); } } return; }
     var k = e.key === "Backspace" ? "BACK" : e.key === "Enter" ? "ENTER" : /^[a-zA-Z]$/.test(e.key) ? e.key.toUpperCase() : null; if (!k) return;
@@ -810,5 +872,5 @@
     if (G.id === "detective") detType(k); else if (G.id === "eisi") eisType(k); else if (G.id === "kreuz") kreuzType(k);
   });
 
-  global.VTG = { GAMES: GAMES, start: start, best: best, open: function () { return !!G; }, _evalGuess: evalGuess, _layout: layout, _state: function () { return G; } };
+  global.VTG = { GAMES: GAMES, start: start, resume: resume, best: best, open: function () { return !!G; }, _evalGuess: evalGuess, _layout: layout, _state: function () { return G; } };
 })(window);

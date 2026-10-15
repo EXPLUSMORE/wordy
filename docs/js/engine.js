@@ -1432,9 +1432,55 @@
     save(true); return { ok: true, item: it };
   }
 
+  /* ---------- Später weitermachen: unterbrochene Runden ----------
+     state.resume = [{ key, kind, title, sub, day, ts, data }] (höchstens 3, je key einer). Der Stand gilt nur am selben Tag.
+     Wörter, Verben und Sätze werden als Verweis (id) abgelegt, damit der Speicher klein bleibt und die Objekte beim Laden wieder die echten sind. */
+  var RESUME_MAX = 3;
+  function resumePack(o) {
+    var m = new Map();
+    words.forEach(function (w) { m.set(w, ["w", w.id]); });
+    verbs.forEach(function (v) { m.set(v, ["v", v.id]); });
+    sentences.forEach(function (x) { m.set(x, ["s", x.id]); });
+    return JSON.parse(JSON.stringify(o, function (k, v) {
+      if (v && typeof v === "object") { var r = m.get(v); if (r) return { $r: r[0], id: r[1] }; }
+      return v;
+    }));
+  }
+  /* Gibt null zurück, wenn ein Verweis nicht mehr aufzulösen ist (z. B. gelöschte eigene Liste) */
+  function resumeUnpack(o) {
+    var bad = false;
+    var out = JSON.parse(JSON.stringify(o), function (k, v) {
+      if (v && typeof v === "object" && v.$r) {
+        var r = v.$r === "w" ? byId[v.id] : v.$r === "v" ? verbs[+String(v.id).slice(2)] : sentences[+String(v.id).slice(1)];
+        if (!r) bad = true;
+        return r;
+      }
+      return v;
+    });
+    return bad ? null : out;
+  }
+  function resumeList() {
+    var t = today(), l = state.resume || [], keep = l.filter(function (e) { return e && e.day === t; });
+    if (keep.length !== l.length) { state.resume = keep; save(); }
+    return keep;
+  }
+  function resumeSave(e) {
+    var l = resumeList().filter(function (x) { return x.key !== e.key; });
+    e.day = today(); e.ts = Date.now();
+    l.unshift(e); state.resume = l.slice(0, RESUME_MAX); save(true);
+  }
+  function resumeTake(key) {
+    var l = resumeList(), hit = null;
+    state.resume = l.filter(function (x) { if (x.key === key) { hit = x; return false; } return true; });
+    if (hit) save(true);
+    return hit;
+  }
+  function resumeHas(key) { return resumeList().some(function (x) { return x.key === key; }); }
+
   global.VT = {
     LEVELS: LEVELS, RANKS: RANKS, AVATARS: AVATARS, SHOP: SHOP, BADGES: BADGES,
     SEC_PER_ITEM: SEC_PER_ITEM, secPerItem: secPerItem, itemsFor: itemsFor, recordPace: recordPace,
+    resumePack: resumePack, resumeUnpack: resumeUnpack, resumeList: resumeList, resumeSave: resumeSave, resumeTake: resumeTake, resumeHas: resumeHas,
     load: load, save: save, get state() { return state; },
     units: function () { return units; }, words: function () { return words; }, byId: function (id) { return byId[id]; },
     buildCatalogue: function () { return buildCatalogue(state); },

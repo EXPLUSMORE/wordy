@@ -400,6 +400,55 @@
     if (run.cfg && run.cfg.onFinish) run.cfg.onFinish({ score: score, correct: run.correct, items: run.items, mode: run.mode, reason: reason }, function (html, next) { var d = $("#arDuel"); if (d) d.innerHTML = html; var nb = $("#arNext"); if (nb && next) nb.hidden = false; });
   }
 
+  /* ---------- Später weitermachen ---------- */
+  function parkable() { return !!run && !run.done && !(run.cfg && (run.cfg.duel || run.cfg.onFinish)); }
+  function park() {
+    if (!parkable() || !run.items) return false;
+    try {
+      var q = run.queue.slice(0, 60);
+      if (run.cur && !run.locked && run.mode !== "hunt" && run.mode !== "match") q.unshift(run.cur);   // die offene Karte kommt beim Fortsetzen wieder
+      var d = {
+        mode: run.mode, score: run.score, combo: run.combo, maxCombo: run.maxCombo, items: run.items, correct: run.correct, wrong: run.wrong,
+        left: run.left, total: run.total, cap: run.cap, note: run.note, qTotal: run.qTotal, queue: q, round: run.round || 0,
+        targets: run.targets, hits: run.hits, cleared: run.cleared, dir: run.dir, left5: run.left5, right5: run.right5,
+        el: Date.now() - run.start, cfg: run.cfg ? { words: run.cfg.words || null, boss: run.cfg.boss || null } : null
+      };
+      var m = MODES.filter(function (x) { return x.id === run.mode; })[0];
+      S.resumeSave({ key: "arena:" + run.mode, kind: "arena", title: "Arena · " + (m ? m.name || m.id : run.mode), sub: run.score + " Punkte · " + run.correct + " richtig", data: S.resumePack(d) });
+      return true;
+    } catch (e) { try { console.error("arena park:", e); } catch (x) {} return false; }
+  }
+  function resume(d, end) {
+    S.rollDay();
+    var cfg = d.cfg, p = S.pools();
+    run = {
+      mode: d.mode, score: d.score, combo: d.combo, maxCombo: d.maxCombo, items: d.items, correct: d.correct, wrong: d.wrong,
+      start: Date.now() - (d.el || 0), left: d.left, total: d.total, cap: d.cap, queue: d.queue || [], round: d.round || 0, locked: false,
+      all: cfg && cfg.words ? cfg.words.concat(p.all.filter(function (x) { return cfg.words.indexOf(x) < 0; })) : p.all,
+      cfg: cfg, boss: cfg && cfg.boss || null, qTotal: d.qTotal || 7000, qLeft: d.qTotal || 7000, targets: d.targets || [], hits: d.hits || {}, cleared: d.cleared || 0, note: d.note || "",
+      dir: d.dir, left5: d.left5, right5: d.right5, sel: null
+    };
+    el.hidden = false; document.documentElement.classList.add("ar-open");
+    if (end) { finish("quit"); return true; }
+    if (run.mode === "match") { el.innerHTML = chrome('<div class="ar-match" id="arMatch"></div>'); paintMatch(); paintHud(); startClock(); return true; }
+    el.innerHTML = chrome(""); renderCard(); startClock();
+    return true;
+  }
+  /* Verlassen: mit Fortschritt erst fragen (pausieren / beenden / weiter), sonst wie bisher */
+  function leave(silent) {
+    if (!run || run.done) return;
+    var r = run;
+    if (!parkable() || !run.items || !global.VTUI || !global.VTUI.leave) return finish("quit");
+    if (silent) { if (park()) { close(); return; } return finish("quit"); }
+    stopClock();
+    global.VTUI.leave({}, function (pick) {
+      if (run !== r || r.done) return;
+      if (pick === "stay") return startClock();
+      if (pick === "pause" && park()) { close(); try { global.VTUI.toast("Gespeichert. Du findest die Runde auf der Startseite."); } catch (x) {} return; }
+      finish("quit");
+    });
+  }
+
   function close() {
     stopClock();
     var again = run && run.mode;
@@ -415,7 +464,7 @@
     var t = e.target.closest("[data-a]");
     if (t) {
       var a = t.getAttribute("data-a");
-      if (a === "quit") { if (!run.done) finish("quit"); else close(); return; }
+      if (a === "quit") { if (!run.done) leave(); else close(); return; }
       if (a === "again") { var m = run.mode, o = run.cfg; close(); return start(m, o); }
       if (a === "duelnext") { var nx = run.cfg && run.cfg.duel && run.cfg.duel.next; close(); if (nx) nx(); return; }
       if (a === "chest") { close(); return global.VTUI.openChest(); }
@@ -430,11 +479,11 @@
   document.addEventListener("keydown", function (e) {
     if (!run || el.hidden || run.done) return;
     if (/^[1-4]$/.test(e.key)) { var o = $$(".ar-opt")[+e.key - 1]; if (o) o.click(); }
-    if (e.key === "Escape") finish("quit");
+    if (e.key === "Escape") leave();
   });
   document.addEventListener("visibilitychange", function () {
-    if (document.hidden && run && !run.done && run.mode !== "survival") finish("quit");
+    if (document.hidden && run && !run.done && run.mode !== "survival") leave(true);
   });
 
-  global.ARENA = { MODES: MODES, start: start, best: best, close: close, open: function () { return !el.hidden; } };
+  global.ARENA = { MODES: MODES, start: start, resume: resume, best: best, close: close, open: function () { return !el.hidden; } };
 })(window);

@@ -1141,7 +1141,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.102.3";window.WORDY_BUILD="62a9e4baab";</script>
+<script>window.WORDY_VERSION="2.103.0";window.WORDY_BUILD="94c171fc43";</script>
 </head>
 <body>
 <div id="app">
@@ -6233,9 +6233,55 @@ window.VERBS = [
     save(true); return { ok: true, item: it };
   }
 
+  /* ---------- Später weitermachen: unterbrochene Runden ----------
+     state.resume = [{ key, kind, title, sub, day, ts, data }] (höchstens 3, je key einer). Der Stand gilt nur am selben Tag.
+     Wörter, Verben und Sätze werden als Verweis (id) abgelegt, damit der Speicher klein bleibt und die Objekte beim Laden wieder die echten sind. */
+  var RESUME_MAX = 3;
+  function resumePack(o) {
+    var m = new Map();
+    words.forEach(function (w) { m.set(w, ["w", w.id]); });
+    verbs.forEach(function (v) { m.set(v, ["v", v.id]); });
+    sentences.forEach(function (x) { m.set(x, ["s", x.id]); });
+    return JSON.parse(JSON.stringify(o, function (k, v) {
+      if (v && typeof v === "object") { var r = m.get(v); if (r) return { $r: r[0], id: r[1] }; }
+      return v;
+    }));
+  }
+  /* Gibt null zurück, wenn ein Verweis nicht mehr aufzulösen ist (z. B. gelöschte eigene Liste) */
+  function resumeUnpack(o) {
+    var bad = false;
+    var out = JSON.parse(JSON.stringify(o), function (k, v) {
+      if (v && typeof v === "object" && v.$r) {
+        var r = v.$r === "w" ? byId[v.id] : v.$r === "v" ? verbs[+String(v.id).slice(2)] : sentences[+String(v.id).slice(1)];
+        if (!r) bad = true;
+        return r;
+      }
+      return v;
+    });
+    return bad ? null : out;
+  }
+  function resumeList() {
+    var t = today(), l = state.resume || [], keep = l.filter(function (e) { return e && e.day === t; });
+    if (keep.length !== l.length) { state.resume = keep; save(); }
+    return keep;
+  }
+  function resumeSave(e) {
+    var l = resumeList().filter(function (x) { return x.key !== e.key; });
+    e.day = today(); e.ts = Date.now();
+    l.unshift(e); state.resume = l.slice(0, RESUME_MAX); save(true);
+  }
+  function resumeTake(key) {
+    var l = resumeList(), hit = null;
+    state.resume = l.filter(function (x) { if (x.key === key) { hit = x; return false; } return true; });
+    if (hit) save(true);
+    return hit;
+  }
+  function resumeHas(key) { return resumeList().some(function (x) { return x.key === key; }); }
+
   global.VT = {
     LEVELS: LEVELS, RANKS: RANKS, AVATARS: AVATARS, SHOP: SHOP, BADGES: BADGES,
     SEC_PER_ITEM: SEC_PER_ITEM, secPerItem: secPerItem, itemsFor: itemsFor, recordPace: recordPace,
+    resumePack: resumePack, resumeUnpack: resumeUnpack, resumeList: resumeList, resumeSave: resumeSave, resumeTake: resumeTake, resumeHas: resumeHas,
     load: load, save: save, get state() { return state; },
     units: function () { return units; }, words: function () { return words; }, byId: function (id) { return byId[id]; },
     buildCatalogue: function () { return buildCatalogue(state); },
@@ -8529,7 +8575,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       '<div class="hhchips"><span class="hhc">🔥 <b class="tnum">' + st.streak.count + '</b></span><span class="hhc">🪙 <b class="tnum">' + st.coins + '</b></span></div></div>' +
       '</section>';
 
-    html += planCard() + dayCard(pct);
+    html += resumeCard() + planCard() + dayCard(pct);
 
     var wish = S.wish();
     html += '<section class="card"><div class="eyebrow">Tagesmissionen</div><div style="margin-top:6px">' +
@@ -9981,6 +10027,71 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     render();
   }
 
+  /* ---------- Später weitermachen ----------
+     Eine angefangene Runde (Aufgaben, Spiele, Lektionen) lässt sich pausieren und am selben Tag fortsetzen.
+     Gespeichert wird über S.resumeSave; Spiele und Lektionen liefern ihren Stand selbst (park/resume in arena.js, spiele.js, grammatik.js). */
+  function leaveAsk(o, cb) {
+    var old = $("#leaveAsk"); if (old) old.remove();
+    var ov = document.createElement("div"); ov.className = "srmd"; ov.id = "leaveAsk";
+    ov.innerHTML = '<div class="dsh"><div class="dshg"></div><div style="font-size:42px">⏸️</div><h3>Pause machen?</h3>' +
+      '<p>' + esc(o && o.text || "Du kannst heute noch genau hier weitermachen.") + '</p>' +
+      '<button class="btn" data-pick="pause">Später weitermachen</button>' +
+      '<button class="dshx" data-pick="end">Beenden – zählt nicht als geschafft</button>' +
+      '<button class="dshx" data-pick="stay" style="border-color:transparent">Weiterspielen</button></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-pick]"); if (!b && e.target !== ov) return;
+      var pick = b ? b.getAttribute("data-pick") : "stay";
+      ov.remove(); try { cb(pick); } catch (x) { try { console.error("leave:", x); } catch (y) {} }
+    });
+  }
+  var MODE_NAME = { mix: "Daily Challenge", box: "Fehlerkartei", "new": "Neue Wörter", master: "Meistern", sent: "Sätze", verbs: "Unregelmäßige Verben", focus: "Gezielt üben", path: "Lernpfad" };
+  function parkSession() {
+    if (!SS || SS.ended) return false;
+    try {
+      var d = Object.assign({}, SS);
+      delete d.station; delete d.pick;
+      d.i = SS.answered ? SS.i + 1 : SS.i; d.answered = false;
+      d.el = Date.now() - SS.start; d.stationId = SS.station ? SS.station.id : null; d.lopts = lastStartOpts || null;
+      var name = SS.station ? "Lernpfad · Station " + SS.station.n : MODE_NAME[(lastStartOpts && lastStartOpts.focus ? "focus" : SS.mode)] || "Runde";
+      S.resumeSave({ key: "session", kind: "session", title: name, sub: "Aufgabe " + Math.min(d.i + 1, SS.tasks.length) + " von " + SS.tasks.length, data: S.resumePack(d) });
+      return true;
+    } catch (e) { try { console.error("park:", e); } catch (x) {} return false; }
+  }
+  function resumeSession(d, end) {
+    var st = null;
+    if (d.stationId) { st = S.pathStations().filter(function (x) { return x.id === d.stationId; })[0]; if (!st) { toast("Diese Station gibt es nicht mehr."); return; } }
+    S.rollDay(); S.regenHearts();
+    lastStartOpts = d.lopts || null; delete d.lopts;
+    SS = d; SS.station = st || undefined; SS.start = Date.now() - (d.el || 0); SS.ended = false; SS.answered = false;
+    if (window.WordySync) window.WordySync.ctx = { mode: SS.mode || "mix" };
+    sessionEl.hidden = false; document.body.style.overflow = "hidden";
+    if (end) return endSession("quit");
+    renderTask();
+  }
+  /* Karte auf der Startseite: angefangene Runden von heute */
+  function resumeCard() {
+    var l = S.resumeList(); if (!l.length) return "";
+    return '<section class="card rescard"><div class="eyebrow">⏸ Angefangen – mach weiter</div>' + l.map(function (e) {
+      return '<div class="row" style="gap:10px;margin-top:10px;align-items:center"><div style="flex:1 1 auto;min-width:0"><b>' + esc(e.title) + '</b><div class="small muted">' + esc(e.sub || "") + '</div></div>' +
+        '<button class="btn" data-act="resumego" data-k="' + esc(e.key) + '">Weiter</button>' +
+        '<button class="chip" data-act="resumeend" data-k="' + esc(e.key) + '" aria-label="Runde beenden">✕</button></div>';
+    }).join("") + '<p class="small muted" style="margin:10px 0 0">Der Stand gilt nur heute. ✕ beendet die Runde (XP bleiben, keine Münzen).</p></section>';
+  }
+  /* end = true: Runde wiederherstellen und sofort als abgebrochen beenden (XP für die Antworten) */
+  function resumeGo(key, end) {
+    var e = S.resumeList().filter(function (x) { return x.key === key; })[0]; if (!e) { render(); return; }
+    if (!end && (e.kind === "session") && S.state.settings.hearts && S.state.hearts <= 0) { toast("Die Herzen sind alle. Sie füllen sich bald wieder auf."); return; }
+    var d = S.resumeUnpack(e.data);
+    if (!d) { S.resumeTake(key); toast("Die Runde lässt sich nicht mehr öffnen (Wörter geändert)."); render(); return; }
+    S.resumeTake(key);
+    var ok = e.kind === "session" ? (resumeSession(d, end), true)
+      : e.kind === "arena" && global.ARENA ? global.ARENA.resume(d, end)
+      : e.kind === "game" && global.VTG ? global.VTG.resume(d, end)
+      : e.kind === "gram" && global.VTGR ? global.VTGR.resume(d, end) : false;
+    if (ok === false) { toast("Die Runde lässt sich nicht mehr öffnen."); render(); }
+  }
+
   function renderTask() {
     if (!SS) return;
     if (SS.i >= SS.tasks.length) {
@@ -10451,7 +10562,14 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var a = act.getAttribute("data-act");
     if (a === "check") check();
     else if (a === "next") next();
-    else if (a === "quit") { if (SS && SS.items) endSession("quit"); else closeSession(); }
+    else if (a === "quit") {
+      if (SS && SS.items) leaveAsk({}, function (pick) {
+        if (pick === "stay") return;
+        if (pick === "pause" && parkSession()) { toast("Gespeichert. Du findest die Runde auf der Startseite."); return closeSession(); }
+        endSession("quit");
+      });
+      else closeSession();
+    }
     else if (a === "close") closeSession();
     else if (a === "openchest") openChest();
     else if (a === "again") { closeSession(); startSession({ minutes: S.goalMin() }); }
@@ -10643,6 +10761,8 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
         else startSession({ minutes: Math.min(15, Math.max(5, gleft)), mode: "mix" });
       }
     }
+    else if (a === "resumego") resumeGo(act.getAttribute("data-k"), false);
+    else if (a === "resumeend") { if (confirm("Angefangene Runde beenden? Sie zählt dann nicht als geschafft (die XP für schon beantwortete Aufgaben bleiben).")) resumeGo(act.getAttribute("data-k"), true); }
     else if (a === "planblock") {
       var pdp = window.WordySync.dayplan(), pb = pdp && pdp.blocks[+act.getAttribute("data-i")]; if (!pb) return;
       if (pb.act === "start") startSession({ minutes: pb.min, mode: pb.mode, unit: pb.unit || null, focus: pb.focus || null, planBlock: pb.id });
@@ -10910,6 +11030,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   global.VTUI = {
     speechText: speechClean,
     speak: function (t) { speak(t); },
+    leave: leaveAsk,
     toast: toast,
     refreshHeader: renderHeader,
     afterArena: function () { render(); },
@@ -11358,6 +11479,55 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (run.cfg && run.cfg.onFinish) run.cfg.onFinish({ score: score, correct: run.correct, items: run.items, mode: run.mode, reason: reason }, function (html, next) { var d = $("#arDuel"); if (d) d.innerHTML = html; var nb = $("#arNext"); if (nb && next) nb.hidden = false; });
   }
 
+  /* ---------- Später weitermachen ---------- */
+  function parkable() { return !!run && !run.done && !(run.cfg && (run.cfg.duel || run.cfg.onFinish)); }
+  function park() {
+    if (!parkable() || !run.items) return false;
+    try {
+      var q = run.queue.slice(0, 60);
+      if (run.cur && !run.locked && run.mode !== "hunt" && run.mode !== "match") q.unshift(run.cur);   // die offene Karte kommt beim Fortsetzen wieder
+      var d = {
+        mode: run.mode, score: run.score, combo: run.combo, maxCombo: run.maxCombo, items: run.items, correct: run.correct, wrong: run.wrong,
+        left: run.left, total: run.total, cap: run.cap, note: run.note, qTotal: run.qTotal, queue: q, round: run.round || 0,
+        targets: run.targets, hits: run.hits, cleared: run.cleared, dir: run.dir, left5: run.left5, right5: run.right5,
+        el: Date.now() - run.start, cfg: run.cfg ? { words: run.cfg.words || null, boss: run.cfg.boss || null } : null
+      };
+      var m = MODES.filter(function (x) { return x.id === run.mode; })[0];
+      S.resumeSave({ key: "arena:" + run.mode, kind: "arena", title: "Arena · " + (m ? m.name || m.id : run.mode), sub: run.score + " Punkte · " + run.correct + " richtig", data: S.resumePack(d) });
+      return true;
+    } catch (e) { try { console.error("arena park:", e); } catch (x) {} return false; }
+  }
+  function resume(d, end) {
+    S.rollDay();
+    var cfg = d.cfg, p = S.pools();
+    run = {
+      mode: d.mode, score: d.score, combo: d.combo, maxCombo: d.maxCombo, items: d.items, correct: d.correct, wrong: d.wrong,
+      start: Date.now() - (d.el || 0), left: d.left, total: d.total, cap: d.cap, queue: d.queue || [], round: d.round || 0, locked: false,
+      all: cfg && cfg.words ? cfg.words.concat(p.all.filter(function (x) { return cfg.words.indexOf(x) < 0; })) : p.all,
+      cfg: cfg, boss: cfg && cfg.boss || null, qTotal: d.qTotal || 7000, qLeft: d.qTotal || 7000, targets: d.targets || [], hits: d.hits || {}, cleared: d.cleared || 0, note: d.note || "",
+      dir: d.dir, left5: d.left5, right5: d.right5, sel: null
+    };
+    el.hidden = false; document.documentElement.classList.add("ar-open");
+    if (end) { finish("quit"); return true; }
+    if (run.mode === "match") { el.innerHTML = chrome('<div class="ar-match" id="arMatch"></div>'); paintMatch(); paintHud(); startClock(); return true; }
+    el.innerHTML = chrome(""); renderCard(); startClock();
+    return true;
+  }
+  /* Verlassen: mit Fortschritt erst fragen (pausieren / beenden / weiter), sonst wie bisher */
+  function leave(silent) {
+    if (!run || run.done) return;
+    var r = run;
+    if (!parkable() || !run.items || !global.VTUI || !global.VTUI.leave) return finish("quit");
+    if (silent) { if (park()) { close(); return; } return finish("quit"); }
+    stopClock();
+    global.VTUI.leave({}, function (pick) {
+      if (run !== r || r.done) return;
+      if (pick === "stay") return startClock();
+      if (pick === "pause" && park()) { close(); try { global.VTUI.toast("Gespeichert. Du findest die Runde auf der Startseite."); } catch (x) {} return; }
+      finish("quit");
+    });
+  }
+
   function close() {
     stopClock();
     var again = run && run.mode;
@@ -11373,7 +11543,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var t = e.target.closest("[data-a]");
     if (t) {
       var a = t.getAttribute("data-a");
-      if (a === "quit") { if (!run.done) finish("quit"); else close(); return; }
+      if (a === "quit") { if (!run.done) leave(); else close(); return; }
       if (a === "again") { var m = run.mode, o = run.cfg; close(); return start(m, o); }
       if (a === "duelnext") { var nx = run.cfg && run.cfg.duel && run.cfg.duel.next; close(); if (nx) nx(); return; }
       if (a === "chest") { close(); return global.VTUI.openChest(); }
@@ -11388,13 +11558,13 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   document.addEventListener("keydown", function (e) {
     if (!run || el.hidden || run.done) return;
     if (/^[1-4]$/.test(e.key)) { var o = $$(".ar-opt")[+e.key - 1]; if (o) o.click(); }
-    if (e.key === "Escape") finish("quit");
+    if (e.key === "Escape") leave();
   });
   document.addEventListener("visibilitychange", function () {
-    if (document.hidden && run && !run.done && run.mode !== "survival") finish("quit");
+    if (document.hidden && run && !run.done && run.mode !== "survival") leave(true);
   });
 
-  global.ARENA = { MODES: MODES, start: start, best: best, close: close, open: function () { return !el.hidden; } };
+  global.ARENA = { MODES: MODES, start: start, resume: resume, best: best, close: close, open: function () { return !el.hidden; } };
 })(window);
 </script>
 <script>/* Wortspiele – Wort-Detektiv, Rette Eisi, Wort-Kreuz.
@@ -11763,9 +11933,9 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
 
 
   /* ================= Blast (Wörter-Shooter) ================= */
-  function blastStart() {
-    var deck = pickWords(60, 2, 26, G.opts && (G.opts.units || G.opts.unit), true);
-    G.words = deck; G.res = [];
+  function blastStart(rs) {
+    var deck = rs ? rs.words : pickWords(60, 2, 26, G.opts && (G.opts.units || G.opts.unit), true);
+    G.words = deck; G.res = rs ? G.res : [];
     el.innerHTML = top("Blast") +
       '<div class="bl-hud"><span id="blLives"></span><span id="blLevel"></span><span id="blCombo"></span></div>' +
       '<div class="bl-prompt" id="blP"><small>Schieß das englische Wort ab</small><b id="blT"></b></div>' +
@@ -11774,6 +11944,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var F = $("#blF");
     G.sh = { px: 0, dir: 0, keys: {}, lives: 3, level: 1, hits: 0, queue: [], target: null, foes: [], freeze: 0, lastSpawn: 0, nextOrb: 9, t: 0, last: 0, id: 0, w: 0, h: 0, over: false };
     G.sh.w = F.clientWidth; G.sh.h = F.clientHeight; G.sh.px = G.sh.w / 2; blShipPos();
+    if (rs && rs.sh) Object.keys(rs.sh).forEach(function (k) { G.sh[k] = rs.sh[k]; });
     [["blL", -1], ["blR", 1]].forEach(function (b) {   // Raumschiff steuern: Knopf gedrückt halten (oder Pfeiltasten / A und D)
       var btn = $("#" + b[0]), on = function (e) { e.preventDefault(); if (G && G.sh) G.sh.dir = b[1]; }, off = function () { if (G && G.sh && G.sh.dir === b[1]) G.sh.dir = 0; };
       btn.addEventListener("pointerdown", on); btn.addEventListener("pointerup", off); btn.addEventListener("pointerleave", off); btn.addEventListener("pointercancel", off);
@@ -11930,8 +12101,8 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   /* ================= Blast 3D (Ausweichen) ================= */
   /* Perspektive: Tiefe d von 1 (Horizont, ganz oben) bis 0 (Ebene des Raumschiffs). Maßstab s = 1 / (1 + 3 d), Darstellung 1,25 s; Bildschirm-y wächst mit s, x = Mitte + Spur * Spurbreite * s. */
   var B3LANES = [-1, 0, 1];
-  function b3Start() {
-    G.words = pickWords(60, 2, 16, G.opts && (G.opts.units || G.opts.unit), true); G.res = [];
+  function b3Start(rs) {
+    G.words = rs ? rs.words : pickWords(60, 2, 16, G.opts && (G.opts.units || G.opts.unit), true); G.res = rs ? G.res : [];
     el.innerHTML = top("Blast 3D") +
       '<div class="bl-hud"><span id="blLives"></span><span id="blLevel"></span><span id="blCombo"></span></div>' +
       '<div class="bl-field b3" id="blF"><svg class="b3-grid" viewBox="0 0 100 100" preserveAspectRatio="none"><g stroke="rgba(120,200,255,.28)" stroke-width=".35" fill="none"><path d="M0 8H100"/>' +
@@ -11943,6 +12114,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     G.sh = { px: 0, lx: 0, lane: 1, dir: 0, keys: {}, lives: 3, level: 1, hits: 0, queue: [], target: null, waves: [], t: 0, last: 0, w: F.clientWidth, h: F.clientHeight, over: false, T: 8.5, hard: false, hits5: 0 };
     G.sh.ls = G.sh.w * 0.31; G.sh.y0 = G.sh.h * 0.07; G.sh.yS = G.sh.h - 54;
     G.sh.px = G.sh.w / 2; blShipPos();
+    if (rs && rs.sh) Object.keys(rs.sh).forEach(function (k) { G.sh[k] = rs.sh[k]; });
     [["blL", -1], ["blR", 1]].forEach(function (b) {
       $("#" + b[0]).addEventListener("pointerdown", function (e) { e.preventDefault(); b3Hop(b[1]); });   // ein Tipp = eine Spur
     });
@@ -12059,6 +12231,10 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     B.placed.forEach(function (p, i) { p.hue = Math.round(i * 360 / B.placed.length + 20); });
     G.words = B.placed.map(function (p) { return p.w; }); G.res = [];
     G.ls = { N: N, grid: B.grid, placed: B.placed, found: 0, sel: [], start: null, drag: false, last: Date.now(), hintsAt: null, cellOf: {} };
+    lettersDraw();
+  }
+  function lettersDraw() {
+    var N = G.ls.N, B = G.ls;
     var h = top("Letters") +
       '<div class="wg-body"><div class="ls-cur" id="lsCur">&nbsp;</div>' +
       '<div class="ls-grid" id="lsGrid" style="--n:' + N + '">';
@@ -12160,6 +12336,62 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     S.save(true);
     if (global.VTUI && global.VTUI.refreshHeader) global.VTUI.refreshHeader();
   }
+  /* ---------- Später weitermachen ---------- */
+  function hasProgress() {
+    if (!G || G.done) return false;
+    if (G.items || G.score) return true;
+    if (G.kr && Object.keys(G.kr.cells).some(function (k) { return G.kr.cells[k].ent; })) return true;
+    return !!(G.ls && G.ls.found);
+  }
+  var SH_KEYS = ["lives", "level", "hits", "hits5", "T", "hard"];
+  function park() {
+    if (!hasProgress()) return false;
+    try {
+      var d = { id: G.id, words: G.words, i: G.i, score: G.score, res: G.res, items: G.items, correct: G.correct, wrong: G.wrong, hints: G.hints, maxStreak: G.maxStreak, streak: G.streak, cleared: G.cleared,
+        opts: G.opts || null, el: Date.now() - G.start };
+      if (G.kr) d.kr = G.kr;
+      if (G.ls) d.ls = { N: G.ls.N, grid: G.ls.grid, placed: G.ls.placed, found: G.ls.found };
+      if (G.sh) { d.sh = {}; SH_KEYS.forEach(function (k) { if (G.sh[k] !== undefined) d.sh[k] = G.sh[k]; }); }
+      var m = GAMES.filter(function (x) { return x.id === G.id; })[0];
+      S.resumeSave({ key: "game:" + G.id, kind: "game", title: (m ? m.icon + " " + m.name : G.id), sub: G.score + " Punkte" + (G.words && G.words.length && G.id !== "blast" && G.id !== "blast3d" ? " · Wort " + Math.min(G.i + 1, G.words.length) + " von " + G.words.length : ""), data: S.resumePack(d) });
+      return true;
+    } catch (e) { try { console.error("game park:", e); } catch (x) {} return false; }
+  }
+  function resume(d, end) {
+    S.rollDay();
+    G = { id: d.id, words: d.words, i: d.i || 0, score: d.score || 0, res: d.res || [], items: d.items || 0, correct: d.correct || 0, wrong: d.wrong || 0, hints: d.hints || 0,
+      start: Date.now() - (d.el || 0), done: false, opts: d.opts || null, maxStreak: d.maxStreak || 0, streak: d.streak || 0, cleared: d.cleared || 0 };
+    el.hidden = false; document.documentElement.classList.add("ar-open");
+    if (end) { finish("quit"); return true; }
+    if (d.id === "detective") detRound();
+    else if (d.id === "eisi") eisRound();
+    else if (d.id === "kreuz" && d.kr) { G.kr = d.kr; G.words = d.kr.words.map(function (x) { return x.w; }); kreuzDraw(); }
+    else if (d.id === "letters" && d.ls) {
+      G.ls = { N: d.ls.N, grid: d.ls.grid, placed: d.ls.placed, found: d.ls.found, sel: [], start: null, drag: false, last: Date.now(), hintsAt: null, cellOf: {} };
+      G.words = d.ls.placed.map(function (p) { return p.w; });
+      lettersDraw();
+      G.ls.placed.forEach(function (p) { if (!p.found) return; for (var i = 0; i < p.w.en.length; i++) { var e = lsCell(p.r + p.d[0] * i, p.c + p.d[1] * i); if (e) { e.style.setProperty("--fh", p.hue); e.classList.add("f"); } } });
+    }
+    else if (d.id === "blast") blastStart(d);
+    else if (d.id === "blast3d") b3Start(d);
+    else { G = null; el.hidden = true; el.innerHTML = ""; document.documentElement.classList.remove("ar-open"); return false; }
+    return true;
+  }
+  /* Verlassen: mit Fortschritt erst fragen (pausieren / beenden / weiter), sonst wie bisher */
+  function leave() {
+    if (!G) return;
+    if (G.done) return close();
+    var g = G;
+    if (!hasProgress() || !global.VTUI || !global.VTUI.leave) return G.items || G.score ? finish("quit") : close();
+    if (G.sh) G.sh.paused = true;
+    global.VTUI.leave({}, function (pick) {
+      if (G !== g || g.done) return;
+      if (pick === "stay") { if (g.sh && g.sh.paused) { g.sh.paused = false; g.sh.last = performance.now(); } return; }
+      if (pick === "pause" && park()) { close(); try { global.VTUI.toast("Gespeichert. Du findest die Runde auf der Startseite."); } catch (x) {} return; }
+      finish("quit");
+    });
+  }
+
   function close() {
     if (G && G.sh) { G.sh.over = true; cancelAnimationFrame(G.sh.raf); }
     G = null; el.hidden = true; el.innerHTML = ""; document.documentElement.classList.remove("ar-open");
@@ -12180,7 +12412,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (a0 === "helpx") return hideHelp();
     var t = e.target.closest("[data-g]"); if (!t || !G) { if (t && !G && /^(exit|again|quit)$/.test(t.getAttribute("data-g"))) close(); return; }
     var a = t.getAttribute("data-g");
-    if (a === "quit") { if (G.done) return close(); return G.items || G.score ? finish("quit") : close(); }
+    if (a === "quit") return leave();
     if (a === "exit") return close();
     if (a === "again") { var id = G.id, o = G.opts; G = null; return start(id, o); }
     if (G.done) return;
@@ -12201,7 +12433,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   });
   document.addEventListener("keydown", function (e) {
     if (!G || el.hidden || G.done) return;
-    if (e.key === "Escape") return finish("quit");
+    if (e.key === "Escape") return leave();
     if (e.ctrlKey || e.metaKey || e.altKey) return;
     if (G.id === "blast") { if (/^[1-9]$/.test(e.key) && G.sh && !G.sh.over) { var fs = G.sh.foes.filter(function (f) { return !f.dead; }).sort(function (a, b) { return a.x - b.x; }), f = fs[+e.key - 1]; if (f) { var r = f.el.getBoundingClientRect(); blShoot(f.id, r.left + r.width / 2, r.top + r.height / 2); } } return; }
     var k = e.key === "Backspace" ? "BACK" : e.key === "Enter" ? "ENTER" : /^[a-zA-Z]$/.test(e.key) ? e.key.toUpperCase() : null; if (!k) return;
@@ -12209,7 +12441,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (G.id === "detective") detType(k); else if (G.id === "eisi") eisType(k); else if (G.id === "kreuz") kreuzType(k);
   });
 
-  global.VTG = { GAMES: GAMES, start: start, best: best, open: function () { return !!G; }, _evalGuess: evalGuess, _layout: layout, _state: function () { return G; } };
+  global.VTG = { GAMES: GAMES, start: start, resume: resume, best: best, open: function () { return !!G; }, _evalGuess: evalGuess, _layout: layout, _state: function () { return G; } };
 })(window);
 </script>
 <script>/* Grammatik – Lektionen (Erklärkarte + 8 Übungen). Themen in data/grammatik.js, Optik der Arena (#arena, ar-* und wg-*). */
@@ -12394,6 +12626,43 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     S.save(true);
     if (global.VTUI && global.VTUI.refreshHeader) global.VTUI.refreshHeader();
   }
+  /* ---------- Später weitermachen ---------- */
+  function park() {
+    if (!L || L.done || L.right + L.wrong < 1) return false;
+    try {
+      var q = L.queue.slice();
+      if (L.cur && !L.answered) q.unshift(L.cur);   // die offene Aufgabe kommt beim Fortsetzen wieder
+      var d = { id: L.t.id, opts: L.opts || null, queue: q.map(function (x) { return { i: x.i, tries: 0, retry: !!x.retry }; }), n: L.n, score: L.score, right: L.right, wrong: L.wrong, first: L.first,
+        streak: L.streak, maxStreak: L.maxStreak, total: L.total, orig: L.orig, res: L.res || [], el: Date.now() - L.start };
+      S.resumeSave({ key: "gram", kind: "gram", title: (L.t.icon || "📘") + " Grammatik · " + L.t.title, sub: L.score + " Punkte · Aufgabe " + Math.min(L.n + 1, L.total) + " von " + L.total, data: S.resumePack(d) });
+      return true;
+    } catch (e) { try { console.error("gram park:", e); } catch (x) {} return false; }
+  }
+  function resume(d, end) {
+    var t = topic(d.id); if (!t || t.soon) return false;
+    S.rollDay();
+    L = { t: t, opts: d.opts || null, queue: d.queue.map(function (x) { return { i: x.i, it: t.items[x.i], tries: 0, retry: x.retry }; }).filter(function (x) { return x.it; }),
+      n: d.n, score: d.score, right: d.right, wrong: d.wrong, first: d.first, start: Date.now() - (d.el || 0), done: false, retry: [], cur: null, answered: false,
+      streak: d.streak || 0, maxStreak: d.maxStreak || 0, total: d.total, orig: d.orig, res: d.res || [] };
+    el.hidden = false; document.documentElement.classList.add("ar-open");
+    if (end) { L.queue = []; L.quit = true; finish(); return true; }
+    nextTask();
+    return true;
+  }
+  function leave() {
+    if (!L) return;
+    if (L.done) return close();
+    var g = L;
+    if (L.right + L.wrong < 1) return close();
+    if (!global.VTUI || !global.VTUI.leave) { L.queue = []; L.quit = true; return finish(); }
+    global.VTUI.leave({}, function (pick) {
+      if (L !== g || g.done) return;
+      if (pick === "stay") return;
+      if (pick === "pause" && park()) { close(); try { global.VTUI.toast("Gespeichert. Du findest die Lektion auf der Startseite."); } catch (x) {} return; }
+      g.queue = []; g.quit = true; finish();
+    });
+  }
+
   function close() {
     L = null; el.hidden = true; el.innerHTML = ""; document.documentElement.classList.remove("ar-open");
     if (global.VTUI && global.VTUI.afterArena) global.VTUI.afterArena();
@@ -12403,7 +12672,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   el.addEventListener("click", function (e) {
     var t = e.target.closest("[data-gr]"); if (!t || !L) { if (t && !L && /^(exit|quit|again)$/.test(t.getAttribute("data-gr"))) close(); return; }
     var a = t.getAttribute("data-gr");
-    if (a === "quit") { if (L.done) return close(); if (L.right + L.wrong > 0) { L.queue = []; L.quit = true; return finish(); } return close(); }
+    if (a === "quit") return leave();
     if (a === "exit") return close();
     if (a === "again") { var id = L.t.id, o0 = L.opts; L = null; return start(id, o0); }
     if (a === "help") return showExplain(false);
@@ -12460,7 +12729,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   });
   el.addEventListener("click", function (e) { if (gSwallow) { gSwallow = false; e.stopPropagation(); e.preventDefault(); } }, true);   // nach dem Ziehen kein Antippen auslösen
 
-  global.VTGR = { list: list, next: next, start: start, topic: topic, _state: function () { return L; } };
+  global.VTGR = { list: list, next: next, start: start, resume: resume, topic: topic, _state: function () { return L; } };
 })(window);
 </script>
 <script>/* Sync: sendet den Lernverlauf an den Wordy-Server (Dashboard).

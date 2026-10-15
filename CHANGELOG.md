@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.103.0 – 2026-10-15
+- **Neu: Später weitermachen**: Runden, Spiele und Lektionen lassen sich pausieren. Beim Verlassen (✕) fragt Wordy: „Später weitermachen“, „Beenden“ (zählt nicht als geschafft, nur XP) oder „Weiterspielen“. Gepausierte Runden stehen auf der Startseite in der Karte „Angefangen – mach weiter“ (Weiter / ✕ beenden) und gelten bis Tagesende. Gilt für Lernrunden (auch Daily Challenge und Lernpfad-Stationen), alle Arena-Modi (Match-Rausch, Blitzrunde, Letztes Herz, Fehlerjagd), Wort-Detektiv, Freezy, Xing, Letters, Blast, Blast 3D und Grammatik-Lektionen. Es wird ab der laufenden Aufgabe weitergespielt (Punkte, Treffer, Herzen, Zeit und Buchstabenfelder bleiben). Nicht pausierbar: Duelle und Herausforderungen. Wechselt man in der Arena die App, wird die Runde jetzt gespeichert statt abgebrochen. Es werden bis zu drei Runden gemerkt; dieselbe Spielart ersetzt die ältere. Server-Schritt nicht nötig.
+
 ## 2.102.3 – 2026-10-15
 - **Fehler behoben: abgehacktes „OK“ vor dem Vorlesen**: Zum Anwärmen der Sprachausgabe sprach die App unhörbar das Wort „Okay“ (Lautstärke fast 0). Viele Handy-Stimmen ignorieren die Lautstärke, dann war ein kurzes „OK“ in einer anderen Stimme zu hören, bevor die gewählte Stimme die Aufgabe las. Jetzt wird nur ein stiller Punkt mit derselben Stimme und Sprache angewärmt, und nur noch nach mehr als 30 Sekunden Pause (vorher 8). Server-Schritt nicht nötig. Wird der Satzanfang abgeschnitten, hilft der Regler „Vorlauf“ im Setup.
 
