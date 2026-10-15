@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.103.1 – 2026-10-15
+- **Fehler behoben: gekaufte Farbwelt (Pflaume, Minze, Bernstein) wirkte nicht**: Die Farbwelten aus dem Shop griffen nur im Design „Klassisch“. Im Standard-Design Nachtgold (und in Sonnenschein und Aurora) passierte beim Auswählen nichts, obwohl sie gekauft war. Jetzt färben sie in jedem Design Akzent, Knöpfe und Beschriftungen (hell und dunkel); Hintergrund und Karten bleiben die des Designs. Server-Schritt nicht nötig.
+
 ## 2.103.0 – 2026-10-15
 - **Neu: Später weitermachen**: Runden, Spiele und Lektionen lassen sich pausieren. Beim Verlassen (✕) fragt Wordy: „Später weitermachen“, „Beenden“ (zählt nicht als geschafft, nur XP) oder „Weiterspielen“. Gepausierte Runden stehen auf der Startseite in der Karte „Angefangen – mach weiter“ (Weiter / ✕ beenden) und gelten bis Tagesende. Gilt für Lernrunden (auch Daily Challenge und Lernpfad-Stationen), alle Arena-Modi (Match-Rausch, Blitzrunde, Letztes Herz, Fehlerjagd), Wort-Detektiv, Freezy, Xing, Letters, Blast, Blast 3D und Grammatik-Lektionen. Es wird ab der laufenden Aufgabe weitergespielt (Punkte, Treffer, Herzen, Zeit und Buchstabenfelder bleiben). Nicht pausierbar: Duelle und Herausforderungen. Wechselt man in der Arena die App, wird die Runde jetzt gespeichert statt abgebrochen. Es werden bis zu drei Runden gemerkt; dieselbe Spielart ersetzt die ältere. Server-Schritt nicht nötig.
 

@@ -1138,10 +1138,20 @@ details.fold>.fbody{padding:2px 0 14px}
 @media (prefers-reduced-motion:reduce){.stp.new .stpi,.stp.now .stpi{animation:none}}
 .passc .psgift{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.35);color:#fff}.passc .psgift b{color:#fff}.passc .psgift small,.passc .psgift .muted{color:#c9d6f0!important}
 .passc .stp small{color:#c9d6f0}.passc .stpi{border-color:rgba(255,255,255,.35)}.passc .stp.ok .stpi{border-color:#e8b53c}.passc .stp.joker .stpi{border-color:#c79bff}
+/* Farbwelten (Shop) gelten in jedem Design: sie färben Akzent, Knöpfe und Beschriftungen; Hintergrund und Karten bleiben die des Designs. */
+:root[data-design="gold"][data-accent="mint"],:root[data-design="sun"][data-accent="mint"]{--accent:#2E7357;--accent-ink:#fff;--accent-soft:#D9EEE2;--eyebrow:#2E7357;--btn-bg:#2E7357;--btn-sh:#1F5440}
+:root[data-design="gold"][data-accent="plum"],:root[data-design="sun"][data-accent="plum"]{--accent:#6A3D70;--accent-ink:#fff;--accent-soft:#EBDDEE;--eyebrow:#6A3D70;--btn-bg:#6A3D70;--btn-sh:#4A2A4F}
+:root[data-design="gold"][data-accent="amber"],:root[data-design="sun"][data-accent="amber"]{--accent:#8A5A1B;--accent-ink:#fff;--accent-soft:#F3E4CA;--eyebrow:#8A5A1B;--btn-bg:#8A5A1B;--btn-sh:#5F3D0F}
+:root[data-design="gold"][data-theme="dark"][data-accent="mint"],:root[data-design="aurora"][data-accent="mint"]{--accent:#5CC59A;--accent-ink:#06140E;--accent-soft:#163025;--eyebrow:#5CC59A;--btn-bg:linear-gradient(#8BE0BC,#5CC59A);--btn-sh:#2E8D68}
+@media (prefers-color-scheme:dark){:root[data-design="gold"][data-accent="mint"]:not([data-theme="light"]){--accent:#5CC59A;--accent-ink:#06140E;--accent-soft:#163025;--eyebrow:#5CC59A;--btn-bg:linear-gradient(#8BE0BC,#5CC59A);--btn-sh:#2E8D68}}
+:root[data-design="gold"][data-theme="dark"][data-accent="plum"],:root[data-design="aurora"][data-accent="plum"]{--accent:#C48BD0;--accent-ink:#1A0B1E;--accent-soft:#31203A;--eyebrow:#C48BD0;--btn-bg:linear-gradient(#DDB0E6,#C48BD0);--btn-sh:#8F5C9A}
+@media (prefers-color-scheme:dark){:root[data-design="gold"][data-accent="plum"]:not([data-theme="light"]){--accent:#C48BD0;--accent-ink:#1A0B1E;--accent-soft:#31203A;--eyebrow:#C48BD0;--btn-bg:linear-gradient(#DDB0E6,#C48BD0);--btn-sh:#8F5C9A}}
+:root[data-design="gold"][data-theme="dark"][data-accent="amber"],:root[data-design="aurora"][data-accent="amber"]{--accent:#E0A34A;--accent-ink:#1C1205;--accent-soft:#3A2B13;--eyebrow:#E0A34A;--btn-bg:linear-gradient(#F0C47E,#E0A34A);--btn-sh:#9A6A22}
+@media (prefers-color-scheme:dark){:root[data-design="gold"][data-accent="amber"]:not([data-theme="light"]){--accent:#E0A34A;--accent-ink:#1C1205;--accent-soft:#3A2B13;--eyebrow:#E0A34A;--btn-bg:linear-gradient(#F0C47E,#E0A34A);--btn-sh:#9A6A22}}
 </style>
 
 
-<script>window.WORDY_VERSION="2.103.0";window.WORDY_BUILD="94c171fc43";</script>
+<script>window.WORDY_VERSION="2.103.1";window.WORDY_BUILD="4ad0fa28a0";</script>
 </head>
 <body>
 <div id="app">
