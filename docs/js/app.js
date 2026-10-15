@@ -2559,6 +2559,7 @@
         '<div class="row" style="gap:12px">' + (audioAvailable() ? speakBtn(w.en) : "") + '<div class="prompt">' + esc(w.en) + '</div></div>' +
         optionList(opts) + '</div>';
       foot.innerHTML = footCheck();
+      if (audioAvailable()) setTimeout(function () { speak(w.en); }, 300);   // das englische Wort wird vor der Antwort vorgelesen
     },
     mc_de_en: function (t, body, foot) {
       var w = t.w, opts = S.shuffle(distractors(w, "en", 3).map(function (x) { return { label: x.en, ok: false }; }).concat([{ label: w.en, ok: true }]));
@@ -2628,6 +2629,7 @@
         '<p class="gapline vgap" style="margin:0;flex:1 1 auto">' + sentHtml(x, true) + ' <span class="small muted">(' + esc(v.inf) + ')</span></p></div>' +
         '<div class="sub">' + esc(x.de) + '</div>' + optionList(opts) + '</div>';
       foot.innerHTML = footCheck();
+      if (audioAvailable()) setTimeout(function () { speak(x.en.replace(new RegExp("\\b" + reEsc(x.form) + "\\b"), " … "), 0.9); }, 300);   // Satz mit Pause an der Lücke
     },
     verb: function (t, body, foot) {
       var v = t.v;
@@ -2648,6 +2650,7 @@
       b.addEventListener("keydown", function (e) { if (e.key === "Enter" && !btn.disabled) check(); });
       [a, b].forEach(function (el) { el.addEventListener("focus", function () { setTimeout(function () { btn.scrollIntoView({ block: "nearest" }); }, 300); }); });
       setTimeout(function () { a.focus(); }, 60);
+      if (audioAvailable()) setTimeout(function () { speak(v.inf); }, 300);
     },
     type: function (t, body, foot) {
       var w = t.w;
@@ -2687,7 +2690,7 @@
         '<div class="row" style="gap:12px">' + (audioAvailable() ? speakBtn(w.en) : "") + '<div class="prompt de">' + esc(w.de) + '</div></div>' +
         '<div class="slot" id="slot" data-len="' + target.length + '"></div>' +
         '<p class="small muted" style="margin:0">Tippe die Buchstaben an oder ziehe sie in die Reihe; auch in der Reihe lassen sie sich verschieben.</p>' +
-        '<div class="tiles" id="tiles">' + letters.map(function (l, i) {
+        '<div class="tiles letters" id="tiles">' + letters.map(function (l, i) {
           return '<button class="tile" data-tile="' + i + '" data-ch="' + esc(l.ch) + '">' + (l.ch === " " ? "␣" : esc(l.ch)) + '</button>';
         }).join("") + '</div>' +
         '<button class="chip" data-act="undo" style="align-self:flex-start">⌫ Buchstabe löschen</button></div>';
@@ -2812,8 +2815,11 @@
         ci.addEventListener("input", function () { copied = judgeTyped(ci.value, w.en) === 2; ci.classList.toggle("good", copied); release(); });
         setTimeout(function () { ci.focus(); }, 80);
       }
-      if (!ok && !(SS.tasks[SS.i] && SS.tasks[SS.i].type === "gap")) speak(w.en);   // die richtige Lösung wird vorgelesen (bei Lückensätzen liest der Satz)
     }
+    /* Nach jeder Antwort (richtig oder falsch) wird die englische Lösung vorgelesen; bei Lückensätzen der ganze Satz (liest check), bei Verblücken der Satz mit der Form */
+    var tk = SS && SS.tasks[SS.i];
+    if (tk && tk.type === "verbgap") speak(tk.v.s[tk.idx].en, 0.9);
+    else if (!tk || tk.type !== "gap") speak(w.en);
   }
   /* Pause nach der Antwort: der Weiter-Knopf ist kurz gesperrt (Füllbalken), damit die Lösung gesehen wird */
   function pauseOn() { return S.state.settings.pause !== false; }
@@ -2844,7 +2850,7 @@
       '<span class="cmp">Regel: ' + esc(x.rule) + '</span></div>' +
       (audioAvailable() ? '<button class="btn ghost wide" data-act="say" data-text="' + esc(x.en) + '" style="margin-bottom:8px">🔊 Satz anhören</button>' : "") +
       '<button class="btn wide lg" data-act="next" id="mainBtn">Weiter</button>';
-    if (ok || pauseOn()) speak(x.en, 0.9);
+    speak(x.en, 0.9);
     var b = $("#mainBtn"); if (b) b.focus();
     if (b && pauseOn()) holdButton(b, ok ? 1500 : 4000, function () { b.disabled = false; b.focus(); });
   }
@@ -2916,7 +2922,6 @@
     });
     var res2 = applyGrade(w, ok ? 2 : 0);
     if (!ok) SS.retry.push({ type: t.type === "odd" ? "mc_en_de" : t.type, w: w });
-    if (ok && (t.type === "listen" || t.type === "mc_en_de")) speak(w.en);
     if (t.type === "gap") {   // der ganze Satz mit dem richtigen Wort wird gezeigt und noch einmal vorgelesen
       var gu = $(".gapline u"); if (gu) { gu.innerHTML = esc(w.gap); gu.className = ok ? "gfill ok" : "gfill bad"; }
       if (audioAvailable()) setTimeout(function () { speak(w.ex, 0.9); }, 250);

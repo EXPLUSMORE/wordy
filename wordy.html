@@ -1148,10 +1148,18 @@ details.fold>.fbody{padding:2px 0 14px}
 @media (prefers-color-scheme:dark){:root[data-design="gold"][data-accent="plum"]:not([data-theme="light"]){--accent:#C48BD0;--accent-ink:#1A0B1E;--accent-soft:#31203A;--eyebrow:#C48BD0;--btn-bg:linear-gradient(#DDB0E6,#C48BD0);--btn-sh:#8F5C9A}}
 :root[data-design="gold"][data-theme="dark"][data-accent="amber"],:root[data-design="aurora"][data-accent="amber"]{--accent:#E0A34A;--accent-ink:#1C1205;--accent-soft:#3A2B13;--eyebrow:#E0A34A;--btn-bg:linear-gradient(#F0C47E,#E0A34A);--btn-sh:#9A6A22}
 @media (prefers-color-scheme:dark){:root[data-design="gold"][data-accent="amber"]:not([data-theme="light"]){--accent:#E0A34A;--accent-ink:#1C1205;--accent-soft:#3A2B13;--eyebrow:#E0A34A;--btn-bg:linear-gradient(#F0C47E,#E0A34A);--btn-sh:#9A6A22}}
+/* Rechtschreibung und Satzbau: die Kacheln der Startseite (.tiles/.tile weiter oben) sollen hier nicht greifen.
+   Buchstaben stehen zu viert in einer Reihe, Wörter laufen in natürlicher Breite um. */
+#session .tiles{display:flex;flex-wrap:wrap;gap:7px;margin-top:0}
+#session .tile{display:block;width:auto;min-width:38px;text-align:center;padding:10px 11px;border-radius:9px;background:var(--card);font-weight:700;font-size:17px;font-family:Karla,sans-serif}
+#session .tile.word{font-size:15px;padding:10px 13px;min-width:0;font-weight:600}
+#session .tiles.letters{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:6px}
+#session .tiles.letters .tile{width:100%;min-width:0;padding:14px 0;font-size:24px;border-radius:12px;text-align:center}
+#session .tile.used{opacity:.25;pointer-events:none}
 </style>
 
 
-<script>window.WORDY_VERSION="2.103.1";window.WORDY_BUILD="4ad0fa28a0";</script>
+<script>window.WORDY_VERSION="2.103.2";window.WORDY_BUILD="e9c5570708";</script>
 </head>
 <body>
 <div id="app">
@@ -10160,6 +10168,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
         '<div class="row" style="gap:12px">' + (audioAvailable() ? speakBtn(w.en) : "") + '<div class="prompt">' + esc(w.en) + '</div></div>' +
         optionList(opts) + '</div>';
       foot.innerHTML = footCheck();
+      if (audioAvailable()) setTimeout(function () { speak(w.en); }, 300);   // das englische Wort wird vor der Antwort vorgelesen
     },
     mc_de_en: function (t, body, foot) {
       var w = t.w, opts = S.shuffle(distractors(w, "en", 3).map(function (x) { return { label: x.en, ok: false }; }).concat([{ label: w.en, ok: true }]));
@@ -10229,6 +10238,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
         '<p class="gapline vgap" style="margin:0;flex:1 1 auto">' + sentHtml(x, true) + ' <span class="small muted">(' + esc(v.inf) + ')</span></p></div>' +
         '<div class="sub">' + esc(x.de) + '</div>' + optionList(opts) + '</div>';
       foot.innerHTML = footCheck();
+      if (audioAvailable()) setTimeout(function () { speak(x.en.replace(new RegExp("\\b" + reEsc(x.form) + "\\b"), " … "), 0.9); }, 300);   // Satz mit Pause an der Lücke
     },
     verb: function (t, body, foot) {
       var v = t.v;
@@ -10249,6 +10259,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       b.addEventListener("keydown", function (e) { if (e.key === "Enter" && !btn.disabled) check(); });
       [a, b].forEach(function (el) { el.addEventListener("focus", function () { setTimeout(function () { btn.scrollIntoView({ block: "nearest" }); }, 300); }); });
       setTimeout(function () { a.focus(); }, 60);
+      if (audioAvailable()) setTimeout(function () { speak(v.inf); }, 300);
     },
     type: function (t, body, foot) {
       var w = t.w;
@@ -10288,7 +10299,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
         '<div class="row" style="gap:12px">' + (audioAvailable() ? speakBtn(w.en) : "") + '<div class="prompt de">' + esc(w.de) + '</div></div>' +
         '<div class="slot" id="slot" data-len="' + target.length + '"></div>' +
         '<p class="small muted" style="margin:0">Tippe die Buchstaben an oder ziehe sie in die Reihe; auch in der Reihe lassen sie sich verschieben.</p>' +
-        '<div class="tiles" id="tiles">' + letters.map(function (l, i) {
+        '<div class="tiles letters" id="tiles">' + letters.map(function (l, i) {
           return '<button class="tile" data-tile="' + i + '" data-ch="' + esc(l.ch) + '">' + (l.ch === " " ? "␣" : esc(l.ch)) + '</button>';
         }).join("") + '</div>' +
         '<button class="chip" data-act="undo" style="align-self:flex-start">⌫ Buchstabe löschen</button></div>';
@@ -10413,8 +10424,11 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
         ci.addEventListener("input", function () { copied = judgeTyped(ci.value, w.en) === 2; ci.classList.toggle("good", copied); release(); });
         setTimeout(function () { ci.focus(); }, 80);
       }
-      if (!ok && !(SS.tasks[SS.i] && SS.tasks[SS.i].type === "gap")) speak(w.en);   // die richtige Lösung wird vorgelesen (bei Lückensätzen liest der Satz)
     }
+    /* Nach jeder Antwort (richtig oder falsch) wird die englische Lösung vorgelesen; bei Lückensätzen der ganze Satz (liest check), bei Verblücken der Satz mit der Form */
+    var tk = SS && SS.tasks[SS.i];
+    if (tk && tk.type === "verbgap") speak(tk.v.s[tk.idx].en, 0.9);
+    else if (!tk || tk.type !== "gap") speak(w.en);
   }
   /* Pause nach der Antwort: der Weiter-Knopf ist kurz gesperrt (Füllbalken), damit die Lösung gesehen wird */
   function pauseOn() { return S.state.settings.pause !== false; }
@@ -10445,7 +10459,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       '<span class="cmp">Regel: ' + esc(x.rule) + '</span></div>' +
       (audioAvailable() ? '<button class="btn ghost wide" data-act="say" data-text="' + esc(x.en) + '" style="margin-bottom:8px">🔊 Satz anhören</button>' : "") +
       '<button class="btn wide lg" data-act="next" id="mainBtn">Weiter</button>';
-    if (ok || pauseOn()) speak(x.en, 0.9);
+    speak(x.en, 0.9);
     var b = $("#mainBtn"); if (b) b.focus();
     if (b && pauseOn()) holdButton(b, ok ? 1500 : 4000, function () { b.disabled = false; b.focus(); });
   }
@@ -10517,7 +10531,6 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     });
     var res2 = applyGrade(w, ok ? 2 : 0);
     if (!ok) SS.retry.push({ type: t.type === "odd" ? "mc_en_de" : t.type, w: w });
-    if (ok && (t.type === "listen" || t.type === "mc_en_de")) speak(w.en);
     if (t.type === "gap") {   // der ganze Satz mit dem richtigen Wort wird gezeigt und noch einmal vorgelesen
       var gu = $(".gapline u"); if (gu) { gu.innerHTML = esc(w.gap); gu.className = ok ? "gfill ok" : "gfill bad"; }
       if (audioAvailable()) setTimeout(function () { speak(w.ex, 0.9); }, 250);
