@@ -25,7 +25,7 @@ const fake = net.createServer(c => {
     }
   });
 }).listen(smtpPort, "127.0.0.1");
-const srv = spawn(process.execPath, [path.join(__dirname, "server.js")], { env: Object.assign({}, process.env, { PORT, DB_FILE: path.join(dir, "t.db"), ADMIN_PASSWORD: "test-passwort-123", SMTP_HOST: "127.0.0.1", SMTP_PORT: String(smtpPort), SMTP_SECURE: "none", SMTP_USER: "u", SMTP_PASSWORD: "p", MAIL_FROM: "Wordy <w@example.org>", MAIL_TO: "eltern@example.org", PUSH_ALLOW_HTTP: "1" }), stdio: "inherit" });
+const srv = spawn(process.execPath, [path.join(__dirname, "server.js")], { env: Object.assign({}, process.env, { PORT, DB_FILE: path.join(dir, "t.db"), ADMIN_PASSWORD: "test-passwort-123", SMTP_HOST: "127.0.0.1", SMTP_PORT: String(smtpPort), SMTP_SECURE: "none", SMTP_USER: "u", SMTP_PASSWORD: "p", MAIL_FROM: "Wordy <w@example.org>", MAIL_TO: "eltern@example.org", PUSH_ALLOW_HTTP: "1", ADMIN_RATE: "1000" }), stdio: "inherit" });
 const wait = ms => new Promise(r => setTimeout(r, ms));
 const T2 = t => ({ Authorization: "Bearer " + t, "Content-Type": "application/json" });
 const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await r.json().catch(() => null) }));
@@ -74,6 +74,12 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
       assert.equal(m1.h["content-encoding"], "aes128gcm"); assert.ok(/^vapid t=[\w-]+\.[\w-]+\.[\w-]+, k=/.test(m1.h.authorization), "VAPID-Kopf");
       const msg = JSON.parse(PUSH.decrypt(m1.body, rec)); assert.equal(msg.title, "Wordy"); assert.ok(msg.body.length > 10, "Spruch: " + msg.body);
       const ad = await J("/api/admin/players/" + mk.j.id + "/push", { headers: H }); assert.equal(ad.s, 200); assert.equal(ad.j.devices, 1); assert.equal(ad.j.time, "15:30");
+      assert.equal(ad.j.every, 2, "Standard: alle 2 Stunden"); assert.equal(ad.j.until, "20:00", "Standard: Zeitfenster bis 20 Uhr");
+      const PA = "/api/admin/players/" + mk.j.id + "/push";
+      assert.equal((await J(PA, { method: "POST", headers: H, body: JSON.stringify({ until: "15:00" }) })).s, 400, "Ende vor dem Beginn abgelehnt");
+      const sv = await J(PA, { method: "POST", headers: H, body: JSON.stringify({ every: 3, until: "21:15" }) }); assert.equal(sv.j.every, 3); assert.equal(sv.j.until, "21:15", "Abstand und Ende speicherbar");
+      const nGot = got.length, sn = await J(PA, { method: "POST", headers: H, body: JSON.stringify({ action: "startnow" }) });
+      assert.equal(sn.j.sent, 1, "Jetzt starten sendet sofort"); await wait(300); assert.equal(got.length, nGot + 1, "Push-Dienst bekommt die sofortige Nachricht"); assert.ok(sn.j.lastAt > Date.now() - 5000, "Zeitpunkt der letzten Nachricht");
       assert.equal((await J("/api/admin/players/" + mk.j.id + "/push", { method: "POST", headers: H, body: JSON.stringify({ on: false, time: "16:45" }) })).j.time, "16:45", "Eltern ändern die Uhrzeit");
       assert.equal((await J("/api/push", { headers: T })).j.on, false, "und schalten ab");
       const gone = Object.assign({}, sub, { endpoint: "http://127.0.0.1:" + mp + "/gone" });

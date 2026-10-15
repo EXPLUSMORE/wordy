@@ -629,7 +629,7 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
     var SET = sg("conn", "🔗", "Verbindung &amp; Geräte", "Neuer Code oder Link · Geräte trennen · Nur sichern", '<div class="row" style="gap:8px;flex-wrap:wrap"><button class="ghost" id="inv">Neuer Code / Link</button><button class="ghost" id="rev">Geräte trennen</button><button class="ghost" id="hid">Nur sichern</button></div>' + (window.WT ? "" : '<div style="margin-top:12px">' + pairCard("pairKid") + "</div>"), true) +
       sg("stoff", "🧭", "Lernstoff steuern", "Pfad-Einheiten · „Kind wählt selbst“ · Lernplan · Wochenziele · Boss", '<div class="card" id="pathCard"></div><div class="card" id="plansCard"></div><div class="card" id="goalsCard"></div>', true) +
       sg("ziel", "⏱️", "Tagesziel &amp; Wochenzeitplan", "Minuten je Tag · freie Tage", '<div class="card" id="wpCard"></div>', false) +
-      sg("push", "🔔", "Tägliche Erinnerung", "Uhrzeit · An / Aus · Geräte", '<div class="card" id="pushCard"></div>', false) +
+      sg("push", "🔔", "Erinnerung", "Zeitfenster · Abstand · An / Aus · Geräte", '<div class="card" id="pushCard"></div>', false) +
       sg("belohn", "🎁", "Belohnungen", "Extramünzen · Pass (nur Betreiber)", '<div class="card" id="giftCard"></div><div class="card" id="passCard"></div>', false) +
       sg("sozial", "👥", "Freunde, Klasse, Crew", "Freigaben der Eltern", '<div class="card" id="friendCard"></div><div class="card" id="classCard"></div>', false) +
       sg("daten", "💾", "Sicherung &amp; Daten", "Lernstand wiederherstellen · Herunterladen", '<div class="card" id="backupCard"></div>', false) +
@@ -950,13 +950,17 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
   function drawPush(p) {
     var el = document.getElementById("pushCard"); if (!el) return;
     api("/api/admin/players/" + p.id + "/push").then(function (v) {
-      el.innerHTML = '<h2>Tägliche Erinnerung</h2><p class="small muted" style="margin:0 0 10px">Ein persönlicher, frecher Spruch als Mitteilung aufs Handy, zur gewählten Uhrzeit. Er kommt nicht, wenn das Tagesziel schon geschafft ist. ' + esc(nm()) + ' schaltet die Mitteilungen in der App unter Profil › Ton &amp; Aussehen am Handy frei.</p>' +
+      var EV = [[0, "nur einmal am Tag"], [1, "jede Stunde"], [2, "alle 2 Stunden"], [3, "alle 3 Stunden"], [4, "alle 4 Stunden"]];
+      el.innerHTML = '<h2>Erinnerung</h2><p class="small muted" style="margin:0 0 10px">Ein persönlicher, frecher Spruch als Mitteilung aufs Handy, im gewählten Zeitfenster (Berlin) und im gewählten Abstand. Er kommt nicht mehr, wenn das Tagesziel schon geschafft ist. ' + esc(nm()) + ' schaltet die Mitteilungen in der App unter Profil › Ton &amp; Aussehen selbst ein oder aus.</p>' +
         '<label class="row" style="gap:8px;margin-bottom:8px"><input type="checkbox" id="pxOn"' + (v.on ? " checked" : "") + '><span>Erinnerung aktiv</span></label>' +
-        '<div class="row" style="gap:8px;align-items:center;flex-wrap:wrap"><label class="small" for="pxT">Uhrzeit (Berlin)</label><input id="pxT" type="time" value="' + esc(v.time) + '" style="width:auto"><button id="pxS">Speichern</button><span id="pxM" class="small"></span></div>' +
-        '<p class="small muted" style="margin:10px 0 0">Geräte mit Mitteilungen: <b>' + v.devices + '</b>' + (v.devices ? "" : " (noch keins freigeschaltet)") + (v.lastSent ? " · zuletzt " + v.lastSent.split("-").reverse().join(".") : "") + "</p>";
-      document.getElementById("pxS").onclick = function () {
-        post("/api/admin/players/" + p.id + "/push", { on: document.getElementById("pxOn").checked, time: document.getElementById("pxT").value }).then(function () { var m = document.getElementById("pxM"); m.className = "small"; m.textContent = "Gespeichert."; }).catch(function (e) { var m = document.getElementById("pxM"); m.className = "small err"; m.textContent = e.message; });
-      };
+        '<div class="row" style="gap:8px;align-items:center;flex-wrap:wrap"><label class="small" for="pxT">von</label><input id="pxT" type="time" value="' + esc(v.time) + '" style="width:auto"><label class="small" for="pxU">bis</label><input id="pxU" type="time" value="' + esc(v.until) + '" style="width:auto">' +
+        '<select id="pxE" style="width:auto">' + EV.map(function (e) { return '<option value="' + e[0] + '"' + (e[0] === v.every ? " selected" : "") + '>' + e[1] + '</option>'; }).join("") + '</select></div>' +
+        '<div class="row" style="gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px"><button id="pxS">Speichern</button><button class="ghost" id="pxN" ' + (v.devices ? "" : "disabled") + '>Jetzt starten (sofort senden)</button><span id="pxM" class="small"></span></div>' +
+        '<p class="small muted" style="margin:10px 0 0">Geräte mit Mitteilungen: <b>' + v.devices + '</b>' + (v.devices ? "" : " (noch keins freigeschaltet)") + (v.lastAt ? " · zuletzt gesendet " + new Date(v.lastAt).toLocaleString("de-DE", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }) : "") + "</p>";
+      function msg(t, bad) { var m = document.getElementById("pxM"); m.className = "small" + (bad ? " err" : ""); m.textContent = t; }
+      function body() { return { on: document.getElementById("pxOn").checked, time: document.getElementById("pxT").value, until: document.getElementById("pxU").value, every: +document.getElementById("pxE").value }; }
+      document.getElementById("pxS").onclick = function () { post("/api/admin/players/" + p.id + "/push", body()).then(function () { msg("Gespeichert."); }).catch(function (e) { msg(e.message, true); }); };
+      document.getElementById("pxN").onclick = function () { post("/api/admin/players/" + p.id + "/push", body()).then(function () { return post("/api/admin/players/" + p.id + "/push", { action: "startnow" }); }).then(function (r) { msg(r.sent ? "Gesendet. Die nächste kommt " + (+document.getElementById("pxE").value ? "in " + document.getElementById("pxE").value + " Std." : "morgen") + " (im Zeitfenster)." : "Es ist kein Gerät angemeldet.", !r.sent); }).catch(function (e) { msg(e.message, true); }); };
     }).catch(function (e) { el.innerHTML = '<p class="small err">' + esc(e.message) + "</p>"; });
   }
   function drawGoals(p, r) {

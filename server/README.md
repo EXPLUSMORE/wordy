@@ -128,10 +128,10 @@ Außer dem Betreiber-Zugang (`/`, Basic-Anmeldung) gibt es Konten für Familien.
 - **Voraussetzung:** Mailversand (SMTP oder Graph mit `MAIL_FROM`) und `DASHBOARD_URL` müssen gesetzt sein, sonst kann sich niemand anmelden. Die Datenschutzerklärung `server/public/datenschutz.html` ist ein **Entwurf**: Verantwortlichen eintragen und rechtlich prüfen lassen, bevor fremde Familien eingeladen werden.
 - Technik: Tabellen `families`, `family_links`, `family_sessions`, `family_invites`, Spalte `players.family` (leer = Spieler des Betreibers). Familien-Schnittstelle: `/api/fam/…` (gleiche Routen wie `/api/admin/…`, mit Besitzprüfung), schreibende Aufrufe brauchen den Kopf `X-Wordy: 1`.
 
-## Tägliche Erinnerung (Web Push)
-Der Server schickt jedem Kind mit freigeschalteten Mitteilungen einmal am Tag zur eingestellten Uhrzeit (Standard 15:00, Europe/Berlin) einen persönlichen Spruch, außer das Tagesziel ist schon geschafft. Läuft der Server zur Uhrzeit nicht (mehr als zwei Stunden), entfällt die Nachricht für den Tag.
+## Erinnerung (Web Push)
+Der Server schickt jedem Kind mit freigeschalteten Mitteilungen im Zeitfenster von 15:00 bis 20:00 Uhr (Europe/Berlin) **alle 2 Stunden** einen persönlichen Spruch, solange das Tagesziel noch offen ist. Fenster und Abstand (nur einmal am Tag, jede Stunde, alle 2, 3 oder 4 Stunden) stellen die Eltern im Dashboard ein; der Knopf „Jetzt starten“ sendet sofort. Mit Abstand 0 gilt das alte Verhalten (einmal am Tag zur Startzeit). Läuft der Server zur Uhrzeit nicht (mehr als zwei Stunden), entfällt die Nachricht für den Tag.
 - **Einrichten am Kind:** App › Profil › Ton & Aussehen › „Tägliche Erinnerung“ einschalten (Erlaubnis geben), „Test senden“ prüft es. iPhone: Wordy muss über „Zum Home-Bildschirm“ installiert sein (ab iOS 16.4).
-- **Eltern:** Dashboard › Einstellungen › „Tägliche Erinnerung“: Uhrzeit, An/Aus, Anzahl der Geräte.
+- **Eltern:** Dashboard › Einstellungen › „Erinnerung“: Zeitfenster, Abstand, An/Aus, „Jetzt starten“, Anzahl der Geräte und Zeitpunkt der letzten Nachricht.
 - **Technik:** `server/push.js` (VAPID, Verschlüsselung nach RFC 8291, `node:crypto`, keine Abhängigkeiten). Das VAPID-Schlüsselpaar entsteht beim ersten Start und liegt in der Datenbank (Tabelle `kv`, Schlüssel `vapid`, wird mit gesichert). Optional `PUSH_SUBJECT` in `.env` (Standard: `DASHBOARD_URL`). Der Server braucht ausgehendes HTTPS zu den Push-Diensten (Google, Apple, Mozilla). Ungültige Abos (HTTP 404/410) werden automatisch gelöscht.
 - Schnittstellen (Bearer): `GET /api/push`, `POST /api/push` (`subscribe`, `unsubscribe`, `settings`, `test`); öffentlich `GET /api/push/key`; Eltern `/api/admin|fam/players/:id/push`.
 

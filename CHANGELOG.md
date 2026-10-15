@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.102.0 – 2026-10-15
+- **Erinnerung alle 2 Stunden (Standard) mit Zeitfenster**: Statt einer Mitteilung am Tag kommt sie jetzt im Fenster von **15:00 bis 20:00 Uhr (Berlin) alle 2 Stunden**, also etwa 15, 17 und 19 Uhr, solange das Tagesziel offen ist; der Spruch wechselt je Stunde. Im Dashboard (Einstellungen › Erinnerung) stellst du „von“, „bis“ und den Abstand ein (nur einmal am Tag, jede Stunde, alle 2, 3 oder 4 Stunden). Neu: Knopf **„Jetzt starten (sofort senden)“** sendet sofort eine Mitteilung und rechnet den Abstand von da an. Die Karte zeigt, wann zuletzt gesendet wurde (Datum und Uhrzeit). Server: `pushState` mit `until`, `every`, `lastTs`; Tick-Logik für Intervall und einmal am Tag; `POST /api/admin/players/:id/push` mit `action:"startnow"`. Test-Hilfe: `ADMIN_RATE` (Anfragen je Minute am Dashboard, Standard 120). Server-Update nötig.
+
 ## 2.101.0 – 2026-10-14
 - **Drag and drop bei Rechtschreibung und Grammatik**: In der Übung **Rechtschreibung** lassen sich die Buchstaben jetzt mit Maus oder Finger aus dem Vorrat in die Reihe ziehen, in der Reihe an eine andere Stelle schieben und wieder herausziehen (zurück in den Vorrat). Eine Einfügemarke zeigt, wo der Buchstabe landet. In der **Grammatik**-Übung „Wörter in die richtige Reihenfolge bringen“ gilt dasselbe für die Wörter (Vorrat → Antwort, in der Antwort umsortieren, zurück in den Vorrat). Antippen funktioniert weiter wie bisher; die Satzbau-Übung („Sätze bauen“) konnte schon ziehen. Nur App-Änderung.
 

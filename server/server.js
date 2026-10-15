@@ -244,7 +244,8 @@ function eq(a, b) {
 const dayFmt = new Intl.DateTimeFormat("sv-SE", { timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit" });
 const dayOf = ts => dayFmt.format(new Date(ts));
 
-const hits = new Map();   // sehr einfache Begrenzung pro Adresse
+const hits = new Map();
+const ADMIN_RATE = +process.env.ADMIN_RATE || 120;   // Anfragen je Minute für das Dashboard (der Test erhöht das)   // sehr einfache Begrenzung pro Adresse
 function limited(ip, bucket, max, windowMs) {
   const k = bucket + ":" + ip, now = Date.now();
   const a = (hits.get(k) || []).filter(t => now - t < windowMs);
@@ -946,7 +947,14 @@ const VAPID = (() => {
 })();
 const PUSH_SUBJECT = process.env.PUSH_SUBJECT || DASH_URL || "mailto:admin@example.org";
 const PUSH_HTTP = process.env.PUSH_ALLOW_HTTP === "1";   // nur für Tests
-const pushState = pid => { const r = q.kvGet.get("push:" + pid); let v = {}; try { v = r ? JSON.parse(r.val) : {}; } catch (e) {} return { on: v.on !== false, time: /^([01]\d|2[0-3]):[0-5]\d$/.test(v.time || "") ? v.time : "15:00", last: v.last || "" }; };
+/* Erinnerung: im Fenster von `time` bis `until` (Europe/Berlin) alle `every` Stunden (0 = nur einmal am Tag zur Startzeit), solange das Tagesziel offen ist */
+const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
+const pushState = pid => {
+  const r = q.kvGet.get("push:" + pid); let v = {}; try { v = r ? JSON.parse(r.val) : {}; } catch (e) {}
+  const time = TIME_RE.test(v.time || "") ? v.time : "15:00", ev = Number.isInteger(v.every) && v.every >= 0 && v.every <= 12 ? v.every : 2;
+  const until = TIME_RE.test(v.until || "") && v.until > time ? v.until : (time < "20:00" ? "20:00" : "23:30");
+  return { on: v.on !== false, time, until, every: ev, last: v.last || "", lastTs: +v.lastTs || 0 };
+};
 const pushSave = (pid, st) => q.kvSet.run("push:" + pid, JSON.stringify(st));
 const PUSH_LINES = [
   "Digga {name}, 5 Minuten Wordy und dein Tag ist safe. Kein Cap. 😎",
@@ -1006,20 +1014,28 @@ let pushBusy = false;
 async function pushTick() {
   if (pushBusy) return; pushBusy = true;
   try {
-    const ln = localNow(), hhmm = String(ln.h).padStart(2, "0") + ":" + String(ln.m).padStart(2, "0"), day = dayOf(Date.now());
+    const ln = localNow(), hhmm = String(ln.h).padStart(2, "0") + ":" + String(ln.m).padStart(2, "0"), day = dayOf(Date.now()), now = Date.now();
     for (const { player: pid } of pq.players.all()) {
-      const st = pushState(pid); if (!st.on || st.last === day || hhmm < st.time) continue;
-      const late = (ln.h * 60 + ln.m) - (+st.time.slice(0, 2) * 60 + +st.time.slice(3));
-      st.last = day; pushSave(pid, st);
-      if (late > 120) continue;   // Server war lange weg: nicht mehr nachträglich nerven
-      const t = pushTodayInfo(pid); if (t.sec >= t.goal) continue;   // Tagesziel schon geschafft
+      const st = pushState(pid); if (!st.on || hhmm < st.time) continue;
       const pl = q.player.get(pid); if (!pl) continue;
+      if (st.every > 0) {   // alle N Stunden im Zeitfenster
+        if (hhmm > st.until || now - st.lastTs < st.every * 3600000 - 30000) continue;
+        st.lastTs = now; st.last = day; pushSave(pid, st);
+        const t = pushTodayInfo(pid); if (t.sec >= t.goal) continue;   // Tagesziel schon geschafft
+        await pushSendTo(pid, pushMessage(pid, pl.name, t.streak, Math.floor(now / 3600000)));
+        continue;
+      }
+      if (st.last === day) continue;   // einmal am Tag
+      const late = (ln.h * 60 + ln.m) - (+st.time.slice(0, 2) * 60 + +st.time.slice(3));
+      st.last = day; st.lastTs = now; pushSave(pid, st);
+      if (late > 120) continue;   // Server war lange weg: nicht mehr nachträglich nerven
+      const t = pushTodayInfo(pid); if (t.sec >= t.goal) continue;
       await pushSendTo(pid, pushMessage(pid, pl.name, t.streak));
     }
   } catch (e) { console.error("Push-Tick:", e.message); } finally { pushBusy = false; }
 }
 setInterval(() => pushTick(), 60000).unref();
-function pushView(pid) { const st = pushState(pid); return { on: st.on, time: st.time, devices: pq.of.all(pid).length, lastSent: st.last || null, key: VAPID.publicKey }; }
+function pushView(pid) { const st = pushState(pid); return { on: st.on, time: st.time, until: st.until, every: st.every, devices: pq.of.all(pid).length, lastSent: st.last || null, lastAt: st.lastTs || null, key: VAPID.publicKey }; }
 const SUB_OK = sub => {
   try {
     const u = new URL(sub.endpoint); if (!(u.protocol === "https:" || (PUSH_HTTP && u.protocol === "http:")) || String(sub.endpoint).length > 600) return false;
@@ -1657,7 +1673,7 @@ const server = http.createServer(async (req, res) => {
 
     /* Ab hier nur für Eltern */
     if (p === "/" || p.startsWith("/api/admin/")) {
-      if (!scope && limited(ip, "admin", 120, 60000)) return send(res, 429, { error: "Zu viele Anfragen." });
+      if (!scope && limited(ip, "admin", ADMIN_RATE, 60000)) return send(res, 429, { error: "Zu viele Anfragen." });
       if (!scope && !adminOk(req)) {
         if (limited(ip, "authfail", 10, 600000)) return send(res, 429, { error: "Zu viele Versuche." });
         return send(res, 401, "Anmeldung nötig", { "WWW-Authenticate": 'Basic realm="Wordy Lernfortschritt", charset="UTF-8"' });
@@ -1860,8 +1876,16 @@ const server = http.createServer(async (req, res) => {
         if (m[2] === "push" && req.method === "GET") return send(res, 200, pushView(pid));
         if (m[2] === "push" && req.method === "POST") {
           const b = await readJson(req), st = pushState(pid);
+          if (b.action === "startnow") {   // sofort senden, danach alle N Stunden im Zeitfenster
+            const pl2 = q.player.get(pid), t = pushTodayInfo(pid), n = await pushSendTo(pid, pushMessage(pid, pl2.name, t.streak, Math.floor(Date.now() / 3600000)));
+            st.on = true; st.lastTs = Date.now(); st.last = dayOf(Date.now()); pushSave(pid, st);
+            return send(res, 200, Object.assign(pushView(pid), { sent: n }));
+          }
           if (typeof b.on === "boolean") st.on = b.on;
-          if (/^([01]\d|2[0-3]):[0-5]\d$/.test(b.time || "")) st.time = b.time;
+          if (TIME_RE.test(b.time || "")) st.time = b.time;
+          if (TIME_RE.test(b.until || "")) st.until = b.until;
+          if (b.every != null) { const ev = Math.round(+b.every); if (ev >= 0 && ev <= 12) st.every = ev; }
+          if (st.until <= st.time) return send(res, 400, { error: "Das Ende des Zeitfensters muss nach dem Beginn liegen." });
           pushSave(pid, st); return send(res, 200, pushView(pid));
         }
         if (m[2] === "weekplan" && req.method === "GET") return send(res, 200, weekPlanOf(pid));
