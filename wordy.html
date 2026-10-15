@@ -1141,7 +1141,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.102.2";window.WORDY_BUILD="aea039328b";</script>
+<script>window.WORDY_VERSION="2.102.3";window.WORDY_BUILD="62a9e4baab";</script>
 </head>
 <body>
 <div id="app">
@@ -7633,18 +7633,22 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
      Die Länge des Vorlaufs ist unter Setup einstellbar (Standard 500 ms). */
   var lastSpoke = 0;
   function speechLead() { var v = S.state.settings.speechLead; return v == null ? 500 : v; }
-  /* Wärmt die Ausgabe mit einem echten, aber unhörbaren Wort an (Lautstärke fast 0; bei exakt 0 überspringen
-     manche Stimmen die Ausgabe). done() läuft, sobald es fertig ist oder spätestens nach maxMs. */
-  function primeSpeech(done, maxMs) {
-    var synth = window.speechSynthesis, fired = false;
-    function fin() { if (fired) return; fired = true; if (done) setTimeout(done, 40); }
+  /* Wärmt die Ausgabe an, ohne etwas zu sagen: Früher wurde dafür das Wort „Okay“ mit Lautstärke 0,001 gesprochen. Viele Handy-Stimmen
+     ignorieren die Lautstärke, dann war ein abgehacktes „OK“ in der Standardstimme zu hören, bevor die gewählte Stimme die Aufgabe vorlas.
+     Jetzt ist der Wärm-Text nur ein Punkt (wird nicht gesprochen), mit derselben Stimme und Sprache wie die eigentliche Ausgabe (ref).
+     done() läuft nach dem Vorlauf (ms), mindestens nach dem Ende des stillen Textes. */
+  function primeSpeech(done, ms, ref) {
+    var synth = window.speechSynthesis, fired = false, t0 = Date.now(), lead = Math.max(0, ms || 0);
+    function fin() { if (fired) return; fired = true; if (done) setTimeout(done, Math.max(40, lead - (Date.now() - t0))); }
     if (!synth) return fin();
     try {
-      var w = new SpeechSynthesisUtterance("Okay");
-      w.volume = 0.001; w.rate = 3;
+      var w = new SpeechSynthesisUtterance(".");
+      w.volume = 0.001; w.rate = 2;
+      if (ref && ref.voice) w.voice = ref.voice;
+      if (ref && ref.lang) w.lang = ref.lang;
       w.onend = fin; w.onerror = fin;
       synth.speak(w);
-      setTimeout(fin, maxMs || 500);
+      setTimeout(fin, Math.min(lead || 300, 600));
     } catch (e) { fin(); }
   }
   /* Englischen Text für die Sprachausgabe aufbereiten: Abkürzungen ausschreiben, Klammern und Schrägstriche glätten */
@@ -7673,7 +7677,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (!S.state.settings.audio || !window.speechSynthesis) return false;
     try {
       var synth = window.speechSynthesis, now = Date.now();
-      var busy = synth.speaking || synth.pending, cold = !busy && (forceCold || now - lastSpoke > 8000);
+      var busy = synth.speaking || synth.pending, cold = !busy && (forceCold || now - lastSpoke > 30000);
       if (busy) synth.cancel();
       var de = lang === "de";
       var u = new SpeechSynthesisUtterance(de ? String(text) : speechClean(String(text)).replace(/^to\s+/i, ""));
@@ -7686,7 +7690,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       lastSpoke = now; keepUtt = u;   // Referenz halten: Chrome/Android feuert onend sonst nicht immer
       var lead = speechLead();
       if (busy) setTimeout(function () { synth.speak(u); }, 150);
-      else if (cold && lead > 0) primeSpeech(function () { synth.speak(u); }, lead);
+      else if (cold && lead > 0) primeSpeech(function () { synth.speak(u); }, lead, u);
       else synth.speak(u);
       return true;
     } catch (e) { return false; }
