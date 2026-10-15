@@ -1141,7 +1141,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.102.1";window.WORDY_BUILD="9b03c4bb49";</script>
+<script>window.WORDY_VERSION="2.102.2";window.WORDY_BUILD="aea039328b";</script>
 </head>
 <body>
 <div id="app">
@@ -5866,7 +5866,8 @@ window.VERBS = [
         if (sb) logCoins("serie", sb, state.streak.count + " Tage am Stück!");
       }
     }
-    if (res.items >= 8 && res.correct === res.items) {
+    var complete = res.complete !== false;   // false = abgebrochen: Zeit, Antworten und XP zählen, Abschluss-Belohnungen (Daily Challenge, Bonus-Runden, Abzeichen für fehlerfreie Runde) nicht
+    if (complete && res.items >= 8 && res.correct === res.items) {
       if (state.badges.indexOf("clean") < 0) { state.badges.push("clean"); rewards.badges.push(BADGES.filter(function (b) { return b.id === "clean"; })[0]); }
     }
     if ((res.maxChain || 0) >= 15 && state.badges.indexOf("chain15") < 0) {
@@ -5876,7 +5877,7 @@ window.VERBS = [
     rewards.missions.forEach(function (m) { rewards.coins += m.coins; });
     rewards.parts = foldParts();
     /* Daily Challenge: die erste gemischte Runde des Tages (mind. 8 Aufgaben) gibt einmalig einen Bonus */
-    if (res.daily && res.items >= 8 && !d.chal) {
+    if (complete && res.daily && res.items >= 8 && !d.chal) {
       d.chal = 1; var bc = boost(10); addCoins(bc); addCl("ziel", bc); rewards.coins += bc; rewards.challenge = bc;
       rewards.parts.push({ c: bc, t: "Daily-Challenge-Bonus" });
       /* Challenge-Serie: Tage in Folge mit geschaffener Daily Challenge, Zusatzbonus bei 3, 7, 14 und 30 */
@@ -5890,7 +5891,7 @@ window.VERBS = [
       }
     }
     /* Bonus-Runden: nach der Daily Challenge gibt jede weitere gemischte Runde (mind. 8 Aufgaben, mind. 60 % richtig) +5, höchstens 3 am Tag */
-    else if (res.daily && d.chal && res.items >= 8 && res.correct >= res.items * 0.6 && (d.xtra || 0) < XTRA_MAX) {
+    else if (complete && res.daily && d.chal && res.items >= 8 && res.correct >= res.items * 0.6 && (d.xtra || 0) < XTRA_MAX) {
       d.xtra = (d.xtra || 0) + 1; var xc = boost(XTRA_COINS); addCoins(xc); addCl("ziel", xc); rewards.coins += xc; rewards.extra = { coins: xc, n: d.xtra, left: XTRA_MAX - d.xtra };
       rewards.parts.push({ c: xc, t: "Bonus-Runde" });
     }
@@ -9891,14 +9892,16 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     SS.ended = true;
     var sec = Math.round((Date.now() - SS.start) / 1000);
     if (reason === "done" && SS.planned) S.recordPace(sec, SS.planned);
-    var rw = S.finishSession({ items: SS.items, correct: SS.correct, sec: sec, maxChain: SS.maxChain, newSeen: SS.newSeen, deep: SS.deep || 0, daily: SS.mode === "mix" || !!SS.cls, boxSolved: SS.boxSolved, mastered: SS.mastered, sentOk: SS.sentOk });
+    var rw = S.finishSession({ items: SS.items, correct: SS.correct, sec: sec, maxChain: SS.maxChain, newSeen: SS.newSeen, deep: SS.deep || 0, daily: SS.mode === "mix" || !!SS.cls, boxSolved: SS.boxSolved, mastered: SS.mastered, sentOk: SS.sentOk, complete: reason === "done" });
     if (reason === "done" && lastStartOpts) planComplete({ act: "start", mode: lastStartOpts.mode || (lastStartOpts.focus ? "focus" : "mix"), unit: lastStartOpts.unit || null, focus: lastStartOpts.focus || null });
     var st = S.state, acc = SS.items ? Math.round(SS.correct * 100 / SS.items) : 0;
-    var head = reason === "hearts" ? "Kurze Pause" : SS.correct === SS.items && SS.items > 3 ? "Fehlerfrei!" : "Runde geschafft";
+    var done = reason === "done";   // nur komplett gemachte Runden zählen als geschafft (Challenge, Münzen, Sterne)
+    var head = reason === "hearts" ? "Kurze Pause" : !done ? "Runde beendet" : SS.correct === SS.items && SS.items > 3 ? "Fehlerfrei!" : "Runde geschafft";
     var msg = reason === "hearts"
-      ? "Die Herzen sind alle. Dein Fortschritt ist gespeichert – die Herzen füllen sich von selbst wieder auf."
+      ? "Die Herzen sind alle. Dein Fortschritt ist gespeichert – die Herzen füllen sich von selbst wieder auf. Die Runde zählt nicht als geschafft."
+      : !done ? "Abgebrochen: Deine Antworten und die XP bleiben, aber die Runde zählt nicht als geschafft. Für Challenge, Bonus und Münzen musst du sie zu Ende spielen."
       : acc >= 90 ? "Das saß. Weiter so." : acc >= 70 ? "Solide Runde. Die Wackelkandidaten kommen bald wieder." : "Schwierige Wörter dabei – die landen jetzt in der Fehlerkartei und kommen häufiger dran.";
-    var good = reason !== "hearts";
+    var good = done;
     var perfect = good && SS.correct === SS.items && SS.items > 3;
     var stars = !good ? 0 : acc >= 90 ? 3 : acc >= 70 ? 2 : 1;
     var pr = SS.station && reason === "done" ? S.pathComplete(SS.station.id, stars) : null;
@@ -11288,10 +11291,11 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var sec = Math.round((Date.now() - run.start) / 1000);
     var m = MODES.filter(function (x) { return x.id === run.mode; })[0];
     var score = run.mode === "survival" ? run.correct : run.score;
-    var rec = best(run.mode), isRecord = score > rec.best;
+    var complete = reason !== "quit";   // abgebrochene Runden: XP für die Antworten, aber keine Münzen, kein Bestwert, kein Boss-Erfolg
+    var rec = best(run.mode), isRecord = complete && score > rec.best;
     if (!S.state.arena) S.state.arena = {};
-    S.state.arena[key(run.mode)] = { best: Math.max(rec.best, score), plays: rec.plays + 1 };
-    var coins = run.boss ? 0 : Math.min(40, Math.floor(score / 40)) + (isRecord ? 10 : 0);   // Boss-Runden: Münzen nur über die Truhe (höchstens 25 je Boss)
+    if (complete) S.state.arena[key(run.mode)] = { best: Math.max(rec.best, score), plays: rec.plays + 1 };
+    var coins = !complete || run.boss ? 0 : Math.min(40, Math.floor(score / 40)) + (isRecord ? 10 : 0);   // Boss-Runden: Münzen nur über die Truhe (höchstens 25 je Boss)
     if (global.WordySync) { global.WordySync.sessionEnd({ sec: sec, items: run.items, correct: run.correct, mode: "arena", sub: run.mode, score: score, coins: coins, end: reason }); global.WordySync.ctx = null; }
     S.rollDay();
     var left = Math.max(0, 30 - (S.state.daily.arenaCoins || 0));   // Tageslimit, damit dieselben Wörter nicht endlos Münzen bringen
@@ -11300,8 +11304,8 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     coins = S.boost(coins);
     S.addCoins(coins);
     S.addXp(Math.min(60, Math.round(score / 8)));
-    var boss = run.boss && global.VTUI && global.VTUI.bossFinish ? global.VTUI.bossFinish(run.boss, run.correct) : null;
-    var rw = S.finishSession({ items: run.items, correct: run.correct, sec: sec, maxChain: run.maxCombo, newSeen: 0, boxSolved: run.cleared, mastered: 0, sentOk: 0, arena: true });
+    var boss = complete && run.boss && global.VTUI && global.VTUI.bossFinish ? global.VTUI.bossFinish(run.boss, run.correct) : null;
+    var rw = S.finishSession({ items: run.items, correct: run.correct, sec: sec, maxChain: run.maxCombo, newSeen: 0, boxSolved: run.cleared, mastered: 0, sentOk: 0, arena: true, complete: complete });
     var fresh = [];
     function give(id) {
       if (S.state.badges.indexOf(id) < 0) {
@@ -11313,7 +11317,8 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     give("arena1");
     if (run.maxCombo >= 15) give("combo15");
     var acc = run.items ? Math.round(run.correct * 100 / run.items) : 0;
-    var head = boss ? (boss.pass ? "Boss besiegt!" : "Knapp daneben – noch ein Versuch")
+    var head = !complete ? "Runde beendet"
+      : boss ? (boss.pass ? "Boss besiegt!" : "Knapp daneben – noch ein Versuch")
       : reason === "cleared" ? "Kartei leer geräumt!"
       : isRecord ? "Neuer Bestwert!"
       : reason === "dead" ? "Erwischt."
@@ -11334,7 +11339,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       '<div><b class="tnum">' + Math.max(rec.best, score) + '</b><span>Bestwert</span></div>' +
       '</div>' +
       (run.cfg && run.cfg.duel ? '<div id="arDuel" class="ar-duel">' + esc(run.cfg.duel.wait || "Ergebnis wird übertragen …") + '</div>' : '') +
-      '<p class="ar-note">' + (run.boss ? (boss && boss.pass ? "Die Münzen gibt es in der Truhe" : "Schaffst du das Ziel, wartet eine Truhe") : coins ? "🪙 " + coins + " Münzen" + (capped ? " (Tageslimit der Arena erreicht)" : "") : (capped ? "Arena-Münzen für heute sind voll – lerne neue Wörter für mehr" : "Keine Münzen diesmal")) +
+      '<p class="ar-note">' + (run.boss ? (boss && boss.pass ? "Die Münzen gibt es in der Truhe" : "Schaffst du das Ziel, wartet eine Truhe") : coins ? "🪙 " + coins + " Münzen" + (capped ? " (Tageslimit der Arena erreicht)" : "") : (capped ? "Arena-Münzen für heute sind voll – lerne neue Wörter für mehr" : (complete ? "Keine Münzen diesmal" : "Abgebrochen: keine Münzen, die XP für deine Antworten bleiben"))) +
       (boss ? " · Boss: " + run.correct + " von " + run.boss.need + " richtig nötig" + (boss.pass ? " " + "★".repeat(boss.stars) : "") : "") +
       (rw.goalReached ? " · Tagesziel erreicht" : "") +
       rw.missions.filter(function (x) { return x.type === "arena"; }).map(function (x) { return " · Mission geschafft: +" + x.coins + " 🪙"; }).join("") +
@@ -12129,23 +12134,24 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (!G || G.done) return; G.done = true; if (G.sh) { G.sh.over = true; cancelAnimationFrame(G.sh.raf); }
     if (G.id === "letters" && G.ls) G.items = G.words.length;
     var m = GAMES.filter(function (x) { return x.id === G.id; })[0], sec = Math.round((Date.now() - G.start) / 1000);
-    var rec = best(G.id), score = G.score, isRecord = score > rec.best;
+    var complete = reason !== "quit";   // abgebrochen: XP für die Antworten, aber keine Münzen und kein Bestwert
+    var rec = best(G.id), score = G.score, isRecord = complete && score > rec.best;
     if (!S.state.arena) S.state.arena = {};
-    S.state.arena[key(G.id)] = { best: Math.max(rec.best, score), plays: rec.plays + 1 };
-    var coins = Math.min(40, Math.floor(score / 40)) + (isRecord && rec.plays > 0 ? 10 : 0);
+    if (complete) S.state.arena[key(G.id)] = { best: Math.max(rec.best, score), plays: rec.plays + 1 };
+    var coins = !complete ? 0 : Math.min(40, Math.floor(score / 40)) + (isRecord && rec.plays > 0 ? 10 : 0);
     if (G.items === 0) coins = 0;
     if (global.WordySync) { global.WordySync.sessionEnd({ sec: sec, items: G.items, correct: G.correct, mode: "arena", sub: G.id, score: score, coins: coins, end: reason }); global.WordySync.ctx = null; }
     S.rollDay();
     var left = Math.max(0, 30 - (S.state.daily.arenaCoins || 0)), capped = coins > left; coins = Math.min(coins, left);
     S.state.daily.arenaCoins = (S.state.daily.arenaCoins || 0) + coins;
     coins = S.boost(coins); S.addCoins(coins); S.addXp(Math.min(60, Math.round(score / 8)));
-    var rw = S.finishSession({ items: G.items, correct: G.correct, sec: sec, maxChain: G.maxStreak, newSeen: 0, boxSolved: 0, mastered: 0, sentOk: 0, arena: true });
+    var rw = S.finishSession({ items: G.items, correct: G.correct, sec: sec, maxChain: G.maxStreak, newSeen: 0, boxSolved: 0, mastered: 0, sentOk: 0, arena: true, complete: complete });
     var acc = G.items ? Math.round(G.correct * 100 / G.items) : 0;
     el.innerHTML = '<div class="ar-end"><div class="ar-endicon">' + (isRecord && rec.plays > 0 ? "🏆" : esc(m.icon)) + '</div>' +
       '<h1>' + (reason === "quit" ? "Runde beendet" : isRecord && rec.plays > 0 ? "Neuer Bestwert!" : G.correct === G.items && G.items ? "Alles geschafft!" : "Geschafft!") + '</h1>' +
       '<div class="ar-big tnum">' + score + ' Punkte</div>' +
       '<div class="ar-stats"><div><b class="tnum">' + G.correct + '</b><span>richtig</span></div><div><b class="tnum">' + acc + '%</b><span>Trefferquote</span></div><div><b class="tnum">' + (G.id === "kreuz" ? G.hints : G.maxStreak) + '</b><span>' + (G.id === "kreuz" ? "Tipps" : "beste Serie") + '</span></div><div><b class="tnum">' + Math.max(rec.best, score) + '</b><span>Bestwert</span></div></div>' +
-      '<p class="ar-note">' + (coins ? "🪙 " + coins + " Münzen" + (capped ? " (Tageslimit erreicht)" : "") : (capped ? "Tageslimit der Spiele erreicht" : "Diesmal keine Münzen")) + (rw.goalReached ? " · Tagesziel erreicht" : "") + '</p>' +
+      '<p class="ar-note">' + (coins ? "🪙 " + coins + " Münzen" + (capped ? " (Tageslimit erreicht)" : "") : (capped ? "Tageslimit der Spiele erreicht" : (complete ? "Diesmal keine Münzen" : "Abgebrochen: keine Münzen, die XP bleiben"))) + (rw.goalReached ? " · Tagesziel erreicht" : "") + '</p>' +
       '<div class="ar-endbtns"><button class="ar-btn" data-g="again">Noch mal</button><button class="ar-btn ghost" data-g="exit">Zurück</button></div></div>';
     S.save(true);
     if (global.VTUI && global.VTUI.refreshHeader) global.VTUI.refreshHeader();
@@ -12364,21 +12370,22 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   function finish() {
     if (!L || L.done) return; L.done = true;
     var t = L.t, r = rec(t.id), sec = Math.round((Date.now() - L.start) / 1000), items = L.right + L.wrong, correct = L.right;
-    r.lessons++; r.best = Math.max(r.best || 0, L.score); r.last = Date.now();
-    var coins = Math.min(12, Math.floor(L.score / 8));
+    var complete = !L.quit;   // abgebrochene Lektion: XP für die Antworten, aber keine Münzen und keine Lektion gezählt
+    if (complete) { r.lessons++; r.best = Math.max(r.best || 0, L.score); r.last = Date.now(); }
+    var coins = complete ? Math.min(12, Math.floor(L.score / 8)) : 0;
     if (global.WordySync) { global.WordySync.sessionEnd({ sec: sec, items: items, correct: correct, mode: "arena", sub: "grammar:" + t.id, score: L.score, coins: coins, end: L.quit ? "quit" : "done" }); global.WordySync.ctx = null; }
     S.rollDay();
     var left = Math.max(0, 30 - (S.state.daily.arenaCoins || 0)), capped = coins > left; coins = Math.min(coins, left);
     S.state.daily.arenaCoins = (S.state.daily.arenaCoins || 0) + coins;
     coins = S.boost(coins); S.addCoins(coins); S.addXp(Math.min(40, Math.round(L.score / 2)));
-    var rw = S.finishSession({ items: items, correct: correct, sec: sec, maxChain: L.maxStreak, newSeen: 0, boxSolved: 0, mastered: 0, sentOk: 0, arena: true });
+    var rw = S.finishSession({ items: items, correct: correct, sec: sec, maxChain: L.maxStreak, newSeen: 0, boxSolved: 0, mastered: 0, sentOk: 0, arena: true, complete: complete });
     var info = list().filter(function (x) { return x.id === t.id; })[0], acc = items ? Math.round(correct * 100 / items) : 0;
     var pr = null, stars = L.first >= L.orig * 0.85 ? 3 : L.first >= L.orig * 0.6 ? 2 : 1;   // Lernpfad: Station geschafft, Sterne nach „gleich richtig“
     if (L.opts && L.opts.station && !L.quit) pr = S.pathComplete(L.opts.station, stars);
-    el.innerHTML = '<div class="ar-end"><div class="ar-endicon">' + (L.wrong === 0 ? "🏆" : esc(t.icon)) + '</div><h1>' + (L.wrong === 0 ? "Alles richtig!" : "Lektion geschafft!") + '</h1>' +
+    el.innerHTML = '<div class="ar-end"><div class="ar-endicon">' + (L.wrong === 0 ? "🏆" : esc(t.icon)) + '</div><h1>' + (!complete ? "Lektion beendet" : L.wrong === 0 ? "Alles richtig!" : "Lektion geschafft!") + '</h1>' +
       '<div class="ar-big tnum">' + L.score + ' Punkte</div>' +
       '<div class="ar-stats"><div><b class="tnum">' + L.first + '/' + L.orig + '</b><span>gleich richtig</span></div><div><b class="tnum">' + acc + '%</b><span>Trefferquote</span></div><div><b class="tnum">' + info.pct + '%</b><span>Thema sitzt</span></div><div><b class="tnum">' + r.lessons + '</b><span>Lektionen</span></div></div>' +
-      (pr ? '<p class="ar-note"><b>Lernpfad: Station geschafft</b> ' + "★".repeat(stars) + "☆".repeat(3 - stars) + (pr.advanced ? "" : " (Wiederholung)") + '</p>' : "") + '<p class="ar-note">' + (coins ? "🪙 " + coins + " Münzen" + (capped ? " (Tageslimit erreicht)" : "") : "Diesmal keine Münzen") + (rw.goalReached ? " · Tagesziel erreicht" : "") + '</p>' +
+      (pr ? '<p class="ar-note"><b>Lernpfad: Station geschafft</b> ' + "★".repeat(stars) + "☆".repeat(3 - stars) + (pr.advanced ? "" : " (Wiederholung)") + '</p>' : "") + '<p class="ar-note">' + (coins ? "🪙 " + coins + " Münzen" + (capped ? " (Tageslimit erreicht)" : "") : (complete ? "Diesmal keine Münzen" : "Abgebrochen: keine Münzen, die XP für deine Antworten bleiben")) + (rw.goalReached ? " · Tagesziel erreicht" : "") + '</p>' +
       '<div class="ar-endbtns">' + (L.opts && L.opts.station ? '<button class="ar-btn" data-gr="exit">Weiter auf dem Pfad</button>' : '<button class="ar-btn" data-gr="again">Noch eine Lektion</button><button class="ar-btn ghost" data-gr="exit">Zurück</button>') + '</div></div>';
     S.save(true);
     if (global.VTUI && global.VTUI.refreshHeader) global.VTUI.refreshHeader();

@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.102.2 – 2026-10-15
+- **Fehler behoben: Abbrechen zählte als geschafft**: Wer die Daily Challenge (oder jede gemischte Runde) nach mindestens 8 Aufgaben abbrach, bekam die Challenge des Tages, den Challenge-Bonus, die Challenge-Serie und Bonus-Runden gutgeschrieben. Jetzt gilt für **alle Übungen**: Nur komplett gespielte Runden zählen als geschafft. Bei Abbruch (oder wenn die Herzen alle sind) bleiben **Zeit, Antworten und XP für die Antworten** erhalten, es gibt aber **keine Challenge, keine Münzen-Boni, keinen Stern, kein Abzeichen für fehlerfreie Runde**. Arena-Spiele und Wortspiele: bei Abbruch keine Münzen, kein Bestwert und keine gezählte Spielrunde; Boss-Runden gelten bei Abbruch nicht als bestanden. Grammatik-Lektion: bei Abbruch keine Münzen und keine gezählte Lektion (XP bleiben). Die Abschlussseite sagt „Runde beendet“ bzw. „Lektion beendet“ und erklärt es. Hinweis: Missionen und das Tagesziel richten sich weiter nach der geübten Zeit bzw. den Antworten, nicht nach dem Rundenabschluss. Nur App-Änderung.
+
 ## 2.102.1 – 2026-10-15
 - **Monatspass: Lesbarkeit**: Im hellen Modus standen „Geheimes Geschenk“ und „Sammel-Set“ als weiße Schrift auf hellem Grund. Die beiden Karten haben im Pass jetzt einen dunklen, leicht durchscheinenden Grund mit heller Schrift (in allen Designs und im Dunkelmodus gleich lesbar). Nur App-Änderung.
 

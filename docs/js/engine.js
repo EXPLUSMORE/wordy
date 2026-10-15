@@ -1065,7 +1065,8 @@
         if (sb) logCoins("serie", sb, state.streak.count + " Tage am Stück!");
       }
     }
-    if (res.items >= 8 && res.correct === res.items) {
+    var complete = res.complete !== false;   // false = abgebrochen: Zeit, Antworten und XP zählen, Abschluss-Belohnungen (Daily Challenge, Bonus-Runden, Abzeichen für fehlerfreie Runde) nicht
+    if (complete && res.items >= 8 && res.correct === res.items) {
       if (state.badges.indexOf("clean") < 0) { state.badges.push("clean"); rewards.badges.push(BADGES.filter(function (b) { return b.id === "clean"; })[0]); }
     }
     if ((res.maxChain || 0) >= 15 && state.badges.indexOf("chain15") < 0) {
@@ -1075,7 +1076,7 @@
     rewards.missions.forEach(function (m) { rewards.coins += m.coins; });
     rewards.parts = foldParts();
     /* Daily Challenge: die erste gemischte Runde des Tages (mind. 8 Aufgaben) gibt einmalig einen Bonus */
-    if (res.daily && res.items >= 8 && !d.chal) {
+    if (complete && res.daily && res.items >= 8 && !d.chal) {
       d.chal = 1; var bc = boost(10); addCoins(bc); addCl("ziel", bc); rewards.coins += bc; rewards.challenge = bc;
       rewards.parts.push({ c: bc, t: "Daily-Challenge-Bonus" });
       /* Challenge-Serie: Tage in Folge mit geschaffener Daily Challenge, Zusatzbonus bei 3, 7, 14 und 30 */
@@ -1089,7 +1090,7 @@
       }
     }
     /* Bonus-Runden: nach der Daily Challenge gibt jede weitere gemischte Runde (mind. 8 Aufgaben, mind. 60 % richtig) +5, höchstens 3 am Tag */
-    else if (res.daily && d.chal && res.items >= 8 && res.correct >= res.items * 0.6 && (d.xtra || 0) < XTRA_MAX) {
+    else if (complete && res.daily && d.chal && res.items >= 8 && res.correct >= res.items * 0.6 && (d.xtra || 0) < XTRA_MAX) {
       d.xtra = (d.xtra || 0) + 1; var xc = boost(XTRA_COINS); addCoins(xc); addCl("ziel", xc); rewards.coins += xc; rewards.extra = { coins: xc, n: d.xtra, left: XTRA_MAX - d.xtra };
       rewards.parts.push({ c: xc, t: "Bonus-Runde" });
     }

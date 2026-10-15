@@ -337,10 +337,11 @@
     var sec = Math.round((Date.now() - run.start) / 1000);
     var m = MODES.filter(function (x) { return x.id === run.mode; })[0];
     var score = run.mode === "survival" ? run.correct : run.score;
-    var rec = best(run.mode), isRecord = score > rec.best;
+    var complete = reason !== "quit";   // abgebrochene Runden: XP für die Antworten, aber keine Münzen, kein Bestwert, kein Boss-Erfolg
+    var rec = best(run.mode), isRecord = complete && score > rec.best;
     if (!S.state.arena) S.state.arena = {};
-    S.state.arena[key(run.mode)] = { best: Math.max(rec.best, score), plays: rec.plays + 1 };
-    var coins = run.boss ? 0 : Math.min(40, Math.floor(score / 40)) + (isRecord ? 10 : 0);   // Boss-Runden: Münzen nur über die Truhe (höchstens 25 je Boss)
+    if (complete) S.state.arena[key(run.mode)] = { best: Math.max(rec.best, score), plays: rec.plays + 1 };
+    var coins = !complete || run.boss ? 0 : Math.min(40, Math.floor(score / 40)) + (isRecord ? 10 : 0);   // Boss-Runden: Münzen nur über die Truhe (höchstens 25 je Boss)
     if (global.WordySync) { global.WordySync.sessionEnd({ sec: sec, items: run.items, correct: run.correct, mode: "arena", sub: run.mode, score: score, coins: coins, end: reason }); global.WordySync.ctx = null; }
     S.rollDay();
     var left = Math.max(0, 30 - (S.state.daily.arenaCoins || 0));   // Tageslimit, damit dieselben Wörter nicht endlos Münzen bringen
@@ -349,8 +350,8 @@
     coins = S.boost(coins);
     S.addCoins(coins);
     S.addXp(Math.min(60, Math.round(score / 8)));
-    var boss = run.boss && global.VTUI && global.VTUI.bossFinish ? global.VTUI.bossFinish(run.boss, run.correct) : null;
-    var rw = S.finishSession({ items: run.items, correct: run.correct, sec: sec, maxChain: run.maxCombo, newSeen: 0, boxSolved: run.cleared, mastered: 0, sentOk: 0, arena: true });
+    var boss = complete && run.boss && global.VTUI && global.VTUI.bossFinish ? global.VTUI.bossFinish(run.boss, run.correct) : null;
+    var rw = S.finishSession({ items: run.items, correct: run.correct, sec: sec, maxChain: run.maxCombo, newSeen: 0, boxSolved: run.cleared, mastered: 0, sentOk: 0, arena: true, complete: complete });
     var fresh = [];
     function give(id) {
       if (S.state.badges.indexOf(id) < 0) {
@@ -362,7 +363,8 @@
     give("arena1");
     if (run.maxCombo >= 15) give("combo15");
     var acc = run.items ? Math.round(run.correct * 100 / run.items) : 0;
-    var head = boss ? (boss.pass ? "Boss besiegt!" : "Knapp daneben – noch ein Versuch")
+    var head = !complete ? "Runde beendet"
+      : boss ? (boss.pass ? "Boss besiegt!" : "Knapp daneben – noch ein Versuch")
       : reason === "cleared" ? "Kartei leer geräumt!"
       : isRecord ? "Neuer Bestwert!"
       : reason === "dead" ? "Erwischt."
@@ -383,7 +385,7 @@
       '<div><b class="tnum">' + Math.max(rec.best, score) + '</b><span>Bestwert</span></div>' +
       '</div>' +
       (run.cfg && run.cfg.duel ? '<div id="arDuel" class="ar-duel">' + esc(run.cfg.duel.wait || "Ergebnis wird übertragen …") + '</div>' : '') +
-      '<p class="ar-note">' + (run.boss ? (boss && boss.pass ? "Die Münzen gibt es in der Truhe" : "Schaffst du das Ziel, wartet eine Truhe") : coins ? "🪙 " + coins + " Münzen" + (capped ? " (Tageslimit der Arena erreicht)" : "") : (capped ? "Arena-Münzen für heute sind voll – lerne neue Wörter für mehr" : "Keine Münzen diesmal")) +
+      '<p class="ar-note">' + (run.boss ? (boss && boss.pass ? "Die Münzen gibt es in der Truhe" : "Schaffst du das Ziel, wartet eine Truhe") : coins ? "🪙 " + coins + " Münzen" + (capped ? " (Tageslimit der Arena erreicht)" : "") : (capped ? "Arena-Münzen für heute sind voll – lerne neue Wörter für mehr" : (complete ? "Keine Münzen diesmal" : "Abgebrochen: keine Münzen, die XP für deine Antworten bleiben"))) +
       (boss ? " · Boss: " + run.correct + " von " + run.boss.need + " richtig nötig" + (boss.pass ? " " + "★".repeat(boss.stars) : "") : "") +
       (rw.goalReached ? " · Tagesziel erreicht" : "") +
       rw.missions.filter(function (x) { return x.type === "arena"; }).map(function (x) { return " · Mission geschafft: +" + x.coins + " 🪙"; }).join("") +

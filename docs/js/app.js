@@ -2347,14 +2347,16 @@
     SS.ended = true;
     var sec = Math.round((Date.now() - SS.start) / 1000);
     if (reason === "done" && SS.planned) S.recordPace(sec, SS.planned);
-    var rw = S.finishSession({ items: SS.items, correct: SS.correct, sec: sec, maxChain: SS.maxChain, newSeen: SS.newSeen, deep: SS.deep || 0, daily: SS.mode === "mix" || !!SS.cls, boxSolved: SS.boxSolved, mastered: SS.mastered, sentOk: SS.sentOk });
+    var rw = S.finishSession({ items: SS.items, correct: SS.correct, sec: sec, maxChain: SS.maxChain, newSeen: SS.newSeen, deep: SS.deep || 0, daily: SS.mode === "mix" || !!SS.cls, boxSolved: SS.boxSolved, mastered: SS.mastered, sentOk: SS.sentOk, complete: reason === "done" });
     if (reason === "done" && lastStartOpts) planComplete({ act: "start", mode: lastStartOpts.mode || (lastStartOpts.focus ? "focus" : "mix"), unit: lastStartOpts.unit || null, focus: lastStartOpts.focus || null });
     var st = S.state, acc = SS.items ? Math.round(SS.correct * 100 / SS.items) : 0;
-    var head = reason === "hearts" ? "Kurze Pause" : SS.correct === SS.items && SS.items > 3 ? "Fehlerfrei!" : "Runde geschafft";
+    var done = reason === "done";   // nur komplett gemachte Runden zählen als geschafft (Challenge, Münzen, Sterne)
+    var head = reason === "hearts" ? "Kurze Pause" : !done ? "Runde beendet" : SS.correct === SS.items && SS.items > 3 ? "Fehlerfrei!" : "Runde geschafft";
     var msg = reason === "hearts"
-      ? "Die Herzen sind alle. Dein Fortschritt ist gespeichert – die Herzen füllen sich von selbst wieder auf."
+      ? "Die Herzen sind alle. Dein Fortschritt ist gespeichert – die Herzen füllen sich von selbst wieder auf. Die Runde zählt nicht als geschafft."
+      : !done ? "Abgebrochen: Deine Antworten und die XP bleiben, aber die Runde zählt nicht als geschafft. Für Challenge, Bonus und Münzen musst du sie zu Ende spielen."
       : acc >= 90 ? "Das saß. Weiter so." : acc >= 70 ? "Solide Runde. Die Wackelkandidaten kommen bald wieder." : "Schwierige Wörter dabei – die landen jetzt in der Fehlerkartei und kommen häufiger dran.";
-    var good = reason !== "hearts";
+    var good = done;
     var perfect = good && SS.correct === SS.items && SS.items > 3;
     var stars = !good ? 0 : acc >= 90 ? 3 : acc >= 70 ? 2 : 1;
     var pr = SS.station && reason === "done" ? S.pathComplete(SS.station.id, stars) : null;

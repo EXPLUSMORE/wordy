@@ -160,21 +160,22 @@
   function finish() {
     if (!L || L.done) return; L.done = true;
     var t = L.t, r = rec(t.id), sec = Math.round((Date.now() - L.start) / 1000), items = L.right + L.wrong, correct = L.right;
-    r.lessons++; r.best = Math.max(r.best || 0, L.score); r.last = Date.now();
-    var coins = Math.min(12, Math.floor(L.score / 8));
+    var complete = !L.quit;   // abgebrochene Lektion: XP für die Antworten, aber keine Münzen und keine Lektion gezählt
+    if (complete) { r.lessons++; r.best = Math.max(r.best || 0, L.score); r.last = Date.now(); }
+    var coins = complete ? Math.min(12, Math.floor(L.score / 8)) : 0;
     if (global.WordySync) { global.WordySync.sessionEnd({ sec: sec, items: items, correct: correct, mode: "arena", sub: "grammar:" + t.id, score: L.score, coins: coins, end: L.quit ? "quit" : "done" }); global.WordySync.ctx = null; }
     S.rollDay();
     var left = Math.max(0, 30 - (S.state.daily.arenaCoins || 0)), capped = coins > left; coins = Math.min(coins, left);
     S.state.daily.arenaCoins = (S.state.daily.arenaCoins || 0) + coins;
     coins = S.boost(coins); S.addCoins(coins); S.addXp(Math.min(40, Math.round(L.score / 2)));
-    var rw = S.finishSession({ items: items, correct: correct, sec: sec, maxChain: L.maxStreak, newSeen: 0, boxSolved: 0, mastered: 0, sentOk: 0, arena: true });
+    var rw = S.finishSession({ items: items, correct: correct, sec: sec, maxChain: L.maxStreak, newSeen: 0, boxSolved: 0, mastered: 0, sentOk: 0, arena: true, complete: complete });
     var info = list().filter(function (x) { return x.id === t.id; })[0], acc = items ? Math.round(correct * 100 / items) : 0;
     var pr = null, stars = L.first >= L.orig * 0.85 ? 3 : L.first >= L.orig * 0.6 ? 2 : 1;   // Lernpfad: Station geschafft, Sterne nach „gleich richtig“
     if (L.opts && L.opts.station && !L.quit) pr = S.pathComplete(L.opts.station, stars);
-    el.innerHTML = '<div class="ar-end"><div class="ar-endicon">' + (L.wrong === 0 ? "🏆" : esc(t.icon)) + '</div><h1>' + (L.wrong === 0 ? "Alles richtig!" : "Lektion geschafft!") + '</h1>' +
+    el.innerHTML = '<div class="ar-end"><div class="ar-endicon">' + (L.wrong === 0 ? "🏆" : esc(t.icon)) + '</div><h1>' + (!complete ? "Lektion beendet" : L.wrong === 0 ? "Alles richtig!" : "Lektion geschafft!") + '</h1>' +
       '<div class="ar-big tnum">' + L.score + ' Punkte</div>' +
       '<div class="ar-stats"><div><b class="tnum">' + L.first + '/' + L.orig + '</b><span>gleich richtig</span></div><div><b class="tnum">' + acc + '%</b><span>Trefferquote</span></div><div><b class="tnum">' + info.pct + '%</b><span>Thema sitzt</span></div><div><b class="tnum">' + r.lessons + '</b><span>Lektionen</span></div></div>' +
-      (pr ? '<p class="ar-note"><b>Lernpfad: Station geschafft</b> ' + "★".repeat(stars) + "☆".repeat(3 - stars) + (pr.advanced ? "" : " (Wiederholung)") + '</p>' : "") + '<p class="ar-note">' + (coins ? "🪙 " + coins + " Münzen" + (capped ? " (Tageslimit erreicht)" : "") : "Diesmal keine Münzen") + (rw.goalReached ? " · Tagesziel erreicht" : "") + '</p>' +
+      (pr ? '<p class="ar-note"><b>Lernpfad: Station geschafft</b> ' + "★".repeat(stars) + "☆".repeat(3 - stars) + (pr.advanced ? "" : " (Wiederholung)") + '</p>' : "") + '<p class="ar-note">' + (coins ? "🪙 " + coins + " Münzen" + (capped ? " (Tageslimit erreicht)" : "") : (complete ? "Diesmal keine Münzen" : "Abgebrochen: keine Münzen, die XP für deine Antworten bleiben")) + (rw.goalReached ? " · Tagesziel erreicht" : "") + '</p>' +
       '<div class="ar-endbtns">' + (L.opts && L.opts.station ? '<button class="ar-btn" data-gr="exit">Weiter auf dem Pfad</button>' : '<button class="ar-btn" data-gr="again">Noch eine Lektion</button><button class="ar-btn ghost" data-gr="exit">Zurück</button>') + '</div></div>';
     S.save(true);
     if (global.VTUI && global.VTUI.refreshHeader) global.VTUI.refreshHeader();
