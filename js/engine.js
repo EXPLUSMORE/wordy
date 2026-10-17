@@ -758,6 +758,7 @@
     if (boostActive()) v *= 2;
     var r0 = rankIdx(state.xp); state.xp += v; state.daily.xp += v;
     for (var i = r0 + 1, r1 = rankIdx(state.xp); i <= r1; i++) rankGift(i);
+    return v;   // tatsächlich gutgeschriebene XP (mit Booster), damit Runden sie melden können
   }
   /* Rangaufstieg: Münzen (50 + 10 je Rangstufe) und das günstigste Stück, das genau mit diesem Rang frei wird */
   function rankGift(i) {

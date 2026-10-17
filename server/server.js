@@ -352,7 +352,7 @@ function report(pid, days) {
   const now = Date.now(), from = now - days * 86400000;
   const evs = q.events.all(pid, now - Math.max(days, 15) * 86400000).map(r => ({ ts: r.ts, k: r.k, d: JSON.parse(r.d) }));
   const perDay = {};
-  const day = ts => (perDay[dayOf(ts)] = perDay[dayOf(ts)] || { date: dayOf(ts), sec: 0, items: 0, correct: 0, neu: 0, coins: 0, sessions: 0 });
+  const day = ts => (perDay[dayOf(ts)] = perDay[dayOf(ts)] || { date: dayOf(ts), sec: 0, items: 0, correct: 0, neu: 0, coins: 0, xp: 0, sessions: 0 });
   const bad = {}, sessions = [], buys = [];
   for (const e of evs) {
     const d = e.d;
@@ -365,8 +365,8 @@ function report(pid, days) {
         b.n++; b.last = e.ts;
       }
     } else if (e.k === "ss") {
-      const x = day(e.ts); x.sec += d.sec || 0; x.coins += d.coins || 0; x.sessions++;
-      sessions.push({ ts: e.ts, sec: d.sec || 0, items: d.items || 0, correct: d.correct || 0, mode: d.mode || "", sub: String(d.sub || "").slice(0, 40), score: d.score || 0, unit: d.unit || "", coins: d.coins || 0 });
+      const x = day(e.ts); x.sec += d.sec || 0; x.coins += d.coins || 0; x.xp += d.xp || 0; x.sessions++;
+      sessions.push({ ts: e.ts, sec: d.sec || 0, items: d.items || 0, correct: d.correct || 0, mode: d.mode || "", sub: String(d.sub || "").slice(0, 40), score: d.score || 0, unit: d.unit || "", coins: d.coins || 0, xp: d.xp == null ? null : d.xp });
     } else if (e.k === "buy") buys.push({ ts: e.ts, name: d.name || d.id, cost: d.cost || 0 });
   }
   const runsBy = {}, badBy = {};
@@ -377,14 +377,14 @@ function report(pid, days) {
   }
   const dayList = [];
   for (let i = days - 1; i >= 0; i--) {
-    const k = dayOf(now - i * 86400000), base = perDay[k] || { date: k, sec: 0, items: 0, correct: 0, neu: 0, coins: 0, sessions: 0 };
+    const k = dayOf(now - i * 86400000), base = perDay[k] || { date: k, sec: 0, items: 0, correct: 0, neu: 0, coins: 0, xp: 0, sessions: 0 };
     dayList.push(Object.assign({}, base, { runs: runsBy[k] || [], problems: Object.values(badBy[k] || {}).sort((a, b) => b.n - a.n).slice(0, 5) }));
   }
   /* Heute und laufende Kalenderwoche (Mo–So), unabhängig von der gewählten Zeitspanne */
   const todayK = dayOf(now), mon = mondayOf(todayK), sun = ymdAdd(mon, 6), pmon = ymdAdd(mon, -7), psun = ymdAdd(mon, -1);
-  const empty = k => ({ date: k, sec: 0, items: 0, correct: 0, neu: 0, coins: 0, sessions: 0 });
+  const empty = k => ({ date: k, sec: 0, items: 0, correct: 0, neu: 0, coins: 0, xp: 0, sessions: 0 });
   const dayAt = k => perDay[k] || empty(k);
-  const sumDays = list => list.reduce((a, x) => ({ sec: a.sec + x.sec, items: a.items + x.items, correct: a.correct + x.correct, neu: a.neu + x.neu, coins: a.coins + x.coins, sessions: a.sessions + x.sessions, activeDays: a.activeDays + (x.items > 0 ? 1 : 0) }), { sec: 0, items: 0, correct: 0, neu: 0, coins: 0, sessions: 0, activeDays: 0 });
+  const sumDays = list => list.reduce((a, x) => ({ sec: a.sec + x.sec, items: a.items + x.items, correct: a.correct + x.correct, neu: a.neu + x.neu, coins: a.coins + x.coins, xp: a.xp + x.xp, sessions: a.sessions + x.sessions, activeDays: a.activeDays + (x.items > 0 ? 1 : 0) }), { sec: 0, items: 0, correct: 0, neu: 0, coins: 0, xp: 0, sessions: 0, activeDays: 0 });
   const wdays = []; for (let i = 0; i < 7; i++) wdays.push(dayAt(ymdAdd(mon, i)));
   const pdays = []; for (let i = 0; i < 7; i++) pdays.push(dayAt(ymdAdd(pmon, i)));
   const topBad = (a, b) => { const m = {}; for (const e of evs) { const k = dayOf(e.ts); if ((e.k === "a" || e.k === "s") && e.d.g === 0 && e.d.id && k >= a && k <= b) { const x = m[e.d.id] = m[e.d.id] || Object.assign({ id: e.d.id, n: 0, last: 0 }, nameOf(e.d)); x.n++; x.last = e.ts; } }
@@ -414,7 +414,7 @@ function report(pid, days) {
   return {
     days: dayList, today: todayInfo, calWeek: weekInfo, units, problems: badList, sessions: sessions.slice(-25).reverse(), buys: buys.slice(-20).reverse(), meta: meta ? meta.d : null,
     metaTs: meta ? meta.ts : null,
-    totals: { sec: sum(x => x.sec), items: sum(x => x.items), correct: sum(x => x.correct), neu: sum(x => x.neu), activeDays: dayList.filter(x => x.items > 0).length },
+    totals: { sec: sum(x => x.sec), items: sum(x => x.items), correct: sum(x => x.correct), neu: sum(x => x.neu), xp: sum(x => x.xp), coins: sum(x => x.coins), activeDays: dayList.filter(x => x.items > 0).length },
     week: { sec: last7.reduce((a, x) => a + x.sec, 0), items: last7.reduce((a, x) => a + x.items, 0), correct: last7.reduce((a, x) => a + x.correct, 0), activeDays: last7.filter(x => x.items > 0).length },
     goals: weekGoals(pid), plans: plansOf(pid), backups: q.stateList.all(pid).map(stateMeta),
     events: c.n, lastEvent: c.last

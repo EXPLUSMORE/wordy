@@ -75,7 +75,7 @@
     try {   // Beiwerk (Note, Lernstand, Ton, Effekt) darf die Runde nie blockieren
       var bn = $("#arNote"); if (bn && run.boss) bn.textContent = noteText();
       if (w) { if (global.WordySync) global.WordySync.ctx = { mode: "arena" }; S.grade(w.id, 1); }            // Tempo zählt als sichere, nicht als tiefe Wiederholung
-      S.addXp(2);
+      run.xp = (run.xp || 0) + (S.addXp(2) || 0);
       flash("+" + pts, run.combo >= 5 ? "combo" : "ok");
       var pr = S.state.profile;
       if (S.state.settings.audio) global.VTC.sound(pr.snd, true);
@@ -342,14 +342,15 @@
     if (!S.state.arena) S.state.arena = {};
     if (complete) S.state.arena[key(run.mode)] = { best: Math.max(rec.best, score), plays: rec.plays + 1 };
     var coins = !complete || run.boss ? 0 : Math.min(40, Math.floor(score / 40)) + (isRecord ? 10 : 0);   // Boss-Runden: Münzen nur über die Truhe (höchstens 25 je Boss)
-    if (global.WordySync) { global.WordySync.sessionEnd({ sec: sec, items: run.items, correct: run.correct, mode: "arena", sub: run.mode, score: score, coins: coins, end: reason }); global.WordySync.ctx = null; }
+    S.rollDay();
+    var xpTotal = (run.xp || 0) + (S.addXp(Math.min(60, Math.round(score / 8))) || 0);   // XP der Runde: Treffer plus Punkte-Bonus
+    if (global.WordySync) { global.WordySync.sessionEnd({ sec: sec, items: run.items, correct: run.correct, mode: "arena", sub: run.mode, score: score, coins: coins, xp: xpTotal, end: reason }); global.WordySync.ctx = null; }
     S.rollDay();
     var left = Math.max(0, 30 - (S.state.daily.arenaCoins || 0));   // Tageslimit, damit dieselben Wörter nicht endlos Münzen bringen
     var capped = coins > left; coins = Math.min(coins, left);
     S.state.daily.arenaCoins = (S.state.daily.arenaCoins || 0) + coins;
     coins = S.boost(coins);
     S.addCoins(coins);
-    S.addXp(Math.min(60, Math.round(score / 8)));
     var boss = complete && run.boss && global.VTUI && global.VTUI.bossFinish ? global.VTUI.bossFinish(run.boss, run.correct) : null;
     var rw = S.finishSession({ items: run.items, correct: run.correct, sec: sec, maxChain: run.maxCombo, newSeen: 0, boxSolved: run.cleared, mastered: 0, sentOk: 0, arena: true, complete: complete });
     var fresh = [];
@@ -409,7 +410,7 @@
       if (run.cur && !run.locked && run.mode !== "hunt" && run.mode !== "match") q.unshift(run.cur);   // die offene Karte kommt beim Fortsetzen wieder
       var d = {
         mode: run.mode, score: run.score, combo: run.combo, maxCombo: run.maxCombo, items: run.items, correct: run.correct, wrong: run.wrong,
-        left: run.left, total: run.total, cap: run.cap, note: run.note, qTotal: run.qTotal, queue: q, round: run.round || 0,
+        xp: run.xp || 0, left: run.left, total: run.total, cap: run.cap, note: run.note, qTotal: run.qTotal, queue: q, round: run.round || 0,
         targets: run.targets, hits: run.hits, cleared: run.cleared, dir: run.dir, left5: run.left5, right5: run.right5,
         el: Date.now() - run.start, cfg: run.cfg ? { words: run.cfg.words || null, boss: run.cfg.boss || null } : null
       };
@@ -423,7 +424,7 @@
     var cfg = d.cfg, p = S.pools();
     run = {
       mode: d.mode, score: d.score, combo: d.combo, maxCombo: d.maxCombo, items: d.items, correct: d.correct, wrong: d.wrong,
-      start: Date.now() - (d.el || 0), left: d.left, total: d.total, cap: d.cap, queue: d.queue || [], round: d.round || 0, locked: false,
+      start: Date.now() - (d.el || 0), xp: d.xp || 0, left: d.left, total: d.total, cap: d.cap, queue: d.queue || [], round: d.round || 0, locked: false,
       all: cfg && cfg.words ? cfg.words.concat(p.all.filter(function (x) { return cfg.words.indexOf(x) < 0; })) : p.all,
       cfg: cfg, boss: cfg && cfg.boss || null, qTotal: d.qTotal || 7000, qLeft: d.qTotal || 7000, targets: d.targets || [], hits: d.hits || {}, cleared: d.cleared || 0, note: d.note || "",
       dir: d.dir, left5: d.left5, right5: d.right5, sel: null

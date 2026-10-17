@@ -9,6 +9,11 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.106.0 – 2026-10-17
+- **Dashboard: XP-Statistik**: Der Überblick zeigt jetzt neben den Münzen auch die XP (heute und Kalenderwoche, Wochenvergleich); die Tageszeilen im Verlauf nennen die XP des Tages. In allen Rundenlisten (heute, pro Tag, Letzte Runden) gibt es eine XP-Spalte. Neue Karte „XP und Münzen nach Aktivität“ im Reiter Aktivität: je Art (Gemischt, Sätze, Verben, Arena-Modi, Spiele, Grammatik) Runden, Zeit, XP, Anteil, XP pro Minute und Münzen, dazu eine Summe.
+- **App meldet XP für alle Runden**: Bisher kamen nur bei Lernrunden XP an. Jetzt melden auch Arena, Wortspiele und Grammatik-Lektionen ihre XP (inklusive Booster) an den Server. Ältere Runden haben keine XP-Angabe und stehen mit „–“ da.
+- **Server-Schritt nötig** (Dashboard-Anzeige): Server auf 2.106.0 aktualisieren (`sudo /opt/wordy/server/deploy.sh`), danach in der Dashboard-Fußzeile die Version prüfen. Ohne Update fehlen die XP-Spalten, die App läuft weiter.
+
 ## 2.105.0 – 2026-10-17
 - **Neu: 23 weitere Business-Einheiten (b-37 bis b-60 ohne die Muster-Einheit b-39)** mit Themen aus Handel, IT, Versicherung, Bank, Gastronomie und Hotel, Handwerk und Bau, Gesundheit und Pflege, Einzelhandel, Logistik, Verwaltung und Produktion: je 16 Wörter mit Beispielsatz und 4 Sätze für den Satzbau, insgesamt 384 Wörter und 96 Sätze. Stufen: Basis, Aufbau und Profi. Alles ist selbst formuliert (Herkunft `own`, CC BY-SA 4.0); die Häufigkeit ist nicht gegen NGSL/BSL belegt. Wörter, die es im Altbestand schon gibt, sind nicht doppelt. Bestehende Einheiten, Wort- und Satz-IDs bleiben unverändert. Server-Schritt nicht nötig.
 

@@ -108,6 +108,29 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
   function pct(a, b) { return b ? Math.round(a * 100 / b) + " %" : "–"; }
   /* Arena: welches Spiel gespielt wurde (sub) */
   var ARENA = { match: "Match-Rausch", blitz: "Blitzrunde", survival: "Letztes Herz", hunt: "Fehlerjagd", detective: "Wort-Detektiv", eisi: "Freezy", kreuz: "Xing", letters: "Letters", blast: "Blast", blast3d: "Blast 3D" };
+  function xpTxt(s) { return s.xp == null ? "–" : s.xp; }
+  /* Art ohne Punktzahl, damit gleiche Spiele zusammengezählt werden */
+  function kindLabel(s) {
+    if (s.mode !== "arena" || !s.sub) return MODE[s.mode] || s.mode || "Sonstiges";
+    return "Arena · " + (/^grammar:/.test(s.sub) ? "Grammatik" : (ARENA[s.sub] || s.sub));
+  }
+  /* XP und Münzen nach Aktivität über den gewählten Zeitraum (aus den Runden aller Tage) */
+  function kindCard(r, days) {
+    var by = {}, known = 0, all = 0;
+    r.days.forEach(function (d) { (d.runs || []).forEach(function (s) {
+      var k = kindLabel(s), x = by[k] = by[k] || { k: k, n: 0, sec: 0, xp: 0, coins: 0, xpN: 0 };
+      x.n++; x.sec += s.sec || 0; x.coins += s.coins || 0; all++; if (s.xp != null) { x.xp += s.xp; x.xpN++; known++; }
+    }); });
+    var list = Object.keys(by).map(function (k) { return by[k]; }).sort(function (a, b) { return b.xp - a.xp || b.n - a.n; });
+    var h = '<div class="card"><h2>XP und Münzen nach Aktivität (' + days + ' Tage)</h2>';
+    if (!list.length) return h + '<p class="muted small" style="margin:0">Noch keine Runden in diesem Zeitraum.</p></div>';
+    var tx = list.reduce(function (a, x) { return a + x.xp; }, 0), tc = list.reduce(function (a, x) { return a + x.coins; }, 0), ts = list.reduce(function (a, x) { return a + x.sec; }, 0);
+    h += '<table><tr><th>Aktivität</th><th class="n">Runden</th><th class="n">Zeit</th><th class="n">✨ XP</th><th class="n">Anteil</th><th class="n">XP/Min.</th><th class="n">🪙 Münzen</th></tr>' + list.map(function (x) {
+      return "<tr><td>" + esc(x.k) + '</td><td class="n">' + x.n + '</td><td class="n">' + fmtMin(x.sec) + '</td><td class="n">' + (x.xpN ? x.xp : "–") + '</td><td class="n">' + (x.xpN && tx ? Math.round(x.xp * 100 / tx) + " %" : "–") + '</td><td class="n">' + (x.xpN && x.sec >= 60 ? (x.xp * 60 / x.sec).toFixed(1).replace(".", ",") : "–") + '</td><td class="n">' + x.coins + "</td></tr>";
+    }).join("") + '<tr><th>Summe</th><th class="n">' + all + '</th><th class="n">' + fmtMin(ts) + '</th><th class="n">' + tx + '</th><th class="n"></th><th class="n">' + (ts >= 60 ? (tx * 60 / ts).toFixed(1).replace(".", ",") : "–") + '</th><th class="n">' + tc + "</th></tr></table>";
+    h += '<p class="small muted" style="margin:8px 0 0">Gezählt wird, was in Runden, Spielen und Lektionen verdient wurde; XP außerhalb davon (z. B. Belohnungen) fehlt.' + (known < all ? " Für " + (all - known) + (all - known === 1 ? " ältere Runde" : " ältere Runden") + " liegen keine XP vor (\"–\"); sie fehlen in der Summe." : "") + "</p></div>";
+    return h;
+  }
   function modeLabel(s) {
     var m = MODE[s.mode] || s.mode; if (s.mode !== "arena" || !s.sub) return m;
     var g = /^grammar:/.test(s.sub) ? "Grammatik" : (ARENA[s.sub] || s.sub);
@@ -317,10 +340,10 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
     var t = r.today, goal = (m.goalMin || 0) * 60, h = '<div class="card"><h2>Heute · ' + dLong(t.date) + "</h2>";
     if (!t.items && !t.sec) return h + '<p class="muted small" style="margin:0">Heute wurde noch nicht geübt.' + (goal ? " Tagesziel: " + m.goalMin + " Min." : "") + "</p></div>";
     h += '<div class="kpis">' + kpi(goal && t.sec < goal && Math.round(t.sec / 60) * 60 >= goal ? fmtExact(t.sec) : fmtMin(t.sec), "geübt" + (goal ? " · Ziel " + m.goalMin + " Min." : "")) +
-      kpi(t.items, "Aufgaben · " + pct(t.correct, t.items) + " richtig") + kpi(t.neu, "neue Wörter") + kpi("🪙 " + t.coins, t.sessions + (t.sessions === 1 ? " Runde" : " Runden")) + "</div>";
+      kpi(t.items, "Aufgaben · " + pct(t.correct, t.items) + " richtig") + kpi(t.neu, "neue Wörter") + kpi("🪙 " + t.coins, t.sessions + (t.sessions === 1 ? " Runde" : " Runden")) + kpi("✨ " + t.xp, "XP") + "</div>";
     if (goal) h += '<div class="mini" style="margin-top:10px"><i class="' + (t.sec >= goal ? "d" : "") + '" style="width:' + Math.min(100, Math.round(t.sec * 100 / goal)) + '%"></i></div><div class="small muted" style="margin-top:4px">' + (t.sec >= goal ? "Tagesziel geschafft ✅" : "Noch " + (goal - t.sec < 60 ? Math.ceil(goal - t.sec) + " Sek." : fmtMin(goal - t.sec)) + " bis zum Tagesziel") + "</div>";
-    if (t.runs.length) h += '<h3 style="margin:14px 0 4px;font-size:14px">Runden heute</h3><table><tr><th>Uhr</th><th>Art</th><th class="n">Dauer</th><th class="n">Aufgaben</th><th class="n">Richtig</th></tr>' + t.runs.map(function (s) {
-      return "<tr><td>" + new Date(s.ts).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" }) + "</td><td>" + esc(modeLabel(s)) + '</td><td class="n">' + fmtMin(s.sec) + '</td><td class="n">' + s.items + '</td><td class="n">' + pct(s.correct, s.items) + "</td></tr>";
+    if (t.runs.length) h += '<h3 style="margin:14px 0 4px;font-size:14px">Runden heute</h3><table><tr><th>Uhr</th><th>Art</th><th class="n">Dauer</th><th class="n">Aufgaben</th><th class="n">Richtig</th><th class="n">XP</th></tr>' + t.runs.map(function (s) {
+      return "<tr><td>" + new Date(s.ts).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" }) + "</td><td>" + esc(modeLabel(s)) + '</td><td class="n">' + fmtMin(s.sec) + '</td><td class="n">' + s.items + '</td><td class="n">' + pct(s.correct, s.items) + '</td><td class="n">' + xpTxt(s) + "</td></tr>";
     }).join("") + "</table>";
     if (t.problems.length) h += '<h3 style="margin:14px 0 4px;font-size:14px">Fehlerwörter heute</h3>' + probList(t.problems);
     return h + "</div>";
@@ -329,7 +352,7 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
     var w = r.calWeek, pv = w.prev, goal = (m.goalMin || 0) * 60, h = '<div class="card"><h2>Woche · ' + dLong(w.from) + " bis " + dLong(w.to) + "</h2>";
     h += '<div class="kpis">' + kpi(fmtMin(w.sec), w.activeDays + " von 7 Tagen aktiv" + delta(w.sec, pv.sec, fmtMin)) +
       kpi(w.items, "Aufgaben · " + pct(w.correct, w.items) + " richtig" + delta(w.items, pv.items, String)) +
-      kpi(w.neu, "neue Wörter" + delta(w.neu, pv.neu, String)) + kpi("🪙 " + w.coins, w.sessions + (w.sessions === 1 ? " Runde" : " Runden")) + "</div>";
+      kpi(w.neu, "neue Wörter" + delta(w.neu, pv.neu, String)) + kpi("🪙 " + w.coins, w.sessions + (w.sessions === 1 ? " Runde" : " Runden")) + kpi("✨ " + w.xp, "XP" + delta(w.xp, pv.xp, String)) + "</div>";
     var mx = Math.max.apply(null, w.days.map(function (d) { return d.sec; }).concat([goal, 60])), todayK = r.today.date;
     h += '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:14px;align-items:end;height:90px">' + w.days.map(function (d) {
       var hh = d.sec ? Math.max(6, Math.round(d.sec * 100 / mx)) : 3, ok = goal && d.sec >= goal, fut = d.date > todayK;
@@ -416,9 +439,9 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
         '<span class="small' + (has ? "" : " muted") + '" style="text-align:right">' + (has ? fmtMin(d.sec) : "–") + '</span><span class="small muted" style="text-align:right">' + (has ? d.items : "") + '</span><span class="small muted" style="text-align:right">' + (has ? pct(d.correct, d.items) : "") + "</span></summary>";
       var det = "";
       if (has) {
-        det = '<div class="small" style="padding:4px 0 10px 4px"><div class="muted">' + d.sessions + (d.sessions === 1 ? " Runde" : " Runden") + " · " + d.neu + (d.neu === 1 ? " neues Wort" : " neue Wörter") + " · 🪙 " + d.coins + "</div>" +
-          (d.runs.length ? "<table><tr><th>Uhr</th><th>Art</th><th class=\"n\">Dauer</th><th class=\"n\">Aufgaben</th><th class=\"n\">Richtig</th></tr>" + d.runs.slice().reverse().map(function (s) {
-            return "<tr><td>" + hhmm(s.ts) + "</td><td>" + esc(modeLabel(s)) + '</td><td class="n">' + fmtMin(s.sec) + '</td><td class="n">' + s.items + '</td><td class="n">' + pct(s.correct, s.items) + "</td></tr>";
+        det = '<div class="small" style="padding:4px 0 10px 4px"><div class="muted">' + d.sessions + (d.sessions === 1 ? " Runde" : " Runden") + " · " + d.neu + (d.neu === 1 ? " neues Wort" : " neue Wörter") + " · 🪙 " + d.coins + " · ✨ " + d.xp + " XP</div>" +
+          (d.runs.length ? "<table><tr><th>Uhr</th><th>Art</th><th class=\"n\">Dauer</th><th class=\"n\">Aufgaben</th><th class=\"n\">Richtig</th><th class=\"n\">XP</th></tr>" + d.runs.slice().reverse().map(function (s) {
+            return "<tr><td>" + hhmm(s.ts) + "</td><td>" + esc(modeLabel(s)) + '</td><td class="n">' + fmtMin(s.sec) + '</td><td class="n">' + s.items + '</td><td class="n">' + pct(s.correct, s.items) + '</td><td class="n">' + xpTxt(s) + "</td></tr>";
           }).join("") + "</table>" : "") +
           (d.problems.length ? '<div class="muted" style="margin-top:6px">Fehler: ' + d.problems.map(function (x) { return "<b>" + esc(x.en) + "</b> (" + x.n + "×)"; }).join(", ") + "</div>" : "") + "</div>";
       } else det = '<div class="small muted" style="padding:4px 0 10px 4px">An diesem Tag wurde nicht geübt.</div>';
@@ -618,9 +641,10 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
     }).join("") + "</table>" : '<p class="muted small">Keine Fehler in diesem Zeitraum.</p>';
     D3 += "</div>";
 
+    D4 += kindCard(r, days);
     D4 += '<div class="card"><h2>Letzte Runden</h2>';
-    D4 += r.sessions.length ? "<table><tr><th>Wann</th><th>Art</th><th class=\"n\">Dauer</th><th class=\"n\">Aufgaben</th><th class=\"n\">Richtig</th><th class=\"n\">Münzen</th></tr>" + r.sessions.map(function (s) {
-      return "<tr><td>" + fmtDate(s.ts) + "</td><td>" + esc(modeLabel(s)) + '</td><td class="n">' + fmtMin(s.sec) + '</td><td class="n">' + s.items + '</td><td class="n">' + pct(s.correct, s.items) + '</td><td class="n">' + s.coins + "</td></tr>";
+    D4 += r.sessions.length ? "<table><tr><th>Wann</th><th>Art</th><th class=\"n\">Dauer</th><th class=\"n\">Aufgaben</th><th class=\"n\">Richtig</th><th class=\"n\">XP</th><th class=\"n\">Münzen</th></tr>" + r.sessions.map(function (s) {
+      return "<tr><td>" + fmtDate(s.ts) + "</td><td>" + esc(modeLabel(s)) + '</td><td class="n">' + fmtMin(s.sec) + '</td><td class="n">' + s.items + '</td><td class="n">' + pct(s.correct, s.items) + '</td><td class="n">' + xpTxt(s) + '</td><td class="n">' + s.coins + "</td></tr>";
     }).join("") + "</table>" : '<p class="muted small">Noch keine Runden.</p>';
     D4 += "</div>";
 

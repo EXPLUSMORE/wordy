@@ -1159,7 +1159,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.105.0";window.WORDY_BUILD="8801a194c9";</script>
+<script>window.WORDY_VERSION="2.106.0";window.WORDY_BUILD="668bcd1ea9";</script>
 </head>
 <body>
 <div id="app">
@@ -6097,6 +6097,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     if (boostActive()) v *= 2;
     var r0 = rankIdx(state.xp); state.xp += v; state.daily.xp += v;
     for (var i = r0 + 1, r1 = rankIdx(state.xp); i <= r1; i++) rankGift(i);
+    return v;   // tatsächlich gutgeschriebene XP (mit Booster), damit Runden sie melden können
   }
   /* Rangaufstieg: Münzen (50 + 10 je Rangstufe) und das günstigste Stück, das genau mit diesem Rang frei wird */
   function rankGift(i) {
@@ -11697,7 +11698,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     try {   // Beiwerk (Note, Lernstand, Ton, Effekt) darf die Runde nie blockieren
       var bn = $("#arNote"); if (bn && run.boss) bn.textContent = noteText();
       if (w) { if (global.WordySync) global.WordySync.ctx = { mode: "arena" }; S.grade(w.id, 1); }            // Tempo zählt als sichere, nicht als tiefe Wiederholung
-      S.addXp(2);
+      run.xp = (run.xp || 0) + (S.addXp(2) || 0);
       flash("+" + pts, run.combo >= 5 ? "combo" : "ok");
       var pr = S.state.profile;
       if (S.state.settings.audio) global.VTC.sound(pr.snd, true);
@@ -11964,14 +11965,15 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (!S.state.arena) S.state.arena = {};
     if (complete) S.state.arena[key(run.mode)] = { best: Math.max(rec.best, score), plays: rec.plays + 1 };
     var coins = !complete || run.boss ? 0 : Math.min(40, Math.floor(score / 40)) + (isRecord ? 10 : 0);   // Boss-Runden: Münzen nur über die Truhe (höchstens 25 je Boss)
-    if (global.WordySync) { global.WordySync.sessionEnd({ sec: sec, items: run.items, correct: run.correct, mode: "arena", sub: run.mode, score: score, coins: coins, end: reason }); global.WordySync.ctx = null; }
+    S.rollDay();
+    var xpTotal = (run.xp || 0) + (S.addXp(Math.min(60, Math.round(score / 8))) || 0);   // XP der Runde: Treffer plus Punkte-Bonus
+    if (global.WordySync) { global.WordySync.sessionEnd({ sec: sec, items: run.items, correct: run.correct, mode: "arena", sub: run.mode, score: score, coins: coins, xp: xpTotal, end: reason }); global.WordySync.ctx = null; }
     S.rollDay();
     var left = Math.max(0, 30 - (S.state.daily.arenaCoins || 0));   // Tageslimit, damit dieselben Wörter nicht endlos Münzen bringen
     var capped = coins > left; coins = Math.min(coins, left);
     S.state.daily.arenaCoins = (S.state.daily.arenaCoins || 0) + coins;
     coins = S.boost(coins);
     S.addCoins(coins);
-    S.addXp(Math.min(60, Math.round(score / 8)));
     var boss = complete && run.boss && global.VTUI && global.VTUI.bossFinish ? global.VTUI.bossFinish(run.boss, run.correct) : null;
     var rw = S.finishSession({ items: run.items, correct: run.correct, sec: sec, maxChain: run.maxCombo, newSeen: 0, boxSolved: run.cleared, mastered: 0, sentOk: 0, arena: true, complete: complete });
     var fresh = [];
@@ -12031,7 +12033,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       if (run.cur && !run.locked && run.mode !== "hunt" && run.mode !== "match") q.unshift(run.cur);   // die offene Karte kommt beim Fortsetzen wieder
       var d = {
         mode: run.mode, score: run.score, combo: run.combo, maxCombo: run.maxCombo, items: run.items, correct: run.correct, wrong: run.wrong,
-        left: run.left, total: run.total, cap: run.cap, note: run.note, qTotal: run.qTotal, queue: q, round: run.round || 0,
+        xp: run.xp || 0, left: run.left, total: run.total, cap: run.cap, note: run.note, qTotal: run.qTotal, queue: q, round: run.round || 0,
         targets: run.targets, hits: run.hits, cleared: run.cleared, dir: run.dir, left5: run.left5, right5: run.right5,
         el: Date.now() - run.start, cfg: run.cfg ? { words: run.cfg.words || null, boss: run.cfg.boss || null } : null
       };
@@ -12045,7 +12047,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var cfg = d.cfg, p = S.pools();
     run = {
       mode: d.mode, score: d.score, combo: d.combo, maxCombo: d.maxCombo, items: d.items, correct: d.correct, wrong: d.wrong,
-      start: Date.now() - (d.el || 0), left: d.left, total: d.total, cap: d.cap, queue: d.queue || [], round: d.round || 0, locked: false,
+      start: Date.now() - (d.el || 0), xp: d.xp || 0, left: d.left, total: d.total, cap: d.cap, queue: d.queue || [], round: d.round || 0, locked: false,
       all: cfg && cfg.words ? cfg.words.concat(p.all.filter(function (x) { return cfg.words.indexOf(x) < 0; })) : p.all,
       cfg: cfg, boss: cfg && cfg.boss || null, qTotal: d.qTotal || 7000, qLeft: d.qTotal || 7000, targets: d.targets || [], hits: d.hits || {}, cleared: d.cleared || 0, note: d.note || "",
       dir: d.dir, left5: d.left5, right5: d.right5, sel: null
@@ -12863,11 +12865,13 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (complete) S.state.arena[key(G.id)] = { best: Math.max(rec.best, score), plays: rec.plays + 1 };
     var coins = !complete ? 0 : Math.min(40, Math.floor(score / 40)) + (isRecord && rec.plays > 0 ? 10 : 0);
     if (G.items === 0) coins = 0;
-    if (global.WordySync) { global.WordySync.sessionEnd({ sec: sec, items: G.items, correct: G.correct, mode: "arena", sub: G.id, score: score, coins: coins, end: reason }); global.WordySync.ctx = null; }
+    S.rollDay();
+    var xpGain = S.addXp(Math.min(60, Math.round(score / 8))) || 0;
+    if (global.WordySync) { global.WordySync.sessionEnd({ sec: sec, items: G.items, correct: G.correct, mode: "arena", sub: G.id, score: score, coins: coins, xp: xpGain, end: reason }); global.WordySync.ctx = null; }
     S.rollDay();
     var left = Math.max(0, 30 - (S.state.daily.arenaCoins || 0)), capped = coins > left; coins = Math.min(coins, left);
     S.state.daily.arenaCoins = (S.state.daily.arenaCoins || 0) + coins;
-    coins = S.boost(coins); S.addCoins(coins); S.addXp(Math.min(60, Math.round(score / 8)));
+    coins = S.boost(coins); S.addCoins(coins);
     var rw = S.finishSession({ items: G.items, correct: G.correct, sec: sec, maxChain: G.maxStreak, newSeen: 0, boxSolved: 0, mastered: 0, sentOk: 0, arena: true, complete: complete });
     var acc = G.items ? Math.round(G.correct * 100 / G.items) : 0;
     el.innerHTML = '<div class="ar-end"><div class="ar-endicon">' + (isRecord && rec.plays > 0 ? "🏆" : esc(m.icon)) + '</div>' +
@@ -13152,11 +13156,13 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var complete = !L.quit;   // abgebrochene Lektion: XP für die Antworten, aber keine Münzen und keine Lektion gezählt
     if (complete) { r.lessons++; r.best = Math.max(r.best || 0, L.score); r.last = Date.now(); }
     var coins = complete ? Math.min(12, Math.floor(L.score / 8)) : 0;
-    if (global.WordySync) { global.WordySync.sessionEnd({ sec: sec, items: items, correct: correct, mode: "arena", sub: "grammar:" + t.id, score: L.score, coins: coins, end: L.quit ? "quit" : "done" }); global.WordySync.ctx = null; }
+    S.rollDay();
+    var xpGain = S.addXp(Math.min(40, Math.round(L.score / 2))) || 0;
+    if (global.WordySync) { global.WordySync.sessionEnd({ sec: sec, items: items, correct: correct, mode: "arena", sub: "grammar:" + t.id, score: L.score, coins: coins, xp: xpGain, end: L.quit ? "quit" : "done" }); global.WordySync.ctx = null; }
     S.rollDay();
     var left = Math.max(0, 30 - (S.state.daily.arenaCoins || 0)), capped = coins > left; coins = Math.min(coins, left);
     S.state.daily.arenaCoins = (S.state.daily.arenaCoins || 0) + coins;
-    coins = S.boost(coins); S.addCoins(coins); S.addXp(Math.min(40, Math.round(L.score / 2)));
+    coins = S.boost(coins); S.addCoins(coins);
     var rw = S.finishSession({ items: items, correct: correct, sec: sec, maxChain: L.maxStreak, newSeen: 0, boxSolved: 0, mastered: 0, sentOk: 0, arena: true, complete: complete });
     var info = list().filter(function (x) { return x.id === t.id; })[0], acc = items ? Math.round(correct * 100 / items) : 0;
     var pr = null, stars = L.first >= L.orig * 0.85 ? 3 : L.first >= L.orig * 0.6 ? 2 : 1;   // Lernpfad: Station geschafft, Sterne nach „gleich richtig“
