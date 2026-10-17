@@ -3,16 +3,33 @@
    wordy.html   – alles in einer Datei, zum Weitergeben ohne Server          */
 const fs = require('fs'), path = require('path');
 
-const DATA = ['data/klasse6.js','data/klasse7.js','data/klasse8.js','data/business.js',
+/* Altbestand: wird ohne Herkunftsangaben (src/lic) ausgeliefert, siehe SOURCES.md */
+const LEGACY = ['data/klasse6.js','data/klasse7.js','data/klasse8.js','data/business.js',
   'data/business-basis2.js','data/business-aufbau2.js','data/business-profi2.js',
   'data/smalltalk.js','data/idioms.js','data/saetze.js','data/saetze2.js','data/lernbuch.js','data/verben.js','data/grammatik.js'];
+/* Offene Daten (data/open/*.js): jeder Eintrag braucht src und lic von der Whitelist, sonst bricht der Build ab.
+   Private Dateien (private/, *.private.*, data/private/) werden nie gelesen. */
+const OPEN = fs.existsSync('data/open') ? fs.readdirSync('data/open').filter(f => /\.js$/.test(f)).sort().map(f => 'data/open/' + f) : [];
+const DATA = LEGACY.concat(OPEN);
+const rules = require('./tools/lib/open_rules.js');
+if (DATA.some(f => /(^|\/)private\//.test(f) || /\.private\./.test(f))) throw new Error('Private Dateien dürfen nicht in den Build.');
+if (OPEN.length) {
+  const taken = []; LEGACY.forEach(f => { try { rules.load(f).units.forEach(u => taken.push(u.id)); } catch (e) {} });
+  const chk = rules.validate(OPEN, taken);
+  if (chk.errs.length) {
+    console.error('BUILD ABGEBROCHEN: Verstöße in data/open (' + chk.errs.length + '):');
+    chk.errs.slice(0, 100).forEach(e => console.error('  - ' + e));
+    if (chk.errs.length > 100) console.error('  … und ' + (chk.errs.length - 100) + ' weitere');
+    process.exit(1);
+  }
+}
 const CODE = ['js/engine.js','js/cosmetics.js','js/fortnite.js','js/figur.js','js/stila.js','js/stilb.js','js/loot.js','js/film.js','js/app.js','js/arena.js','js/spiele.js','js/grammatik.js','js/sync.js'];
 const ICONS = ['icons/icon-192.png','icons/icon-512.png','icons/icon-maskable-512.png',
   'icons/apple-touch-icon.png','icons/favicon-32.png'];
 
 const APP = 'Wordy';
 const THEME = '#0E1320';   // Nachtgold: Browserleiste und Startbild im selben Dunkelblau wie das Symbol
-const src = fs.readFileSync('index.html', 'utf8');
+const src = fs.readFileSync('index.html', 'utf8').replace('<!--OPEN-DATA-->', OPEN.map(f => `<script src="${f}"></script>`).join('\n'));
 /* Version aus dem Inhalt: ändert sich der Code, ändert sich auch diese Kennung (Setup zeigt sie, der Offline-Cache nutzt sie) */
 const VERSION = JSON.parse(fs.readFileSync('package.json', 'utf8')).version;   // Versionsnummer: nur in package.json pflegen
 const AUDIO = fs.existsSync('audio/film') ? fs.readdirSync('audio/film').filter(f => /\.(mp3|json)$/.test(f)).sort().map(f => 'audio/film/' + f) : [];
@@ -42,7 +59,7 @@ fs.writeFileSync('wordy.html',
 
 /* ---------- 2. Website ---------- */
 fs.rmSync('docs', { recursive: true, force: true });
-for (const d of ['docs', 'docs/js', 'docs/data', 'docs/icons', ...(AUDIO.length ? ['docs/audio/film'] : [])]) fs.mkdirSync(d, { recursive: true });
+for (const d of ['docs', 'docs/js', 'docs/data', 'docs/icons', ...(OPEN.length ? ['docs/data/open'] : []), ...(AUDIO.length ? ['docs/audio/film'] : [])]) fs.mkdirSync(d, { recursive: true });
 [...DATA, ...CODE, ...ICONS, ...AUDIO].forEach(f => fs.copyFileSync(f, path.join('docs', f)));
 
 const manifest = {
@@ -168,3 +185,7 @@ fs.writeFileSync('docs/CNAME', 'wordy.explusmore.com\n');
 fs.writeFileSync('docs/.nojekyll', '');
 console.log('Einzeldatei:', (fs.statSync('wordy.html').size / 1024).toFixed(0) + ' KB');
 console.log('Website:', fs.readdirSync('docs').join(' '), '| Cache-Version', stamp);
+
+/* Letzter Schritt: nichts aus privat-blocklist.txt darf in getrackten Dateien, docs/ oder wordy.html stehen */
+const chk = require('child_process').spawnSync('node', ['tools/check_clean.js'], { stdio: 'inherit' });
+if (chk.status !== 0) { console.error('BUILD ABGEBROCHEN: Prüfung auf private Inhalte fehlgeschlagen.'); process.exit(chk.status || 1); }
