@@ -1410,7 +1410,9 @@ const CATALOG = (() => {   // alle Datendateien der App (gleiche Reihenfolge wie
   const out = { units: [], sentences: [], verbs: [] };
   try {
     const vm = require("node:vm"), ctx = { window: {} }; vm.createContext(ctx);
-    for (const f of ["klasse6", "klasse7", "klasse8", "business", "business-basis2", "business-aufbau2", "business-profi2", "smalltalk", "idioms", "saetze", "saetze2", "lernbuch", "verben"]) {
+    const openDir = path.join(__dirname, "..", "data", "open");   // offene Einheiten und Sätze: wie in build.js zuletzt, alphabetisch
+    const openFiles = fs.existsSync(openDir) ? fs.readdirSync(openDir).filter(f => f.endsWith(".js")).sort().map(f => path.join("open", f.slice(0, -3))) : [];
+    for (const f of ["klasse6", "klasse7", "klasse8", "business", "business-basis2", "business-aufbau2", "business-profi2", "smalltalk", "idioms", "saetze", "saetze2", "lernbuch", "verben"].concat(openFiles)) {
       try { vm.runInContext(fs.readFileSync(path.join(__dirname, "..", "data", f + ".js"), "utf8"), ctx); } catch (e) { console.error("Datei " + f + " nicht geladen:", e.message); }
     }
     out.units = (ctx.window.VOCAB_UNITS || []).map(u => ({ id: String(u.id), k: u.k, title: String(u.title), icon: u.icon || "", words: u.words.map(w => [w[0], w[1]]) }));
