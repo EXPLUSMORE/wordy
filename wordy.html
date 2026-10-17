@@ -1159,7 +1159,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.106.0";window.WORDY_BUILD="668bcd1ea9";</script>
+<script>window.WORDY_VERSION="2.106.1";window.WORDY_BUILD="19c63573c5";</script>
 </head>
 <body>
 <div id="app">
@@ -10495,7 +10495,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var stars = !good ? 0 : acc >= 90 ? 3 : acc >= 70 ? 2 : 1;
     var pr = SS.station && reason === "done" ? S.pathComplete(SS.station.id, stars) : null;
     var xp0 = SS.xp0 == null ? st.xp : SS.xp0, gain = Math.max(0, st.xp - xp0), coinGain = Math.max(0, st.coins - (SS.coins0 == null ? st.coins : SS.coins0));
-    if (window.WordySync) { window.WordySync.sessionEnd({ sec: sec, items: SS.items, correct: SS.correct, mode: SS.mode || "mix", coins: coinGain, xp: gain, reason: reason }); window.WordySync.ctx = null; }
+    if (window.WordySync) { window.WordySync.sessionEnd({ sec: sec, items: SS.items, correct: SS.correct, mode: SS.mode || "mix", unit: (SS.station && SS.station.unit) || (lastStartOpts && lastStartOpts.unit) || "", coins: coinGain, xp: gain, reason: reason }); window.WordySync.ctx = null; }
     var r0 = S.rankOf(xp0), r1 = S.rankOf(st.xp), rankUp = r0.rank.n !== r1.rank.n;
     var pct = function (r) { return r.span ? Math.round(r.into * 100 / r.span) : 100; };
     var html = '<div class="sbody"><div class="stack" style="padding-top:20px">' +
@@ -12867,7 +12867,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (G.items === 0) coins = 0;
     S.rollDay();
     var xpGain = S.addXp(Math.min(60, Math.round(score / 8))) || 0;
-    if (global.WordySync) { global.WordySync.sessionEnd({ sec: sec, items: G.items, correct: G.correct, mode: "arena", sub: G.id, score: score, coins: coins, xp: xpGain, end: reason }); global.WordySync.ctx = null; }
+    if (global.WordySync) { global.WordySync.sessionEnd({ sec: sec, items: G.items, correct: G.correct, mode: "arena", sub: G.id, score: score, coins: coins, xp: xpGain, unit: (G.opts && (typeof G.opts.unit === "string" ? G.opts.unit : G.opts.units && G.opts.units.length === 1 ? G.opts.units[0] : "")) || "", end: reason }); global.WordySync.ctx = null; }
     S.rollDay();
     var left = Math.max(0, 30 - (S.state.daily.arenaCoins || 0)), capped = coins > left; coins = Math.min(coins, left);
     S.state.daily.arenaCoins = (S.state.daily.arenaCoins || 0) + coins;

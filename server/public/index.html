@@ -108,6 +108,12 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
   function pct(a, b) { return b ? Math.round(a * 100 / b) + " %" : "–"; }
   /* Arena: welches Spiel gespielt wurde (sub) */
   var ARENA = { match: "Match-Rausch", blitz: "Blitzrunde", survival: "Letztes Herz", hunt: "Fehlerjagd", detective: "Wort-Detektiv", eisi: "Freezy", kreuz: "Xing", letters: "Letters", blast: "Blast", blast3d: "Blast 3D" };
+  function earnTxt(e) { return e && (e.xp || e.coins) ? "✨ " + e.xp + " XP · 🪙 " + e.coins : ""; }
+  function earnCard(r, days) {
+    var e = r.wordEarn || { xp: 0, coins: 0, runs: 0 };
+    return '<div class="card"><h2>Verdient mit Wörtern (' + days + ' Tage)</h2><div class="kpis">' + kpi("✨ " + e.xp, "XP aus Lernrunden") + kpi("🪙 " + e.coins, "Münzen aus Lernrunden") + kpi(e.runs, e.runs === 1 ? "Runde" : "Runden") + "</div>" +
+      '<p class="small muted" style="margin:8px 0 0">Gezählt sind Lernrunden (gemischt, neue Wörter, Fehlerkartei, Sätze, Verben, Lernpfad). Arena, Spiele und Grammatik stehen im Reiter Aktivität. Bei den Einheiten siehst du, was in Runden mit genau dieser Einheit verdient wurde; Runden ohne feste Einheit und ältere Runden sind dort nicht zugeordnet.</p></div>';
+  }
   function xpTxt(s) { return s.xp == null ? "–" : s.xp; }
   /* Art ohne Punktzahl, damit gleiche Spiele zusammengezählt werden */
   function kindLabel(s) {
@@ -316,7 +322,7 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
     s += '<text x="0" y="' + (h - (h - 8) + 3) + '">' + Math.round(max / 60) + "</text>";
     list.forEach(function (d, i) {
       var bh = Math.max(d.sec ? 2 : 0, d.sec / max * (h - 8)), x = pad + i * bw + bw * 0.15, bwi = bw * 0.7;
-      s += '<rect x="' + x + '" y="' + (h - bh) + '" width="' + bwi + '" height="' + bh + '" rx="3" fill="' + (d.sec >= 600 ? "var(--good)" : d.sec ? "var(--acc2)" : "var(--line)") + '"><title>' + d.date + ": " + fmtMin(d.sec) + ", " + d.items + " Aufgaben</title></rect>";
+      s += '<rect x="' + x + '" y="' + (h - bh) + '" width="' + bwi + '" height="' + bh + '" rx="3" fill="' + (d.sec >= 600 ? "var(--good)" : d.sec ? "var(--acc2)" : "var(--line)") + '"><title>' + d.date + ": " + fmtMin(d.sec) + ", " + d.items + " Aufgaben, " + (d.xp || 0) + " XP, " + (d.coins || 0) + " Münzen</title></rect>";
       if (n <= 16 || i % 5 === 0) s += '<text x="' + (x + bwi / 2) + '" y="' + (h + 14) + '" text-anchor="middle">' + d.date.slice(8) + "." + d.date.slice(5, 7) + "</text>";
     });
     return s + "</svg>";
@@ -342,8 +348,8 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
     h += '<div class="kpis">' + kpi(goal && t.sec < goal && Math.round(t.sec / 60) * 60 >= goal ? fmtExact(t.sec) : fmtMin(t.sec), "geübt" + (goal ? " · Ziel " + m.goalMin + " Min." : "")) +
       kpi(t.items, "Aufgaben · " + pct(t.correct, t.items) + " richtig") + kpi(t.neu, "neue Wörter") + kpi("🪙 " + t.coins, t.sessions + (t.sessions === 1 ? " Runde" : " Runden")) + kpi("✨ " + t.xp, "XP") + "</div>";
     if (goal) h += '<div class="mini" style="margin-top:10px"><i class="' + (t.sec >= goal ? "d" : "") + '" style="width:' + Math.min(100, Math.round(t.sec * 100 / goal)) + '%"></i></div><div class="small muted" style="margin-top:4px">' + (t.sec >= goal ? "Tagesziel geschafft ✅" : "Noch " + (goal - t.sec < 60 ? Math.ceil(goal - t.sec) + " Sek." : fmtMin(goal - t.sec)) + " bis zum Tagesziel") + "</div>";
-    if (t.runs.length) h += '<h3 style="margin:14px 0 4px;font-size:14px">Runden heute</h3><table><tr><th>Uhr</th><th>Art</th><th class="n">Dauer</th><th class="n">Aufgaben</th><th class="n">Richtig</th><th class="n">XP</th></tr>' + t.runs.map(function (s) {
-      return "<tr><td>" + new Date(s.ts).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" }) + "</td><td>" + esc(modeLabel(s)) + '</td><td class="n">' + fmtMin(s.sec) + '</td><td class="n">' + s.items + '</td><td class="n">' + pct(s.correct, s.items) + '</td><td class="n">' + xpTxt(s) + "</td></tr>";
+    if (t.runs.length) h += '<h3 style="margin:14px 0 4px;font-size:14px">Runden heute</h3><table><tr><th>Uhr</th><th>Art</th><th class="n">Dauer</th><th class="n">Aufgaben</th><th class="n">Richtig</th><th class="n">XP</th><th class="n">Münzen</th></tr>' + t.runs.map(function (s) {
+      return "<tr><td>" + new Date(s.ts).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" }) + "</td><td>" + esc(modeLabel(s)) + '</td><td class="n">' + fmtMin(s.sec) + '</td><td class="n">' + s.items + '</td><td class="n">' + pct(s.correct, s.items) + '</td><td class="n">' + xpTxt(s) + '</td><td class="n">' + s.coins + "</td></tr>";
     }).join("") + "</table>";
     if (t.problems.length) h += '<h3 style="margin:14px 0 4px;font-size:14px">Fehlerwörter heute</h3>' + probList(t.problems);
     return h + "</div>";
@@ -359,9 +365,9 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
       return '<div title="' + dLong(d.date) + ": " + fmtMin(d.sec) + '" style="height:100%;display:flex;align-items:flex-end"><i style="display:block;width:100%;height:' + hh + "%;border-radius:4px;background:" + (d.sec ? (ok ? "var(--good)" : "var(--acc2)") : "var(--line)") + (fut ? ";opacity:.4" : "") + '"></i></div>';
     }).join("") + "</div>";
     h += '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center" class="small muted">' + w.days.map(function (d) {
-      return "<div" + (d.date === todayK ? ' style="font-weight:700;color:var(--ink)"' : "") + ">" + WD[dparts(d.date).wd] + "<br>" + fmtMin(d.sec).replace(" Min.", "") + "</div>";
+      return "<div" + (d.date === todayK ? ' style="font-weight:700;color:var(--ink)"' : "") + ">" + WD[dparts(d.date).wd] + "<br>" + fmtMin(d.sec).replace(" Min.", "") + (d.xp ? "<br>✨" + d.xp : "") + (d.coins ? "<br>🪙" + d.coins : "") + "</div>";
     }).join("") + "</div>";
-    h += '<div class="small muted" style="margin-top:6px">Minuten pro Tag' + (goal ? " · grün = Tagesziel (" + m.goalMin + " Min.) erreicht" : "") + ". Vorwoche: " + dShort(pv.from) + " – " + dShort(pv.to) + ", " + fmtMin(pv.sec) + ", " + pv.activeDays + " aktive Tage.</div>";
+    h += '<div class="small muted" style="margin-top:6px">Minuten, ✨ XP und 🪙 Münzen pro Tag' + (goal ? " · grün = Tagesziel (" + m.goalMin + " Min.) erreicht" : "") + ". Vorwoche: " + dShort(pv.from) + " – " + dShort(pv.to) + ", " + fmtMin(pv.sec) + ", " + pv.activeDays + " aktive Tage.</div>";
     h += '<h3 style="margin:14px 0 4px;font-size:14px">Fehlerwörter der Woche</h3>' + probList(w.problems);
     return h + "</div>";
   }
@@ -394,16 +400,16 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
     var prevArea = "";
     h += order.map(function (g) {
       var head = areaHead(g, prevArea); prevArea = areaOf(g);
-      var us = groups[g], n = 0, mm = 0, seen = 0, sd = 0, st = 0;
-      us.forEach(function (u) { n += u.total; mm += u.mastered; seen += u.seen; (secBy[u.id] || []).forEach(function (x) { sd += x.d; st += x.n; }); });
+      var us = groups[g], n = 0, mm = 0, seen = 0, sd = 0, st = 0, gx = 0, gc = 0, ue0 = r.unitEarn || {};
+      us.forEach(function (u) { if (ue0[u.id]) { gx += ue0[u.id].xp; gc += ue0[u.id].coins; } n += u.total; mm += u.mastered; seen += u.seen; (secBy[u.id] || []).forEach(function (x) { sd += x.d; st += x.n; }); });
       var active = seen > 0 && mm < n, label = groupName(g);
       return head + '<details class="ugrp"' + (active ? " open" : "") + '><summary style="cursor:pointer;display:grid;grid-template-columns:1fr auto;gap:4px 10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)">' +
         '<b>' + esc(label) + '</b><span class="small muted">' + mm + " / " + n + " gemeistert</span>" +
         '<span style="grid-column:1 / 3">' + '<div class="mini" style="margin:0"><i class="' + (mm >= n ? "d" : "") + '" style="width:' + Math.round(mm * 100 / Math.max(1, n)) + '%"></i></div></span>' +
-        '<span class="small muted" style="grid-column:1 / 3">' + (n ? seen + " von " + n + " begonnen" : "noch nicht begonnen") + (st ? " · Lernpfad " + sd + " von " + st + " Stationen" : "") + " · " + us.length + (us.length === 1 ? " Einheit" : " Einheiten") + '</span></summary>' +
+        '<span class="small muted" style="grid-column:1 / 3">' + (n ? seen + " von " + n + " begonnen" : "noch nicht begonnen") + (st ? " · Lernpfad " + sd + " von " + st + " Stationen" : "") + " · " + us.length + (us.length === 1 ? " Einheit" : " Einheiten") + (gx || gc ? " · ✨ " + gx + " XP · 🪙 " + gc : "") + '</span></summary>' +
         '<table><tr><th>Einheit</th><th style="width:34%">Stand</th><th class="n">Gemeistert</th></tr>' + us.map(function (u) {
           var secs = secBy[u.id] || [];
-          return '<tr class="clk" data-u="' + esc(u.id) + '"' + (u.open ? ' style="opacity:.55"' : "") + '><td>' + esc(u.title.replace(/^Headlight 2 · /, "")) + '<div class="small muted">' + (u.open ? "noch nicht begonnen" : u.seen + " von " + u.total + " Wörtern begonnen") + "</div>" +
+          return '<tr class="clk" data-u="' + esc(u.id) + '"' + (u.open ? ' style="opacity:.55"' : "") + '><td>' + esc(u.title.replace(/^Headlight 2 · /, "")) + '<div class="small muted">' + (u.open ? "noch nicht begonnen" : u.seen + " von " + u.total + " Wörtern begonnen") + (earnTxt(ue0[u.id]) ? " · " + earnTxt(ue0[u.id]) : "") + "</div>" +
             (secs.length ? '<div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:4px">' + secs.map(function (x, i) {
               var full = x.d >= x.n;
               return '<span class="pill" title="Lernpfad-Abschnitt">' + (secs.length > 1 ? "Teil " + (i + 1) + " · " : "Pfad · ") + x.d + "/" + x.n + (full ? " ✓" : x.d ? " ▶" : "") + (x.b ? " ⚔️" : "") + (x.c ? " 🎁" : "") + '</span>';
@@ -436,12 +442,12 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
       var wk = dparts(d.date).wd, we = wk === 0 || wk === 6, has = d.items > 0 || d.sec > 0, ok = goal && d.sec >= goal;
       var sum = '<summary style="display:grid;grid-template-columns:78px 1fr 62px 46px 46px;gap:8px;align-items:center;cursor:pointer;padding:6px 0;border-top:1px solid var(--line)">' +
         "<span" + (we ? ' style="color:var(--acc)"' : "") + "><b>" + WD[wk] + "</b> " + dShort(d.date) + '</span><span><div class="mini" style="margin:0"><i class="' + (ok ? "d" : "") + '" style="width:' + (d.sec ? Math.max(3, Math.round(d.sec * 100 / mx)) : 0) + '%"></i></div></span>' +
-        '<span class="small' + (has ? "" : " muted") + '" style="text-align:right">' + (has ? fmtMin(d.sec) : "–") + '</span><span class="small muted" style="text-align:right">' + (has ? d.items : "") + '</span><span class="small muted" style="text-align:right">' + (has ? pct(d.correct, d.items) : "") + "</span></summary>";
+        '<span class="small' + (has ? "" : " muted") + '" style="text-align:right">' + (has ? fmtMin(d.sec) : "–") + '</span><span class="small muted" style="text-align:right">' + (has ? d.items : "") + '</span><span class="small muted" style="text-align:right">' + (has ? pct(d.correct, d.items) : "") + "</span>" + (has && (d.xp || d.coins) ? '<span class="small muted" style="grid-column:2 / -1">✨ ' + d.xp + " XP · 🪙 " + d.coins + "</span>" : "") + "</summary>";
       var det = "";
       if (has) {
         det = '<div class="small" style="padding:4px 0 10px 4px"><div class="muted">' + d.sessions + (d.sessions === 1 ? " Runde" : " Runden") + " · " + d.neu + (d.neu === 1 ? " neues Wort" : " neue Wörter") + " · 🪙 " + d.coins + " · ✨ " + d.xp + " XP</div>" +
-          (d.runs.length ? "<table><tr><th>Uhr</th><th>Art</th><th class=\"n\">Dauer</th><th class=\"n\">Aufgaben</th><th class=\"n\">Richtig</th><th class=\"n\">XP</th></tr>" + d.runs.slice().reverse().map(function (s) {
-            return "<tr><td>" + hhmm(s.ts) + "</td><td>" + esc(modeLabel(s)) + '</td><td class="n">' + fmtMin(s.sec) + '</td><td class="n">' + s.items + '</td><td class="n">' + pct(s.correct, s.items) + '</td><td class="n">' + xpTxt(s) + "</td></tr>";
+          (d.runs.length ? "<table><tr><th>Uhr</th><th>Art</th><th class=\"n\">Dauer</th><th class=\"n\">Aufgaben</th><th class=\"n\">Richtig</th><th class=\"n\">XP</th><th class=\"n\">Münzen</th></tr>" + d.runs.slice().reverse().map(function (s) {
+            return "<tr><td>" + hhmm(s.ts) + "</td><td>" + esc(modeLabel(s)) + '</td><td class="n">' + fmtMin(s.sec) + '</td><td class="n">' + s.items + '</td><td class="n">' + pct(s.correct, s.items) + '</td><td class="n">' + xpTxt(s) + '</td><td class="n">' + s.coins + "</td></tr>";
           }).join("") + "</table>" : "") +
           (d.problems.length ? '<div class="muted" style="margin-top:6px">Fehler: ' + d.problems.map(function (x) { return "<b>" + esc(x.en) + "</b> (" + x.n + "×)"; }).join(", ") + "</div>" : "") + "</div>";
       } else det = '<div class="small muted" style="padding:4px 0 10px 4px">An diesem Tag wurde nicht geübt.</div>';
@@ -629,10 +635,10 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
       (p.devices.length ? " · " + p.devices.length + " Gerät" + (p.devices.length > 1 ? "e" : "") : " · noch kein Gerät verbunden") + "</div></div>" + '</div></div></div>';
     D1 += heuteCard(r, m) + wocheCard(r, m);
     D2 += '<div class="card"><div class="row"><h2 class="grow" style="margin:0">Übungszeit pro Tag</h2><button class="tab" data-d="14" aria-pressed="' + (days === 14) + '">14 Tage</button><button class="tab" data-d="30" aria-pressed="' + (days === 30) + '">30 Tage</button><button class="tab" data-d="90" aria-pressed="' + (days === 90) + '">90 Tage</button></div>' +
-      bars(r.days) + '<div class="legend"><span><i style="background:var(--good)"></i>10 Min. oder mehr</span><span><i style="background:var(--acc2)"></i>weniger</span><span class="muted">Insgesamt ' + fmtMin(t.sec) + ", " + t.items + " Aufgaben, " + t.activeDays + " aktive Tage</span></div></div>";
+      bars(r.days) + '<div class="legend"><span><i style="background:var(--good)"></i>10 Min. oder mehr</span><span><i style="background:var(--acc2)"></i>weniger</span><span class="muted">Insgesamt ' + fmtMin(t.sec) + ", " + t.items + " Aufgaben, " + t.activeDays + " aktive Tage · ✨ " + t.xp + " XP · 🪙 " + t.coins + " Münzen</span></div></div>";
 
     D2 += tageCard(r, m);
-    D3 += unitsCard(r, m);
+    D3 += earnCard(r, days) + unitsCard(r, m);
 
     D3 += '<div class="card"><h2>Alle Wörter</h2><details id="wdet"><summary style="cursor:pointer;color:var(--acc);font-weight:600">Wörterliste öffnen (Suche, Filter, Fehlerquote)</summary><div id="wbox"></div></details></div>';
     D3 += '<div class="card"><h2>Problemwörter (' + days + " Tage)</h2>";
@@ -648,7 +654,7 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
     }).join("") + "</table>" : '<p class="muted small">Noch keine Runden.</p>';
     D4 += "</div>";
 
-    if (r.buys.length) D4 += '<div class="card"><h2>Käufe im Shop</h2><table>' + r.buys.map(function (b) { return "<tr><td>" + fmtDate(b.ts) + "</td><td>" + esc(b.name) + '</td><td class="n">🪙 ' + b.cost + "</td></tr>"; }).join("") + "</table></div>";
+    if (r.buys.length) D4 += '<div class="card"><h2>Käufe im Shop</h2><p class="small muted" style="margin:0 0 6px">Ausgegeben: <b>🪙 ' + r.buys.reduce(function (a, b) { return a + (b.cost || 0); }, 0) + "</b> für " + r.buys.length + (r.buys.length === 1 ? " Kauf" : " Käufe") + ' (die letzten 20). Gekauft wird nur mit Münzen, XP werden dabei nicht verbraucht.</p><table>' + r.buys.map(function (b) { return "<tr><td>" + fmtDate(b.ts) + "</td><td>" + esc(b.name) + '</td><td class="n">🪙 ' + b.cost + "</td></tr>"; }).join("") + "</table></div>";
     var sg = function (key, icon, title, sub, inner, open) { return '<details class="sg" data-sg="' + key + '"' + ((setOpen[key] === undefined ? open : setOpen[key]) ? " open" : "") + '><summary><span class="chev">▸</span><span class="grow"><b>' + icon + " " + title + '</b><span class="small muted" style="display:block">' + sub + '</span></span></summary><div class="sgb">' + inner + '</div></details>'; };
     var SET = sg("conn", "🔗", "Verbindung &amp; Geräte", "Neuer Code oder Link · Geräte trennen · Nur sichern", '<div class="row" style="gap:8px;flex-wrap:wrap"><button class="ghost" id="inv">Neuer Code / Link</button><button class="ghost" id="rev">Geräte trennen</button><button class="ghost" id="hid">Nur sichern</button></div>' + (window.WT ? "" : '<div style="margin-top:12px">' + pairCard("pairKid") + "</div>"), true) +
       sg("stoff", "🧭", "Lernstoff steuern", "Pfad-Einheiten · „Kind wählt selbst“ · Lernplan · Wochenziele · Boss", '<div class="card" id="pathCard"></div><div class="card" id="plansCard"></div><div class="card" id="goalsCard"></div>', true) +

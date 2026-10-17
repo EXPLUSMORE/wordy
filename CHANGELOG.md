@@ -9,6 +9,11 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.106.1 – 2026-10-17
+- **Dashboard: Münzen und XP in allen Reitern**: Überblick: XP und Münzen pro Wochentag unter dem Wochenbalken, Münzen-Spalte in „Runden heute“. Verlauf: Gesamtsumme in der Legende, XP und Münzen im Balken-Tooltip und eine zweite Zeile je Tag bei „Tage einzeln“, Münzen-Spalte in den Tagesrunden. Wörter: neue Karte „Verdient mit Wörtern“ (Lernrunden im Zeitraum) und XP/Münzen je Einheit und Gruppe, soweit die Runde einer Einheit zugeordnet ist. Aktivität: Summe der ausgegebenen Münzen bei den Käufen im Shop.
+- **App meldet die Einheit mit**: Lernpfad-Stationen, Runden mit gewählter Einheit und Spiele mit einer einzelnen Einheit schicken die Einheit mit, damit das Dashboard XP und Münzen je Einheit zuordnen kann. Ältere Runden und gemischte Runden haben keine Einheit und fehlen in dieser Zuordnung.
+- **Server-Schritt nötig** für die neuen Anzeigen (`sudo /opt/wordy/server/deploy.sh`). Die App läuft auch ohne.
+
 ## 2.106.0 – 2026-10-17
 - **Dashboard: XP-Statistik**: Der Überblick zeigt jetzt neben den Münzen auch die XP (heute und Kalenderwoche, Wochenvergleich); die Tageszeilen im Verlauf nennen die XP des Tages. In allen Rundenlisten (heute, pro Tag, Letzte Runden) gibt es eine XP-Spalte. Neue Karte „XP und Münzen nach Aktivität“ im Reiter Aktivität: je Art (Gemischt, Sätze, Verben, Arena-Modi, Spiele, Grammatik) Runden, Zeit, XP, Anteil, XP pro Minute und Münzen, dazu eine Summe.
 - **App meldet XP für alle Runden**: Bisher kamen nur bei Lernrunden XP an. Jetzt melden auch Arena, Wortspiele und Grammatik-Lektionen ihre XP (inklusive Booster) an den Server. Ältere Runden haben keine XP-Angabe und stehen mit „–“ da.

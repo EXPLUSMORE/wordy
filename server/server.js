@@ -353,7 +353,7 @@ function report(pid, days) {
   const evs = q.events.all(pid, now - Math.max(days, 15) * 86400000).map(r => ({ ts: r.ts, k: r.k, d: JSON.parse(r.d) }));
   const perDay = {};
   const day = ts => (perDay[dayOf(ts)] = perDay[dayOf(ts)] || { date: dayOf(ts), sec: 0, items: 0, correct: 0, neu: 0, coins: 0, xp: 0, sessions: 0 });
-  const bad = {}, sessions = [], buys = [];
+  const bad = {}, sessions = [], buys = [], unitEarn = {}, wordEarn = { xp: 0, coins: 0, runs: 0 };
   for (const e of evs) {
     const d = e.d;
     if (e.ts < from) continue;       // die Zeitraum-Auswahl gilt für Tagesbalken, Problemwörter und Runden
@@ -366,6 +366,8 @@ function report(pid, days) {
       }
     } else if (e.k === "ss") {
       const x = day(e.ts); x.sec += d.sec || 0; x.coins += d.coins || 0; x.xp += d.xp || 0; x.sessions++;
+      if (d.mode !== "arena") { wordEarn.xp += d.xp || 0; wordEarn.coins += d.coins || 0; wordEarn.runs++; }   // Lernrunden mit Wörtern, ohne Arena, Spiele und Grammatik
+      if (d.unit) { const ue = unitEarn[String(d.unit)] = unitEarn[String(d.unit)] || { xp: 0, coins: 0, runs: 0 }; ue.xp += d.xp || 0; ue.coins += d.coins || 0; ue.runs++; }
       sessions.push({ ts: e.ts, sec: d.sec || 0, items: d.items || 0, correct: d.correct || 0, mode: d.mode || "", sub: String(d.sub || "").slice(0, 40), score: d.score || 0, unit: d.unit || "", coins: d.coins || 0, xp: d.xp == null ? null : d.xp });
     } else if (e.k === "buy") buys.push({ ts: e.ts, name: d.name || d.id, cost: d.cost || 0 });
   }
@@ -412,7 +414,7 @@ function report(pid, days) {
   const last7 = dayList.slice(-7);
   const c = q.evCount.get(pid);
   return {
-    days: dayList, today: todayInfo, calWeek: weekInfo, units, problems: badList, sessions: sessions.slice(-25).reverse(), buys: buys.slice(-20).reverse(), meta: meta ? meta.d : null,
+    days: dayList, today: todayInfo, calWeek: weekInfo, units, unitEarn, wordEarn, problems: badList, sessions: sessions.slice(-25).reverse(), buys: buys.slice(-20).reverse(), meta: meta ? meta.d : null,
     metaTs: meta ? meta.ts : null,
     totals: { sec: sum(x => x.sec), items: sum(x => x.items), correct: sum(x => x.correct), neu: sum(x => x.neu), xp: sum(x => x.xp), coins: sum(x => x.coins), activeDays: dayList.filter(x => x.items > 0).length },
     week: { sec: last7.reduce((a, x) => a + x.sec, 0), items: last7.reduce((a, x) => a + x.items, 0), correct: last7.reduce((a, x) => a + x.correct, 0), activeDays: last7.filter(x => x.items > 0).length },

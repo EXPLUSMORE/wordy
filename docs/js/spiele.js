@@ -753,7 +753,7 @@
     if (G.items === 0) coins = 0;
     S.rollDay();
     var xpGain = S.addXp(Math.min(60, Math.round(score / 8))) || 0;
-    if (global.WordySync) { global.WordySync.sessionEnd({ sec: sec, items: G.items, correct: G.correct, mode: "arena", sub: G.id, score: score, coins: coins, xp: xpGain, end: reason }); global.WordySync.ctx = null; }
+    if (global.WordySync) { global.WordySync.sessionEnd({ sec: sec, items: G.items, correct: G.correct, mode: "arena", sub: G.id, score: score, coins: coins, xp: xpGain, unit: (G.opts && (typeof G.opts.unit === "string" ? G.opts.unit : G.opts.units && G.opts.units.length === 1 ? G.opts.units[0] : "")) || "", end: reason }); global.WordySync.ctx = null; }
     S.rollDay();
     var left = Math.max(0, 30 - (S.state.daily.arenaCoins || 0)), capped = coins > left; coins = Math.min(coins, left);
     S.state.daily.arenaCoins = (S.state.daily.arenaCoins || 0) + coins;

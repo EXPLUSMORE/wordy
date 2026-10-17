@@ -2365,7 +2365,7 @@
     var stars = !good ? 0 : acc >= 90 ? 3 : acc >= 70 ? 2 : 1;
     var pr = SS.station && reason === "done" ? S.pathComplete(SS.station.id, stars) : null;
     var xp0 = SS.xp0 == null ? st.xp : SS.xp0, gain = Math.max(0, st.xp - xp0), coinGain = Math.max(0, st.coins - (SS.coins0 == null ? st.coins : SS.coins0));
-    if (window.WordySync) { window.WordySync.sessionEnd({ sec: sec, items: SS.items, correct: SS.correct, mode: SS.mode || "mix", coins: coinGain, xp: gain, reason: reason }); window.WordySync.ctx = null; }
+    if (window.WordySync) { window.WordySync.sessionEnd({ sec: sec, items: SS.items, correct: SS.correct, mode: SS.mode || "mix", unit: (SS.station && SS.station.unit) || (lastStartOpts && lastStartOpts.unit) || "", coins: coinGain, xp: gain, reason: reason }); window.WordySync.ctx = null; }
     var r0 = S.rankOf(xp0), r1 = S.rankOf(st.xp), rankUp = r0.rank.n !== r1.rank.n;
     var pct = function (r) { return r.span ? Math.round(r.into * 100 / r.span) : 100; };
     var html = '<div class="sbody"><div class="stack" style="padding-top:20px">' +
