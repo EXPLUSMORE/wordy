@@ -1,0 +1,3 @@
+#!/bin/sh
+# Verhindert Commits mit Inhalten aus privat-blocklist.txt. Installieren: sh tools/install-hooks.sh
+exec node "$(git rev-parse --show-toplevel)/tools/check_clean.js" --staged

@@ -6,3 +6,10 @@ server/data/
 *.db-wal
 *.db-shm
 .deploy-bad
+
+# Private Daten: nie committen und nie vom Build lesen
+private/
+*.private.csv
+*.private.json
+data/private/
+privat-blocklist.txt
