@@ -65,7 +65,9 @@ in `CHANGELOG.md`. Die App zeigt sie unten im Setup mit der Build-Kennung.
 
 ## Lizenz
 
-Privates Projekt, keine Lizenz vergeben.
+- **App-Code:** Privates Projekt, keine Lizenz vergeben.
+- **Offene Vokabeldaten** (`data/open/`): CC BY-SA 4.0, mit Quellen und Namensnennung, siehe [LICENSE-DATA.md](LICENSE-DATA.md) und [SOURCES.md](SOURCES.md). Der ältere Datenbestand ist davon ausgenommen.
+- Private Dateien (`private/`, `*.private.*`, `privat-blocklist.txt`) werden nie committet und nie vom Build gelesen. `node tools/check_clean.js` und der pre-commit-Hook (`sh tools/install-hooks.sh`) prüfen das.
 © Magnus, Pummel & Christian
 
 ## Bedienung
