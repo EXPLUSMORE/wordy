@@ -1,0 +1,143 @@
+{
+  "_hinweis": "Eigene Formulierungen (src own, CC-BY-SA-4.0): Wörter, Übersetzungen, Wortarten und Sätze sind vom Projekt selbst verfasst, nicht aus NGSL/BSL/Wiktionary/Tatoeba übernommen. Die Häufigkeit ist NICHT gegen NGSL/BSL belegt. Reihenfolge nur anhängen, nie umordnen (Lernstand b-NN#Position).",
+  "b-39": {
+    "status": "Muster",
+    "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; mehrdeutig: change = Wechselgeld (nicht ändern), deposit = Anzahlung (nicht Pfand), tip = Trinkgeld (nicht Hinweis); Wörter, die der Altbestand schon hat (invoice, refund, VAT, reminder, due date, to settle), wurden weggelassen",
+    "words": [
+      [
+        "bill",
+        "die Rechnung",
+        "noun",
+        1,
+        "Can we have the bill, please?"
+      ],
+      [
+        "payment",
+        "die Zahlung",
+        "noun",
+        1,
+        "We have not received your payment yet."
+      ],
+      [
+        "to pay",
+        "bezahlen",
+        "verb",
+        1,
+        "You can pay at the front desk."
+      ],
+      [
+        "cash",
+        "das Bargeld",
+        "noun",
+        1,
+        "Do you accept cash here?"
+      ],
+      [
+        "credit card",
+        "die Kreditkarte",
+        "noun",
+        1,
+        "I would like to pay by credit card."
+      ],
+      [
+        "price",
+        "der Preis",
+        "noun",
+        1,
+        "What is the price of this ticket?"
+      ],
+      [
+        "to charge",
+        "berechnen, in Rechnung stellen",
+        "verb",
+        2,
+        "They charge ten euros for delivery."
+      ],
+      [
+        "voucher",
+        "der Gutschein",
+        "noun",
+        2,
+        "You can use this voucher in our shop."
+      ],
+      [
+        "change",
+        "das Wechselgeld",
+        "noun",
+        2,
+        "Keep the change, please."
+      ],
+      [
+        "tip",
+        "das Trinkgeld",
+        "noun",
+        2,
+        "Is the tip included in the bill?"
+      ],
+      [
+        "tax",
+        "die Steuer",
+        "noun",
+        2,
+        "The price does not include tax."
+      ],
+      [
+        "fee",
+        "die Gebühr",
+        "noun",
+        2,
+        "There is a small fee for late payment."
+      ],
+      [
+        "deposit",
+        "die Anzahlung",
+        "noun",
+        2,
+        "We ask for a deposit of twenty percent."
+      ],
+      [
+        "to owe",
+        "schulden",
+        "verb",
+        2,
+        "How much do I owe you?"
+      ],
+      [
+        "overdue",
+        "überfällig",
+        "adj",
+        3,
+        "Your payment is overdue."
+      ],
+      [
+        "outstanding",
+        "ausstehend, offen",
+        "adj",
+        3,
+        "There is an outstanding amount on your account."
+      ]
+    ],
+    "sentences": [
+      [
+        "Could you send me the invoice, please?",
+        "Könnten Sie mir bitte die Rechnung schicken?",
+        "Höfliche Bitte: Could + Person + Grundform des Verbs."
+      ],
+      [
+        "The payment is due next week.",
+        "Die Zahlung ist nächste Woche fällig.",
+        "be due = fällig sein; next week steht ohne Präposition."
+      ],
+      [
+        "We do not accept cash, only credit cards.",
+        "Wir nehmen kein Bargeld, nur Kreditkarten.",
+        "Verneinung im Present Simple: do not + Grundform."
+      ],
+      [
+        "I still owe you twenty euros.",
+        "Ich schulde dir noch zwanzig Euro.",
+        "still steht vor dem Vollverb; owe + Person + Betrag."
+      ]
+    ]
+  }
+}

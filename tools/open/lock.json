@@ -1,0 +1,36 @@
+{
+ "units": {
+  "b-39": {
+   "words": [
+    "bill|noun",
+    "payment|noun",
+    "to pay|verb",
+    "cash|noun",
+    "credit card|noun",
+    "price|noun",
+    "to charge|verb",
+    "voucher|noun",
+    "change|noun",
+    "tip|noun",
+    "tax|noun",
+    "fee|noun",
+    "deposit|noun",
+    "to owe|verb",
+    "overdue|adj",
+    "outstanding|adj"
+   ],
+   "sentences": [
+    "own:Could you send me the invoice, please?",
+    "own:The payment is due next week.",
+    "own:We do not accept cash, only credit cards.",
+    "own:I still owe you twenty euros."
+   ]
+  }
+ },
+ "sentenceOrder": [
+  "own:Could you send me the invoice, please?",
+  "own:The payment is due next week.",
+  "own:We do not accept cash, only credit cards.",
+  "own:I still owe you twenty euros."
+ ]
+}

@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.104.0 – 2026-10-17
+- **Neu: Muster-Einheit „Rechnung & Zahlung“ (b-39, Business Basis)** aus der neuen offenen Datenreihe `data/open`: 16 Wörter und 4 Sätze, selbst formuliert (Herkunft `own`, Lizenz CC BY-SA 4.0), Herkunft und Lizenz stehen je Eintrag in den Daten. Die Häufigkeit ist nicht gegen NGSL/BSL belegt (siehe SOURCES.md). Der Build prüft Herkunft und Lizenz aller Einträge in `data/open`. Bestehende Einheiten, Wort- und Satz-IDs bleiben unverändert. Server-Schritt nicht nötig.
+
 ## 2.103.2 – 2026-10-15
 - **Vorlesen vollständig**: Nach jeder Antwort (richtig oder falsch) wird jetzt die englische Lösung vorgelesen, in allen Aufgabenarten (Tippen, Rechtschreibung, Deutsch→Englisch, Was passt nicht, Zuordnen, Verben, Lückensätze, Satzbau). Bisher kam das nur bei falschen Antworten und nur bei eingeschalteter Pause, bei richtigen nur in zwei Aufgabenarten. Vor der Antwort wird jedes englische Wort bzw. jeder englische Satz vorgelesen, der zu sehen ist: neu dazugekommen sind „Was heißt das auf Deutsch?“, die Verb-Aufgaben (Infinitiv, Lückensatz mit Pause an der Lücke). Bei Aufgaben mit deutscher Frage (Tippen, Deutsch→Englisch, Satzbau) bleibt das Englische vorher stumm, sonst wäre die Lösung verraten.
 - **Rechtschreibung: vier Buchstaben pro Reihe**: Die Buchstabenkacheln standen wegen eines alten Stilkonflikts mit den Startseiten-Kacheln nur zu zweit in einer Reihe und sehr breit. Jetzt vier pro Reihe, größer zum Antippen und Ziehen. Satzbau-Wörter laufen wieder in natürlicher Breite um. Server-Schritt nicht nötig.

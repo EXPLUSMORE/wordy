@@ -30,7 +30,9 @@ Diese Einheiten haben **keine** `src`/`lic`-Angaben. Ihre Herkunft ist nicht bel
 
 ## Offene Einheiten (data/open)
 
-_Noch keine._
+| Einheit | Titel | Stufe | Wörter | Quellen der Wörter | Beispielsätze | Status |
+|---|---|---|---|---|---|---|
+| b-39 | 🧾 Rechnung & Zahlung | Basis | 16 | own 16 | own 16 | Muster (zur Prüfung): eigene Formulierung (src own); Häufigkeit nicht gegen NGSL/BSL belegt; Mehrdeutigkeiten: change = Wechselgeld, deposit = Anzahlung, tip = Trinkgeld |
 
 ## Offene Punkte (rechtlich und fachlich, keine Rechtsberatung)
 
