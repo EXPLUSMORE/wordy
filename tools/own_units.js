@@ -18,19 +18,20 @@ const old = {}, oldSent = [];
 if (fs.existsSync(OUT)) fs.readdirSync(OUT).filter(f => /^business-.*\.js$/.test(f)).forEach(f => rules.load(path.join(OUT, f)).units.forEach(u => (old[u.id] = u)));
 if (fs.existsSync(path.join(OUT, 'saetze-open.js'))) rules.load(path.join(OUT, 'saetze-open.js')).sentences.forEach(s => oldSent.push(s));
 const units = Object.assign({}, old), sent = oldSent.filter(s => ids.indexOf(s[5].unit) < 0);
-const nl = JSON.parse(JSON.stringify(lock));
+const nl = JSON.parse(JSON.stringify(lock)), problems = [], seen = {};
+Object.values(old).forEach(u => { if (ids.indexOf(u.id) < 0) u.words.forEach(w => (seen[norm(w[0])] = u.id)); });
 for (const id of ids) {
   const th = themes.filter(t => t.id === id)[0], o = own[id]; if (!th || !o) { console.error('Einheit ' + id + ' fehlt in themes.json oder own-units.json'); process.exit(2); }
   const locked = (lock.units[id] || {}).words || [];
   const keys = o.words.map(w => w[0] + '|' + w[2]);
   locked.forEach((k, i) => { if (keys[i] !== k) { console.error(id + ': Reihenfolge/Inhalt der bereits vergebenen Wörter geändert (Position ' + i + ') – nur anhängen!'); process.exit(1); } });
-  const dup = o.words.filter(w => legacy.has(norm(w[0]))).map(w => w[0]);
-  if (dup.length) { console.error(id + ': Wörter schon im Altbestand: ' + dup.join(', ')); process.exit(1); }
+  o.words.forEach(w => { const k = norm(w[0]); if (legacy.has(k)) problems.push(id + ': "' + w[0] + '" steht schon im Altbestand'); else if (seen[k] && seen[k] !== id) problems.push(id + ': "' + w[0] + '" steht schon in ' + seen[k]); seen[k] = id; });
   units[id] = { track: 'business', k: th.k, id, title: th.title, icon: th.icon, words: o.words.map(w => [w[0], w[1], w[3], w[4], Object.assign({ pos: w[2], ex: Object.assign({}, OWN) }, OWN)]) };
   o.sentences.forEach(s => sent.push(['business', th.k, s[0], s[1], s[2], Object.assign({ unit: id }, OWN)]));
   nl.units[id] = { words: keys, sentences: o.sentences.map(s => 'own:' + s[0]) };
   o.sentences.forEach(s => { if (nl.sentenceOrder.indexOf('own:' + s[0]) < 0) nl.sentenceOrder.push('own:' + s[0]); });
 }
+if (problems.length) { console.error('Dubletten (' + problems.length + '):'); problems.forEach(x => console.error('  - ' + x)); process.exit(1); }
 const rank = s => nl.sentenceOrder.indexOf(s[5].src + ':' + (s[5].sentence_id || s[2]));
 sent.sort((a, b) => rank(a) - rank(b));
 const J = JSON.stringify, files = {};

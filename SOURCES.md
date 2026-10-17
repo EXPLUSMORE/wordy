@@ -32,7 +32,30 @@ Diese Einheiten haben **keine** `src`/`lic`-Angaben. Ihre Herkunft ist nicht bel
 
 | Einheit | Titel | Stufe | Wörter | Quellen der Wörter | Beispielsätze | Status |
 |---|---|---|---|---|---|---|
-| b-39 | 🧾 Rechnung & Zahlung | Basis | 16 | own 16 | own 16 | Muster (zur Prüfung): eigene Formulierung (src own); Häufigkeit nicht gegen NGSL/BSL belegt; Mehrdeutigkeiten: change = Wechselgeld, deposit = Anzahlung, tip = Trinkgeld |
+| b-40 | 🧑‍💼 Bewerbung & Vorstellungsgespräch | Aufbau | 16 | own 16 | own 16 | Entwurf zur Prüfung: eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft |
+| b-42 | 🐞 Software-Projekte & Fehler | Aufbau | 16 | own 16 | own 16 | Entwurf zur Prüfung: eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft |
+| b-43 | 🛡️ Versicherung: Police & Schaden | Aufbau | 16 | own 16 | own 16 | Entwurf zur Prüfung: eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft |
+| b-45 | 🏦 Kredit, Zinsen & Anlage | Aufbau | 16 | own 16 | own 16 | Entwurf zur Prüfung: eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft |
+| b-47 | 🛎️ Hotel: Rezeption & Beschwerde | Aufbau | 16 | own 16 | own 16 | Entwurf zur Prüfung: eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft |
+| b-49 | 🏗️ Baustelle: Angebot & Termin | Aufbau | 16 | own 16 | own 16 | Entwurf zur Prüfung: eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft |
+| b-51 | 🧑‍⚕️ Pflege & Betreuung | Aufbau | 16 | own 16 | own 16 | Entwurf zur Prüfung: eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft |
+| b-53 | 🧴 Sortiment & Kundenberatung | Aufbau | 16 | own 16 | own 16 | Entwurf zur Prüfung: eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft |
+| b-55 | 🏭 Lager & Fuhrpark | Aufbau | 16 | own 16 | own 16 | Entwurf zur Prüfung: eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft |
+| b-58 | 🦺 Wartung & Sicherheit am Arbeitsplatz | Aufbau | 16 | own 16 | own 16 | Entwurf zur Prüfung: eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft |
+| b-59 | 📲 Online-Vertrieb & Social Media | Aufbau | 16 | own 16 | own 16 | Entwurf zur Prüfung: eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft |
+| b-37 | 🛒 Bestellen & Liefern | Basis | 16 | own 16 | own 16 | Entwurf zur Prüfung: eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft |
+| b-38 | 🏷️ Preise, Rabatt & Angebot | Basis | 16 | own 16 | own 16 | Entwurf zur Prüfung: eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft |
+| b-39 | 🧾 Rechnung & Zahlung | Basis | 16 | own 16 | own 16 | Muster (geprüft): eigene Formulierung (src own); Häufigkeit nicht gegen NGSL/BSL belegt; Mehrdeutigkeiten: change = Wechselgeld, deposit = Anzahlung, tip = Trinkgeld |
+| b-41 | 💻 IT-Support & Geräte | Basis | 16 | own 16 | own 16 | Entwurf zur Prüfung: eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft |
+| b-44 | 💳 Konto, Karte & Geld abheben | Basis | 16 | own 16 | own 16 | Entwurf zur Prüfung: eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft |
+| b-46 | 🍽️ Restaurant: Reservierung & Bestellung | Basis | 16 | own 16 | own 16 | Entwurf zur Prüfung: eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft |
+| b-48 | 🔧 Werkzeug & Material | Basis | 16 | own 16 | own 16 | Entwurf zur Prüfung: eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft |
+| b-50 | 🩺 Praxis & Termin beim Arzt | Basis | 16 | own 16 | own 16 | Entwurf zur Prüfung: eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft |
+| b-52 | 🛍️ Laden & Kasse | Basis | 16 | own 16 | own 16 | Entwurf zur Prüfung: eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft |
+| b-54 | 📦 Versand & Transport | Basis | 16 | own 16 | own 16 | Entwurf zur Prüfung: eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft |
+| b-56 | 🗃️ Verwaltung: Formulare & Post | Basis | 16 | own 16 | own 16 | Entwurf zur Prüfung: eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft |
+| b-57 | ⚙️ Produktion: Maschinen & Arbeitsschritte | Basis | 16 | own 16 | own 16 | Entwurf zur Prüfung: eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft |
+| b-60 | 🛰️ IT-Sicherheit im Alltag | Profi | 16 | own 16 | own 16 | Entwurf zur Prüfung: eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft |
 
 ## Offene Punkte (rechtlich und fachlich, keine Rechtsberatung)
 

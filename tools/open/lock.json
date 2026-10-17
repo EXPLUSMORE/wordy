@@ -25,12 +25,702 @@
     "own:We do not accept cash, only credit cards.",
     "own:I still owe you twenty euros."
    ]
+  },
+  "b-37": {
+   "words": [
+    "courier|noun",
+    "to deliver|verb",
+    "parcel|noun",
+    "address|noun",
+    "to arrive|verb",
+    "to send|verb",
+    "to receive|verb",
+    "in stock|adj",
+    "out of stock|adj",
+    "shipping|noun",
+    "to cancel|verb",
+    "to notify|verb",
+    "quantity|noun",
+    "to return|verb",
+    "to choose|verb",
+    "to expect|verb"
+   ],
+   "sentences": [
+    "own:I would like to order ten boxes.",
+    "own:When will my parcel arrive?",
+    "own:The item is out of stock at the moment.",
+    "own:We sent the goods last week."
+   ]
+  },
+  "b-38": {
+   "words": [
+    "cheap|adj",
+    "expensive|adj",
+    "sale|noun",
+    "special offer|noun",
+    "good value|noun",
+    "to cost|verb",
+    "free|adj",
+    "bargain|noun",
+    "price list|noun",
+    "to compare|verb",
+    "included|adj",
+    "extra|adj",
+    "to save|verb",
+    "to afford|verb",
+    "reasonable|adj",
+    "worth|adj"
+   ],
+   "sentences": [
+    "own:This offer is only valid this week.",
+    "own:Is shipping included in the price?",
+    "own:Your offer is cheaper than the others.",
+    "own:We can give you a better price."
+   ]
+  },
+  "b-40": {
+   "words": [
+    "application|noun",
+    "to apply|verb",
+    "job interview|noun",
+    "skills|noun",
+    "experience|noun",
+    "degree|noun",
+    "candidate|noun",
+    "position|noun",
+    "reference letter|noun",
+    "strength|noun",
+    "weakness|noun",
+    "salary|noun",
+    "full-time|adj",
+    "part-time|adj",
+    "to be responsible for|verb",
+    "working hours|noun"
+   ],
+   "sentences": [
+    "own:I am applying for the position of assistant.",
+    "own:Could you tell me about your experience?",
+    "own:I have worked in this field for five years.",
+    "own:When can you start?"
+   ]
+  },
+  "b-41": {
+   "words": [
+    "laptop|noun",
+    "screen|noun",
+    "keyboard|noun",
+    "mouse|noun",
+    "password|noun",
+    "username|noun",
+    "to sign in|verb",
+    "to restart|verb",
+    "to install|verb",
+    "update|noun",
+    "wifi|noun",
+    "cable|noun",
+    "battery|noun",
+    "file|noun",
+    "to delete|verb",
+    "to switch on|verb"
+   ],
+   "sentences": [
+    "own:My computer does not start.",
+    "own:Have you tried to restart it?",
+    "own:I forgot my password again.",
+    "own:The wifi is very slow in this room."
+   ]
+  },
+  "b-42": {
+   "words": [
+    "defect|noun",
+    "error message|noun",
+    "to fix|verb",
+    "to roll back|verb",
+    "version|noun",
+    "function|noun",
+    "to test|verb",
+    "developer|noun",
+    "source code|noun",
+    "to deploy|verb",
+    "test case|noun",
+    "to crash|verb",
+    "workaround|noun",
+    "backlog|noun",
+    "sprint|noun",
+    "user interface|noun"
+   ],
+   "sentences": [
+    "own:The app crashes when I open the menu.",
+    "own:We need to fix this bug before the release.",
+    "own:The developers tested the new feature yesterday.",
+    "own:Please describe the error in detail."
+   ]
+  },
+  "b-43": {
+   "words": [
+    "insurance|noun",
+    "policy|noun",
+    "premium|noun",
+    "claim|noun",
+    "damage|noun",
+    "benefit|noun",
+    "insurer|noun",
+    "policyholder|noun",
+    "excess|noun",
+    "third party|noun",
+    "accident|noun",
+    "theft|noun",
+    "to renew|verb",
+    "exclusion|noun",
+    "compensation|noun",
+    "to report|verb"
+   ],
+   "sentences": [
+    "own:Is the damage covered by my insurance?",
+    "own:I would like to report an accident.",
+    "own:The premium is lower this year.",
+    "own:Please send us the photos of the damage."
+   ]
+  },
+  "b-44": {
+   "words": [
+    "bank account|noun",
+    "current account|noun",
+    "savings|noun",
+    "cash machine|noun",
+    "bank card|noun",
+    "PIN|noun",
+    "contactless|adj",
+    "online banking|noun",
+    "to pay in|verb",
+    "to lock|verb",
+    "advisor|noun",
+    "opening hours|noun",
+    "interest|noun",
+    "to open an account|verb",
+    "monthly|adj",
+    "cheque|noun"
+   ],
+   "sentences": [
+    "own:I lost my card. Can you block it?",
+    "own:How much money do you want to withdraw?",
+    "own:The cash machine is out of order.",
+    "own:You can pay by card or in cash."
+   ]
+  },
+  "b-45": {
+   "words": [
+    "to borrow|verb",
+    "to lend|verb",
+    "debt|noun",
+    "mortgage|noun",
+    "repayment|noun",
+    "to save up|verb",
+    "investment|noun",
+    "stock exchange|noun",
+    "pension|noun",
+    "safe|adj",
+    "fixed rate|noun",
+    "credit rating|noun",
+    "collateral|noun",
+    "term|noun",
+    "to default|verb",
+    "fund|noun"
+   ],
+   "sentences": [
+    "own:How long is the term of the loan?",
+    "own:The interest rate went up last month.",
+    "own:We cannot lend you any more money.",
+    "own:You should compare several offers first."
+   ]
+  },
+  "b-46": {
+   "words": [
+    "to book|verb",
+    "menu|noun",
+    "waiter|noun",
+    "waitress|noun",
+    "dessert|noun",
+    "dish of the day|noun",
+    "vegetarian|adj",
+    "allergy|noun",
+    "soup|noun",
+    "dish|noun",
+    "drink|noun",
+    "delicious|adj",
+    "fresh|adj",
+    "spicy|adj",
+    "napkin|noun",
+    "vegan|adj"
+   ],
+   "sentences": [
+    "own:A table for two, please.",
+    "own:Do you have a table by the window?",
+    "own:I will have the soup, please.",
+    "own:Could we have the bill, please?"
+   ]
+  },
+  "b-47": {
+   "words": [
+    "double room|noun",
+    "key card|noun",
+    "to check out|verb",
+    "to stay|verb",
+    "per night|adv",
+    "towel|noun",
+    "air conditioning|noun",
+    "noise|noun",
+    "to complain|verb",
+    "broken|adj",
+    "to upgrade|verb",
+    "wake-up call|noun",
+    "view|noun",
+    "quiet|adj",
+    "suite|noun",
+    "luggage|noun"
+   ],
+   "sentences": [
+    "own:I booked a room for three nights.",
+    "own:Breakfast is served from seven to ten.",
+    "own:The room is too noisy. Can we change it?",
+    "own:We apologise for the inconvenience."
+   ]
+  },
+  "b-48": {
+   "words": [
+    "hammer|noun",
+    "screwdriver|noun",
+    "drill|noun",
+    "saw|noun",
+    "pliers|noun",
+    "ladder|noun",
+    "tape measure|noun",
+    "nail|noun",
+    "screw|noun",
+    "wood|noun",
+    "metal|noun",
+    "paint|noun",
+    "brush|noun",
+    "glue|noun",
+    "toolbox|noun",
+    "to drill|verb"
+   ],
+   "sentences": [
+    "own:Can I borrow your screwdriver?",
+    "own:The wall needs two coats of paint.",
+    "own:Measure twice and cut once.",
+    "own:We need a ladder and some nails."
+   ]
+  },
+  "b-49": {
+   "words": [
+    "building site|noun",
+    "scaffolding|noun",
+    "concrete|noun",
+    "brick|noun",
+    "foundation|noun",
+    "roof|noun",
+    "drawing|noun",
+    "contractor|noun",
+    "building permit|noun",
+    "inspection|noun",
+    "to renovate|verb",
+    "ceiling|noun",
+    "floor|noun",
+    "pipe|noun",
+    "electrician|noun",
+    "plumber|noun"
+   ],
+   "sentences": [
+    "own:When can you start the work?",
+    "own:The job will take about three weeks.",
+    "own:Our offer includes material and labour.",
+    "own:We must finish before the winter."
+   ]
+  },
+  "b-50": {
+   "words": [
+    "doctor|noun",
+    "patient|noun",
+    "waiting room|noun",
+    "prescription|noun",
+    "medicine|noun",
+    "pain|noun",
+    "fever|noun",
+    "cough|noun",
+    "headache|noun",
+    "sick|adj",
+    "symptom|noun",
+    "treatment|noun",
+    "blood pressure|noun",
+    "sick note|noun",
+    "to examine|verb",
+    "pharmacy|noun"
+   ],
+   "sentences": [
+    "own:I would like to make an appointment.",
+    "own:How long have you had these symptoms?",
+    "own:Take one tablet after every meal.",
+    "own:Please stay in bed and drink a lot."
+   ]
+  },
+  "b-51": {
+   "words": [
+    "nurse|noun",
+    "caregiver|noun",
+    "care home|noun",
+    "elderly|adj",
+    "to look after|verb",
+    "wheelchair|noun",
+    "bandage|noun",
+    "medication|noun",
+    "duty roster|noun",
+    "hygiene|noun",
+    "privacy|noun",
+    "emergency|noun",
+    "relative|noun",
+    "to carry|verb",
+    "to wash|verb",
+    "to monitor|verb"
+   ],
+   "sentences": [
+    "own:The patient needs help with eating.",
+    "own:Please wash your hands before you start.",
+    "own:She checks on the residents every hour.",
+    "own:Call me if there is a problem."
+   ]
+  },
+  "b-52": {
+   "words": [
+    "shop assistant|noun",
+    "till|noun",
+    "queue|noun",
+    "bag|noun",
+    "basket|noun",
+    "trolley|noun",
+    "shelf|noun",
+    "size|noun",
+    "to try on|verb",
+    "fitting room|noun",
+    "to exchange|verb",
+    "price tag|noun",
+    "cashier|noun",
+    "loyalty card|noun",
+    "barcode|noun",
+    "to wrap|verb"
+   ],
+   "sentences": [
+    "own:Can I help you?",
+    "own:I am just looking, thank you.",
+    "own:How would you like to pay?",
+    "own:Do you have this shirt in blue?"
+   ]
+  },
+  "b-53": {
+   "words": [
+    "range|noun",
+    "manufacturer|noun",
+    "product|noun",
+    "customer advice|noun",
+    "to suit|verb",
+    "alternative|noun",
+    "new arrival|noun",
+    "display|noun",
+    "guarantee|noun",
+    "to demonstrate|verb",
+    "popular|adj",
+    "bestseller|noun",
+    "out of date|adj",
+    "ingredients|noun",
+    "shelf life|noun",
+    "sample|noun"
+   ],
+   "sentences": [
+    "own:What would you recommend for a beginner?",
+    "own:This model is lighter than the old one.",
+    "own:Can I see a different colour?",
+    "own:It comes with a two-year guarantee."
+   ]
+  },
+  "b-54": {
+   "words": [
+    "lorry|noun",
+    "van|noun",
+    "driver|noun",
+    "route|noun",
+    "to load|verb",
+    "to unload|verb",
+    "pallet|noun",
+    "box|noun",
+    "label|noun",
+    "traffic|noun",
+    "motorway|noun",
+    "fuel|noun",
+    "delay|noun",
+    "to drive|verb",
+    "to transport|verb",
+    "cargo|noun"
+   ],
+   "sentences": [
+    "own:The lorry is stuck in traffic.",
+    "own:Please load the boxes carefully.",
+    "own:How long does the journey take?",
+    "own:We will deliver the goods tomorrow."
+   ]
+  },
+  "b-55": {
+   "words": [
+    "forklift|noun",
+    "loading bay|noun",
+    "goods|noun",
+    "stock count|noun",
+    "inventory|noun",
+    "fleet|noun",
+    "vehicle|noun",
+    "to service|verb",
+    "driving licence|noun",
+    "tyre|noun",
+    "to refuel|verb",
+    "delivery note|noun",
+    "damaged|adj",
+    "to pack|verb",
+    "storage|noun",
+    "to store|verb"
+   ],
+   "sentences": [
+    "own:The goods must be checked on arrival.",
+    "own:Who is responsible for the vehicles?",
+    "own:The forklift driver needs a special licence.",
+    "own:We have to count everything again."
+   ]
+  },
+  "b-56": {
+   "words": [
+    "form|noun",
+    "to fill in|verb",
+    "stamp|noun",
+    "envelope|noun",
+    "letter|noun",
+    "post|noun",
+    "to post|verb",
+    "copy|noun",
+    "to scan|verb",
+    "document|noun",
+    "enclosure|noun",
+    "to hand in|verb",
+    "to register|verb",
+    "original|noun",
+    "initials|noun",
+    "tick box|noun"
+   ],
+   "sentences": [
+    "own:Please return the form by Friday.",
+    "own:Where can I get this document?",
+    "own:The office is closed on Saturdays.",
+    "own:I will send you a copy by post."
+   ]
+  },
+  "b-57": {
+   "words": [
+    "machine|noun",
+    "to produce|verb",
+    "production line|noun",
+    "raw material|noun",
+    "to assemble|verb",
+    "part|noun",
+    "spare part|noun",
+    "to start|verb",
+    "to stop|verb",
+    "operator|noun",
+    "worker|noun",
+    "factory|noun",
+    "speed|noun",
+    "button|noun",
+    "conveyor belt|noun",
+    "output|noun"
+   ],
+   "sentences": [
+    "own:Press this button to start the machine.",
+    "own:The machine stopped because of a fault.",
+    "own:Each part is checked twice.",
+    "own:We produce about two thousand units a day."
+   ]
+  },
+  "b-58": {
+   "words": [
+    "maintenance|noun",
+    "to repair|verb",
+    "breakdown|noun",
+    "safety|noun",
+    "helmet|noun",
+    "gloves|noun",
+    "protective clothing|noun",
+    "hazard|noun",
+    "fire exit|noun",
+    "first aid|noun",
+    "warning sign|noun",
+    "emergency stop|noun",
+    "to wear|verb",
+    "to inspect|verb",
+    "regular|adj",
+    "to prevent|verb"
+   ],
+   "sentences": [
+    "own:You must always wear a helmet here.",
+    "own:Do not enter without protective clothing.",
+    "own:The machine is being repaired at the moment.",
+    "own:Report every accident to your supervisor."
+   ]
+  },
+  "b-59": {
+   "words": [
+    "website|noun",
+    "online shop|noun",
+    "to click|verb",
+    "banner|noun",
+    "follower|noun",
+    "social media|noun",
+    "mailing list|noun",
+    "to subscribe|verb",
+    "survey|noun",
+    "rating|noun",
+    "to upload|verb",
+    "to download|verb",
+    "profile|noun",
+    "to comment|verb",
+    "advert|noun",
+    "hashtag|noun"
+   ],
+   "sentences": [
+    "own:Please leave a review after your purchase.",
+    "own:Our online shop is open day and night.",
+    "own:Click here to see all products.",
+    "own:We post new photos every week."
+   ]
+  },
+  "b-60": {
+   "words": [
+    "hacker|noun",
+    "virus|noun",
+    "malware|noun",
+    "spam|noun",
+    "suspicious|adj",
+    "antivirus|noun",
+    "secure|adj",
+    "to protect|verb",
+    "device|noun",
+    "public network|noun",
+    "lock screen|noun",
+    "to encrypt|verb",
+    "fake|adj",
+    "to steal|verb",
+    "unauthorised|adj",
+    "to log out|verb"
+   ],
+   "sentences": [
+    "own:Never click on links in suspicious emails.",
+    "own:Use a different password for each account.",
+    "own:Our systems were attacked last night.",
+    "own:Please report anything unusual to the IT team."
+   ]
   }
  },
  "sentenceOrder": [
   "own:Could you send me the invoice, please?",
   "own:The payment is due next week.",
   "own:We do not accept cash, only credit cards.",
-  "own:I still owe you twenty euros."
+  "own:I still owe you twenty euros.",
+  "own:I would like to order ten boxes.",
+  "own:When will my parcel arrive?",
+  "own:The item is out of stock at the moment.",
+  "own:We sent the goods last week.",
+  "own:This offer is only valid this week.",
+  "own:Is shipping included in the price?",
+  "own:Your offer is cheaper than the others.",
+  "own:We can give you a better price.",
+  "own:I am applying for the position of assistant.",
+  "own:Could you tell me about your experience?",
+  "own:I have worked in this field for five years.",
+  "own:When can you start?",
+  "own:My computer does not start.",
+  "own:Have you tried to restart it?",
+  "own:I forgot my password again.",
+  "own:The wifi is very slow in this room.",
+  "own:The app crashes when I open the menu.",
+  "own:We need to fix this bug before the release.",
+  "own:The developers tested the new feature yesterday.",
+  "own:Please describe the error in detail.",
+  "own:Is the damage covered by my insurance?",
+  "own:I would like to report an accident.",
+  "own:The premium is lower this year.",
+  "own:Please send us the photos of the damage.",
+  "own:I lost my card. Can you block it?",
+  "own:How much money do you want to withdraw?",
+  "own:The cash machine is out of order.",
+  "own:You can pay by card or in cash.",
+  "own:How long is the term of the loan?",
+  "own:The interest rate went up last month.",
+  "own:We cannot lend you any more money.",
+  "own:You should compare several offers first.",
+  "own:A table for two, please.",
+  "own:Do you have a table by the window?",
+  "own:I will have the soup, please.",
+  "own:Could we have the bill, please?",
+  "own:I booked a room for three nights.",
+  "own:Breakfast is served from seven to ten.",
+  "own:The room is too noisy. Can we change it?",
+  "own:We apologise for the inconvenience.",
+  "own:Can I borrow your screwdriver?",
+  "own:The wall needs two coats of paint.",
+  "own:Measure twice and cut once.",
+  "own:We need a ladder and some nails.",
+  "own:When can you start the work?",
+  "own:The job will take about three weeks.",
+  "own:Our offer includes material and labour.",
+  "own:We must finish before the winter.",
+  "own:I would like to make an appointment.",
+  "own:How long have you had these symptoms?",
+  "own:Take one tablet after every meal.",
+  "own:Please stay in bed and drink a lot.",
+  "own:The patient needs help with eating.",
+  "own:Please wash your hands before you start.",
+  "own:She checks on the residents every hour.",
+  "own:Call me if there is a problem.",
+  "own:Can I help you?",
+  "own:I am just looking, thank you.",
+  "own:How would you like to pay?",
+  "own:Do you have this shirt in blue?",
+  "own:What would you recommend for a beginner?",
+  "own:This model is lighter than the old one.",
+  "own:Can I see a different colour?",
+  "own:It comes with a two-year guarantee.",
+  "own:The lorry is stuck in traffic.",
+  "own:Please load the boxes carefully.",
+  "own:How long does the journey take?",
+  "own:We will deliver the goods tomorrow.",
+  "own:The goods must be checked on arrival.",
+  "own:Who is responsible for the vehicles?",
+  "own:The forklift driver needs a special licence.",
+  "own:We have to count everything again.",
+  "own:Please return the form by Friday.",
+  "own:Where can I get this document?",
+  "own:The office is closed on Saturdays.",
+  "own:I will send you a copy by post.",
+  "own:Press this button to start the machine.",
+  "own:The machine stopped because of a fault.",
+  "own:Each part is checked twice.",
+  "own:We produce about two thousand units a day.",
+  "own:You must always wear a helmet here.",
+  "own:Do not enter without protective clothing.",
+  "own:The machine is being repaired at the moment.",
+  "own:Report every accident to your supervisor.",
+  "own:Please leave a review after your purchase.",
+  "own:Our online shop is open day and night.",
+  "own:Click here to see all products.",
+  "own:We post new photos every week.",
+  "own:Never click on links in suspicious emails.",
+  "own:Use a different password for each account.",
+  "own:Our systems were attacked last night.",
+  "own:Please report anything unusual to the IT team."
  ]
 }

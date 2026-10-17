@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.105.0 – 2026-10-17
+- **Neu: 23 weitere Business-Einheiten (b-37 bis b-60 ohne die Muster-Einheit b-39)** mit Themen aus Handel, IT, Versicherung, Bank, Gastronomie und Hotel, Handwerk und Bau, Gesundheit und Pflege, Einzelhandel, Logistik, Verwaltung und Produktion: je 16 Wörter mit Beispielsatz und 4 Sätze für den Satzbau, insgesamt 384 Wörter und 96 Sätze. Stufen: Basis, Aufbau und Profi. Alles ist selbst formuliert (Herkunft `own`, CC BY-SA 4.0); die Häufigkeit ist nicht gegen NGSL/BSL belegt. Wörter, die es im Altbestand schon gibt, sind nicht doppelt. Bestehende Einheiten, Wort- und Satz-IDs bleiben unverändert. Server-Schritt nicht nötig.
+
 ## 2.104.0 – 2026-10-17
 - **Neu: Muster-Einheit „Rechnung & Zahlung“ (b-39, Business Basis)** aus der neuen offenen Datenreihe `data/open`: 16 Wörter und 4 Sätze, selbst formuliert (Herkunft `own`, Lizenz CC BY-SA 4.0), Herkunft und Lizenz stehen je Eintrag in den Daten. Die Häufigkeit ist nicht gegen NGSL/BSL belegt (siehe SOURCES.md). Der Build prüft Herkunft und Lizenz aller Einträge in `data/open`. Bestehende Einheiten, Wort- und Satz-IDs bleiben unverändert. Server-Schritt nicht nötig.
 

@@ -1,3 +1,98 @@
 {
-  "b-39": { "status": "Muster (zur Prüfung)", "note": "eigene Formulierung (src own); Häufigkeit nicht gegen NGSL/BSL belegt; Mehrdeutigkeiten: change = Wechselgeld, deposit = Anzahlung, tip = Trinkgeld" }
+ "b-39": {
+  "status": "Muster (geprüft)",
+  "note": "eigene Formulierung (src own); Häufigkeit nicht gegen NGSL/BSL belegt; Mehrdeutigkeiten: change = Wechselgeld, deposit = Anzahlung, tip = Trinkgeld"
+ },
+ "b-37": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft"
+ },
+ "b-38": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft"
+ },
+ "b-40": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft"
+ },
+ "b-41": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft"
+ },
+ "b-42": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft"
+ },
+ "b-43": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft"
+ },
+ "b-44": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft"
+ },
+ "b-45": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft"
+ },
+ "b-46": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft"
+ },
+ "b-47": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft"
+ },
+ "b-48": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft"
+ },
+ "b-49": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft"
+ },
+ "b-50": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft"
+ },
+ "b-51": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft"
+ },
+ "b-52": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft"
+ },
+ "b-53": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft"
+ },
+ "b-54": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft"
+ },
+ "b-55": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft"
+ },
+ "b-56": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft"
+ },
+ "b-57": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft"
+ },
+ "b-58": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft"
+ },
+ "b-59": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft"
+ },
+ "b-60": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft"
+ }
 }

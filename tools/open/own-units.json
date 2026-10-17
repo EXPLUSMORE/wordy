@@ -1,143 +1,3363 @@
 {
-  "_hinweis": "Eigene Formulierungen (src own, CC-BY-SA-4.0): Wörter, Übersetzungen, Wortarten und Sätze sind vom Projekt selbst verfasst, nicht aus NGSL/BSL/Wiktionary/Tatoeba übernommen. Die Häufigkeit ist NICHT gegen NGSL/BSL belegt. Reihenfolge nur anhängen, nie umordnen (Lernstand b-NN#Position).",
-  "b-39": {
-    "status": "Muster",
-    "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; mehrdeutig: change = Wechselgeld (nicht ändern), deposit = Anzahlung (nicht Pfand), tip = Trinkgeld (nicht Hinweis); Wörter, die der Altbestand schon hat (invoice, refund, VAT, reminder, due date, to settle), wurden weggelassen",
-    "words": [
-      [
-        "bill",
-        "die Rechnung",
-        "noun",
-        1,
-        "Can we have the bill, please?"
-      ],
-      [
-        "payment",
-        "die Zahlung",
-        "noun",
-        1,
-        "We have not received your payment yet."
-      ],
-      [
-        "to pay",
-        "bezahlen",
-        "verb",
-        1,
-        "You can pay at the front desk."
-      ],
-      [
-        "cash",
-        "das Bargeld",
-        "noun",
-        1,
-        "Do you accept cash here?"
-      ],
-      [
-        "credit card",
-        "die Kreditkarte",
-        "noun",
-        1,
-        "I would like to pay by credit card."
-      ],
-      [
-        "price",
-        "der Preis",
-        "noun",
-        1,
-        "What is the price of this ticket?"
-      ],
-      [
-        "to charge",
-        "berechnen, in Rechnung stellen",
-        "verb",
-        2,
-        "They charge ten euros for delivery."
-      ],
-      [
-        "voucher",
-        "der Gutschein",
-        "noun",
-        2,
-        "You can use this voucher in our shop."
-      ],
-      [
-        "change",
-        "das Wechselgeld",
-        "noun",
-        2,
-        "Keep the change, please."
-      ],
-      [
-        "tip",
-        "das Trinkgeld",
-        "noun",
-        2,
-        "Is the tip included in the bill?"
-      ],
-      [
-        "tax",
-        "die Steuer",
-        "noun",
-        2,
-        "The price does not include tax."
-      ],
-      [
-        "fee",
-        "die Gebühr",
-        "noun",
-        2,
-        "There is a small fee for late payment."
-      ],
-      [
-        "deposit",
-        "die Anzahlung",
-        "noun",
-        2,
-        "We ask for a deposit of twenty percent."
-      ],
-      [
-        "to owe",
-        "schulden",
-        "verb",
-        2,
-        "How much do I owe you?"
-      ],
-      [
-        "overdue",
-        "überfällig",
-        "adj",
-        3,
-        "Your payment is overdue."
-      ],
-      [
-        "outstanding",
-        "ausstehend, offen",
-        "adj",
-        3,
-        "There is an outstanding amount on your account."
-      ]
-    ],
-    "sentences": [
-      [
-        "Could you send me the invoice, please?",
-        "Könnten Sie mir bitte die Rechnung schicken?",
-        "Höfliche Bitte: Could + Person + Grundform des Verbs."
-      ],
-      [
-        "The payment is due next week.",
-        "Die Zahlung ist nächste Woche fällig.",
-        "be due = fällig sein; next week steht ohne Präposition."
-      ],
-      [
-        "We do not accept cash, only credit cards.",
-        "Wir nehmen kein Bargeld, nur Kreditkarten.",
-        "Verneinung im Present Simple: do not + Grundform."
-      ],
-      [
-        "I still owe you twenty euros.",
-        "Ich schulde dir noch zwanzig Euro.",
-        "still steht vor dem Vollverb; owe + Person + Betrag."
-      ]
-    ]
-  }
+ "_hinweis": "Eigene Formulierungen (src own, CC-BY-SA-4.0): Wörter, Übersetzungen, Wortarten und Sätze sind vom Projekt selbst verfasst, nicht aus NGSL/BSL/Wiktionary/Tatoeba übernommen. Die Häufigkeit ist NICHT gegen NGSL/BSL belegt. Reihenfolge nur anhängen, nie umordnen (Lernstand b-NN#Position).",
+ "b-39": {
+  "status": "Muster",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; mehrdeutig: change = Wechselgeld (nicht ändern), deposit = Anzahlung (nicht Pfand), tip = Trinkgeld (nicht Hinweis); Wörter, die der Altbestand schon hat (invoice, refund, VAT, reminder, due date, to settle), wurden weggelassen",
+  "words": [
+   [
+    "bill",
+    "die Rechnung",
+    "noun",
+    1,
+    "Can we have the bill, please?"
+   ],
+   [
+    "payment",
+    "die Zahlung",
+    "noun",
+    1,
+    "We have not received your payment yet."
+   ],
+   [
+    "to pay",
+    "bezahlen",
+    "verb",
+    1,
+    "You can pay at the front desk."
+   ],
+   [
+    "cash",
+    "das Bargeld",
+    "noun",
+    1,
+    "Do you accept cash here?"
+   ],
+   [
+    "credit card",
+    "die Kreditkarte",
+    "noun",
+    1,
+    "I would like to pay by credit card."
+   ],
+   [
+    "price",
+    "der Preis",
+    "noun",
+    1,
+    "What is the price of this ticket?"
+   ],
+   [
+    "to charge",
+    "berechnen, in Rechnung stellen",
+    "verb",
+    2,
+    "They charge ten euros for delivery."
+   ],
+   [
+    "voucher",
+    "der Gutschein",
+    "noun",
+    2,
+    "You can use this voucher in our shop."
+   ],
+   [
+    "change",
+    "das Wechselgeld",
+    "noun",
+    2,
+    "Keep the change, please."
+   ],
+   [
+    "tip",
+    "das Trinkgeld",
+    "noun",
+    2,
+    "Is the tip included in the bill?"
+   ],
+   [
+    "tax",
+    "die Steuer",
+    "noun",
+    2,
+    "The price does not include tax."
+   ],
+   [
+    "fee",
+    "die Gebühr",
+    "noun",
+    2,
+    "There is a small fee for late payment."
+   ],
+   [
+    "deposit",
+    "die Anzahlung",
+    "noun",
+    2,
+    "We ask for a deposit of twenty percent."
+   ],
+   [
+    "to owe",
+    "schulden",
+    "verb",
+    2,
+    "How much do I owe you?"
+   ],
+   [
+    "overdue",
+    "überfällig",
+    "adj",
+    3,
+    "Your payment is overdue."
+   ],
+   [
+    "outstanding",
+    "ausstehend, offen",
+    "adj",
+    3,
+    "There is an outstanding amount on your account."
+   ]
+  ],
+  "sentences": [
+   [
+    "Could you send me the invoice, please?",
+    "Könnten Sie mir bitte die Rechnung schicken?",
+    "Höfliche Bitte: Could + Person + Grundform des Verbs."
+   ],
+   [
+    "The payment is due next week.",
+    "Die Zahlung ist nächste Woche fällig.",
+    "be due = fällig sein; next week steht ohne Präposition."
+   ],
+   [
+    "We do not accept cash, only credit cards.",
+    "Wir nehmen kein Bargeld, nur Kreditkarten.",
+    "Verneinung im Present Simple: do not + Grundform."
+   ],
+   [
+    "I still owe you twenty euros.",
+    "Ich schulde dir noch zwanzig Euro.",
+    "still steht vor dem Vollverb; owe + Person + Betrag."
+   ]
+  ]
+ },
+ "b-37": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft",
+  "words": [
+   [
+    "courier",
+    "der Kurierdienst",
+    "noun",
+    2,
+    "The courier brings the parcel to your door."
+   ],
+   [
+    "to deliver",
+    "liefern",
+    "verb",
+    1,
+    "We deliver within three days."
+   ],
+   [
+    "parcel",
+    "das Paket",
+    "noun",
+    1,
+    "The parcel is too heavy for me."
+   ],
+   [
+    "address",
+    "die Adresse",
+    "noun",
+    1,
+    "Please check the delivery address."
+   ],
+   [
+    "to arrive",
+    "ankommen",
+    "verb",
+    1,
+    "The goods arrive tomorrow morning."
+   ],
+   [
+    "to send",
+    "schicken, senden",
+    "verb",
+    1,
+    "Can you send it to my office?"
+   ],
+   [
+    "to receive",
+    "erhalten, bekommen",
+    "verb",
+    1,
+    "We received your order yesterday."
+   ],
+   [
+    "in stock",
+    "auf Lager, vorrätig",
+    "adj",
+    1,
+    "Is this model in stock?"
+   ],
+   [
+    "out of stock",
+    "nicht vorrätig",
+    "adj",
+    1,
+    "The blue one is out of stock."
+   ],
+   [
+    "shipping",
+    "der Versand",
+    "noun",
+    2,
+    "Shipping costs five euros."
+   ],
+   [
+    "to cancel",
+    "stornieren, absagen",
+    "verb",
+    2,
+    "I want to cancel my order."
+   ],
+   [
+    "to notify",
+    "benachrichtigen",
+    "verb",
+    3,
+    "We will notify you when the goods arrive."
+   ],
+   [
+    "quantity",
+    "die Menge, die Stückzahl",
+    "noun",
+    2,
+    "What quantity do you need?"
+   ],
+   [
+    "to return",
+    "zurückschicken",
+    "verb",
+    2,
+    "You can return the goods within two weeks."
+   ],
+   [
+    "to choose",
+    "auswählen, wählen",
+    "verb",
+    1,
+    "Please choose a colour."
+   ],
+   [
+    "to expect",
+    "erwarten",
+    "verb",
+    2,
+    "We expect the delivery on Thursday."
+   ]
+  ],
+  "sentences": [
+   [
+    "I would like to order ten boxes.",
+    "Ich möchte zehn Kartons bestellen.",
+    "would like to + Grundform ist die höfliche Form von want to."
+   ],
+   [
+    "When will my parcel arrive?",
+    "Wann kommt mein Paket an?",
+    "Frage mit will: Fragewort + will + Subjekt + Grundform."
+   ],
+   [
+    "The item is out of stock at the moment.",
+    "Der Artikel ist im Moment nicht vorrätig.",
+    "at the moment steht meist am Satzende."
+   ],
+   [
+    "We sent the goods last week.",
+    "Wir haben die Ware letzte Woche geschickt.",
+    "Simple Past mit Zeitangabe: send wird zu sent (unregelmäßig)."
+   ]
+  ]
+ },
+ "b-38": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft",
+  "words": [
+   [
+    "cheap",
+    "billig, günstig",
+    "adj",
+    1,
+    "This hotel is cheap and clean."
+   ],
+   [
+    "expensive",
+    "teuer",
+    "adj",
+    1,
+    "That printer is too expensive for us."
+   ],
+   [
+    "sale",
+    "der Ausverkauf, die Aktion",
+    "noun",
+    1,
+    "The sale starts on the first of the month."
+   ],
+   [
+    "special offer",
+    "das Sonderangebot",
+    "noun",
+    1,
+    "Today's special offer is a free coffee."
+   ],
+   [
+    "good value",
+    "preiswert, gutes Preis-Leistungs-Verhältnis",
+    "noun",
+    3,
+    "This menu is very good value."
+   ],
+   [
+    "to cost",
+    "kosten",
+    "verb",
+    1,
+    "How much does it cost?"
+   ],
+   [
+    "free",
+    "kostenlos",
+    "adj",
+    1,
+    "The first lesson is free."
+   ],
+   [
+    "bargain",
+    "das Schnäppchen",
+    "noun",
+    2,
+    "At that price it is a real bargain."
+   ],
+   [
+    "price list",
+    "die Preisliste",
+    "noun",
+    2,
+    "I will send you our price list."
+   ],
+   [
+    "to compare",
+    "vergleichen",
+    "verb",
+    2,
+    "Let us compare the two offers."
+   ],
+   [
+    "included",
+    "inklusive, enthalten",
+    "adj",
+    2,
+    "Is breakfast included in the price?"
+   ],
+   [
+    "extra",
+    "zusätzlich, extra",
+    "adj",
+    2,
+    "Delivery is an extra charge."
+   ],
+   [
+    "to save",
+    "sparen",
+    "verb",
+    2,
+    "You save ten percent with this card."
+   ],
+   [
+    "to afford",
+    "sich leisten",
+    "verb",
+    3,
+    "We cannot afford a new car."
+   ],
+   [
+    "reasonable",
+    "angemessen, vernünftig",
+    "adj",
+    3,
+    "The price seems reasonable to me."
+   ],
+   [
+    "worth",
+    "wert",
+    "adj",
+    3,
+    "The book is worth every euro."
+   ]
+  ],
+  "sentences": [
+   [
+    "This offer is only valid this week.",
+    "Dieses Angebot gilt nur diese Woche.",
+    "valid = gültig; Zeitangabe mit this ohne Präposition."
+   ],
+   [
+    "Is shipping included in the price?",
+    "Ist der Versand im Preis enthalten?",
+    "Frage mit is: Is + Subjekt + Zustand."
+   ],
+   [
+    "Your offer is cheaper than the others.",
+    "Ihr Angebot ist günstiger als die anderen.",
+    "Steigerung kurzer Adjektive mit -er + than."
+   ],
+   [
+    "We can give you a better price.",
+    "Wir können Ihnen einen besseren Preis anbieten.",
+    "better ist die unregelmäßige Steigerung von good."
+   ]
+  ]
+ },
+ "b-40": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft",
+  "words": [
+   [
+    "application",
+    "die Bewerbung",
+    "noun",
+    2,
+    "I sent my application last week."
+   ],
+   [
+    "to apply",
+    "sich bewerben",
+    "verb",
+    2,
+    "She wants to apply for the job."
+   ],
+   [
+    "job interview",
+    "das Vorstellungsgespräch",
+    "noun",
+    2,
+    "My job interview is on Tuesday morning."
+   ],
+   [
+    "skills",
+    "die Fähigkeiten",
+    "noun",
+    2,
+    "Good communication skills are important."
+   ],
+   [
+    "experience",
+    "die Erfahrung",
+    "noun",
+    2,
+    "Do you have experience in sales?"
+   ],
+   [
+    "degree",
+    "der Studienabschluss",
+    "noun",
+    2,
+    "She has a degree in business."
+   ],
+   [
+    "candidate",
+    "der Bewerber, die Kandidatin",
+    "noun",
+    3,
+    "We have three good candidates."
+   ],
+   [
+    "position",
+    "die Stelle",
+    "noun",
+    2,
+    "The position is still open."
+   ],
+   [
+    "reference letter",
+    "das Empfehlungsschreiben, das Zeugnis",
+    "noun",
+    3,
+    "My old boss wrote a reference letter."
+   ],
+   [
+    "strength",
+    "die Stärke",
+    "noun",
+    2,
+    "What is your greatest strength?"
+   ],
+   [
+    "weakness",
+    "die Schwäche",
+    "noun",
+    3,
+    "Everyone has a weakness."
+   ],
+   [
+    "salary",
+    "das Gehalt",
+    "noun",
+    2,
+    "The salary depends on your experience."
+   ],
+   [
+    "full-time",
+    "Vollzeit",
+    "adj",
+    2,
+    "It is a full-time position."
+   ],
+   [
+    "part-time",
+    "Teilzeit",
+    "adj",
+    2,
+    "I work part-time on Fridays."
+   ],
+   [
+    "to be responsible for",
+    "zuständig sein für",
+    "verb",
+    3,
+    "He is responsible for the budget."
+   ],
+   [
+    "working hours",
+    "die Arbeitszeiten",
+    "noun",
+    2,
+    "What are the working hours?"
+   ]
+  ],
+  "sentences": [
+   [
+    "I am applying for the position of assistant.",
+    "Ich bewerbe mich um die Stelle als Assistent.",
+    "Present Continuous für eine gerade laufende Handlung; apply for = sich bewerben um."
+   ],
+   [
+    "Could you tell me about your experience?",
+    "Könnten Sie mir von Ihrer Erfahrung erzählen?",
+    "Höfliche Bitte mit could; tell me about = mir von etwas erzählen."
+   ],
+   [
+    "I have worked in this field for five years.",
+    "Ich arbeite seit fünf Jahren in diesem Bereich.",
+    "Present Perfect mit for + Zeitraum für Dauer bis jetzt."
+   ],
+   [
+    "When can you start?",
+    "Wann können Sie anfangen?",
+    "Frage mit can: Fragewort + can + Subjekt + Grundform."
+   ]
+  ]
+ },
+ "b-41": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft",
+  "words": [
+   [
+    "laptop",
+    "der Laptop",
+    "noun",
+    1,
+    "My laptop is very slow today."
+   ],
+   [
+    "screen",
+    "der Bildschirm",
+    "noun",
+    1,
+    "The screen is too dark."
+   ],
+   [
+    "keyboard",
+    "die Tastatur",
+    "noun",
+    1,
+    "The keyboard does not work."
+   ],
+   [
+    "mouse",
+    "die Maus",
+    "noun",
+    1,
+    "I need a new mouse."
+   ],
+   [
+    "password",
+    "das Passwort",
+    "noun",
+    1,
+    "Please do not share your password."
+   ],
+   [
+    "username",
+    "der Benutzername",
+    "noun",
+    1,
+    "Your username is your email address."
+   ],
+   [
+    "to sign in",
+    "sich anmelden",
+    "verb",
+    1,
+    "Please sign in with your username."
+   ],
+   [
+    "to restart",
+    "neu starten",
+    "verb",
+    1,
+    "Please restart your computer."
+   ],
+   [
+    "to install",
+    "installieren",
+    "verb",
+    2,
+    "Can you install this programme for me?"
+   ],
+   [
+    "update",
+    "das Update",
+    "noun",
+    2,
+    "There is an update for your phone."
+   ],
+   [
+    "wifi",
+    "das WLAN",
+    "noun",
+    1,
+    "What is the wifi password?"
+   ],
+   [
+    "cable",
+    "das Kabel",
+    "noun",
+    1,
+    "The cable is too short."
+   ],
+   [
+    "battery",
+    "der Akku, die Batterie",
+    "noun",
+    1,
+    "The battery is almost empty."
+   ],
+   [
+    "file",
+    "die Datei",
+    "noun",
+    1,
+    "I cannot open this file."
+   ],
+   [
+    "to delete",
+    "löschen",
+    "verb",
+    2,
+    "Do not delete the old files."
+   ],
+   [
+    "to switch on",
+    "einschalten",
+    "verb",
+    1,
+    "Switch on the computer first."
+   ]
+  ],
+  "sentences": [
+   [
+    "My computer does not start.",
+    "Mein Computer startet nicht.",
+    "Verneinung im Present Simple: does not + Grundform."
+   ],
+   [
+    "Have you tried to restart it?",
+    "Haben Sie versucht, es neu zu starten?",
+    "Present Perfect: have + Partizip (tried)."
+   ],
+   [
+    "I forgot my password again.",
+    "Ich habe mein Passwort schon wieder vergessen.",
+    "Simple Past von forget ist forgot (unregelmäßig)."
+   ],
+   [
+    "The wifi is very slow in this room.",
+    "Das WLAN ist in diesem Raum sehr langsam.",
+    "Steigerung mit very vor dem Adjektiv."
+   ]
+  ]
+ },
+ "b-42": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft",
+  "words": [
+   [
+    "defect",
+    "der Mangel, der Defekt",
+    "noun",
+    3,
+    "The test showed a serious defect."
+   ],
+   [
+    "error message",
+    "die Fehlermeldung",
+    "noun",
+    2,
+    "The error message appears every time."
+   ],
+   [
+    "to fix",
+    "beheben, reparieren",
+    "verb",
+    2,
+    "Can you fix this problem today?"
+   ],
+   [
+    "to roll back",
+    "auf die alte Version zurücksetzen",
+    "verb",
+    3,
+    "We had to roll back the update."
+   ],
+   [
+    "version",
+    "die Version",
+    "noun",
+    2,
+    "Which version are you using?"
+   ],
+   [
+    "function",
+    "die Funktion",
+    "noun",
+    2,
+    "This function saves a lot of time."
+   ],
+   [
+    "to test",
+    "testen, prüfen",
+    "verb",
+    2,
+    "We test every update before the release."
+   ],
+   [
+    "developer",
+    "der Entwickler, die Entwicklerin",
+    "noun",
+    2,
+    "Our developers work in small teams."
+   ],
+   [
+    "source code",
+    "der Quellcode",
+    "noun",
+    3,
+    "Only the team can see the source code."
+   ],
+   [
+    "to deploy",
+    "bereitstellen, ausrollen",
+    "verb",
+    3,
+    "We deploy the new version tonight."
+   ],
+   [
+    "test case",
+    "der Testfall",
+    "noun",
+    3,
+    "Each test case has a clear result."
+   ],
+   [
+    "to crash",
+    "abstürzen",
+    "verb",
+    2,
+    "The programme crashes when I save."
+   ],
+   [
+    "workaround",
+    "die Übergangslösung",
+    "noun",
+    3,
+    "There is a simple workaround for now."
+   ],
+   [
+    "backlog",
+    "der Rückstand, die offene Aufgabenliste",
+    "noun",
+    3,
+    "The backlog is getting longer."
+   ],
+   [
+    "sprint",
+    "der Sprint (Arbeitsabschnitt)",
+    "noun",
+    3,
+    "Each sprint lasts two weeks."
+   ],
+   [
+    "user interface",
+    "die Benutzeroberfläche",
+    "noun",
+    3,
+    "The user interface is easy to use."
+   ]
+  ],
+  "sentences": [
+   [
+    "The app crashes when I open the menu.",
+    "Die App stürzt ab, wenn ich das Menü öffne.",
+    "when-Satz im Present Simple, Zeitform bleibt gleich."
+   ],
+   [
+    "We need to fix this bug before the release.",
+    "Wir müssen diesen Fehler vor der Veröffentlichung beheben.",
+    "need to + Grundform; before + Nomen."
+   ],
+   [
+    "The developers tested the new feature yesterday.",
+    "Die Entwickler haben die neue Funktion gestern getestet.",
+    "Simple Past regelmäßiger Verben: Grundform + ed."
+   ],
+   [
+    "Please describe the error in detail.",
+    "Bitte beschreiben Sie den Fehler genau.",
+    "Aufforderung (Imperativ) mit please."
+   ]
+  ]
+ },
+ "b-43": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft",
+  "words": [
+   [
+    "insurance",
+    "die Versicherung",
+    "noun",
+    1,
+    "Do you have health insurance?"
+   ],
+   [
+    "policy",
+    "die Police",
+    "noun",
+    2,
+    "Your policy covers fire and theft."
+   ],
+   [
+    "premium",
+    "der Beitrag, die Prämie",
+    "noun",
+    2,
+    "The premium is due every month."
+   ],
+   [
+    "claim",
+    "der Schadensfall, die Forderung",
+    "noun",
+    2,
+    "We received your claim on Monday."
+   ],
+   [
+    "damage",
+    "der Schaden",
+    "noun",
+    1,
+    "The storm caused a lot of damage."
+   ],
+   [
+    "benefit",
+    "die Leistung (der Versicherung)",
+    "noun",
+    3,
+    "The policy has several benefits."
+   ],
+   [
+    "insurer",
+    "der Versicherer",
+    "noun",
+    3,
+    "The insurer will pay for the repair."
+   ],
+   [
+    "policyholder",
+    "der Versicherungsnehmer",
+    "noun",
+    3,
+    "The policyholder must report the damage."
+   ],
+   [
+    "excess",
+    "die Selbstbeteiligung",
+    "noun",
+    3,
+    "You pay the first hundred euros as excess."
+   ],
+   [
+    "third party",
+    "der Dritte",
+    "noun",
+    3,
+    "The insurance pays if a third party is hurt."
+   ],
+   [
+    "accident",
+    "der Unfall",
+    "noun",
+    1,
+    "There was an accident on the motorway."
+   ],
+   [
+    "theft",
+    "der Diebstahl",
+    "noun",
+    2,
+    "Theft is not covered by this policy."
+   ],
+   [
+    "to renew",
+    "verlängern, erneuern",
+    "verb",
+    3,
+    "Do not forget to renew your policy."
+   ],
+   [
+    "exclusion",
+    "der Ausschluss",
+    "noun",
+    3,
+    "Read the exclusions carefully."
+   ],
+   [
+    "compensation",
+    "die Entschädigung",
+    "noun",
+    3,
+    "You will receive compensation for the loss."
+   ],
+   [
+    "to report",
+    "melden",
+    "verb",
+    2,
+    "You must report the damage within a week."
+   ]
+  ],
+  "sentences": [
+   [
+    "Is the damage covered by my insurance?",
+    "Ist der Schaden durch meine Versicherung gedeckt?",
+    "Passiv im Present Simple: is/are + Partizip."
+   ],
+   [
+    "I would like to report an accident.",
+    "Ich möchte einen Unfall melden.",
+    "an steht vor Vokal-Laut (accident)."
+   ],
+   [
+    "The premium is lower this year.",
+    "Der Beitrag ist dieses Jahr niedriger.",
+    "Steigerung von low: lower; ohne than, wenn kein Vergleichsobjekt genannt wird."
+   ],
+   [
+    "Please send us the photos of the damage.",
+    "Bitte schicken Sie uns die Fotos vom Schaden.",
+    "us ist die Objektform von we."
+   ]
+  ]
+ },
+ "b-44": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft",
+  "words": [
+   [
+    "bank account",
+    "das Bankkonto",
+    "noun",
+    1,
+    "I would like to open a bank account."
+   ],
+   [
+    "current account",
+    "das Girokonto",
+    "noun",
+    2,
+    "My salary goes into my current account."
+   ],
+   [
+    "savings",
+    "die Ersparnisse",
+    "noun",
+    2,
+    "We keep our savings in a separate account."
+   ],
+   [
+    "cash machine",
+    "der Geldautomat",
+    "noun",
+    1,
+    "Is there a cash machine nearby?"
+   ],
+   [
+    "bank card",
+    "die Bankkarte",
+    "noun",
+    1,
+    "I lost my bank card yesterday."
+   ],
+   [
+    "PIN",
+    "die Geheimzahl, die PIN",
+    "noun",
+    1,
+    "Do not tell anyone your PIN."
+   ],
+   [
+    "contactless",
+    "kontaktlos",
+    "adj",
+    2,
+    "You can pay contactless with your card."
+   ],
+   [
+    "online banking",
+    "das Online-Banking",
+    "noun",
+    2,
+    "I do my online banking on the phone."
+   ],
+   [
+    "to pay in",
+    "einzahlen",
+    "verb",
+    2,
+    "I would like to pay in this cheque."
+   ],
+   [
+    "to lock",
+    "sperren",
+    "verb",
+    2,
+    "Please lock my card immediately."
+   ],
+   [
+    "advisor",
+    "der Berater, die Beraterin",
+    "noun",
+    2,
+    "My advisor will call you back."
+   ],
+   [
+    "opening hours",
+    "die Öffnungszeiten",
+    "noun",
+    1,
+    "What are the bank's opening hours?"
+   ],
+   [
+    "interest",
+    "die Zinsen",
+    "noun",
+    2,
+    "The bank pays no interest on this account."
+   ],
+   [
+    "to open an account",
+    "ein Konto eröffnen",
+    "verb",
+    2,
+    "You need an ID to open an account."
+   ],
+   [
+    "monthly",
+    "monatlich",
+    "adj",
+    2,
+    "There is a small monthly fee."
+   ],
+   [
+    "cheque",
+    "der Scheck",
+    "noun",
+    3,
+    "We do not accept cheques."
+   ]
+  ],
+  "sentences": [
+   [
+    "I lost my card. Can you block it?",
+    "Ich habe meine Karte verloren. Können Sie sie sperren?",
+    "Simple Past: lose wird zu lost; it ersetzt die Karte."
+   ],
+   [
+    "How much money do you want to withdraw?",
+    "Wie viel Geld möchten Sie abheben?",
+    "money ist nicht zählbar: how much statt how many."
+   ],
+   [
+    "The cash machine is out of order.",
+    "Der Geldautomat ist außer Betrieb.",
+    "out of order = außer Betrieb, feste Wendung."
+   ],
+   [
+    "You can pay by card or in cash.",
+    "Sie können mit Karte oder bar bezahlen.",
+    "by card, aber in cash; feste Verbindungen."
+   ]
+  ]
+ },
+ "b-45": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft",
+  "words": [
+   [
+    "to borrow",
+    "sich leihen, ausleihen",
+    "verb",
+    2,
+    "I borrowed money from the bank."
+   ],
+   [
+    "to lend",
+    "verleihen, leihen",
+    "verb",
+    2,
+    "Banks lend money to companies."
+   ],
+   [
+    "debt",
+    "die Schulden",
+    "noun",
+    2,
+    "The company has a lot of debt."
+   ],
+   [
+    "mortgage",
+    "die Hypothek",
+    "noun",
+    3,
+    "They pay a mortgage every month."
+   ],
+   [
+    "repayment",
+    "die Rückzahlung",
+    "noun",
+    3,
+    "The repayment starts in January."
+   ],
+   [
+    "to save up",
+    "ansparen",
+    "verb",
+    2,
+    "We are saving up for a new car."
+   ],
+   [
+    "investment",
+    "die Investition, die Geldanlage",
+    "noun",
+    3,
+    "It is a safe investment."
+   ],
+   [
+    "stock exchange",
+    "die Börse",
+    "noun",
+    3,
+    "The stock exchange opens at nine."
+   ],
+   [
+    "pension",
+    "die Rente, die Altersvorsorge",
+    "noun",
+    3,
+    "She pays into a private pension."
+   ],
+   [
+    "safe",
+    "sicher, risikoarm",
+    "adj",
+    2,
+    "Is this a safe way to save money?"
+   ],
+   [
+    "fixed rate",
+    "der feste Zinssatz",
+    "noun",
+    3,
+    "A fixed rate protects you from rising interest."
+   ],
+   [
+    "credit rating",
+    "die Kreditwürdigkeit, das Rating",
+    "noun",
+    3,
+    "A good credit rating helps you get a loan."
+   ],
+   [
+    "collateral",
+    "die Sicherheit (für einen Kredit)",
+    "noun",
+    3,
+    "The bank asks for collateral."
+   ],
+   [
+    "term",
+    "die Laufzeit",
+    "noun",
+    3,
+    "The term of the loan is ten years."
+   ],
+   [
+    "to default",
+    "in Verzug geraten",
+    "verb",
+    3,
+    "Some customers default on their payments."
+   ],
+   [
+    "fund",
+    "der Fonds",
+    "noun",
+    3,
+    "Our pension is invested in a fund."
+   ]
+  ],
+  "sentences": [
+   [
+    "How long is the term of the loan?",
+    "Wie lange ist die Laufzeit des Kredits?",
+    "Frage mit how long für Zeitdauer."
+   ],
+   [
+    "The interest rate went up last month.",
+    "Der Zinssatz ist letzten Monat gestiegen.",
+    "go up wird im Simple Past zu went up."
+   ],
+   [
+    "We cannot lend you any more money.",
+    "Wir können Ihnen kein Geld mehr leihen.",
+    "any more in verneinten Sätzen = nicht mehr."
+   ],
+   [
+    "You should compare several offers first.",
+    "Sie sollten zuerst mehrere Angebote vergleichen.",
+    "should + Grundform für einen Rat."
+   ]
+  ]
+ },
+ "b-46": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft",
+  "words": [
+   [
+    "to book",
+    "reservieren, buchen",
+    "verb",
+    1,
+    "I would like to book a table for four."
+   ],
+   [
+    "menu",
+    "die Speisekarte",
+    "noun",
+    1,
+    "Could we see the menu, please?"
+   ],
+   [
+    "waiter",
+    "der Kellner",
+    "noun",
+    1,
+    "The waiter brings the drinks first."
+   ],
+   [
+    "waitress",
+    "die Kellnerin",
+    "noun",
+    1,
+    "The waitress asked for our order."
+   ],
+   [
+    "dessert",
+    "der Nachtisch, das Dessert",
+    "noun",
+    1,
+    "Would you like a dessert?"
+   ],
+   [
+    "dish of the day",
+    "das Tagesgericht",
+    "noun",
+    2,
+    "What is the dish of the day?"
+   ],
+   [
+    "vegetarian",
+    "vegetarisch",
+    "adj",
+    1,
+    "Do you have a vegetarian dish?"
+   ],
+   [
+    "allergy",
+    "die Allergie",
+    "noun",
+    2,
+    "I have an allergy to nuts."
+   ],
+   [
+    "soup",
+    "die Suppe",
+    "noun",
+    1,
+    "The soup of the day is tomato."
+   ],
+   [
+    "dish",
+    "das Gericht",
+    "noun",
+    1,
+    "This dish is very popular."
+   ],
+   [
+    "drink",
+    "das Getränk",
+    "noun",
+    1,
+    "What would you like to drink?"
+   ],
+   [
+    "delicious",
+    "köstlich, lecker",
+    "adj",
+    1,
+    "The cake was delicious."
+   ],
+   [
+    "fresh",
+    "frisch",
+    "adj",
+    1,
+    "All our fish is fresh."
+   ],
+   [
+    "spicy",
+    "scharf, würzig",
+    "adj",
+    2,
+    "Is this dish spicy?"
+   ],
+   [
+    "napkin",
+    "die Serviette",
+    "noun",
+    2,
+    "Could I have another napkin?"
+   ],
+   [
+    "vegan",
+    "vegan",
+    "adj",
+    2,
+    "We also offer vegan meals."
+   ]
+  ],
+  "sentences": [
+   [
+    "A table for two, please.",
+    "Einen Tisch für zwei, bitte.",
+    "Kurzform der höflichen Bitte; for + Personenzahl."
+   ],
+   [
+    "Do you have a table by the window?",
+    "Haben Sie einen Tisch am Fenster?",
+    "Frage im Present Simple mit do; by = am, neben."
+   ],
+   [
+    "I will have the soup, please.",
+    "Ich nehme die Suppe, bitte.",
+    "Spontane Entscheidung: will + Grundform; have = hier nehmen, essen."
+   ],
+   [
+    "Could we have the bill, please?",
+    "Könnten wir bitte die Rechnung haben?",
+    "Höfliche Bitte mit could; we = Subjekt, bill = Rechnung."
+   ]
+  ]
+ },
+ "b-47": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft",
+  "words": [
+   [
+    "double room",
+    "das Doppelzimmer",
+    "noun",
+    1,
+    "We would like a double room for two nights."
+   ],
+   [
+    "key card",
+    "die Zimmerkarte",
+    "noun",
+    1,
+    "Here is your key card."
+   ],
+   [
+    "to check out",
+    "auschecken",
+    "verb",
+    1,
+    "You must check out before eleven."
+   ],
+   [
+    "to stay",
+    "übernachten, bleiben",
+    "verb",
+    1,
+    "We stayed at that hotel last year."
+   ],
+   [
+    "per night",
+    "pro Nacht",
+    "adv",
+    1,
+    "The room costs eighty euros per night."
+   ],
+   [
+    "towel",
+    "das Handtuch",
+    "noun",
+    1,
+    "Could I have a clean towel?"
+   ],
+   [
+    "air conditioning",
+    "die Klimaanlage",
+    "noun",
+    2,
+    "The air conditioning does not work."
+   ],
+   [
+    "noise",
+    "der Lärm",
+    "noun",
+    2,
+    "There was a lot of noise last night."
+   ],
+   [
+    "to complain",
+    "sich beschweren",
+    "verb",
+    2,
+    "I would like to complain about the room."
+   ],
+   [
+    "broken",
+    "kaputt, defekt",
+    "adj",
+    1,
+    "The lamp in my room is broken."
+   ],
+   [
+    "to upgrade",
+    "ein besseres Zimmer geben, aufwerten",
+    "verb",
+    3,
+    "Can you upgrade us to a suite?"
+   ],
+   [
+    "wake-up call",
+    "der Weckruf",
+    "noun",
+    2,
+    "Please give me a wake-up call at six."
+   ],
+   [
+    "view",
+    "die Aussicht",
+    "noun",
+    1,
+    "The room has a lovely view of the lake."
+   ],
+   [
+    "quiet",
+    "ruhig",
+    "adj",
+    1,
+    "I need a quiet room."
+   ],
+   [
+    "suite",
+    "die Suite",
+    "noun",
+    3,
+    "The suite has a separate living room."
+   ],
+   [
+    "luggage",
+    "das Gepäck",
+    "noun",
+    2,
+    "Can you keep my luggage until four?"
+   ]
+  ],
+  "sentences": [
+   [
+    "I booked a room for three nights.",
+    "Ich habe ein Zimmer für drei Nächte gebucht.",
+    "Simple Past von book: booked; for + Zeitraum."
+   ],
+   [
+    "Breakfast is served from seven to ten.",
+    "Das Frühstück wird von sieben bis zehn Uhr serviert.",
+    "Passiv im Present Simple; from … to = von … bis."
+   ],
+   [
+    "The room is too noisy. Can we change it?",
+    "Das Zimmer ist zu laut. Können wir es wechseln?",
+    "too + Adjektiv = zu; it ersetzt das Zimmer."
+   ],
+   [
+    "We apologise for the inconvenience.",
+    "Wir entschuldigen uns für die Unannehmlichkeit.",
+    "apologise for + Nomen; typische Höflichkeitsformel."
+   ]
+  ]
+ },
+ "b-48": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft",
+  "words": [
+   [
+    "hammer",
+    "der Hammer",
+    "noun",
+    1,
+    "Pass me the hammer, please."
+   ],
+   [
+    "screwdriver",
+    "der Schraubendreher",
+    "noun",
+    1,
+    "I need a small screwdriver."
+   ],
+   [
+    "drill",
+    "die Bohrmaschine",
+    "noun",
+    1,
+    "The drill is in the toolbox."
+   ],
+   [
+    "saw",
+    "die Säge",
+    "noun",
+    1,
+    "Use a saw to cut the wood."
+   ],
+   [
+    "pliers",
+    "die Zange",
+    "noun",
+    2,
+    "You can hold the wire with pliers."
+   ],
+   [
+    "ladder",
+    "die Leiter",
+    "noun",
+    1,
+    "Be careful on the ladder."
+   ],
+   [
+    "tape measure",
+    "das Maßband",
+    "noun",
+    2,
+    "Do you have a tape measure?"
+   ],
+   [
+    "nail",
+    "der Nagel",
+    "noun",
+    1,
+    "He hit the nail with the hammer."
+   ],
+   [
+    "screw",
+    "die Schraube",
+    "noun",
+    1,
+    "This screw is too short."
+   ],
+   [
+    "wood",
+    "das Holz",
+    "noun",
+    1,
+    "The shelf is made of wood."
+   ],
+   [
+    "metal",
+    "das Metall",
+    "noun",
+    1,
+    "The frame is made of metal."
+   ],
+   [
+    "paint",
+    "die Farbe, der Lack",
+    "noun",
+    1,
+    "We need two litres of white paint."
+   ],
+   [
+    "brush",
+    "der Pinsel",
+    "noun",
+    1,
+    "Please clean the brush after use."
+   ],
+   [
+    "glue",
+    "der Kleber",
+    "noun",
+    1,
+    "You need strong glue for this."
+   ],
+   [
+    "toolbox",
+    "der Werkzeugkasten",
+    "noun",
+    1,
+    "He always carries a toolbox in the van."
+   ],
+   [
+    "to drill",
+    "bohren",
+    "verb",
+    2,
+    "Drill a hole in the wall."
+   ]
+  ],
+  "sentences": [
+   [
+    "Can I borrow your screwdriver?",
+    "Kann ich Ihren Schraubendreher leihen?",
+    "Höfliche Frage mit can; borrow = sich leihen."
+   ],
+   [
+    "The wall needs two coats of paint.",
+    "Die Wand braucht zwei Anstriche.",
+    "coat = Schicht; needs mit s bei he/she/it."
+   ],
+   [
+    "Measure twice and cut once.",
+    "Zweimal messen, einmal schneiden.",
+    "Imperativ ohne Subjekt; twice = zweimal."
+   ],
+   [
+    "We need a ladder and some nails.",
+    "Wir brauchen eine Leiter und ein paar Nägel.",
+    "some steht in bejahten Sätzen für eine unbestimmte Menge."
+   ]
+  ]
+ },
+ "b-49": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft",
+  "words": [
+   [
+    "building site",
+    "die Baustelle",
+    "noun",
+    1,
+    "Wear a helmet on the building site."
+   ],
+   [
+    "scaffolding",
+    "das Gerüst",
+    "noun",
+    3,
+    "The scaffolding is up on the north side."
+   ],
+   [
+    "concrete",
+    "der Beton",
+    "noun",
+    2,
+    "The concrete needs two days to dry."
+   ],
+   [
+    "brick",
+    "der Ziegel, der Backstein",
+    "noun",
+    2,
+    "The wall is built of red brick."
+   ],
+   [
+    "foundation",
+    "das Fundament",
+    "noun",
+    3,
+    "The foundation must be very strong."
+   ],
+   [
+    "roof",
+    "das Dach",
+    "noun",
+    1,
+    "The roof is leaking."
+   ],
+   [
+    "drawing",
+    "die Zeichnung, der Plan",
+    "noun",
+    2,
+    "Please check the drawing again."
+   ],
+   [
+    "contractor",
+    "der Auftragnehmer, die Baufirma",
+    "noun",
+    3,
+    "The contractor starts on Monday."
+   ],
+   [
+    "building permit",
+    "die Baugenehmigung",
+    "noun",
+    3,
+    "We are still waiting for the building permit."
+   ],
+   [
+    "inspection",
+    "die Prüfung, die Abnahme",
+    "noun",
+    3,
+    "The inspection is planned for next week."
+   ],
+   [
+    "to renovate",
+    "renovieren",
+    "verb",
+    2,
+    "They want to renovate the old house."
+   ],
+   [
+    "ceiling",
+    "die Decke",
+    "noun",
+    2,
+    "There is a crack in the ceiling."
+   ],
+   [
+    "floor",
+    "der Boden, das Stockwerk",
+    "noun",
+    1,
+    "The floor needs to be replaced."
+   ],
+   [
+    "pipe",
+    "das Rohr",
+    "noun",
+    2,
+    "A pipe in the kitchen is broken."
+   ],
+   [
+    "electrician",
+    "der Elektriker",
+    "noun",
+    2,
+    "The electrician comes this afternoon."
+   ],
+   [
+    "plumber",
+    "der Klempner",
+    "noun",
+    2,
+    "We called a plumber for the leak."
+   ]
+  ],
+  "sentences": [
+   [
+    "When can you start the work?",
+    "Wann können Sie mit der Arbeit anfangen?",
+    "Frage mit can: Fragewort + can + Subjekt + Grundform."
+   ],
+   [
+    "The job will take about three weeks.",
+    "Die Arbeit wird etwa drei Wochen dauern.",
+    "Zukunft mit will; take = dauern."
+   ],
+   [
+    "Our offer includes material and labour.",
+    "Unser Angebot enthält Material und Arbeitskosten.",
+    "include = enthalten; labour = Arbeitsleistung."
+   ],
+   [
+    "We must finish before the winter.",
+    "Wir müssen vor dem Winter fertig werden.",
+    "must + Grundform; before + Nomen."
+   ]
+  ]
+ },
+ "b-50": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft",
+  "words": [
+   [
+    "doctor",
+    "der Arzt, die Ärztin",
+    "noun",
+    1,
+    "I have an appointment with the doctor."
+   ],
+   [
+    "patient",
+    "der Patient, die Patientin",
+    "noun",
+    1,
+    "The next patient is waiting."
+   ],
+   [
+    "waiting room",
+    "das Wartezimmer",
+    "noun",
+    1,
+    "Please wait in the waiting room."
+   ],
+   [
+    "prescription",
+    "das Rezept",
+    "noun",
+    2,
+    "You need a prescription for this medicine."
+   ],
+   [
+    "medicine",
+    "das Medikament",
+    "noun",
+    1,
+    "Take this medicine twice a day."
+   ],
+   [
+    "pain",
+    "der Schmerz",
+    "noun",
+    1,
+    "I have a pain in my back."
+   ],
+   [
+    "fever",
+    "das Fieber",
+    "noun",
+    1,
+    "She has a high fever."
+   ],
+   [
+    "cough",
+    "der Husten",
+    "noun",
+    1,
+    "I have had a cough for a week."
+   ],
+   [
+    "headache",
+    "die Kopfschmerzen",
+    "noun",
+    1,
+    "I have a terrible headache."
+   ],
+   [
+    "sick",
+    "krank",
+    "adj",
+    1,
+    "My son is sick today."
+   ],
+   [
+    "symptom",
+    "das Symptom",
+    "noun",
+    2,
+    "What symptoms do you have?"
+   ],
+   [
+    "treatment",
+    "die Behandlung",
+    "noun",
+    2,
+    "The treatment lasts two weeks."
+   ],
+   [
+    "blood pressure",
+    "der Blutdruck",
+    "noun",
+    2,
+    "Your blood pressure is normal."
+   ],
+   [
+    "sick note",
+    "die Krankschreibung",
+    "noun",
+    2,
+    "The doctor gave me a sick note."
+   ],
+   [
+    "to examine",
+    "untersuchen",
+    "verb",
+    2,
+    "The doctor will examine you now."
+   ],
+   [
+    "pharmacy",
+    "die Apotheke",
+    "noun",
+    1,
+    "The pharmacy is next to the station."
+   ]
+  ],
+  "sentences": [
+   [
+    "I would like to make an appointment.",
+    "Ich möchte einen Termin vereinbaren.",
+    "make an appointment = einen Termin vereinbaren."
+   ],
+   [
+    "How long have you had these symptoms?",
+    "Wie lange haben Sie diese Symptome schon?",
+    "Present Perfect mit how long für Dauer bis jetzt."
+   ],
+   [
+    "Take one tablet after every meal.",
+    "Nehmen Sie eine Tablette nach jeder Mahlzeit.",
+    "Imperativ; after + Nomen."
+   ],
+   [
+    "Please stay in bed and drink a lot.",
+    "Bitte bleiben Sie im Bett und trinken Sie viel.",
+    "Imperativ mit zwei Verben, durch and verbunden."
+   ]
+  ]
+ },
+ "b-51": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft",
+  "words": [
+   [
+    "nurse",
+    "die Krankenschwester, der Pfleger",
+    "noun",
+    1,
+    "The nurse takes your temperature."
+   ],
+   [
+    "caregiver",
+    "die Pflegekraft",
+    "noun",
+    3,
+    "The caregiver visits twice a day."
+   ],
+   [
+    "care home",
+    "das Pflegeheim",
+    "noun",
+    2,
+    "Her grandmother lives in a care home."
+   ],
+   [
+    "elderly",
+    "älter, betagt",
+    "adj",
+    2,
+    "Many elderly people live alone."
+   ],
+   [
+    "to look after",
+    "sich kümmern um",
+    "verb",
+    2,
+    "She looks after her mother."
+   ],
+   [
+    "wheelchair",
+    "der Rollstuhl",
+    "noun",
+    2,
+    "He needs a wheelchair."
+   ],
+   [
+    "bandage",
+    "der Verband",
+    "noun",
+    2,
+    "The nurse changed the bandage."
+   ],
+   [
+    "medication",
+    "die Medikamente, die Medikation",
+    "noun",
+    3,
+    "The medication must be given at eight."
+   ],
+   [
+    "duty roster",
+    "der Dienstplan",
+    "noun",
+    3,
+    "The duty roster is on the board."
+   ],
+   [
+    "hygiene",
+    "die Hygiene",
+    "noun",
+    3,
+    "Hygiene is very important in care work."
+   ],
+   [
+    "privacy",
+    "die Privatsphäre",
+    "noun",
+    3,
+    "Respect the patient's privacy."
+   ],
+   [
+    "emergency",
+    "der Notfall",
+    "noun",
+    2,
+    "Call the doctor in an emergency."
+   ],
+   [
+    "relative",
+    "der Angehörige, die Angehörige",
+    "noun",
+    3,
+    "The relatives visit on Sundays."
+   ],
+   [
+    "to carry",
+    "tragen",
+    "verb",
+    1,
+    "Please help me carry the box."
+   ],
+   [
+    "to wash",
+    "waschen",
+    "verb",
+    1,
+    "The nurse helps him wash."
+   ],
+   [
+    "to monitor",
+    "überwachen",
+    "verb",
+    3,
+    "We monitor his blood pressure every day."
+   ]
+  ],
+  "sentences": [
+   [
+    "The patient needs help with eating.",
+    "Der Patient braucht Hilfe beim Essen.",
+    "help with + Nomen oder -ing-Form."
+   ],
+   [
+    "Please wash your hands before you start.",
+    "Bitte waschen Sie sich die Hände, bevor Sie anfangen.",
+    "before-Satz im Present Simple, kein will."
+   ],
+   [
+    "She checks on the residents every hour.",
+    "Sie sieht jede Stunde nach den Bewohnern.",
+    "Häufigkeit mit every + Zeitraum; checks mit s bei she."
+   ],
+   [
+    "Call me if there is a problem.",
+    "Rufen Sie mich an, wenn es ein Problem gibt.",
+    "if-Satz im Present Simple, Imperativ im Hauptsatz."
+   ]
+  ]
+ },
+ "b-52": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft",
+  "words": [
+   [
+    "shop assistant",
+    "der Verkäufer, die Verkäuferin",
+    "noun",
+    1,
+    "The shop assistant was very friendly."
+   ],
+   [
+    "till",
+    "die Kasse",
+    "noun",
+    1,
+    "Please pay at the till."
+   ],
+   [
+    "queue",
+    "die Warteschlange",
+    "noun",
+    1,
+    "There is a long queue at the till."
+   ],
+   [
+    "bag",
+    "die Tasche, die Tüte",
+    "noun",
+    1,
+    "Would you like a bag?"
+   ],
+   [
+    "basket",
+    "der Korb",
+    "noun",
+    1,
+    "Take a basket at the entrance."
+   ],
+   [
+    "trolley",
+    "der Einkaufswagen",
+    "noun",
+    1,
+    "I need a trolley for the shopping."
+   ],
+   [
+    "shelf",
+    "das Regal",
+    "noun",
+    1,
+    "The milk is on the top shelf."
+   ],
+   [
+    "size",
+    "die Größe",
+    "noun",
+    1,
+    "Do you have this in a larger size?"
+   ],
+   [
+    "to try on",
+    "anprobieren",
+    "verb",
+    1,
+    "May I try on this jacket?"
+   ],
+   [
+    "fitting room",
+    "die Umkleidekabine",
+    "noun",
+    2,
+    "The fitting rooms are at the back."
+   ],
+   [
+    "to exchange",
+    "umtauschen",
+    "verb",
+    2,
+    "You can exchange the shirt within a week."
+   ],
+   [
+    "price tag",
+    "das Preisschild",
+    "noun",
+    2,
+    "The price tag is still on it."
+   ],
+   [
+    "cashier",
+    "der Kassierer, die Kassiererin",
+    "noun",
+    2,
+    "The cashier scans each item."
+   ],
+   [
+    "loyalty card",
+    "die Kundenkarte",
+    "noun",
+    2,
+    "Do you have a loyalty card?"
+   ],
+   [
+    "barcode",
+    "der Strichcode",
+    "noun",
+    2,
+    "The scanner cannot read the barcode."
+   ],
+   [
+    "to wrap",
+    "einpacken",
+    "verb",
+    2,
+    "Could you wrap it as a gift?"
+   ]
+  ],
+  "sentences": [
+   [
+    "Can I help you?",
+    "Kann ich Ihnen helfen?",
+    "Standardfrage im Laden mit can."
+   ],
+   [
+    "I am just looking, thank you.",
+    "Ich schaue nur, danke.",
+    "Present Continuous für eine gerade laufende Handlung; just = nur."
+   ],
+   [
+    "How would you like to pay?",
+    "Wie möchten Sie bezahlen?",
+    "would like ist die höfliche Form; how für die Art und Weise."
+   ],
+   [
+    "Do you have this shirt in blue?",
+    "Haben Sie dieses Hemd in Blau?",
+    "in + Farbe für die Farbvariante."
+   ]
+  ]
+ },
+ "b-53": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft",
+  "words": [
+   [
+    "range",
+    "das Sortiment, die Auswahl",
+    "noun",
+    2,
+    "We have a wide range of products."
+   ],
+   [
+    "manufacturer",
+    "der Hersteller",
+    "noun",
+    3,
+    "The manufacturer offers a long guarantee."
+   ],
+   [
+    "product",
+    "das Produkt",
+    "noun",
+    1,
+    "The product comes with a guarantee."
+   ],
+   [
+    "customer advice",
+    "die Kundenberatung",
+    "noun",
+    3,
+    "Customer advice is available on the first floor."
+   ],
+   [
+    "to suit",
+    "passen zu, stehen",
+    "verb",
+    2,
+    "This colour suits you very well."
+   ],
+   [
+    "alternative",
+    "die Alternative",
+    "noun",
+    2,
+    "Is there a cheaper alternative?"
+   ],
+   [
+    "new arrival",
+    "die Neuheit, der Neuzugang",
+    "noun",
+    3,
+    "Look at our new arrivals."
+   ],
+   [
+    "display",
+    "die Auslage, die Ausstellung",
+    "noun",
+    2,
+    "The display in the window changes every week."
+   ],
+   [
+    "guarantee",
+    "die Garantie",
+    "noun",
+    2,
+    "There is a two-year guarantee on all devices."
+   ],
+   [
+    "to demonstrate",
+    "vorführen",
+    "verb",
+    3,
+    "Let me demonstrate how it works."
+   ],
+   [
+    "popular",
+    "beliebt",
+    "adj",
+    2,
+    "This model is very popular."
+   ],
+   [
+    "bestseller",
+    "der Bestseller, das Verkaufsschlager",
+    "noun",
+    3,
+    "It is our bestseller this year."
+   ],
+   [
+    "out of date",
+    "veraltet, abgelaufen",
+    "adj",
+    2,
+    "This version is out of date."
+   ],
+   [
+    "ingredients",
+    "die Zutaten, die Inhaltsstoffe",
+    "noun",
+    2,
+    "Please check the list of ingredients."
+   ],
+   [
+    "shelf life",
+    "die Haltbarkeit",
+    "noun",
+    3,
+    "The shelf life is six months."
+   ],
+   [
+    "sample",
+    "das Muster, die Probe",
+    "noun",
+    2,
+    "You can take a free sample."
+   ]
+  ],
+  "sentences": [
+   [
+    "What would you recommend for a beginner?",
+    "Was würden Sie einem Anfänger empfehlen?",
+    "would ist die höfliche Konditionalform; for + Zielgruppe."
+   ],
+   [
+    "This model is lighter than the old one.",
+    "Dieses Modell ist leichter als das alte.",
+    "Steigerung mit -er + than; one ersetzt model."
+   ],
+   [
+    "Can I see a different colour?",
+    "Kann ich eine andere Farbe sehen?",
+    "different = anders; Singular nach a."
+   ],
+   [
+    "It comes with a two-year guarantee.",
+    "Es hat zwei Jahre Garantie.",
+    "come with = mit etwas geliefert werden, dabeihaben."
+   ]
+  ]
+ },
+ "b-54": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft",
+  "words": [
+   [
+    "lorry",
+    "der Lastwagen",
+    "noun",
+    1,
+    "The lorry is waiting at the gate."
+   ],
+   [
+    "van",
+    "der Lieferwagen",
+    "noun",
+    1,
+    "The van delivers to the shops."
+   ],
+   [
+    "driver",
+    "der Fahrer, die Fahrerin",
+    "noun",
+    1,
+    "The driver starts at six."
+   ],
+   [
+    "route",
+    "die Route",
+    "noun",
+    1,
+    "Which route do you take?"
+   ],
+   [
+    "to load",
+    "beladen, laden",
+    "verb",
+    2,
+    "We load the lorry in the morning."
+   ],
+   [
+    "to unload",
+    "entladen",
+    "verb",
+    2,
+    "Please unload the boxes here."
+   ],
+   [
+    "pallet",
+    "die Palette",
+    "noun",
+    2,
+    "One pallet holds fifty boxes."
+   ],
+   [
+    "box",
+    "der Karton, die Kiste",
+    "noun",
+    1,
+    "Put the goods in a box."
+   ],
+   [
+    "label",
+    "das Etikett, der Aufkleber",
+    "noun",
+    2,
+    "The label shows the address."
+   ],
+   [
+    "traffic",
+    "der Verkehr",
+    "noun",
+    1,
+    "There is a lot of traffic today."
+   ],
+   [
+    "motorway",
+    "die Autobahn",
+    "noun",
+    2,
+    "The lorry is on the motorway."
+   ],
+   [
+    "fuel",
+    "der Kraftstoff",
+    "noun",
+    2,
+    "Fuel is getting more expensive."
+   ],
+   [
+    "delay",
+    "die Verspätung",
+    "noun",
+    2,
+    "There is a delay of one hour."
+   ],
+   [
+    "to drive",
+    "fahren",
+    "verb",
+    1,
+    "He drives about five hundred kilometres a day."
+   ],
+   [
+    "to transport",
+    "transportieren",
+    "verb",
+    2,
+    "We transport goods all over the country."
+   ],
+   [
+    "cargo",
+    "die Ladung, die Fracht",
+    "noun",
+    3,
+    "The ship carries heavy cargo."
+   ]
+  ],
+  "sentences": [
+   [
+    "The lorry is stuck in traffic.",
+    "Der Lastwagen steckt im Stau.",
+    "be stuck in traffic = im Verkehr feststecken."
+   ],
+   [
+    "Please load the boxes carefully.",
+    "Bitte laden Sie die Kartons vorsichtig ein.",
+    "Adverb carefully steht nach dem Objekt."
+   ],
+   [
+    "How long does the journey take?",
+    "Wie lange dauert die Fahrt?",
+    "Frage im Present Simple: how long + does + Subjekt + Grundform."
+   ],
+   [
+    "We will deliver the goods tomorrow.",
+    "Wir liefern die Ware morgen.",
+    "will + Grundform für feste Pläne und Zusagen."
+   ]
+  ]
+ },
+ "b-55": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft",
+  "words": [
+   [
+    "forklift",
+    "der Gabelstapler",
+    "noun",
+    2,
+    "The forklift moves the pallets."
+   ],
+   [
+    "loading bay",
+    "die Laderampe",
+    "noun",
+    3,
+    "Park at the loading bay."
+   ],
+   [
+    "goods",
+    "die Waren",
+    "noun",
+    2,
+    "The goods are stored in hall two."
+   ],
+   [
+    "stock count",
+    "die Inventur",
+    "noun",
+    3,
+    "We do a stock count every year."
+   ],
+   [
+    "inventory",
+    "der Bestand, das Inventar",
+    "noun",
+    3,
+    "The inventory is checked every week."
+   ],
+   [
+    "fleet",
+    "der Fuhrpark",
+    "noun",
+    3,
+    "Our fleet has twenty vehicles."
+   ],
+   [
+    "vehicle",
+    "das Fahrzeug",
+    "noun",
+    2,
+    "Every vehicle needs a service."
+   ],
+   [
+    "to service",
+    "warten",
+    "verb",
+    3,
+    "We service the vehicles twice a year."
+   ],
+   [
+    "driving licence",
+    "der Führerschein",
+    "noun",
+    2,
+    "You need a driving licence for this lorry."
+   ],
+   [
+    "tyre",
+    "der Reifen",
+    "noun",
+    2,
+    "One tyre is flat."
+   ],
+   [
+    "to refuel",
+    "tanken",
+    "verb",
+    2,
+    "We refuel the vans every evening."
+   ],
+   [
+    "delivery note",
+    "der Lieferschein",
+    "noun",
+    3,
+    "Please sign the delivery note."
+   ],
+   [
+    "damaged",
+    "beschädigt",
+    "adj",
+    2,
+    "Two boxes arrived damaged."
+   ],
+   [
+    "to pack",
+    "verpacken",
+    "verb",
+    1,
+    "Please pack the items safely."
+   ],
+   [
+    "storage",
+    "die Lagerung",
+    "noun",
+    3,
+    "Storage space is limited."
+   ],
+   [
+    "to store",
+    "lagern",
+    "verb",
+    2,
+    "We store the goods in a cool room."
+   ]
+  ],
+  "sentences": [
+   [
+    "The goods must be checked on arrival.",
+    "Die Ware muss bei Ankunft geprüft werden.",
+    "Passiv mit must + be + Partizip; on arrival = bei Ankunft."
+   ],
+   [
+    "Who is responsible for the vehicles?",
+    "Wer ist für die Fahrzeuge zuständig?",
+    "Fragewort who als Subjekt; be responsible for = zuständig sein für."
+   ],
+   [
+    "The forklift driver needs a special licence.",
+    "Der Staplerfahrer braucht einen speziellen Führerschein.",
+    "Zusammengesetztes Nomen: forklift driver, nur der letzte Teil wird verändert."
+   ],
+   [
+    "We have to count everything again.",
+    "Wir müssen alles noch einmal zählen.",
+    "have to + Grundform = müssen (Verpflichtung von außen)."
+   ]
+  ]
+ },
+ "b-56": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft",
+  "words": [
+   [
+    "form",
+    "das Formular",
+    "noun",
+    1,
+    "Please fill in this form."
+   ],
+   [
+    "to fill in",
+    "ausfüllen",
+    "verb",
+    1,
+    "Fill in your name and address."
+   ],
+   [
+    "stamp",
+    "die Briefmarke, der Stempel",
+    "noun",
+    1,
+    "I need a stamp for this letter."
+   ],
+   [
+    "envelope",
+    "der Briefumschlag",
+    "noun",
+    1,
+    "Put the letter in an envelope."
+   ],
+   [
+    "letter",
+    "der Brief",
+    "noun",
+    1,
+    "The letter arrived this morning."
+   ],
+   [
+    "post",
+    "die Post",
+    "noun",
+    1,
+    "The post comes at ten."
+   ],
+   [
+    "to post",
+    "abschicken, aufgeben",
+    "verb",
+    1,
+    "Can you post this letter for me?"
+   ],
+   [
+    "copy",
+    "die Kopie",
+    "noun",
+    1,
+    "Please make a copy of the contract."
+   ],
+   [
+    "to scan",
+    "einscannen",
+    "verb",
+    2,
+    "Scan the document and send it by email."
+   ],
+   [
+    "document",
+    "das Dokument",
+    "noun",
+    1,
+    "Which documents do I need?"
+   ],
+   [
+    "enclosure",
+    "die Anlage",
+    "noun",
+    3,
+    "Please see the enclosure for details."
+   ],
+   [
+    "to hand in",
+    "abgeben, einreichen",
+    "verb",
+    2,
+    "Hand in the form at the office."
+   ],
+   [
+    "to register",
+    "anmelden, eintragen",
+    "verb",
+    2,
+    "You must register at the office."
+   ],
+   [
+    "original",
+    "das Original",
+    "noun",
+    2,
+    "Please bring the original."
+   ],
+   [
+    "initials",
+    "das Namenskürzel, die Paraphe",
+    "noun",
+    3,
+    "Please add your initials on each page."
+   ],
+   [
+    "tick box",
+    "das Kästchen zum Ankreuzen",
+    "noun",
+    3,
+    "Please tick the box."
+   ]
+  ],
+  "sentences": [
+   [
+    "Please return the form by Friday.",
+    "Bitte schicken Sie das Formular bis Freitag zurück.",
+    "by + Zeitpunkt = bis spätestens."
+   ],
+   [
+    "Where can I get this document?",
+    "Wo bekomme ich dieses Dokument?",
+    "Frage mit where und can."
+   ],
+   [
+    "The office is closed on Saturdays.",
+    "Das Büro ist samstags geschlossen.",
+    "on + Wochentag im Plural mit s = jeweils samstags."
+   ],
+   [
+    "I will send you a copy by post.",
+    "Ich schicke Ihnen eine Kopie mit der Post.",
+    "by post = mit der Post; will für eine Zusage."
+   ]
+  ]
+ },
+ "b-57": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft",
+  "words": [
+   [
+    "machine",
+    "die Maschine",
+    "noun",
+    1,
+    "The machine is very loud."
+   ],
+   [
+    "to produce",
+    "herstellen, produzieren",
+    "verb",
+    2,
+    "We produce parts for cars."
+   ],
+   [
+    "production line",
+    "die Fertigungsstraße",
+    "noun",
+    2,
+    "The production line runs day and night."
+   ],
+   [
+    "raw material",
+    "der Rohstoff",
+    "noun",
+    3,
+    "Raw materials are getting more expensive."
+   ],
+   [
+    "to assemble",
+    "zusammenbauen",
+    "verb",
+    3,
+    "Workers assemble the parts by hand."
+   ],
+   [
+    "part",
+    "das Teil",
+    "noun",
+    1,
+    "One part is missing."
+   ],
+   [
+    "spare part",
+    "das Ersatzteil",
+    "noun",
+    2,
+    "We keep many spare parts in stock."
+   ],
+   [
+    "to start",
+    "starten, anfangen",
+    "verb",
+    1,
+    "Press the green button to start."
+   ],
+   [
+    "to stop",
+    "anhalten, stoppen",
+    "verb",
+    1,
+    "Press the red button to stop."
+   ],
+   [
+    "operator",
+    "der Maschinenführer, der Bediener",
+    "noun",
+    2,
+    "The operator checks the display."
+   ],
+   [
+    "worker",
+    "der Arbeiter, die Arbeiterin",
+    "noun",
+    1,
+    "The workers start at six."
+   ],
+   [
+    "factory",
+    "die Fabrik",
+    "noun",
+    1,
+    "The factory is outside the town."
+   ],
+   [
+    "speed",
+    "die Geschwindigkeit, das Tempo",
+    "noun",
+    2,
+    "Reduce the speed of the belt."
+   ],
+   [
+    "button",
+    "der Knopf, die Taste",
+    "noun",
+    1,
+    "Press the button twice."
+   ],
+   [
+    "conveyor belt",
+    "das Förderband",
+    "noun",
+    3,
+    "The parts move on a conveyor belt."
+   ],
+   [
+    "output",
+    "die Produktionsmenge",
+    "noun",
+    3,
+    "Output rose by ten percent."
+   ]
+  ],
+  "sentences": [
+   [
+    "Press this button to start the machine.",
+    "Drücken Sie diesen Knopf, um die Maschine zu starten.",
+    "to + Grundform nennt den Zweck (um … zu)."
+   ],
+   [
+    "The machine stopped because of a fault.",
+    "Die Maschine blieb wegen eines Fehlers stehen.",
+    "because of + Nomen, dagegen because + ganzer Satz."
+   ],
+   [
+    "Each part is checked twice.",
+    "Jedes Teil wird zweimal geprüft.",
+    "each + Singular; Passiv im Present Simple."
+   ],
+   [
+    "We produce about two thousand units a day.",
+    "Wir stellen etwa zweitausend Stück am Tag her.",
+    "a day = pro Tag."
+   ]
+  ]
+ },
+ "b-58": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft",
+  "words": [
+   [
+    "maintenance",
+    "die Wartung",
+    "noun",
+    2,
+    "Maintenance takes place every Friday."
+   ],
+   [
+    "to repair",
+    "reparieren",
+    "verb",
+    1,
+    "The technician repaired the pump."
+   ],
+   [
+    "breakdown",
+    "die Panne, der Ausfall",
+    "noun",
+    2,
+    "A breakdown stopped the line for an hour."
+   ],
+   [
+    "safety",
+    "die Sicherheit (Arbeitsschutz)",
+    "noun",
+    2,
+    "Safety comes first."
+   ],
+   [
+    "helmet",
+    "der Helm",
+    "noun",
+    1,
+    "You must wear a helmet here."
+   ],
+   [
+    "gloves",
+    "die Handschuhe",
+    "noun",
+    1,
+    "Always wear gloves when you work with this."
+   ],
+   [
+    "protective clothing",
+    "die Schutzkleidung",
+    "noun",
+    3,
+    "Protective clothing is provided by the company."
+   ],
+   [
+    "hazard",
+    "die Gefahr",
+    "noun",
+    3,
+    "A wet floor is a hazard."
+   ],
+   [
+    "fire exit",
+    "der Notausgang",
+    "noun",
+    2,
+    "Keep the fire exit clear."
+   ],
+   [
+    "first aid",
+    "die Erste Hilfe",
+    "noun",
+    2,
+    "Where is the first aid kit?"
+   ],
+   [
+    "warning sign",
+    "das Warnschild",
+    "noun",
+    2,
+    "Read the warning signs."
+   ],
+   [
+    "emergency stop",
+    "der Notaus",
+    "noun",
+    3,
+    "Press the emergency stop at once."
+   ],
+   [
+    "to wear",
+    "tragen (Kleidung)",
+    "verb",
+    1,
+    "Please wear safety shoes."
+   ],
+   [
+    "to inspect",
+    "kontrollieren, prüfen",
+    "verb",
+    3,
+    "We inspect the machines every month."
+   ],
+   [
+    "regular",
+    "regelmäßig",
+    "adj",
+    2,
+    "Regular checks prevent accidents."
+   ],
+   [
+    "to prevent",
+    "verhindern",
+    "verb",
+    3,
+    "Good training prevents accidents."
+   ]
+  ],
+  "sentences": [
+   [
+    "You must always wear a helmet here.",
+    "Sie müssen hier immer einen Helm tragen.",
+    "must + Grundform; always steht vor dem Vollverb."
+   ],
+   [
+    "Do not enter without protective clothing.",
+    "Betreten Sie den Bereich nicht ohne Schutzkleidung.",
+    "Verbot im Imperativ: Do not + Grundform."
+   ],
+   [
+    "The machine is being repaired at the moment.",
+    "Die Maschine wird gerade repariert.",
+    "Passiv Present Continuous: is being + Partizip."
+   ],
+   [
+    "Report every accident to your supervisor.",
+    "Melden Sie jeden Unfall Ihrem Vorgesetzten.",
+    "report + Objekt + to + Person."
+   ]
+  ]
+ },
+ "b-59": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft",
+  "words": [
+   [
+    "website",
+    "die Website",
+    "noun",
+    1,
+    "Our website has a new design."
+   ],
+   [
+    "online shop",
+    "der Online-Shop",
+    "noun",
+    1,
+    "You can order in our online shop."
+   ],
+   [
+    "to click",
+    "klicken",
+    "verb",
+    1,
+    "Click on this link."
+   ],
+   [
+    "banner",
+    "das Werbebanner",
+    "noun",
+    2,
+    "The banner appears at the top of the page."
+   ],
+   [
+    "follower",
+    "der Follower",
+    "noun",
+    2,
+    "We now have a thousand followers."
+   ],
+   [
+    "social media",
+    "die sozialen Medien",
+    "noun",
+    2,
+    "We advertise on social media."
+   ],
+   [
+    "mailing list",
+    "der Verteiler",
+    "noun",
+    2,
+    "Add me to your mailing list."
+   ],
+   [
+    "to subscribe",
+    "abonnieren",
+    "verb",
+    2,
+    "Subscribe to get news every week."
+   ],
+   [
+    "survey",
+    "die Umfrage",
+    "noun",
+    2,
+    "Please fill in our short survey."
+   ],
+   [
+    "rating",
+    "die Bewertung (Sterne)",
+    "noun",
+    2,
+    "The shop has a rating of four stars."
+   ],
+   [
+    "to upload",
+    "hochladen",
+    "verb",
+    2,
+    "Upload your photo here."
+   ],
+   [
+    "to download",
+    "herunterladen",
+    "verb",
+    2,
+    "You can download the catalogue for free."
+   ],
+   [
+    "profile",
+    "das Profil",
+    "noun",
+    2,
+    "Please update your profile."
+   ],
+   [
+    "to comment",
+    "kommentieren",
+    "verb",
+    2,
+    "Please comment on the post."
+   ],
+   [
+    "advert",
+    "die Anzeige, die Werbung",
+    "noun",
+    2,
+    "The advert was seen by many people."
+   ],
+   [
+    "hashtag",
+    "der Hashtag",
+    "noun",
+    3,
+    "Use a short hashtag for the event."
+   ]
+  ],
+  "sentences": [
+   [
+    "Please leave a review after your purchase.",
+    "Bitte hinterlassen Sie nach Ihrem Kauf eine Bewertung.",
+    "after + Nomen; leave a review = eine Bewertung hinterlassen."
+   ],
+   [
+    "Our online shop is open day and night.",
+    "Unser Online-Shop ist Tag und Nacht geöffnet.",
+    "day and night = Tag und Nacht, feste Wendung ohne Artikel."
+   ],
+   [
+    "Click here to see all products.",
+    "Klicken Sie hier, um alle Produkte zu sehen.",
+    "to + Grundform nennt den Zweck."
+   ],
+   [
+    "We post new photos every week.",
+    "Wir veröffentlichen jede Woche neue Fotos.",
+    "every week als Zeitangabe ohne Präposition."
+   ]
+  ]
+ },
+ "b-60": {
+  "status": "Entwurf zur Prüfung",
+  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft",
+  "words": [
+   [
+    "hacker",
+    "der Hacker",
+    "noun",
+    2,
+    "A hacker tried to open our files."
+   ],
+   [
+    "virus",
+    "der Virus",
+    "noun",
+    2,
+    "The email contained a virus."
+   ],
+   [
+    "malware",
+    "die Schadsoftware",
+    "noun",
+    3,
+    "Malware can steal your data."
+   ],
+   [
+    "spam",
+    "der Spam",
+    "noun",
+    2,
+    "I get a lot of spam every day."
+   ],
+   [
+    "suspicious",
+    "verdächtig",
+    "adj",
+    3,
+    "This email looks suspicious."
+   ],
+   [
+    "antivirus",
+    "das Antivirenprogramm",
+    "noun",
+    3,
+    "Your antivirus has to be up to date."
+   ],
+   [
+    "secure",
+    "sicher",
+    "adj",
+    2,
+    "Is this connection secure?"
+   ],
+   [
+    "to protect",
+    "schützen",
+    "verb",
+    2,
+    "We protect our data with strong passwords."
+   ],
+   [
+    "device",
+    "das Gerät",
+    "noun",
+    2,
+    "Please lock your device."
+   ],
+   [
+    "public network",
+    "das öffentliche Netzwerk",
+    "noun",
+    3,
+    "Do not use a public network for work."
+   ],
+   [
+    "lock screen",
+    "der Sperrbildschirm",
+    "noun",
+    3,
+    "Set a code for the lock screen."
+   ],
+   [
+    "to encrypt",
+    "verschlüsseln",
+    "verb",
+    3,
+    "We encrypt all customer data."
+   ],
+   [
+    "fake",
+    "gefälscht, falsch",
+    "adj",
+    3,
+    "The website was fake."
+   ],
+   [
+    "to steal",
+    "stehlen",
+    "verb",
+    2,
+    "Hackers want to steal your data."
+   ],
+   [
+    "unauthorised",
+    "unbefugt",
+    "adj",
+    3,
+    "Unauthorised persons cannot enter."
+   ],
+   [
+    "to log out",
+    "sich abmelden",
+    "verb",
+    2,
+    "Remember to log out when you leave."
+   ]
+  ],
+  "sentences": [
+   [
+    "Never click on links in suspicious emails.",
+    "Klicken Sie nie auf Links in verdächtigen Mails.",
+    "Verbot mit never im Imperativ; never steht vor dem Verb."
+   ],
+   [
+    "Use a different password for each account.",
+    "Verwenden Sie für jedes Konto ein anderes Passwort.",
+    "each + Singular; different = verschieden."
+   ],
+   [
+    "Our systems were attacked last night.",
+    "Unsere Systeme wurden letzte Nacht angegriffen.",
+    "Passiv im Simple Past: was/were + Partizip."
+   ],
+   [
+    "Please report anything unusual to the IT team.",
+    "Melden Sie alles Ungewöhnliche bitte dem IT-Team.",
+    "anything unusual = alles Ungewöhnliche, Adjektiv steht hinter any-/some-Wörtern."
+   ]
+  ]
+ }
 }
