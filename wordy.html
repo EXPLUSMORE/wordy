@@ -762,6 +762,7 @@ details.fold>.fbody{padding:2px 0 14px}
 .ddays{display:flex;gap:4px}.dd{flex:1;text-align:center;font-size:11px;border-radius:8px;padding:3px 0;background:rgba(255,255,255,.08)}.dd i{display:block;font-style:normal;font-size:16px;font-weight:900}
 .dd.ok i{color:#6ff09a}.dd.now{background:rgba(255,255,255,.22)}.dd.fut i{opacity:.5}.dd.miss i{opacity:.5}
 .rpk .ri{display:block;width:64px;height:64px;font-size:48px;line-height:64px}.rpk .ri svg{width:100%!important;height:100%!important}
+.introde{display:flex;flex-direction:column;gap:4px;padding:14px 16px;border-radius:16px;background:var(--accent-soft,#e4f1f4);border:2px solid var(--accent,#1E6273)}.introde .eyebrow{color:var(--accent,#1E6273)}.introde b{font-size:clamp(24px,7vw,32px);line-height:1.15;font-weight:800;color:var(--ink,#14213d);word-break:break-word}
 .rcards{display:flex;flex-wrap:wrap;gap:8px}
 .rcard{width:84px;border-radius:12px;border:3px solid #14213d;background:radial-gradient(circle at 50% 30%,var(--c1),var(--c2));padding:6px 4px 5px;text-align:center;box-shadow:0 3px 0 #0a1230}
 .rcard .ri{display:block;width:44px;height:44px;margin:0 auto 2px}.rcard .ri svg{width:100%!important;height:100%!important}.rcard .ri.em{font-size:30px;line-height:44px}
@@ -1193,7 +1194,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.116.0";window.WORDY_BUILD="1082a27c89";</script>
+<script>window.WORDY_VERSION="2.116.1";window.WORDY_BUILD="939e16c1fe";</script>
 </head>
 <body>
 <div id="app">
@@ -11052,7 +11053,8 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       body.innerHTML = '<div class="stack" style="padding-top:8px">' +
         '<div class="eyebrow">Neues Wort · ' + esc(w.unitTitle) + '</div>' +
         '<div class="row" style="gap:14px;align-items:center">' + (audioAvailable() ? speakBtn(w.en, true) : "") +
-        '<div><div class="prompt">' + esc(w.en) + '</div><div class="sub" style="margin-top:4px">' + esc(w.de) + '</div></div></div>' +
+        '<div class="prompt">' + esc(w.en) + '</div></div>' +
+        '<div class="introde"><span class="eyebrow">Auf Deutsch</span><b>' + esc(w.de) + '</b></div>' +
         (w.ex ? '<div class="card" style="background:var(--card-2);box-shadow:none"><div class="eyebrow">Im Satz</div><p style="margin:6px 0 0;font-family:Newsreader,serif;font-size:18px">' + esc(w.ex) + '</p></div>' : "") +
         '</div>';
       foot.innerHTML = '<button class="btn wide lg" data-act="next">Verstanden</button>';

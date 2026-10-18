@@ -2668,7 +2668,8 @@
       body.innerHTML = '<div class="stack" style="padding-top:8px">' +
         '<div class="eyebrow">Neues Wort · ' + esc(w.unitTitle) + '</div>' +
         '<div class="row" style="gap:14px;align-items:center">' + (audioAvailable() ? speakBtn(w.en, true) : "") +
-        '<div><div class="prompt">' + esc(w.en) + '</div><div class="sub" style="margin-top:4px">' + esc(w.de) + '</div></div></div>' +
+        '<div class="prompt">' + esc(w.en) + '</div></div>' +
+        '<div class="introde"><span class="eyebrow">Auf Deutsch</span><b>' + esc(w.de) + '</b></div>' +
         (w.ex ? '<div class="card" style="background:var(--card-2);box-shadow:none"><div class="eyebrow">Im Satz</div><p style="margin:6px 0 0;font-family:Newsreader,serif;font-size:18px">' + esc(w.ex) + '</p></div>' : "") +
         '</div>';
       foot.innerHTML = '<button class="btn wide lg" data-act="next">Verstanden</button>';
