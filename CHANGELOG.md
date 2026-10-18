@@ -9,6 +9,14 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.110.0 – 2026-10-18
+- Drei neue Figuren, jeweils mit Kopf (Avatar), ganzer Figur für Tänze und Showroom, Sticker (gratis dazu) und Eintrag im Shop:
+  - **Sternendrache** (legendär, 1.800 🪙, Rang Diamant II): Türkis-Gold mit Flammenkrone, Sternen und Galaxie-Flügeln.
+  - **Blitzwolf** (episch, 750 🪙, Rang Diamant I): Nachtblau mit Blitzen und leuchtend blauen Augen.
+  - **Nachtschatten** (episch, 750 🪙, Rang Diamant I): Ninja-Katze mit rotem Stirnband und violetten Augen.
+- Rang-Pfad: Diamant I bietet Blitzwolf oder Nachtschatten zur Wahl, Diamant II schenkt den Sternendrachen. Der Eisbär ist nicht mehr Rang-Geschenk, bleibt aber im Shop (Eis-Set).
+- Kein Server-Schritt nötig.
+
 ## 2.109.2 – 2026-10-18
 - Showroom: Der Knopf „Als Avatar übernehmen“ sitzt jetzt unter der Bühne in eigener Zeile und verdeckt den Namen der Figur nicht mehr.
 - Kein Server-Schritt nötig.

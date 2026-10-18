@@ -146,6 +146,8 @@
   }
 
   /* ---- Bausteine ---- */
+  function bolt(x, y, k, c) { return '<path d="M' + (x + 8 * k) + ' ' + (y - 22 * k) + 'l' + (-14 * k) + ' ' + 22 * k + 'h' + 10 * k + 'l' + (-8 * k) + ' ' + 22 * k + 'l' + 22 * k + ' ' + (-28 * k) + 'h' + (-11 * k) + 'z" fill="' + c + '" stroke="' + L + '" stroke-width="3.5" stroke-linejoin="round"/>'; }
+
   var HORN = '<path d="M110 -10l-15 52h30z" fill="url(#$Ih)" stroke="' + L + '" stroke-width="5" stroke-linejoin="round"/><path d="M104 14l12 6M101 26l16 7" stroke="#c8780a" stroke-width="3" stroke-linecap="round"/>';
   var HORN_DEF = '<linearGradient id="$Ih" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3a0"/><stop offset="1" stop-color="#f0a820"/></linearGradient>';
   function mane(cols) { return '<g stroke="' + L + '" stroke-width="4" stroke-linejoin="round"><ellipse cx="46" cy="70" rx="22" ry="34" fill="' + cols[0] + '" transform="rotate(-18 46 70)"/><ellipse cx="174" cy="70" rx="22" ry="34" fill="' + cols[2] + '" transform="rotate(18 174 70)"/><ellipse cx="86" cy="34" rx="24" ry="22" fill="' + cols[1] + '"/><ellipse cx="134" cy="34" rx="24" ry="22" fill="' + cols[3] + '"/></g>'; }
@@ -211,6 +213,18 @@
     "svg:pregen": ["pregen", { fur: ["#ff9fb3", "#ffd27a", "#9be8a8", "#8ed0f8"], belly: "#ffffff", ears: "round", earIn: "#ffd6de", nose: "#ff8fa3", defs: HORN_DEF, hfront: HORN + star(50, 38, 9, "#ffd34d") + star(170, 36, 8, "#8ed0f8"), hback: mane(["#ff8fa3", "#ffd27a", "#8ed0f8", "#c6a4f5"]) }, ["#8f7dff", "#4a35c8"]],
     "svg:pgalaxie": ["galaxie", { fur: ["#8a74e0", "#4b3b8f", "#2b2166"], belly: "#6a55b8", ears: "round", earIn: "#7a63d1", nose: "#ff7fd0", eyes: "big", sclera: "#fff", pupil: "#2b2166", defs: HORN_DEF, hfront: HORN + star(52, 40, 8, "#ffe27a") + star(170, 38, 7, "#59d6f0"),
       under: star(76, 72, 6, "#fff") + star(150, 66, 5, "#ffe27a") + star(172, 112, 5, "#59d6f0"), badge: "#59d6f0" }, ["#ff7fd0", "#a02a90"]],
+    "svg:blitzwolf": ["blitzwolf", { fur: ["#7a90e0", "#33448f", "#1b2660"], belly: "#cfe4ff", ears: "point", earIn: "#ffd84a", face: "wolf", cheek: false, eyes: "big", sclera: "#effcff", pupil: "#00b7d4", hand: "#33448f",
+      under: bolt(66, 128, .55, "#ffd84a") + bolt(158, 126, .55, "#ffd84a"),
+      hfront: bolt(110, 62, .8, "#ffd84a") + star(52, 44, 9, "#7be9ff") + star(170, 40, 8, "#ffd84a"), back: tail("#33448f", "#ffd84a"), badge: "#00e0ff" }, ["#ffd84a", "#c98a00"]],
+    "svg:ninja": ["ninja", { fur: ["#7c6bb8", "#2e2358", "#17113a"], belly: "#8d7cc9", ears: "point", earIn: "#e63946", face: "cat", cheek: false, eyes: "big", sclera: "#fff", pupil: "#7a2cff", hand: "#2e2358", pants: "#171733", shoe: "#e63946",
+      hfront: '<path d="M44 66Q110 42 176 66L178 90Q110 66 42 90z" fill="#e63946" stroke="' + L + '" stroke-width="5" stroke-linejoin="round"/><rect x="88" y="60" width="44" height="24" rx="6" fill="#d7dee9" stroke="' + L + '" stroke-width="4"/><path d="M110 64l5 8-5 8-5-8z" fill="#6c7890"/>' +
+        '<path d="M170 72q28-14 40 4q-16 4-20 18q18 2 20 18q-26 2-40-22z" fill="#e63946" stroke="' + L + '" stroke-width="4.5" stroke-linejoin="round"/>',
+      back: tail("#2e2358", "#e63946") + '<path d="M70 168q40 26 80 0l-8 16q-32 14-64 0z" fill="#e63946" stroke="' + L + '" stroke-width="4" stroke-linejoin="round"/>', badge: "#e63946" }, ["#4a4a78", "#171733"]],
+    "svg:sdrache": ["sdrache", { fur: ["#9afbe6", "#1fb59a", "#0f6f7f"], belly: "#fff2b8", ears: "", face: "dino", cheek: false, eyes: "big", sclera: "#fff", pupil: "#6a2cff", hand: "#1fb59a",
+      under: star(70, 76, 6, "#fff") + star(150, 70, 5, "#ffe27a") + star(172, 116, 5, "#7be9ff") + star(54, 118, 4, "#ffe27a"),
+      back: wings("#3a2d8f", "#ffd34d") + tail("#1fb59a", "#ffd34d"),
+      hback: '<path d="M54 64L36 0l54 36z" fill="#ffd34d" stroke="' + L + '" stroke-width="5" stroke-linejoin="round"/><path d="M166 64L184 0l-54 36z" fill="#ffd34d" stroke="' + L + '" stroke-width="5" stroke-linejoin="round"/>',
+      hfront: '<path d="M78 40q4-26 14-12q4-24 18-34q14 10 18 34q10-14 14 12q-8 8-32 8q-24 0-32-8z" fill="#ffb61e" stroke="' + L + '" stroke-width="4.5" stroke-linejoin="round"/><path d="M96 42q4-14 14-22q10 8 14 22z" fill="#fff1a8"/>' + star(52, 46, 9, "#fff") + star(170, 42, 8, "#ffe27a"), badge: "#ffd34d" }, ["#6a4be0", "#2b1f8f"]],
     "svg:fnhuhn": ["huhn", { fur: ["#ffffff", "#fff4e8", "#e6d0b8"], belly: "#ffffff", ears: "", face: "beak", cheek: true,
       hfront: '<g stroke="' + L + '" stroke-width="4" stroke-linejoin="round" fill="#ff4d4d"><circle cx="94" cy="40" r="12"/><circle cx="110" cy="32" r="14"/><circle cx="126" cy="40" r="12"/></g><path d="M104 138q6 16 12 0z" fill="#ff4d4d" stroke="' + L + '" stroke-width="3.5"/>',
       back: '<path d="M158 238q40-6 46-34q-26 4-38 18z" fill="#fff" stroke="' + L + '" stroke-width="4.5" stroke-linejoin="round"/>', hand: "#ffd23d" }, ["#ffd23d", "#e08a0a"]],

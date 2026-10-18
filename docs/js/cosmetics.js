@@ -102,6 +102,31 @@
       ears: '<circle cx="16" cy="21" r="7" fill="#FF8FA3"/><circle cx="48" cy="21" r="7" fill="#C6A4F5"/><circle cx="16" cy="22" r="3.5" fill="#FFD6DE"/><circle cx="48" cy="22" r="3.5" fill="#E7DAFB"/>',
       front: HORN + star(10, 16, 4, "#FFD34D") + star(55, 14, 3.5, "#8ED0F8") + star(55, 52, 3, "#FF8FA3")
     }),
+    blitzwolf: pummel({
+      body: "#33448F", shade: "#1B2660", eye: "#00D4F0", pupil: "#fff",
+      ears: '<path d="M8 32L10 4l18 14z" fill="#33448F"/><path d="M56 32L54 4L36 18z" fill="#33448F"/><path d="M13 24l1.5-13 8 6z" fill="#FFD84A"/><path d="M51 24l-1.5-13-8 6z" fill="#FFD84A"/>',
+      front: '<ellipse cx="32" cy="46" rx="11" ry="7.6" fill="#CFE4FF"/><ellipse cx="32" cy="42.6" rx="3.6" ry="2.5" fill="#0E1538"/>' +
+        '<path d="M33 18l-7 10h5l-3 8 9-12h-5z" fill="#FFD84A" stroke="#C98A00" stroke-width="1" stroke-linejoin="round"/>' +
+        '<path d="M9 36l6-6-1.6 5h4l-6 8 1.6-5.4z" fill="#FFD84A"/><path d="M55 36l-6-6 1.6 5h-4l6 8-1.6-5.4z" fill="#FFD84A"/>' + star(9, 16, 3, "#FFD84A") + star(55, 14, 3.4, "#7BE9FF"),
+      face: '<path d="M28 49q4 3.4 8 0" fill="none" stroke="#0E1538" stroke-width="1.8" stroke-linecap="round"/>'
+    }),
+    ninja: pummel({
+      body: "#2E2358", shade: "#17113A", eye: "#9A4CFF", pupil: "#fff",
+      ears: '<path d="M9 28L13 6l17 12z" fill="#2E2358"/><path d="M55 28L51 6L34 18z" fill="#2E2358"/><path d="M14 22l1.5-10 8 6z" fill="#E63946"/><path d="M50 22l-1.5-10-8 6z" fill="#E63946"/>',
+      front: '<path d="M8 27q24-9 48 0v8q-24-9-48 0z" fill="#E63946" stroke="#9E1B28" stroke-width="1"/><rect x="26" y="25.5" width="12" height="7" rx="1.6" fill="#D7DEE9" stroke="#6C7890" stroke-width="1"/><path d="M32 27.4l1 2-1 2-1-2z" fill="#6C7890"/>' +
+        '<path d="M55 29l8-3-2 5 5 4-9-.4z" fill="#E63946" stroke="#9E1B28" stroke-width=".8" stroke-linejoin="round"/>' +
+        '<path d="M30 42h4l-2 2.6z" fill="#E63946"/><path d="M8 44l9 1.5M8 49l9-1M56 44l-9 1.5M56 49l-9-1" stroke="#B9A8F0" stroke-width="1.2" stroke-linecap="round" opacity=".9"/>',
+      face: '<path d="M28 46q2 3 4 0q2 3 4 0" fill="none" stroke="#B9A8F0" stroke-width="1.8" stroke-linecap="round"/>'
+    }),
+    sdrache: pummel({
+      defs: '<linearGradient id="pmSd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9AFBE6"/><stop offset="1" stop-color="#1FB59A"/></linearGradient>',
+      body: "url(#pmSd)", shade: "#0F6F7F", eye: "#6A2CFF", pupil: "#fff",
+      behind: '<ellipse cx="6" cy="36" rx="8" ry="12" fill="#3A2D8F" transform="rotate(-18 6 36)"/><ellipse cx="58" cy="36" rx="8" ry="12" fill="#3A2D8F" transform="rotate(18 58 36)"/>' + star(5, 30, 2.4, "#FFE27A") + star(59, 40, 2.4, "#7BE9FF"),
+      ears: '<path d="M14 26L6 3l17 12z" fill="#FFD34D" stroke="#E0A800" stroke-width="1.2" stroke-linejoin="round"/><path d="M50 26L58 3L41 15z" fill="#FFD34D" stroke="#E0A800" stroke-width="1.2" stroke-linejoin="round"/>',
+      front: '<path d="M22 22q2-12 5-6q1-9 5-12q4 3 5 12q3-6 5 6z" fill="#FFB61E" stroke="#E0780A" stroke-width="1.2" stroke-linejoin="round"/><path d="M28 22q1-6 4-9q3 3 4 9z" fill="#FFF1A8"/>' +
+        '<ellipse cx="32" cy="47" rx="12" ry="8" fill="#FFF2B8"/><circle cx="29" cy="44" r="1" fill="#1FB59A"/><circle cx="35" cy="44" r="1" fill="#1FB59A"/>' + star(14, 30, 2.2, "#fff") + star(51, 28, 2.6, "#FFE27A") + star(46, 52, 2, "#7BE9FF"),
+      face: '<path d="M27 49q5 4 10 0" fill="none" stroke="#0F6F7F" stroke-width="1.8" stroke-linecap="round"/>'
+    }),
     pgalaxie: pummel({
       body: "#4B3B8F", shade: "#3A2D73", eye: "#fff", pupil: "#4B3B8F",
       ears: '<circle cx="16" cy="21" r="7" fill="#4B3B8F"/><circle cx="48" cy="21" r="7" fill="#4B3B8F"/><circle cx="16" cy="22" r="3.5" fill="#7A63D1"/><circle cx="48" cy="22" r="3.5" fill="#7A63D1"/>',
