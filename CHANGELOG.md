@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.113.1 – 2026-10-18
+- Shop › Figuren und Sticker zeigen jetzt immer **alle** Einträge (43 Figuren, 43 Sticker) nach Stufe, auch die Fortnite-Reihe und noch nicht freigegebene als gesperrte Silhouette („🕒 Kommt bald“ mit Rang, 🔒 bei zu niedrigem Rang). Antippen nennt Rang, fehlende XP und Wochen bis zur Freigabe.
+- Kein Server-Schritt nötig.
+
 ## 2.113.0 – 2026-10-18
 - Ab Rang Diamant I gibt es keine Figurenwahl und keine Geschenke mehr: Der Rang schaltet alle Figuren nur im Shop zum Kauf frei. Ab Diamant I sind alle Figuren legendär. Die Wahl (eine Figur samt Sticker) gibt es nur noch bis Platin III.
 - Blitzwolf aufgewertet: jetzt legendär (1.800 🪙) mit Blitzkrone und zwei flackernden Blitzen neben dem Kopf.

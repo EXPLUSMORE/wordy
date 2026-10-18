@@ -1828,14 +1828,15 @@
   }
   /* Seltenheits-Karte im Shop: Farbe, Glanz und Etikett nach Seltenheit; gleiche Aktionen wie die Listenzeile */
   function shopTile(it, wishId) {
-    var own = S.owns(it), act = S.isActive(it), locked = !own && lockNote(it), price = S.priceOf(it), deal = price !== it.cost, rar = S.rarityOf(it), c = MED_COL[rar] || MED_COL.common;
+    var own = S.owns(it), act = S.isActive(it), soon = !own && S.shopSoon(it), locked = !own && (lockNote(it) || soon), price = S.priceOf(it), deal = price !== it.cost, rar = S.rarityOf(it), c = MED_COL[rar] || MED_COL.common;
     var setName = it.reward ? (S.SETS.filter(function (s) { return s.reward === it.id; })[0] || {}).name : "";
     var star = '<button class="rwish" data-act="wish" data-id="' + esc(it.id) + '" aria-pressed="' + (wishId === it.id) + '" aria-label="Wunsch">⭐</button>';
     var action = own ? '<button class="rbtn' + (act ? " on" : "") + '" data-act="equip" data-id="' + esc(it.id) + '">' + (act ? "✓ aktiv" : "Auswählen") + '</button>'
       : it.pass ? '<span class="rpill">🎁 ' + esc(it.pass) + '-Pass</span>' : it.reward ? '<span class="rpill">🎁 ' + esc(setName) + '</span>'
+      : soon ? '<span class="rpill">🕒 Kommt bald</span>'
       : locked ? '<span class="rpill">🔒 ab ' + esc(it.rank) + '</span>'
       : '<button class="rbtn buy" data-act="buy" data-id="' + esc(it.id) + '">🪙 ' + (deal ? '<s>' + it.cost + '</s> ' : "") + price + '</button>';
-    var sub = KIND_NAME[it.kind] + (it.bundle ? " · ❄️ Eis-Set" : "") + (it.rank && !own && !locked ? " · ab " + esc(it.rank) : "");
+    var sub = KIND_NAME[it.kind] + (it.bundle ? " · ❄️ Eis-Set" : "") + (it.rank && !own && (!locked || soon) ? " · ab " + esc(it.rank) : "");
     var prev = (it.kind === "dance" || it.kind === "outfit" || it.kind === "kit") ? '<button class="rprev" data-act="dancetry" data-id="' + esc(it.id) + '" aria-label="Vorschau">▶︎</button>' : "";
     return '<div class="rtile ' + rar + (own ? " own" : "") + (locked ? " lock" : "") + '"' + (locked ? ' data-act="lockinfo" data-id="' + esc(it.id) + '"' : "") + ' style="--c1:' + c[0] + ';--c2:' + c[1] + ';--g:' + RAR_GLOW[rar] + '">' +
       '<span class="rtag">' + RAR_NAME[rar] + '</span>' + (own || it.pass || it.reward || locked ? "" : star) + (own ? '<span class="rown">✓</span>' : "") +
@@ -1904,7 +1905,8 @@
       html += '<div class="seg2">' + [["stufe", "Nach Stufe"], ["pfad", "Rang-Pfad"]].map(function (v) { return '<button class="chip" data-act="shopview" data-k="' + v[0] + '" aria-pressed="' + (shopView === v[0]) + '">' + v[1] + '</button>'; }).join("") + '</div>';
       if (shopView === "pfad") return html + rankPathHtml() + '</section>';
     }
-    var list = S.SHOP.filter(function (it) { return (shopTab === "fn" ? it.set === "fn" : it.kind === shopTab && !it.set) && S.shopVisible(it); })
+    var all = shopTab === "avatar" || shopTab === "sticker";   // Figuren und Sticker: alles zeigen (auch Fortnite-Reihe, Noch-nicht-Freigegebenes als gesperrte Silhouette)
+    var list = S.SHOP.filter(function (it) { return all ? it.kind === shopTab : (shopTab === "fn" ? it.set === "fn" : it.kind === shopTab && !it.set) && S.shopVisible(it); })
       .map(function (it, i) { return { it: it, i: i }; }).sort(function (a, b) { return (RO[S.rarityOf(a.it)] - RO[S.rarityOf(b.it)]) || (a.it.cost - b.it.cost) || (a.i - b.i); }).map(function (x) { return x.it; });
     var tot = list.filter(function (it) { return it.cost > 0 || shopTab !== "avatar"; }), have = tot.filter(function (it) { return S.owns(it); }).length;
     html += teaserHtml() + '<div class="small muted" style="margin:2px 0 4px">Gesammelt: <b>' + have + ' / ' + tot.length + '</b></div>';
@@ -3451,7 +3453,7 @@
     }
     else if (a === "dancetry") { var dit = S.SHOP.filter(function (x) { return x.id === act.getAttribute("data-id"); })[0]; if (dit) { var pf = S.state.profile; global.VTC.dance({ av: pf.avatar, avatar: avatarHtml(pf.avatar), outfit: (dit.kind === "outfit" || dit.kind === "kit") ? dit.val : pf.outfit, dance: dit.kind === "dance" ? dit.val : (pf.dance || "wackler"), title: dit.label }); } }
     else if (a === "shopview") { shopView = act.getAttribute("data-k"); render(); }
-    else if (a === "lockinfo") { var li = S.itemById(act.getAttribute("data-id")); if (li) { var need = S.minXp(li) - S.state.xp; toast("🔒 " + li.label + ": ab Rang " + li.rank + (need > 0 ? " · noch " + need.toLocaleString("de-DE") + " XP" : "") + (li.cost ? " · " + li.cost + " 🪙" : ""), 4200); } }
+    else if (a === "lockinfo") { var li = S.itemById(act.getAttribute("data-id")); if (li) { var need = S.minXp(li) - S.state.xp, sw = S.shopSoon(li); toast("🔒 " + li.label + (sw ? ": kommt in " + sw + (sw === 1 ? " Woche" : " Wochen") + " in den Shop" : "") + (li.rank ? ": ab Rang " + li.rank : "") + (need > 0 ? " · noch " + need.toLocaleString("de-DE") + " XP" : "") + (li.cost ? " · " + li.cost + " 🪙" : ""), 4200); } }
     else if (a === "shoptab") { shopTab = act.getAttribute("data-k"); render(); }
     else if (a === "checkupdate") {
       if (!navigator.serviceWorker) return toast("Dieses Gerät kennt keine App-Updates. Seite einfach neu laden.");

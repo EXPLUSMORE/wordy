@@ -1445,6 +1445,8 @@
   }
   /* sichtbar: schon gekauft, ein Geschenk (Set, Pass, Rang) oder freigeschaltet */
   function shopVisible(it) { return owns(it) || !!it.reward || !!it.pass || shopRel(it) <= shopNow(); }
+  /* Wochen bis zur Freigabe im Shop-Kalender (0 = schon im Shop); für die Silhouetten „Kommt bald“ in der Figurenliste */
+  function shopSoon(it) { return shopVisible(it) ? 0 : Math.max(1, shopRel(it) - shopNow()); }
   /* „Kommt bald“: die Artikel der nächsten zwei Wochen (ohne Sticker), höchstens sechs */
   function shopTeasers() {
     var w = shopNow();
@@ -1541,7 +1543,7 @@
     sentences: function () { return sentences; }, activeSentences: activeSentences,
     planSentences: planSentences, gradeSentence: gradeSentence, sentenceStats: sentenceStats,
     srec: srec, groupsOf: groupsOf, setTrack: setTrack,
-    newBlocked: newBlocked, crewReward: crewReward, crewJoined: crewJoined, duelDone: duelDone, chalInfo: chalInfo, challengeDone: function () { return !!(state.daily && state.daily.date === today() && state.daily.chal); }, rankOf: rankOf, rankPicks: rankPicks, rankPickable: rankPickable, rankPickClaim: rankPickClaim, RANK_SLOTS: RANK_SLOTS, addXp: addXp, addCoins: addCoins, finishSession: finishSession,
+    newBlocked: newBlocked, crewReward: crewReward, crewJoined: crewJoined, duelDone: duelDone, chalInfo: chalInfo, challengeDone: function () { return !!(state.daily && state.daily.date === today() && state.daily.chal); }, rankOf: rankOf, shopSoon: shopSoon, rankPicks: rankPicks, rankPickable: rankPickable, rankPickClaim: rankPickClaim, RANK_SLOTS: RANK_SLOTS, addXp: addXp, addCoins: addCoins, finishSession: finishSession,
     stats: stats, today: today, shuffle: shuffle, regenHearts: regenHearts, heartsIn: heartsIn,
     rollDay: rollDay, verbs: function () { return verbs; }, verbPools: verbPools, planVerbs: planVerbs, verbStats: verbStats, parseCsv: parseCsv, removeCustom: removeCustom,
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
