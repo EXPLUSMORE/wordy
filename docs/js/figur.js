@@ -37,6 +37,8 @@
     "svg:fnwolf": ["fur", "#9AA5BA", "#E7ECF4", "#444E63", "tuft", "#9AA5BA", "", "#E7ECF4"],
     "svg:fnraptor": ["fur", "#86C23A", "#E6F5C0", "#4C7A1C", "dino", "#86C23A", "spikes", "#F97316"],
     "svg:fnllama": ["fur", "#B05CF0", "#FF7EC7", "#4B2A8A", "pom", "#FF7EC7"],
+    "svg:flamingo": ["bird", "#FF6FA8", "#FFE0EF", "#FFD34D", "feat", "#FF8FC0"],
+    "svg:faultier": ["fur", "#A67C52", "#F2DFC4", "#6E4B2C", "", ""],
     "svg:fnrakete": ["fur", "#FF9A3D", "#FFD7A8", "#5A1A1A", "pom", "#FFD7A8"],
     "svg:fngold": ["fur", "#FFD34D", "#FFF6C0", "#6A3A00", "pom", "#9FEFFF"],
     "svg:fnkristall": ["fur", "#BFE9FF", "#FFFFFF", "#7FA8FF", "pom", "#FFFFFF"],

@@ -68,8 +68,10 @@
     { id: "av:pgold",    kind: "avatar", label: "Goldpummel",    cost: 800,  val: "svg:pgold", rank: "Platin I" },
     { id: "av:pregen",   kind: "avatar", label: "Regenbogenpummel", cost: 1500, val: "svg:pregen", rank: "Diamant I" },
     { id: "av:pgalaxie", kind: "avatar", label: "Galaxiepummel", cost: 2000, val: "svg:pgalaxie", rank: "Elite" },
-    { id: "av:blitzwolf", kind: "avatar", label: "Blitzwolf", cost: 750, val: "svg:blitzwolf", rank: "Diamant I", rar: "epic" },
+    { id: "av:blitzwolf", kind: "avatar", label: "Blitzwolf", cost: 1800, val: "svg:blitzwolf", rank: "Diamant I", rar: "legend" },
     { id: "av:ninja", kind: "avatar", label: "Nachtschatten", cost: 1800, val: "svg:ninja", rank: "Diamant II", rar: "legend" },
+    { id: "av:flamingo", kind: "avatar", label: "Disco-Flamingo", cost: 2000, val: "svg:flamingo", rank: "Diamant III", rar: "legend" },
+    { id: "av:faultier", kind: "avatar", label: "Donut-Faultier", cost: 2000, val: "svg:faultier", rank: "Diamant III", rar: "legend" },
     { id: "av:sdrache", kind: "avatar", label: "Sternendrache", cost: 1800, val: "svg:sdrache", rank: "Diamant II", rar: "legend" },
     /* Kitty-Reihe (Start-Sortiment, je Stufe eine Figur) */
     { id: "av:kitty1", kind: "avatar", label: "Kitty Schleife",      cost: 50,  val: "svg:kitty1", rar: "common" },
@@ -170,9 +172,18 @@
   var RANK_SLOTS = {
     "Bronze II": ["av:🐼", "av:🐢"],        "Silber I": ["av:🦉", "av:🐙"],         "Silber III": ["av:🦕", "av:pbaer"],
     "Gold I": ["av:🦈", "av:🦄"],           "Gold II": ["av:phase", "av:pkatze"],   "Gold III": ["av:pummel", "av:fnllama"],
-    "Platin I": ["av:pphoenix", "av:kitty3"], "Platin II": ["av:fnrakete"], "Platin III": ["av:pgold", "av:fnelite"], "Diamant I": ["av:blitzwolf"], "Diamant II": ["av:sdrache", "av:ninja"],
-    "Elite": ["av:pregen", "av:fnchamp"],   "Champion": ["av:pgalaxie", "av:fnkristall"], "Unreal": ["av:kitty4", "av:fnunreal"], "Unreal Gold": ["av:fngold"]
+    "Platin I": ["av:pphoenix", "av:kitty3"], "Platin II": ["av:fnrakete"], "Platin III": ["av:pgold", "av:fnelite"],
+    /* ab Diamant I: alles legendär, nichts wird geschenkt, der Rang schaltet die Figuren nur im Shop frei (Kauf) */
+    "Diamant I": ["av:blitzwolf", "av:pregen"], "Diamant II": ["av:sdrache", "av:ninja"], "Diamant III": ["av:flamingo", "av:faultier"],
+    "Elite": ["av:fnchamp", "av:pgalaxie"], "Champion": ["av:fnkristall", "av:fnunreal"], "Unreal": ["av:kitty4"], "Unreal Gold": ["av:fngold"]
   };
+  var SHOP_ONLY_FROM = "Diamant I";   // ab diesem Rang keine Figurenwahl mehr
+  function rankPickable(rn) {
+    var ids = RANK_SLOTS[rn]; if (!ids || ids.length < 2) return false;
+    var a = -1, b = -1; RANKS.forEach(function (r, k) { if (r.n === rn) a = k; if (r.n === SHOP_ONLY_FROM) b = k; });
+    return a >= 0 && a < b;
+  }
+
   (function () {
     var at = {};
     Object.keys(RANK_SLOTS).forEach(function (rn) { RANK_SLOTS[rn].forEach(function (id) { at[id] = rn; }); });
@@ -789,7 +800,7 @@
   function rankPicks() {
     var done = (state.rankPick || (state.rankPick = {})), out = [];
     RANKS.forEach(function (r) {
-      var ids = RANK_SLOTS[r.n]; if (!ids || ids.length < 2 || state.xp < r.xp || done[r.n]) return;   // nur Stufen mit echter Wahl (mindestens zwei Figuren)
+      var ids = RANK_SLOTS[r.n]; if (!rankPickable(r.n) || state.xp < r.xp || done[r.n]) return;   // nur Stufen mit echter Wahl (mindestens zwei Figuren, unterhalb von Diamant I)
       var open = ids.filter(function (id) { var it = itemById(id); return it && !owns(it); });
       if (!open.length) { done[r.n] = 1; return; }
       out.push({ rank: r.n, ids: open });
@@ -1530,7 +1541,7 @@
     sentences: function () { return sentences; }, activeSentences: activeSentences,
     planSentences: planSentences, gradeSentence: gradeSentence, sentenceStats: sentenceStats,
     srec: srec, groupsOf: groupsOf, setTrack: setTrack,
-    newBlocked: newBlocked, crewReward: crewReward, crewJoined: crewJoined, duelDone: duelDone, chalInfo: chalInfo, challengeDone: function () { return !!(state.daily && state.daily.date === today() && state.daily.chal); }, rankOf: rankOf, rankPicks: rankPicks, rankPickClaim: rankPickClaim, RANK_SLOTS: RANK_SLOTS, addXp: addXp, addCoins: addCoins, finishSession: finishSession,
+    newBlocked: newBlocked, crewReward: crewReward, crewJoined: crewJoined, duelDone: duelDone, chalInfo: chalInfo, challengeDone: function () { return !!(state.daily && state.daily.date === today() && state.daily.chal); }, rankOf: rankOf, rankPicks: rankPicks, rankPickable: rankPickable, rankPickClaim: rankPickClaim, RANK_SLOTS: RANK_SLOTS, addXp: addXp, addCoins: addCoins, finishSession: finishSession,
     stats: stats, today: today, shuffle: shuffle, regenHearts: regenHearts, heartsIn: heartsIn,
     rollDay: rollDay, verbs: function () { return verbs; }, verbPools: verbPools, planVerbs: planVerbs, verbStats: verbStats, parseCsv: parseCsv, removeCustom: removeCustom,
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },

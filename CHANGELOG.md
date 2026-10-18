@@ -9,6 +9,15 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.113.0 – 2026-10-18
+- Ab Rang Diamant I gibt es keine Figurenwahl und keine Geschenke mehr: Der Rang schaltet alle Figuren nur im Shop zum Kauf frei. Ab Diamant I sind alle Figuren legendär. Die Wahl (eine Figur samt Sticker) gibt es nur noch bis Platin III.
+- Blitzwolf aufgewertet: jetzt legendär (1.800 🪙) mit Blitzkrone und zwei flackernden Blitzen neben dem Kopf.
+- Zwei neue hyperwitzige legendäre Figuren für Diamant III (je 2.000 🪙, mit Kopf, ganzer Figur, Sticker, Shop-Eintrag):
+  - **Disco-Flamingo**: Discokugel auf dem Kopf mit glitzernden Funken, Herz-Sonnenbrille, goldene Kette mit Musiknote, Lila-Disco-Jacke, Goldschuhe.
+  - **Donut-Faultier**: schläfrige Augen, Riesen-Donut mit Streuseln als Hut, aufsteigende „Zzz“.
+- Neue Rang-Verteilung ab Diamant I (nur Vorschlag): Diamant I Blitzwolf und Regenbogenpummel, Diamant II Sternendrache und Nachtschatten, Diamant III Disco-Flamingo und Donut-Faultier, Elite Champion-Kristall und Galaxiepummel, Champion Kristall-Lama und Unreal-Kristall, Unreal Kitty Sternenzauber, Unreal Gold Goldkristall-Lama.
+- Kein Server-Schritt nötig.
+
 ## 2.112.0 – 2026-10-18
 - Ränge schenken nichts mehr: kein Münzbonus und keine Geschenk-Stücke beim Aufstieg. Es bleibt nur die **Figurenwahl** (eine Figur samt Sticker zur Auswahl); alles andere schaltet der Rang nur im Shop frei und muss gekauft oder erlernt werden.
 - Die Wahl gibt es nur bei Rängen mit mindestens zwei Figuren. Ränge mit nur einer Figur (Platin II, Diamant I, Unreal Gold) schalten sie nur im Shop frei; im Rang-Pfad steht dort „🛒 im Shop“.
