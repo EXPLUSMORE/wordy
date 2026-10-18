@@ -1163,10 +1163,20 @@ details.fold>.fbody{padding:2px 0 14px}
 #session .tiles.letters{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:6px}
 #session .tiles.letters .tile{width:100%;min-width:0;padding:14px 0;font-size:24px;border-radius:12px;text-align:center}
 #session .tile.used{opacity:.25;pointer-events:none}
+/* Xing: Tastatur als Leiste unten über dem Spiel (erscheint beim Antippen eines Felds oder Hinweises) */
+.kr-pad{position:absolute;left:0;right:0;bottom:0;z-index:5;display:flex;flex-direction:column;align-items:center;gap:8px;padding:4px 10px calc(10px + env(safe-area-inset-bottom,0px));background:var(--ar-bg);border-top:1px solid var(--ar-line);box-shadow:0 -10px 24px rgba(0,0,0,.35);animation:krUp .18s ease-out}
+.kr-pad[hidden]{display:none}
+.kr-pad .wg-keys,.kr-pad .wg-acts{max-width:420px}
+.kr-padx{width:64px;height:22px;border-radius:11px;background:var(--ar-s);color:var(--ar-ink2);font-size:16px;line-height:1}
+.kr-open .wg-body{padding-bottom:calc(var(--krpad,230px) + 14px)}
+.kr-open .kc{scroll-margin-bottom:calc(var(--krpad,230px) + 18px)}
+.kr-tip{color:var(--ar-ink2);text-align:center;margin:0}
+@keyframes krUp{from{transform:translateY(30%);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.kr-pad{animation:none}}
 </style>
 
 
-<script>window.WORDY_VERSION="2.106.1";window.WORDY_BUILD="19c63573c5";</script>
+<script>window.WORDY_VERSION="2.106.2";window.WORDY_BUILD="b31beeee9c";</script>
 </head>
 <body>
 <div id="app">
@@ -1194,37 +1204,37 @@ details.fold>.fbody{padding:2px 0 14px}
   <div id="session" hidden></div>
 </div>
 <div id="arena" hidden></div>
-<script src="data/klasse6.js?v=19c63573c5"></script>
-<script src="data/klasse7.js?v=19c63573c5"></script>
-<script src="data/klasse8.js?v=19c63573c5"></script>
-<script src="data/business.js?v=19c63573c5"></script>
-<script src="data/business-basis2.js?v=19c63573c5"></script>
-<script src="data/business-aufbau2.js?v=19c63573c5"></script>
-<script src="data/business-profi2.js?v=19c63573c5"></script>
-<script src="data/smalltalk.js?v=19c63573c5"></script>
-<script src="data/idioms.js?v=19c63573c5"></script>
-<script src="data/saetze.js?v=19c63573c5"></script>
-<script src="data/grammatik.js?v=19c63573c5"></script>
-<script src="data/saetze2.js?v=19c63573c5"></script>
-<script src="data/lernbuch.js?v=19c63573c5"></script>
-<script src="data/verben.js?v=19c63573c5"></script>
-<script src="data/open/business-aufbau.js?v=19c63573c5"></script>
-<script src="data/open/business-basis.js?v=19c63573c5"></script>
-<script src="data/open/business-profi.js?v=19c63573c5"></script>
-<script src="data/open/saetze-open.js?v=19c63573c5"></script>
-<script src="js/engine.js?v=19c63573c5"></script>
-<script src="js/cosmetics.js?v=19c63573c5"></script>
-<script src="js/fortnite.js?v=19c63573c5"></script>
-<script src="js/figur.js?v=19c63573c5"></script>
-<script src="js/stila.js?v=19c63573c5"></script>
-<script src="js/stilb.js?v=19c63573c5"></script>
-<script src="js/loot.js?v=19c63573c5"></script>
-<script src="js/film.js?v=19c63573c5"></script>
-<script src="js/app.js?v=19c63573c5"></script>
-<script src="js/arena.js?v=19c63573c5"></script>
-<script src="js/spiele.js?v=19c63573c5"></script>
-<script src="js/grammatik.js?v=19c63573c5"></script>
-<script src="js/sync.js?v=19c63573c5"></script>
+<script src="data/klasse6.js?v=b31beeee9c"></script>
+<script src="data/klasse7.js?v=b31beeee9c"></script>
+<script src="data/klasse8.js?v=b31beeee9c"></script>
+<script src="data/business.js?v=b31beeee9c"></script>
+<script src="data/business-basis2.js?v=b31beeee9c"></script>
+<script src="data/business-aufbau2.js?v=b31beeee9c"></script>
+<script src="data/business-profi2.js?v=b31beeee9c"></script>
+<script src="data/smalltalk.js?v=b31beeee9c"></script>
+<script src="data/idioms.js?v=b31beeee9c"></script>
+<script src="data/saetze.js?v=b31beeee9c"></script>
+<script src="data/grammatik.js?v=b31beeee9c"></script>
+<script src="data/saetze2.js?v=b31beeee9c"></script>
+<script src="data/lernbuch.js?v=b31beeee9c"></script>
+<script src="data/verben.js?v=b31beeee9c"></script>
+<script src="data/open/business-aufbau.js?v=b31beeee9c"></script>
+<script src="data/open/business-basis.js?v=b31beeee9c"></script>
+<script src="data/open/business-profi.js?v=b31beeee9c"></script>
+<script src="data/open/saetze-open.js?v=b31beeee9c"></script>
+<script src="js/engine.js?v=b31beeee9c"></script>
+<script src="js/cosmetics.js?v=b31beeee9c"></script>
+<script src="js/fortnite.js?v=b31beeee9c"></script>
+<script src="js/figur.js?v=b31beeee9c"></script>
+<script src="js/stila.js?v=b31beeee9c"></script>
+<script src="js/stilb.js?v=b31beeee9c"></script>
+<script src="js/loot.js?v=b31beeee9c"></script>
+<script src="js/film.js?v=b31beeee9c"></script>
+<script src="js/app.js?v=b31beeee9c"></script>
+<script src="js/arena.js?v=b31beeee9c"></script>
+<script src="js/spiele.js?v=b31beeee9c"></script>
+<script src="js/grammatik.js?v=b31beeee9c"></script>
+<script src="js/sync.js?v=b31beeee9c"></script>
 
 <script>
 if ('serviceWorker' in navigator) {

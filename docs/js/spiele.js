@@ -300,9 +300,17 @@
       var k = r + "," + c, cell = K.cells[k];
       h += cell ? '<div class="kc" data-g="cell" data-k="' + k + '">' + (K.numAt[k] ? '<i>' + K.numAt[k] + '</i>' : "") + '<b></b></div>' : '<div class="kc x"></div>';
     }
-    h += '</div><div class="kr-list" id="krList"></div>' + keysHtml({ back: true }) +
+    /* Tastatur, Tipp und Prüfen liegen als Leiste unten über dem Spiel; sie erscheint beim Antippen eines Felds oder einer Zeile/Spalte */
+    h += '</div><div class="kr-list" id="krList"></div><p class="small kr-tip" id="krTip">Tippe auf ein Feld oder einen Hinweis, dann erscheint die Tastatur.</p></div>' +
+      '<div class="kr-pad" id="krPad" hidden><button class="kr-padx" data-g="krclose" aria-label="Tastatur ausblenden">⌄</button>' + keysHtml({ back: true }) +
       '<div class="wg-acts"><button class="wg-btn ghost" data-g="hint">💡 Tipp (−8)</button><button class="wg-btn" data-g="check">✓ Prüfen</button></div></div>';
-    el.innerHTML = h; kreuzPaint();
+    el.classList.remove("kr-open"); el.innerHTML = h; kreuzPaint();
+  }
+  function krPad(show) {
+    var p = $("#krPad"); if (!p) return;
+    p.hidden = !show; el.classList.toggle("kr-open", !!show);
+    var tip = $("#krTip"); if (tip) tip.hidden = !!show;
+    if (show) { el.style.setProperty("--krpad", p.offsetHeight + "px"); var c = $(".kc.cur"); if (c && c.scrollIntoView) c.scrollIntoView({ block: "nearest" }); }
   }
   function kreuzPaint() {
     var K = G.kr, sel = K.words[K.sel.wi];
@@ -319,6 +327,7 @@
           return '<button class="kr-it' + (o.i === K.sel.wi ? " on" : "") + (o.x.done ? " done" : "") + '" data-g="word" data-wi="' + o.i + '"><b>' + o.x.n + '</b> ' + esc(o.x.w.de) + '</button>'; }).join("") + '</div>' : "";
       }).join("");
     }
+    if (el.classList.contains("kr-open")) { var cc = $(".kc.cur"); if (cc && cc.scrollIntoView) cc.scrollIntoView({ block: "nearest" }); }   // das aktive Feld bleibt über der Tastatur sichtbar
   }
   function kreuzSelect(k) {
     var K = G.kr, cell = K.cells[k]; if (!cell) return;
@@ -827,7 +836,7 @@
 
   function close() {
     if (G && G.sh) { G.sh.over = true; cancelAnimationFrame(G.sh.raf); }
-    G = null; el.hidden = true; el.innerHTML = ""; document.documentElement.classList.remove("ar-open");
+    G = null; el.hidden = true; el.innerHTML = ""; el.classList.remove("kr-open"); document.documentElement.classList.remove("ar-open");
     if (global.VTUI && global.VTUI.afterArena) global.VTUI.afterArena();
   }
   function next() {
@@ -860,8 +869,9 @@
     }
     if (a === "giveup") { if (G.id === "detective" && !G.det.over) { G.det.over = true; return detEnd(false); } if (G.id === "eisi" && !G.eis.over) return eisEnd(false); return; }
     if (a === "lshint") return lsHint(+t.getAttribute("data-i"));
-    if (a === "cell") return kreuzSelect(t.getAttribute("data-k"));
-    if (a === "word") { var wi = +t.getAttribute("data-wi"); G.kr.sel.wi = wi; var kw = G.kr.words[wi], first = kw.keys.filter(function (k) { return G.kr.cells[k].ent !== G.kr.cells[k].ch; })[0] || kw.keys[0]; G.kr.sel.k = first; return kreuzPaint(); }
+    if (a === "krclose") return krPad(false);
+    if (a === "cell") { kreuzSelect(t.getAttribute("data-k")); return krPad(true); }
+    if (a === "word") { var wi = +t.getAttribute("data-wi"); G.kr.sel.wi = wi; var kw = G.kr.words[wi], first = kw.keys.filter(function (k) { return G.kr.cells[k].ent !== G.kr.cells[k].ch; })[0] || kw.keys[0]; G.kr.sel.k = first; kreuzPaint(); return krPad(true); }
     if (a === "check") { kreuzCheckWords(true); kreuzPaint(); return kreuzWin(); }
   });
   document.addEventListener("keydown", function (e) {

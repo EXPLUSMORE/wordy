@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.106.2 – 2026-10-18
+- **Xing: Tastatur als Leiste unten**: Beim Antippen eines Felds oder eines Hinweises (Zeile/Spalte) erscheint die Tastatur mit Tipp- und Prüfen-Knopf als Leiste am unteren Bildschirmrand über dem Spiel, so dass man nicht mehr nach unten scrollen muss. Das aktive Feld bleibt über der Leiste sichtbar, der kleine Pfeil ⌄ klappt sie ein, das nächste Antippen holt sie zurück. Die Hardware-Tastatur geht weiter wie bisher. Server-Schritt nicht nötig.
+
 ## 2.106.1 – 2026-10-17
 - **Dashboard: Münzen und XP in allen Reitern**: Überblick: XP und Münzen pro Wochentag unter dem Wochenbalken, Münzen-Spalte in „Runden heute“. Verlauf: Gesamtsumme in der Legende, XP und Münzen im Balken-Tooltip und eine zweite Zeile je Tag bei „Tage einzeln“, Münzen-Spalte in den Tagesrunden. Wörter: neue Karte „Verdient mit Wörtern“ (Lernrunden im Zeitraum) und XP/Münzen je Einheit und Gruppe, soweit die Runde einer Einheit zugeordnet ist. Aktivität: Summe der ausgegebenen Münzen bei den Käufen im Shop.
 - **App meldet die Einheit mit**: Lernpfad-Stationen, Runden mit gewählter Einheit und Spiele mit einer einzelnen Einheit schicken die Einheit mit, damit das Dashboard XP und Münzen je Einheit zuordnen kann. Ältere Runden und gemischte Runden haben keine Einheit und fehlen in dieser Zuordnung.
