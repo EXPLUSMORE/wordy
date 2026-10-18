@@ -1721,7 +1721,7 @@
     var st = S.state, cur = S.rankOf(st.xp);
     var rows = S.RANKS.map(function (r, i) {
       var reached = st.xp >= r.xp, isCur = r.n === cur.rank.n, next = S.RANKS[i + 1];
-      var slot = S.RANK_SLOTS[r.n], unlocks = S.SHOP.filter(function (x) { return x.rank === r.n && x.kind !== "sticker" && !(slot && slot.indexOf(x.id) >= 0); }).map(function (x) { return x.label; });
+      var slot = S.RANK_SLOTS[r.n]; if (slot && slot.length < 2) slot = null; var unlocks = S.SHOP.filter(function (x) { return x.rank === r.n && x.kind !== "sticker" && !(slot && slot.indexOf(x.id) >= 0); }).map(function (x) { return x.label; });
       var gift = slot ? slot.map(function (id) { var it = S.itemById(id); return it ? it.label : ""; }).join(" oder ") : "";
       var pc = isCur && next ? Math.round(cur.into * 100 / cur.span) : 0;
       return '<div class="rank-i' + (isCur ? " cur" : reached ? "" : " off") + '"><div class="row" style="gap:10px;align-items:center">' +
@@ -1733,7 +1733,7 @@
         (unlocks.length ? '<div class="small muted" style="margin:3px 0 0 32px">🔓 Im Shop: ' + esc(unlocks.join(", ")) + '</div>' : "") + '</div>';
     }).join("");
     return '<section class="card"><div class="eyebrow">Alle Ränge</div>' +
-      '<p class="small muted" style="margin:6px 0 8px">Dein Stand: <b>' + st.xp.toLocaleString("de-DE") + ' XP</b> · ' + esc(cur.rank.n) + '. Mit vielen Rängen bekommst du eine <b>Figur zur Wahl geschenkt</b> (mit Sticker); die andere kannst du dann kaufen. Pass-Figuren gibt es nur im Wochenpass.</p>' + rows +
+      '<p class="small muted" style="margin:6px 0 8px">Dein Stand: <b>' + st.xp.toLocaleString("de-DE") + ' XP</b> · ' + esc(cur.rank.n) + '. Bei manchen Rängen darfst du dir <b>eine Figur samt Sticker aussuchen</b>. Alles andere schaltet der Rang nur im Shop frei: das musst du kaufen oder erlernen. Pass-Figuren gibt es nur im Wochenpass.</p>' + rows +
       '<div class="eyebrow" style="margin-top:14px">So bekommst du XP</div>' +
       '<div class="small" style="margin-top:6px;line-height:1.7">' +
       '• Richtige Antwort: <b>+10</b> (sicher) oder <b>+6</b> (mit kleinem Tippfehler)<br>' +
@@ -1920,9 +1920,9 @@
   function rankPathHtml() {
     var st = S.state, cur = S.rankOf(st.xp), h = '<p class="small muted" style="margin:6px 0 8px">' + (cur.next ? "Noch <b>" + (cur.next.xp - st.xp).toLocaleString("de-DE") + " XP</b> bis " + esc(cur.next.n) + "." : "Höchster Rang erreicht!") + '</p>';
     S.RANKS.forEach(function (r) {
-      var ids = S.RANK_SLOTS[r.n]; if (!ids) return;
+      var ids = S.RANK_SLOTS[r.n]; if (!ids) return; var pick = ids.length > 1;
       var reached = st.xp >= r.xp, isCur = r.n === cur.rank.n, got = (st.rankPick || {})[r.n], pc = isCur && cur.next ? Math.round(cur.into * 100 / cur.span) : 0;
-      h += '<div class="rkrow' + (reached ? "" : " lock") + (isCur ? " cur" : "") + '"><div class="rkn"><b>' + (reached ? "✓ " : "🔒 ") + esc(r.n) + '</b><small>ab ' + r.xp.toLocaleString("de-DE") + ' XP</small>' + (isCur && cur.next ? '<div class="bar"><i style="width:' + pc + '%"></i></div>' : "") + '</div><div class="rkf">' +
+      h += '<div class="rkrow' + (reached ? "" : " lock") + (isCur ? " cur" : "") + '"><div class="rkn"><b>' + (reached ? "✓ " : "🔒 ") + esc(r.n) + '</b><small>ab ' + r.xp.toLocaleString("de-DE") + ' XP</small>' + (pick ? "" : '<small>🛒 im Shop</small>') + (isCur && cur.next ? '<div class="bar"><i style="width:' + pc + '%"></i></div>' : "") + '</div><div class="rkf">' +
         ids.map(function (id) { var it = S.itemById(id), rr = S.rarityOf(it), own = S.owns(it);
           return '<span class="rkx ' + rr + (got === id ? " pick" : "") + '" title="' + esc(it.label) + '"' + (reached ? "" : ' data-act="lockinfo" data-id="' + esc(id) + '"') + '><i>' + avatarHtml(it.val) + '</i><small>' + esc(it.label) + (got === id ? " 🎁" : own ? " ✓" : "") + '</small></span>'; }).join("") + '</div></div>';
     });

@@ -9,6 +9,11 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.112.0 – 2026-10-18
+- Ränge schenken nichts mehr: kein Münzbonus und keine Geschenk-Stücke beim Aufstieg. Es bleibt nur die **Figurenwahl** (eine Figur samt Sticker zur Auswahl); alles andere schaltet der Rang nur im Shop frei und muss gekauft oder erlernt werden.
+- Die Wahl gibt es nur bei Rängen mit mindestens zwei Figuren. Ränge mit nur einer Figur (Platin II, Diamant I, Unreal Gold) schalten sie nur im Shop frei; im Rang-Pfad steht dort „🛒 im Shop“.
+- Kein Server-Schritt nötig.
+
 ## 2.111.2 – 2026-10-18
 - Lamas mit eigenen bunten Haaren: Raketen-Lama rot-orange, Kristall-Lama eisblau-violett, Beute-Lama weiter gelb. Statt des Schatz-Lamas gibt es das **Goldkristall-Lama** (legendär): Gold mit Kristall, Kristallkrone und langem, wehendem Kristall-Haarschweif.
 - Kein Server-Schritt nötig.

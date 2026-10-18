@@ -782,19 +782,14 @@
     for (var i = r0 + 1, r1 = rankIdx(state.xp); i <= r1; i++) rankGift(i);
     return v;   // tatsächlich gutgeschriebene XP (mit Booster), damit Runden sie melden können
   }
-  /* Rangaufstieg: Münzen (50 + 10 je Rangstufe) und das günstigste Stück, das genau mit diesem Rang frei wird */
-  function rankGift(i) {
-    var rn = RANKS[i].n, c = 50 + 10 * i, gift = null;
-    addCoins(c); addCl("fortschritt", c);
-    SHOP.filter(function (x) { return x.rank === rn && x.kind !== "sticker" && x.kind !== "avatar" && !x.reward && !owns(x); }).sort(function (a, b) { return a.cost - b.cost; }).slice(0, 1).forEach(function (x) { state.profile.owned.push(x.id); gift = x.label; });
-    (state.news || (state.news = { ranks: [], sets: [] })).ranks.push({ rank: rn, coins: c, item: gift });
-    checkSets();
-  }
+  /* Rangaufstieg (ab v2.112): Ränge schenken nichts mehr, weder Münzen noch Stücke. Es gibt nur die Figurenwahl (rankPicks, Figur samt Sticker);
+     alles andere muss gekauft oder erlernt werden. Rangstufen schalten Artikel im Shop frei (Mindestrang `rank`). */
+  function rankGift(i) { checkSets(); }
   /* Rang-Figur zur Wahl: offen ist jede erreichte Stufe, die noch nicht abgeholt wurde (gilt rückwirkend). Wer alle Figuren der Stufe schon hat, bekommt Münzen. */
   function rankPicks() {
     var done = (state.rankPick || (state.rankPick = {})), out = [];
     RANKS.forEach(function (r) {
-      var ids = RANK_SLOTS[r.n]; if (!ids || state.xp < r.xp || done[r.n]) return;
+      var ids = RANK_SLOTS[r.n]; if (!ids || ids.length < 2 || state.xp < r.xp || done[r.n]) return;   // nur Stufen mit echter Wahl (mindestens zwei Figuren)
       var open = ids.filter(function (id) { var it = itemById(id); return it && !owns(it); });
       if (!open.length) { done[r.n] = 1; return; }
       out.push({ rank: r.n, ids: open });
