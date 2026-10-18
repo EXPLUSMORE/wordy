@@ -1719,17 +1719,19 @@
     var st = S.state, cur = S.rankOf(st.xp);
     var rows = S.RANKS.map(function (r, i) {
       var reached = st.xp >= r.xp, isCur = r.n === cur.rank.n, next = S.RANKS[i + 1];
-      var unlocks = S.SHOP.filter(function (x) { return x.rank === r.n && x.kind !== "sticker"; }).map(function (x) { return x.label; });
+      var slot = S.RANK_SLOTS[r.n], unlocks = S.SHOP.filter(function (x) { return x.rank === r.n && x.kind !== "sticker" && !(slot && slot.indexOf(x.id) >= 0); }).map(function (x) { return x.label; });
+      var gift = slot ? slot.map(function (id) { var it = S.itemById(id); return it ? it.label : ""; }).join(" oder ") : "";
       var pc = isCur && next ? Math.round(cur.into * 100 / cur.span) : 0;
       return '<div class="rank-i' + (isCur ? " cur" : reached ? "" : " off") + '"><div class="row" style="gap:10px;align-items:center">' +
         '<span style="width:22px;text-align:center">' + (isCur ? "▶" : reached ? "✓" : "🔒") + '</span>' +
         '<b style="flex:1 1 auto">' + esc(r.n) + '</b><span class="small muted tnum">ab ' + r.xp.toLocaleString("de-DE") + ' XP</span></div>' +
         (isCur && next ? '<div class="bar" style="margin:6px 0 2px 32px"><i style="width:' + pc + '%"></i></div><div class="small muted" style="margin-left:32px">Noch ' +
           (next.xp - st.xp).toLocaleString("de-DE") + ' XP bis ' + esc(next.n) + '</div>' : "") +
-        (unlocks.length ? '<div class="small muted" style="margin:3px 0 0 32px">🔓 ' + esc(unlocks.join(", ")) + ' <span title="Sticker gibt es auch">(+ Sticker)</span></div>' : "") + '</div>';
+        (gift ? '<div class="small" style="margin:3px 0 0 32px">🎁 Figur zur Wahl: <b>' + esc(gift) + '</b> <span class="muted">(+ Sticker)</span></div>' : "") +
+        (unlocks.length ? '<div class="small muted" style="margin:3px 0 0 32px">🔓 Im Shop: ' + esc(unlocks.join(", ")) + '</div>' : "") + '</div>';
     }).join("");
     return '<section class="card"><div class="eyebrow">Alle Ränge</div>' +
-      '<p class="small muted" style="margin:6px 0 8px">Dein Stand: <b>' + st.xp.toLocaleString("de-DE") + ' XP</b> · ' + esc(cur.rank.n) + '. Das schaltest du mit jedem Rang im Shop frei.</p>' + rows +
+      '<p class="small muted" style="margin:6px 0 8px">Dein Stand: <b>' + st.xp.toLocaleString("de-DE") + ' XP</b> · ' + esc(cur.rank.n) + '. Mit vielen Rängen bekommst du eine <b>Figur zur Wahl geschenkt</b> (mit Sticker); die andere kannst du dann kaufen. Pass-Figuren gibt es nur im Wochenpass.</p>' + rows +
       '<div class="eyebrow" style="margin-top:14px">So bekommst du XP</div>' +
       '<div class="small" style="margin-top:6px;line-height:1.7">' +
       '• Richtige Antwort: <b>+10</b> (sicher) oder <b>+6</b> (mit kleinem Tippfehler)<br>' +
@@ -1901,6 +1903,28 @@
       .map(function (x) { return shopTile(x.it, wishId); }).join("") + '</div>';
     return html + '</section>';
   }
+  /* Rang-Figur zur Wahl: ein Fenster je erreichter Stufe, die Figur kommt samt Sticker geschenkt */
+  function openRankPick() {
+    if ($("#rankPick") || !sessionEl.hidden) return;
+    var p = S.rankPicks()[0]; if (!p) return;
+    var its = p.ids.map(S.itemById), many = its.length > 1;
+    var ov = document.createElement("div"); ov.className = "srmd"; ov.id = "rankPick";
+    ov.innerHTML = '<div class="dsh" style="text-align:center"><div class="dshg"></div><div class="eyebrow">⬆️ Rang ' + esc(p.rank) + '</div><h3>' + (many ? "Such dir eine Figur aus!" : "Deine neue Figur!") + '</h3>' +
+      '<div class="row wrap" style="gap:12px;justify-content:center;margin:10px 0">' + its.map(function (it) {
+        var r = S.rarityOf(it);
+        return '<button class="chip rpk" data-pick="' + esc(it.id) + '" style="min-width:120px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:4px;border-radius:14px">' + itemIcon(it, true) + '<b>' + esc(it.label) + '</b><span class="small muted">' + RAR_NAME[r] + ' · + Sticker</span></button>';
+      }).join("") + '</div>' +
+      '<p class="small muted">' + (many ? "Die andere Figur kannst du ab jetzt im Shop kaufen." : "Dazu gibt es den Sticker gratis.") + '</p></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-pick]"); if (!b) return;
+      var r = S.rankPickClaim(p.rank, b.getAttribute("data-pick"));
+      if (r.error) return toast(r.error);
+      try { var rc = b.getBoundingClientRect(); global.VTC.burst("stars", rc.left + rc.width / 2, rc.top, 30, 1.6); if (S.state.settings.audio) global.VTC.sound(S.state.profile.snd, true); } catch (x) {}
+      ov.remove(); renderHeader(); toast("🎁 " + r.item.label + " ist deine! Sticker gratis dazu.", 3600);
+      setTimeout(function () { if (S.rankPicks().length) openRankPick(); else render(); }, 700);
+    });
+  }
   /* Rang- und Set-Geschenke sowie die einmalige Preisgutschrift ansagen */
   function flushNews() {
     var parts = [], pn = S.state.priceNote;
@@ -1913,6 +1937,7 @@
       S.save(true);
     }
     if (parts.length) toast("🎉 " + parts.join(" · "), 5200);
+    if (S.rankPicks().length) setTimeout(openRankPick, parts.length ? 1200 : 400);
   }
 
   /* ================= FORTSCHRITT ================= */

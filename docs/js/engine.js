@@ -160,6 +160,22 @@
   /* Sets: Wer alle Teile hat, bekommt die Belohnung geschenkt */
   var SETS = [{ id: "eis", name: "Eis-Set", icon: "❄️", fig: "svg:eisbaer", items: ["av:eisbaer", "of:polar", "dn:eislauf", "fx:schnee"], reward: "fr:eis" }];
   SHOP.forEach(function (x) { if (x.id === "st:clombo") x.cost = 300; });   // Clombo als Sticker: gleicher Preis und gleicher Mindestrang wie die Figur
+  /* Rang-Figuren (v2.108): 12 Stufen mit je 1 Figur zur Wahl (gewöhnlich 3, selten 3, episch 3, legendär 3). Die gewählte Figur samt Sticker wird
+     geschenkt, die andere der Stufe ist ab diesem Rang im Shop kaufbar. Pass-Figuren bleiben nur über den Pass erlernbar. */
+  var RANK_SLOTS = {
+    "Bronze II": ["av:🐼", "av:🐢"],        "Silber I": ["av:🦉", "av:🐙"],         "Silber III": ["av:🦕", "av:pbaer"],
+    "Gold I": ["av:🦈", "av:🦄"],           "Gold II": ["av:phase", "av:pkatze"],   "Gold III": ["av:pummel", "av:fnllama"],
+    "Platin I": ["av:pphoenix", "av:kitty3"], "Platin III": ["av:pgold", "av:fnelite"], "Diamant II": ["av:eisbaer"],
+    "Elite": ["av:pregen", "av:fnchamp"],   "Champion": ["av:pgalaxie", "av:fnkristall"], "Unreal": ["av:kitty4", "av:fnunreal"]
+  };
+  (function () {
+    var at = {};
+    Object.keys(RANK_SLOTS).forEach(function (rn) { RANK_SLOTS[rn].forEach(function (id) { at[id] = rn; }); });
+    SHOP.forEach(function (x) {
+      if (x.kind !== "avatar" && x.kind !== "sticker") return;
+      var rn = at["av:" + x.id.slice(3)]; if (rn) x.rank = rn;
+    });
+  })();
   var MAX_STICKERS = 5;
   /* Sticker-Plätze auf dem Profil: der erste ist gratis, die weiteren werden nacheinander freigeschaltet */
   var STICKER_SLOT_COST = [0, 100, 150, 150, 150];
@@ -279,6 +295,7 @@
     if (!ok && readBackup("auto")) { state = Object.assign(freshState(), readBackup("auto").s); restored = true; }
     buildCatalogue(state);
     priceMigrate();
+    (state.profile.owned || []).slice().forEach(function (id) { if (id.indexOf("av:") === 0) giveFigure(id); });   // Sticker gratis zu jeder Figur (rückwirkend)
     rollDay();
     regenHearts();
     return state;
@@ -764,9 +781,31 @@
   function rankGift(i) {
     var rn = RANKS[i].n, c = 50 + 10 * i, gift = null;
     addCoins(c); addCl("fortschritt", c);
-    SHOP.filter(function (x) { return x.rank === rn && x.kind !== "sticker" && !x.reward && !owns(x); }).sort(function (a, b) { return a.cost - b.cost; }).slice(0, 1).forEach(function (x) { state.profile.owned.push(x.id); gift = x.label; });
+    SHOP.filter(function (x) { return x.rank === rn && x.kind !== "sticker" && x.kind !== "avatar" && !x.reward && !owns(x); }).sort(function (a, b) { return a.cost - b.cost; }).slice(0, 1).forEach(function (x) { state.profile.owned.push(x.id); gift = x.label; });
     (state.news || (state.news = { ranks: [], sets: [] })).ranks.push({ rank: rn, coins: c, item: gift });
     checkSets();
+  }
+  /* Rang-Figur zur Wahl: offen ist jede erreichte Stufe, die noch nicht abgeholt wurde (gilt rückwirkend). Wer alle Figuren der Stufe schon hat, bekommt Münzen. */
+  function rankPicks() {
+    var done = (state.rankPick || (state.rankPick = {})), out = [];
+    RANKS.forEach(function (r) {
+      var ids = RANK_SLOTS[r.n]; if (!ids || state.xp < r.xp || done[r.n]) return;
+      var open = ids.filter(function (id) { var it = itemById(id); return it && !owns(it); });
+      if (!open.length) { done[r.n] = 1; return; }
+      out.push({ rank: r.n, ids: open });
+    });
+    return out;
+  }
+  function giveFigure(id) {
+    var it = itemById(id), st = itemById("st:" + id.slice(3));
+    if (it && !owns(it)) state.profile.owned.push(it.id);
+    if (st && !owns(st)) state.profile.owned.push(st.id);
+  }
+  function rankPickClaim(rn, id) {
+    var p = rankPicks().filter(function (x) { return x.rank === rn; })[0];
+    if (!p || p.ids.indexOf(id) < 0) return { error: "Das geht nicht." };
+    giveFigure(id); state.rankPick[rn] = id; ev("rankpick", { rank: rn, id: id });
+    checkSets(); save(true); return { ok: true, item: itemById(id) };
   }
   function checkSets() {
     SETS.forEach(function (s) {
@@ -1426,6 +1465,7 @@
     var price = priceOf(it);
     if (state.coins < price) return { error: "Dafür fehlen noch " + (price - state.coins) + " Münzen." };
     state.coins -= price; state.profile.owned.push(id);
+    if (it.kind === "avatar") giveFigure(id);   // Sticker gibt es gratis zur Figur
     ev("buy", { id: id, name: it.label || it.id, cost: price });
     if (it.kind === "sticker") { var l = stickers(); l.push(it.id); while (l.length > stickerSlots()) l.shift(); }
     else state.profile[PROFILE_KEY[it.kind]] = it.val;
@@ -1490,7 +1530,7 @@
     sentences: function () { return sentences; }, activeSentences: activeSentences,
     planSentences: planSentences, gradeSentence: gradeSentence, sentenceStats: sentenceStats,
     srec: srec, groupsOf: groupsOf, setTrack: setTrack,
-    newBlocked: newBlocked, crewReward: crewReward, crewJoined: crewJoined, duelDone: duelDone, chalInfo: chalInfo, challengeDone: function () { return !!(state.daily && state.daily.date === today() && state.daily.chal); }, rankOf: rankOf, addXp: addXp, addCoins: addCoins, finishSession: finishSession,
+    newBlocked: newBlocked, crewReward: crewReward, crewJoined: crewJoined, duelDone: duelDone, chalInfo: chalInfo, challengeDone: function () { return !!(state.daily && state.daily.date === today() && state.daily.chal); }, rankOf: rankOf, rankPicks: rankPicks, rankPickClaim: rankPickClaim, RANK_SLOTS: RANK_SLOTS, addXp: addXp, addCoins: addCoins, finishSession: finishSession,
     stats: stats, today: today, shuffle: shuffle, regenHearts: regenHearts, heartsIn: heartsIn,
     rollDay: rollDay, verbs: function () { return verbs; }, verbPools: verbPools, planVerbs: planVerbs, verbStats: verbStats, parseCsv: parseCsv, removeCustom: removeCustom,
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },

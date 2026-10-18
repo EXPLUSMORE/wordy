@@ -751,6 +751,7 @@ details.fold>.fbody{padding:2px 0 14px}
 .pdet{margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,.2)}
 .ddays{display:flex;gap:4px}.dd{flex:1;text-align:center;font-size:11px;border-radius:8px;padding:3px 0;background:rgba(255,255,255,.08)}.dd i{display:block;font-style:normal;font-size:16px;font-weight:900}
 .dd.ok i{color:#6ff09a}.dd.now{background:rgba(255,255,255,.22)}.dd.fut i{opacity:.5}.dd.miss i{opacity:.5}
+.rpk .ri{display:block;width:64px;height:64px;font-size:48px;line-height:64px}.rpk .ri svg{width:100%!important;height:100%!important}
 .rcards{display:flex;flex-wrap:wrap;gap:8px}
 .rcard{width:84px;border-radius:12px;border:3px solid #14213d;background:radial-gradient(circle at 50% 30%,var(--c1),var(--c2));padding:6px 4px 5px;text-align:center;box-shadow:0 3px 0 #0a1230}
 .rcard .ri{display:block;width:44px;height:44px;margin:0 auto 2px}.rcard .ri svg{width:100%!important;height:100%!important}.rcard .ri.em{font-size:30px;line-height:44px}
@@ -1176,7 +1177,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.107.0";window.WORDY_BUILD="24671391a5";</script>
+<script>window.WORDY_VERSION="2.107.1";window.WORDY_BUILD="69d79199f5";</script>
 </head>
 <body>
 <div id="app">
@@ -5516,6 +5517,22 @@ window.SENTENCES = (window.SENTENCES || []).concat([
   /* Sets: Wer alle Teile hat, bekommt die Belohnung geschenkt */
   var SETS = [{ id: "eis", name: "Eis-Set", icon: "❄️", fig: "svg:eisbaer", items: ["av:eisbaer", "of:polar", "dn:eislauf", "fx:schnee"], reward: "fr:eis" }];
   SHOP.forEach(function (x) { if (x.id === "st:clombo") x.cost = 300; });   // Clombo als Sticker: gleicher Preis und gleicher Mindestrang wie die Figur
+  /* Rang-Figuren (v2.108): 12 Stufen mit je 1 Figur zur Wahl (gewöhnlich 3, selten 3, episch 3, legendär 3). Die gewählte Figur samt Sticker wird
+     geschenkt, die andere der Stufe ist ab diesem Rang im Shop kaufbar. Pass-Figuren bleiben nur über den Pass erlernbar. */
+  var RANK_SLOTS = {
+    "Bronze II": ["av:🐼", "av:🐢"],        "Silber I": ["av:🦉", "av:🐙"],         "Silber III": ["av:🦕", "av:pbaer"],
+    "Gold I": ["av:🦈", "av:🦄"],           "Gold II": ["av:phase", "av:pkatze"],   "Gold III": ["av:pummel", "av:fnllama"],
+    "Platin I": ["av:pphoenix", "av:kitty3"], "Platin III": ["av:pgold", "av:fnelite"], "Diamant II": ["av:eisbaer"],
+    "Elite": ["av:pregen", "av:fnchamp"],   "Champion": ["av:pgalaxie", "av:fnkristall"], "Unreal": ["av:kitty4", "av:fnunreal"]
+  };
+  (function () {
+    var at = {};
+    Object.keys(RANK_SLOTS).forEach(function (rn) { RANK_SLOTS[rn].forEach(function (id) { at[id] = rn; }); });
+    SHOP.forEach(function (x) {
+      if (x.kind !== "avatar" && x.kind !== "sticker") return;
+      var rn = at["av:" + x.id.slice(3)]; if (rn) x.rank = rn;
+    });
+  })();
   var MAX_STICKERS = 5;
   /* Sticker-Plätze auf dem Profil: der erste ist gratis, die weiteren werden nacheinander freigeschaltet */
   var STICKER_SLOT_COST = [0, 100, 150, 150, 150];
@@ -5635,6 +5652,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     if (!ok && readBackup("auto")) { state = Object.assign(freshState(), readBackup("auto").s); restored = true; }
     buildCatalogue(state);
     priceMigrate();
+    (state.profile.owned || []).slice().forEach(function (id) { if (id.indexOf("av:") === 0) giveFigure(id); });   // Sticker gratis zu jeder Figur (rückwirkend)
     rollDay();
     regenHearts();
     return state;
@@ -6120,9 +6138,31 @@ window.SENTENCES = (window.SENTENCES || []).concat([
   function rankGift(i) {
     var rn = RANKS[i].n, c = 50 + 10 * i, gift = null;
     addCoins(c); addCl("fortschritt", c);
-    SHOP.filter(function (x) { return x.rank === rn && x.kind !== "sticker" && !x.reward && !owns(x); }).sort(function (a, b) { return a.cost - b.cost; }).slice(0, 1).forEach(function (x) { state.profile.owned.push(x.id); gift = x.label; });
+    SHOP.filter(function (x) { return x.rank === rn && x.kind !== "sticker" && x.kind !== "avatar" && !x.reward && !owns(x); }).sort(function (a, b) { return a.cost - b.cost; }).slice(0, 1).forEach(function (x) { state.profile.owned.push(x.id); gift = x.label; });
     (state.news || (state.news = { ranks: [], sets: [] })).ranks.push({ rank: rn, coins: c, item: gift });
     checkSets();
+  }
+  /* Rang-Figur zur Wahl: offen ist jede erreichte Stufe, die noch nicht abgeholt wurde (gilt rückwirkend). Wer alle Figuren der Stufe schon hat, bekommt Münzen. */
+  function rankPicks() {
+    var done = (state.rankPick || (state.rankPick = {})), out = [];
+    RANKS.forEach(function (r) {
+      var ids = RANK_SLOTS[r.n]; if (!ids || state.xp < r.xp || done[r.n]) return;
+      var open = ids.filter(function (id) { var it = itemById(id); return it && !owns(it); });
+      if (!open.length) { done[r.n] = 1; return; }
+      out.push({ rank: r.n, ids: open });
+    });
+    return out;
+  }
+  function giveFigure(id) {
+    var it = itemById(id), st = itemById("st:" + id.slice(3));
+    if (it && !owns(it)) state.profile.owned.push(it.id);
+    if (st && !owns(st)) state.profile.owned.push(st.id);
+  }
+  function rankPickClaim(rn, id) {
+    var p = rankPicks().filter(function (x) { return x.rank === rn; })[0];
+    if (!p || p.ids.indexOf(id) < 0) return { error: "Das geht nicht." };
+    giveFigure(id); state.rankPick[rn] = id; ev("rankpick", { rank: rn, id: id });
+    checkSets(); save(true); return { ok: true, item: itemById(id) };
   }
   function checkSets() {
     SETS.forEach(function (s) {
@@ -6782,6 +6822,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     var price = priceOf(it);
     if (state.coins < price) return { error: "Dafür fehlen noch " + (price - state.coins) + " Münzen." };
     state.coins -= price; state.profile.owned.push(id);
+    if (it.kind === "avatar") giveFigure(id);   // Sticker gibt es gratis zur Figur
     ev("buy", { id: id, name: it.label || it.id, cost: price });
     if (it.kind === "sticker") { var l = stickers(); l.push(it.id); while (l.length > stickerSlots()) l.shift(); }
     else state.profile[PROFILE_KEY[it.kind]] = it.val;
@@ -6846,7 +6887,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     sentences: function () { return sentences; }, activeSentences: activeSentences,
     planSentences: planSentences, gradeSentence: gradeSentence, sentenceStats: sentenceStats,
     srec: srec, groupsOf: groupsOf, setTrack: setTrack,
-    newBlocked: newBlocked, crewReward: crewReward, crewJoined: crewJoined, duelDone: duelDone, chalInfo: chalInfo, challengeDone: function () { return !!(state.daily && state.daily.date === today() && state.daily.chal); }, rankOf: rankOf, addXp: addXp, addCoins: addCoins, finishSession: finishSession,
+    newBlocked: newBlocked, crewReward: crewReward, crewJoined: crewJoined, duelDone: duelDone, chalInfo: chalInfo, challengeDone: function () { return !!(state.daily && state.daily.date === today() && state.daily.chal); }, rankOf: rankOf, rankPicks: rankPicks, rankPickClaim: rankPickClaim, RANK_SLOTS: RANK_SLOTS, addXp: addXp, addCoins: addCoins, finishSession: finishSession,
     stats: stats, today: today, shuffle: shuffle, regenHearts: regenHearts, heartsIn: heartsIn,
     rollDay: rollDay, verbs: function () { return verbs; }, verbPools: verbPools, planVerbs: planVerbs, verbStats: verbStats, parseCsv: parseCsv, removeCustom: removeCustom,
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
@@ -9866,17 +9907,19 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var st = S.state, cur = S.rankOf(st.xp);
     var rows = S.RANKS.map(function (r, i) {
       var reached = st.xp >= r.xp, isCur = r.n === cur.rank.n, next = S.RANKS[i + 1];
-      var unlocks = S.SHOP.filter(function (x) { return x.rank === r.n && x.kind !== "sticker"; }).map(function (x) { return x.label; });
+      var slot = S.RANK_SLOTS[r.n], unlocks = S.SHOP.filter(function (x) { return x.rank === r.n && x.kind !== "sticker" && !(slot && slot.indexOf(x.id) >= 0); }).map(function (x) { return x.label; });
+      var gift = slot ? slot.map(function (id) { var it = S.itemById(id); return it ? it.label : ""; }).join(" oder ") : "";
       var pc = isCur && next ? Math.round(cur.into * 100 / cur.span) : 0;
       return '<div class="rank-i' + (isCur ? " cur" : reached ? "" : " off") + '"><div class="row" style="gap:10px;align-items:center">' +
         '<span style="width:22px;text-align:center">' + (isCur ? "▶" : reached ? "✓" : "🔒") + '</span>' +
         '<b style="flex:1 1 auto">' + esc(r.n) + '</b><span class="small muted tnum">ab ' + r.xp.toLocaleString("de-DE") + ' XP</span></div>' +
         (isCur && next ? '<div class="bar" style="margin:6px 0 2px 32px"><i style="width:' + pc + '%"></i></div><div class="small muted" style="margin-left:32px">Noch ' +
           (next.xp - st.xp).toLocaleString("de-DE") + ' XP bis ' + esc(next.n) + '</div>' : "") +
-        (unlocks.length ? '<div class="small muted" style="margin:3px 0 0 32px">🔓 ' + esc(unlocks.join(", ")) + ' <span title="Sticker gibt es auch">(+ Sticker)</span></div>' : "") + '</div>';
+        (gift ? '<div class="small" style="margin:3px 0 0 32px">🎁 Figur zur Wahl: <b>' + esc(gift) + '</b> <span class="muted">(+ Sticker)</span></div>' : "") +
+        (unlocks.length ? '<div class="small muted" style="margin:3px 0 0 32px">🔓 Im Shop: ' + esc(unlocks.join(", ")) + '</div>' : "") + '</div>';
     }).join("");
     return '<section class="card"><div class="eyebrow">Alle Ränge</div>' +
-      '<p class="small muted" style="margin:6px 0 8px">Dein Stand: <b>' + st.xp.toLocaleString("de-DE") + ' XP</b> · ' + esc(cur.rank.n) + '. Das schaltest du mit jedem Rang im Shop frei.</p>' + rows +
+      '<p class="small muted" style="margin:6px 0 8px">Dein Stand: <b>' + st.xp.toLocaleString("de-DE") + ' XP</b> · ' + esc(cur.rank.n) + '. Mit vielen Rängen bekommst du eine <b>Figur zur Wahl geschenkt</b> (mit Sticker); die andere kannst du dann kaufen. Pass-Figuren gibt es nur im Wochenpass.</p>' + rows +
       '<div class="eyebrow" style="margin-top:14px">So bekommst du XP</div>' +
       '<div class="small" style="margin-top:6px;line-height:1.7">' +
       '• Richtige Antwort: <b>+10</b> (sicher) oder <b>+6</b> (mit kleinem Tippfehler)<br>' +
@@ -10048,6 +10091,28 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       .map(function (x) { return shopTile(x.it, wishId); }).join("") + '</div>';
     return html + '</section>';
   }
+  /* Rang-Figur zur Wahl: ein Fenster je erreichter Stufe, die Figur kommt samt Sticker geschenkt */
+  function openRankPick() {
+    if ($("#rankPick") || !sessionEl.hidden) return;
+    var p = S.rankPicks()[0]; if (!p) return;
+    var its = p.ids.map(S.itemById), many = its.length > 1;
+    var ov = document.createElement("div"); ov.className = "srmd"; ov.id = "rankPick";
+    ov.innerHTML = '<div class="dsh" style="text-align:center"><div class="dshg"></div><div class="eyebrow">⬆️ Rang ' + esc(p.rank) + '</div><h3>' + (many ? "Such dir eine Figur aus!" : "Deine neue Figur!") + '</h3>' +
+      '<div class="row wrap" style="gap:12px;justify-content:center;margin:10px 0">' + its.map(function (it) {
+        var r = S.rarityOf(it);
+        return '<button class="chip rpk" data-pick="' + esc(it.id) + '" style="min-width:120px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:4px;border-radius:14px">' + itemIcon(it, true) + '<b>' + esc(it.label) + '</b><span class="small muted">' + RAR_NAME[r] + ' · + Sticker</span></button>';
+      }).join("") + '</div>' +
+      '<p class="small muted">' + (many ? "Die andere Figur kannst du ab jetzt im Shop kaufen." : "Dazu gibt es den Sticker gratis.") + '</p></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-pick]"); if (!b) return;
+      var r = S.rankPickClaim(p.rank, b.getAttribute("data-pick"));
+      if (r.error) return toast(r.error);
+      try { var rc = b.getBoundingClientRect(); global.VTC.burst("stars", rc.left + rc.width / 2, rc.top, 30, 1.6); if (S.state.settings.audio) global.VTC.sound(S.state.profile.snd, true); } catch (x) {}
+      ov.remove(); renderHeader(); toast("🎁 " + r.item.label + " ist deine! Sticker gratis dazu.", 3600);
+      setTimeout(function () { if (S.rankPicks().length) openRankPick(); else render(); }, 700);
+    });
+  }
   /* Rang- und Set-Geschenke sowie die einmalige Preisgutschrift ansagen */
   function flushNews() {
     var parts = [], pn = S.state.priceNote;
@@ -10060,6 +10125,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       S.save(true);
     }
     if (parts.length) toast("🎉 " + parts.join(" · "), 5200);
+    if (S.rankPicks().length) setTimeout(openRankPick, parts.length ? 1200 : 400);
   }
 
   /* ================= FORTSCHRITT ================= */

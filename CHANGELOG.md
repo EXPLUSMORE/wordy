@@ -9,6 +9,12 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.108.0 – 2026-10-18
+- Rang-Figuren: 12 Rangstufen (Bronze II, Silber I, Silber III, Gold I, II, III, Platin I, Platin III, Diamant II, Elite, Champion, Unreal) schenken eine Figur **zur Wahl** (je 3 gewöhnlich, selten, episch, legendär), samt Sticker. Die nicht gewählte Figur der Stufe ist ab diesem Rang im Shop kaufbar. Gilt rückwirkend: erreichte Ränge bieten die Wahl beim nächsten Öffnen an.
+- Sticker gibt es gratis zu jeder Figur (Kauf, Rang, Geschenk), auch rückwirkend für alle schon besessenen Figuren.
+- Ränge-Übersicht zeigt je Rang „Figur zur Wahl“ und „Im Shop“. Pass-Figuren bleiben nur über den Wochenpass erlernbar.
+- Kein Server-Schritt nötig.
+
 ## 2.107.1 – 2026-10-18
 - Duelle melden sich sofort: Der Server schickt dem Freund beim Abschicken einer Herausforderung und dem Herausforderer beim Ergebnis einen Push (nur bei eingeschalteten Erinnerungen). Ist die App offen, erscheint ein Hinweis und die Startseite lädt den Posteingang sofort neu.
 - Ohne Push (kein Abo, iPhone ohne Mitteilungen): Abfrage alle 30 Sekunden statt 2 Minuten und beim Zurückkehren in die App sofort.
