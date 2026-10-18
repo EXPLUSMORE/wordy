@@ -38,6 +38,17 @@
   var ART = {
     fnllama: llama({ id: "fnL1", cols: ["#FF7EC7", "#B05CF0", "#4F7CF5", "#3BC4F2"], edge: "#4B2A8A", ear: "#C06CF5", head: "#B05CF0", snout: "#D79BFF" }),
 
+    /* Raketen-Lama (episch): Jetpack mit flackernden Flammen und Fliegerbrille */
+    fnrakete: llama({ id: "fnL3", cols: ["#FFE08A", "#FF9A3D", "#F0503A", "#B8262E"], edge: "#5A1A1A", ear: "#FF9A3D", head: "#FF9A3D", snout: "#FFD7A8",
+      extra: '<g stroke="#3A1212" stroke-width="1.1" stroke-linejoin="round"><rect x="49" y="28" width="6" height="16" rx="3" fill="#C9D2E0"/><rect x="56" y="28" width="6" height="16" rx="3" fill="#AEB9CC"/><path d="M49 31h6M56 31h6M49 41h6M56 41h6" stroke="#E0453A" stroke-width="1.6" stroke-linecap="round"/></g>' +
+        '<path d="M52 44q3 9 0 14q-3-5 0-14z" fill="#FFD34D"><animate attributeName="opacity" values="1;.55;1" dur=".35s" repeatCount="indefinite"/></path><path d="M59 44q3 11 0 17q-3-6 0-17z" fill="#FF7A2D"><animate attributeName="opacity" values=".6;1;.6" dur=".3s" repeatCount="indefinite"/></path>' +
+        '<path d="M22 11h23" stroke="#3A1212" stroke-width="2.4" stroke-linecap="round"/><circle cx="39" cy="14.5" r="5.6" fill="#7BE9FF" fill-opacity=".55" stroke="#3A1212" stroke-width="1.6"/><circle cx="27" cy="14" r="4.2" fill="#7BE9FF" fill-opacity=".55" stroke="#3A1212" stroke-width="1.4"/><path d="M37 12.5l2 -1.4" stroke="#fff" stroke-width="1.2" stroke-linecap="round"/>' }),
+    /* Schatz-Lama (legendär): goldene Piñata mit Krone und Schatzkiste voller Münzen auf dem Rücken */
+    fnschatz: llama({ id: "fnL4", cols: ["#FFF6C0", "#FFD34D", "#F0A820", "#C8780A"], edge: "#6A3A00", ear: "#FFD34D", head: "#FFD34D", snout: "#FFF1B0",
+      extra: '<path d="M24 9l-1-7 5 4 4-6 4 6 5-4-1 7z" fill="#FF4D6A" stroke="#6A3A00" stroke-width="1.1" stroke-linejoin="round"/><circle cx="28" cy="5" r="1.3" fill="#7BE9FF"/><circle cx="36" cy="5" r="1.3" fill="#7BE9FF"/>' +
+        '<g stroke="#3A2210" stroke-width="1.2" stroke-linejoin="round"><rect x="46" y="32" width="16" height="12" rx="2" fill="#8A5A2C"/><path d="M46 34q8-10 16 0z" fill="#B87A3C"/><rect x="52" y="36" width="4" height="5" rx="1" fill="#FFD34D"/></g>' +
+        '<circle cx="50" cy="28" r="2.6" fill="#FFD34D" stroke="#6A3A00" stroke-width=".9"/><circle cx="56" cy="26" r="2.6" fill="#FFE27A" stroke="#6A3A00" stroke-width=".9"/><circle cx="60" cy="29" r="2.2" fill="#FFD34D" stroke="#6A3A00" stroke-width=".9"/>' +
+        '<path d="M54 14l1 2.6 2.6 1-2.6 1-1 2.6-1-2.6-2.6-1 2.6-1z" fill="#fff"><animate attributeName="opacity" values="1;.2;1" dur="1.4s" repeatCount="indefinite"/></path><path d="M10 26l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z" fill="#fff"><animate attributeName="opacity" values=".2;1;.2" dur="1.4s" repeatCount="indefinite"/></path>' }),
     fnkristall: llama({ id: "fnL2", cols: ["#FFFFFF", "#9FEFFF", "#7FA8FF", "#B58CFF"], edge: "#3E5BB8", ear: "#CFF6FF", head: "#BFE9FF", snout: "#F2FCFF",
       extra: '<path d="M11 54V44l10-5v-8l10 6 10-6v8l13 5v10z" fill="#fff" opacity=".18"/><path d="M26 17l6 10 6-10z" fill="#fff" opacity=".45"/>' +
         '<path d="M8 22l2 4 4 2-4 2-2 4-2-4-4-2 4-2zM56 38l1.6 3.4 3.4 1.6-3.4 1.6L56 48l-1.6-3.4-3.4-1.6 3.4-1.6z" fill="#fff"/>' }),

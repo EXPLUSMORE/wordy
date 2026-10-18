@@ -87,6 +87,8 @@
     { id: "av:fnelite",    kind: "avatar", set: "fn", label: "Elite-Kristall", cost: 800,  val: "svg:fnelite",    rank: "Elite" },
     { id: "av:fnchamp",    kind: "avatar", set: "fn", label: "Champion-Kristall", cost: 1500, val: "svg:fnchamp", rank: "Champion" },
     { id: "av:fnkristall", kind: "avatar", set: "fn", label: "Kristall-Lama",  cost: 1500, val: "svg:fnkristall", rank: "Unreal" },
+    { id: "av:fnrakete",   kind: "avatar", set: "fn", label: "Raketen-Lama",   cost: 700,  val: "svg:fnrakete",   rank: "Platin II", rar: "epic" },
+    { id: "av:fnschatz",   kind: "avatar", set: "fn", label: "Schatz-Lama",    cost: 2200, val: "svg:fnschatz",   rank: "Unreal Gold", rar: "legend" },
     { id: "av:fnunreal",   kind: "avatar", set: "fn", label: "Unreal-Kristall", cost: 2500, val: "svg:fnunreal",  rank: "Unreal" },
 
     { id: "fr:eis",     kind: "frame", label: "Eiskristall-Rahmen", cost: 1500, val: "eis", reward: "eis" },
@@ -168,8 +170,8 @@
   var RANK_SLOTS = {
     "Bronze II": ["av:🐼", "av:🐢"],        "Silber I": ["av:🦉", "av:🐙"],         "Silber III": ["av:🦕", "av:pbaer"],
     "Gold I": ["av:🦈", "av:🦄"],           "Gold II": ["av:phase", "av:pkatze"],   "Gold III": ["av:pummel", "av:fnllama"],
-    "Platin I": ["av:pphoenix", "av:kitty3"], "Platin III": ["av:pgold", "av:fnelite"], "Diamant I": ["av:blitzwolf", "av:ninja"], "Diamant II": ["av:sdrache"],
-    "Elite": ["av:pregen", "av:fnchamp"],   "Champion": ["av:pgalaxie", "av:fnkristall"], "Unreal": ["av:kitty4", "av:fnunreal"]
+    "Platin I": ["av:pphoenix", "av:kitty3"], "Platin II": ["av:fnrakete"], "Platin III": ["av:pgold", "av:fnelite"], "Diamant I": ["av:blitzwolf", "av:ninja"], "Diamant II": ["av:sdrache"],
+    "Elite": ["av:pregen", "av:fnchamp"],   "Champion": ["av:pgalaxie", "av:fnkristall"], "Unreal": ["av:kitty4", "av:fnunreal"], "Unreal Gold": ["av:fnschatz"]
   };
   (function () {
     var at = {};
