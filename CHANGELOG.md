@@ -9,6 +9,11 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.114.0 – 2026-10-18
+- Shop-Kalender neu geplant, passend zur Rangordnung: Figuren erscheinen in Rang-Reihenfolge (Bronze II zum Start, danach etwa eine Rangstufe pro Woche bis Unreal Gold in Woche 25), alle übrigen Bereiche je zwei bis drei Artikel pro Woche nach Stufe und Preis, das Eis-Set als Winter-Set in Woche 10. Die neuen Figuren (Raketen-Lama, Blitzwolf, Nachtschatten, Sternendrache, Disco-Flamingo, Donut-Faultier, Goldkristall-Lama) sind eingeplant.
+- Start-Sortiment (Woche 0): Panda, Schildkröte, Kitty Schleife und zwei Fußballtrikots; dazu Fuchs und die Pass-Figuren.
+- Kein Server-Schritt nötig. Abweichungen je Artikel lassen sich weiter im Dashboard setzen.
+
 ## 2.113.2 – 2026-10-18
 - Noch nicht freigegebene Figuren und Sticker (Shop-Kalender) erscheinen als graues **❔** mit dem Namen „???“, nur Stufe und Rang bleiben sichtbar. Auch im Rang-Pfad und im Hinweis beim Antippen („Geheimes Stück: kommt in N Wochen“). Wegen des Rangs gesperrte, schon freigegebene Stücke bleiben dunkle Silhouetten mit Namen.
 - Kein Server-Schritt nötig.
