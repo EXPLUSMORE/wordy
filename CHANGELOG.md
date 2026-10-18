@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.115.0 – 2026-10-18
+- Der ganze bestehende Shop ist von Anfang an sichtbar, mit den Einschränkungen nach Rang (🔒), Pass und Set. Der Wochenkalender entfällt für den vorhandenen Katalog; das ❔ „???“ und die Karten unter „Kommt bald“ erscheinen nur noch für wirklich **neue** Artikel, die mit einer Woche eingetragen sind (`SHOP_WEEK` in engine.js oder Dashboard). Solange nichts Neues geplant ist, gibt es keine „Kommt bald“-Karten.
+- Kein Server-Schritt nötig.
+
 ## 2.114.0 – 2026-10-18
 - Shop-Kalender neu geplant, passend zur Rangordnung: Figuren erscheinen in Rang-Reihenfolge (Bronze II zum Start, danach etwa eine Rangstufe pro Woche bis Unreal Gold in Woche 25), alle übrigen Bereiche je zwei bis drei Artikel pro Woche nach Stufe und Preis, das Eis-Set als Winter-Set in Woche 10. Die neuen Figuren (Raketen-Lama, Blitzwolf, Nachtschatten, Sternendrache, Disco-Flamingo, Donut-Faultier, Goldkristall-Lama) sind eingeplant.
 - Start-Sortiment (Woche 0): Panda, Schildkröte, Kitty Schleife und zwei Fußballtrikots; dazu Fuchs und die Pass-Figuren.

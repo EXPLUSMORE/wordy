@@ -1420,23 +1420,9 @@
   }
   /* ---------- Shop-Kalender: was ab welcher Woche nach dem Go-live im Shop steht ---------- */
   var SHOP_GOLIVE = "2026-10-12";   // Standard, das Dashboard (Betreiber) kann ein anderes Datum setzen
-  var SHOP_WEEK = {   // Woche seit Go-live; nicht aufgeführte Artikel (Start-Sortiment, Fuchs) sind ab Woche 0 da. Sticker folgen ihrer Figur.
-    /* v2.114: passend zur Rangordnung neu geplant: Figuren erscheinen in Rang-Reihenfolge (Bronze II = Start, Unreal Gold = Woche 25), übrige Bereiche je 2 pro Woche nach Stufe und Preis, Eis-Set als Winter-Set in Woche 10 */
-    "av:🐼": 0, "av:🐢": 0, "av:kitty1": 0, "kt:muenchen": 0, "kt:barcelona": 0, "av:🦉": 1,
-    "av:🐙": 1, "kt:turin": 1, "kt:deutschland": 1, "av:🦕": 2, "av:pbaer": 2, "av:kitty2": 2,
-    "kt:argentinien": 2, "kt:portugal": 2, "av:🦈": 3, "av:🦄": 3, "av:pdrache": 3, "of:shirt": 3,
-    "of:kitty1": 3, "av:phase": 4, "av:pkatze": 4, "av:fnhuhn": 4, "ti:wort": 4, "ti:streber": 4,
-    "av:pummel": 5, "av:clombo": 5, "av:fnfrosch": 5, "av:fnllama": 5, "fx:confetti": 5, "of:hoodie": 5,
-    "av:fnschwein": 6, "av:fnraptor": 6, "sn:bell": 6, "th:mint": 6, "av:pphoenix": 7, "av:kitty3": 7,
-    "th:plum": 7, "fr:gold": 7, "av:fnwolf": 8, "ti:freund": 8, "ti:profi": 8, "av:fnrakete": 9,
-    "bg:stars": 9, "bg:clouds": 9, "av:eisbaer": 10, "of:polar": 10, "dn:eislauf": 10, "fx:schnee": 10,
-    "fx:stars": 10, "dn:huepfer": 10, "av:pgold": 11, "av:fnelite": 11, "dn:drehung": 11, "of:trikot": 11,
-    "sn:arcade": 12, "th:amber": 12, "av:pregen": 13, "av:blitzwolf": 13, "fr:rainbow": 13, "fx:sparks": 13,
-    "dn:roboter": 14, "of:held": 14, "av:ninja": 15, "av:sdrache": 15, "of:raum": 15, "of:kitty2": 15,
-    "av:eispingu": 16, "av:eisrobbe": 16, "sn:harp": 16, "bg:space": 16, "av:flamingo": 17, "av:faultier": 17,
-    "dn:moonwalk": 17, "of:rock": 17, "fr:fire": 18, "ti:genie": 18, "av:pgalaxie": 19, "av:fnchamp": 19,
-    "fx:firework": 19, "of:kitty3": 19, "dn:sieg": 20, "av:fnkristall": 21, "av:fnunreal": 21, "av:eiskoenig": 21,
-    "ti:champ": 21, "of:kitty4": 21, "av:kitty4": 23, "av:fngold": 25
+  var SHOP_WEEK = {   // Woche seit Go-live; nicht aufgeführte Artikel sind ab Woche 0 da. Sticker folgen ihrer Figur.
+    /* v2.115: Der ganze bestehende Katalog ist von Anfang an sichtbar (gesperrt nach Rang, Pass oder Set). Hier stehen nur noch wirklich NEUE
+       Artikel, die erst später erscheinen (Eintrag "id": Woche); bis dahin zeigt „Kommt bald“ sie als ❔. Ohne Eintrag gibt es keine Teaser. */
   };
   function shopStart() { var r = global.WordySync && global.WordySync.remote ? (global.WordySync.remote() || {}).shop : null; return r && /^\d{4}-\d{2}-\d{2}$/.test(r.start || "") ? r.start : SHOP_GOLIVE; }
   function shopNow() { return Math.max(0, Math.floor(dayDiff(shopStart(), today()) / 7)); }   // aktuelle Shop-Woche
