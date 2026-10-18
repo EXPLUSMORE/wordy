@@ -95,6 +95,16 @@ nav#tabs button[aria-current="true"]{color:var(--accent);background:var(--accent
 @keyframes frFire{from{box-shadow:0 0 0 2px #FF8A3D,0 0 6px 1px rgba(255,120,40,.7),0 -4px 10px rgba(255,200,60,.5)}
   to{box-shadow:0 0 0 2.5px #FF5A2B,0 0 12px 3px rgba(255,90,30,.8),0 -7px 14px rgba(255,210,70,.6)}}
 @media (prefers-reduced-motion:reduce){.avatar.fr-fire{animation:none;box-shadow:0 0 0 2.5px #FF7A33,0 0 8px 2px rgba(255,120,40,.6)}}
+.avatar.fr-neon{animation:frNeon 1.4s ease-in-out infinite alternate}
+@keyframes frNeon{from{box-shadow:0 0 0 2px #00F0FF,0 0 8px 2px rgba(0,240,255,.85),0 0 18px 4px rgba(255,61,240,.5)}to{box-shadow:0 0 0 2.5px #FF3DF0,0 0 10px 3px rgba(255,61,240,.85),0 0 20px 5px rgba(0,240,255,.55)}}
+.avatar.fr-pirat{box-shadow:0 0 0 2px #5a3a1a,0 0 0 4.5px #d8a85a,0 0 0 6.5px #5a3a1a,0 0 8px 6px rgba(255,211,77,.35)}
+.avatar.fr-sterne{isolation:isolate}
+.avatar.fr-sterne::before{content:"";position:absolute;inset:-5px;border-radius:50%;z-index:-1;animation:frSp 4s linear infinite;
+  background:conic-gradient(#b58cff,#ffe27a,#8ed0f8,#ff8fd0,#ffe27a,#b58cff);
+  -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 4.5px),#000 calc(100% - 4px));mask:radial-gradient(farthest-side,transparent calc(100% - 4.5px),#000 calc(100% - 4px))}
+@keyframes frSp{to{transform:rotate(360deg)}}
+.avatar.fr-kristall{box-shadow:0 0 0 2px #9fefff,0 0 0 4.5px #fff,0 0 14px 4px rgba(159,239,255,.85)}
+@media (prefers-reduced-motion:reduce){.avatar.fr-neon{animation:none;box-shadow:0 0 0 2.5px #00F0FF,0 0 12px 3px rgba(255,61,240,.6)}.avatar.fr-sterne::before{animation:none}}
 /* Hintergründe (Shop): liegen als feine Muster über der Papierfarbe */
 html[data-bg="stars"] body{background-image:
   radial-gradient(2.4px 2.4px at 12% 18%,var(--bgdot) 50%,transparent 55%),radial-gradient(1.8px 1.8px at 78% 12%,var(--bgdot) 50%,transparent 55%),

@@ -154,7 +154,28 @@
     { id: "th:paper", kind: "theme", label: "Papier", cost: 0,  val: "paper" },
     { id: "th:mint",  kind: "theme", label: "Minze",  cost: 90,  val: "mint" },
     { id: "th:plum",  kind: "theme", label: "Pflaume",cost: 90,  val: "plum" },
-    { id: "th:amber", kind: "theme", label: "Amber",  cost: 120, val: "amber" }
+    { id: "th:amber", kind: "theme", label: "Amber",  cost: 120, val: "amber" },
+
+    /* ---- Drops (neue Artikel mit Wochenplan in SHOP_WEEK, ab v2.116) ---- */
+    /* Drop 1 · Cyber (Woche 0) */
+    { id: "av:cyberfuchs", kind: "avatar", label: "Cyber-Fuchs",  cost: 800, val: "svg:cyberfuchs", rank: "Platin II", rar: "epic" },
+    { id: "fr:neon",       kind: "frame",  label: "Neon-Rahmen",  cost: 450, val: "neon",  rar: "epic" },
+    { id: "fx:pixel",      kind: "fx",     label: "Pixelregen",   cost: 250, val: "pixel", rar: "rare" },
+    { id: "ti:pixel",      kind: "title",  label: "Pixelprofi",   cost: 250, val: "Pixelprofi", rar: "rare" },
+    /* Drop 2 · Ahoi (Woche 1) */
+    { id: "av:pirat",      kind: "avatar", label: "Piraten-Papagei", cost: 350, val: "svg:pirat", rank: "Gold III", rar: "rare" },
+    { id: "fr:pirat",      kind: "frame",  label: "Piratenrahmen",   cost: 250, val: "pirat", rar: "rare" },
+    { id: "fx:gold",       kind: "fx",     label: "Goldregen",       cost: 400, val: "gold",  rar: "epic" },
+    { id: "ti:schatz",     kind: "title",  label: "Schatzjäger",     cost: 200, val: "Schatzjäger", rar: "rare" },
+    /* Drop 3 · Zauber (Woche 2) */
+    { id: "av:zauber",     kind: "avatar", label: "Zauber-Eule",     cost: 2000, val: "svg:zauber", rank: "Diamant II", rar: "legend" },
+    { id: "fr:sterne",     kind: "frame",  label: "Sternenstaub-Rahmen", cost: 900, val: "sterne", rar: "legend" },
+    { id: "fx:magie",      kind: "fx",     label: "Zauberfunken",    cost: 400, val: "magie", rar: "epic" },
+    { id: "ti:zauber",     kind: "title",  label: "Wortzauberer",    cost: 500, val: "Wortzauberer", rar: "epic" },
+    /* Drop 4 · Eis-Gipfel (Woche 3) */
+    { id: "av:yeti",       kind: "avatar", label: "Yeti",            cost: 850, val: "svg:yeti", rank: "Platin III", rar: "epic" },
+    { id: "fr:kristall",   kind: "frame",  label: "Eiskristall-Rahmen", cost: 500, val: "kristall", rar: "epic" },
+    { id: "ti:eis",        kind: "title",  label: "Eisbrecher",      cost: 250, val: "Eisbrecher", rar: "rare" }
   ];
   /* Sticker: jede Figur gibt es zusätzlich als Aufkleber (halber Preis), die man auf Startseite und Profil klebt */
   SHOP = SHOP.concat(SHOP.filter(function (a) { return a.kind === "avatar"; }).map(function (a) {
@@ -974,7 +995,7 @@
   }
   var RAR_ORDER = { common: 0, rare: 1, epic: 2, legend: 3 };
   function rarityOf(it) { return it.rar || (it.cost <= 120 ? "common" : it.cost <= 350 ? "rare" : it.cost <= 800 ? "epic" : "legend"); }
-  function shopCatalog() { return SHOP.filter(function (x) { return x.kind !== "sticker" && !x.reward && x.cost > 0; }).map(function (x) { return [x.id, x.label, x.kind, SHOP_WEEK[x.id] || 0]; }); }
+  function shopCatalog() { return SHOP.filter(function (x) { return x.kind !== "sticker" && !x.reward && x.cost > 0 && SHOP_WEEK[x.id] != null; }).map(function (x) { return [x.id, x.label, x.kind, SHOP_WEEK[x.id] || 0]; }); }
   function shopWeeks() { var o = {}; SHOP.forEach(function (x) { if (x.kind !== "sticker" && !x.reward) o[x.id] = SHOP_WEEK[x.id] || 0; }); return o; }
   function shopList() { return SHOP.filter(function (x) { return ["avatar", "dance", "outfit", "kit", "fx", "frame", "title", "bg"].indexOf(x.kind) >= 0 && x.cost > 0 || x.kind === "dance"; }).map(function (x) { return [x.id, x.label, x.kind]; }); }
 
@@ -1420,15 +1441,18 @@
   }
   /* ---------- Shop-Kalender: was ab welcher Woche nach dem Go-live im Shop steht ---------- */
   var SHOP_GOLIVE = "2026-10-12";   // Standard, das Dashboard (Betreiber) kann ein anderes Datum setzen
-  var SHOP_WEEK = {   // Woche seit Go-live; nicht aufgeführte Artikel sind ab Woche 0 da. Sticker folgen ihrer Figur.
-    /* v2.115: Der ganze bestehende Katalog ist von Anfang an sichtbar (gesperrt nach Rang, Pass oder Set). Hier stehen nur noch wirklich NEUE
-       Artikel, die erst später erscheinen (Eintrag "id": Woche); bis dahin zeigt „Kommt bald“ sie als ❔. Ohne Eintrag gibt es keine Teaser. */
+  var SHOP_WEEK = {   // Woche seit Go-live; nur NEUE Artikel (Drops) stehen hier, der übrige Katalog ist von Anfang an im Shop. Sticker folgen ihrer Figur.
+    /* Drop 1 · Cyber: Woche 0 (sofort) – Drop 2 · Ahoi: Woche 1 – Drop 3 · Zauber: Woche 2 – Drop 4 · Eis-Gipfel: Woche 3. Neue Drops hier anhängen. */
+    "av:cyberfuchs": 0, "fr:neon": 0, "fx:pixel": 0, "ti:pixel": 0,
+    "av:pirat": 1, "fr:pirat": 1, "fx:gold": 1, "ti:schatz": 1,
+    "av:zauber": 2, "fr:sterne": 2, "fx:magie": 2, "ti:zauber": 2,
+    "av:yeti": 3, "fr:kristall": 3, "ti:eis": 3
   };
   function shopStart() { var r = global.WordySync && global.WordySync.remote ? (global.WordySync.remote() || {}).shop : null; return r && /^\d{4}-\d{2}-\d{2}$/.test(r.start || "") ? r.start : SHOP_GOLIVE; }
   function shopNow() { return Math.max(0, Math.floor(dayDiff(shopStart(), today()) / 7)); }   // aktuelle Shop-Woche
   function shopRel(it) {
     var r = global.WordySync && global.WordySync.remote ? ((global.WordySync.remote() || {}).shop || {}).over : null, id = it.kind === "sticker" ? "av:" + it.id.slice(3) : it.id;
-    if (r && r[id] != null && isFinite(+r[id])) return Math.max(0, +r[id]);
+    if (r && SHOP_WEEK[id] != null && r[id] != null && isFinite(+r[id])) return Math.max(0, +r[id]);   // Dashboard darf nur Drops verschieben
     return SHOP_WEEK[id] || 0;
   }
   /* sichtbar: schon gekauft, ein Geschenk (Set, Pass, Rang) oder freigeschaltet */
@@ -1437,10 +1461,13 @@
   function shopSoon(it) { return shopVisible(it) ? 0 : Math.max(1, shopRel(it) - shopNow()); }
   /* „Kommt bald“: die Artikel der nächsten zwei Wochen (ohne Sticker), höchstens sechs */
   function shopTeasers() {
-    var w = shopNow();
-    return SHOP.filter(function (x) { return x.kind !== "sticker" && !x.reward && !x.pass && !owns(x) && shopRel(x) > w && shopRel(x) <= w + 2; })
-      .sort(function (a, b) { return shopRel(a) - shopRel(b); }).slice(0, 6).map(function (x) { return { id: x.id, kind: x.kind, rar: rarityOf(x), inWeeks: shopRel(x) - w }; });
+    var w = shopNow(), st = shopStart();
+    return SHOP.filter(function (x) { return x.kind !== "sticker" && !x.reward && !x.pass && !owns(x) && shopRel(x) > w && shopRel(x) <= w + 4; })
+      .sort(function (a, b) { return shopRel(a) - shopRel(b); }).slice(0, 12).map(function (x) { return { id: x.id, kind: x.kind, rar: rarityOf(x), inWeeks: shopRel(x) - w, date: dayAdd(st, 7 * shopRel(x)) }; });
   }
+  /* „NEU“: Artikel des aktuellen und des vorigen Drops */
+  function shopIsNew(it) { var k = it.kind === "sticker" ? "av:" + it.id.slice(3) : it.id; return SHOP_WEEK[k] != null && shopRel(it) <= shopNow() && shopNow() - shopRel(it) <= 1; }
+
   /* Willkommenspaket für jedes neue Kind: eine Figur zur Wahl plus Münzen, Effekt und Titel */
   var WELCOME = { choices: ["av:🦊", "av:🐢", "av:🐼"], coins: 50, extras: ["fx:confetti", "ti:wort"] };
   function welcomeGrant(figId) {
@@ -1531,7 +1558,7 @@
     sentences: function () { return sentences; }, activeSentences: activeSentences,
     planSentences: planSentences, gradeSentence: gradeSentence, sentenceStats: sentenceStats,
     srec: srec, groupsOf: groupsOf, setTrack: setTrack,
-    newBlocked: newBlocked, crewReward: crewReward, crewJoined: crewJoined, duelDone: duelDone, chalInfo: chalInfo, challengeDone: function () { return !!(state.daily && state.daily.date === today() && state.daily.chal); }, rankOf: rankOf, shopSoon: shopSoon, rankPicks: rankPicks, rankPickable: rankPickable, rankPickClaim: rankPickClaim, RANK_SLOTS: RANK_SLOTS, addXp: addXp, addCoins: addCoins, finishSession: finishSession,
+    newBlocked: newBlocked, crewReward: crewReward, crewJoined: crewJoined, duelDone: duelDone, chalInfo: chalInfo, challengeDone: function () { return !!(state.daily && state.daily.date === today() && state.daily.chal); }, rankOf: rankOf, shopSoon: shopSoon, shopIsNew: shopIsNew, rankPicks: rankPicks, rankPickable: rankPickable, rankPickClaim: rankPickClaim, RANK_SLOTS: RANK_SLOTS, addXp: addXp, addCoins: addCoins, finishSession: finishSession,
     stats: stats, today: today, shuffle: shuffle, regenHearts: regenHearts, heartsIn: heartsIn,
     rollDay: rollDay, verbs: function () { return verbs; }, verbPools: verbPools, planVerbs: planVerbs, verbStats: verbStats, parseCsv: parseCsv, removeCustom: removeCustom,
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },

@@ -9,6 +9,16 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.116.0 – 2026-10-18
+- Erster Drop plus drei weitere in Planung: 15 neue Artikel mit Wochenplan.
+  - **Drop 1 · Cyber (sofort):** Cyber-Fuchs (episch, 800 🪙, ab Rang Platin II), Neon-Rahmen (episch, animiert), Pixelregen (Effekt, selten), Titel „Pixelprofi“.
+  - **Drop 2 · Ahoi (Woche 1):** Piraten-Papagei (selten, 350 🪙, ab Gold III), Piratenrahmen, Goldregen (Effekt, episch), Titel „Schatzjäger“.
+  - **Drop 3 · Zauber (Woche 2):** Zauber-Eule (legendär, 2.000 🪙, ab Diamant II), Sternenstaub-Rahmen (legendär, kreisender Sternenring), Zauberfunken (Effekt, episch), Titel „Wortzauberer“.
+  - **Drop 4 · Eis-Gipfel (Woche 3):** Yeti (episch, 850 🪙, ab Platin III), Eiskristall-Rahmen, Titel „Eisbrecher“.
+  - Figuren mit Kopf, ganzer Figur für Tänze/Showroom und Sticker (gratis dazu).
+- „Kommt bald“ zeigt jetzt die nächsten vier Wochen, nach Montag gruppiert, mit Datum und Stufe (❔ für Figuren, 🎁 für den Rest). Neue Artikel des aktuellen und vorigen Drops tragen „· NEU“.
+- Dashboard › Shop-Kalender: Die Liste enthält nur noch die Drops (statt aller Artikel). Verschieben geht nur für Drops; Einträge für ältere Artikel wirken nicht mehr. Der Plan lebt im Code (`SHOP_WEEK`), das Dashboard ist nur noch für Verschiebungen und das Go-live-Datum da. Server-Update nötig, damit der neue Hilfetext erscheint (die Funktion selbst läuft ohne).
+
 ## 2.115.0 – 2026-10-18
 - Der ganze bestehende Shop ist von Anfang an sichtbar, mit den Einschränkungen nach Rang (🔒), Pass und Set. Der Wochenkalender entfällt für den vorhandenen Katalog; das ❔ „???“ und die Karten unter „Kommt bald“ erscheinen nur noch für wirklich **neue** Artikel, die mit einer Woche eingetragen sind (`SHOP_WEEK` in engine.js oder Dashboard). Solange nichts Neues geplant ist, gibt es keine „Kommt bald“-Karten.
 - Kein Server-Schritt nötig.

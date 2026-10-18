@@ -108,6 +108,16 @@ nav#tabs button[aria-current="true"]{color:var(--accent);background:var(--accent
 @keyframes frFire{from{box-shadow:0 0 0 2px #FF8A3D,0 0 6px 1px rgba(255,120,40,.7),0 -4px 10px rgba(255,200,60,.5)}
   to{box-shadow:0 0 0 2.5px #FF5A2B,0 0 12px 3px rgba(255,90,30,.8),0 -7px 14px rgba(255,210,70,.6)}}
 @media (prefers-reduced-motion:reduce){.avatar.fr-fire{animation:none;box-shadow:0 0 0 2.5px #FF7A33,0 0 8px 2px rgba(255,120,40,.6)}}
+.avatar.fr-neon{animation:frNeon 1.4s ease-in-out infinite alternate}
+@keyframes frNeon{from{box-shadow:0 0 0 2px #00F0FF,0 0 8px 2px rgba(0,240,255,.85),0 0 18px 4px rgba(255,61,240,.5)}to{box-shadow:0 0 0 2.5px #FF3DF0,0 0 10px 3px rgba(255,61,240,.85),0 0 20px 5px rgba(0,240,255,.55)}}
+.avatar.fr-pirat{box-shadow:0 0 0 2px #5a3a1a,0 0 0 4.5px #d8a85a,0 0 0 6.5px #5a3a1a,0 0 8px 6px rgba(255,211,77,.35)}
+.avatar.fr-sterne{isolation:isolate}
+.avatar.fr-sterne::before{content:"";position:absolute;inset:-5px;border-radius:50%;z-index:-1;animation:frSp 4s linear infinite;
+  background:conic-gradient(#b58cff,#ffe27a,#8ed0f8,#ff8fd0,#ffe27a,#b58cff);
+  -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 4.5px),#000 calc(100% - 4px));mask:radial-gradient(farthest-side,transparent calc(100% - 4.5px),#000 calc(100% - 4px))}
+@keyframes frSp{to{transform:rotate(360deg)}}
+.avatar.fr-kristall{box-shadow:0 0 0 2px #9fefff,0 0 0 4.5px #fff,0 0 14px 4px rgba(159,239,255,.85)}
+@media (prefers-reduced-motion:reduce){.avatar.fr-neon{animation:none;box-shadow:0 0 0 2.5px #00F0FF,0 0 12px 3px rgba(255,61,240,.6)}.avatar.fr-sterne::before{animation:none}}
 /* Hintergründe (Shop): liegen als feine Muster über der Papierfarbe */
 html[data-bg="stars"] body{background-image:
   radial-gradient(2.4px 2.4px at 12% 18%,var(--bgdot) 50%,transparent 55%),radial-gradient(1.8px 1.8px at 78% 12%,var(--bgdot) 50%,transparent 55%),
@@ -1190,7 +1200,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.114.0";window.WORDY_BUILD="faa9a449f7";</script>
+<script>window.WORDY_VERSION="2.115.0";window.WORDY_BUILD="dc3ec07291";</script>
 </head>
 <body>
 <div id="app">
@@ -1218,37 +1228,37 @@ details.fold>.fbody{padding:2px 0 14px}
   <div id="session" hidden></div>
 </div>
 <div id="arena" hidden></div>
-<script src="data/klasse6.js?v=faa9a449f7"></script>
-<script src="data/klasse7.js?v=faa9a449f7"></script>
-<script src="data/klasse8.js?v=faa9a449f7"></script>
-<script src="data/business.js?v=faa9a449f7"></script>
-<script src="data/business-basis2.js?v=faa9a449f7"></script>
-<script src="data/business-aufbau2.js?v=faa9a449f7"></script>
-<script src="data/business-profi2.js?v=faa9a449f7"></script>
-<script src="data/smalltalk.js?v=faa9a449f7"></script>
-<script src="data/idioms.js?v=faa9a449f7"></script>
-<script src="data/saetze.js?v=faa9a449f7"></script>
-<script src="data/grammatik.js?v=faa9a449f7"></script>
-<script src="data/saetze2.js?v=faa9a449f7"></script>
-<script src="data/lernbuch.js?v=faa9a449f7"></script>
-<script src="data/verben.js?v=faa9a449f7"></script>
-<script src="data/open/business-aufbau.js?v=faa9a449f7"></script>
-<script src="data/open/business-basis.js?v=faa9a449f7"></script>
-<script src="data/open/business-profi.js?v=faa9a449f7"></script>
-<script src="data/open/saetze-open.js?v=faa9a449f7"></script>
-<script src="js/engine.js?v=faa9a449f7"></script>
-<script src="js/cosmetics.js?v=faa9a449f7"></script>
-<script src="js/fortnite.js?v=faa9a449f7"></script>
-<script src="js/figur.js?v=faa9a449f7"></script>
-<script src="js/stila.js?v=faa9a449f7"></script>
-<script src="js/stilb.js?v=faa9a449f7"></script>
-<script src="js/loot.js?v=faa9a449f7"></script>
-<script src="js/film.js?v=faa9a449f7"></script>
-<script src="js/app.js?v=faa9a449f7"></script>
-<script src="js/arena.js?v=faa9a449f7"></script>
-<script src="js/spiele.js?v=faa9a449f7"></script>
-<script src="js/grammatik.js?v=faa9a449f7"></script>
-<script src="js/sync.js?v=faa9a449f7"></script>
+<script src="data/klasse6.js?v=dc3ec07291"></script>
+<script src="data/klasse7.js?v=dc3ec07291"></script>
+<script src="data/klasse8.js?v=dc3ec07291"></script>
+<script src="data/business.js?v=dc3ec07291"></script>
+<script src="data/business-basis2.js?v=dc3ec07291"></script>
+<script src="data/business-aufbau2.js?v=dc3ec07291"></script>
+<script src="data/business-profi2.js?v=dc3ec07291"></script>
+<script src="data/smalltalk.js?v=dc3ec07291"></script>
+<script src="data/idioms.js?v=dc3ec07291"></script>
+<script src="data/saetze.js?v=dc3ec07291"></script>
+<script src="data/grammatik.js?v=dc3ec07291"></script>
+<script src="data/saetze2.js?v=dc3ec07291"></script>
+<script src="data/lernbuch.js?v=dc3ec07291"></script>
+<script src="data/verben.js?v=dc3ec07291"></script>
+<script src="data/open/business-aufbau.js?v=dc3ec07291"></script>
+<script src="data/open/business-basis.js?v=dc3ec07291"></script>
+<script src="data/open/business-profi.js?v=dc3ec07291"></script>
+<script src="data/open/saetze-open.js?v=dc3ec07291"></script>
+<script src="js/engine.js?v=dc3ec07291"></script>
+<script src="js/cosmetics.js?v=dc3ec07291"></script>
+<script src="js/fortnite.js?v=dc3ec07291"></script>
+<script src="js/figur.js?v=dc3ec07291"></script>
+<script src="js/stila.js?v=dc3ec07291"></script>
+<script src="js/stilb.js?v=dc3ec07291"></script>
+<script src="js/loot.js?v=dc3ec07291"></script>
+<script src="js/film.js?v=dc3ec07291"></script>
+<script src="js/app.js?v=dc3ec07291"></script>
+<script src="js/arena.js?v=dc3ec07291"></script>
+<script src="js/spiele.js?v=dc3ec07291"></script>
+<script src="js/grammatik.js?v=dc3ec07291"></script>
+<script src="js/sync.js?v=dc3ec07291"></script>
 
 <script>
 if ('serviceWorker' in navigator) {

@@ -1761,7 +1761,7 @@
       case "frame": return '<span class="avatar fr-' + it.val + '" style="width:26px;height:26px;font-size:14px">' + (it.val === "none" ? "—" : "🙂") + '</span>';
       case "title": return "🏷️";
       case "bg": return it.val === "stars" ? "✨" : it.val === "clouds" ? "☁️" : it.val === "space" ? "🌌" : "▫️";
-      case "fx": return it.val === "confetti" ? "🎊" : it.val === "stars" ? "⭐" : it.val === "sparks" ? "⚡" : it.val === "firework" ? "🎆" : it.val === "snow" ? "❄️" : "▫️";
+      case "fx": return it.val === "confetti" ? "🎊" : it.val === "stars" ? "⭐" : it.val === "sparks" ? "⚡" : it.val === "firework" ? "🎆" : it.val === "snow" ? "❄️" : it.val === "pixel" ? "👾" : it.val === "gold" ? "🪙" : it.val === "magie" ? "🔮" : "▫️";
       case "snd": return it.val === "none" ? "🔇" : "🔔";
       case "dance": return "💃";
       case "outfit": return "👕";
@@ -1839,7 +1839,7 @@
     var sub = KIND_NAME[it.kind] + (it.bundle ? " · ❄️ Eis-Set" : "") + (it.rank && !own && (!locked || soon) ? " · ab " + esc(it.rank) : "");
     var prev = (it.kind === "dance" || it.kind === "outfit" || it.kind === "kit") ? '<button class="rprev" data-act="dancetry" data-id="' + esc(it.id) + '" aria-label="Vorschau">▶︎</button>' : "";
     return '<div class="rtile ' + rar + (own ? " own" : "") + (locked ? " lock" : "") + '"' + (locked ? ' data-act="lockinfo" data-id="' + esc(it.id) + '"' : "") + ' style="--c1:' + c[0] + ';--c2:' + c[1] + ';--g:' + RAR_GLOW[rar] + '">' +
-      '<span class="rtag">' + RAR_NAME[rar] + '</span>' + (own || it.pass || it.reward || locked ? "" : star) + (own ? '<span class="rown">✓</span>' : "") +
+      '<span class="rtag">' + RAR_NAME[rar] + (S.shopIsNew(it) && !own ? ' · NEU' : '') + '</span>' + (own || it.pass || it.reward || locked ? "" : star) + (own ? '<span class="rown">✓</span>' : "") +
       '<div class="rico">' + (soon ? '<span class="ri em" style="display:grid;place-items:center;height:64px;font-size:44px;filter:grayscale(1) brightness(.55)">❔</span>' : srIcon({ kind: it.kind, val: it.val, rar: rar, it: it }) + prev) + '</div>' +
       '<b class="rname">' + (soon ? "???" : esc(it.label)) + '</b><span class="rsub">' + sub + '</span><div class="ract">' + action + '</div></div>';
   }
@@ -1859,11 +1859,17 @@
   /* „Kommt bald“: Silhouetten der nächsten Freischaltungen */
   function teaserHtml() {
     var t = S.shopTeasers(); if (!t.length) return "";
-    return '<div style="margin:2px 0 10px"><div class="eyebrow">Kommt bald</div><div class="row wrap" style="gap:8px;margin-top:6px">' + t.map(function (x) {
-      var it = S.itemById(x.id);
-      return '<div style="width:74px;text-align:center"><div class="sil" style="width:56px;height:56px;margin:0 auto;display:grid;place-items:center;font-size:30px;border-radius:14px;background:var(--card-2);border:2px dashed var(--line);filter:grayscale(1)">' + (it && it.kind === "avatar" ? "❔" : "🎁") + '</div><small class="muted" style="display:block;font-size:11px;margin-top:3px">' + (x.inWeeks === 1 ? "Montag" : "in " + x.inWeeks + " Wochen") + '</small></div>';
-    }).join("") + '</div></div>';
+    var byW = {}, ws = []; t.forEach(function (x) { if (!byW[x.inWeeks]) { byW[x.inWeeks] = []; ws.push(x.inWeeks); } byW[x.inWeeks].push(x); });
+    var DM = function (d) { var p = d.split("-"); return +p[2] + "." + +p[1] + "."; };
+    return '<div style="margin:2px 0 10px"><div class="eyebrow">Kommt bald</div>' + ws.map(function (wk) {
+      var l = byW[wk];
+      return '<div style="margin-top:8px"><small class="muted" style="font-size:12px"><b>' + (wk === 1 ? "Nächsten Montag" : "In " + wk + " Wochen") + '</b> · Mo ' + DM(l[0].date) + '</small><div class="row wrap" style="gap:8px;margin-top:4px">' + l.map(function (x) {
+        var it = S.itemById(x.id), c = MED_COL[x.rar] || MED_COL.common;
+        return '<div style="width:62px;text-align:center"><div class="sil" style="width:56px;height:56px;margin:0 auto;display:grid;place-items:center;font-size:30px;border-radius:14px;background:var(--card-2);border:2px dashed ' + c[1] + ';filter:grayscale(1)' + (x.rar === "legend" ? ";box-shadow:0 0 10px ' + c[0] + '" : "") + '">' + (it && it.kind === "avatar" ? "❔" : "🎁") + '</div><small class="muted" style="display:block;font-size:10px;margin-top:2px">' + (RAR_NAME[x.rar] || "") + '</small></div>';
+      }).join("") + '</div></div>';
+    }).join("") + '</div>';
   }
+
   /* Willkommenspaket: jedes neue Kind wählt seine erste Figur und bekommt Münzen, Konfetti und einen Titel */
   function openWelcome() {
     if (!S.welcomeNeeded() || document.getElementById("welcomeSheet")) return;

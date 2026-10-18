@@ -116,6 +116,35 @@
         '<ellipse cx="32" cy="9" rx="17" ry="7" fill="#FF8FC0" stroke="#C23A7A" stroke-width="1.2"/><ellipse cx="32" cy="9" rx="6" ry="2.4" fill="#2B1A0C" opacity=".6"/><path d="M22 7l2 1M40 6l-2 1.4M28 12l1-2M36 12l-1-2" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/><path d="M26 5l1 2M37 10l-2-1" stroke="#7BE9FF" stroke-width="1.4" stroke-linecap="round"/>',
       face: '<path d="M18.5 37a4.6 4.6 0 0 1 9.2 0z" fill="#A67C52" stroke="#2B1A0C" stroke-width=".9"/><path d="M36.5 37a4.6 4.6 0 0 1 9.2 0z" fill="#A67C52" stroke="#2B1A0C" stroke-width=".9"/><path d="M28 48q4 3 8 0" fill="none" stroke="#3A2410" stroke-width="1.8" stroke-linecap="round"/>'
     }),
+    cyberfuchs: pummel({
+      body: "#141C45", shade: "#080C26", eye: "#00F0FF", pupil: "#fff",
+      ears: '<path d="M8 32L10 4l18 14z" fill="#141C45"/><path d="M56 32L54 4L36 18z" fill="#141C45"/><path d="M13 24l1.5-13 8 6z" fill="#00E5FF"/><path d="M51 24l-1.5-13-8 6z" fill="#00E5FF"/><path d="M11 6V0" stroke="#FF3DF0" stroke-width="1.4"/><circle cx="11" cy="0" r="2" fill="#FF3DF0"/><path d="M53 6V0" stroke="#FF3DF0" stroke-width="1.4"/><circle cx="53" cy="0" r="2" fill="#FF3DF0"/>',
+      front: '<ellipse cx="32" cy="46" rx="11" ry="7.4" fill="#1D2A5E"/><ellipse cx="32" cy="42.6" rx="3.4" ry="2.4" fill="#00E5FF"/><path d="M12 30h10l3 4M52 30H42l-3 4M20 52h8M36 52h8" stroke="#00E5FF" stroke-width="1.3" stroke-linecap="round" fill="none"/><circle cx="12" cy="30" r="1.6" fill="#00E5FF"/><circle cx="52" cy="30" r="1.6" fill="#00E5FF"/>' +
+        '<path d="M10 25q22-9 44 0v5q-22-8-44 0z" fill="#0B1233" stroke="#00E5FF" stroke-width="1"/><circle cx="20" cy="25.5" r="1.3" fill="#FF3DF0"/><circle cx="32" cy="24.2" r="1.3" fill="#00F0FF"/><circle cx="44" cy="25.5" r="1.3" fill="#FF3DF0"/>',
+      face: '<path d="M28 49q4 3.4 8 0" fill="none" stroke="#00E5FF" stroke-width="1.6" stroke-linecap="round"/>'
+    }),
+    pirat: pummel({
+      body: "#E02F3F", shade: "#A31524", eye: "#1B1230", pupil: "#fff",
+      front: '<path d="M26 41l6 9 6-9z" fill="#FFB84D" stroke="#E08A0A" stroke-width="1" stroke-linejoin="round"/>' +
+        '<circle cx="23" cy="37" r="5.6" fill="#14121f"/><path d="M17 33L10 24M27 33L40 24" stroke="#14121f" stroke-width="1.2" stroke-linecap="round"/>' +
+        '<path d="M8 27Q32-14 56 27Q32 18 8 27z" fill="#1B1B2F" stroke="#FFD34D" stroke-width="1.3" stroke-linejoin="round"/><circle cx="32" cy="12" r="4.4" fill="#fff"/><circle cx="30.4" cy="11.4" r="1" fill="#1B1B2F"/><circle cx="33.6" cy="11.4" r="1" fill="#1B1B2F"/><path d="M30.4 15h3.2" stroke="#1B1B2F" stroke-width="1"/>' +
+        '<circle cx="10" cy="44" r="3.4" fill="none" stroke="#FFD34D" stroke-width="1.5"/>',
+      face: ''
+    }),
+    zauber: pummel({
+      body: "#6D4FD8", shade: "#3B2791", eye: "#4B2FB8", pupil: "#fff",
+      ears: '<path d="M9 28L13 6l17 12z" fill="#6D4FD8"/><path d="M55 28L51 6L34 18z" fill="#6D4FD8"/><path d="M14 22l1.5-10 8 6z" fill="#FFD34D"/><path d="M50 22l-1.5-10-8 6z" fill="#FFD34D"/>',
+      front: '<ellipse cx="32" cy="45" rx="10" ry="7" fill="#E6DCFF"/><path d="M28 41l4 8 4-8z" fill="#FFD34D" stroke="#E08A0A" stroke-width="1" stroke-linejoin="round"/>' +
+        '<path d="M10 27Q30 22 54 27Q44 24 40 14Q36 -6 30 0Q24 10 20 22z" fill="#3B2791" stroke="#FFD34D" stroke-width="1.2" stroke-linejoin="round"/><ellipse cx="32" cy="26.5" rx="25" ry="3.4" fill="#4B2FB8" stroke="#FFD34D" stroke-width="1"/>' + star(31, 12, 4, "#FFE27A") + star(43, 20, 2.4, "#fff"),
+      face: ''
+    }),
+    yeti: pummel({
+      body: "#E4F1FF", shade: "#B6D4F2", eye: "#1B2A5A", pupil: "#fff",
+      ears: '<circle cx="14" cy="22" r="7" fill="#E4F1FF"/><circle cx="50" cy="22" r="7" fill="#E4F1FF"/>',
+      front: '<path d="M32 22q-12 0-18 12q-2 12 6 18q12 8 24 0q8-6 6-18q-6-12-18-12z" fill="#A9D6FF" stroke="#7FB8E8" stroke-width="1"/><ellipse cx="32" cy="43" rx="3.4" ry="2.4" fill="#2B4A8A"/>' +
+        '<path d="M22 14l-3-10 8 7zM32 11l0-11 5 10zM42 14l4-10 3 11z" fill="#CFF6FF" stroke="#7FB8E8" stroke-width="1" stroke-linejoin="round"/><path d="M10 38l-4 2M54 38l4 2" stroke="#fff" stroke-width="2" stroke-linecap="round"/>',
+      face: '<path d="M27 48q5 5 10 0" fill="none" stroke="#2B4A8A" stroke-width="1.8" stroke-linecap="round"/>'
+    }),
     blitzwolf: pummel({
       body: "#33448F", shade: "#1B2660", eye: "#00D4F0", pupil: "#fff",
       ears: '<path d="M8 32L10 4l18 14z" fill="#33448F"/><path d="M56 32L54 4L36 18z" fill="#33448F"/><path d="M13 24l1.5-13 8 6z" fill="#FFD84A"/><path d="M51 24l-1.5-13-8 6z" fill="#FFD84A"/>',
@@ -195,12 +224,15 @@
     var css = "position:absolute;left:" + x + "px;top:" + y + "px;display:block;";
     if (kind === "stars") { el.textContent = "★"; css += "color:#FFC94D;font-size:" + (size + 8) + "px;line-height:1;"; }
     else if (kind === "snow") { css += "width:" + (size * .8) + "px;height:" + (size * .8) + "px;border-radius:50%;background:#fff;box-shadow:0 0 6px #bfe9ff;"; }
+    else if (kind === "pixel") { var pc = ["#00F0FF", "#FF3DF0", "#7BFF7B", "#FFE27A"][Math.floor(Math.random() * 4)]; css += "width:" + (size * .8) + "px;height:" + (size * .8) + "px;background:" + pc + ";box-shadow:0 0 6px " + pc + ";"; }
+    else if (kind === "gold") { css += "width:" + (size + 2) + "px;height:" + (size + 2) + "px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FFF6B0,#FFC93D 60%,#C8860A);border:1.5px solid #8A5A00;"; }
+    else if (kind === "magie") { el.textContent = Math.random() < .5 ? "✦" : "✧"; css += "color:" + ["#B58CFF", "#FFE27A", "#8ED0F8"][Math.floor(Math.random() * 3)] + ";font-size:" + (size + 8) + "px;line-height:1;text-shadow:0 0 8px #B58CFF;"; }
     else if (kind === "sparks") { css += "width:3px;height:" + (size + 6) + "px;border-radius:2px;background:" + c + ";transform:rotate(" + (a * 57.3 + 90) + "deg);"; }
     else { css += "width:" + size + "px;height:" + (size * .6) + "px;background:" + c + ";border-radius:1px;"; }
     el.style.cssText = css;
     getLayer().appendChild(el);
     var rot = (Math.random() - .5) * 720;
-    var fall = kind === "confetti" || kind === "stars" ? 60 * power : kind === "snow" ? 90 * power : 0;
+    var fall = kind === "confetti" || kind === "stars" || kind === "pixel" || kind === "gold" || kind === "magie" ? 60 * power : kind === "snow" ? 90 * power : 0;
     var an = el.animate([
       { transform: "translate(0,0) rotate(0deg)", opacity: 1 },
       { transform: "translate(" + dx + "px," + (dy + fall) + "px) rotate(" + rot + "deg)", opacity: 0 }
