@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.109.1 – 2026-10-18
+- Showroom: Der Knopf zum Übernehmen eines Avatars ist jetzt ein großer, goldener, leicht pulsierender Knopf „Als Avatar übernehmen“ (vorher ein kleiner, kaum sichtbarer Chip neben dem Namen). Bei schon aktivem Avatar verschwindet er, der Name zeigt „aktiv ✓“.
+- Kein Server-Schritt nötig.
+
 ## 2.109.0 – 2026-10-18
 - Shop nach Stufen: Jeder Reiter zeigt Abschnitte Gewöhnlich, Selten, Episch, Legendär mit Zähler („2 / 5“) und dem Rang, ab dem es etwas Neues gibt. Gesperrte Artikel erscheinen als dunkle Silhouette mit Schloss; Antippen nennt Rang und fehlende XP. Oben steht „Gesammelt: x / y“.
 - Reiter Figuren: Umschalter „Nach Stufe“ / „Rang-Pfad“. Der Rang-Pfad zeigt je Rang die zwei Figuren zur Wahl mit Stufenfarbe, Stand und XP-Balken.
