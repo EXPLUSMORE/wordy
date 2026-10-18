@@ -38,7 +38,7 @@
     "svg:fnraptor": ["fur", "#86C23A", "#E6F5C0", "#4C7A1C", "dino", "#86C23A", "spikes", "#F97316"],
     "svg:fnllama": ["fur", "#B05CF0", "#FF7EC7", "#4B2A8A", "pom", "#FF7EC7"],
     "svg:fnrakete": ["fur", "#FF9A3D", "#FFD7A8", "#5A1A1A", "pom", "#FFD7A8"],
-    "svg:fnschatz": ["fur", "#FFD34D", "#FFF1B0", "#6A3A00", "pom", "#FFF1B0"],
+    "svg:fngold": ["fur", "#FFD34D", "#FFF6C0", "#6A3A00", "pom", "#9FEFFF"],
     "svg:fnkristall": ["fur", "#BFE9FF", "#FFFFFF", "#7FA8FF", "pom", "#FFFFFF"],
     "svg:fnelite": ["crys", "#5B8CFF", "#9FE7FF", "#1E2A6B", "", ""],
     "svg:fnchamp": ["crys", "#CFE9FF", "#FFFFFF", "#5B54C8", "", ""],
