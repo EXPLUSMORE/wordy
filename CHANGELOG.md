@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.113.2 – 2026-10-18
+- Noch nicht freigegebene Figuren und Sticker (Shop-Kalender) erscheinen als graues **❔** mit dem Namen „???“, nur Stufe und Rang bleiben sichtbar. Auch im Rang-Pfad und im Hinweis beim Antippen („Geheimes Stück: kommt in N Wochen“). Wegen des Rangs gesperrte, schon freigegebene Stücke bleiben dunkle Silhouetten mit Namen.
+- Kein Server-Schritt nötig.
+
 ## 2.113.1 – 2026-10-18
 - Shop › Figuren und Sticker zeigen jetzt immer **alle** Einträge (43 Figuren, 43 Sticker) nach Stufe, auch die Fortnite-Reihe und noch nicht freigegebene als gesperrte Silhouette („🕒 Kommt bald“ mit Rang, 🔒 bei zu niedrigem Rang). Antippen nennt Rang, fehlende XP und Wochen bis zur Freigabe.
 - Kein Server-Schritt nötig.

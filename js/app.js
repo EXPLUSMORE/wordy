@@ -1840,8 +1840,8 @@
     var prev = (it.kind === "dance" || it.kind === "outfit" || it.kind === "kit") ? '<button class="rprev" data-act="dancetry" data-id="' + esc(it.id) + '" aria-label="Vorschau">▶︎</button>' : "";
     return '<div class="rtile ' + rar + (own ? " own" : "") + (locked ? " lock" : "") + '"' + (locked ? ' data-act="lockinfo" data-id="' + esc(it.id) + '"' : "") + ' style="--c1:' + c[0] + ';--c2:' + c[1] + ';--g:' + RAR_GLOW[rar] + '">' +
       '<span class="rtag">' + RAR_NAME[rar] + '</span>' + (own || it.pass || it.reward || locked ? "" : star) + (own ? '<span class="rown">✓</span>' : "") +
-      '<div class="rico">' + srIcon({ kind: it.kind, val: it.val, rar: rar, it: it }) + prev + '</div>' +
-      '<b class="rname">' + esc(it.label) + '</b><span class="rsub">' + sub + '</span><div class="ract">' + action + '</div></div>';
+      '<div class="rico">' + (soon ? '<span class="ri em" style="display:grid;place-items:center;height:64px;font-size:44px;filter:grayscale(1) brightness(.55)">❔</span>' : srIcon({ kind: it.kind, val: it.val, rar: rar, it: it }) + prev) + '</div>' +
+      '<b class="rname">' + (soon ? "???" : esc(it.label)) + '</b><span class="rsub">' + sub + '</span><div class="ract">' + action + '</div></div>';
   }
   function shopRow(it, wishId) {
     var own = S.owns(it), act = S.isActive(it), locked = !own && lockNote(it), price = S.priceOf(it), deal = price !== it.cost;
@@ -1925,7 +1925,8 @@
       var ids = S.RANK_SLOTS[r.n]; if (!ids) return; var pick = S.rankPickable(r.n);
       var reached = st.xp >= r.xp, isCur = r.n === cur.rank.n, got = (st.rankPick || {})[r.n], pc = isCur && cur.next ? Math.round(cur.into * 100 / cur.span) : 0;
       h += '<div class="rkrow' + (reached ? "" : " lock") + (isCur ? " cur" : "") + '"><div class="rkn"><b>' + (reached ? "✓ " : "🔒 ") + esc(r.n) + '</b><small>ab ' + r.xp.toLocaleString("de-DE") + ' XP</small>' + (pick ? "" : '<small>🛒 im Shop</small>') + (isCur && cur.next ? '<div class="bar"><i style="width:' + pc + '%"></i></div>' : "") + '</div><div class="rkf">' +
-        ids.map(function (id) { var it = S.itemById(id), rr = S.rarityOf(it), own = S.owns(it);
+        ids.map(function (id) { var it = S.itemById(id), rr = S.rarityOf(it), own = S.owns(it), hid = !own && S.shopSoon(it);
+          if (hid) return '<span class="rkx ' + rr + '" title="Geheim" data-act="lockinfo" data-id="' + esc(id) + '"><i style="display:grid;place-items:center;font-size:30px;filter:grayscale(1) brightness(.55)">❔</i><small>???</small></span>';
           return '<span class="rkx ' + rr + (got === id ? " pick" : "") + '" title="' + esc(it.label) + '"' + (reached ? "" : ' data-act="lockinfo" data-id="' + esc(id) + '"') + '><i>' + avatarHtml(it.val) + '</i><small>' + esc(it.label) + (got === id ? " 🎁" : own ? " ✓" : "") + '</small></span>'; }).join("") + '</div></div>';
     });
     return h;
@@ -3453,7 +3454,7 @@
     }
     else if (a === "dancetry") { var dit = S.SHOP.filter(function (x) { return x.id === act.getAttribute("data-id"); })[0]; if (dit) { var pf = S.state.profile; global.VTC.dance({ av: pf.avatar, avatar: avatarHtml(pf.avatar), outfit: (dit.kind === "outfit" || dit.kind === "kit") ? dit.val : pf.outfit, dance: dit.kind === "dance" ? dit.val : (pf.dance || "wackler"), title: dit.label }); } }
     else if (a === "shopview") { shopView = act.getAttribute("data-k"); render(); }
-    else if (a === "lockinfo") { var li = S.itemById(act.getAttribute("data-id")); if (li) { var need = S.minXp(li) - S.state.xp, sw = S.shopSoon(li); toast("🔒 " + li.label + (sw ? ": kommt in " + sw + (sw === 1 ? " Woche" : " Wochen") + " in den Shop" : "") + (li.rank ? ": ab Rang " + li.rank : "") + (need > 0 ? " · noch " + need.toLocaleString("de-DE") + " XP" : "") + (li.cost ? " · " + li.cost + " 🪙" : ""), 4200); } }
+    else if (a === "lockinfo") { var li = S.itemById(act.getAttribute("data-id")); if (li) { var need = S.minXp(li) - S.state.xp, sw = S.shopSoon(li); toast("🔒 " + (sw ? "Geheimes Stück" : li.label) + (sw ? ": kommt in " + sw + (sw === 1 ? " Woche" : " Wochen") + " in den Shop" : "") + (li.rank ? ": ab Rang " + li.rank : "") + (need > 0 ? " · noch " + need.toLocaleString("de-DE") + " XP" : "") + (li.cost && !sw ? " · " + li.cost + " 🪙" : ""), 4200); } }
     else if (a === "shoptab") { shopTab = act.getAttribute("data-k"); render(); }
     else if (a === "checkupdate") {
       if (!navigator.serviceWorker) return toast("Dieses Gerät kennt keine App-Updates. Seite einfach neu laden.");
