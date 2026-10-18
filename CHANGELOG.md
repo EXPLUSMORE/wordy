@@ -9,6 +9,12 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.109.0 – 2026-10-18
+- Shop nach Stufen: Jeder Reiter zeigt Abschnitte Gewöhnlich, Selten, Episch, Legendär mit Zähler („2 / 5“) und dem Rang, ab dem es etwas Neues gibt. Gesperrte Artikel erscheinen als dunkle Silhouette mit Schloss; Antippen nennt Rang und fehlende XP. Oben steht „Gesammelt: x / y“.
+- Reiter Figuren: Umschalter „Nach Stufe“ / „Rang-Pfad“. Der Rang-Pfad zeigt je Rang die zwei Figuren zur Wahl mit Stufenfarbe, Stand und XP-Balken.
+- Fehler behoben: Pass-Figuren (z. B. Eiskönig) konnten als Tagesangebot erscheinen, obwohl sie nur über den Pass zu haben sind.
+- Kein Server-Schritt nötig.
+
 ## 2.108.0 – 2026-10-18
 - Rang-Figuren: 12 Rangstufen (Bronze II, Silber I, Silber III, Gold I, II, III, Platin I, Platin III, Diamant II, Elite, Champion, Unreal) schenken eine Figur **zur Wahl** (je 3 gewöhnlich, selten, episch, legendär), samt Sticker. Die nicht gewählte Figur der Stufe ist ab diesem Rang im Shop kaufbar. Gilt rückwirkend: erreichte Ränge bieten die Wahl beim nächsten Öffnen an.
 - Sticker gibt es gratis zu jeder Figur (Kauf, Rang, Geschenk), auch rückwirkend für alle schon besessenen Figuren.

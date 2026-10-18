@@ -1748,7 +1748,7 @@
     { k: "fn", n: "Fortnite" }, { k: "bg", n: "Hintergründe" }, { k: "fx", n: "Effekte" }, { k: "dance", n: "Tänze 💃" }, { k: "outfit", n: "Outfits 👕" }, { k: "kit", n: "Trikots ⚽" }, { k: "sets", n: "Sets ⭐" }, { k: "snd", n: "Töne" }, { k: "theme", n: "Farben" }
   ];
   var KIND_NAME = { sticker: "Sticker", avatar: "Figur", frame: "Rahmen", title: "Titel", bg: "Hintergrund", fx: "Effekt", dance: "Tanz", outfit: "Outfit", kit: "Trikot", snd: "Ton", theme: "Farbwelt" };
-  var shopTab = "avatar", lernSeg = "units", spielSeg = "challenge", beuteSeg = "pass";
+  var shopTab = "avatar", shopView = "stufe", lernSeg = "units", spielSeg = "challenge", beuteSeg = "pass";
   var TABMAP = { ueben: "lernen", stats: "lernen", shop: "beute", showroom: "beute" };
   var THEME_DOT = { paper: "#1E6273", mint: "#2E7357", plum: "#6A3D70", amber: "#8A5A1B" };
   function shopIcon(it) {
@@ -1835,7 +1835,7 @@
       : '<button class="rbtn buy" data-act="buy" data-id="' + esc(it.id) + '">🪙 ' + (deal ? '<s>' + it.cost + '</s> ' : "") + price + '</button>';
     var sub = KIND_NAME[it.kind] + (it.bundle ? " · ❄️ Eis-Set" : "") + (it.rank && !own && !locked ? " · ab " + esc(it.rank) : "");
     var prev = (it.kind === "dance" || it.kind === "outfit" || it.kind === "kit") ? '<button class="rprev" data-act="dancetry" data-id="' + esc(it.id) + '" aria-label="Vorschau">▶︎</button>' : "";
-    return '<div class="rtile ' + rar + (own ? " own" : "") + (locked ? " lock" : "") + '" style="--c1:' + c[0] + ';--c2:' + c[1] + ';--g:' + RAR_GLOW[rar] + '">' +
+    return '<div class="rtile ' + rar + (own ? " own" : "") + (locked ? " lock" : "") + '"' + (locked ? ' data-act="lockinfo" data-id="' + esc(it.id) + '"' : "") + ' style="--c1:' + c[0] + ';--c2:' + c[1] + ';--g:' + RAR_GLOW[rar] + '">' +
       '<span class="rtag">' + RAR_NAME[rar] + '</span>' + (own || it.pass || it.reward || locked ? "" : star) + (own ? '<span class="rown">✓</span>' : "") +
       '<div class="rico">' + srIcon({ kind: it.kind, val: it.val, rar: rar, it: it }) + prev + '</div>' +
       '<b class="rname">' + esc(it.label) + '</b><span class="rsub">' + sub + '</span><div class="ract">' + action + '</div></div>';
@@ -1898,10 +1898,33 @@
       return html + '</section>';
     }
     var RO = { common: 0, rare: 1, epic: 2, legend: 3 };   // Sortierung immer: gewöhnlich, selten, episch, legendär, danach nach Preis
-    html += teaserHtml() + '<div class="rgrid">' + S.SHOP.filter(function (it) { return (shopTab === "fn" ? it.set === "fn" : it.kind === shopTab && !it.set) && S.shopVisible(it); })
-      .map(function (it, i) { return { it: it, i: i }; }).sort(function (a, b) { return (RO[S.rarityOf(a.it)] - RO[S.rarityOf(b.it)]) || (a.it.cost - b.it.cost) || (a.i - b.i); })
-      .map(function (x) { return shopTile(x.it, wishId); }).join("") + '</div>';
+    if (shopTab === "avatar") {
+      html += '<div class="seg2">' + [["stufe", "Nach Stufe"], ["pfad", "Rang-Pfad"]].map(function (v) { return '<button class="chip" data-act="shopview" data-k="' + v[0] + '" aria-pressed="' + (shopView === v[0]) + '">' + v[1] + '</button>'; }).join("") + '</div>';
+      if (shopView === "pfad") return html + rankPathHtml() + '</section>';
+    }
+    var list = S.SHOP.filter(function (it) { return (shopTab === "fn" ? it.set === "fn" : it.kind === shopTab && !it.set) && S.shopVisible(it); })
+      .map(function (it, i) { return { it: it, i: i }; }).sort(function (a, b) { return (RO[S.rarityOf(a.it)] - RO[S.rarityOf(b.it)]) || (a.it.cost - b.it.cost) || (a.i - b.i); }).map(function (x) { return x.it; });
+    var tot = list.filter(function (it) { return it.cost > 0 || shopTab !== "avatar"; }), have = tot.filter(function (it) { return S.owns(it); }).length;
+    html += teaserHtml() + '<div class="small muted" style="margin:2px 0 4px">Gesammelt: <b>' + have + ' / ' + tot.length + '</b></div>';
+    ["common", "rare", "epic", "legend"].forEach(function (r) {
+      var l = list.filter(function (it) { return S.rarityOf(it) === r; }); if (!l.length) return;
+      var own = l.filter(function (it) { return S.owns(it); }).length, free = l.filter(function (it) { return !S.owns(it) && !it.pass && !it.reward && S.minXp(it) <= S.state.xp; }).length;
+      var mins = l.filter(function (it) { return !S.owns(it) && S.minXp(it) > S.state.xp; }).map(function (it) { return S.minXp(it); }), first = mins.length && !free ? S.rankOf(Math.min.apply(null, mins)).rank.n : "";
+      html += '<div class="shsec" style="--c:' + MED_COL[r][1] + '"><b>' + RAR_NAME[r] + '</b><small>' + own + ' / ' + l.length + (first ? ' · ab ' + esc(first) : "") + '</small><i></i></div><div class="rgrid">' + l.map(function (it) { return shopTile(it, wishId); }).join("") + '</div>';
+    });
     return html + '</section>';
+  }
+  /* Rang-Pfad: je Rang mit Figurenwahl die zwei Figuren, Stufenfarbe, Stand und XP-Balken */
+  function rankPathHtml() {
+    var st = S.state, cur = S.rankOf(st.xp), h = '<p class="small muted" style="margin:6px 0 8px">' + (cur.next ? "Noch <b>" + (cur.next.xp - st.xp).toLocaleString("de-DE") + " XP</b> bis " + esc(cur.next.n) + "." : "Höchster Rang erreicht!") + '</p>';
+    S.RANKS.forEach(function (r) {
+      var ids = S.RANK_SLOTS[r.n]; if (!ids) return;
+      var reached = st.xp >= r.xp, isCur = r.n === cur.rank.n, got = (st.rankPick || {})[r.n], pc = isCur && cur.next ? Math.round(cur.into * 100 / cur.span) : 0;
+      h += '<div class="rkrow' + (reached ? "" : " lock") + (isCur ? " cur" : "") + '"><div class="rkn"><b>' + (reached ? "✓ " : "🔒 ") + esc(r.n) + '</b><small>ab ' + r.xp.toLocaleString("de-DE") + ' XP</small>' + (isCur && cur.next ? '<div class="bar"><i style="width:' + pc + '%"></i></div>' : "") + '</div><div class="rkf">' +
+        ids.map(function (id) { var it = S.itemById(id), rr = S.rarityOf(it), own = S.owns(it);
+          return '<span class="rkx ' + rr + (got === id ? " pick" : "") + '" title="' + esc(it.label) + '"' + (reached ? "" : ' data-act="lockinfo" data-id="' + esc(id) + '"') + '><i>' + avatarHtml(it.val) + '</i><small>' + esc(it.label) + (got === id ? " 🎁" : own ? " ✓" : "") + '</small></span>'; }).join("") + '</div></div>';
+    });
+    return h;
   }
   /* Rang-Figur zur Wahl: ein Fenster je erreichter Stufe, die Figur kommt samt Sticker geschenkt */
   function openRankPick() {
@@ -3425,6 +3448,8 @@
       renderHeader(); render();
     }
     else if (a === "dancetry") { var dit = S.SHOP.filter(function (x) { return x.id === act.getAttribute("data-id"); })[0]; if (dit) { var pf = S.state.profile; global.VTC.dance({ av: pf.avatar, avatar: avatarHtml(pf.avatar), outfit: (dit.kind === "outfit" || dit.kind === "kit") ? dit.val : pf.outfit, dance: dit.kind === "dance" ? dit.val : (pf.dance || "wackler"), title: dit.label }); } }
+    else if (a === "shopview") { shopView = act.getAttribute("data-k"); render(); }
+    else if (a === "lockinfo") { var li = S.itemById(act.getAttribute("data-id")); if (li) { var need = S.minXp(li) - S.state.xp; toast("🔒 " + li.label + ": ab Rang " + li.rank + (need > 0 ? " · noch " + need.toLocaleString("de-DE") + " XP" : "") + (li.cost ? " · " + li.cost + " 🪙" : ""), 4200); } }
     else if (a === "shoptab") { shopTab = act.getAttribute("data-k"); render(); }
     else if (a === "checkupdate") {
       if (!navigator.serviceWorker) return toast("Dieses Gerät kennt keine App-Updates. Seite einfach neu laden.");

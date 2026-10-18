@@ -835,7 +835,7 @@
   function dealItem() {
     var t = today();
     if (!state.deal || state.deal.day !== t) {
-      var c = SHOP.filter(function (x) { return x.kind !== "sticker" && !x.reward && x.cost >= 90 && !owns(x) && state.xp >= minXp(x) && shopVisible(x); }), h = 0;
+      var c = SHOP.filter(function (x) { return x.kind !== "sticker" && !x.reward && !x.pass && x.cost >= 90 && !owns(x) && state.xp >= minXp(x) && shopVisible(x); }), h = 0;
       for (var i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) >>> 0;
       state.deal = { day: t, id: c.length ? c[h % c.length].id : null };
     }

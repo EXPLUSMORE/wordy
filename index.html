@@ -930,7 +930,12 @@ details.fold>.fbody{padding:2px 0 14px}
 .rtile.epic{box-shadow:0 4px 0 rgba(20,33,61,.35),0 0 16px var(--g)}.rtile.legend{box-shadow:0 4px 0 rgba(20,33,61,.35),0 0 22px var(--g);animation:rtpl 2.4s ease-in-out infinite alternate}
 @keyframes rtpl{to{box-shadow:0 4px 0 rgba(20,33,61,.35),0 0 34px var(--g)}}
 .rtile.epic:after,.rtile.legend:after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.35) 48%,transparent 56%);transform:translateX(-130%);animation:srgl 5s ease-in-out infinite;pointer-events:none}
-.rtile.lock{filter:saturate(.55) brightness(.85)}
+.rtile.lock{filter:saturate(.55) brightness(.85);cursor:pointer}.rtile.lock .rico{filter:grayscale(1) brightness(.4)}
+.shsec{display:flex;align-items:center;gap:8px;margin:14px 0 8px;font-size:15px;color:var(--c,#999)}.shsec small{color:var(--muted,#8a93a8);font-size:12px}.shsec i{flex:1;height:2px;background:var(--c,#999);opacity:.35;border-radius:2px}
+.seg2{display:flex;gap:6px;margin:4px 0 6px}
+.rkrow{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:14px;background:var(--card-2,#18223f);margin-bottom:7px}.rkrow.cur{outline:2px solid var(--accent,#f2b33d)}.rkrow.lock .rkf i{filter:grayscale(1) brightness(.45)}.rkn{width:104px;flex:0 0 auto}.rkn b{display:block;font-size:14px}.rkn small{font-size:11px;color:var(--muted,#8a93a8)}.rkn .bar{margin-top:4px}
+.rkf{display:flex;gap:8px;flex:1;justify-content:flex-end}.rkx{border:2px solid;border-radius:12px;padding:5px 3px;width:68px;text-align:center;cursor:default}.rkx i{display:block;width:42px;height:42px;margin:0 auto;font-style:normal}.rkx i svg,.rkx i span{width:100%!important;height:100%!important;font-size:34px;line-height:42px;display:block}.rkx small{display:block;font-size:10px;line-height:1.15;margin-top:2px}.rkx.common{border-color:#7b8ab0}.rkx.rare{border-color:#4aa3ff}.rkx.epic{border-color:#b36bff}.rkx.legend{border-color:#ffb02e}.rkx.pick{background:rgba(242,179,61,.18)}
+
 .rtag{position:absolute;left:0;top:0;background:#14213d;color:#fff;font-size:10px;font-weight:900;letter-spacing:.5px;text-transform:uppercase;padding:3px 9px;border-radius:0 0 10px 0}
 .rtile.legend .rtag{background:linear-gradient(90deg,#ffb61e,#e8730c);color:#3a2000}
 .rwish,.rown{position:absolute;right:6px;top:4px;width:26px;height:26px;border-radius:50%;border:0;background:rgba(20,33,61,.45);color:#fff;font-size:13px;display:grid;place-items:center;cursor:pointer;padding:0}
