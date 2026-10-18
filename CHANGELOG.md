@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.111.1 – 2026-10-18
+- Nachtschatten (Ninja-Katze) ist jetzt **legendär** (1.800 🪙). Rang-Pfad: Diamant I schenkt den Blitzwolf, Diamant II bietet Sternendrache oder Nachtschatten zur Wahl (beide legendär).
+- Kein Server-Schritt nötig.
+
 ## 2.111.0 – 2026-10-18
 - Beute-Lama gibt es jetzt in drei Stufen (Fortnite-Reihe): **Beute-Lama** (selten, wie bisher), **Raketen-Lama** (episch, 700 🪙, Rang Platin II: Jetpack mit flackernden Flammen und Fliegerbrille) und **Schatz-Lama** (legendär, 2.200 🪙, Rang Unreal Gold: goldene Piñata mit Krone und Schatzkiste voller Münzen, glitzernd). Mit Kopf, ganzer Figur, Sticker (gratis dazu) und Rang-Pfad-Eintrag.
 - Kein Server-Schritt nötig.

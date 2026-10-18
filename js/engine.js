@@ -69,7 +69,7 @@
     { id: "av:pregen",   kind: "avatar", label: "Regenbogenpummel", cost: 1500, val: "svg:pregen", rank: "Diamant I" },
     { id: "av:pgalaxie", kind: "avatar", label: "Galaxiepummel", cost: 2000, val: "svg:pgalaxie", rank: "Elite" },
     { id: "av:blitzwolf", kind: "avatar", label: "Blitzwolf", cost: 750, val: "svg:blitzwolf", rank: "Diamant I", rar: "epic" },
-    { id: "av:ninja", kind: "avatar", label: "Nachtschatten", cost: 750, val: "svg:ninja", rank: "Diamant I", rar: "epic" },
+    { id: "av:ninja", kind: "avatar", label: "Nachtschatten", cost: 1800, val: "svg:ninja", rank: "Diamant II", rar: "legend" },
     { id: "av:sdrache", kind: "avatar", label: "Sternendrache", cost: 1800, val: "svg:sdrache", rank: "Diamant II", rar: "legend" },
     /* Kitty-Reihe (Start-Sortiment, je Stufe eine Figur) */
     { id: "av:kitty1", kind: "avatar", label: "Kitty Schleife",      cost: 50,  val: "svg:kitty1", rar: "common" },
@@ -170,7 +170,7 @@
   var RANK_SLOTS = {
     "Bronze II": ["av:🐼", "av:🐢"],        "Silber I": ["av:🦉", "av:🐙"],         "Silber III": ["av:🦕", "av:pbaer"],
     "Gold I": ["av:🦈", "av:🦄"],           "Gold II": ["av:phase", "av:pkatze"],   "Gold III": ["av:pummel", "av:fnllama"],
-    "Platin I": ["av:pphoenix", "av:kitty3"], "Platin II": ["av:fnrakete"], "Platin III": ["av:pgold", "av:fnelite"], "Diamant I": ["av:blitzwolf", "av:ninja"], "Diamant II": ["av:sdrache"],
+    "Platin I": ["av:pphoenix", "av:kitty3"], "Platin II": ["av:fnrakete"], "Platin III": ["av:pgold", "av:fnelite"], "Diamant I": ["av:blitzwolf"], "Diamant II": ["av:sdrache", "av:ninja"],
     "Elite": ["av:pregen", "av:fnchamp"],   "Champion": ["av:pgalaxie", "av:fnkristall"], "Unreal": ["av:kitty4", "av:fnunreal"], "Unreal Gold": ["av:fnschatz"]
   };
   (function () {
