@@ -1908,7 +1908,7 @@
     }
     var RO = { common: 0, rare: 1, epic: 2, legend: 3 };   // Sortierung immer: gewöhnlich, selten, episch, legendär, danach nach Preis
     if (shopTab === "avatar") {
-      html += '<div class="seg2">' + [["stufe", "Nach Stufe"], ["pfad", "Rang-Pfad"]].map(function (v) { return '<button class="chip" data-act="shopview" data-k="' + v[0] + '" aria-pressed="' + (shopView === v[0]) + '">' + v[1] + '</button>'; }).join("") + '</div>';
+      html += '<div class="eyebrow" style="margin:14px 0 4px">Ansicht</div><div class="seg2">' + [["stufe", "🧩 Nach Stufe"], ["pfad", "🗺️ Rang-Pfad"]].map(function (v) { return '<button data-act="shopview" data-k="' + v[0] + '" aria-pressed="' + (shopView === v[0]) + '">' + v[1] + '</button>'; }).join("") + '</div>';
       if (shopView === "pfad") return html + rankPathHtml() + '</section>';
     }
     var all = shopTab === "avatar" || shopTab === "sticker";   // Figuren und Sticker: alles zeigen (auch Fortnite-Reihe, Noch-nicht-Freigegebenes als gesperrte Silhouette)

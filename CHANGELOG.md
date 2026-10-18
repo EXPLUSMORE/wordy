@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.116.1 – 2026-10-18
+- Shop › Figuren: Der Umschalter „Nach Stufe“ / „Rang-Pfad“ ist jetzt ein eigener, breiter Schalter mit Rahmen in der Akzentfarbe und der Überschrift „Ansicht“. Er geht nicht mehr zwischen den Kategorie-Knöpfen unter.
+- Kein Server-Schritt nötig.
+
 ## 2.116.0 – 2026-10-18
 - Erster Drop plus drei weitere in Planung: 15 neue Artikel mit Wochenplan.
   - **Drop 1 · Cyber (sofort):** Cyber-Fuchs (episch, 800 🪙, ab Rang Platin II), Neon-Rahmen (episch, animiert), Pixelregen (Effekt, selten), Titel „Pixelprofi“.
