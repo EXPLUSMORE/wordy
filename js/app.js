@@ -605,7 +605,8 @@
       '<section class="srtop"><div class="srring" style="--p:' + c.pct + '"><b>' + c.pct + '%</b></div><div class="srcups">' + c.cups.map(function (t) { var col = { Bronze: ["#e0975a", "#8a4a1e"], Silber: ["#eef2fa", "#8794ad"], Gold: ["#ffd24a", "#c8780a"], Platin: ["#c9efff", "#7a8fff"] }[t.n]; return '<div class="srcup' + (t.done ? "" : " lock") + '">' + svgCup(col[0], col[1]) + '<b>' + t.n + '</b><small>ab ' + t.pct + '%</small></div>'; }).join("") + '</div></section>' +
       '<div class="srrar">' + ["common", "rare", "epic", "legend"].map(function (r) { return '<span class="' + r + '"><b>' + c.rar[r] + '</b>' + RAR_NAME[r] + '</span>'; }).join("") + '</div>' +
       '<section class="srstage"><div class="srray"></div><div class="srfloor"></div><div class="srfav">' + favHtml + '</div><div class="srlbl">Favoriten</div><div class="srpod"><i></i></div><div class="srhero" id="srHero"></div>' +
-      '<div class="srname" id="srName"></div><div class="srbtns"><button class="sbtn b5" id="srWear" data-act="srwear" hidden>✅ Als Avatar übernehmen</button><button class="sbtn" data-act="srdance">💃 Tanzen</button><button class="sbtn b2" data-act="srswap">🔄 Wechseln</button></div></section>' +
+      '<div class="srname" id="srName"></div><div class="srbtns"><button class="sbtn" data-act="srdance">💃 Tanzen</button><button class="sbtn b2" data-act="srswap">🔄 Wechseln</button></div></section>' +
+      '<button class="sbtn b5 srwear" id="srWear" data-act="srwear" hidden>✅ Als Avatar übernehmen</button>' +
       '<section class="srcab">' + c.shelves.map(function (s) {
         return '<div class="srshelf"><div class="srhead"><span>' + s.icon + ' ' + esc(s.title) + '</span><span class="c' + (s.own === s.items.length ? " full" : "") + '">' + s.own + ' / ' + s.items.length + '</span></div><div class="sritems">' + s.items.map(function (i) {
           var isNew = i.owned && !seen[i.id];
@@ -621,7 +622,7 @@
     e.innerHTML = heroHtml(srAv, dn);
     var it = S.SHOP.filter(function (x) { return x.kind === "avatar" && x.val === srAv; })[0], same = srAv === pf.avatar;
     var nm = $("#srName"); if (nm) nm.innerHTML = '<b>' + esc(it ? it.label : "Fuchs") + '</b>' + (same ? ' · aktiv ✓' : "");
-    var wb = $("#srWear"); if (wb) wb.hidden = same; if (nm) nm.style.bottom = same ? "" : "88px";
+    var wb = $("#srWear"); if (wb) wb.hidden = same;
   }
   function srModal(id) {
     var it = S.findCollItem(id), fav = S.favs().indexOf(id) >= 0;

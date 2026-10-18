@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.109.2 – 2026-10-18
+- Showroom: Der Knopf „Als Avatar übernehmen“ sitzt jetzt unter der Bühne in eigener Zeile und verdeckt den Namen der Figur nicht mehr.
+- Kein Server-Schritt nötig.
+
 ## 2.109.1 – 2026-10-18
 - Showroom: Der Knopf zum Übernehmen eines Avatars ist jetzt ein großer, goldener, leicht pulsierender Knopf „Als Avatar übernehmen“ (vorher ein kleiner, kaum sichtbarer Chip neben dem Namen). Bei schon aktivem Avatar verschwindet er, der Name zeigt „aktiv ✓“.
 - Kein Server-Schritt nötig.
