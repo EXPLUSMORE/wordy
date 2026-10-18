@@ -1176,7 +1176,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.107.0";window.WORDY_BUILD="5d0362d70c";</script>
+<script>window.WORDY_VERSION="2.107.0";window.WORDY_BUILD="24671391a5";</script>
 </head>
 <body>
 <div id="app">
@@ -8351,7 +8351,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     });
     try { if (navigator.vibrate) navigator.vibrate([200, 100, 200]); } catch (e) {}
   }
-  if (navigator.serviceWorker) navigator.serviceWorker.addEventListener("message", function (e) { if (e.data && e.data.type === "wordy-push") pushPopup(e.data.title, e.data.body); });
+  if (navigator.serviceWorker) navigator.serviceWorker.addEventListener("message", function (e) { if (!e.data || e.data.type !== "wordy-push") return; if (/^duel/.test(e.data.kind || "")) { toast(e.data.body, 5000); try { if (navigator.vibrate) navigator.vibrate([150, 80, 150]); } catch (x) {} if (socOn()) socLoad(true); return; } pushPopup(e.data.title, e.data.body); });
   setTimeout(pushAuto, 4500);
   function pushInit() {
     var box = $("#pushBox"); if (!box) return;
@@ -9413,7 +9413,8 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     });
   }
   global.addEventListener("focus", function () { if (socOn()) socLoad(); });
-  setInterval(function () { if (socOn() && !document.hidden) socLoad(); }, 120000);
+  setInterval(function () { if (socOn() && !document.hidden) socLoad(); }, 30000);
+  document.addEventListener("visibilitychange", function () { if (!document.hidden && socOn()) socLoad(true); });
   setTimeout(function () { if (socOn()) socLoad(); }, 4000);
 
   /* ================= Hauptmenü: Start · Lernen · Spielen · Beute · Profil ================= */

@@ -9,6 +9,11 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.107.1 – 2026-10-18
+- Duelle melden sich sofort: Der Server schickt dem Freund beim Abschicken einer Herausforderung und dem Herausforderer beim Ergebnis einen Push (nur bei eingeschalteten Erinnerungen). Ist die App offen, erscheint ein Hinweis und die Startseite lädt den Posteingang sofort neu.
+- Ohne Push (kein Abo, iPhone ohne Mitteilungen): Abfrage alle 30 Sekunden statt 2 Minuten und beim Zurückkehren in die App sofort.
+- Server-Update nötig.
+
 ## 2.107.0 – 2026-10-18
 - **Duell: Einheiten wählen und alle Spiele als Duell**: Vor dem Duell wählt man jetzt die Einheiten (Schritt 1, mindestens 12 Wörter, höchstens 80), danach das Spiel (Schritt 2). Gespielt wird mit genau den Wörtern dieser Einheiten; der Freund bekommt dieselben Wörter und dieselbe Startzahl. Neben Match-Rausch, Blitzrunde und Letztes Herz gibt es jetzt auch Wort-Detektiv, Freezy, Xing, Letters, Blast und Blast 3D als Duell. Spiele, für die die gewählten Einheiten zu wenige passende Wörter haben (einzelne Wörter ab 3 Buchstaben), sind ausgegraut mit Begründung. Bei Xing und Letters ist das Rätsel für beide gleich (gleiche Startzahl, auch auf verschiedenen Geräten); bei Blast und Blast 3D sind Wörter, Reihenfolge, Bahnen und Sonderkugeln fest, der Spielverlauf hängt aber vom Spieler ab. Die Einträge im Posteingang nennen Spiel und Einheiten. Die Revanche behält Wörter und Spiel. Duelle lassen sich nicht pausieren.
 - **Fehler behoben: Duell-Namen**: Seit 2.103.0 überschrieb ein zweiter gleichnamiger Wert die Spielnamen der Duelle, in der Startseiten-Wolke und der Duell-Liste stand deshalb „undefined“. Die Namen von „Später weitermachen“ heißen jetzt anders.

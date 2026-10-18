@@ -204,7 +204,7 @@
     });
     try { if (navigator.vibrate) navigator.vibrate([200, 100, 200]); } catch (e) {}
   }
-  if (navigator.serviceWorker) navigator.serviceWorker.addEventListener("message", function (e) { if (e.data && e.data.type === "wordy-push") pushPopup(e.data.title, e.data.body); });
+  if (navigator.serviceWorker) navigator.serviceWorker.addEventListener("message", function (e) { if (!e.data || e.data.type !== "wordy-push") return; if (/^duel/.test(e.data.kind || "")) { toast(e.data.body, 5000); try { if (navigator.vibrate) navigator.vibrate([150, 80, 150]); } catch (x) {} if (socOn()) socLoad(true); return; } pushPopup(e.data.title, e.data.body); });
   setTimeout(pushAuto, 4500);
   function pushInit() {
     var box = $("#pushBox"); if (!box) return;
@@ -1266,7 +1266,8 @@
     });
   }
   global.addEventListener("focus", function () { if (socOn()) socLoad(); });
-  setInterval(function () { if (socOn() && !document.hidden) socLoad(); }, 120000);
+  setInterval(function () { if (socOn() && !document.hidden) socLoad(); }, 30000);
+  document.addEventListener("visibilitychange", function () { if (!document.hidden && socOn()) socLoad(true); });
   setTimeout(function () { if (socOn()) socLoad(); }, 4000);
 
   /* ================= Hauptmenü: Start · Lernen · Spielen · Beute · Profil ================= */

@@ -1007,6 +1007,10 @@ async function pushSendTo(pid, message) {
   }
   return sent;
 }
+/* Duell-Hinweis sofort an das Gerät des Freundes (nur wenn Erinnerungen an sind); kind lässt die geöffnete App den Posteingang neu laden */
+function duelPush(pid, body, kind) {
+  try { if (!pushState(pid).on || !pq.of.all(pid).length) return; pushSendTo(pid, { title: "Wordy", body, url: "./", tag: "wordy-" + kind, kind }).catch(() => {}); } catch (e) {}
+}
 function pushTodayInfo(pid) {
   const m = snap(pid, "meta"), today = dayOf(Date.now()); let sec = 0;
   for (const r of q.events.all(pid, Date.now() - 36 * 3600000)) { if (r.k !== "ss" || dayOf(r.ts) !== today) continue; try { sec += JSON.parse(r.d).sec || 0; } catch (e) {} }
@@ -1271,6 +1275,7 @@ async function apiSocial(pid, method, p, url, req, ip) {
     if (words.length < 8) return [400, { error: "Zu wenige Wörter." }];
     if (sq.chCount.get(pid, Date.now() - 86400000).n >= 30) return [429, { error: "Für heute sind genug Herausforderungen verschickt." }];
     const id = +sq.addCh.run(pid, to, mode, JSON.stringify(words), Math.abs(Math.round(+b.seed)) % 2147483647, score, Date.now(), Date.now()).lastInsertRowid;
+    const me0 = sq.me.get(pid); duelPush(to, "⚔️ " + (me0 ? me0.name : "Dein Freund") + " fordert dich zum Duell heraus! Kannst du " + score + " schlagen?", "duel");
     return [200, { id }];
   }
   if (p === "/api/social/inbox" && method === "GET") {
@@ -1287,7 +1292,10 @@ async function apiSocial(pid, method, p, url, req, ip) {
       if (!(score >= 0 && score <= SOCIAL_MAX[c.mode])) return [400, { error: "Ungültiges Ergebnis." }];
       if (c.b_score != null) return [400, { error: "Schon gespielt." }];
       if (Date.now() - c.created > 7 * 86400000) return [400, { error: "Abgelaufen." }];
-      sq.chDone.run(score, Date.now(), c.id); return [200, { ok: true, view: chView(sq.ch.get(c.id), pid) }];
+      sq.chDone.run(score, Date.now(), c.id);
+      { const me1 = sq.me.get(pid), nm = me1 ? me1.name : "Dein Freund", res = score > c.a_score ? "hat gewonnen" : score < c.a_score ? "hat verloren" : "hat Unentschieden gespielt";
+        duelPush(c.a, "🏁 " + nm + " hat dein Duell gespielt und " + res + " (" + c.a_score + " : " + score + ")!", "duelres"); }
+      return [200, { ok: true, view: chView(sq.ch.get(c.id), pid) }];
     }
     const e = String(b.emoji); if (!REACTS.includes(e)) return [400, { error: "Unbekannte Reaktion." }];
     if (c.b_score == null) return [400, { error: "Erst nach dem Spiel." }];
