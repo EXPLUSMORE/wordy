@@ -32,18 +32,36 @@
   function clean(en) { return String(en).toLowerCase().trim().replace(/^(to|a|an|the)\s+/, ""); }
   function plainDe(de) { return String(de).replace(/\s*\([^)]*\)/g, "").trim() || String(de); }
 
-  /* Wörter für ein Spiel: nur einzelne Wörter aus Buchstaben, Fehlerkartei und Fälliges zuerst */
-  function pickWords(n, min, max, unit, spaces) {
-    var p = S.pools(), order = S.shuffle(p.box.slice()).concat(S.shuffle(p.due.slice()), S.shuffle(p.learning.slice()), S.shuffle(p.fresh.slice()), S.shuffle(p.all.slice()));
-    if (unit) { var us = [].concat(unit); order = S.shuffle(S.words().filter(function (w) { return us.indexOf(w.unit) >= 0; })); }   // gewählte Einheit: alle ihre Wörter, auch außerhalb des aktiven Lernbereichs
+  /* Duell: Beide Spieler bekommen dieselben Aufgaben. Dafür kommt der Zufall aus einer Startzahl (Strom je Zweck), sonst bleibt es der normale Zufall. */
+  var RS = null, DUEL = null;
+  function hashStr(str) { var h = 2166136261; for (var i = 0; i < str.length; i++) h = Math.imul(h ^ str.charCodeAt(i), 16777619); return h >>> 0; }
+  function mk(seed, salt) {
+    var st = ((seed >>> 0) ^ hashStr(salt)) >>> 0 || 1;
+    return function () { st = (st + 0x6D2B79F5) >>> 0; var x = Math.imul(st ^ st >>> 15, 1 | st); x = x + Math.imul(x ^ x >>> 7, 61 | x) ^ x; return ((x ^ x >>> 14) >>> 0) / 4294967296; };
+  }
+  function rr(n) { return RS && RS[n] ? RS[n]() : Math.random(); }
+  function shufS(a, n) { var o = a.slice(), i, j, t; for (i = o.length - 1; i > 0; i--) { j = Math.floor(rr(n) * (i + 1)); t = o[i]; o[i] = o[j]; o[j] = t; } return o; }
+  /* Einstellungen je Spiel: Wortzahl, Länge, Mindestzahl passender Wörter */
+  var CFG = { detective: { n: 5, min: 3, max: 8, need: 3 }, eisi: { n: 5, min: 3, max: 8, need: 3 }, kreuz: { n: 14, min: 3, max: 8, need: 6 }, letters: { n: 7, min: 3, max: 8, need: 5 },
+    blast: { n: 40, min: 2, max: 26, spaces: true, need: 6 }, blast3d: { n: 40, min: 2, max: 16, spaces: true, need: 6 } };
+  function candidates(order, min, max, spaces) {
     var seenEn = {}, seenDe = {}, out = [];
     order.forEach(function (w) {
       var s = clean(w.en);
       if (!(spaces ? /^[a-z][a-z ]*[a-z]$/ : /^[a-z]+$/).test(s) || s.length < min || s.length > max || seenEn[s] || seenDe[w.de]) return;
       seenEn[s] = seenDe[w.de] = 1; out.push({ id: w.id, en: s, de: plainDe(w.de), unit: w.unit, raw: w.en });
     });
-    return out.slice(0, n);
+    return out;
   }
+  /* Wörter für ein Spiel: nur einzelne Wörter aus Buchstaben, Fehlerkartei und Fälliges zuerst; im Duell genau die vereinbarten Wörter in festgelegter Reihenfolge */
+  function pickWords(n, min, max, unit, spaces) {
+    if (DUEL) return candidates(shufS(DUEL.words, "a"), min, max, spaces).slice(0, n);
+    var p = S.pools(), order = S.shuffle(p.box.slice()).concat(S.shuffle(p.due.slice()), S.shuffle(p.learning.slice()), S.shuffle(p.fresh.slice()), S.shuffle(p.all.slice()));
+    if (unit) { var us = [].concat(unit); order = S.shuffle(S.words().filter(function (w) { return us.indexOf(w.unit) >= 0; })); }   // gewählte Einheit: alle ihre Wörter, auch außerhalb des aktiven Lernbereichs
+    return candidates(order, min, max, spaces).slice(0, n);
+  }
+  /* Für die Duell-Auswahl: wie viele der Wörter taugen für das Spiel, und wie viele werden gebraucht? */
+  function duelCount(id, words) { var c = CFG[id]; return c ? candidates(words, c.min, c.max, c.spaces).length : 0; }
 
   /* ---------- Tastatur ---------- */
   var ROWS = ["QWERTZUIOP", "ASDFGHJKL", "YXCVBNM"];
@@ -107,9 +125,12 @@
   /* ---------- Start ---------- */
   function start(id, opts) {
     var seen = S.state.settings.gameIntro || (S.state.settings.gameIntro = {});
-    if (!seen[id] && !(opts && opts._intro)) { if (!(S.pools().all.length || (opts && (opts.units || opts.unit)))) return; return showIntro(id, opts); }
-    var min = id === "blast" ? 2 : 3, max = 8, n = id === "kreuz" ? 14 : id === "blast" || id === "blast3d" ? 40 : id === "letters" ? 7 : 5, words = pickWords(n, min, id === "blast" ? 26 : id === "blast3d" ? 16 : max, opts && (opts.units || opts.unit), id === "blast" || id === "blast3d");
-    if (words.length < (id === "kreuz" ? 6 : id === "blast" || id === "blast3d" ? 6 : id === "letters" ? 5 : 3)) return toast("Dafür brauchst du mehr Wörter im gewählten Bereich (einzelne Wörter ab 3 Buchstaben).");
+    if (!seen[id] && !(opts && opts._intro)) { if (!(S.pools().all.length || (opts && (opts.units || opts.unit || opts.duel)))) return; return showIntro(id, opts); }
+    var c = CFG[id]; if (!c) return;
+    DUEL = opts && opts.duel && opts.duel.words ? opts.duel : null;
+    RS = DUEL ? { a: mk(DUEL.seed, "a"), q: mk(DUEL.seed, "q"), o: mk(DUEL.seed, "o"), l: mk(DUEL.seed, "l") } : null;
+    var words = pickWords(c.n, c.min, c.max, opts && (opts.units || opts.unit), !!c.spaces);
+    if (words.length < c.need) { DUEL = null; RS = null; return toast("Dafür brauchst du mehr Wörter im gewählten Bereich (einzelne Wörter ab 3 Buchstaben)."); }
     S.rollDay();
     G = { id: id, words: words, i: 0, score: 0, res: [], items: 0, correct: 0, wrong: 0, hints: 0, start: Date.now(), done: false, opts: opts || null, maxStreak: 0, streak: 0, cleared: 0 };
     el.hidden = false; document.documentElement.classList.add("ar-open");
@@ -241,7 +262,7 @@
   function layout(cands, target, maxDim) {
     var bestL = null, att, i;
     for (att = 0; att < 80; att++) {
-      var ws = S.shuffle(cands.slice()).sort(function (a, b) { return (b.en.length - a.en.length) + (Math.random() - .5) * 3; }), map = {}, dirAt = {}, placed = [];
+      var ws = shufS(cands, "a").map(function (c) { return { c: c, k: c.en.length + (rr("a") - .5) * 3 }; }).sort(function (a, b) { return b.k - a.k; }).map(function (x) { return x.c; }), map = {}, dirAt = {}, placed = [];   // Rauschen vorab, damit die Reihenfolge in jedem Browser gleich ausfällt
       var first = ws[0], bnd = { r0: 0, r1: 0, c0: 0, c1: first.en.length - 1 }; for (i = 0; i < first.en.length; i++) { map["0," + i] = first.en[i]; dirAt["0," + i] = 0; }
       placed.push({ w: first, r: 0, c: 0, dir: 0 });
       ws.slice(1).forEach(function (w) {
@@ -258,7 +279,7 @@
           }
         });
         if (!opts.length) return;
-        var pick = opts[Math.floor(Math.random() * opts.length)];
+        var pick = opts[Math.floor(rr("a") * opts.length)];
         for (var j = 0; j < w.en.length; j++) { var kk = (pick.r + DIRS[pick.dir][0] * j) + "," + (pick.c + DIRS[pick.dir][1] * j); map[kk] = w.en[j]; dirAt[kk] = dirAt[kk] === undefined ? pick.dir : dirAt[kk]; }
         bnd.r0 = Math.min(bnd.r0, pick.r); bnd.c0 = Math.min(bnd.c0, pick.c); bnd.r1 = Math.max(bnd.r1, pick.er); bnd.c1 = Math.max(bnd.c1, pick.ec);
         placed.push({ w: w, r: pick.r, c: pick.c, dir: pick.dir });
@@ -415,7 +436,7 @@
   }
   function blFlash(t, cls) { var f = $("#blFl"); if (!f) return; f.textContent = t; f.className = "bl-flash show " + (cls || ""); clearTimeout(f._t); f._t = setTimeout(function () { f.className = "bl-flash"; }, 1100); }
   function blNextTarget() {
-    var sh = G.sh; if (!sh.queue.length) sh.queue = S.shuffle(G.words.slice());
+    var sh = G.sh; if (!sh.queue.length) sh.queue = shufS(G.words, "q");
     sh.target = sh.queue.shift(); $("#blT").textContent = sh.target.de;
     var P = $("#blP"); P.classList.remove("pop"); void P.offsetWidth; P.classList.add("pop");
   }
@@ -529,10 +550,10 @@
     if (sh.t - sh.lastSpawn > Math.max(0.5, 1.3 - sh.level * 0.05) * (sh.hard ? 0.7 : 1) && plain.length < want) {
       sh.lastSpawn = sh.t;
       var hasT = plain.some(function (o) { return o.w.id === sh.target.id; }), w;
-      if (!hasT) w = sh.target; else { var pool = G.words.filter(function (x) { return x.id !== sh.target.id && x.en !== sh.target.en && !plain.some(function (o) { return o.w.id === x.id; }); }); w = pool[Math.floor(Math.random() * pool.length)]; }
+      if (!hasT) w = sh.target; else { var pool = G.words.filter(function (x) { return x.id !== sh.target.id && x.en !== sh.target.en && !plain.some(function (o) { return o.w.id === x.id; }); }); w = pool[Math.floor(rr("q") * pool.length)]; }
       if (w) blSpawn(w);
     }
-    if (sh.t > sh.nextOrb) { sh.nextOrb = sh.t + 12 + Math.random() * 6; blSpawn(null, Math.random() < .5 ? "freeze" : "bomb"); }
+    if (sh.t > sh.nextOrb) { sh.nextOrb = sh.t + 12 + rr("o") * 6; blSpawn(null, rr("o") < .5 ? "freeze" : "bomb"); }
     sh.raf = requestAnimationFrame(blLoop);
   }
 
@@ -563,11 +584,11 @@
   }
   function b3Hop(d) { var sh = G && G.sh; if (!sh || sh.over || sh.paused) return; sh.lane = Math.max(0, Math.min(B3LANES.length - 1, sh.lane + d)); }
   function b3Next() {
-    var sh = G.sh; if (!sh.queue.length) sh.queue = S.shuffle(G.words.slice()); return sh.queue.shift();
+    var sh = G.sh; if (!sh.queue.length) sh.queue = shufS(G.words, "q"); return sh.queue.shift();
   }
   function b3Fill() {   // Vorschau: die nächsten Wörter stehen schon fest (Wort und Sprache der Antwort)
     var sh = G.sh; sh.pre = sh.pre || [];
-    while (sh.pre.length < 3) sh.pre.push({ t: b3Next(), deAnswer: Math.random() < 0.5 });
+    while (sh.pre.length < 3) sh.pre.push({ t: b3Next(), deAnswer: rr("l") < 0.5 });
   }
   function b3Preview() {
     var sh = G.sh, el2 = $("#b3Next"); if (!el2) return;
@@ -577,8 +598,8 @@
   }
   function b3Spawn() {
     var sh = G.sh, F = $("#blF"); b3Fill(); var pr = sh.pre.shift(), t = pr.t, deAnswer = pr.deAnswer;   // deAnswer: die Antworten sind deutsch, oben steht das englische Wort
-    var others = S.shuffle(G.words.filter(function (x) { return x.id !== t.id && x.en !== t.en && x.de !== t.de; })).slice(0, sh.hard ? 2 : 1);
-    var lanes = S.shuffle([0, 1, 2]), items = [t].concat(others).map(function (w, i) {
+    var others = shufS(G.words.filter(function (x) { return x.id !== t.id && x.en !== t.en && x.de !== t.de; }), "q").slice(0, sh.hard ? 2 : 1);
+    var lanes = shufS([0, 1, 2], "l"), items = [t].concat(others).map(function (w, i) {
       var txt = deAnswer ? w.de : w.raw, d = document.createElement("div"), n = txt.length;
       d.className = "foe b3w"; d.textContent = txt; d.style.setProperty("--h", Math.floor(Math.random() * 360));
       d.style.maxWidth = Math.round(sh.ls * 0.97 / 1.25) + "px"; d.style.fontSize = Math.max(12, Math.min(26, Math.floor((sh.ls * 0.97 / 1.25 - 22) / (Math.max.apply(null, txt.split(/\s+/).map(function (x) { return x.length; })) * 0.74)))) + "px";   /* längstes Wort passt in die Spur, Wortgruppen brechen zwischen den Wörtern um */ d.style.opacity = 0;
@@ -643,11 +664,11 @@
   function lettersBuild(words, N) {
     var grid = [], placed = [], r, c, i;
     for (r = 0; r < N; r++) { grid[r] = []; for (c = 0; c < N; c++) grid[r][c] = ""; }
-    var dirPool = S.shuffle([0, 1, 2, 3, 4, 5, 6, 7]);   // jedem Wort eine eigene Richtung zuweisen, damit Diagonale und Rückwärts sicher vorkommen
+    var dirPool = shufS([0, 1, 2, 3, 4, 5, 6, 7], "a");   // jedem Wort eine eigene Richtung zuweisen, damit Diagonale und Rückwärts sicher vorkommen
     words.slice().sort(function (a, b) { return b.en.length - a.en.length; }).forEach(function (w, wi) {
       var tries, cands = [], len = w.en.length;
       for (tries = 0; tries < 500; tries++) {
-        var d = LDIRS[tries < 250 ? dirPool[wi % 8] : Math.floor(Math.random() * 8)], sr = Math.floor(Math.random() * N), sc = Math.floor(Math.random() * N);
+        var d = LDIRS[tries < 250 ? dirPool[wi % 8] : Math.floor(rr("a") * 8)], sr = Math.floor(rr("a") * N), sc = Math.floor(rr("a") * N);
         var er = sr + d[0] * (len - 1), ec = sc + d[1] * (len - 1);
         if (er < 0 || er >= N || ec < 0 || ec >= N) continue;
         var ok = true, shared = 0; for (i = 0; i < len && ok; i++) { var g = grid[sr + d[0] * i][sc + d[1] * i]; if (g) { if (g !== w.en[i]) ok = false; else shared++; } }
@@ -656,12 +677,12 @@
         if (cands.length >= 40) break;
       }
       if (!cands.length) return;
-      var most = Math.max.apply(null, cands.map(function (x) { return x.shared; })), top = cands.filter(function (x) { return x.shared === most; }), pick = top[Math.floor(Math.random() * top.length)];
+      var most = Math.max.apply(null, cands.map(function (x) { return x.shared; })), top = cands.filter(function (x) { return x.shared === most; }), pick = top[Math.floor(rr("a") * top.length)];
       for (i = 0; i < len; i++) grid[pick.r + pick.d[0] * i][pick.c + pick.d[1] * i] = w.en[i];
       placed.push({ w: w, r: pick.r, c: pick.c, d: pick.d, found: false, hue: 0 });
     });
     var abc = "eeeeaaaiioonnrrsstttlldcuhmpbgfywkvxzjq";   // häufige Buchstaben öfter, damit es nach Englisch aussieht
-    for (r = 0; r < N; r++) for (c = 0; c < N; c++) if (!grid[r][c]) grid[r][c] = abc[Math.floor(Math.random() * abc.length)];
+    for (r = 0; r < N; r++) for (c = 0; c < N; c++) if (!grid[r][c]) grid[r][c] = abc[Math.floor(rr("a") * abc.length)];
     return { grid: grid, placed: placed };
   }
   function lettersStart() {
@@ -754,6 +775,7 @@
     if (!G || G.done) return; G.done = true; if (G.sh) { G.sh.over = true; cancelAnimationFrame(G.sh.raf); }
     if (G.id === "letters" && G.ls) G.items = G.words.length;
     var m = GAMES.filter(function (x) { return x.id === G.id; })[0], sec = Math.round((Date.now() - G.start) / 1000);
+    var duel = G.opts && G.opts.duel && G.opts.duel.words ? G.opts.duel : null;
     var complete = reason !== "quit";   // abgebrochen: XP für die Antworten, aber keine Münzen und kein Bestwert
     var rec = best(G.id), score = G.score, isRecord = complete && score > rec.best;
     if (!S.state.arena) S.state.arena = {};
@@ -774,9 +796,11 @@
       '<div class="ar-big tnum">' + score + ' Punkte</div>' +
       '<div class="ar-stats"><div><b class="tnum">' + G.correct + '</b><span>richtig</span></div><div><b class="tnum">' + acc + '%</b><span>Trefferquote</span></div><div><b class="tnum">' + (G.id === "kreuz" ? G.hints : G.maxStreak) + '</b><span>' + (G.id === "kreuz" ? "Tipps" : "beste Serie") + '</span></div><div><b class="tnum">' + Math.max(rec.best, score) + '</b><span>Bestwert</span></div></div>' +
       '<p class="ar-note">' + (coins ? "🪙 " + coins + " Münzen" + (capped ? " (Tageslimit erreicht)" : "") : (capped ? "Tageslimit der Spiele erreicht" : (complete ? "Diesmal keine Münzen" : "Abgebrochen: keine Münzen, die XP bleiben"))) + (rw.goalReached ? " · Tagesziel erreicht" : "") + '</p>' +
-      '<div class="ar-endbtns"><button class="ar-btn" data-g="again">Noch mal</button><button class="ar-btn ghost" data-g="exit">Zurück</button></div></div>';
+      (duel ? '<div id="wgDuel" class="ar-duel">' + esc(duel.wait || "Ergebnis wird übertragen …") + '</div>' : '') +
+      '<div class="ar-endbtns">' + (duel ? '<button class="ar-btn" data-g="duelnext" id="wgNext" hidden>' + esc(duel.nextLabel || "🔁 Revanche") + '</button>' : '<button class="ar-btn" data-g="again">Noch mal</button>') + '<button class="ar-btn ghost" data-g="exit">Zurück</button></div></div>';
     S.save(true);
     if (global.VTUI && global.VTUI.refreshHeader) global.VTUI.refreshHeader();
+    if (G.opts && G.opts.onFinish) G.opts.onFinish({ score: score, correct: G.correct, items: G.items, mode: G.id, reason: reason }, function (html, next) { var d = $("#wgDuel"); if (d) d.innerHTML = html; var nb = $("#wgNext"); if (nb && next) nb.hidden = false; });
   }
   /* ---------- Später weitermachen ---------- */
   function hasProgress() {
@@ -824,7 +848,7 @@
     if (!G) return;
     if (G.done) return close();
     var g = G;
-    if (!hasProgress() || !global.VTUI || !global.VTUI.leave) return G.items || G.score ? finish("quit") : close();
+    if (!hasProgress() || !global.VTUI || !global.VTUI.leave || (G.opts && G.opts.duel)) return G.items || G.score ? finish("quit") : close();   // Duelle lassen sich nicht pausieren
     if (G.sh) G.sh.paused = true;
     global.VTUI.leave({}, function (pick) {
       if (G !== g || g.done) return;
@@ -836,7 +860,7 @@
 
   function close() {
     if (G && G.sh) { G.sh.over = true; cancelAnimationFrame(G.sh.raf); }
-    G = null; el.hidden = true; el.innerHTML = ""; el.classList.remove("kr-open"); document.documentElement.classList.remove("ar-open");
+    G = null; DUEL = null; RS = null; el.hidden = true; el.innerHTML = ""; el.classList.remove("kr-open"); document.documentElement.classList.remove("ar-open");
     if (global.VTUI && global.VTUI.afterArena) global.VTUI.afterArena();
   }
   function next() {
@@ -856,6 +880,7 @@
     var a = t.getAttribute("data-g");
     if (a === "quit") return leave();
     if (a === "exit") return close();
+    if (a === "duelnext") { var nx = G.opts && G.opts.duel && G.opts.duel.next; close(); if (nx) nx(); return; }
     if (a === "again") { var id = G.id, o = G.opts; G = null; return start(id, o); }
     if (G.done) return;
     if (a === "k") { var k = t.getAttribute("data-k"); return G.id === "detective" ? detType(k) : G.id === "eisi" ? eisType(k) : kreuzType(k); }
@@ -884,5 +909,5 @@
     if (G.id === "detective") detType(k); else if (G.id === "eisi") eisType(k); else if (G.id === "kreuz") kreuzType(k);
   });
 
-  global.VTG = { GAMES: GAMES, start: start, resume: resume, best: best, open: function () { return !!G; }, _evalGuess: evalGuess, _layout: layout, _state: function () { return G; } };
+  global.VTG = { GAMES: GAMES, start: start, resume: resume, duelCount: duelCount, duelNeed: function (id) { return CFG[id] ? CFG[id].need : 0; }, best: best, open: function () { return !!G; }, _evalGuess: evalGuess, _layout: layout, _state: function () { return G; } };
 })(window);

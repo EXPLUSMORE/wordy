@@ -1227,7 +1227,7 @@ async function famWeekly() {
 
 
 /* ---------- Freunde, Duelle, Ranglisten ---------- */
-const SOCIAL_MAX = { match: 3000, blitz: 5000, survival: 200 };
+const SOCIAL_MAX = { match: 3000, blitz: 5000, survival: 200, detective: 1500, eisi: 1500, kreuz: 1500, letters: 1200, blast: 30000, blast3d: 30000 };   // Duelle: Arena-Modi und Wortspiele
 const REACTS = ["👏", "😮", "🔥", "😅", "💪", "🤝"];
 const AVATAR_RE = /^[A-Za-z0-9:_\-←-⯿\u{1F000}-\u{1FFFF}️‍]{1,40}$/u;
 const pairOf = (a, b) => a < b ? [a, b] : [b, a];

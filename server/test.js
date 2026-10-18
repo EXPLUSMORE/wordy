@@ -494,6 +494,13 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     assert.equal((await J("/api/social/challenges/" + ch.j.id + "/react", { method: "POST", headers: lt, body: JSON.stringify({ emoji: "🔥" }) })).s, 200);
     const rc = (await J("/api/social/inbox", { headers: jt })).j.recent[0]; assert.equal(rc.aScore, 120); assert.equal(rc.bScore, 150); assert.equal(rc.theirReact, "🔥");
     assert.equal((await J("/api/social/challenges/" + ch.j.id + "/result", { method: "POST", headers: T, body: JSON.stringify({ score: 1 }) })).s, 401, "fremdes Gerät ohne Zugang");
+    /* Duelle in den Wortspielen: gleiche Prüfung wie bei der Arena (Spiel auf der Liste, Punktzahl in Grenzen) */
+    assert.equal((await J("/api/social/challenges", { method: "POST", headers: jt, body: JSON.stringify({ to: kid.j.id, mode: "gibtsnicht", words: WORDS, seed: 5, score: 10 }) })).s, 400, "unbekanntes Spiel");
+    assert.equal((await J("/api/social/challenges", { method: "POST", headers: jt, body: JSON.stringify({ to: kid.j.id, mode: "kreuz", words: WORDS, seed: 5, score: 999999 }) })).s, 400, "Xing: unmögliche Punktzahl");
+    { const gc = await J("/api/social/challenges", { method: "POST", headers: jt, body: JSON.stringify({ to: kid.j.id, mode: "blast3d", words: WORDS, seed: 9, score: 2400 }) });
+      assert.equal(gc.s, 200, "Blast 3D als Duell"); assert.equal((await J("/api/social/inbox", { headers: lt })).j.open[0].mode, "blast3d");
+      assert.equal((await J("/api/social/challenges/" + gc.j.id + "/result", { method: "POST", headers: lt, body: JSON.stringify({ score: 31000 }) })).s, 400, "Blast 3D: unmögliches Ergebnis");
+      assert.equal((await J("/api/social/challenges/" + gc.j.id + "/result", { method: "POST", headers: lt, body: JSON.stringify({ score: 1800 }) })).s, 200); }
     await J("/api/social/score", { method: "POST", headers: jt, body: JSON.stringify({ mode: "blitz", score: 30 }) });
     await J("/api/social/score", { method: "POST", headers: lt, body: JSON.stringify({ mode: "blitz", score: 50 }) });
     await J("/api/social/score", { method: "POST", headers: lt, body: JSON.stringify({ mode: "blitz", score: 40 }) });

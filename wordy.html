@@ -1166,10 +1166,17 @@ details.fold>.fbody{padding:2px 0 14px}
 .kr-tip{color:var(--ar-ink2);text-align:center;margin:0}
 @keyframes krUp{from{transform:translateY(30%);opacity:0}to{transform:none;opacity:1}}
 @media (prefers-reduced-motion:reduce){.kr-pad{animation:none}}
+/* Duell-Auswahl: Einheiten wählen, dann Spiel */
+.dsu{max-height:36vh;overflow:auto;text-align:left;margin:10px 0 0;padding:2px 4px;border-radius:12px;background:rgba(255,255,255,.05)}
+.dsug{font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.8;margin:10px 4px 4px;font-weight:800}
+.dsur{display:flex;align-items:center;gap:10px;padding:8px 6px;border-radius:10px;cursor:pointer;font-size:14px}
+.dsur input{width:20px;height:20px;flex:none;accent-color:#E9BD62}.dsur span{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}.dsur small{opacity:.7;flex:none}
+.dshs{border:1px solid rgba(255,255,255,.25);background:transparent;color:inherit;border-radius:12px;padding:6px 14px;font-weight:700;font-family:inherit;cursor:pointer}
+.dshb[disabled]{opacity:.45;box-shadow:none;cursor:default;transform:none}
 </style>
 
 
-<script>window.WORDY_VERSION="2.106.2";window.WORDY_BUILD="b31beeee9c";</script>
+<script>window.WORDY_VERSION="2.107.0";window.WORDY_BUILD="5d0362d70c";</script>
 </head>
 <body>
 <div id="app">
@@ -9086,12 +9093,12 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var it = duelCloudItem(); homeDuelKey = it ? it.key : ""; if (!it) return "";
     var c = it.c, head, sub, icon, tag, cid = it.kind === "crew" ? c.crew : c.id;
     if (it.kind === "crew") { icon = esc(c.emoji || "🛡️"); tag = "CREW"; head = esc(shortName(c.from)) + " lädt dich ein!"; sub = "Crew " + esc(shortName(c.name)) + " · Tippen zum Ansehen"; }
-    else if (it.kind === "open") { icon = "⚔️"; tag = "DUELL"; head = esc(shortName(c.from.name)) + " fordert dich heraus!"; sub = MODE_NAME[c.mode] + " · schlag " + c.aScore; }
-    else if (it.kind === "wait") { icon = "📨"; tag = "GESENDET"; head = "Duell an " + esc(shortName(c.to.name)) + " läuft"; sub = MODE_NAME[c.mode] + " · dein Wert " + c.aScore + " · wartet auf Antwort"; }
+    else if (it.kind === "open") { icon = "⚔️"; tag = "DUELL"; head = esc(shortName(c.from.name)) + " fordert dich heraus!"; sub = modeName(c.mode) + " · schlag " + c.aScore; }
+    else if (it.kind === "wait") { icon = "📨"; tag = "GESENDET"; head = "Duell an " + esc(shortName(c.to.name)) + " läuft"; sub = modeName(c.mode) + " · dein Wert " + c.aScore + " · wartet auf Antwort"; }
     else {
       var r = duelResult(c); tag = "ERGEBNIS"; icon = r.tie ? "🤝" : r.win ? "🏆" : "💪";
       head = r.tie ? "Unentschieden gegen " + esc(shortName(r.other.name)) : r.win ? "Du hast " + esc(shortName(r.other.name)) + " besiegt!" : esc(shortName(r.other.name)) + " war besser!";
-      sub = "Du " + r.me + " : " + r.they + " " + esc(shortName(r.other.name)) + " · " + MODE_NAME[c.mode];
+      sub = "Du " + r.me + " : " + r.they + " " + esc(shortName(r.other.name)) + " · " + modeName(c.mode);
     }
     return '<div class="newscloud duelcl ' + it.kind + '" data-id="' + cid + '"><i class="ncs s1">⚡</i><i class="ncs s2">⭐</i><i class="ncs s3">⚡</i><span class="ncnew">' + tag + '</span><button class="ncbody" data-act="duelcloud" data-kind="' + it.kind + '" data-id="' + cid + '"><span class="nci">' + icon + '</span><span class="nct"><b>' + head + '</b><small>' + sub + '</small></span></button><button class="ncx" data-act="duelx" data-kind="' + it.kind + '" data-id="' + cid + '" aria-label="Ausblenden">✕</button></div>';
   }
@@ -9192,6 +9199,15 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   /* ================= Freunde, Duelle, Ranglisten ================= */
   var soc = { me: null, inbox: null, crew: null, err: "", loading: false, ts: 0, board: {}, boardMode: "blitz" };
   var DUEL_MODES = [["match", "⚡ Match-Rausch"], ["blitz", "🔥 Blitzrunde"], ["survival", "💠 Letztes Herz"]], MODE_NAME = { match: "Match-Rausch", blitz: "Blitzrunde", survival: "Letztes Herz" };
+  /* Name eines Duell-Spiels: Arena-Modus oder Wortspiel (Wort-Detektiv, Freezy, Xing, Letters, Blast, Blast 3D) */
+  function modeName(m) { var g = global.VTG && global.VTG.GAMES.filter(function (x) { return x.id === m; })[0]; return MODE_NAME[m] || (g ? g.name : String(m)); }
+  function isGameMode(m) { return !!(global.VTG && global.VTG.GAMES.some(function (x) { return x.id === m; })); }
+  /* Einheiten einer Herausforderung aus den Wort-IDs („b-39#3“ -> Einheit b-39) */
+  function duelUnitsText(ids) {
+    var seen = {}, names = [];
+    (ids || []).forEach(function (id) { var u = String(id).split("#")[0]; if (seen[u]) return; seen[u] = 1; var uu = S.units().filter(function (x) { return x.id === u; })[0]; if (uu) names.push(uu.title); });
+    return names.length ? names.slice(0, 2).join(" + ") + (names.length > 2 ? " +" + (names.length - 2) : "") : "";
+  }
   var REACTS = ["👏", "😮", "🔥", "😅", "💪", "🤝"];
   function socOn() { return !!(global.WordySync && global.WordySync.connected()); }
   function socViewing() { return tab === "spielen" && (spielSeg === "freunde" || spielSeg === "rang" || spielSeg === "crew") && sessionEl.hidden; }
@@ -9233,7 +9249,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     socLoad(); duelSeenAll();
     var me = soc.me, ib = soc.inbox || { open: [], waiting: [], recent: [] }, h = "";
     if (ib.open.length) h += '<section class="card duelcard"><div class="eyebrow">⚔️ Herausforderungen für dich</div>' + ib.open.map(function (c) {
-      return '<div class="drow">' + who(c.from) + '<div class="grow"><b>' + esc(c.from.name) + '</b><div class="small muted">' + MODE_NAME[c.mode] + ' · schlag <b class="tnum">' + c.aScore + '</b></div></div><button class="btn" data-act="socaccept" data-id="' + c.id + '">Annehmen ▶</button></div>';
+      return '<div class="drow">' + who(c.from) + '<div class="grow"><b>' + esc(c.from.name) + '</b><div class="small muted">' + modeName(c.mode) + (duelUnitsText(c.words) ? ' · ' + esc(duelUnitsText(c.words)) : '') + ' · schlag <b class="tnum">' + c.aScore + '</b></div></div><button class="btn" data-act="socaccept" data-id="' + c.id + '">Annehmen ▶</button></div>';
     }).join("") + '</section>';
     h += '<section class="card"><div class="eyebrow">Mein Freundescode</div><div class="fcode">' + esc(me.code) + '</div>' +
       '<div class="row" style="gap:8px;margin-top:8px"><button class="chip" data-act="soccopy">📋 Kopieren</button><button class="chip" data-act="socshare">📤 Teilen</button></div>' +
@@ -9244,10 +9260,10 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       return '<div class="drow">' + who(f) + '<div class="grow"><b>' + esc(f.name) + '</b>' + (st ? '<div class="small muted">' + st + '</div>' : '') + '</div>' +
         (f.state === "ok" ? '<button class="btn soft" data-act="socchallenge" data-id="' + f.id + '">⚔️ Duell</button>' : '<span class="pill">⏳</span>') + '<button class="chip" data-act="socdel" data-id="' + f.id + '" aria-label="Entfernen">✕</button></div>';
     }).join("") : '<p class="small muted" style="margin:8px 0 0">Noch keine Freunde. Tausche Codes aus!</p>') + '</section>';
-    if (ib.waiting.length) h += '<section class="card"><div class="eyebrow">Warten auf Antwort</div>' + ib.waiting.map(function (c) { return '<div class="drow">' + who(c.to, 32) + '<div class="grow small"><b>' + esc(c.to.name) + '</b> · ' + MODE_NAME[c.mode] + ' · dein Wert <b class="tnum">' + c.aScore + '</b></div></div>'; }).join("") + '</section>';
+    if (ib.waiting.length) h += '<section class="card"><div class="eyebrow">Warten auf Antwort</div>' + ib.waiting.map(function (c) { return '<div class="drow">' + who(c.to, 32) + '<div class="grow small"><b>' + esc(c.to.name) + '</b> · ' + modeName(c.mode) + ' · dein Wert <b class="tnum">' + c.aScore + '</b></div></div>'; }).join("") + '</section>';
     if (ib.recent.length) h += '<section class="card"><div class="eyebrow">Letzte Duelle</div>' + ib.recent.map(function (c) {
       var r = duelResult(c);
-      return '<div class="drow">' + who(r.other, 32) + '<div class="grow"><b>' + (r.tie ? "🤝 Unentschieden" : r.win ? "🏆 Gewonnen" : "Verloren") + '</b> <span class="small muted">gegen ' + esc(r.other.name) + ' · ' + MODE_NAME[c.mode] + '</span><div class="tnum small"><b>' + r.me + '</b> : ' + r.they + '</div></div>' +
+      return '<div class="drow">' + who(r.other, 32) + '<div class="grow"><b>' + (r.tie ? "🤝 Unentschieden" : r.win ? "🏆 Gewonnen" : "Verloren") + '</b> <span class="small muted">gegen ' + esc(r.other.name) + ' · ' + modeName(c.mode) + '</span><div class="tnum small"><b>' + r.me + '</b> : ' + r.they + '</div></div>' +
         '<span class="reacts">' + (c.theirReact ? '<span class="rea on" title="Reaktion von ' + esc(r.other.name) + '">' + c.theirReact + '</span>' : '') + REACTS.slice(0, 4).map(function (e) { return '<button class="rea' + (c.myReact === e ? " on" : "") + '" data-act="socreact" data-id="' + c.id + '" data-e="' + e + '">' + e + '</button>'; }).join("") + '</span></div>';
     }).join("") + '</section>';
     return h;
@@ -9307,41 +9323,94 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   function crewDo(path, body, ok) {
     return global.WordySync.social("POST", path, body).then(function (r) { soc.ts = 0; socLoad(true); if (ok) ok(r); }).catch(function (e) { toast(e.message); });
   }
-  function duelSheet(friend) {
+  /* Einheiten, aus denen man ein Duell wählen kann: alle im aktiven Lernbereich, ohne eigene Listen (der Freund hat sie nicht) */
+  function duelUnits() {
+    var aw = {}; S.activeWords().forEach(function (w) { aw[w.unit] = 1; });
+    return S.units().filter(function (u) { return u.track !== "eigen" && aw[u.id] && u.words.length; });
+  }
+  var DUEL_MAX = 80, DUEL_MIN = 12;   // Der Server nimmt höchstens 80 Wörter je Herausforderung
+  /* Alle Wörter der gewählten Einheiten, ohne doppelte Wörter; bei mehr als 80 eine zufällige, feste Auswahl */
+  function duelDeckOf(unitIds) {
+    var seenEn = {}, seenDe = {}, out = [];
+    unitIds.forEach(function (uid) {
+      var u = S.units().filter(function (x) { return x.id === uid; })[0]; if (!u) return;
+      u.words.forEach(function (w, i) { var wo = S.byId(u.id + "#" + i); if (!wo || seenEn[wo.en] || seenDe[wo.de]) return; seenEn[wo.en] = seenDe[wo.de] = 1; out.push(wo); });
+    });
+    return out.length > DUEL_MAX ? S.shuffle(out).slice(0, DUEL_MAX) : out;
+  }
+  /* Schritt 1: Einheiten wählen. Schritt 2: Spiel wählen. Gespielt wird mit genau den Wörtern dieser Einheiten. */
+  function duelSheet(friend, preUnits) {
     var ov = document.createElement("div"); ov.className = "srmd";
-    ov.innerHTML = '<div class="dsh"><div class="dshg"></div><div class="eyebrow">Herausforderung</div><h3>Gegen ' + esc(friend.name) + '</h3><p>Du spielst zuerst. Dann bekommt ' + esc(friend.name) + ' genau dieselben Wörter und muss dein Ergebnis schlagen.</p>' +
-      DUEL_MODES.map(function (m) { return '<button class="dshb" data-m="' + m[0] + '">' + m[1] + '</button>'; }).join("") + '<button class="dshx" data-m="x">Abbrechen</button></div>';
-    document.body.appendChild(ov);
+    var units = duelUnits(), sel = {}, step = preUnits ? 2 : 1;
+    (preUnits || []).forEach(function (u) { sel[u] = 1; });
+    function chosen() { return units.filter(function (u) { return sel[u.id]; }).map(function (u) { return u.id; }); }
+    function draw() {
+      var ids = chosen(), deck = duelDeckOf(ids), n = deck.length;
+      if (step === 1) {
+        var groups = {}, order = [];
+        units.forEach(function (u) { var g = String(u.k || "Weitere"); if (!groups[g]) { groups[g] = []; order.push(g); } groups[g].push(u); });
+        ov.innerHTML = '<div class="dsh"><div class="dshg"></div><div class="eyebrow">Herausforderung · Schritt 1 von 2</div><h3>Welche Einheiten?</h3>' +
+          '<p>Du und ' + esc(friend.name) + ' spielt mit genau den Wörtern der gewählten Einheiten.</p>' +
+          '<div class="dsu">' + (units.length ? order.map(function (g) {
+            return '<div class="dsug">' + esc(g) + '</div>' + groups[g].map(function (u) {
+              return '<label class="dsur"><input type="checkbox" data-u="' + esc(u.id) + '"' + (sel[u.id] ? " checked" : "") + '><span>' + esc(u.title) + '</span><small>' + u.words.length + '</small></label>';
+            }).join("");
+          }).join("") : '<p class="small">Keine Einheiten im aktiven Bereich.</p>') + '</div>' +
+          '<div class="row" style="gap:8px;margin:10px 0 0;justify-content:center"><button class="dshs" data-d="all">Alle</button><button class="dshs" data-d="none">Keine</button></div>' +
+          '<div class="small" style="margin:8px 0 0;color:#B9C0CE">' + (n >= DUEL_MIN ? "<b>" + n + " Wörter</b> gewählt" + (n >= DUEL_MAX ? " (höchstens " + DUEL_MAX + ")" : "") : "Wähle mindestens " + DUEL_MIN + " Wörter (jetzt " + n + ")") + '</div>' +
+          '<button class="dshb" data-d="next"' + (n >= DUEL_MIN ? "" : " disabled") + '>Weiter ▶</button><button class="dshx" data-d="x">Abbrechen</button></div>';
+      } else {
+        var arenaM = DUEL_MODES.map(function (m) { return { id: m[0], label: m[1], ok: true }; });
+        var gameM = (global.VTG ? global.VTG.GAMES : []).map(function (g) {
+          var have = global.VTG.duelCount(g.id, deck), need = global.VTG.duelNeed(g.id);
+          return { id: g.id, label: g.icon + " " + g.name, ok: have >= need, why: have + " von " + need + " passenden Wörtern" };
+        });
+        ov.innerHTML = '<div class="dsh"><div class="dshg"></div><div class="eyebrow">Herausforderung · Schritt 2 von 2</div><h3>Gegen ' + esc(friend.name) + '</h3>' +
+          '<p>' + n + ' Wörter aus ' + chosen().length + (chosen().length === 1 ? " Einheit" : " Einheiten") + '. Du spielst zuerst, dann muss ' + esc(friend.name) + ' dein Ergebnis mit denselben Wörtern schlagen.</p>' +
+          '<div class="dsu" style="max-height:46vh">' + arenaM.concat(gameM).map(function (m) {
+            return '<button class="dshb" data-m="' + esc(m.id) + '"' + (m.ok ? "" : " disabled") + '>' + esc(m.label) + (m.ok ? "" : '<small style="display:block;font-size:11px;font-weight:600">zu wenige passende Wörter (' + esc(m.why) + ')</small>') + '</button>';
+          }).join("") + '</div><button class="dshx" data-d="back">← Einheiten ändern</button><button class="dshx" data-d="x" style="margin-top:6px">Abbrechen</button></div>';
+      }
+    }
+    draw(); document.body.appendChild(ov);
+    ov.addEventListener("change", function (e) { var cb = e.target.closest("input[data-u]"); if (!cb) return; sel[cb.getAttribute("data-u")] = cb.checked ? 1 : 0; var sc = ov.querySelector(".dsu"), top = sc ? sc.scrollTop : 0; draw(); sc = ov.querySelector(".dsu"); if (sc) sc.scrollTop = top; });
     ov.addEventListener("click", function (e) {
-      var m = e.target.closest("[data-m]"), mm = m && m.getAttribute("data-m");
-      if (e.target === ov || mm === "x") return ov.remove();
-      if (mm) { ov.remove(); startChallenge(friend, mm); }
+      var d = e.target.closest("[data-d]"), dd = d && d.getAttribute("data-d"), m = e.target.closest("[data-m]"), mm = m && m.getAttribute("data-m");
+      if (e.target === ov || dd === "x") return ov.remove();
+      if (dd === "all") { units.forEach(function (u) { sel[u.id] = 1; }); return draw(); }
+      if (dd === "none") { sel = {}; return draw(); }
+      if (dd === "next") { if (duelDeckOf(chosen()).length >= DUEL_MIN) { step = 2; draw(); } return; }
+      if (dd === "back") { step = 1; return draw(); }
+      if (mm && !m.disabled) { var deck = duelDeckOf(chosen()); ov.remove(); startChallenge(friend, mm, deck); }
     });
   }
-  function duelDeck() {
-    var all = S.pools().all.filter(function (w) { return w.track !== "eigen"; });
-    return all.length >= 12 ? S.shuffle(all.slice()).slice(0, 60) : null;
+  /* Ein Duell spielen: Arena-Modus oder Wortspiel, mit festen Wörtern und fester Startzahl */
+  function playDuel(mode, words, seed, duel, onFinish) {
+    if (isGameMode(mode)) return global.VTG.start(mode, { duel: Object.assign({ words: words, seed: seed }, duel), onFinish: onFinish });
+    global.ARENA.start(mode, { words: words, seed: seed, duel: duel, onFinish: onFinish });
   }
-  function startChallenge(friend, mode) {
-    var deck = duelDeck(); if (!deck) return toast("Dafür fehlen noch Wörter im gewählten Bereich.");
+  function startChallenge(friend, mode, deck) {
+    if (!deck) return duelSheet(friend);   // ohne Wörter erst die Einheiten wählen
+    if (deck.length < DUEL_MIN) return toast("Dafür fehlen noch Wörter in den gewählten Einheiten.");
     var ids = deck.map(function (w) { return w.id; }), seed = Math.floor(Math.random() * 2000000000);
-    global.ARENA.start(mode, { words: deck, seed: seed, duel: { wait: "Herausforderung wird gesendet …" }, onFinish: function (res, show) {
+    playDuel(mode, deck, seed, { wait: "Herausforderung wird gesendet …" }, function (res, show) {
       global.WordySync.social("POST", "/challenges", { to: friend.id, mode: mode, words: ids, seed: seed, score: res.score })
         .then(function () { soc.ts = 0; socLoad(true); planComplete({ act: "duel" }); show("📨 <b>Gesendet!</b> " + esc(friend.name) + " muss jetzt deine <b>" + res.score + "</b> schlagen."); })
         .catch(function (e) { show("⚠️ " + esc(e.message)); });
-    } });
+    });
   }
   function acceptDuel(ch) {
     var words = ch.words.map(function (id) { return S.byId(id); }).filter(Boolean);
     if (words.length < 8) return toast("Die Wörter dieser Herausforderung gibt es in deiner App nicht.");
+    if (isGameMode(ch.mode) && global.VTG.duelCount(ch.mode, words) < global.VTG.duelNeed(ch.mode)) return toast("Für dieses Spiel fehlen dir Wörter dieser Herausforderung. Bitte aktualisiere die App.");
     var other = ch.from;
-    global.ARENA.start(ch.mode, { words: words, seed: ch.seed, duel: { wait: "Dein Ergebnis wird übertragen …", nextLabel: "🔁 Revanche", next: function () { soc.ts = 0; startChallenge(other, ch.mode); } }, onFinish: function (res, show) {
+    playDuel(ch.mode, words, ch.seed, { wait: "Dein Ergebnis wird übertragen …", nextLabel: "🔁 Revanche", next: function () { soc.ts = 0; startChallenge(other, ch.mode, words); } }, function (res, show) {
       global.WordySync.social("POST", "/challenges/" + ch.id + "/result", { score: res.score }).then(function (r) {
         var v = r.view, mine = v.bScore, theirs = v.aScore; soc.ts = 0; planComplete({ act: "duel" });
         show((mine > theirs ? "🏆 <b>Gewonnen!</b>" : mine === theirs ? "🤝 <b>Unentschieden!</b>" : "💪 <b>Knapp verloren.</b>") + " Du <b>" + mine + "</b> : " + theirs + " " + esc(other.name), true);
         if (mine > theirs) try { global.VTC.burst("stars", innerWidth / 2, innerHeight / 3, 30, 1.4); } catch (e) {}
       }).catch(function (e) { show("⚠️ " + esc(e.message)); });
-    } });
+    });
   }
   global.addEventListener("focus", function () { if (socOn()) socLoad(); });
   setInterval(function () { if (socOn() && !document.hidden) socLoad(); }, 120000);
@@ -10594,7 +10663,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       ov.remove(); try { cb(pick); } catch (x) { try { console.error("leave:", x); } catch (y) {} }
     });
   }
-  var MODE_NAME = { mix: "Daily Challenge", box: "Fehlerkartei", "new": "Neue Wörter", master: "Meistern", sent: "Sätze", verbs: "Unregelmäßige Verben", focus: "Gezielt üben", path: "Lernpfad" };
+  var RUN_NAMES = { mix: "Daily Challenge", box: "Fehlerkartei", "new": "Neue Wörter", master: "Meistern", sent: "Sätze", verbs: "Unregelmäßige Verben", focus: "Gezielt üben", path: "Lernpfad" };
   function parkSession() {
     if (!SS || SS.ended) return false;
     try {
@@ -10602,7 +10671,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       delete d.station; delete d.pick;
       d.i = SS.answered ? SS.i + 1 : SS.i; d.answered = false;
       d.el = Date.now() - SS.start; d.stationId = SS.station ? SS.station.id : null; d.lopts = lastStartOpts || null;
-      var name = SS.station ? "Lernpfad · Station " + SS.station.n : MODE_NAME[(lastStartOpts && lastStartOpts.focus ? "focus" : SS.mode)] || "Runde";
+      var name = SS.station ? "Lernpfad · Station " + SS.station.n : RUN_NAMES[(lastStartOpts && lastStartOpts.focus ? "focus" : SS.mode)] || "Runde";
       S.resumeSave({ key: "session", kind: "session", title: name, sub: "Aufgabe " + Math.min(d.i + 1, SS.tasks.length) + " von " + SS.tasks.length, data: S.resumePack(d) });
       return true;
     } catch (e) { try { console.error("park:", e); } catch (x) {} return false; }
@@ -12156,18 +12225,36 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   function clean(en) { return String(en).toLowerCase().trim().replace(/^(to|a|an|the)\s+/, ""); }
   function plainDe(de) { return String(de).replace(/\s*\([^)]*\)/g, "").trim() || String(de); }
 
-  /* Wörter für ein Spiel: nur einzelne Wörter aus Buchstaben, Fehlerkartei und Fälliges zuerst */
-  function pickWords(n, min, max, unit, spaces) {
-    var p = S.pools(), order = S.shuffle(p.box.slice()).concat(S.shuffle(p.due.slice()), S.shuffle(p.learning.slice()), S.shuffle(p.fresh.slice()), S.shuffle(p.all.slice()));
-    if (unit) { var us = [].concat(unit); order = S.shuffle(S.words().filter(function (w) { return us.indexOf(w.unit) >= 0; })); }   // gewählte Einheit: alle ihre Wörter, auch außerhalb des aktiven Lernbereichs
+  /* Duell: Beide Spieler bekommen dieselben Aufgaben. Dafür kommt der Zufall aus einer Startzahl (Strom je Zweck), sonst bleibt es der normale Zufall. */
+  var RS = null, DUEL = null;
+  function hashStr(str) { var h = 2166136261; for (var i = 0; i < str.length; i++) h = Math.imul(h ^ str.charCodeAt(i), 16777619); return h >>> 0; }
+  function mk(seed, salt) {
+    var st = ((seed >>> 0) ^ hashStr(salt)) >>> 0 || 1;
+    return function () { st = (st + 0x6D2B79F5) >>> 0; var x = Math.imul(st ^ st >>> 15, 1 | st); x = x + Math.imul(x ^ x >>> 7, 61 | x) ^ x; return ((x ^ x >>> 14) >>> 0) / 4294967296; };
+  }
+  function rr(n) { return RS && RS[n] ? RS[n]() : Math.random(); }
+  function shufS(a, n) { var o = a.slice(), i, j, t; for (i = o.length - 1; i > 0; i--) { j = Math.floor(rr(n) * (i + 1)); t = o[i]; o[i] = o[j]; o[j] = t; } return o; }
+  /* Einstellungen je Spiel: Wortzahl, Länge, Mindestzahl passender Wörter */
+  var CFG = { detective: { n: 5, min: 3, max: 8, need: 3 }, eisi: { n: 5, min: 3, max: 8, need: 3 }, kreuz: { n: 14, min: 3, max: 8, need: 6 }, letters: { n: 7, min: 3, max: 8, need: 5 },
+    blast: { n: 40, min: 2, max: 26, spaces: true, need: 6 }, blast3d: { n: 40, min: 2, max: 16, spaces: true, need: 6 } };
+  function candidates(order, min, max, spaces) {
     var seenEn = {}, seenDe = {}, out = [];
     order.forEach(function (w) {
       var s = clean(w.en);
       if (!(spaces ? /^[a-z][a-z ]*[a-z]$/ : /^[a-z]+$/).test(s) || s.length < min || s.length > max || seenEn[s] || seenDe[w.de]) return;
       seenEn[s] = seenDe[w.de] = 1; out.push({ id: w.id, en: s, de: plainDe(w.de), unit: w.unit, raw: w.en });
     });
-    return out.slice(0, n);
+    return out;
   }
+  /* Wörter für ein Spiel: nur einzelne Wörter aus Buchstaben, Fehlerkartei und Fälliges zuerst; im Duell genau die vereinbarten Wörter in festgelegter Reihenfolge */
+  function pickWords(n, min, max, unit, spaces) {
+    if (DUEL) return candidates(shufS(DUEL.words, "a"), min, max, spaces).slice(0, n);
+    var p = S.pools(), order = S.shuffle(p.box.slice()).concat(S.shuffle(p.due.slice()), S.shuffle(p.learning.slice()), S.shuffle(p.fresh.slice()), S.shuffle(p.all.slice()));
+    if (unit) { var us = [].concat(unit); order = S.shuffle(S.words().filter(function (w) { return us.indexOf(w.unit) >= 0; })); }   // gewählte Einheit: alle ihre Wörter, auch außerhalb des aktiven Lernbereichs
+    return candidates(order, min, max, spaces).slice(0, n);
+  }
+  /* Für die Duell-Auswahl: wie viele der Wörter taugen für das Spiel, und wie viele werden gebraucht? */
+  function duelCount(id, words) { var c = CFG[id]; return c ? candidates(words, c.min, c.max, c.spaces).length : 0; }
 
   /* ---------- Tastatur ---------- */
   var ROWS = ["QWERTZUIOP", "ASDFGHJKL", "YXCVBNM"];
@@ -12231,9 +12318,12 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   /* ---------- Start ---------- */
   function start(id, opts) {
     var seen = S.state.settings.gameIntro || (S.state.settings.gameIntro = {});
-    if (!seen[id] && !(opts && opts._intro)) { if (!(S.pools().all.length || (opts && (opts.units || opts.unit)))) return; return showIntro(id, opts); }
-    var min = id === "blast" ? 2 : 3, max = 8, n = id === "kreuz" ? 14 : id === "blast" || id === "blast3d" ? 40 : id === "letters" ? 7 : 5, words = pickWords(n, min, id === "blast" ? 26 : id === "blast3d" ? 16 : max, opts && (opts.units || opts.unit), id === "blast" || id === "blast3d");
-    if (words.length < (id === "kreuz" ? 6 : id === "blast" || id === "blast3d" ? 6 : id === "letters" ? 5 : 3)) return toast("Dafür brauchst du mehr Wörter im gewählten Bereich (einzelne Wörter ab 3 Buchstaben).");
+    if (!seen[id] && !(opts && opts._intro)) { if (!(S.pools().all.length || (opts && (opts.units || opts.unit || opts.duel)))) return; return showIntro(id, opts); }
+    var c = CFG[id]; if (!c) return;
+    DUEL = opts && opts.duel && opts.duel.words ? opts.duel : null;
+    RS = DUEL ? { a: mk(DUEL.seed, "a"), q: mk(DUEL.seed, "q"), o: mk(DUEL.seed, "o"), l: mk(DUEL.seed, "l") } : null;
+    var words = pickWords(c.n, c.min, c.max, opts && (opts.units || opts.unit), !!c.spaces);
+    if (words.length < c.need) { DUEL = null; RS = null; return toast("Dafür brauchst du mehr Wörter im gewählten Bereich (einzelne Wörter ab 3 Buchstaben)."); }
     S.rollDay();
     G = { id: id, words: words, i: 0, score: 0, res: [], items: 0, correct: 0, wrong: 0, hints: 0, start: Date.now(), done: false, opts: opts || null, maxStreak: 0, streak: 0, cleared: 0 };
     el.hidden = false; document.documentElement.classList.add("ar-open");
@@ -12365,7 +12455,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   function layout(cands, target, maxDim) {
     var bestL = null, att, i;
     for (att = 0; att < 80; att++) {
-      var ws = S.shuffle(cands.slice()).sort(function (a, b) { return (b.en.length - a.en.length) + (Math.random() - .5) * 3; }), map = {}, dirAt = {}, placed = [];
+      var ws = shufS(cands, "a").map(function (c) { return { c: c, k: c.en.length + (rr("a") - .5) * 3 }; }).sort(function (a, b) { return b.k - a.k; }).map(function (x) { return x.c; }), map = {}, dirAt = {}, placed = [];   // Rauschen vorab, damit die Reihenfolge in jedem Browser gleich ausfällt
       var first = ws[0], bnd = { r0: 0, r1: 0, c0: 0, c1: first.en.length - 1 }; for (i = 0; i < first.en.length; i++) { map["0," + i] = first.en[i]; dirAt["0," + i] = 0; }
       placed.push({ w: first, r: 0, c: 0, dir: 0 });
       ws.slice(1).forEach(function (w) {
@@ -12382,7 +12472,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
           }
         });
         if (!opts.length) return;
-        var pick = opts[Math.floor(Math.random() * opts.length)];
+        var pick = opts[Math.floor(rr("a") * opts.length)];
         for (var j = 0; j < w.en.length; j++) { var kk = (pick.r + DIRS[pick.dir][0] * j) + "," + (pick.c + DIRS[pick.dir][1] * j); map[kk] = w.en[j]; dirAt[kk] = dirAt[kk] === undefined ? pick.dir : dirAt[kk]; }
         bnd.r0 = Math.min(bnd.r0, pick.r); bnd.c0 = Math.min(bnd.c0, pick.c); bnd.r1 = Math.max(bnd.r1, pick.er); bnd.c1 = Math.max(bnd.c1, pick.ec);
         placed.push({ w: w, r: pick.r, c: pick.c, dir: pick.dir });
@@ -12539,7 +12629,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   }
   function blFlash(t, cls) { var f = $("#blFl"); if (!f) return; f.textContent = t; f.className = "bl-flash show " + (cls || ""); clearTimeout(f._t); f._t = setTimeout(function () { f.className = "bl-flash"; }, 1100); }
   function blNextTarget() {
-    var sh = G.sh; if (!sh.queue.length) sh.queue = S.shuffle(G.words.slice());
+    var sh = G.sh; if (!sh.queue.length) sh.queue = shufS(G.words, "q");
     sh.target = sh.queue.shift(); $("#blT").textContent = sh.target.de;
     var P = $("#blP"); P.classList.remove("pop"); void P.offsetWidth; P.classList.add("pop");
   }
@@ -12653,10 +12743,10 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (sh.t - sh.lastSpawn > Math.max(0.5, 1.3 - sh.level * 0.05) * (sh.hard ? 0.7 : 1) && plain.length < want) {
       sh.lastSpawn = sh.t;
       var hasT = plain.some(function (o) { return o.w.id === sh.target.id; }), w;
-      if (!hasT) w = sh.target; else { var pool = G.words.filter(function (x) { return x.id !== sh.target.id && x.en !== sh.target.en && !plain.some(function (o) { return o.w.id === x.id; }); }); w = pool[Math.floor(Math.random() * pool.length)]; }
+      if (!hasT) w = sh.target; else { var pool = G.words.filter(function (x) { return x.id !== sh.target.id && x.en !== sh.target.en && !plain.some(function (o) { return o.w.id === x.id; }); }); w = pool[Math.floor(rr("q") * pool.length)]; }
       if (w) blSpawn(w);
     }
-    if (sh.t > sh.nextOrb) { sh.nextOrb = sh.t + 12 + Math.random() * 6; blSpawn(null, Math.random() < .5 ? "freeze" : "bomb"); }
+    if (sh.t > sh.nextOrb) { sh.nextOrb = sh.t + 12 + rr("o") * 6; blSpawn(null, rr("o") < .5 ? "freeze" : "bomb"); }
     sh.raf = requestAnimationFrame(blLoop);
   }
 
@@ -12687,11 +12777,11 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   }
   function b3Hop(d) { var sh = G && G.sh; if (!sh || sh.over || sh.paused) return; sh.lane = Math.max(0, Math.min(B3LANES.length - 1, sh.lane + d)); }
   function b3Next() {
-    var sh = G.sh; if (!sh.queue.length) sh.queue = S.shuffle(G.words.slice()); return sh.queue.shift();
+    var sh = G.sh; if (!sh.queue.length) sh.queue = shufS(G.words, "q"); return sh.queue.shift();
   }
   function b3Fill() {   // Vorschau: die nächsten Wörter stehen schon fest (Wort und Sprache der Antwort)
     var sh = G.sh; sh.pre = sh.pre || [];
-    while (sh.pre.length < 3) sh.pre.push({ t: b3Next(), deAnswer: Math.random() < 0.5 });
+    while (sh.pre.length < 3) sh.pre.push({ t: b3Next(), deAnswer: rr("l") < 0.5 });
   }
   function b3Preview() {
     var sh = G.sh, el2 = $("#b3Next"); if (!el2) return;
@@ -12701,8 +12791,8 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   }
   function b3Spawn() {
     var sh = G.sh, F = $("#blF"); b3Fill(); var pr = sh.pre.shift(), t = pr.t, deAnswer = pr.deAnswer;   // deAnswer: die Antworten sind deutsch, oben steht das englische Wort
-    var others = S.shuffle(G.words.filter(function (x) { return x.id !== t.id && x.en !== t.en && x.de !== t.de; })).slice(0, sh.hard ? 2 : 1);
-    var lanes = S.shuffle([0, 1, 2]), items = [t].concat(others).map(function (w, i) {
+    var others = shufS(G.words.filter(function (x) { return x.id !== t.id && x.en !== t.en && x.de !== t.de; }), "q").slice(0, sh.hard ? 2 : 1);
+    var lanes = shufS([0, 1, 2], "l"), items = [t].concat(others).map(function (w, i) {
       var txt = deAnswer ? w.de : w.raw, d = document.createElement("div"), n = txt.length;
       d.className = "foe b3w"; d.textContent = txt; d.style.setProperty("--h", Math.floor(Math.random() * 360));
       d.style.maxWidth = Math.round(sh.ls * 0.97 / 1.25) + "px"; d.style.fontSize = Math.max(12, Math.min(26, Math.floor((sh.ls * 0.97 / 1.25 - 22) / (Math.max.apply(null, txt.split(/\s+/).map(function (x) { return x.length; })) * 0.74)))) + "px";   /* längstes Wort passt in die Spur, Wortgruppen brechen zwischen den Wörtern um */ d.style.opacity = 0;
@@ -12767,11 +12857,11 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   function lettersBuild(words, N) {
     var grid = [], placed = [], r, c, i;
     for (r = 0; r < N; r++) { grid[r] = []; for (c = 0; c < N; c++) grid[r][c] = ""; }
-    var dirPool = S.shuffle([0, 1, 2, 3, 4, 5, 6, 7]);   // jedem Wort eine eigene Richtung zuweisen, damit Diagonale und Rückwärts sicher vorkommen
+    var dirPool = shufS([0, 1, 2, 3, 4, 5, 6, 7], "a");   // jedem Wort eine eigene Richtung zuweisen, damit Diagonale und Rückwärts sicher vorkommen
     words.slice().sort(function (a, b) { return b.en.length - a.en.length; }).forEach(function (w, wi) {
       var tries, cands = [], len = w.en.length;
       for (tries = 0; tries < 500; tries++) {
-        var d = LDIRS[tries < 250 ? dirPool[wi % 8] : Math.floor(Math.random() * 8)], sr = Math.floor(Math.random() * N), sc = Math.floor(Math.random() * N);
+        var d = LDIRS[tries < 250 ? dirPool[wi % 8] : Math.floor(rr("a") * 8)], sr = Math.floor(rr("a") * N), sc = Math.floor(rr("a") * N);
         var er = sr + d[0] * (len - 1), ec = sc + d[1] * (len - 1);
         if (er < 0 || er >= N || ec < 0 || ec >= N) continue;
         var ok = true, shared = 0; for (i = 0; i < len && ok; i++) { var g = grid[sr + d[0] * i][sc + d[1] * i]; if (g) { if (g !== w.en[i]) ok = false; else shared++; } }
@@ -12780,12 +12870,12 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
         if (cands.length >= 40) break;
       }
       if (!cands.length) return;
-      var most = Math.max.apply(null, cands.map(function (x) { return x.shared; })), top = cands.filter(function (x) { return x.shared === most; }), pick = top[Math.floor(Math.random() * top.length)];
+      var most = Math.max.apply(null, cands.map(function (x) { return x.shared; })), top = cands.filter(function (x) { return x.shared === most; }), pick = top[Math.floor(rr("a") * top.length)];
       for (i = 0; i < len; i++) grid[pick.r + pick.d[0] * i][pick.c + pick.d[1] * i] = w.en[i];
       placed.push({ w: w, r: pick.r, c: pick.c, d: pick.d, found: false, hue: 0 });
     });
     var abc = "eeeeaaaiioonnrrsstttlldcuhmpbgfywkvxzjq";   // häufige Buchstaben öfter, damit es nach Englisch aussieht
-    for (r = 0; r < N; r++) for (c = 0; c < N; c++) if (!grid[r][c]) grid[r][c] = abc[Math.floor(Math.random() * abc.length)];
+    for (r = 0; r < N; r++) for (c = 0; c < N; c++) if (!grid[r][c]) grid[r][c] = abc[Math.floor(rr("a") * abc.length)];
     return { grid: grid, placed: placed };
   }
   function lettersStart() {
@@ -12878,6 +12968,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (!G || G.done) return; G.done = true; if (G.sh) { G.sh.over = true; cancelAnimationFrame(G.sh.raf); }
     if (G.id === "letters" && G.ls) G.items = G.words.length;
     var m = GAMES.filter(function (x) { return x.id === G.id; })[0], sec = Math.round((Date.now() - G.start) / 1000);
+    var duel = G.opts && G.opts.duel && G.opts.duel.words ? G.opts.duel : null;
     var complete = reason !== "quit";   // abgebrochen: XP für die Antworten, aber keine Münzen und kein Bestwert
     var rec = best(G.id), score = G.score, isRecord = complete && score > rec.best;
     if (!S.state.arena) S.state.arena = {};
@@ -12898,9 +12989,11 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       '<div class="ar-big tnum">' + score + ' Punkte</div>' +
       '<div class="ar-stats"><div><b class="tnum">' + G.correct + '</b><span>richtig</span></div><div><b class="tnum">' + acc + '%</b><span>Trefferquote</span></div><div><b class="tnum">' + (G.id === "kreuz" ? G.hints : G.maxStreak) + '</b><span>' + (G.id === "kreuz" ? "Tipps" : "beste Serie") + '</span></div><div><b class="tnum">' + Math.max(rec.best, score) + '</b><span>Bestwert</span></div></div>' +
       '<p class="ar-note">' + (coins ? "🪙 " + coins + " Münzen" + (capped ? " (Tageslimit erreicht)" : "") : (capped ? "Tageslimit der Spiele erreicht" : (complete ? "Diesmal keine Münzen" : "Abgebrochen: keine Münzen, die XP bleiben"))) + (rw.goalReached ? " · Tagesziel erreicht" : "") + '</p>' +
-      '<div class="ar-endbtns"><button class="ar-btn" data-g="again">Noch mal</button><button class="ar-btn ghost" data-g="exit">Zurück</button></div></div>';
+      (duel ? '<div id="wgDuel" class="ar-duel">' + esc(duel.wait || "Ergebnis wird übertragen …") + '</div>' : '') +
+      '<div class="ar-endbtns">' + (duel ? '<button class="ar-btn" data-g="duelnext" id="wgNext" hidden>' + esc(duel.nextLabel || "🔁 Revanche") + '</button>' : '<button class="ar-btn" data-g="again">Noch mal</button>') + '<button class="ar-btn ghost" data-g="exit">Zurück</button></div></div>';
     S.save(true);
     if (global.VTUI && global.VTUI.refreshHeader) global.VTUI.refreshHeader();
+    if (G.opts && G.opts.onFinish) G.opts.onFinish({ score: score, correct: G.correct, items: G.items, mode: G.id, reason: reason }, function (html, next) { var d = $("#wgDuel"); if (d) d.innerHTML = html; var nb = $("#wgNext"); if (nb && next) nb.hidden = false; });
   }
   /* ---------- Später weitermachen ---------- */
   function hasProgress() {
@@ -12948,7 +13041,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (!G) return;
     if (G.done) return close();
     var g = G;
-    if (!hasProgress() || !global.VTUI || !global.VTUI.leave) return G.items || G.score ? finish("quit") : close();
+    if (!hasProgress() || !global.VTUI || !global.VTUI.leave || (G.opts && G.opts.duel)) return G.items || G.score ? finish("quit") : close();   // Duelle lassen sich nicht pausieren
     if (G.sh) G.sh.paused = true;
     global.VTUI.leave({}, function (pick) {
       if (G !== g || g.done) return;
@@ -12960,7 +13053,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
 
   function close() {
     if (G && G.sh) { G.sh.over = true; cancelAnimationFrame(G.sh.raf); }
-    G = null; el.hidden = true; el.innerHTML = ""; el.classList.remove("kr-open"); document.documentElement.classList.remove("ar-open");
+    G = null; DUEL = null; RS = null; el.hidden = true; el.innerHTML = ""; el.classList.remove("kr-open"); document.documentElement.classList.remove("ar-open");
     if (global.VTUI && global.VTUI.afterArena) global.VTUI.afterArena();
   }
   function next() {
@@ -12980,6 +13073,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var a = t.getAttribute("data-g");
     if (a === "quit") return leave();
     if (a === "exit") return close();
+    if (a === "duelnext") { var nx = G.opts && G.opts.duel && G.opts.duel.next; close(); if (nx) nx(); return; }
     if (a === "again") { var id = G.id, o = G.opts; G = null; return start(id, o); }
     if (G.done) return;
     if (a === "k") { var k = t.getAttribute("data-k"); return G.id === "detective" ? detType(k) : G.id === "eisi" ? eisType(k) : kreuzType(k); }
@@ -13008,7 +13102,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (G.id === "detective") detType(k); else if (G.id === "eisi") eisType(k); else if (G.id === "kreuz") kreuzType(k);
   });
 
-  global.VTG = { GAMES: GAMES, start: start, resume: resume, best: best, open: function () { return !!G; }, _evalGuess: evalGuess, _layout: layout, _state: function () { return G; } };
+  global.VTG = { GAMES: GAMES, start: start, resume: resume, duelCount: duelCount, duelNeed: function (id) { return CFG[id] ? CFG[id].need : 0; }, best: best, open: function () { return !!G; }, _evalGuess: evalGuess, _layout: layout, _state: function () { return G; } };
 })(window);
 </script>
 <script>/* Grammatik – Lektionen (Erklärkarte + 8 Übungen). Themen in data/grammatik.js, Optik der Arena (#arena, ar-* und wg-*). */

@@ -946,12 +946,12 @@
     var it = duelCloudItem(); homeDuelKey = it ? it.key : ""; if (!it) return "";
     var c = it.c, head, sub, icon, tag, cid = it.kind === "crew" ? c.crew : c.id;
     if (it.kind === "crew") { icon = esc(c.emoji || "🛡️"); tag = "CREW"; head = esc(shortName(c.from)) + " lädt dich ein!"; sub = "Crew " + esc(shortName(c.name)) + " · Tippen zum Ansehen"; }
-    else if (it.kind === "open") { icon = "⚔️"; tag = "DUELL"; head = esc(shortName(c.from.name)) + " fordert dich heraus!"; sub = MODE_NAME[c.mode] + " · schlag " + c.aScore; }
-    else if (it.kind === "wait") { icon = "📨"; tag = "GESENDET"; head = "Duell an " + esc(shortName(c.to.name)) + " läuft"; sub = MODE_NAME[c.mode] + " · dein Wert " + c.aScore + " · wartet auf Antwort"; }
+    else if (it.kind === "open") { icon = "⚔️"; tag = "DUELL"; head = esc(shortName(c.from.name)) + " fordert dich heraus!"; sub = modeName(c.mode) + " · schlag " + c.aScore; }
+    else if (it.kind === "wait") { icon = "📨"; tag = "GESENDET"; head = "Duell an " + esc(shortName(c.to.name)) + " läuft"; sub = modeName(c.mode) + " · dein Wert " + c.aScore + " · wartet auf Antwort"; }
     else {
       var r = duelResult(c); tag = "ERGEBNIS"; icon = r.tie ? "🤝" : r.win ? "🏆" : "💪";
       head = r.tie ? "Unentschieden gegen " + esc(shortName(r.other.name)) : r.win ? "Du hast " + esc(shortName(r.other.name)) + " besiegt!" : esc(shortName(r.other.name)) + " war besser!";
-      sub = "Du " + r.me + " : " + r.they + " " + esc(shortName(r.other.name)) + " · " + MODE_NAME[c.mode];
+      sub = "Du " + r.me + " : " + r.they + " " + esc(shortName(r.other.name)) + " · " + modeName(c.mode);
     }
     return '<div class="newscloud duelcl ' + it.kind + '" data-id="' + cid + '"><i class="ncs s1">⚡</i><i class="ncs s2">⭐</i><i class="ncs s3">⚡</i><span class="ncnew">' + tag + '</span><button class="ncbody" data-act="duelcloud" data-kind="' + it.kind + '" data-id="' + cid + '"><span class="nci">' + icon + '</span><span class="nct"><b>' + head + '</b><small>' + sub + '</small></span></button><button class="ncx" data-act="duelx" data-kind="' + it.kind + '" data-id="' + cid + '" aria-label="Ausblenden">✕</button></div>';
   }
@@ -1052,6 +1052,15 @@
   /* ================= Freunde, Duelle, Ranglisten ================= */
   var soc = { me: null, inbox: null, crew: null, err: "", loading: false, ts: 0, board: {}, boardMode: "blitz" };
   var DUEL_MODES = [["match", "⚡ Match-Rausch"], ["blitz", "🔥 Blitzrunde"], ["survival", "💠 Letztes Herz"]], MODE_NAME = { match: "Match-Rausch", blitz: "Blitzrunde", survival: "Letztes Herz" };
+  /* Name eines Duell-Spiels: Arena-Modus oder Wortspiel (Wort-Detektiv, Freezy, Xing, Letters, Blast, Blast 3D) */
+  function modeName(m) { var g = global.VTG && global.VTG.GAMES.filter(function (x) { return x.id === m; })[0]; return MODE_NAME[m] || (g ? g.name : String(m)); }
+  function isGameMode(m) { return !!(global.VTG && global.VTG.GAMES.some(function (x) { return x.id === m; })); }
+  /* Einheiten einer Herausforderung aus den Wort-IDs („b-39#3“ -> Einheit b-39) */
+  function duelUnitsText(ids) {
+    var seen = {}, names = [];
+    (ids || []).forEach(function (id) { var u = String(id).split("#")[0]; if (seen[u]) return; seen[u] = 1; var uu = S.units().filter(function (x) { return x.id === u; })[0]; if (uu) names.push(uu.title); });
+    return names.length ? names.slice(0, 2).join(" + ") + (names.length > 2 ? " +" + (names.length - 2) : "") : "";
+  }
   var REACTS = ["👏", "😮", "🔥", "😅", "💪", "🤝"];
   function socOn() { return !!(global.WordySync && global.WordySync.connected()); }
   function socViewing() { return tab === "spielen" && (spielSeg === "freunde" || spielSeg === "rang" || spielSeg === "crew") && sessionEl.hidden; }
@@ -1093,7 +1102,7 @@
     socLoad(); duelSeenAll();
     var me = soc.me, ib = soc.inbox || { open: [], waiting: [], recent: [] }, h = "";
     if (ib.open.length) h += '<section class="card duelcard"><div class="eyebrow">⚔️ Herausforderungen für dich</div>' + ib.open.map(function (c) {
-      return '<div class="drow">' + who(c.from) + '<div class="grow"><b>' + esc(c.from.name) + '</b><div class="small muted">' + MODE_NAME[c.mode] + ' · schlag <b class="tnum">' + c.aScore + '</b></div></div><button class="btn" data-act="socaccept" data-id="' + c.id + '">Annehmen ▶</button></div>';
+      return '<div class="drow">' + who(c.from) + '<div class="grow"><b>' + esc(c.from.name) + '</b><div class="small muted">' + modeName(c.mode) + (duelUnitsText(c.words) ? ' · ' + esc(duelUnitsText(c.words)) : '') + ' · schlag <b class="tnum">' + c.aScore + '</b></div></div><button class="btn" data-act="socaccept" data-id="' + c.id + '">Annehmen ▶</button></div>';
     }).join("") + '</section>';
     h += '<section class="card"><div class="eyebrow">Mein Freundescode</div><div class="fcode">' + esc(me.code) + '</div>' +
       '<div class="row" style="gap:8px;margin-top:8px"><button class="chip" data-act="soccopy">📋 Kopieren</button><button class="chip" data-act="socshare">📤 Teilen</button></div>' +
@@ -1104,10 +1113,10 @@
       return '<div class="drow">' + who(f) + '<div class="grow"><b>' + esc(f.name) + '</b>' + (st ? '<div class="small muted">' + st + '</div>' : '') + '</div>' +
         (f.state === "ok" ? '<button class="btn soft" data-act="socchallenge" data-id="' + f.id + '">⚔️ Duell</button>' : '<span class="pill">⏳</span>') + '<button class="chip" data-act="socdel" data-id="' + f.id + '" aria-label="Entfernen">✕</button></div>';
     }).join("") : '<p class="small muted" style="margin:8px 0 0">Noch keine Freunde. Tausche Codes aus!</p>') + '</section>';
-    if (ib.waiting.length) h += '<section class="card"><div class="eyebrow">Warten auf Antwort</div>' + ib.waiting.map(function (c) { return '<div class="drow">' + who(c.to, 32) + '<div class="grow small"><b>' + esc(c.to.name) + '</b> · ' + MODE_NAME[c.mode] + ' · dein Wert <b class="tnum">' + c.aScore + '</b></div></div>'; }).join("") + '</section>';
+    if (ib.waiting.length) h += '<section class="card"><div class="eyebrow">Warten auf Antwort</div>' + ib.waiting.map(function (c) { return '<div class="drow">' + who(c.to, 32) + '<div class="grow small"><b>' + esc(c.to.name) + '</b> · ' + modeName(c.mode) + ' · dein Wert <b class="tnum">' + c.aScore + '</b></div></div>'; }).join("") + '</section>';
     if (ib.recent.length) h += '<section class="card"><div class="eyebrow">Letzte Duelle</div>' + ib.recent.map(function (c) {
       var r = duelResult(c);
-      return '<div class="drow">' + who(r.other, 32) + '<div class="grow"><b>' + (r.tie ? "🤝 Unentschieden" : r.win ? "🏆 Gewonnen" : "Verloren") + '</b> <span class="small muted">gegen ' + esc(r.other.name) + ' · ' + MODE_NAME[c.mode] + '</span><div class="tnum small"><b>' + r.me + '</b> : ' + r.they + '</div></div>' +
+      return '<div class="drow">' + who(r.other, 32) + '<div class="grow"><b>' + (r.tie ? "🤝 Unentschieden" : r.win ? "🏆 Gewonnen" : "Verloren") + '</b> <span class="small muted">gegen ' + esc(r.other.name) + ' · ' + modeName(c.mode) + '</span><div class="tnum small"><b>' + r.me + '</b> : ' + r.they + '</div></div>' +
         '<span class="reacts">' + (c.theirReact ? '<span class="rea on" title="Reaktion von ' + esc(r.other.name) + '">' + c.theirReact + '</span>' : '') + REACTS.slice(0, 4).map(function (e) { return '<button class="rea' + (c.myReact === e ? " on" : "") + '" data-act="socreact" data-id="' + c.id + '" data-e="' + e + '">' + e + '</button>'; }).join("") + '</span></div>';
     }).join("") + '</section>';
     return h;
@@ -1167,41 +1176,94 @@
   function crewDo(path, body, ok) {
     return global.WordySync.social("POST", path, body).then(function (r) { soc.ts = 0; socLoad(true); if (ok) ok(r); }).catch(function (e) { toast(e.message); });
   }
-  function duelSheet(friend) {
+  /* Einheiten, aus denen man ein Duell wählen kann: alle im aktiven Lernbereich, ohne eigene Listen (der Freund hat sie nicht) */
+  function duelUnits() {
+    var aw = {}; S.activeWords().forEach(function (w) { aw[w.unit] = 1; });
+    return S.units().filter(function (u) { return u.track !== "eigen" && aw[u.id] && u.words.length; });
+  }
+  var DUEL_MAX = 80, DUEL_MIN = 12;   // Der Server nimmt höchstens 80 Wörter je Herausforderung
+  /* Alle Wörter der gewählten Einheiten, ohne doppelte Wörter; bei mehr als 80 eine zufällige, feste Auswahl */
+  function duelDeckOf(unitIds) {
+    var seenEn = {}, seenDe = {}, out = [];
+    unitIds.forEach(function (uid) {
+      var u = S.units().filter(function (x) { return x.id === uid; })[0]; if (!u) return;
+      u.words.forEach(function (w, i) { var wo = S.byId(u.id + "#" + i); if (!wo || seenEn[wo.en] || seenDe[wo.de]) return; seenEn[wo.en] = seenDe[wo.de] = 1; out.push(wo); });
+    });
+    return out.length > DUEL_MAX ? S.shuffle(out).slice(0, DUEL_MAX) : out;
+  }
+  /* Schritt 1: Einheiten wählen. Schritt 2: Spiel wählen. Gespielt wird mit genau den Wörtern dieser Einheiten. */
+  function duelSheet(friend, preUnits) {
     var ov = document.createElement("div"); ov.className = "srmd";
-    ov.innerHTML = '<div class="dsh"><div class="dshg"></div><div class="eyebrow">Herausforderung</div><h3>Gegen ' + esc(friend.name) + '</h3><p>Du spielst zuerst. Dann bekommt ' + esc(friend.name) + ' genau dieselben Wörter und muss dein Ergebnis schlagen.</p>' +
-      DUEL_MODES.map(function (m) { return '<button class="dshb" data-m="' + m[0] + '">' + m[1] + '</button>'; }).join("") + '<button class="dshx" data-m="x">Abbrechen</button></div>';
-    document.body.appendChild(ov);
+    var units = duelUnits(), sel = {}, step = preUnits ? 2 : 1;
+    (preUnits || []).forEach(function (u) { sel[u] = 1; });
+    function chosen() { return units.filter(function (u) { return sel[u.id]; }).map(function (u) { return u.id; }); }
+    function draw() {
+      var ids = chosen(), deck = duelDeckOf(ids), n = deck.length;
+      if (step === 1) {
+        var groups = {}, order = [];
+        units.forEach(function (u) { var g = String(u.k || "Weitere"); if (!groups[g]) { groups[g] = []; order.push(g); } groups[g].push(u); });
+        ov.innerHTML = '<div class="dsh"><div class="dshg"></div><div class="eyebrow">Herausforderung · Schritt 1 von 2</div><h3>Welche Einheiten?</h3>' +
+          '<p>Du und ' + esc(friend.name) + ' spielt mit genau den Wörtern der gewählten Einheiten.</p>' +
+          '<div class="dsu">' + (units.length ? order.map(function (g) {
+            return '<div class="dsug">' + esc(g) + '</div>' + groups[g].map(function (u) {
+              return '<label class="dsur"><input type="checkbox" data-u="' + esc(u.id) + '"' + (sel[u.id] ? " checked" : "") + '><span>' + esc(u.title) + '</span><small>' + u.words.length + '</small></label>';
+            }).join("");
+          }).join("") : '<p class="small">Keine Einheiten im aktiven Bereich.</p>') + '</div>' +
+          '<div class="row" style="gap:8px;margin:10px 0 0;justify-content:center"><button class="dshs" data-d="all">Alle</button><button class="dshs" data-d="none">Keine</button></div>' +
+          '<div class="small" style="margin:8px 0 0;color:#B9C0CE">' + (n >= DUEL_MIN ? "<b>" + n + " Wörter</b> gewählt" + (n >= DUEL_MAX ? " (höchstens " + DUEL_MAX + ")" : "") : "Wähle mindestens " + DUEL_MIN + " Wörter (jetzt " + n + ")") + '</div>' +
+          '<button class="dshb" data-d="next"' + (n >= DUEL_MIN ? "" : " disabled") + '>Weiter ▶</button><button class="dshx" data-d="x">Abbrechen</button></div>';
+      } else {
+        var arenaM = DUEL_MODES.map(function (m) { return { id: m[0], label: m[1], ok: true }; });
+        var gameM = (global.VTG ? global.VTG.GAMES : []).map(function (g) {
+          var have = global.VTG.duelCount(g.id, deck), need = global.VTG.duelNeed(g.id);
+          return { id: g.id, label: g.icon + " " + g.name, ok: have >= need, why: have + " von " + need + " passenden Wörtern" };
+        });
+        ov.innerHTML = '<div class="dsh"><div class="dshg"></div><div class="eyebrow">Herausforderung · Schritt 2 von 2</div><h3>Gegen ' + esc(friend.name) + '</h3>' +
+          '<p>' + n + ' Wörter aus ' + chosen().length + (chosen().length === 1 ? " Einheit" : " Einheiten") + '. Du spielst zuerst, dann muss ' + esc(friend.name) + ' dein Ergebnis mit denselben Wörtern schlagen.</p>' +
+          '<div class="dsu" style="max-height:46vh">' + arenaM.concat(gameM).map(function (m) {
+            return '<button class="dshb" data-m="' + esc(m.id) + '"' + (m.ok ? "" : " disabled") + '>' + esc(m.label) + (m.ok ? "" : '<small style="display:block;font-size:11px;font-weight:600">zu wenige passende Wörter (' + esc(m.why) + ')</small>') + '</button>';
+          }).join("") + '</div><button class="dshx" data-d="back">← Einheiten ändern</button><button class="dshx" data-d="x" style="margin-top:6px">Abbrechen</button></div>';
+      }
+    }
+    draw(); document.body.appendChild(ov);
+    ov.addEventListener("change", function (e) { var cb = e.target.closest("input[data-u]"); if (!cb) return; sel[cb.getAttribute("data-u")] = cb.checked ? 1 : 0; var sc = ov.querySelector(".dsu"), top = sc ? sc.scrollTop : 0; draw(); sc = ov.querySelector(".dsu"); if (sc) sc.scrollTop = top; });
     ov.addEventListener("click", function (e) {
-      var m = e.target.closest("[data-m]"), mm = m && m.getAttribute("data-m");
-      if (e.target === ov || mm === "x") return ov.remove();
-      if (mm) { ov.remove(); startChallenge(friend, mm); }
+      var d = e.target.closest("[data-d]"), dd = d && d.getAttribute("data-d"), m = e.target.closest("[data-m]"), mm = m && m.getAttribute("data-m");
+      if (e.target === ov || dd === "x") return ov.remove();
+      if (dd === "all") { units.forEach(function (u) { sel[u.id] = 1; }); return draw(); }
+      if (dd === "none") { sel = {}; return draw(); }
+      if (dd === "next") { if (duelDeckOf(chosen()).length >= DUEL_MIN) { step = 2; draw(); } return; }
+      if (dd === "back") { step = 1; return draw(); }
+      if (mm && !m.disabled) { var deck = duelDeckOf(chosen()); ov.remove(); startChallenge(friend, mm, deck); }
     });
   }
-  function duelDeck() {
-    var all = S.pools().all.filter(function (w) { return w.track !== "eigen"; });
-    return all.length >= 12 ? S.shuffle(all.slice()).slice(0, 60) : null;
+  /* Ein Duell spielen: Arena-Modus oder Wortspiel, mit festen Wörtern und fester Startzahl */
+  function playDuel(mode, words, seed, duel, onFinish) {
+    if (isGameMode(mode)) return global.VTG.start(mode, { duel: Object.assign({ words: words, seed: seed }, duel), onFinish: onFinish });
+    global.ARENA.start(mode, { words: words, seed: seed, duel: duel, onFinish: onFinish });
   }
-  function startChallenge(friend, mode) {
-    var deck = duelDeck(); if (!deck) return toast("Dafür fehlen noch Wörter im gewählten Bereich.");
+  function startChallenge(friend, mode, deck) {
+    if (!deck) return duelSheet(friend);   // ohne Wörter erst die Einheiten wählen
+    if (deck.length < DUEL_MIN) return toast("Dafür fehlen noch Wörter in den gewählten Einheiten.");
     var ids = deck.map(function (w) { return w.id; }), seed = Math.floor(Math.random() * 2000000000);
-    global.ARENA.start(mode, { words: deck, seed: seed, duel: { wait: "Herausforderung wird gesendet …" }, onFinish: function (res, show) {
+    playDuel(mode, deck, seed, { wait: "Herausforderung wird gesendet …" }, function (res, show) {
       global.WordySync.social("POST", "/challenges", { to: friend.id, mode: mode, words: ids, seed: seed, score: res.score })
         .then(function () { soc.ts = 0; socLoad(true); planComplete({ act: "duel" }); show("📨 <b>Gesendet!</b> " + esc(friend.name) + " muss jetzt deine <b>" + res.score + "</b> schlagen."); })
         .catch(function (e) { show("⚠️ " + esc(e.message)); });
-    } });
+    });
   }
   function acceptDuel(ch) {
     var words = ch.words.map(function (id) { return S.byId(id); }).filter(Boolean);
     if (words.length < 8) return toast("Die Wörter dieser Herausforderung gibt es in deiner App nicht.");
+    if (isGameMode(ch.mode) && global.VTG.duelCount(ch.mode, words) < global.VTG.duelNeed(ch.mode)) return toast("Für dieses Spiel fehlen dir Wörter dieser Herausforderung. Bitte aktualisiere die App.");
     var other = ch.from;
-    global.ARENA.start(ch.mode, { words: words, seed: ch.seed, duel: { wait: "Dein Ergebnis wird übertragen …", nextLabel: "🔁 Revanche", next: function () { soc.ts = 0; startChallenge(other, ch.mode); } }, onFinish: function (res, show) {
+    playDuel(ch.mode, words, ch.seed, { wait: "Dein Ergebnis wird übertragen …", nextLabel: "🔁 Revanche", next: function () { soc.ts = 0; startChallenge(other, ch.mode, words); } }, function (res, show) {
       global.WordySync.social("POST", "/challenges/" + ch.id + "/result", { score: res.score }).then(function (r) {
         var v = r.view, mine = v.bScore, theirs = v.aScore; soc.ts = 0; planComplete({ act: "duel" });
         show((mine > theirs ? "🏆 <b>Gewonnen!</b>" : mine === theirs ? "🤝 <b>Unentschieden!</b>" : "💪 <b>Knapp verloren.</b>") + " Du <b>" + mine + "</b> : " + theirs + " " + esc(other.name), true);
         if (mine > theirs) try { global.VTC.burst("stars", innerWidth / 2, innerHeight / 3, 30, 1.4); } catch (e) {}
       }).catch(function (e) { show("⚠️ " + esc(e.message)); });
-    } });
+    });
   }
   global.addEventListener("focus", function () { if (socOn()) socLoad(); });
   setInterval(function () { if (socOn() && !document.hidden) socLoad(); }, 120000);
@@ -2454,7 +2516,7 @@
       ov.remove(); try { cb(pick); } catch (x) { try { console.error("leave:", x); } catch (y) {} }
     });
   }
-  var MODE_NAME = { mix: "Daily Challenge", box: "Fehlerkartei", "new": "Neue Wörter", master: "Meistern", sent: "Sätze", verbs: "Unregelmäßige Verben", focus: "Gezielt üben", path: "Lernpfad" };
+  var RUN_NAMES = { mix: "Daily Challenge", box: "Fehlerkartei", "new": "Neue Wörter", master: "Meistern", sent: "Sätze", verbs: "Unregelmäßige Verben", focus: "Gezielt üben", path: "Lernpfad" };
   function parkSession() {
     if (!SS || SS.ended) return false;
     try {
@@ -2462,7 +2524,7 @@
       delete d.station; delete d.pick;
       d.i = SS.answered ? SS.i + 1 : SS.i; d.answered = false;
       d.el = Date.now() - SS.start; d.stationId = SS.station ? SS.station.id : null; d.lopts = lastStartOpts || null;
-      var name = SS.station ? "Lernpfad · Station " + SS.station.n : MODE_NAME[(lastStartOpts && lastStartOpts.focus ? "focus" : SS.mode)] || "Runde";
+      var name = SS.station ? "Lernpfad · Station " + SS.station.n : RUN_NAMES[(lastStartOpts && lastStartOpts.focus ? "focus" : SS.mode)] || "Runde";
       S.resumeSave({ key: "session", kind: "session", title: name, sub: "Aufgabe " + Math.min(d.i + 1, SS.tasks.length) + " von " + SS.tasks.length, data: S.resumePack(d) });
       return true;
     } catch (e) { try { console.error("park:", e); } catch (x) {} return false; }
