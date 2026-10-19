@@ -362,6 +362,7 @@
     if (!ok && readBackup("auto")) { state = Object.assign(freshState(), readBackup("auto").s); restored = true; }
     buildCatalogue(state);
     priceMigrate();
+    rankPickSkip();
     rollDay();
     regenHearts();
     return state;
@@ -847,6 +848,12 @@
      alles andere muss gekauft oder erlernt werden. Rangstufen schalten Artikel im Shop frei (Mindestrang `rank`). */
   function rankGift(i) { checkSets(); }
   /* Rang-Figur zur Wahl: offen ist jede erreichte Stufe, die noch nicht abgeholt wurde (gilt rückwirkend). Wer alle Figuren der Stufe schon hat, bekommt Münzen. */
+  /* Neue Figur in einer Stufe (v2.123): Wer die Stufe schon erreicht hatte, bekommt nachträglich keine Wahl angeboten (Platin II hatte vorher nur das Raketen-Lama) */
+  function rankPickSkip() {
+    if (!state || state.rankPickSkip) return;
+    state.rankPickSkip = 1; var done = state.rankPick || (state.rankPick = {});
+    RANKS.forEach(function (r) { if (r.n === "Platin II" && state.xp >= r.xp && !done[r.n]) done[r.n] = 1; });
+  }
   function rankPicks() {
     var done = (state.rankPick || (state.rankPick = {})), out = [];
     RANKS.forEach(function (r) {

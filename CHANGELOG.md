@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.123.1 – 2026-10-19
+- Fehler behoben: Mit der neuen Figur in Platin II bekamen Kinder, die diesen Rang schon erreicht hatten, nachträglich die Wahl „Raketen-Lama oder Turbo-Gepard“ angeboten. Das gibt es für schon erreichte Ränge jetzt nicht mehr (einmalig beim Start übersprungen); wer Platin II erst später erreicht, bekommt die Wahl wie vorgesehen. Wer die Wahl schon getroffen hat, behält seine Figur.
+- Kein Server-Schritt nötig.
+
 ## 2.123.0 – 2026-10-19
 - Neue seltene Figur **Turbo-Gepard** (350 🪙, Sticker 300 🪙) für Rang Platin II, neben dem Raketen-Lama: goldgelb mit Flecken, Tränenstreifen, Renn-Brille mit rotem Stirnband und weißen Tempostreifen. Ab Platin II hat man dort jetzt die Wahl zwischen Raketen-Lama und Turbo-Gepard; wer Platin II schon erreicht und gewählt hat, kann den Gepard im Shop kaufen.
 - Kein Server-Schritt nötig.
