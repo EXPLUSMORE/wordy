@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.120.2 – 2026-10-19
+- **Zauber-Drop** vorgezogen: Zauber-Eule (legendär), Sternenstaub-Rahmen (legendär), Zauberfunken (Effekt) und Titel „Wortzauberer“ sind ab heute im Shop (statt am 26.10.). Neue Wolke „🔮 Zauber-Drop!“ auf der Startseite führt in Shop › Figuren. Nächster Drop: Eis-Gipfel am Montag, 2.11.
+- Kein Server-Schritt nötig.
+
 ## 2.120.1 – 2026-10-19
 - Sticker in der Kopfzeile noch cooler: stärker gekippt (zickzack), Sonnenbrille auf jedem Sticker, ein Glanzstreifen läuft in Abständen über die Sticker (bei „Bewegung reduzieren“ aus), Aufkleber-Look mit weißem Rand und Schatten.
 - Kein Server-Schritt nötig.

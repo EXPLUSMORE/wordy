@@ -1211,7 +1211,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.120.0";window.WORDY_BUILD="ac9192fcce";</script>
+<script>window.WORDY_VERSION="2.120.1";window.WORDY_BUILD="2815c0fa47";</script>
 </head>
 <body>
 <div id="app">
@@ -6864,7 +6864,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     /* Drop 1 · Cyber: Woche 0 (sofort) – Drop 2 · Ahoi: Woche 1 – Drop 3 · Zauber: Woche 2 – Drop 4 · Eis-Gipfel: Woche 3. Neue Drops hier anhängen. */
     "av:cyberfuchs": 0, "fr:neon": 0, "fx:pixel": 0, "ti:pixel": 0,
     "av:pirat": 1, "fr:pirat": 1, "fx:gold": 1, "ti:schatz": 1,
-    "av:zauber": 2, "fr:sterne": 2, "fx:magie": 2, "ti:zauber": 2,
+    "av:zauber": 1, "fr:sterne": 1, "fx:magie": 1, "ti:zauber": 1,   /* vorgezogen (war Woche 2) */
     "av:yeti": 3, "fr:kristall": 3, "ti:eis": 3,
     "of:dj": 1   /* Drop 5 · Verkleidung: die acht anderen Outfits sind sofort da, der Disco-DJ folgt als Kommt-bald */
   };
@@ -9364,7 +9364,8 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   }
   /* Neuheiten-Wolke auf der Startseite: kündigt ein neues Spiel an. Neues Spiel = Eintrag in NEWS (id = Spiel-ID aus VTG.GAMES, date = Datum der Veröffentlichung).
      Sie verschwindet nach dem ersten Spielen, nach ✕, nach dem Antippen oder nach 14 Tagen (pro Profil in profile.cloudSeen). */
-  var NEWS = [{ id: "verkleidung", icon: "🎭", title: "Neue Outfits!", sub: "Ritter, Ninja, Zauberer … ab in den Shop", date: "2026-10-19", shop: "outfit" },
+  var NEWS = [{ id: "dropzauber", icon: "🔮", title: "Zauber-Drop!", sub: "Zauber-Eule, Sternenstaub & mehr", date: "2026-10-19", shop: "avatar" },
+    { id: "verkleidung", icon: "🎭", title: "Neue Outfits!", sub: "Ritter, Ninja, Zauberer … ab in den Shop", date: "2026-10-19", shop: "outfit" },
     { id: "blast3d", icon: "🛸", title: "Blast 3D", sub: "Weich den Wörtern aus!", date: "2026-10-11" }];
   function newsCloud() {
     var pf = S.state.profile, seen = pf.cloudSeen || {}, ar = S.state.arena || {}, today = S.today();

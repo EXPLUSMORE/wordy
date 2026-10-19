@@ -1472,7 +1472,7 @@
     /* Drop 1 · Cyber: Woche 0 (sofort) – Drop 2 · Ahoi: Woche 1 – Drop 3 · Zauber: Woche 2 – Drop 4 · Eis-Gipfel: Woche 3. Neue Drops hier anhängen. */
     "av:cyberfuchs": 0, "fr:neon": 0, "fx:pixel": 0, "ti:pixel": 0,
     "av:pirat": 1, "fr:pirat": 1, "fx:gold": 1, "ti:schatz": 1,
-    "av:zauber": 2, "fr:sterne": 2, "fx:magie": 2, "ti:zauber": 2,
+    "av:zauber": 1, "fr:sterne": 1, "fx:magie": 1, "ti:zauber": 1,   /* vorgezogen (war Woche 2) */
     "av:yeti": 3, "fr:kristall": 3, "ti:eis": 3,
     "of:dj": 1   /* Drop 5 · Verkleidung: die acht anderen Outfits sind sofort da, der Disco-DJ folgt als Kommt-bald */
   };
