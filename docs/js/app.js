@@ -1989,14 +1989,14 @@
         var r = S.rarityOf(it);
         return '<button class="chip rpk" data-pick="' + esc(it.id) + '" style="min-width:120px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:4px;border-radius:14px">' + itemIcon(it, true) + '<b>' + esc(it.label) + '</b><span class="small muted">' + RAR_NAME[r] + ' · + Sticker</span></button>';
       }).join("") + '</div>' +
-      '<p class="small muted">' + (many ? "Die andere Figur kannst du ab jetzt im Shop kaufen." : "Dazu gibt es den Sticker gratis.") + '</p></div>';
+      '<p class="small muted">' + (many ? "Die andere Figur kannst du ab jetzt im Shop kaufen." : "Den passenden Sticker kannst du im Shop kaufen.") + '</p></div>';
     document.body.appendChild(ov);
     ov.addEventListener("click", function (e) {
       var b = e.target.closest("[data-pick]"); if (!b) return;
       var r = S.rankPickClaim(p.rank, b.getAttribute("data-pick"));
       if (r.error) return toast(r.error);
       try { var rc = b.getBoundingClientRect(); global.VTC.burst("stars", rc.left + rc.width / 2, rc.top, 30, 1.6); if (S.state.settings.audio) global.VTC.sound(S.state.profile.snd, true); } catch (x) {}
-      ov.remove(); renderHeader(); toast("🎁 " + r.item.label + " ist deine! Sticker gratis dazu.", 3600);
+      ov.remove(); renderHeader(); toast("🎁 " + r.item.label + " ist deine!", 3600);
       setTimeout(function () { if (S.rankPicks().length) openRankPick(); else render(); }, 700);
     });
   }

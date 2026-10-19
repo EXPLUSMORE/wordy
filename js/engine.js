@@ -204,9 +204,11 @@
     { id: "fr:kristall",   kind: "frame",  label: "Eiskristall-Rahmen", cost: 500, val: "kristall", rar: "epic" },
     { id: "ti:eis",        kind: "title",  label: "Eisbrecher",      cost: 250, val: "Eisbrecher", rar: "rare" }
   ];
-  /* Sticker: jede Figur gibt es zusätzlich als Aufkleber (halber Preis), die man auf Startseite und Profil klebt */
+  /* Sticker: jede Figur gibt es zusätzlich als Aufkleber (fester Preis je Stufe, nicht mehr gratis zur Figur), die man auf Startseite und Profil klebt */
+  var STICKER_PRICE = { common: 120, rare: 300, epic: 700, legend: 1600 };
   SHOP = SHOP.concat(SHOP.filter(function (a) { return a.kind === "avatar"; }).map(function (a) {
-    return { id: "st:" + a.id.slice(3), kind: "sticker", set: a.set, label: a.label + "-Sticker", cost: a.cost ? Math.max(20, Math.round(a.cost / 20) * 10) : 0, val: a.val, rank: a.rank, pass: a.pass, rar: a.rar };
+    var ra = rarityOf(a);
+    return { id: "st:" + a.id.slice(3), kind: "sticker", set: a.set, label: a.label + "-Sticker", cost: a.cost ? STICKER_PRICE[ra] : 0, val: a.val, rank: a.rank, rar: ra };
   }));
 
   /* ---------- Preise, Sets, Belohnungen ---------- */
@@ -359,7 +361,6 @@
     if (!ok && readBackup("auto")) { state = Object.assign(freshState(), readBackup("auto").s); restored = true; }
     buildCatalogue(state);
     priceMigrate();
-    (state.profile.owned || []).slice().forEach(function (id) { if (id.indexOf("av:") === 0) giveFigure(id); });   // Sticker gratis zu jeder Figur (rückwirkend)
     rollDay();
     regenHearts();
     return state;
@@ -856,9 +857,8 @@
     return out;
   }
   function giveFigure(id) {
-    var it = itemById(id), st = itemById("st:" + id.slice(3));
+    var it = itemById(id);
     if (it && !owns(it)) state.profile.owned.push(it.id);
-    if (st && !owns(st)) state.profile.owned.push(st.id);
   }
   function rankPickClaim(rn, id) {
     var p = rankPicks().filter(function (x) { return x.rank === rn; })[0];
@@ -978,7 +978,6 @@
     (rw.items || []).forEach(function (id) {
       var it = itemById(id); if (!it || owns(it)) return;
       state.profile.owned.push(id); got.push({ id: id, label: it.label, kind: it.kind, val: it.val, rar: rarityOf(it) });
-      if (it.kind === "avatar") { var st = itemById("st:" + id.slice(3)); if (st && !owns(st)) { state.profile.owned.push(st.id); got.push({ id: st.id, label: st.label, kind: "sticker", val: st.val, rar: rarityOf(st) }); } }
     });
     if (rw.slot) { var n = stickerSlots(); if (n < MAX_STICKERS) { state.profile.stickerSlots = n + 1; slot = 1; } else extra = 25; }
     var c = Math.max(0, Math.round(+rw.coins || 0)) + extra; if (c) parentCoins(c);
@@ -1521,7 +1520,6 @@
     var price = priceOf(it);
     if (state.coins < price) return { error: "Dafür fehlen noch " + (price - state.coins) + " Münzen." };
     state.coins -= price; state.profile.owned.push(id);
-    if (it.kind === "avatar") giveFigure(id);   // Sticker gibt es gratis zur Figur
     ev("buy", { id: id, name: it.label || it.id, cost: price });
     if (it.kind === "sticker") { var l = stickers(); l.push(it.id); while (l.length > stickerSlots()) l.shift(); }
     else state.profile[PROFILE_KEY[it.kind]] = it.val;

@@ -9,6 +9,12 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.122.0 – 2026-10-19
+- Sticker sind jetzt eigene Sammelstücke mit festem Preis je Stufe: gewöhnlich 120, selten 300, episch 700, legendär 1.600 🪙 (bisher etwa der halbe Figurenpreis). Der Fuchs-Sticker bleibt gratis.
+- Sticker kommen nicht mehr gratis zur Figur: weder beim Rang-Aufstieg noch beim Kauf oder als Pass-Geschenk. Nur im Willkommenspaket gibt es weiter den Sticker zur gewählten Start-Figur. Bereits vorhandene Sticker bleiben allen Kindern erhalten.
+- Sticker haben keine Pass-Sperre mehr (sonst wären die Pass-Figur-Sticker nie erhältlich); die Rang-Sperre der Figur gilt weiter.
+- Kein Server-Schritt nötig.
+
 ## 2.121.1 – 2026-10-19
 - Wochenpass „Eiswelt“: Ab Woche 2 gibt es keinen Sticker-Platz mehr als Geschenk (nur noch in Woche 1); Münzen, Booster und Gegenstände bleiben. Gilt auch für die Vorlage im Dashboard. Ein Pass, der im Dashboard schon individuell gespeichert wurde, behält seine alten Einstellungen, bis er dort neu gespeichert wird.
 - Kein Server-Schritt nötig (nur falls ein eigener Pass gespeichert ist).
