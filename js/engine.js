@@ -109,6 +109,7 @@
     /* Titel (Begrüßung auf der Startseite, v2.119) */
     { id: "ti:vninja",   kind: "title", label: "Vokabel-Ninja",        cost: 80,   val: "Vokabel-Ninja",        rar: "common" },
     { id: "ti:quassel",  kind: "title", label: "Quasselstrippe",       cost: 80,   val: "Quasselstrippe",       rar: "common" },
+    { id: "ti:klug",     kind: "title", label: "Klugscheißer",         cost: 150,  val: "Klugscheißer",         rar: "rare" },
     { id: "ti:gladiator",kind: "title", label: "Grammatik-Gladiator",  cost: 220,  val: "Grammatik-Gladiator",  rar: "rare" },
     { id: "ti:blitz",    kind: "title", label: "Blitz-Brain",          cost: 200,  val: "Blitz-Brain",          rar: "rare" },
     { id: "ti:wolf",     kind: "title", label: "Wortwolf",             cost: 250,  val: "Wortwolf",             rar: "rare" },

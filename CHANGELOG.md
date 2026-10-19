@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.119.1 – 2026-10-19
+- Neuer Titel **Klugscheißer** (selten, 150 🪙).
+- Kein Server-Schritt nötig.
+
 ## 2.119.0 – 2026-10-19
 - Titel stehen jetzt in der Begrüßung auf der Startseite: „Hallo [Titel] Name“, als farbiges Schild nach Stufe (gewöhnlich grau-blau, selten blau mit Leuchten, episch violett mit Leuchten, legendär goldglänzend). Die Zeile schrumpft automatisch, damit Titel und Name immer in eine Zeile passen.
 - Wer keinen Titel gekauft hat, bekommt einen Rangtitel (Wort-Rookie, Entdecker, Wort-Profi, Wort-Meister, Wort-Held, Wort-Elite, Wort-Champion, Wort-Legende, Unreal-Genie), damit ihn alle sehen.
