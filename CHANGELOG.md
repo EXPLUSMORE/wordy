@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.123.2 – 2026-10-19
+- Turbo-Gepard ist jetzt **episch** (700 🪙, Sticker 700 🪙) statt selten, passend zum Raketen-Lama in Platin II.
+- Kein Server-Schritt nötig.
+
 ## 2.123.1 – 2026-10-19
 - Fehler behoben: Mit der neuen Figur in Platin II bekamen Kinder, die diesen Rang schon erreicht hatten, nachträglich die Wahl „Raketen-Lama oder Turbo-Gepard“ angeboten. Das gibt es für schon erreichte Ränge jetzt nicht mehr (einmalig beim Start übersprungen); wer Platin II erst später erreicht, bekommt die Wahl wie vorgesehen. Wer die Wahl schon getroffen hat, behält seine Figur.
 - Kein Server-Schritt nötig.

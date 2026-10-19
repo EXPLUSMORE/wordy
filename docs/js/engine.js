@@ -89,7 +89,7 @@
     { id: "av:fnelite",    kind: "avatar", set: "fn", label: "Elite-Kristall", cost: 800,  val: "svg:fnelite",    rank: "Elite" },
     { id: "av:fnchamp",    kind: "avatar", set: "fn", label: "Champion-Kristall", cost: 1500, val: "svg:fnchamp", rank: "Champion" },
     { id: "av:fnkristall", kind: "avatar", set: "fn", label: "Kristall-Lama",  cost: 1500, val: "svg:fnkristall", rank: "Unreal" },
-    { id: "av:gepard",      kind: "avatar", label: "Turbo-Gepard",   cost: 350,  val: "svg:gepard",     rank: "Platin II", rar: "rare" },
+    { id: "av:gepard",      kind: "avatar", label: "Turbo-Gepard",   cost: 700,  val: "svg:gepard",     rank: "Platin II", rar: "epic" },
     { id: "av:fnrakete",   kind: "avatar", set: "fn", label: "Raketen-Lama",   cost: 700,  val: "svg:fnrakete",   rank: "Platin II", rar: "epic" },
     { id: "av:fngold",     kind: "avatar", set: "fn", label: "Goldkristall-Lama", cost: 2200, val: "svg:fngold",  rank: "Unreal Gold", rar: "legend" },
     { id: "av:fnunreal",   kind: "avatar", set: "fn", label: "Unreal-Kristall", cost: 2500, val: "svg:fnunreal",  rank: "Unreal" },
