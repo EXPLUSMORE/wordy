@@ -60,9 +60,10 @@ header#top{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:10px 1
   border-bottom:1px solid var(--line)}
 /* schmale Handys: Kopfzeile schrumpft statt über den Rand zu ragen (Herzen rechts) */
 header#top>*{min-width:0}header#top .stat{white-space:nowrap}header#top .avatar{flex:0 0 auto}
-header#top>div:nth-child(2){flex:0 1 auto;overflow:hidden}header#top #hRank{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-header#top .spacer{flex:1 1 0;min-width:0}header#top .hearts{flex:0 0 auto}
+header#top>div:nth-child(2){flex:0 0 auto;overflow:hidden;max-width:46vw}header#top #hRank{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+header#top .spacer{flex:1 1 0;min-width:0}header#top .hstk{flex:0 1 auto;min-width:0;overflow:hidden;display:flex;align-items:center;cursor:pointer;padding:0 2px}header#top .hstk .stk+.stk{margin-left:-11px}header#top .hstk .stk{filter:drop-shadow(0 2px 2px rgba(20,33,61,.45));transition:transform .15s}header#top .hstk:active .stk{transform:scale(1.08) rotate(0)}header#top .hstk .stk:nth-child(odd){translate:0 -2px}header#top .hstk .stk:nth-child(even){translate:0 4px}@media (max-width:394px){header#top .hstk .stk:nth-child(n+5){display:none}}@media (max-width:360px){header#top .hstk .stk:nth-child(n+4){display:none}}@media (max-width:339px){header#top .hstk .stk:nth-child(n+3){display:none}}header#top .hearts{flex:0 0 auto}
 @media (max-width:400px){header#top{gap:6px;padding:8px 10px}header#top .hearts{font-size:12px;letter-spacing:0}header#top .stat{font-size:12px}}
+@media (max-width:360px){header#top .hstk .stk{width:24px!important;height:24px!important}header#top .hstk .stk+.stk{margin-left:-10px}}
 @media (max-width:340px){header#top{gap:4px;padding:8px 8px}header#top .hearts{font-size:11px}header#top .avatar{width:34px;height:34px;font-size:20px}}
 main{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;padding:16px 16px 28px;-webkit-overflow-scrolling:touch}
 nav#tabs{flex:0 0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:2px;
@@ -867,7 +868,7 @@ details.fold>.fbody{padding:2px 0 14px}
 .hhtop{position:relative;z-index:3;padding:16px 16px 0;max-width:68%}
 .hhdate{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;opacity:.9;text-shadow:0 1px 0 rgba(0,0,0,.35)}
 .hh h1{margin:4px 0 4px;font-size:26px;line-height:1.1;color:#fff;text-shadow:0 3px 0 #14213d}
-.hh h1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hh .hhtop{max-width:94%}.hh .stk-corner~.hhtop{max-width:68%}
+.hh h1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hh .hhtop{max-width:94%}
 .hh h1 .ttl{display:inline-block;vertical-align:.1em;margin:0 .1em 0 .05em;padding:.06em .5em .1em;border-radius:999px;font-size:.6em;font-weight:900;letter-spacing:.02em;color:#fff;text-shadow:0 1px 0 rgba(20,33,61,.5);border:2px solid #14213d}
 .hh h1 .ttl.common{background:linear-gradient(#8fa6cf,#5f7aa6)}.hh h1 .ttl.auto{background:rgba(20,33,61,.55);border-color:rgba(255,255,255,.35)}
 .hh h1 .ttl.rare{background:linear-gradient(#5cb8ff,#1f6fe0);box-shadow:0 0 10px rgba(70,160,255,.8)}
@@ -1205,6 +1206,7 @@ details.fold>.fbody{padding:2px 0 14px}
       <div class="eyebrow" id="hRank">Bronze I</div>
       <div class="stat"><b id="hXp" class="tnum">0</b> XP</div>
     </div>
+    <div class="hstk" id="hStk" hidden title="Deine Sticker"></div>
     <div class="spacer"></div>
     <div class="stat" id="hBoost" title="XP-Booster: doppelte XP" hidden style="color:var(--gold,#c98a00);font-weight:800">⚡</div>
     <div class="stat" title="Münzen">🪙 <b id="hCoins" class="tnum">0</b></div>

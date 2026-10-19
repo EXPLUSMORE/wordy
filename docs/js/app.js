@@ -289,6 +289,7 @@
     $("#hAvatar").title = pn ? pn.name : "";
     $("#hRank").textContent = r.rank.n + (st.profile.title ? " · " + st.profile.title : "");
     $("#hXp").textContent = st.xp;
+    var hs = $("#hStk"); if (hs) { var sh = S.stickers().length ? placedStickers(30) : ""; hs.innerHTML = sh; hs.hidden = !sh; }   // Sticker immer oben neben den XP
     $("#hCoins").textContent = st.coins;
     $("#hStreak").textContent = st.streak.count;
     var hEl = $("#hHearts");
@@ -1001,7 +1002,6 @@
     var rn = r.rank ? r.rank.n : "", xpPct = r.next ? Math.min(100, Math.round(r.into * 100 / Math.max(1, r.span))) : 100;
     var html = '<div class="stack">';
     html += '<section class="hh sky-' + sky + '"><div class="hhsky"><i class="hhsun"></i><i class="hhcl c1"></i><i class="hhcl c2"></i><i class="hhst"></i></div>' +
-      (S.stickers().length ? '<div class="stk-corner">' + placedStickers(46) + '</div>' : "") +
       '<div class="hhtop"><div class="hhdate">' + esc(S.today().split("-").reverse().join(".")) + ' · ' + (biz ? "Business English" : "Schule") + '</div>' +
       '<h1>' + greet + '</h1><p class="hhtip">' + esc(tip) + '</p></div>' +
       '<div class="hhgoal"><div class="hhring" style="--p:' + pct + '"><b class="tnum">' + pct + '%</b></div><small>Tagesziel</small></div>' +
@@ -3599,6 +3599,8 @@
     else viewParent();
   }
 
+  var hStkEl = $("#hStk");
+  if (hStkEl) hStkEl.addEventListener("click", function () { if (SS) return; tab = "beute"; beuteSeg = "shop"; shopTab = "sticker"; render(); view.scrollTop = 0; });
   global.VTUI = {
     speechText: speechClean,
     speak: function (t) { speak(t); },

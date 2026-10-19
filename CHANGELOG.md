@@ -9,6 +9,11 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.120.0 – 2026-10-19
+- Sticker sitzen jetzt in der Kopfzeile neben den XP, damit man sie immer sieht (vorher nur im Bild der Startseite). Sie sind als kleiner Fächer angeordnet (leicht verdreht, abwechselnd höher und tiefer, mit Schatten). Auf schmalen Handys zeigt die Zeile weniger Sticker (ab 395 px alle 5, bis 360 px 4, darunter 3, unter 340 px 2), damit nichts abgeschnitten wird. Ein Tipp auf die Sticker öffnet Shop › Sticker.
+- Das Sticker-Eck im Bild der Startseite entfällt; die Begrüßung hat dadurch mehr Platz.
+- Kein Server-Schritt nötig.
+
 ## 2.119.1 – 2026-10-19
 - Neuer Titel **Klugscheißer** (selten, 150 🪙).
 - Kein Server-Schritt nötig.
