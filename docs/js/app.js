@@ -985,11 +985,10 @@
   }
   function dayDiff2(a, b) { return Math.round((new Date(b + "T00:00:00") - new Date(a + "T00:00:00")) / 864e5); }
   /* Titel in der Begrüßung: „Hallo [Titel] Name“. Ohne gekauften Titel gibt es einen Rangtitel, damit es alle sehen. */
-  var RANK_TITLE = { bronze: "Wort-Rookie", silber: "Entdecker", gold: "Wort-Profi", platin: "Wort-Meister", diamant: "Wort-Held", elite: "Wort-Elite", champion: "Wort-Champion", unreal: "Wort-Legende", "unreal-gold": "Unreal-Genie" };
-  function titleChip(r) {
-    var pf = S.state.profile, it = pf.title ? S.SHOP.filter(function (x) { return x.kind === "title" && x.val === pf.title; })[0] : null;
-    var txt = pf.title || RANK_TITLE[r.rank.t] || "Wort-Rookie", rar = it ? S.rarityOf(it) : "common";
-    return '<span class="ttl ' + rar + (it ? "" : " auto") + '">' + esc(txt) + '</span> ';
+  function titleChip() {   // nur der gewählte Titel; ohne Titel keine Marke
+    var pf = S.state.profile; if (!pf.title) return "";
+    var it = S.SHOP.filter(function (x) { return x.kind === "title" && x.val === pf.title; })[0], rar = it ? S.rarityOf(it) : "common";
+    return '<span class="ttl ' + rar + '">' + esc(pf.title) + '</span> ';
   }
   /* Begrüßung auf eine Zeile einpassen (Schrift schrumpft bei langem Titel und Namen) */
   function fitGreet() {
@@ -1147,8 +1146,8 @@
     if (f.xp == null) return "";
     var r = S.rankOf(f.xp), pc = r.next ? Math.round(r.into * 100 / r.span) : 100;
     var ti = f.title ? S.SHOP.filter(function (x) { return x.kind === "title" && x.val === f.title; })[0] : null,
-      chip = '<span class="ttl ' + (ti ? S.rarityOf(ti) : f.title ? "common" : "auto") + '">' + esc(f.title || RANK_TITLE[r.rank.t] || "Wort-Rookie") + '</span>';
-    return '<div class="small" style="margin-top:2px"><b>' + esc(r.rank.n) + '</b> <span class="muted tnum">· ' + f.xp.toLocaleString("de-DE") + ' XP</span></div><div style="margin-top:3px">' + chip + '</div>' +
+      chip = f.title ? '<div style="margin-top:3px"><span class="ttl ' + (ti ? S.rarityOf(ti) : "common") + '">' + esc(f.title) + '</span></div>' : "";
+    return '<div class="small" style="margin-top:2px"><b>' + esc(r.rank.n) + '</b> <span class="muted tnum">· ' + f.xp.toLocaleString("de-DE") + ' XP</span></div>' + chip +
       '<div class="bar" style="margin-top:4px"><i style="width:' + pc + '%"></i></div>' +
       '<div class="small muted tnum" style="margin-top:3px;font-size:11px;text-align:left">' + (r.next ? 'noch ' + (r.next.xp - f.xp).toLocaleString("de-DE") + ' bis ' + esc(r.next.n) : 'Höchster Rang') + '</div>';
   }

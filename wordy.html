@@ -884,12 +884,11 @@ details.fold>.fbody{padding:2px 0 14px}
 .hh h1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hh .hhtop{max-width:94%}
 .hh h1 .ttl{display:inline-block;vertical-align:.1em;margin:0 .1em 0 .05em;padding:.06em .5em .1em;border-radius:999px;font-size:.6em;font-weight:900;letter-spacing:.02em;color:#fff;text-shadow:0 1px 0 rgba(20,33,61,.5);border:2px solid #14213d}
 .drow .ttl{display:inline-block;padding:1px 9px 2px;border-radius:999px;font-size:11px;font-weight:900;letter-spacing:.02em;color:#fff;text-shadow:0 1px 0 rgba(20,33,61,.5);border:1.5px solid #14213d}
-.drow .ttl.common{background:linear-gradient(#8fa6cf,#5f7aa6)}.drow .ttl.auto{background:rgba(20,33,61,.55);border-color:rgba(255,255,255,.35)}
+.drow .ttl.common{background:linear-gradient(#8fa6cf,#5f7aa6)}
 .drow .ttl.rare{background:linear-gradient(#5cb8ff,#1f6fe0);box-shadow:0 0 8px rgba(70,160,255,.7)}.drow .ttl.epic{background:linear-gradient(#d2a0ff,#8a3de0);box-shadow:0 0 9px rgba(190,110,255,.8)}
 .drow .ttl.legend{background:linear-gradient(100deg,#ffe58a,#ffb61e 45%,#ffe58a 55%,#ffb61e);background-size:220% 100%;color:#3a2000;text-shadow:none;box-shadow:0 0 10px rgba(255,200,70,.9);animation:ttlSh 3s linear infinite}
 @media (prefers-reduced-motion:reduce){.drow .ttl.legend{animation:none}}
-.hh h1 .ttl.common{background:linear-gradient(#8fa6cf,#5f7aa6)}.hh h1 .ttl.auto{background:rgba(20,33,61,.55);border-color:rgba(255,255,255,.35)}
-.hh h1 .ttl.rare{background:linear-gradient(#5cb8ff,#1f6fe0);box-shadow:0 0 10px rgba(70,160,255,.8)}
+.hh h1 .ttl.common{background:linear-gradient(#8fa6cf,#5f7aa6)}.hh h1 .ttl.rare{background:linear-gradient(#5cb8ff,#1f6fe0);box-shadow:0 0 10px rgba(70,160,255,.8)}
 .hh h1 .ttl.epic{background:linear-gradient(#d2a0ff,#8a3de0);box-shadow:0 0 12px rgba(190,110,255,.9)}
 .hh h1 .ttl.legend{background:linear-gradient(100deg,#ffe58a,#ffb61e 45%,#ffe58a 55%,#ffb61e);background-size:220% 100%;color:#3a2000;text-shadow:none;box-shadow:0 0 14px rgba(255,200,70,.95);animation:ttlSh 3s linear infinite}
 @keyframes ttlSh{to{background-position:-220% 0}}@media (prefers-reduced-motion:reduce){.hh h1 .ttl.legend{animation:none}}
@@ -1219,7 +1218,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.124.2";window.WORDY_BUILD="f894544d58";</script>
+<script>window.WORDY_VERSION="2.124.3";window.WORDY_BUILD="116e1df418";</script>
 </head>
 <body>
 <div id="app">
@@ -9458,11 +9457,10 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   }
   function dayDiff2(a, b) { return Math.round((new Date(b + "T00:00:00") - new Date(a + "T00:00:00")) / 864e5); }
   /* Titel in der Begrüßung: „Hallo [Titel] Name“. Ohne gekauften Titel gibt es einen Rangtitel, damit es alle sehen. */
-  var RANK_TITLE = { bronze: "Wort-Rookie", silber: "Entdecker", gold: "Wort-Profi", platin: "Wort-Meister", diamant: "Wort-Held", elite: "Wort-Elite", champion: "Wort-Champion", unreal: "Wort-Legende", "unreal-gold": "Unreal-Genie" };
-  function titleChip(r) {
-    var pf = S.state.profile, it = pf.title ? S.SHOP.filter(function (x) { return x.kind === "title" && x.val === pf.title; })[0] : null;
-    var txt = pf.title || RANK_TITLE[r.rank.t] || "Wort-Rookie", rar = it ? S.rarityOf(it) : "common";
-    return '<span class="ttl ' + rar + (it ? "" : " auto") + '">' + esc(txt) + '</span> ';
+  function titleChip() {   // nur der gewählte Titel; ohne Titel keine Marke
+    var pf = S.state.profile; if (!pf.title) return "";
+    var it = S.SHOP.filter(function (x) { return x.kind === "title" && x.val === pf.title; })[0], rar = it ? S.rarityOf(it) : "common";
+    return '<span class="ttl ' + rar + '">' + esc(pf.title) + '</span> ';
   }
   /* Begrüßung auf eine Zeile einpassen (Schrift schrumpft bei langem Titel und Namen) */
   function fitGreet() {
@@ -9620,8 +9618,8 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (f.xp == null) return "";
     var r = S.rankOf(f.xp), pc = r.next ? Math.round(r.into * 100 / r.span) : 100;
     var ti = f.title ? S.SHOP.filter(function (x) { return x.kind === "title" && x.val === f.title; })[0] : null,
-      chip = '<span class="ttl ' + (ti ? S.rarityOf(ti) : f.title ? "common" : "auto") + '">' + esc(f.title || RANK_TITLE[r.rank.t] || "Wort-Rookie") + '</span>';
-    return '<div class="small" style="margin-top:2px"><b>' + esc(r.rank.n) + '</b> <span class="muted tnum">· ' + f.xp.toLocaleString("de-DE") + ' XP</span></div><div style="margin-top:3px">' + chip + '</div>' +
+      chip = f.title ? '<div style="margin-top:3px"><span class="ttl ' + (ti ? S.rarityOf(ti) : "common") + '">' + esc(f.title) + '</span></div>' : "";
+    return '<div class="small" style="margin-top:2px"><b>' + esc(r.rank.n) + '</b> <span class="muted tnum">· ' + f.xp.toLocaleString("de-DE") + ' XP</span></div>' + chip +
       '<div class="bar" style="margin-top:4px"><i style="width:' + pc + '%"></i></div>' +
       '<div class="small muted tnum" style="margin-top:3px;font-size:11px;text-align:left">' + (r.next ? 'noch ' + (r.next.xp - f.xp).toLocaleString("de-DE") + ' bis ' + esc(r.next.n) : 'Höchster Rang') + '</div>';
   }

@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.124.3 – 2026-10-19
+- Titel: Die automatischen Rang-Titel („Wort-Rookie“, „Wort-Profi“, „Wort-Held“ …) gibt es nicht mehr. Ohne gewählten Titel steht in der Begrüßung nur „Hallo Name“ und bei Freunden keine Titel-Marke. Titel gibt es nur noch aus dem Shop.
+- Kein Server-Schritt nötig.
+
 ## 2.124.2 – 2026-10-19
 - Spielen › Freunde: Die Figur des Freundes ist jetzt immer die **aktuell gewählte** (kommt mit dem Lernstand-Abgleich, nicht erst, wenn der Freund selbst die Freunde-Seite öffnet), und ein **gewählter Rahmen** wird um die Figur gezeigt (Gold, Neon, Regenbogen, Feuer, Eis …). Nur bei bestätigten Freunden. **Server-Schritt nötig** (derselbe Neustart wie bei 2.124.0/2.124.1).
 
