@@ -9,6 +9,12 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.125.0 – 2026-10-20
+- **Halloween-Look** (erstes Saison-Thema): Über dem gewählten Design liegen Fledermäuse, Spinnen an schaukelnden Fäden, große Spinnennetze (Karten, Startbühne), Friedhof mit Grabsteinen, Kreuzen und totem Baum samt drei flackernden Kürbissen auf der Menüleiste, Nebel am unteren Rand und warmes Kürbis-Orange auf Aubergine-Nacht (Knöpfe, Tabs, Balken, Tagesaufgabe). Alles bewegt sich leicht; bei „Bewegung reduzieren“ des Geräts steht alles still.
+- **Gruselklänge**: leiser Klangteppich aus dunklem Brummen, Wind, Spieluhr-Melodie mit Echo und ab und zu einer Eule, komplett per Web Audio erzeugt (keine Dateien). Er läuft nur bei aktivem Halloween-Look, wenn „Ton“ an ist, nie in Lernrunden und Spielen und nicht, wenn die App im Hintergrund ist; er startet erst nach der ersten Berührung.
+- Einstellung unter Profil › Design › „Halloween-Look“: **Automatisch** (15.10. bis 2.11.), Immer an, Aus; dazu Schalter „Gruselklänge“.
+- Technik: `tools/season_halloween.py` erzeugt den Look in `index.html` (Block `SEASON-HALLOWEEN`), `html[data-season="halloween"]`, `VTC.applyLook(..., season)`, `VTC.ambientStart/ambientStop` in cosmetics.js, `seasonNow()/ambientSync()` in app.js. Kein Server-Schritt nötig.
+
 ## 2.124.3 – 2026-10-19
 - Titel: Die automatischen Rang-Titel („Wort-Rookie“, „Wort-Profi“, „Wort-Held“ …) gibt es nicht mehr. Ohne gewählten Titel steht in der Begrüßung nur „Hallo Name“ und bei Freunden keine Titel-Marke. Titel gibt es nur noch aus dem Shop.
 - Kein Server-Schritt nötig.

@@ -293,6 +293,22 @@
   }
   global.addEventListener("resize", fitStickers);
   if (global.document && document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fitStickers(); });
+  /* Saison-Look (Halloween): Einstellung "auto" gilt vom 15.10. bis 2.11., "on" immer, "off" nie */
+  function seasonNow() {
+    var m = S.state.settings.season || "auto"; if (m === "off") return ""; if (m === "on") return "halloween";
+    var d = new Date(), md = (d.getMonth() + 1) * 100 + d.getDate(); return md >= 1015 && md <= 1102 ? "halloween" : "";
+  }
+  /* Leiser Halloween-Klangteppich: nur mit Saison-Look, Ton an, Gruselklängen an, außerhalb von Lernrunden und Spielen, solange die App sichtbar ist */
+  function ambientSync() {
+    var V = global.VTC; if (!V || !V.ambientStart) return;
+    var want = seasonNow() === "halloween" && S.state.settings.audio !== false && S.state.settings.seasonSound !== false && sessionEl.hidden && !document.hidden && heard;
+    if (want && !V.ambientOn()) V.ambientStart(); else if (!want && V.ambientOn()) V.ambientStop();
+  }
+  var heard = false;
+  document.addEventListener("pointerdown", function () { heard = true; ambientSync(); }, { passive: true });
+  document.addEventListener("keydown", function () { heard = true; }, { passive: true });
+  document.addEventListener("visibilitychange", ambientSync);
+  setInterval(ambientSync, 1500);
   function renderHeader() {
     var st = S.state, r = S.rankOf(st.xp);
     $("#hAvatar").innerHTML = avatarHtml(st.profile.avatar);
@@ -307,7 +323,8 @@
     var hEl = $("#hHearts");
     if (!st.settings.hearts) { hEl.textContent = "∞"; hEl.title = "Ohne Herzen"; }
     else { S.regenHearts(); hEl.setAttribute("data-n", st.hearts); hEl.innerHTML = "<span style='color:var(--bad)'>" + "♥".repeat(st.hearts) + "</span><span style='color:var(--line)'>" + "♥".repeat(5 - st.hearts) + "</span>"; }
-    global.VTC.applyLook(st.profile, st.settings.themeMode, st.settings.design);
+    global.VTC.applyLook(st.profile, st.settings.themeMode, st.settings.design, seasonNow());
+    ambientSync();
     var hb = $("#hBoost");
     if (hb) {
       var bs = st.path && st.path.boost, on = !!(bs && bs.on && bs.left > 0);
@@ -1419,11 +1436,17 @@
         '<section class="card"><div class="eyebrow">So funktioniert der Monatspass</div><p class="small muted" style="margin:6px 0 0">Der Pass läuft einen Monat in vier Wochen plus Finale. Jede Woche zählt, an wie vielen Tagen du dein Tagesziel schaffst, und jeder Tag gibt einen Stempel. Ein verpasster Tag pro Woche zählt als Joker mit. Sind genug Tage zusammen, öffnest du die Wochen-Beute mit Figur, Tanz, Sticker und Münzen. Schon ab 3 Tagen gibt es Bronze, bei 5 Silber, bei 7 Gold, jeweils mit Münzen. Mit doppeltem Tagesziel holst du einen verpassten Tag nach, ein Crew-Wochenziel gibt Bonusmünzen, und nächste Woche wartet ein geheimes Geschenk. Alle vier Wochen geschafft? Dann wartet das Finale.</p></section></div>';
     }
   }
+  function seasonCard() {
+    var m = S.state.settings.season || "auto", on = seasonNow() === "halloween", snd = S.state.settings.seasonSound !== false;
+    return '<section class="card"><div class="eyebrow">🎃 Halloween-Look</div><p class="small muted" style="margin:4px 0 10px">Fledermäuse, Spinnen, Friedhof und Kürbisse über deinem Design. „Automatisch“ gilt vom 15. Oktober bis 2. November.' + (on ? ' <b>Gerade aktiv.</b>' : '') + '</p>' +
+      '<div class="row wrap" style="gap:8px">' + [["auto", "Automatisch"], ["on", "Immer an"], ["off", "Aus"]].map(function (x) { return '<button class="chip" data-act="setseason" data-v="' + x[0] + '" aria-pressed="' + (m === x[0]) + '">' + x[1] + (m === x[0] ? " ✓" : "") + '</button>'; }).join("") + '</div>' +
+      '<div class="row" style="gap:8px;margin-top:12px;align-items:center"><button class="chip" data-act="seasonsound" aria-pressed="' + snd + '">🔊 Gruselklänge ' + (snd ? "an" : "aus") + '</button><span class="small muted">leise Hintergrundmusik, nur wenn „Ton“ an ist und nicht beim Üben</span></div></section>';
+  }
   function designCard() {
     var cur = S.state.settings.design || "gold";
     return '<section class="card"><div class="eyebrow">🎨 Design</div><p class="small muted" style="margin:4px 0 10px">Such dir aus, wie Wordy aussieht. Du kannst jederzeit wechseln.</p><div class="dsgrid">' + global.VTC.DESIGNS.map(function (d) {
       return '<button class="dstile" data-act="setdesign" data-d="' + d[0] + '" aria-pressed="' + (cur === d[0]) + '"><i style="background:' + d[3] + '"></i><b>' + d[1] + (cur === d[0] ? " ✓" : "") + '</b><small>' + d[2] + '</small></button>';
-    }).join("") + '</div><p class="small muted" style="margin:10px 0 0">„Hell“ oder „Dunkel“ stellst du unter Ton &amp; Aussehen ein (gilt für Nachtgold). Die Shop-Farbwelten gelten im Design „Klassisch“.</p></section>';
+    }).join("") + '</div><p class="small muted" style="margin:10px 0 0">„Hell“ oder „Dunkel“ stellst du unter Ton &amp; Aussehen ein (gilt für Nachtgold). Die Shop-Farbwelten gelten im Design „Klassisch“.</p></section>' + seasonCard();
   }
   function profileCard() {
     var st = S.state, r = S.rankOf(st.xp), pn = playerName(), pf = st.profile, xpPct = r.next ? Math.min(100, Math.round(r.into * 100 / Math.max(1, r.span))) : 100;
@@ -3456,7 +3479,9 @@
     else if (a === "crewcheer") { crewDo("/crew/cheer", { to: +act.getAttribute("data-id"), emoji: act.getAttribute("data-e") }, function () { toast("Angefeuert " + act.getAttribute("data-e")); }); }
     else if (a === "clsjoin") { var cc = $("#clsCode"); if (cc && cc.value.trim()) clsDo("/class/join", { code: cc.value }, function (r) { toast("Anfrage an " + r.name + " gesendet. Jetzt müssen deine Eltern zustimmen."); }); }
     else if (a === "clsleave") { if (confirm("Wirklich aus der Klasse austreten?")) clsDo("/class/leave", {}, function () { toast("Du bist nicht mehr in der Klasse."); }); }
-    else if (a === "setdesign") { st.settings.design = act.getAttribute("data-d"); S.save(true); global.VTC.applyLook(st.profile, st.settings.themeMode, st.settings.design); render(); }
+    else if (a === "setdesign") { st.settings.design = act.getAttribute("data-d"); S.save(true); global.VTC.applyLook(st.profile, st.settings.themeMode, st.settings.design, seasonNow()); render(); }
+    else if (a === "setseason") { st.settings.season = act.getAttribute("data-v"); S.save(true); heard = true; renderHeader(); render(); }
+    else if (a === "seasonsound") { st.settings.seasonSound = st.settings.seasonSound === false; S.save(true); heard = true; ambientSync(); render(); }
     else if (a === "crewleave") { if (confirm("Crew wirklich verlassen?")) crewDo("/crew/leave", {}, function () { toast("Du hast die Crew verlassen."); }); }
     else if (a === "crewclaim") {
       var rect = act.getBoundingClientRect();

@@ -199,15 +199,16 @@
   /* mode: "auto" (folgt dem Gerät), "light" oder "dark" */
   var DESIGNS = [["gold", "Nachtgold", "Dunkelblau mit Gold, hell auch cremefarben", "linear-gradient(135deg,#0E1320 40%,#E9BD62)"], ["sun", "Sonnenschein", "Warm, hell und bunt", "linear-gradient(135deg,#FFE9B8,#FF7A3D)"], ["aurora", "Aurora", "Nachthimmel mit Polarlicht", "linear-gradient(135deg,#0A0F2C 30%,#5CF2C0 75%,#9A64FF)"], ["klassisch", "Klassisch", "Das bisherige Papier-Design", "linear-gradient(135deg,#EEF2F8,#1E6273)"]];
   var BAR = { gold: ["#10162A", "#F6F1E6"], sun: ["#FFF4DC"], aurora: ["#0A0F2C"], klassisch: ["#EEF2F8"] };
-  function applyLook(p, mode, design) {
+  function applyLook(p, mode, design, season) {
     var root = document.documentElement;
+    if (season) root.setAttribute("data-season", season); else root.removeAttribute("data-season");
     design = design || "gold";
     if (design === "klassisch") { root.removeAttribute("data-design"); root.removeAttribute("data-x"); }
     else { root.setAttribute("data-design", design); root.setAttribute("data-x", "1"); }
     try {   // Farbe der Browserleiste
       var dark = design === "aurora" || (design === "gold" && (mode === "dark" || (mode !== "light" && global.matchMedia && global.matchMedia("(prefers-color-scheme: dark)").matches)));
       var m = document.querySelector('meta[name="theme-color"]'); if (!m) { m = document.createElement("meta"); m.setAttribute("name", "theme-color"); document.head.appendChild(m); }
-      m.setAttribute("content", design === "gold" ? (dark ? BAR.gold[0] : BAR.gold[1]) : (BAR[design] || BAR.klassisch)[0]);
+      m.setAttribute("content", season === "halloween" ? "#180A24" : design === "gold" ? (dark ? BAR.gold[0] : BAR.gold[1]) : (BAR[design] || BAR.klassisch)[0]);
     } catch (e) {}
     if (mode === "light" || mode === "dark") root.setAttribute("data-theme", mode); else root.removeAttribute("data-theme");
     root.setAttribute("data-accent", (p && p.theme) || "paper");
@@ -295,6 +296,61 @@
     var a = ctx(); if (!a) return;
     if (a.state === "suspended") { try { a.resume(); } catch (e) {} }
     (ok ? set.ok : set.no).forEach(function (n) { tone(n[0], n[1], n[2], n[3], ok ? .13 : .1); });
+  }
+
+
+  /* ---------- Halloween-Klangteppich (Web Audio, leise, ohne Dateien): Brummen, Wind, Spieluhr, ab und zu eine Eule ---------- */
+  var amb = null;
+  var NOTES = [220, 261.6, 293.7, 329.6, 392, 440, 523.3, 587.3];   // A-Moll-Pentatonik und Terz
+  function ambientStart() {
+    if (amb) return true;
+    var a = ctx(); if (!a) return false;
+    if (a.state === "suspended") { try { a.resume(); } catch (e) {} }
+    var m = a.createGain(); m.gain.value = 0.0001; m.connect(a.destination);
+    m.gain.exponentialRampToValueAtTime(0.5, a.currentTime + 4);
+    var echo = a.createDelay(1.2), fb = a.createGain(), wet = a.createGain(); echo.delayTime.value = 0.46; fb.gain.value = 0.38; wet.gain.value = 0.5;
+    echo.connect(fb); fb.connect(echo); echo.connect(wet); wet.connect(m);
+    var nodes = [], timers = [];
+    function osc(f, type, vol, lfoHz, lfoDepth) {
+      var o = a.createOscillator(), g = a.createGain(); o.type = type; o.frequency.value = f; g.gain.value = vol; o.connect(g); g.connect(m); o.start(); nodes.push(o);
+      if (lfoHz) { var l = a.createOscillator(), lg = a.createGain(); l.frequency.value = lfoHz; lg.gain.value = lfoDepth; l.connect(lg); lg.connect(g.gain); l.start(); nodes.push(l); }
+    }
+    osc(55, "sine", 0.05, 0.07, 0.025); osc(82.4, "triangle", 0.025, 0.05, 0.015); osc(110.4, "sine", 0.018, 0.09, 0.012);   // dunkles Brummen, atmet langsam
+    var len = a.sampleRate * 2, buf = a.createBuffer(1, len, a.sampleRate), d = buf.getChannelData(0); for (var i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+    var ns = a.createBufferSource(); ns.buffer = buf; ns.loop = true;
+    var bp = a.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = 520; bp.Q.value = 1.4;
+    var ng = a.createGain(); ng.gain.value = 0.02; ns.connect(bp); bp.connect(ng); ng.connect(m); ns.start(); nodes.push(ns);
+    var wl = a.createOscillator(), wg = a.createGain(); wl.frequency.value = 0.08; wg.gain.value = 260; wl.connect(wg); wg.connect(bp.frequency); wl.start(); nodes.push(wl);   // Wind heult langsam auf und ab
+    var wl2 = a.createOscillator(), wg2 = a.createGain(); wl2.frequency.value = 0.05; wg2.gain.value = 0.012; wl2.connect(wg2); wg2.connect(ng.gain); wl2.start(); nodes.push(wl2);
+    function note(f, t, dur, vol) {   // Spieluhr-Ton mit Echo
+      var o = a.createOscillator(), o2 = a.createOscillator(), g = a.createGain(); o.type = "sine"; o2.type = "triangle"; o.frequency.value = f; o2.frequency.value = f * 2.005;
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.connect(g); o2.connect(g); g.connect(m); g.connect(echo); o.start(t); o2.start(t); o.stop(t + dur + .1); o2.stop(t + dur + .1);
+    }
+    var pos = 3;
+    function melody() {
+      var t = a.currentTime + 0.05, n = 3 + Math.floor(Math.random() * 3);
+      for (var k = 0; k < n; k++) { pos = Math.max(0, Math.min(NOTES.length - 1, pos + [-2, -1, -1, 1, 1, 2][Math.floor(Math.random() * 6)])); note(NOTES[pos], t + k * 0.52, 1.6, 0.03); }
+      timers.push(setTimeout(melody, 5500 + Math.random() * 6500));
+    }
+    function owl() {   // zwei tiefe, wabernde „Huu“
+      var t = a.currentTime + 0.05;
+      [[330, 0], [294, 0.55]].forEach(function (x) {
+        var o = a.createOscillator(), g = a.createGain(), v = a.createOscillator(), vg = a.createGain(); o.type = "sine"; o.frequency.value = x[0]; v.frequency.value = 5; vg.gain.value = 5; v.connect(vg); vg.connect(o.frequency);
+        g.gain.setValueAtTime(0.0001, t + x[1]); g.gain.exponentialRampToValueAtTime(0.035, t + x[1] + 0.12); g.gain.exponentialRampToValueAtTime(0.0001, t + x[1] + 0.7);
+        o.connect(g); g.connect(m); g.connect(echo); o.start(t + x[1]); v.start(t + x[1]); o.stop(t + x[1] + 0.8); v.stop(t + x[1] + 0.8);
+      });
+      timers.push(setTimeout(owl, 28000 + Math.random() * 30000));
+    }
+    timers.push(setTimeout(melody, 2500)); timers.push(setTimeout(owl, 12000 + Math.random() * 9000));
+    amb = { m: m, nodes: nodes, timers: timers };
+    return true;
+  }
+  function ambientStop() {
+    if (!amb) return; var x = amb, a = ac; amb = null;
+    x.timers.forEach(clearTimeout);
+    try { x.m.gain.cancelScheduledValues(a.currentTime); x.m.gain.setValueAtTime(Math.max(0.0001, x.m.gain.value), a.currentTime); x.m.gain.exponentialRampToValueAtTime(0.0001, a.currentTime + 1.2); } catch (e) {}
+    setTimeout(function () { x.nodes.forEach(function (n) { try { n.stop(); } catch (e) {} }); try { x.m.disconnect(); } catch (e) {} }, 1400);
   }
 
   /* ---------- Lektionsfinale: Zahlen, Balken, Münzen, Effekte nacheinander ---------- */
@@ -399,5 +455,5 @@
     ov.addEventListener("click", done);
     global.setTimeout(done, reduce ? 1800 : 4200);
   }
-  global.VTC = { dance: dance, stickerHtml: stickerHtml, runFinale: runFinale, avatarHtml: avatarHtml, frameClass: frameClass, applyLook: applyLook, DESIGNS: DESIGNS, burst: burst, finale: finale, sound: sound, ART: ART };
+  global.VTC = { ambientStart: ambientStart, ambientStop: ambientStop, ambientOn: function () { return !!amb; }, dance: dance, stickerHtml: stickerHtml, runFinale: runFinale, avatarHtml: avatarHtml, frameClass: frameClass, applyLook: applyLook, DESIGNS: DESIGNS, burst: burst, finale: finale, sound: sound, ART: ART };
 })(window);
