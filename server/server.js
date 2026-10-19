@@ -1241,8 +1241,10 @@ function fcodeOf(pid) {
   throw new Error("Kein Freundescode");
 }
 const frState = (f, me) => (f.lo_ok && f.hi_ok) ? "ok" : ((me === f.lo ? f.lo_ok : f.hi_ok) ? "theirs" : "mine");   // ok | mine = meine Eltern müssen noch zustimmen | theirs = die Eltern des Freundes
+/* Rang-Fortschritt der Freunde: nur bei bestätigten Freunden, aus dem letzten Lernstand-Abgleich (meta); die App rechnet daraus Rang und Balken */
+function frXp(id, state) { if (state !== "ok") return null; const m = snap(id, "meta"), x = m && m.d && Number(m.d.xp); return Number.isFinite(x) && x >= 0 ? Math.round(x) : null; }
 function friendsOf(pid) {
-  return sq.frOf.all(pid, pid).map(f => { const o = sq.me.get(f.lo === pid ? f.hi : f.lo); return o ? { id: o.id, name: o.name, avatar: o.avatar || "", state: frState(f, pid), social: !!o.social, since: f.created } : null; }).filter(Boolean);
+  return sq.frOf.all(pid, pid).map(f => { const o = sq.me.get(f.lo === pid ? f.hi : f.lo); return o ? { id: o.id, name: o.name, avatar: o.avatar || "", state: frState(f, pid), social: !!o.social, since: f.created, xp: frXp(o.id, frState(f, pid)) } : null; }).filter(Boolean);
 }
 const areFriends = (a, b) => { const [lo, hi] = pairOf(a, b), f = sq.fr.get(lo, hi); return !!(f && f.lo_ok && f.hi_ok); };
 const weekKey = () => mondayOf(dayOf(Date.now()));

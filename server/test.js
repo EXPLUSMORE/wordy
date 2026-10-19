@@ -482,6 +482,8 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     assert.equal(pf.name, "Jonas"); assert.equal(pf.state, "mine", "Lenas Eltern sehen die offene Anfrage");
     assert.equal((await J("/api/fam/players/" + kid.j.id + "/friends/" + jm.j.id, { method: "POST", headers: F, body: JSON.stringify({ action: "approve" }) })).s, 200);
     assert.equal((await J("/api/social/me", { headers: lt })).j.friends[0].state, "ok", "Freunde bestätigt");
+    await J("/api/snapshot", { method: "POST", headers: jt, body: JSON.stringify({ meta: { xp: 1234, coins: 5 } }) });
+    assert.equal((await J("/api/social/me", { headers: lt })).j.friends[0].xp, 1234, "Freunde sehen XP für den Rang-Fortschritt");
     assert.equal((await J("/api/social/challenges", { method: "POST", headers: jt, body: JSON.stringify({ to: kid.j.id, mode: "blitz", words: WORDS.slice(0, 3), seed: 5, score: 100 }) })).s, 400, "zu wenige Wörter");
     assert.equal((await J("/api/social/challenges", { method: "POST", headers: jt, body: JSON.stringify({ to: kid.j.id, mode: "blitz", words: WORDS, seed: 5, score: 999999 }) })).s, 400, "unmögliche Punktzahl");
     const ch = await J("/api/social/challenges", { method: "POST", headers: jt, body: JSON.stringify({ to: kid.j.id, mode: "blitz", words: WORDS, seed: 5, score: 120 }) });
