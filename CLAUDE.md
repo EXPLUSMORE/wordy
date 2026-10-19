@@ -11,6 +11,7 @@ Lernfortschritts-Server: https://track.wordy.explusmore.com (eigenständig, Node
 4. Version in `package.json` erhöhen (Fehlerkorrektur/Neben-/Hauptversion, siehe CHANGELOG), Eintrag oben in `CHANGELOG.md`.
 5. Commit (mit Co-Authored-By- und Claude-Session-Trailer) und Push auf `main` UND `claude/practical-fermat-2b3l8m` – **in zwei getrennten `git push`-Befehlen, zuerst `main`** (ein Push mit beiden Zweigen in einem Befehl löst GitHub Pages nicht aus, 2.53.8–2.54.4 waren deshalb nicht live). Nie `pkill -f` mit Mustern, die die eigene Shell treffen.
 6. Bericht an den Nutzer auf Deutsch, knapp. Erwähnen: App zeigt beim nächsten Öffnen „Neue Version verfügbar“; ob Server-Schritte nötig sind.
+- Freigabe (Betreiber, 19.10.2026): Pushen darf Claude nach jeder fertigen, getesteten Änderung automatisch, ohne erneutes „Push“ des Betreibers (weiterhin zwei getrennte Pushes, zuerst `main`). Für Löschen, Historie umschreiben oder Force-Push gilt das nicht.
 - Bei Designentscheidungen vorher Vorschau-Bilder zeigen (Scratchpad, per SendUserFile).
 
 ## Harte Regeln
