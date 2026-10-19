@@ -3641,6 +3641,7 @@
       if (tab === "ueben") lernSeg = uebenSeg === "units" ? "units" : "ueben"; else if (tab === "stats") lernSeg = "stats"; else beuteSeg = tab;
       tab = TABMAP[tab];
     }
+    document.documentElement.setAttribute("data-tab", tab);   // für Saison-Looks (z. B. Spinne nur auf der Startseite)
     $$("#tabs button").forEach(function (b) { b.setAttribute("aria-current", b.getAttribute("data-tab") === tab); });
     renderHeader();
     if (tab === "home") viewHome();

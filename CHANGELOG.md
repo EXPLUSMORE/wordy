@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.125.1 – 2026-10-20
+- Halloween-Look: Die Spinne in der Kopfzeile seilt sich auf der **Startseite** langsam rund 5 cm nach unten ab (pendelnd, mitten über die Startbühne), bleibt kurz hängen und klettert wieder hoch (Ablauf ca. 24 Sekunden). Auf den anderen Seiten pendelt sie wie bisher. Dafür setzt die App `data-tab` am `<html>`-Element.
+- Kein Server-Schritt nötig.
+
 ## 2.125.0 – 2026-10-20
 - **Halloween-Look** (erstes Saison-Thema): Über dem gewählten Design liegen Fledermäuse, Spinnen an schaukelnden Fäden, große Spinnennetze (Karten, Startbühne), Friedhof mit Grabsteinen, Kreuzen und totem Baum samt drei flackernden Kürbissen auf der Menüleiste, Nebel am unteren Rand und warmes Kürbis-Orange auf Aubergine-Nacht (Knöpfe, Tabs, Balken, Tagesaufgabe). Alles bewegt sich leicht; bei „Bewegung reduzieren“ des Geräts steht alles still.
 - **Gruselklänge**: leiser Klangteppich aus dunklem Brummen, Wind, Spieluhr-Melodie mit Echo und ab und zu einer Eule, komplett per Web Audio erzeugt (keine Dateien). Er läuft nur bei aktivem Halloween-Look, wenn „Ton“ an ist, nie in Lernrunden und Spielen und nicht, wenn die App im Hintergrund ist; er startet erst nach der ersten Berührung.
