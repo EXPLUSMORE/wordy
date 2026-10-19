@@ -1817,7 +1817,7 @@
   var TILTS = [-7, 5, -3, 6, -5];
   function placedStickers(size) {
     var ids = S.stickers(); if (!ids.length) return "";
-    if (ids.length > 6) size = Math.round(size * 0.66); else if (ids.length > 3) size = Math.round(size * 0.8);   // mehr als drei: etwas kleiner, damit alle Platz haben
+    if (ids.length > 3) size = Math.round(size * 0.8);   // mehr als drei: etwas kleiner, damit alle Platz haben
     return '<span class="stk-row">' + ids.map(function (id, i) {
       var it = S.SHOP.filter(function (x) { return x.id === id; })[0];
       return it ? stickerHtml(it, size, TILTS[i % TILTS.length]) : "";

@@ -1212,7 +1212,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.121.0";window.WORDY_BUILD="5f4a4378d7";</script>
+<script>window.WORDY_VERSION="2.121.0";window.WORDY_BUILD="6278a7aad5";</script>
 </head>
 <body>
 <div id="app">
@@ -10260,7 +10260,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   var TILTS = [-7, 5, -3, 6, -5];
   function placedStickers(size) {
     var ids = S.stickers(); if (!ids.length) return "";
-    if (ids.length > 6) size = Math.round(size * 0.66); else if (ids.length > 3) size = Math.round(size * 0.8);   // mehr als drei: etwas kleiner, damit alle Platz haben
+    if (ids.length > 3) size = Math.round(size * 0.8);   // mehr als drei: etwas kleiner, damit alle Platz haben
     return '<span class="stk-row">' + ids.map(function (id, i) {
       var it = S.SHOP.filter(function (x) { return x.id === id; })[0];
       return it ? stickerHtml(it, size, TILTS[i % TILTS.length]) : "";

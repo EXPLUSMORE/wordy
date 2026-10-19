@@ -10,7 +10,7 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 ## 2.121.0 – 2026-10-19
-- Sticker-Plätze: jetzt bis zu **10** statt 5. Platz 1 ist gratis, Platz 2 und 3 kosten je 150, Platz 4 bis 6 je 300, Platz 7 bis 9 je 750, Platz 10 1.000 Münzen. Bereits freigeschaltete Plätze bleiben erhalten; bei mehr als 6 Stickern werden sie etwas kleiner dargestellt.
+- Sticker-Plätze: jetzt bis zu **10** statt 5. Platz 1 ist gratis, Platz 2 und 3 kosten je 150, Platz 4 bis 6 je 300, Platz 7 bis 9 je 750, Platz 10 1.000 Münzen. Bereits freigeschaltete Plätze bleiben erhalten. Die Sticker behalten ihre Größe und ragen unten etwas über den Rand der Kopfzeile.
 - Kein Server-Schritt nötig.
 
 ## 2.120.5 – 2026-10-19
