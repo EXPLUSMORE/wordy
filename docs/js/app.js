@@ -1817,7 +1817,7 @@
   var TILTS = [-7, 5, -3, 6, -5];
   function placedStickers(size) {
     var ids = S.stickers(); if (!ids.length) return "";
-    if (ids.length > 3) size = Math.round(size * 0.8);   // mehr als drei: etwas kleiner, damit alle Platz haben
+    if (ids.length > 6) size = Math.round(size * 0.66); else if (ids.length > 3) size = Math.round(size * 0.8);   // mehr als drei: etwas kleiner, damit alle Platz haben
     return '<span class="stk-row">' + ids.map(function (id, i) {
       var it = S.SHOP.filter(function (x) { return x.id === id; })[0];
       return it ? stickerHtml(it, size, TILTS[i % TILTS.length]) : "";
@@ -1827,7 +1827,7 @@
     var list = S.SHOP.filter(function (x) { return x.kind === "sticker" && (set ? x.set === set : !x.set) && S.shopVisible(x); });
     var have = list.filter(function (x) { return S.owns(x); }).length;
     return '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">' + (set ? "Fortnite-Stickerbuch" : "Stickerbuch") + '</div><span class="pill tnum">' + have + ' / ' + list.length + '</span></div>' +
-      '<p class="small muted" style="margin:6px 0 10px">Sammle Sticker im Shop und klebe bis zu drei davon auf deine Startseite und dein Profil. Antippen klebt auf oder löst ab.</p>' +
+      '<p class="small muted" style="margin:6px 0 10px">Sammle Sticker im Shop und klebe bis zu zehn davon (so viele Plätze du freigeschaltet hast) auf deine Startseite und dein Profil. Antippen klebt auf oder löst ab.</p>' +
       '<div class="album stkbook">' + list.map(function (it) {
         var own = S.owns(it), act = S.isActive(it);
         var sub = own ? (act ? "aufgeklebt" : "") : lockNote(it) ? "🔒 " + it.rank : "🪙 " + it.cost;
@@ -1853,13 +1853,13 @@
           '<small class="sub">' + esc(sub) + '</small></button>';
       }).join("") + '</div></section>';
   }
-  /* Sticker-Plätze: nacheinander freischalten (Platz 2: 100, Platz 3 bis 5: je 150 Münzen) */
+  /* Sticker-Plätze: nacheinander freischalten (Platz 1 gratis, 2 und 3: je 150, 4 bis 6: je 300, 7 bis 9: je 750, 10: 1000 Münzen) */
   function slotsHtml() {
-    var n = S.stickerSlots(), st = S.state, next = n < 5 ? S.SLOT_COST[n] : 0, h = '<div class="shopitem" style="flex-wrap:wrap;gap:8px"><span style="flex:1 1 100%"><b class="small">Sticker-Plätze auf deinem Profil</b><br><span class="small muted">' +
-      n + ' von 5 freigeschaltet. So viele Sticker kannst du gleichzeitig aufkleben.</span></span><span class="row" style="gap:6px;flex:1 1 auto">';
-    for (var i = 1; i <= 5; i++) h += '<span class="pill" style="' + (i <= n ? "background:var(--accent-soft);font-weight:700" : "opacity:.55") + '">' + (i <= n ? "✓ " : "🔒 ") + i + '</span>';
+    var n = S.stickerSlots(), st = S.state, next = n < 10 ? S.SLOT_COST[n] : 0, h = '<div class="shopitem" style="flex-wrap:wrap;gap:8px"><span style="flex:1 1 100%"><b class="small">Sticker-Plätze auf deinem Profil</b><br><span class="small muted">' +
+      n + ' von 10 freigeschaltet. So viele Sticker kannst du gleichzeitig aufkleben.</span></span><span class="row" style="gap:6px;flex:1 1 auto">';
+    for (var i = 1; i <= 10; i++) h += '<span class="pill" style="' + (i <= n ? "background:var(--accent-soft);font-weight:700" : "opacity:.55") + '">' + (i <= n ? "✓ " : "🔒 ") + i + '</span>';
     h += '</span>';
-    if (n < 5) h += '<button class="btn soft" data-act="buyslot"' + (st.coins < next ? ' aria-disabled="true" style="opacity:.6"' : "") + '>Platz ' + (n + 1) + ' freischalten · 🪙 ' + next + '</button>';
+    if (n < 10) h += '<button class="btn soft" data-act="buyslot"' + (st.coins < next ? ' aria-disabled="true" style="opacity:.6"' : "") + '>Platz ' + (n + 1) + ' freischalten · 🪙 ' + next + '</button>';
     return h + '</div>';
   }
   function tierOf(c) { return c <= 120 ? "Gewöhnlich" : c <= 350 ? "Selten" : c <= 800 ? "Episch" : "Legendär"; }

@@ -240,9 +240,9 @@
       var rn = at["av:" + x.id.slice(3)]; if (rn) x.rank = rn;
     });
   })();
-  var MAX_STICKERS = 5;
+  var MAX_STICKERS = 10;
   /* Sticker-Plätze auf dem Profil: der erste ist gratis, die weiteren werden nacheinander freigeschaltet */
-  var STICKER_SLOT_COST = [0, 100, 150, 150, 150];
+  var STICKER_SLOT_COST = [0, 150, 150, 300, 300, 300, 750, 750, 750, 1000];   // Preis für Platz n+1 (Platz 1 ist gratis)
   var PROFILE_KEY = { avatar: "avatar", frame: "frame", title: "title", bg: "bg", fx: "fx", snd: "snd", theme: "theme", dance: "dance", outfit: "outfit", kit: "outfit" };
 
   var BADGES = [
@@ -1283,7 +1283,7 @@
   }
   function buySlot() {
     var n = stickerSlots();
-    if (n >= MAX_STICKERS) return { error: "Alle fünf Plätze sind schon freigeschaltet." };
+    if (n >= MAX_STICKERS) return { error: "Alle zehn Plätze sind schon freigeschaltet." };
     var cost = STICKER_SLOT_COST[n];
     if (state.coins < cost) return { error: "Dafür fehlen noch " + (cost - state.coins) + " Münzen." };
     state.coins -= cost; state.profile.stickerSlots = n + 1;

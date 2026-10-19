@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.121.0 – 2026-10-19
+- Sticker-Plätze: jetzt bis zu **10** statt 5. Platz 1 ist gratis, Platz 2 und 3 kosten je 150, Platz 4 bis 6 je 300, Platz 7 bis 9 je 750, Platz 10 1.000 Münzen. Bereits freigeschaltete Plätze bleiben erhalten; bei mehr als 6 Stickern werden sie etwas kleiner dargestellt.
+- Kein Server-Schritt nötig.
+
 ## 2.120.5 – 2026-10-19
 - Kopfzeile: Rang und Titel („DIAMANT I · Titel“) werden nicht mehr mit „…“ abgeschnitten. Die Sticker brauchen keinen Platz in der Zeile mehr, sondern hängen, leicht gedreht mit Sonnenbrille, unten am Rand der Kopfzeile (antippen öffnet weiterhin Shop › Sticker). Wird die Zeile trotzdem zu eng, wird sie dichter (kleinere Schrift, kompakte Herzen), zuletzt bricht der Rang um.
 - Kein Server-Schritt nötig.
