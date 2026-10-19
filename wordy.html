@@ -883,6 +883,11 @@ details.fold>.fbody{padding:2px 0 14px}
 .hh h1{margin:4px 0 4px;font-size:26px;line-height:1.1;color:#fff;text-shadow:0 3px 0 #14213d}
 .hh h1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hh .hhtop{max-width:94%}
 .hh h1 .ttl{display:inline-block;vertical-align:.1em;margin:0 .1em 0 .05em;padding:.06em .5em .1em;border-radius:999px;font-size:.6em;font-weight:900;letter-spacing:.02em;color:#fff;text-shadow:0 1px 0 rgba(20,33,61,.5);border:2px solid #14213d}
+.drow .ttl{display:inline-block;padding:1px 9px 2px;border-radius:999px;font-size:11px;font-weight:900;letter-spacing:.02em;color:#fff;text-shadow:0 1px 0 rgba(20,33,61,.5);border:1.5px solid #14213d}
+.drow .ttl.common{background:linear-gradient(#8fa6cf,#5f7aa6)}.drow .ttl.auto{background:rgba(20,33,61,.55);border-color:rgba(255,255,255,.35)}
+.drow .ttl.rare{background:linear-gradient(#5cb8ff,#1f6fe0);box-shadow:0 0 8px rgba(70,160,255,.7)}.drow .ttl.epic{background:linear-gradient(#d2a0ff,#8a3de0);box-shadow:0 0 9px rgba(190,110,255,.8)}
+.drow .ttl.legend{background:linear-gradient(100deg,#ffe58a,#ffb61e 45%,#ffe58a 55%,#ffb61e);background-size:220% 100%;color:#3a2000;text-shadow:none;box-shadow:0 0 10px rgba(255,200,70,.9);animation:ttlSh 3s linear infinite}
+@media (prefers-reduced-motion:reduce){.drow .ttl.legend{animation:none}}
 .hh h1 .ttl.common{background:linear-gradient(#8fa6cf,#5f7aa6)}.hh h1 .ttl.auto{background:rgba(20,33,61,.55);border-color:rgba(255,255,255,.35)}
 .hh h1 .ttl.rare{background:linear-gradient(#5cb8ff,#1f6fe0);box-shadow:0 0 10px rgba(70,160,255,.8)}
 .hh h1 .ttl.epic{background:linear-gradient(#d2a0ff,#8a3de0);box-shadow:0 0 12px rgba(190,110,255,.9)}
@@ -1214,7 +1219,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.124.0";window.WORDY_BUILD="86b9287684";</script>
+<script>window.WORDY_VERSION="2.124.1";window.WORDY_BUILD="554ec9c865";</script>
 </head>
 <body>
 <div id="app">
@@ -9612,7 +9617,9 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   function friendRank(f) {
     if (f.xp == null) return "";
     var r = S.rankOf(f.xp), pc = r.next ? Math.round(r.into * 100 / r.span) : 100;
-    return '<div class="small" style="margin-top:2px"><b>' + esc(r.rank.n) + '</b> <span class="muted tnum">· ' + f.xp.toLocaleString("de-DE") + ' XP</span></div>' +
+    var ti = f.title ? S.SHOP.filter(function (x) { return x.kind === "title" && x.val === f.title; })[0] : null,
+      chip = '<span class="ttl ' + (ti ? S.rarityOf(ti) : f.title ? "common" : "auto") + '">' + esc(f.title || RANK_TITLE[r.rank.t] || "Wort-Rookie") + '</span>';
+    return '<div class="small" style="margin-top:2px"><b>' + esc(r.rank.n) + '</b> <span class="muted tnum">· ' + f.xp.toLocaleString("de-DE") + ' XP</span></div><div style="margin-top:3px">' + chip + '</div>' +
       '<div class="bar" style="margin-top:4px"><i style="width:' + pc + '%"></i></div>' +
       '<div class="small muted tnum" style="margin-top:3px;font-size:11px;text-align:left">' + (r.next ? 'noch ' + (r.next.xp - f.xp).toLocaleString("de-DE") + ' bis ' + esc(r.next.n) : 'Höchster Rang') + '</div>';
   }
@@ -13899,7 +13906,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     VT.units().forEach(function (u) { units[u.id] = { id: u.id, title: u.title, k: u.track === "eigen" ? "Eigene Listen" : u.k, total: u.words.length }; });   // alle Einheiten (Schule, Beruf, eigene Listen), damit Ziele und Lernpläne jede wählen können
     var rk = VT.rankOf(st.xp), d = st.daily || {};
     var meta = {
-      name: st.profile.name || "", coins: st.coins, xp: st.xp, rank: rk.rank ? rk.rank.n : "", streak: st.streak.count, best: st.streak.best,
+      name: st.profile.name || "", title: st.profile.title || "", coins: st.coins, xp: st.xp, rank: rk.rank ? rk.rank.n : "", streak: st.streak.count, best: st.streak.best,
       track: st.settings.track || "schule", goalMin: VT.goalMin ? VT.goalMin() : st.settings.goalMin, todaySec: d.sec || 0, todayItems: d.items || 0, owned: (st.profile.owned || []).length,
       pass: VT.passMeta ? VT.passMeta() : null, shop: VT.shopList ? VT.shopList() : [], shopCat: VT.shopCatalog ? VT.shopCatalog() : [], gifts: Object.keys(st.goalsDone || {}).filter(function (k) { return k.indexOf("gift") === 0; }).map(function (k) { return k.slice(4); }), wish: (VT.wish && VT.wish()) ? VT.wish().label || VT.wish().id : "", klassen: st.settings.klassen, version: g.WORDY_VERSION || "", totals: st.totals, path: VT.pathProgress ? Object.assign(VT.pathProgress(), { sections: VT.pathSections(), bosses: VT.bossLog ? VT.bossLog() : [] }) : null
     };

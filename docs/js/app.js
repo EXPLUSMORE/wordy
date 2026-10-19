@@ -1144,7 +1144,9 @@
   function friendRank(f) {
     if (f.xp == null) return "";
     var r = S.rankOf(f.xp), pc = r.next ? Math.round(r.into * 100 / r.span) : 100;
-    return '<div class="small" style="margin-top:2px"><b>' + esc(r.rank.n) + '</b> <span class="muted tnum">· ' + f.xp.toLocaleString("de-DE") + ' XP</span></div>' +
+    var ti = f.title ? S.SHOP.filter(function (x) { return x.kind === "title" && x.val === f.title; })[0] : null,
+      chip = '<span class="ttl ' + (ti ? S.rarityOf(ti) : f.title ? "common" : "auto") + '">' + esc(f.title || RANK_TITLE[r.rank.t] || "Wort-Rookie") + '</span>';
+    return '<div class="small" style="margin-top:2px"><b>' + esc(r.rank.n) + '</b> <span class="muted tnum">· ' + f.xp.toLocaleString("de-DE") + ' XP</span></div><div style="margin-top:3px">' + chip + '</div>' +
       '<div class="bar" style="margin-top:4px"><i style="width:' + pc + '%"></i></div>' +
       '<div class="small muted tnum" style="margin-top:3px;font-size:11px;text-align:left">' + (r.next ? 'noch ' + (r.next.xp - f.xp).toLocaleString("de-DE") + ' bis ' + esc(r.next.n) : 'Höchster Rang') + '</div>';
   }
