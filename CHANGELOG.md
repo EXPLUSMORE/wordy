@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.120.5 – 2026-10-19
+- Kopfzeile: Rang und Titel („DIAMANT I · Titel“) werden nicht mehr mit „…“ abgeschnitten. Die Sticker brauchen keinen Platz in der Zeile mehr, sondern hängen, leicht gedreht mit Sonnenbrille, unten am Rand der Kopfzeile (antippen öffnet weiterhin Shop › Sticker). Wird die Zeile trotzdem zu eng, wird sie dichter (kleinere Schrift, kompakte Herzen), zuletzt bricht der Rang um.
+- Kein Server-Schritt nötig.
+
 ## 2.120.4 – 2026-10-19
 - Kopfzeile: Es wurde oft nur ein Sticker gezeigt, obwohl mehr aufgeklebt sind (vor allem bei aktivem XP-Booster, der viel Platz braucht). Die Sticker-Zeile probiert jetzt mehrere Varianten und nimmt die, bei der die meisten Sticker passen: kleinere Sticker, kompakte Herzen („♥ 5“) und eine dichtere Kopfzeile (kleinere Schrift). Der Rang-Name wird dabei zuerst gekürzt, die XP-Zahl bleibt immer ganz zu sehen. Die Prüfung läuft auch, nachdem der Booster-Zähler erschienen ist.
 - Kein Server-Schritt nötig.

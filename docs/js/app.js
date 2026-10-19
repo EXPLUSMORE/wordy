@@ -281,30 +281,15 @@
     var d = S.profiles(), x = d.list.filter(function (y) { return y.id === d.active; })[0];
     return x ? x.name : "";
   }
-  /* Sticker in der Kopfzeile: so viele zeigen, wie neben Rang, Münzen und Herzen Platz haben (nichts überlagern) */
+  /* Sticker hängen am unteren Rand der Kopfzeile (brauchen keinen Platz); passt die Zeile nicht, wird sie dichter, zuletzt umbrechen */
   function fitStickers() {
-    var h = $("#hStk"), top = $("#top"); if (!h || h.hidden || !top) return;
-    var k = [].slice.call(h.querySelectorAll(".stk")), best = null, xp = $("#hXp");
-    top.style.setProperty("--xpw", (xp && xp.parentNode ? xp.parentNode.offsetWidth + 2 : 60) + "px");
-    top.classList.add("fit");   // beim Messen darf der Rang-Name bis auf die XP-Zahl schrumpfen
-    h.style.display = "";
-    [false, true].forEach(function (dn) {              // erst normal, dann dichte Kopfzeile (kleinere Schrift und Abstände)
-      [false, true].forEach(function (hc) {            // erst normale, dann kompakte Herzen
-        ["", "hs-m", "hs-s"].forEach(function (sz) {   // erst volle Größe, dann kleiner
-          if (best && best.n >= k.length) return;
-          top.classList.toggle("dn", dn); top.classList.toggle("hc", hc);
-          h.className = "hstk" + (sz ? " " + sz : "");
-          k.forEach(function (x) { x.style.display = ""; });
-          var n = k.length;
-          while (n > 0 && top.scrollWidth > top.clientWidth) { n--; k[n].style.display = "none"; }
-          if (!best || n > best.n) best = { n: n, sz: sz, hc: hc, dn: dn };
-        });
-      });
+    var top = $("#top"); if (!top) return;
+    top.classList.remove("dn", "hc", "wr");
+    [["dn"], ["dn", "hc"], ["dn", "hc", "wr"]].some(function (c) {
+      if (top.scrollWidth <= top.clientWidth) return true;
+      c.forEach(function (x) { top.classList.add(x); });
+      return false;
     });
-    top.classList.toggle("dn", best.dn); top.classList.toggle("hc", best.hc);
-    h.className = "hstk" + (best.sz ? " " + best.sz : "");
-    k.forEach(function (x, i) { x.style.display = i < best.n ? "" : "none"; });
-    top.classList.remove("fit"); h.style.display = best.n ? "" : "none";
   }
   global.addEventListener("resize", fitStickers);
   if (global.document && document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fitStickers(); });
