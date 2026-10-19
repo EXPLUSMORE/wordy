@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.120.4 – 2026-10-19
+- Kopfzeile: Es wurde oft nur ein Sticker gezeigt, obwohl mehr aufgeklebt sind (vor allem bei aktivem XP-Booster, der viel Platz braucht). Die Sticker-Zeile probiert jetzt mehrere Varianten und nimmt die, bei der die meisten Sticker passen: kleinere Sticker, kompakte Herzen („♥ 5“) und eine dichtere Kopfzeile (kleinere Schrift). Der Rang-Name wird dabei zuerst gekürzt, die XP-Zahl bleibt immer ganz zu sehen. Die Prüfung läuft auch, nachdem der Booster-Zähler erschienen ist.
+- Kein Server-Schritt nötig.
+
 ## 2.120.3 – 2026-10-19
 - Kopfzeile: Die Sticker überlagern Münzen, Streak und Herzen nicht mehr. Die App misst, wie viel Platz neben Rang, XP, Münzen, Streak und Herzen frei ist, und zeigt nur so viele Sticker, wie hineinpassen (bei großen Zahlen oder schmalen Handys weniger; der Rang-Name wird erst zuletzt gekürzt). Münzen, Streak und Herzen schrumpfen nicht mehr ineinander.
 - Kein Server-Schritt nötig.

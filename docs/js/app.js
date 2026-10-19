@@ -284,10 +284,27 @@
   /* Sticker in der Kopfzeile: so viele zeigen, wie neben Rang, Münzen und Herzen Platz haben (nichts überlagern) */
   function fitStickers() {
     var h = $("#hStk"), top = $("#top"); if (!h || h.hidden || !top) return;
-    var k = [].slice.call(h.querySelectorAll(".stk")); k.forEach(function (x) { x.style.display = ""; });
-    var n = k.length; h.style.display = ""; top.classList.add("fit");   // Rang-Block darf beim Messen nicht schrumpfen
-    while (n > 0 && top.scrollWidth > top.clientWidth + 1) { n--; k[n].style.display = "none"; }
-    top.classList.remove("fit"); h.style.display = n ? "" : "none";
+    var k = [].slice.call(h.querySelectorAll(".stk")), best = null, xp = $("#hXp");
+    top.style.setProperty("--xpw", (xp && xp.parentNode ? xp.parentNode.offsetWidth + 2 : 60) + "px");
+    top.classList.add("fit");   // beim Messen darf der Rang-Name bis auf die XP-Zahl schrumpfen
+    h.style.display = "";
+    [false, true].forEach(function (dn) {              // erst normal, dann dichte Kopfzeile (kleinere Schrift und Abstände)
+      [false, true].forEach(function (hc) {            // erst normale, dann kompakte Herzen
+        ["", "hs-m", "hs-s"].forEach(function (sz) {   // erst volle Größe, dann kleiner
+          if (best && best.n >= k.length) return;
+          top.classList.toggle("dn", dn); top.classList.toggle("hc", hc);
+          h.className = "hstk" + (sz ? " " + sz : "");
+          k.forEach(function (x) { x.style.display = ""; });
+          var n = k.length;
+          while (n > 0 && top.scrollWidth > top.clientWidth) { n--; k[n].style.display = "none"; }
+          if (!best || n > best.n) best = { n: n, sz: sz, hc: hc, dn: dn };
+        });
+      });
+    });
+    top.classList.toggle("dn", best.dn); top.classList.toggle("hc", best.hc);
+    h.className = "hstk" + (best.sz ? " " + best.sz : "");
+    k.forEach(function (x, i) { x.style.display = i < best.n ? "" : "none"; });
+    top.classList.remove("fit"); h.style.display = best.n ? "" : "none";
   }
   global.addEventListener("resize", fitStickers);
   if (global.document && document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fitStickers(); });
@@ -304,14 +321,14 @@
     $("#hStreak").textContent = st.streak.count;
     var hEl = $("#hHearts");
     if (!st.settings.hearts) { hEl.textContent = "∞"; hEl.title = "Ohne Herzen"; }
-    else { S.regenHearts(); hEl.innerHTML = "<span style='color:var(--bad)'>" + "♥".repeat(st.hearts) + "</span><span style='color:var(--line)'>" + "♥".repeat(5 - st.hearts) + "</span>"; }
+    else { S.regenHearts(); hEl.setAttribute("data-n", st.hearts); hEl.innerHTML = "<span style='color:var(--bad)'>" + "♥".repeat(st.hearts) + "</span><span style='color:var(--line)'>" + "♥".repeat(5 - st.hearts) + "</span>"; }
     global.VTC.applyLook(st.profile, st.settings.themeMode, st.settings.design);
-    fitStickers();
     var hb = $("#hBoost");
     if (hb) {
       var bs = st.path && st.path.boost, on = !!(bs && bs.on && bs.left > 0);
       hb.hidden = !on; if (on) hb.textContent = "⚡×2 " + Math.floor(bs.left / 60) + ":" + ("0" + (bs.left % 60)).slice(-2);
     }
+    fitStickers();
   }
 
   function trackSwitch() {
