@@ -146,6 +146,17 @@
     { id: "of:kitty3", kind: "outfit", label: "Kitty-Prinzessin",    cost: 400,  val: "kitty3", rar: "epic" },
     { id: "of:kitty4", kind: "outfit", label: "Kitty-Sternenzauber", cost: 1000, val: "kitty4", rar: "legend" },
 
+    /* Verkleidungen (Drop 5, ab v2.118) */
+    { id: "of:skater",   kind: "outfit", label: "Skater-Beanie",  cost: 100,  val: "skater",   rar: "common" },
+    { id: "of:cowboy",   kind: "outfit", label: "Cowboy",         cost: 120,  val: "cowboy",   rar: "common" },
+    { id: "of:ninja",    kind: "outfit", label: "Ninja",          cost: 250,  val: "ninja",    rar: "rare" },
+    { id: "of:chef",     kind: "outfit", label: "Chefkoch",       cost: 250,  val: "chef",     rar: "rare" },
+    { id: "of:pirat",    kind: "outfit", label: "Pirat",          cost: 450,  val: "pirat",    rar: "epic" },
+    { id: "of:ritter",   kind: "outfit", label: "Ritter",         cost: 500,  val: "ritter",   rar: "epic" },
+    { id: "of:zauberer", kind: "outfit", label: "Zauberer",       cost: 1000, val: "zauberer", rar: "legend" },
+    { id: "of:koenig",   kind: "outfit", label: "Königsgewand",   cost: 1200, val: "koenig",   rar: "legend" },
+    { id: "of:dj",       kind: "outfit", label: "Disco-DJ",       cost: 500,  val: "dj",       rar: "epic" },
+
     { id: "sn:none",  kind: "snd", label: "Stumm",     cost: 0,   val: "none" },
     { id: "sn:bell",  kind: "snd", label: "Glöckchen", cost: 90,  val: "bell" },
     { id: "sn:arcade", kind: "snd", label: "Arcade",   cost: 120, val: "arcade" },
@@ -1446,7 +1457,8 @@
     "av:cyberfuchs": 0, "fr:neon": 0, "fx:pixel": 0, "ti:pixel": 0,
     "av:pirat": 1, "fr:pirat": 1, "fx:gold": 1, "ti:schatz": 1,
     "av:zauber": 2, "fr:sterne": 2, "fx:magie": 2, "ti:zauber": 2,
-    "av:yeti": 3, "fr:kristall": 3, "ti:eis": 3
+    "av:yeti": 3, "fr:kristall": 3, "ti:eis": 3,
+    "of:dj": 1   /* Drop 5 · Verkleidung: die acht anderen Outfits sind sofort da, der Disco-DJ folgt als Kommt-bald */
   };
   function shopStart() { var r = global.WordySync && global.WordySync.remote ? (global.WordySync.remote() || {}).shop : null; return r && /^\d{4}-\d{2}-\d{2}$/.test(r.start || "") ? r.start : SHOP_GOLIVE; }
   function shopNow() { return Math.max(0, Math.floor(dayDiff(shopStart(), today()) / 7)); }   // aktuelle Shop-Woche

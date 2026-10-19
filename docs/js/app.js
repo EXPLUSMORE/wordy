@@ -567,7 +567,7 @@
   var RAR_NAME = { common: "Gewöhnlich", rare: "Selten", epic: "Episch", legend: "Legendär" };
   var RAR_GLOW = { common: "rgba(150,200,130,.7)", rare: "rgba(70,160,255,.8)", epic: "rgba(190,110,255,.85)", legend: "rgba(255,200,70,.95)" };
   var MED_COL = { common: ["#9bd48a", "#4f9a46"], rare: ["#7fd0ff", "#2f8cff"], epic: ["#d79bff", "#a855f7"], legend: ["#ffe58a", "#ffb61e"] };
-  var SHIRTS = { natur: ["#b9c9de", "#b9c9de", ""], shirt: ["#35c6ff", "#35c6ff", ""], hoodie: ["#7a63f0", "#7a63f0", ""], trikot: [["#e53935", "#fff"], "#e53935", "7"], held: ["#2b6fe0", "#c62828", "★"], raum: ["#dfe6ee", "#dfe6ee", "★"], rock: ["#ffd23d", "#ffd23d", "♪"], polar: ["#3f9bff", "#3f9bff", "❄"],
+  var SHIRTS = { skater: ["#ff8a3d", "#ff8a3d", ""], cowboy: ["#9a6a35", "#9a6a35", "★"], ninja: ["#3a3a5c", "#3a3a5c", ""], chef: ["#ffffff", "#ffffff", ""], pirat: ["#c0392b", "#c0392b", "☠"], ritter: ["#cfd6e4", "#cfd6e4", "⚔"], dj: ["#ffd34d", "#ffd34d", "♫"], zauberer: ["#7a4fff", "#7a4fff", "★"], koenig: ["#d12036", "#d12036", "♛"], natur: ["#b9c9de", "#b9c9de", ""], shirt: ["#35c6ff", "#35c6ff", ""], hoodie: ["#7a63f0", "#7a63f0", ""], trikot: [["#e53935", "#fff"], "#e53935", "7"], held: ["#2b6fe0", "#c62828", "★"], raum: ["#dfe6ee", "#dfe6ee", "★"], rock: ["#ffd23d", "#ffd23d", "♪"], polar: ["#3f9bff", "#3f9bff", "❄"],
     "k-muenchen": ["#d4151f", "#d4151f", "7"], "k-barcelona": [["#a50044", "#004d98"], "#004d98", "7"], "k-turin": [["#111", "#fff"], "#111", "7"], "k-deutschland": ["#f1f1f4", "#fff", "7"], "k-argentinien": [["#74acdf", "#fff"], "#74acdf", "7"], "k-portugal": ["#c1121f", "#c1121f", "7"] };
   function svgCup(c1, c2) { return '<svg viewBox="0 0 64 64"><path d="M16 8h32v14q0 14-16 18q-16-4-16-18z" fill="' + c1 + '" stroke="#14213d" stroke-width="4" stroke-linejoin="round"/><path d="M16 14H6q0 14 12 16M48 14h10q0 14-12 16" fill="none" stroke="#14213d" stroke-width="4"/><rect x="28" y="40" width="8" height="8" fill="' + c2 + '" stroke="#14213d" stroke-width="3"/><rect x="18" y="48" width="28" height="10" rx="3" fill="' + c2 + '" stroke="#14213d" stroke-width="4"/><path d="M22 14q0 10 6 14" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".6" fill="none"/><path d="M32 18l3 6l6 1l-4.5 4l1 6l-5.5-3l-5.5 3l1-6l-4.5-4l6-1z" fill="#fff" opacity=".85"/></svg>'; }
   function svgMedal(c, n) { return '<svg viewBox="0 0 64 64"><path d="M20 4l8 22h8l8-22z" fill="#2f8cff" stroke="#14213d" stroke-width="3" stroke-linejoin="round"/><circle cx="32" cy="40" r="19" fill="' + c + '" stroke="#14213d" stroke-width="4"/><circle cx="32" cy="40" r="13" fill="none" stroke="#fff" stroke-width="2" opacity=".6"/><text x="32" y="' + (String(n).length > 2 ? 44 : 46) + '" text-anchor="middle" font-size="' + (String(n).length > 2 ? 13 : 18) + '" font-weight="900" fill="#14213d" font-family="Trebuchet MS,sans-serif">' + esc(n) + '</text></svg>'; }
@@ -921,14 +921,15 @@
   }
   /* Neuheiten-Wolke auf der Startseite: kündigt ein neues Spiel an. Neues Spiel = Eintrag in NEWS (id = Spiel-ID aus VTG.GAMES, date = Datum der Veröffentlichung).
      Sie verschwindet nach dem ersten Spielen, nach ✕, nach dem Antippen oder nach 14 Tagen (pro Profil in profile.cloudSeen). */
-  var NEWS = [{ id: "blast3d", icon: "🛸", title: "Blast 3D", sub: "Weich den Wörtern aus!", date: "2026-10-11" }];
+  var NEWS = [{ id: "verkleidung", icon: "🎭", title: "Neue Outfits!", sub: "Ritter, Ninja, Zauberer … ab in den Shop", date: "2026-10-19", shop: "outfit" },
+    { id: "blast3d", icon: "🛸", title: "Blast 3D", sub: "Weich den Wörtern aus!", date: "2026-10-11" }];
   function newsCloud() {
     var pf = S.state.profile, seen = pf.cloudSeen || {}, ar = S.state.arena || {}, today = S.today();
     var n = NEWS.filter(function (x) {
-      if (seen[x.id] || !global.VTG || !global.VTG.GAMES.some(function (g) { return g.id === x.id; })) return false;
+      if (seen[x.id] || (!x.shop && (!global.VTG || !global.VTG.GAMES.some(function (g) { return g.id === x.id; })))) return false;
       if (dayDiff2(x.date, today) > 14 && !(pf.cloudForce || {})[x.id]) return false;
       if ((pf.cloudForce || {})[x.id]) return true;   // „Wolke wieder anzeigen“ unter Profil › Ton & Aussehen
-      return !Object.keys(ar).some(function (k) { return k.indexOf("g_" + x.id + ":") === 0; });
+      return x.shop ? true : !Object.keys(ar).some(function (k) { return k.indexOf("g_" + x.id + ":") === 0; });
     })[0];
     if (!n) return "";
     return '<div class="newscloud" data-id="' + esc(n.id) + '"><i class="ncs s1">✨</i><i class="ncs s2">⭐</i><i class="ncs s3">✨</i><span class="ncnew">NEU</span><button class="ncbody" data-act="newscloud" data-id="' + esc(n.id) + '"><span class="nci">' + n.icon + '</span><span class="nct"><b>' + esc(n.title) + '</b><small>' + esc(n.sub) + '</small></span></button><button class="ncx" data-act="newsx" data-id="' + esc(n.id) + '" aria-label="Ausblenden">✕</button></div>';
@@ -3432,7 +3433,9 @@
     else if (a === "newscloud" || a === "newsx") {
       var nid = act.getAttribute("data-id"), pfc = S.state.profile; (pfc.cloudSeen || (pfc.cloudSeen = {}))[nid] = 1; if (pfc.cloudForce) delete pfc.cloudForce[nid]; S.save(true);
       var cl = act.closest(".newscloud"); if (cl) cl.remove();
-      if (a === "newscloud" && global.VTG) global.VTG.start(nid);
+      var nn = NEWS.filter(function (x) { return x.id === nid; })[0];
+      if (a === "newscloud" && nn && nn.shop) { tab = "beute"; beuteSeg = "shop"; shopTab = nn.shop; render(); view.scrollTop = 0; }
+      else if (a === "newscloud" && global.VTG) global.VTG.start(nid);
     }
     else if (a === "film") {
       global.VTFILM.play(act.getAttribute("data-id"), { audio: S.state.settings.audio, speak: function (t) { speak(t, null, "de"); }, voice: function () { var n = S.state.settings.narrator || "auto"; return n === "dev" ? null : n === "m" ? "m" : "f"; }, onGo: function (g) {

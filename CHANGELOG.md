@@ -9,6 +9,11 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.118.0 – 2026-10-19
+- Neun neue **Verkleidungen** im Shop (Outfits): Skater-Beanie und Cowboy (gewöhnlich, 100/120 🪙), Ninja und Chefkoch (selten, 250 🪙), Pirat und Ritter (episch, 450/500 🪙), Zauberer und Königsgewand (legendär, 1.000/1.200 🪙) sind sofort da. Der **Disco-DJ** (episch, 500 🪙, Goldjacke und pinke Kopfhörer) folgt am Montag, 26.10. als „Kommt bald“. Die Outfits tragen Kopfschmuck bzw. Umhang auf den Standardfiguren; bei Emoji- und Eisfiguren erscheint die Jackenfarbe.
+- Startseite: Neue Wolke „Neue Outfits!“ führt direkt in Shop › Outfits (verschwindet nach dem Antippen oder nach 14 Tagen; unter Profil › Ton & Aussehen wieder einblendbar).
+- Kein Server-Schritt nötig.
+
 ## 2.117.0 – 2026-10-19
 - Unregelmäßige Verben: wahlweise **nur Simple Past** lernen (ohne die 3. Form, Past Participle). Umschalter „Formen lernen: Alle drei / Nur Simple Past“ oben in der Verbenliste (Lernen › Unregelmäßige Verben) und in den Einstellungen (Profil › Einstellungen › Unregelmäßige Verben). Bei „Nur Simple Past“ zeigen Einführung und Liste nur Grundform – Simple Past, es gibt nur zwei Beispielsätze (Gegenwart und Simple Past), die Lückenaufgabe nutzt nur diese beiden Formen und beim Tippen gibt es nur das Feld fürs Simple Past. Die Einstellung gilt pro Profil; Lernstand und Stufen bleiben erhalten.
 - Kein Server-Schritt nötig.

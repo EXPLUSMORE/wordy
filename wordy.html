@@ -686,6 +686,9 @@ details.fold>.fbody{padding:2px 0 14px}
 .of-held{--tc:#2b6fe0;--sl:#2b6fe0;--pc:#c62828}.of-held .cape{display:block}
 .of-raum{--tc:#dfe6ee;--sl:#dfe6ee;--pc:#dfe6ee}
 .of-rock{--tc:#ffd23d;--sl:#ffd23d;--pc:#1d1d1d}.of-rock .to{box-shadow:inset 0 0 10px #fff9}
+.of-skater{--tc:#ff8a3d;--sl:#ff8a3d;--pc:#2d2a5e}.of-cowboy{--tc:#9a6a35;--sl:#9a6a35;--pc:#4a2d12}.of-ninja{--tc:#3a3a5c;--sl:#3a3a5c;--pc:#14142b}.of-chef{--tc:#fff;--sl:#fff;--pc:#3a3a5c}
+.of-pirat{--tc:#c0392b;--sl:#c0392b;--pc:#2a2a4a}.of-ritter{--tc:#cfd6e4;--sl:#cfd6e4;--pc:#7a869e}.of-dj{--tc:#ffd34d;--sl:#ffd34d;--pc:#ff3df0}
+.of-zauberer{--tc:#7a4fff;--sl:#7a4fff;--pc:#2b1a8f}.of-koenig{--tc:#d12036;--sl:#d12036;--pc:#ffd34d}
 /* Tänze */
 .d1{animation:w-b .5s ease-in-out infinite alternate}@keyframes w-b{0%{transform:rotate(-6deg) translateX(-6px)}100%{transform:rotate(6deg) translateX(6px)}}
 .d1 .al{animation:w-al .5s ease-in-out infinite alternate}.d1 .arr{animation:w-ar .5s ease-in-out infinite alternate}.d1 .ll{animation:w-ll .5s ease-in-out infinite alternate}.d1 .lr{animation:w-lr .5s ease-in-out infinite alternate}.d1 .hd{animation:w-h .5s ease-in-out infinite alternate}
@@ -1194,7 +1197,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.116.2";window.WORDY_BUILD="47d6a9b708";</script>
+<script>window.WORDY_VERSION="2.117.0";window.WORDY_BUILD="e24313b2fd";</script>
 </head>
 <body>
 <div id="app">
@@ -5520,6 +5523,17 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     { id: "of:kitty3", kind: "outfit", label: "Kitty-Prinzessin",    cost: 400,  val: "kitty3", rar: "epic" },
     { id: "of:kitty4", kind: "outfit", label: "Kitty-Sternenzauber", cost: 1000, val: "kitty4", rar: "legend" },
 
+    /* Verkleidungen (Drop 5, ab v2.118) */
+    { id: "of:skater",   kind: "outfit", label: "Skater-Beanie",  cost: 100,  val: "skater",   rar: "common" },
+    { id: "of:cowboy",   kind: "outfit", label: "Cowboy",         cost: 120,  val: "cowboy",   rar: "common" },
+    { id: "of:ninja",    kind: "outfit", label: "Ninja",          cost: 250,  val: "ninja",    rar: "rare" },
+    { id: "of:chef",     kind: "outfit", label: "Chefkoch",       cost: 250,  val: "chef",     rar: "rare" },
+    { id: "of:pirat",    kind: "outfit", label: "Pirat",          cost: 450,  val: "pirat",    rar: "epic" },
+    { id: "of:ritter",   kind: "outfit", label: "Ritter",         cost: 500,  val: "ritter",   rar: "epic" },
+    { id: "of:zauberer", kind: "outfit", label: "Zauberer",       cost: 1000, val: "zauberer", rar: "legend" },
+    { id: "of:koenig",   kind: "outfit", label: "Königsgewand",   cost: 1200, val: "koenig",   rar: "legend" },
+    { id: "of:dj",       kind: "outfit", label: "Disco-DJ",       cost: 500,  val: "dj",       rar: "epic" },
+
     { id: "sn:none",  kind: "snd", label: "Stumm",     cost: 0,   val: "none" },
     { id: "sn:bell",  kind: "snd", label: "Glöckchen", cost: 90,  val: "bell" },
     { id: "sn:arcade", kind: "snd", label: "Arcade",   cost: 120, val: "arcade" },
@@ -6820,7 +6834,8 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     "av:cyberfuchs": 0, "fr:neon": 0, "fx:pixel": 0, "ti:pixel": 0,
     "av:pirat": 1, "fr:pirat": 1, "fx:gold": 1, "ti:schatz": 1,
     "av:zauber": 2, "fr:sterne": 2, "fx:magie": 2, "ti:zauber": 2,
-    "av:yeti": 3, "fr:kristall": 3, "ti:eis": 3
+    "av:yeti": 3, "fr:kristall": 3, "ti:eis": 3,
+    "of:dj": 1   /* Drop 5 · Verkleidung: die acht anderen Outfits sind sofort da, der Disco-DJ folgt als Kommt-bald */
   };
   function shopStart() { var r = global.WordySync && global.WordySync.remote ? (global.WordySync.remote() || {}).shop : null; return r && /^\d{4}-\d{2}-\d{2}$/.test(r.start || "") ? r.start : SHOP_GOLIVE; }
   function shopNow() { return Math.max(0, Math.floor(dayDiff(shopStart(), today()) / 7)); }   // aktuelle Shop-Woche
@@ -7529,7 +7544,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     "k-argentinien": ["repeating-linear-gradient(90deg,#74acdf 0 7px,#fff 7px 14px)", "#74acdf", "#111111", "#ffffff", "#111111", "#111111", "#ffffff"],
     "k-portugal": ["linear-gradient(#c1121f,#c1121f)", "#c1121f", "#0b6b3a", "#c1121f", "#0b6b3a", "#f7d117", "rgba(0,0,0,.4)"]
   };
-  var EMB = { trikot: "7", held: "★", raum: "★", rock: "♪", polar: "❄" };
+  var EMB = { cowboy: "★", pirat: "☠", ritter: "⚔", dj: "♫", zauberer: "★", koenig: "♛", trikot: "7", held: "★", raum: "★", rock: "♪", polar: "❄" };
   /* Eigene Köpfe für Figuren, deren Emoji/Zeichnung schon ein ganzes Tier zeigt (sonst säße ein Tier auf dem Körper) */
   var V = '<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">';
   function eyes(y, dx, r, c) { return '<circle cx="' + (32 - dx) + '" cy="' + y + '" r="' + r + '" fill="' + (c || "#1B1230") + '"/><circle cx="' + (32 + dx) + '" cy="' + y + '" r="' + r + '" fill="' + (c || "#1B1230") + '"/><circle cx="' + (32 - dx + 1.3) + '" cy="' + (y - 1.3) + '" r="' + r * .35 + '" fill="#fff"/><circle cx="' + (32 + dx + 1.3) + '" cy="' + (y - 1.3) + '" r="' + r * .35 + '" fill="#fff"/>'; }
@@ -8027,6 +8042,17 @@ return '<svg class="afs" viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg
     back: '<g stroke="' + L + '" stroke-width="4" stroke-linejoin="round"><path d="M62 180q-52-30-48 22q6 26 50 22z" fill="#ffe0f0" opacity=".9"/><path d="M158 180q52-30 48 22q-6 26-50 22z" fill="#d8ecff" opacity=".9"/></g>' });
   A.outfit("kitty4", ["#ffd34d", "#e08a0a"], { head: '<defs><linearGradient id="kofgd" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffe066"/><stop offset="1" stop-color="#ffb61e"/></linearGradient></defs>' + band("url(#kofgd)", star(110, 14, 15, "#fff")) + fringe(RB) + bow(156, 58, "#ff4d9d", 1.1, 16) + star(40, 40, 10, "#ffe066") + star(182, 34, 9, "#7be0ff") + star(34, 128, 8, "#fff") + star(186, 124, 7, "#ffe066"),
     back: wings("#fff3b8", "#ffe066") });
+  /* Verkleidungen (Drop 5): Jackenfarbe plus Kopfschmuck bzw. Umhang */
+  var OST = 'stroke="' + L + '" stroke-width="5" stroke-linejoin="round"';
+  A.outfit("skater", ["#ff8a3d", "#c2490a"], { head: '<path d="M46 74Q44 4 110 4Q176 4 174 74Q110 58 46 74z" fill="#ff7a2d" ' + OST + '/><path d="M50 60Q110 44 170 60M52 48Q110 32 168 48" stroke="#ffd34d" stroke-width="6" fill="none"/><circle cx="110" cy="2" r="13" fill="#fff" ' + OST + '/>' });
+  A.outfit("cowboy", ["#9a6a35", "#4a2d12"], { head: '<path d="M40 66Q14 62 8 78Q60 98 110 90Q160 98 212 78Q206 62 180 66Q170 20 110 22Q50 20 40 66z" fill="#b07a3c" ' + OST + '/><path d="M52 62Q110 78 168 62" stroke="#5a3a1a" stroke-width="9" fill="none"/>' + star(110, 70, 8, "#ffd34d") });
+  A.outfit("ninja", ["#3a3a5c", "#14142b"], { head: '<path d="M44 66Q110 42 176 66L178 90Q110 66 42 90z" fill="#e63946" ' + OST + '/><rect x="88" y="62" width="44" height="22" rx="6" fill="#d7dee9" ' + OST + '/><path d="M170 72q28-14 40 4q-16 4-20 18q18 2 20 18q-26 2-40-22z" fill="#e63946" ' + OST + '/>' });
+  A.outfit("chef", ["#ffffff", "#c3c9d9"], { head: '<path d="M62 62Q38 42 62 24Q70-2 110 6Q150-2 158 24Q182 42 158 62z" fill="#fff" ' + OST + '/><rect x="62" y="56" width="96" height="16" rx="5" fill="#f1f3f8" ' + OST + '/>' });
+  A.outfit("pirat", ["#c0392b", "#7a1a1a"], { head: '<path d="M36 64Q110-30 184 64Q110 44 36 64z" fill="#1b1b2f" ' + OST + '/><path d="M42 62Q110 42 178 62" stroke="#ffd34d" stroke-width="6" fill="none"/><circle cx="110" cy="14" r="17" fill="#fff" ' + OST + '/><circle cx="103" cy="12" r="4" fill="' + L + '"/><circle cx="117" cy="12" r="4" fill="' + L + '"/><path d="M104 24h12" stroke="' + L + '" stroke-width="3.5" stroke-linecap="round"/>' });
+  A.outfit("ritter", ["#d0d8e8", "#7a869e"], { head: '<path d="M46 86Q42 14 110 12Q178 14 174 86z" fill="#cfd6e4" ' + OST + '/><path d="M60 62h100v14H60z" fill="#7a869e" ' + OST + '/><path d="M110 12Q96-24 140-20Q122-4 128 14z" fill="#e63946" ' + OST + '/><path d="M110 12v50" stroke="' + L + '" stroke-width="4"/>' });
+  A.outfit("dj", ["#ffd34d", "#b8780a"], { head: '<path d="M44 96Q40 -4 110 -2Q180 -4 176 96" fill="none" stroke="#14213d" stroke-width="14"/><path d="M44 96Q40 -4 110 -2Q180 -4 176 96" fill="none" stroke="#ff3df0" stroke-width="7"/><rect x="26" y="78" width="30" height="46" rx="12" fill="#ff3df0" ' + OST + '/><rect x="164" y="78" width="30" height="46" rx="12" fill="#ff3df0" ' + OST + '/>' });
+  A.outfit("zauberer", ["#7a4fff", "#2b1a8f"], { head: '<path d="M60 56Q86 22 118 14Q146 8 170 30Q150 28 140 38L152 56z" fill="#3b2791" ' + OST + '/><ellipse cx="110" cy="56" rx="72" ry="14" fill="#4b2fb8" ' + OST + '/><path d="M52 56Q110 70 168 56" fill="none" stroke="#ffd34d" stroke-width="5"/>' + star(106, 38, 11, "#ffe27a") + star(138, 26, 6, "#fff"), back: '<path d="M60 170Q20 260 60 296Q110 250 160 296Q200 260 160 170z" fill="#4b2fb8" ' + OST + '/>' });
+  A.outfit("koenig", ["#d12036", "#6b0a15"], { head: '<path d="M62 52l-8-40l30 22l26-38l26 38l30-22l-8 40q-48 12-96 0z" fill="#ffd34d" ' + OST + '/><circle cx="84" cy="30" r="6" fill="#e63946"/><circle cx="136" cy="30" r="6" fill="#59c8ff"/><circle cx="110" cy="8" r="7" fill="#fff"/>', back: '<path d="M52 168Q4 250 40 296H180Q216 250 168 168z" fill="#b01a2e" ' + OST + '/><path d="M40 296H180" stroke="#fff" stroke-width="8" stroke-dasharray="14 8"/>' });
   Object.keys(D).forEach(function (av) {
     var d = D[av], sp = d[1], c = d[2];
     A.register(av, d[0], function (jc, jd) { return critter(sp, jc, jd); }, c);
@@ -8952,7 +8978,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   var RAR_NAME = { common: "Gewöhnlich", rare: "Selten", epic: "Episch", legend: "Legendär" };
   var RAR_GLOW = { common: "rgba(150,200,130,.7)", rare: "rgba(70,160,255,.8)", epic: "rgba(190,110,255,.85)", legend: "rgba(255,200,70,.95)" };
   var MED_COL = { common: ["#9bd48a", "#4f9a46"], rare: ["#7fd0ff", "#2f8cff"], epic: ["#d79bff", "#a855f7"], legend: ["#ffe58a", "#ffb61e"] };
-  var SHIRTS = { natur: ["#b9c9de", "#b9c9de", ""], shirt: ["#35c6ff", "#35c6ff", ""], hoodie: ["#7a63f0", "#7a63f0", ""], trikot: [["#e53935", "#fff"], "#e53935", "7"], held: ["#2b6fe0", "#c62828", "★"], raum: ["#dfe6ee", "#dfe6ee", "★"], rock: ["#ffd23d", "#ffd23d", "♪"], polar: ["#3f9bff", "#3f9bff", "❄"],
+  var SHIRTS = { skater: ["#ff8a3d", "#ff8a3d", ""], cowboy: ["#9a6a35", "#9a6a35", "★"], ninja: ["#3a3a5c", "#3a3a5c", ""], chef: ["#ffffff", "#ffffff", ""], pirat: ["#c0392b", "#c0392b", "☠"], ritter: ["#cfd6e4", "#cfd6e4", "⚔"], dj: ["#ffd34d", "#ffd34d", "♫"], zauberer: ["#7a4fff", "#7a4fff", "★"], koenig: ["#d12036", "#d12036", "♛"], natur: ["#b9c9de", "#b9c9de", ""], shirt: ["#35c6ff", "#35c6ff", ""], hoodie: ["#7a63f0", "#7a63f0", ""], trikot: [["#e53935", "#fff"], "#e53935", "7"], held: ["#2b6fe0", "#c62828", "★"], raum: ["#dfe6ee", "#dfe6ee", "★"], rock: ["#ffd23d", "#ffd23d", "♪"], polar: ["#3f9bff", "#3f9bff", "❄"],
     "k-muenchen": ["#d4151f", "#d4151f", "7"], "k-barcelona": [["#a50044", "#004d98"], "#004d98", "7"], "k-turin": [["#111", "#fff"], "#111", "7"], "k-deutschland": ["#f1f1f4", "#fff", "7"], "k-argentinien": [["#74acdf", "#fff"], "#74acdf", "7"], "k-portugal": ["#c1121f", "#c1121f", "7"] };
   function svgCup(c1, c2) { return '<svg viewBox="0 0 64 64"><path d="M16 8h32v14q0 14-16 18q-16-4-16-18z" fill="' + c1 + '" stroke="#14213d" stroke-width="4" stroke-linejoin="round"/><path d="M16 14H6q0 14 12 16M48 14h10q0 14-12 16" fill="none" stroke="#14213d" stroke-width="4"/><rect x="28" y="40" width="8" height="8" fill="' + c2 + '" stroke="#14213d" stroke-width="3"/><rect x="18" y="48" width="28" height="10" rx="3" fill="' + c2 + '" stroke="#14213d" stroke-width="4"/><path d="M22 14q0 10 6 14" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".6" fill="none"/><path d="M32 18l3 6l6 1l-4.5 4l1 6l-5.5-3l-5.5 3l1-6l-4.5-4l6-1z" fill="#fff" opacity=".85"/></svg>'; }
   function svgMedal(c, n) { return '<svg viewBox="0 0 64 64"><path d="M20 4l8 22h8l8-22z" fill="#2f8cff" stroke="#14213d" stroke-width="3" stroke-linejoin="round"/><circle cx="32" cy="40" r="19" fill="' + c + '" stroke="#14213d" stroke-width="4"/><circle cx="32" cy="40" r="13" fill="none" stroke="#fff" stroke-width="2" opacity=".6"/><text x="32" y="' + (String(n).length > 2 ? 44 : 46) + '" text-anchor="middle" font-size="' + (String(n).length > 2 ? 13 : 18) + '" font-weight="900" fill="#14213d" font-family="Trebuchet MS,sans-serif">' + esc(n) + '</text></svg>'; }
@@ -9306,14 +9332,15 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   }
   /* Neuheiten-Wolke auf der Startseite: kündigt ein neues Spiel an. Neues Spiel = Eintrag in NEWS (id = Spiel-ID aus VTG.GAMES, date = Datum der Veröffentlichung).
      Sie verschwindet nach dem ersten Spielen, nach ✕, nach dem Antippen oder nach 14 Tagen (pro Profil in profile.cloudSeen). */
-  var NEWS = [{ id: "blast3d", icon: "🛸", title: "Blast 3D", sub: "Weich den Wörtern aus!", date: "2026-10-11" }];
+  var NEWS = [{ id: "verkleidung", icon: "🎭", title: "Neue Outfits!", sub: "Ritter, Ninja, Zauberer … ab in den Shop", date: "2026-10-19", shop: "outfit" },
+    { id: "blast3d", icon: "🛸", title: "Blast 3D", sub: "Weich den Wörtern aus!", date: "2026-10-11" }];
   function newsCloud() {
     var pf = S.state.profile, seen = pf.cloudSeen || {}, ar = S.state.arena || {}, today = S.today();
     var n = NEWS.filter(function (x) {
-      if (seen[x.id] || !global.VTG || !global.VTG.GAMES.some(function (g) { return g.id === x.id; })) return false;
+      if (seen[x.id] || (!x.shop && (!global.VTG || !global.VTG.GAMES.some(function (g) { return g.id === x.id; })))) return false;
       if (dayDiff2(x.date, today) > 14 && !(pf.cloudForce || {})[x.id]) return false;
       if ((pf.cloudForce || {})[x.id]) return true;   // „Wolke wieder anzeigen“ unter Profil › Ton & Aussehen
-      return !Object.keys(ar).some(function (k) { return k.indexOf("g_" + x.id + ":") === 0; });
+      return x.shop ? true : !Object.keys(ar).some(function (k) { return k.indexOf("g_" + x.id + ":") === 0; });
     })[0];
     if (!n) return "";
     return '<div class="newscloud" data-id="' + esc(n.id) + '"><i class="ncs s1">✨</i><i class="ncs s2">⭐</i><i class="ncs s3">✨</i><span class="ncnew">NEU</span><button class="ncbody" data-act="newscloud" data-id="' + esc(n.id) + '"><span class="nci">' + n.icon + '</span><span class="nct"><b>' + esc(n.title) + '</b><small>' + esc(n.sub) + '</small></span></button><button class="ncx" data-act="newsx" data-id="' + esc(n.id) + '" aria-label="Ausblenden">✕</button></div>';
@@ -11817,7 +11844,9 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     else if (a === "newscloud" || a === "newsx") {
       var nid = act.getAttribute("data-id"), pfc = S.state.profile; (pfc.cloudSeen || (pfc.cloudSeen = {}))[nid] = 1; if (pfc.cloudForce) delete pfc.cloudForce[nid]; S.save(true);
       var cl = act.closest(".newscloud"); if (cl) cl.remove();
-      if (a === "newscloud" && global.VTG) global.VTG.start(nid);
+      var nn = NEWS.filter(function (x) { return x.id === nid; })[0];
+      if (a === "newscloud" && nn && nn.shop) { tab = "beute"; beuteSeg = "shop"; shopTab = nn.shop; render(); view.scrollTop = 0; }
+      else if (a === "newscloud" && global.VTG) global.VTG.start(nid);
     }
     else if (a === "film") {
       global.VTFILM.play(act.getAttribute("data-id"), { audio: S.state.settings.audio, speak: function (t) { speak(t, null, "de"); }, voice: function () { var n = S.state.settings.narrator || "auto"; return n === "dev" ? null : n === "m" ? "m" : "f"; }, onGo: function (g) {

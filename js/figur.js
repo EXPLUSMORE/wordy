@@ -59,7 +59,7 @@
     "k-argentinien": ["repeating-linear-gradient(90deg,#74acdf 0 7px,#fff 7px 14px)", "#74acdf", "#111111", "#ffffff", "#111111", "#111111", "#ffffff"],
     "k-portugal": ["linear-gradient(#c1121f,#c1121f)", "#c1121f", "#0b6b3a", "#c1121f", "#0b6b3a", "#f7d117", "rgba(0,0,0,.4)"]
   };
-  var EMB = { trikot: "7", held: "★", raum: "★", rock: "♪", polar: "❄" };
+  var EMB = { cowboy: "★", pirat: "☠", ritter: "⚔", dj: "♫", zauberer: "★", koenig: "♛", trikot: "7", held: "★", raum: "★", rock: "♪", polar: "❄" };
   /* Eigene Köpfe für Figuren, deren Emoji/Zeichnung schon ein ganzes Tier zeigt (sonst säße ein Tier auf dem Körper) */
   var V = '<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">';
   function eyes(y, dx, r, c) { return '<circle cx="' + (32 - dx) + '" cy="' + y + '" r="' + r + '" fill="' + (c || "#1B1230") + '"/><circle cx="' + (32 + dx) + '" cy="' + y + '" r="' + r + '" fill="' + (c || "#1B1230") + '"/><circle cx="' + (32 - dx + 1.3) + '" cy="' + (y - 1.3) + '" r="' + r * .35 + '" fill="#fff"/><circle cx="' + (32 + dx + 1.3) + '" cy="' + (y - 1.3) + '" r="' + r * .35 + '" fill="#fff"/>'; }
