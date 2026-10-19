@@ -1966,6 +1966,7 @@
     return html + '</section>';
   }
   /* Rang-Pfad: je Rang mit Figurenwahl die zwei Figuren, Stufenfarbe, Stand und XP-Balken */
+  function softWrap(t) { return esc(t).replace(/(.{4})(pummel|einhorn|phönix|drache|schatten|kristall|zauber|flamingo|faultier|lama)/gi, "$1&shy;$2"); }   // lange Namen an Wortgrenzen trennen
   function rankPathHtml() {
     var st = S.state, cur = S.rankOf(st.xp), h = '<p class="small muted" style="margin:6px 0 8px">' + (cur.next ? "Noch <b>" + (cur.next.xp - st.xp).toLocaleString("de-DE") + " XP</b> bis " + esc(cur.next.n) + "." : "Höchster Rang erreicht!") + '</p>';
     S.RANKS.forEach(function (r) {
@@ -1974,7 +1975,7 @@
       h += '<div class="rkrow' + (reached ? "" : " lock") + (isCur ? " cur" : "") + '"><div class="rkn"><b>' + (reached ? "✓ " : "🔒 ") + esc(r.n) + '</b><small>ab ' + r.xp.toLocaleString("de-DE") + ' XP</small>' + (pick ? "" : '<small>🛒 im Shop</small>') + (isCur && cur.next ? '<div class="bar"><i style="width:' + pc + '%"></i></div>' : "") + '</div><div class="rkf">' +
         ids.map(function (id) { var it = S.itemById(id), rr = S.rarityOf(it), own = S.owns(it), hid = !own && S.shopSoon(it);
           if (hid) return '<span class="rkx ' + rr + '" title="Geheim" data-act="lockinfo" data-id="' + esc(id) + '"><i style="display:grid;place-items:center;font-size:30px;filter:grayscale(1) brightness(.55)">❔</i><small>???</small></span>';
-          return '<span class="rkx ' + rr + (got === id ? " pick" : "") + '" title="' + esc(it.label) + '"' + (reached ? "" : ' data-act="lockinfo" data-id="' + esc(id) + '"') + '><i>' + avatarHtml(it.val) + '</i><small>' + esc(it.label) + (got === id ? " 🎁" : own ? " ✓" : "") + '</small></span>'; }).join("") + '</div></div>';
+          return '<span class="rkx ' + rr + (got === id ? " pick" : "") + '" title="' + esc(it.label) + '"' + (reached ? "" : ' data-act="lockinfo" data-id="' + esc(id) + '"') + '><i>' + avatarHtml(it.val) + '</i><small>' + softWrap(it.label) + (got === id ? " 🎁" : own ? " ✓" : "") + '</small></span>'; }).join("") + '</div></div>';
     });
     return h;
   }
