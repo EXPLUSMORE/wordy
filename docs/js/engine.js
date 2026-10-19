@@ -89,6 +89,7 @@
     { id: "av:fnelite",    kind: "avatar", set: "fn", label: "Elite-Kristall", cost: 800,  val: "svg:fnelite",    rank: "Elite" },
     { id: "av:fnchamp",    kind: "avatar", set: "fn", label: "Champion-Kristall", cost: 1500, val: "svg:fnchamp", rank: "Champion" },
     { id: "av:fnkristall", kind: "avatar", set: "fn", label: "Kristall-Lama",  cost: 1500, val: "svg:fnkristall", rank: "Unreal" },
+    { id: "av:gepard",      kind: "avatar", label: "Turbo-Gepard",   cost: 350,  val: "svg:gepard",     rank: "Platin II", rar: "rare" },
     { id: "av:fnrakete",   kind: "avatar", set: "fn", label: "Raketen-Lama",   cost: 700,  val: "svg:fnrakete",   rank: "Platin II", rar: "epic" },
     { id: "av:fngold",     kind: "avatar", set: "fn", label: "Goldkristall-Lama", cost: 2200, val: "svg:fngold",  rank: "Unreal Gold", rar: "legend" },
     { id: "av:fnunreal",   kind: "avatar", set: "fn", label: "Unreal-Kristall", cost: 2500, val: "svg:fnunreal",  rank: "Unreal" },
@@ -222,7 +223,7 @@
   var RANK_SLOTS = {
     "Bronze II": ["av:🐼", "av:🐢"],        "Silber I": ["av:🦉", "av:🐙"],         "Silber III": ["av:🦕", "av:pbaer"],
     "Gold I": ["av:🦈", "av:🦄"],           "Gold II": ["av:phase", "av:pkatze"],   "Gold III": ["av:pummel", "av:fnllama"],
-    "Platin I": ["av:pphoenix", "av:kitty3"], "Platin II": ["av:fnrakete"], "Platin III": ["av:pgold", "av:fnelite"],
+    "Platin I": ["av:pphoenix", "av:kitty3"], "Platin II": ["av:fnrakete", "av:gepard"], "Platin III": ["av:pgold", "av:fnelite"],
     /* ab Diamant I: alles legendär, nichts wird geschenkt, der Rang schaltet die Figuren nur im Shop frei (Kauf) */
     "Diamant I": ["av:blitzwolf", "av:pregen"], "Diamant II": ["av:sdrache", "av:ninja"], "Diamant III": ["av:flamingo", "av:faultier"],
     "Elite": ["av:fnchamp", "av:pgalaxie"], "Champion": ["av:fnkristall", "av:fnunreal"], "Unreal": ["av:kitty4"], "Unreal Gold": ["av:fngold"]

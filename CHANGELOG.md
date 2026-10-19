@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.123.0 – 2026-10-19
+- Neue seltene Figur **Turbo-Gepard** (350 🪙, Sticker 300 🪙) für Rang Platin II, neben dem Raketen-Lama: goldgelb mit Flecken, Tränenstreifen, Renn-Brille mit rotem Stirnband und weißen Tempostreifen. Ab Platin II hat man dort jetzt die Wahl zwischen Raketen-Lama und Turbo-Gepard; wer Platin II schon erreicht und gewählt hat, kann den Gepard im Shop kaufen.
+- Kein Server-Schritt nötig.
+
 ## 2.122.2 – 2026-10-19
 - Shop › Figuren › Rang-Pfad: Lange Figurennamen (z. B. „Regenbogenpummel“, „Nachtschatten“) ragten aus der Kachel. Auf schmalen Handys steht der Rang jetzt oben und die zwei Figuren darunter in voller Breite, lange Namen werden an Wortgrenzen getrennt („Regenbogen-pummel“).
 - Fehler behoben: Legendäre Figuren im Rang-Pfad (ab Diamant I) wurden durch eine fremde Stilregel schief dargestellt (Name links, Symbol verschoben).

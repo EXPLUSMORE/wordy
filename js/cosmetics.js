@@ -138,6 +138,16 @@
         '<path d="M10 27Q30 22 54 27Q44 24 40 14Q36 -6 30 0Q24 10 20 22z" fill="#3B2791" stroke="#FFD34D" stroke-width="1.2" stroke-linejoin="round"/><ellipse cx="32" cy="26.5" rx="25" ry="3.4" fill="#4B2FB8" stroke="#FFD34D" stroke-width="1"/>' + star(31, 12, 4, "#FFE27A") + star(43, 20, 2.4, "#fff"),
       face: ''
     }),
+    gepard: pummel({
+      body: "#F6B73C", shade: "#C27A14", eye: "#2B1A00", pupil: "#fff",
+      ears: '<circle cx="14" cy="20" r="8" fill="#F6B73C"/><circle cx="50" cy="20" r="8" fill="#F6B73C"/><circle cx="14" cy="21" r="4" fill="#3B2410"/><circle cx="50" cy="21" r="4" fill="#3B2410"/>',
+      front: '<ellipse cx="32" cy="46" rx="11" ry="7.4" fill="#FFF3C9"/><path d="M31 42h2l-1 2z" fill="#3B2410"/>' +
+        '<g fill="#3B2410"><circle cx="19" cy="30" r="1.5"/><circle cx="14" cy="38" r="1.4"/><circle cx="45" cy="30" r="1.5"/><circle cx="50" cy="38" r="1.4"/><circle cx="27" cy="21" r="1.4"/><circle cx="37" cy="21" r="1.4"/></g>' +
+        '<path d="M22 37q-2 6 1 10M42 37q2 6-1 10" fill="none" stroke="#3B2410" stroke-width="1.8" stroke-linecap="round"/>' +
+        '<path d="M9 25q23-12 46 0v6q-23-10-46 0z" fill="#FF5A36" stroke="#8E2410" stroke-width="1"/><circle cx="21" cy="27" r="5.6" fill="#7BE9FF" fill-opacity=".75" stroke="#14213D" stroke-width="1.6"/><circle cx="43" cy="27" r="5.6" fill="#7BE9FF" fill-opacity=".75" stroke="#14213D" stroke-width="1.6"/>' +
+        '<path d="M4 40h8M3 45h9M60 40h-8M61 45h-9" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" opacity=".85"/>',
+      face: '<path d="M28 50q4 3 8 0" fill="none" stroke="#3B2410" stroke-width="1.8" stroke-linecap="round"/>'
+    }),
     yeti: pummel({
       body: "#E4F1FF", shade: "#B6D4F2", eye: "#1B2A5A", pupil: "#fff",
       ears: '<circle cx="14" cy="22" r="7" fill="#E4F1FF"/><circle cx="50" cy="22" r="7" fill="#E4F1FF"/>',

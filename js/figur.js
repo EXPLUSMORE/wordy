@@ -40,6 +40,7 @@
     "svg:cyberfuchs": ["fur", "#141C45", "#1D2A5E", "#080C26", "fox", "#141C45"],
     "svg:pirat": ["bird", "#E02F3F", "#FFD34D", "#FFB84D", "feat", "#3AA0FF"],
     "svg:zauber": ["bird", "#6D4FD8", "#E6DCFF", "#FFD34D", "feat", "#FFD34D"],
+    "svg:gepard": ["fur", "#F6B73C", "#FFF3C9", "#C27A14", "cat", "#F6B73C"],
     "svg:yeti": ["fur", "#E4F1FF", "#A9D6FF", "#B6D4F2", "pom", "#FFFFFF"],
     "svg:flamingo": ["bird", "#FF6FA8", "#FFE0EF", "#FFD34D", "feat", "#FF8FC0"],
     "svg:faultier": ["fur", "#A67C52", "#F2DFC4", "#6E4B2C", "", ""],
