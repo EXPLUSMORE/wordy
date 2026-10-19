@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.121.1 – 2026-10-19
+- Wochenpass „Eiswelt“: Ab Woche 2 gibt es keinen Sticker-Platz mehr als Geschenk (nur noch in Woche 1); Münzen, Booster und Gegenstände bleiben. Gilt auch für die Vorlage im Dashboard. Ein Pass, der im Dashboard schon individuell gespeichert wurde, behält seine alten Einstellungen, bis er dort neu gespeichert wird.
+- Kein Server-Schritt nötig (nur falls ein eigener Pass gespeichert ist).
+
 ## 2.121.0 – 2026-10-19
 - Sticker-Plätze: jetzt bis zu **10** statt 5. Platz 1 ist gratis, Platz 2 und 3 kosten je 150, Platz 4 bis 6 je 300, Platz 7 bis 9 je 750, Platz 10 1.000 Münzen. Bereits freigeschaltete Plätze bleiben erhalten. Die Sticker behalten ihre Größe und ragen unten etwas über den Rand der Kopfzeile.
 - Kein Server-Schritt nötig.

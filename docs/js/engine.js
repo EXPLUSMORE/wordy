@@ -933,9 +933,9 @@
   /* ---------- Pass: ein Monat aus Wochen-Sets ---------- */
   var PASS_DEFAULT = { id: "eiswelt1", title: "Eiswelt", theme: "ice", weeks: [
     { title: "Der Eisbär", need: 5, items: ["av:eisbaer", "dn:eislauf"], slot: 1, coins: 50 },
-    { title: "Pinguin-Party", need: 5, items: ["av:eispingu", "dn:moonwalk"], slot: 1, boost: 1, coins: 50 },
-    { title: "Robben-Rutsche", need: 5, items: ["av:eisrobbe", "dn:drehung"], slot: 1, coins: 50 },
-    { title: "Der Eiskönig", need: 6, items: ["av:eiskoenig", "dn:sieg"], slot: 1, coins: 100 }],
+    { title: "Pinguin-Party", need: 5, items: ["av:eispingu", "dn:moonwalk"], slot: 0, boost: 1, coins: 50 },
+    { title: "Robben-Rutsche", need: 5, items: ["av:eisrobbe", "dn:drehung"], slot: 0, coins: 50 },
+    { title: "Der Eiskönig", need: 6, items: ["av:eiskoenig", "dn:sieg"], slot: 0, coins: 100 }],
     finale: { title: "Eiskönigs Schatz", items: ["fr:eis", "of:polar", "fx:schnee"], slot: 0, boost: 1, coins: 200 } };
   function passSeason() {
     var r = global.WordySync && global.WordySync.remote ? (global.WordySync.remote() || {}).season : null;
