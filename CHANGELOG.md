@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.124.2 – 2026-10-19
+- Spielen › Freunde: Die Figur des Freundes ist jetzt immer die **aktuell gewählte** (kommt mit dem Lernstand-Abgleich, nicht erst, wenn der Freund selbst die Freunde-Seite öffnet), und ein **gewählter Rahmen** wird um die Figur gezeigt (Gold, Neon, Regenbogen, Feuer, Eis …). Nur bei bestätigten Freunden. **Server-Schritt nötig** (derselbe Neustart wie bei 2.124.0/2.124.1).
+
 ## 2.124.1 – 2026-10-19
 - Spielen › Freunde: Zu Rang und XP steht jetzt auch der **aktuelle Titel** des Freundes, als farbige Marke nach Seltenheit (wie auf der Startseite); ohne gewählten Titel der Rang-Titel (z. B. „Wort-Rookie“). Die App meldet den Titel mit dem Lernstand-Abgleich, der Server gibt ihn nur bei bestätigten Freunden weiter. **Server-Schritt nötig** (wie bei 2.124.0, ein Neustart genügt für beides).
 
