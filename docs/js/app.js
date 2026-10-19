@@ -1856,7 +1856,7 @@
   /* Sticker-Plätze: nacheinander freischalten (Platz 1 gratis, 2 und 3: je 150, 4 bis 6: je 300, 7 bis 9: je 750, 10: 1000 Münzen) */
   function slotsHtml() {
     var n = S.stickerSlots(), st = S.state, next = n < 10 ? S.SLOT_COST[n] : 0, h = '<div class="shopitem" style="flex-wrap:wrap;gap:8px"><span style="flex:1 1 100%"><b class="small">Sticker-Plätze auf deinem Profil</b><br><span class="small muted">' +
-      n + ' von 10 freigeschaltet. So viele Sticker kannst du gleichzeitig aufkleben.</span></span><span class="row" style="gap:6px;flex:1 1 auto">';
+      n + ' von 10 freigeschaltet. So viele Sticker kannst du gleichzeitig aufkleben.</span></span><span class="row" style="gap:6px;flex:1 1 100%;flex-wrap:wrap">';
     for (var i = 1; i <= 10; i++) h += '<span class="pill" style="' + (i <= n ? "background:var(--accent-soft);font-weight:700" : "opacity:.55") + '">' + (i <= n ? "✓ " : "🔒 ") + i + '</span>';
     h += '</span>';
     if (n < 10) h += '<button class="btn soft" data-act="buyslot"' + (st.coins < next ? ' aria-disabled="true" style="opacity:.6"' : "") + '>Platz ' + (n + 1) + ' freischalten · 🪙 ' + next + '</button>';

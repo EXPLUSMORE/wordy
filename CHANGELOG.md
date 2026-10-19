@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.122.1 – 2026-10-19
+- Shop › Sticker: Die zehn Platz-Marken (1 bis 10) brechen auf zwei Zeilen um, Platz 10 ragte am Rand heraus.
+- Kein Server-Schritt nötig.
+
 ## 2.122.0 – 2026-10-19
 - Sticker sind jetzt eigene Sammelstücke mit festem Preis je Stufe: gewöhnlich 120, selten 300, episch 700, legendär 1.600 🪙 (bisher etwa der halbe Figurenpreis). Der Fuchs-Sticker bleibt gratis.
 - Sticker kommen nicht mehr gratis zur Figur: weder beim Rang-Aufstieg noch beim Kauf oder als Pass-Geschenk. Nur im Willkommenspaket gibt es weiter den Sticker zur gewählten Start-Figur. Bereits vorhandene Sticker bleiben allen Kindern erhalten.
