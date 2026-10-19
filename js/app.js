@@ -333,17 +333,27 @@
       '<div class="row" style="gap:8px;margin-top:10px">' + (!needXp && !left ? '<button class="btn" data-act="buy" data-id="' + esc(it.id) + '">Jetzt kaufen</button>' : "") +
       '<button class="btn ghost" data-act="goshop">Anderen Wunsch wählen</button></div></section>';
   }
+  /* Verbformen (Einstellung `verbForms`): "all" = Infinitiv, Simple Past, Past Participle; "past" = nur Infinitiv und Simple Past (ohne 3. Form) */
+  function vPastOnly() { return S.state.settings.verbForms === "past"; }
+  function vN() { return vPastOnly() ? 2 : 3; }
+  function vFirst(x) { return String(x).split("/")[0]; }
+  function vFormsText(v) { return vPastOnly() ? v.inf + " – " + v.past : v.inf + " – " + v.past + " – " + v.pp; }
+  function verbFormsSwitch() {
+    return '<div class="row wrap" style="gap:6px;margin-top:10px;align-items:center"><span class="small muted">Formen lernen:</span>' +
+      '<button class="chip" data-act="vforms" data-k="all" aria-pressed="' + !vPastOnly() + '">Alle drei</button>' +
+      '<button class="chip" data-act="vforms" data-k="past" aria-pressed="' + vPastOnly() + '">Nur Simple Past</button></div>';
+  }
   /* ---------- Unregelmäßige Verben: Karte, Liste ---------- */
   function verbCard() {
     var vs = S.verbStats(), vp = S.verbPools(), due = vp.box.length + vp.due.length;
     return '<section class="card"><div class="row"><div style="flex:1 1 auto"><div class="eyebrow">Unregelmäßige Verben</div>' +
       '<h2 style="font-size:19px">' + vs.seen + ' von ' + vs.total + ' geübt · ' + vs.mastered + ' sitzen</h2>' +
       '<p class="small muted" style="margin:4px 0 0">' + (due ? due + " " + plural(due, "Verb ist", "Verben sind") + " zur Wiederholung dran. " : "") +
-      'Go – went – gone: alle Formen, die man in der Schule braucht. In normalen Runden kommen sie immer wieder zwischendurch.</p></div></div>' +
+      (vPastOnly() ? 'Go – went: Grundform und Simple Past (die 3. Form ist ausgeblendet). ' : 'Go – went – gone: alle Formen, die man in der Schule braucht. ') + 'In normalen Runden kommen sie immer wieder zwischendurch.</p>' + verbFormsSwitch() + '</div></div>' +
       '<div class="row wrap" style="margin-top:12px;gap:8px"><button class="btn" data-act="start" data-mode="verbs" data-min="5">Verben üben</button>' +
       '<button class="btn soft" data-act="start" data-mode="verbs" data-vtype="1" data-min="5">Nur Tippen</button>' +
       '<button class="btn ghost" data-act="verblist">Alle Verben ansehen</button></div>' +
-      '<p class="small muted" style="margin:8px 0 0">„Verben üben“ mischt Einführung, Lückenaufgabe und Tippen. „Nur Tippen“ fragt immer beide Formen zum Schreiben ab.</p></section>';
+      '<p class="small muted" style="margin:8px 0 0">„Verben üben“ mischt Einführung, Lückenaufgabe und Tippen. „Nur Tippen“ fragt immer ' + (vPastOnly() ? 'das Simple Past' : 'beide Formen') + ' zum Schreiben ab.</p></section>';
   }
   function viewVerbList() {
     var vs = S.verbStats(), list = S.verbs();
@@ -352,7 +362,7 @@
       return '<div class="wordrow" data-act="vtoggle" style="cursor:pointer">' +
         (audioAvailable() ? '<button class="mini-speak" data-act="say" data-text="' + esc(v.en) + '" aria-label="' + esc(v.inf) + ' anhören">🔊</button>' : '') +
         '<span class="vchev" aria-hidden="true">▸</span>' +
-        '<span class="en" style="flex:1 1 auto">' + esc(v.inf) + ' – ' + esc(v.past) + ' – ' + esc(v.pp) + '<br><span class="small muted">' + esc(v.de) + '</span></span>' +
+        '<span class="en" style="flex:1 1 auto">' + esc(vFormsText(v)) + '<br><span class="small muted">' + esc(v.de) + '</span></span>' +
         (r && r.no ? '<span class="pill" title="Fehler">✗ ' + r.no + '</span>' : '') +
         '<span class="pill l' + lv + '">' + esc(S.LEVELS[lv].n) + '</span></div>' +
         '<div class="vsent stack" hidden style="gap:8px;padding:0 0 12px">' + verbSentCards(v, true) +
@@ -362,7 +372,7 @@
       '<button class="btn ghost" data-act="back" style="align-self:flex-start">← Zurück</button>' +
       '<section class="card"><div class="eyebrow">Unregelmäßige Verben</div>' +
       '<h1 style="font-size:24px">Verbenliste</h1>' +
-      '<p class="small muted" style="margin:6px 0 0">' + vs.total + ' Verben · ' + vs.seen + ' geübt · ' + vs.mastered + ' gemeistert. Infinitiv – Simple Past (Präteritum) – Past Participle (Partizip Perfekt).</p>' +
+      '<p class="small muted" style="margin:6px 0 0">' + vs.total + ' Verben · ' + vs.seen + ' geübt · ' + vs.mastered + ' gemeistert. Infinitiv – Simple Past (Präteritum)' + (vPastOnly() ? '' : ' – Past Participle (Partizip Perfekt)') + '.</p>' + verbFormsSwitch() +
       '<div class="row wrap" style="margin-top:12px;gap:8px"><button class="btn" data-act="start" data-mode="verbs" data-min="5">Verben üben</button>' +
       '<button class="btn soft" data-act="start" data-mode="verbs" data-vtype="1" data-min="5">Nur Tippen</button></div></section>' +
       '<section class="card"><div class="eyebrow">Alle Verben · Zeile antippen = Beispielsätze</div>' + rows + '</section></div>';
@@ -2211,6 +2221,8 @@
       '<select id="setNew" style="width:auto">' + [6, 12, 20, 30].map(function (m) {
         return '<option value="' + m + '"' + (st.settings.newPerDay === m ? " selected" : "") + '>' + m + '</option>';
       }).join("") + '</select></label>' +
+      '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Unregelmäßige Verben<br><span class="small muted">Bei „Nur Simple Past“ wird die 3. Form (Past Participle) nicht gezeigt und nicht abgefragt</span></span>' +
+      '<select id="setVForms" style="width:auto"><option value="all"' + (!vPastOnly() ? " selected" : "") + '>Alle drei Formen</option><option value="past"' + (vPastOnly() ? " selected" : "") + '>Nur Simple Past</option></select></label>' +
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Pause nach der Antwort<br><span class="small muted">Die Lösung bleibt kurz stehen. Bei Fehlern wird sie vorgelesen und das Wort einmal abgeschrieben</span></span>' +
       '<input type="checkbox" id="setPause" ' + (st.settings.pause !== false ? "checked" : "") + ' style="width:auto"></label>' +
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Lernpfad auf dem Start-Tab<br><span class="small muted">Stationen und Truhen. Aus = nur die Empfehlung</span></span>' +
@@ -2277,6 +2289,7 @@
 
     $("#setGoal").onchange = function () { st.settings.goalMin = +this.value; S.save(true); renderHeader(); };
     $("#setNew").onchange = function () { st.settings.newPerDay = +this.value; S.save(true); };
+    $("#setVForms").onchange = function () { st.settings.verbForms = this.value === "past" ? "past" : "all"; S.save(true); };
     $("#setAudio").onchange = function () { st.settings.audio = this.checked; S.save(true); };
     pushInit();
     $("#setCloud").onclick = function () { var pf2 = st.profile; pf2.cloudSeen = {}; pf2.cloudForce = {}; NEWS.forEach(function (n) { pf2.cloudForce[n.id] = 1; }); S.save(true); toast("Die Wolke erscheint wieder auf der Startseite."); };
@@ -2342,7 +2355,7 @@
     return h;
   }
   function verbSentCards(v, withDe) {
-    return v.s.map(function (x, i) {
+    return v.s.slice(0, vN()).map(function (x, i) {
       return '<div class="card" style="background:var(--card-2);box-shadow:none;padding:12px 14px">' +
         '<div class="row" style="gap:10px;align-items:center">' + (audioAvailable() ? '<button class="mini-speak" data-act="say" data-text="' + esc(x.en) + '" aria-label="Satz anhören">🔊</button>' : "") +
         '<div class="eyebrow" style="flex:1">' + TENSES[i].label + '</div></div>' +
@@ -2353,10 +2366,10 @@
   }
   /* Verben laufen durch dieselben Anzeige- und Wertungsfunktionen wie Wörter; dafür ein Wort-förmiges Objekt */
   function verbWord(v) {
-    var lines = v.s.map(function (x) {
+    var lines = v.s.slice(0, vN()).map(function (x) {
       return '<span class="cmp">' + (audioAvailable() ? '<button class="mini-speak" data-act="say" data-text="' + esc(x.en) + '" aria-label="Satz anhören">🔊</button>' : "") + sentHtml(x) + '</span>';
     }).join("");
-    return { id: v.id, en: v.en, de: v.de + (v.alt ? " (alle Formen: " + v.past + " · " + v.pp + ")" : ""), ex: v.ex, exHtml: lines };
+    return { id: v.id, en: vPastOnly() ? v.inf + ", " + vFirst(v.past) : v.en, de: v.de + (v.alt ? " (alle Formen: " + v.past + (vPastOnly() ? "" : " · " + v.pp) + ")" : ""), ex: v.ex, exHtml: lines };
   }
   /* Unregelmäßige Verben als Lückenaufgabe: Form wählen, die zum Zeitwort passt */
   function regularForm(inf) {
@@ -2365,7 +2378,7 @@
   }
   function verbGapOptions(v) {
     var seen = {}, opts = [];
-    v.s.map(function (x) { return x.form; }).concat([regularForm(v.inf)]).forEach(function (f, i) {
+    v.s.slice(0, vN()).map(function (x) { return x.form; }).concat([regularForm(v.inf)]).forEach(function (f, i) {
       if (!f || seen[f]) return; seen[f] = 1; opts.push({ label: f, form: f, ok: false });
     });
     return opts;
@@ -2378,7 +2391,7 @@
       var gap = verbGapOk(v);
       if (fresh) out.push({ type: "verbintro", v: v });
       var easy = fresh || S.levelOf(v.id) <= 1 || Math.random() < 0.5;
-      out.push(gap && easy && !typeOnly ? { type: "verbgap", v: v, idx: Math.floor(Math.random() * 3) } : { type: "verb", v: v });
+      out.push(gap && easy && !typeOnly ? { type: "verbgap", v: v, idx: Math.floor(Math.random() * vN()) } : { type: "verb", v: v });
     });
     return out;
   }
@@ -2737,8 +2750,8 @@
         '<div class="eyebrow">Neues unregelmäßiges Verb</div>' +
         '<div class="row" style="gap:14px;align-items:center">' + (audioAvailable() ? speakBtn(w.en, true) : "") +
         '<div><div class="prompt">' + esc(v.inf) + '</div><div class="sub" style="margin-top:4px">' + esc(v.de) + '</div></div></div>' +
-        '<div class="card" style="background:var(--card-2);box-shadow:none"><div class="eyebrow">Die drei Formen</div>' +
-        '<p style="margin:6px 0 0;font-family:Newsreader,serif;font-size:22px">' + esc(v.inf) + ' – ' + esc(v.past) + ' – ' + esc(v.pp) + '</p></div>' +
+        '<div class="card" style="background:var(--card-2);box-shadow:none"><div class="eyebrow">' + (vPastOnly() ? "Die zwei Formen" : "Die drei Formen") + '</div>' +
+        '<p style="margin:6px 0 0;font-family:Newsreader,serif;font-size:22px">' + esc(vFormsText(v)) + '</p></div>' +
         verbSentCards(v, true) + '</div>';
       foot.innerHTML = '<button class="btn wide lg" data-act="next">Verstanden</button>';
       if (audioAvailable()) setTimeout(function () { speak(w.en); }, 250);
@@ -2761,17 +2774,17 @@
         '<div><div class="prompt">' + esc(v.inf) + '</div><div class="sub" style="margin-top:4px">' + esc(v.de) + '</div></div></div>' +
         '<label class="small muted" for="vPast" style="margin-bottom:-6px">Simple Past (Präteritum, 2. Form)</label>' +
         '<input id="vPast" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="next" placeholder="z. B. went">' +
-        '<label class="small muted" for="vPp" style="margin-bottom:-6px">Past Participle (Partizip Perfekt, 3. Form)</label>' +
-        '<input id="vPp" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="z. B. gone">' +
+        (vPastOnly() ? "" : '<label class="small muted" for="vPp" style="margin-bottom:-6px">Past Participle (Partizip Perfekt, 3. Form)</label>' +
+        '<input id="vPp" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="z. B. gone">') +
         inlineCheck() +
-        '<p class="small muted" style="margin:0">Beides muss stimmen. Kleine Tippfehler zählen halb.</p></div>';
+        '<p class="small muted" style="margin:0">' + (vPastOnly() ? "Kleine Tippfehler zählen halb." : "Beides muss stimmen. Kleine Tippfehler zählen halb.") + '</p></div>';
       foot.innerHTML = "";
-      var a = $("#vPast"), b = $("#vPp"), btn = $("#inlineCheck");
-      function upd() { btn.disabled = !(a.value.trim() && b.value.trim()); }
-      a.addEventListener("input", upd); b.addEventListener("input", upd);
-      a.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); b.focus(); } });
-      b.addEventListener("keydown", function (e) { if (e.key === "Enter" && !btn.disabled) check(); });
-      [a, b].forEach(function (el) { el.addEventListener("focus", function () { setTimeout(function () { btn.scrollIntoView({ block: "nearest" }); }, 300); }); });
+      var a = $("#vPast"), b = $("#vPp"), btn = $("#inlineCheck"), only = !b;
+      function upd() { btn.disabled = !(a.value.trim() && (only || b.value.trim())); }
+      a.addEventListener("input", upd); if (b) b.addEventListener("input", upd);
+      a.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); if (only) { if (!btn.disabled) check(); } else b.focus(); } });
+      if (b) b.addEventListener("keydown", function (e) { if (e.key === "Enter" && !btn.disabled) check(); });
+      [a, b].filter(Boolean).forEach(function (el) { el.addEventListener("focus", function () { setTimeout(function () { btn.scrollIntoView({ block: "nearest" }); }, 300); }); });
       setTimeout(function () { a.focus(); }, 60);
       if (audioAvailable()) setTimeout(function () { speak(v.inf); }, 300);
     },
@@ -2993,14 +3006,14 @@
     }
     if (t.type === "verb") {
       var v = t.v, vw = verbWord(v);
-      var ga = judgeTyped($("#vPast").value, v.past), gb = judgeTyped($("#vPp").value, v.pp);
+      var ppIn = $("#vPp"), ga = judgeTyped($("#vPast").value, v.past), gb = ppIn ? judgeTyped(ppIn.value, v.pp) : 2;
       var gv = ga === 0 || gb === 0 ? 0 : (ga === 2 && gb === 2 ? 2 : 1);
       SS.answered = true;
       var rv = applyGrade(vw, gv);
       if (gv === 0) SS.retry.push({ type: "verb", v: v });
       verdict(gv > 0, vw, rv, gv === 1 ? "fast – achte auf die Schreibweise"
-        : gv === 0 ? "Deine Antwort: " + ($("#vPast").value.trim() || "–") + " / " + ($("#vPp").value.trim() || "–") : null);
-      $("#vPast").disabled = true; $("#vPp").disabled = true;
+        : gv === 0 ? "Deine Antwort: " + ($("#vPast").value.trim() || "–") + (ppIn ? " / " + ($("#vPp").value.trim() || "–") : "") : null);
+      $("#vPast").disabled = true; if (ppIn) ppIn.disabled = true;
       return;
     }
     if (t.type === "type") {
@@ -3460,6 +3473,7 @@
       renderHeader(); render();
     }
     else if (a === "dancetry") { var dit = S.SHOP.filter(function (x) { return x.id === act.getAttribute("data-id"); })[0]; if (dit) { var pf = S.state.profile; global.VTC.dance({ av: pf.avatar, avatar: avatarHtml(pf.avatar), outfit: (dit.kind === "outfit" || dit.kind === "kit") ? dit.val : pf.outfit, dance: dit.kind === "dance" ? dit.val : (pf.dance || "wackler"), title: dit.label }); } }
+    else if (a === "vforms") { S.state.settings.verbForms = act.getAttribute("data-k") === "past" ? "past" : "all"; S.save(true); render(); }
     else if (a === "shopview") { shopView = act.getAttribute("data-k"); render(); }
     else if (a === "lockinfo") { var li = S.itemById(act.getAttribute("data-id")); if (li) { var need = S.minXp(li) - S.state.xp, sw = S.shopSoon(li); toast("🔒 " + (sw ? "Geheimes Stück" : li.label) + (sw ? ": kommt in " + sw + (sw === 1 ? " Woche" : " Wochen") + " in den Shop" : "") + (li.rank ? ": ab Rang " + li.rank : "") + (need > 0 ? " · noch " + need.toLocaleString("de-DE") + " XP" : "") + (li.cost && !sw ? " · " + li.cost + " 🪙" : ""), 4200); } }
     else if (a === "shoptab") { shopTab = act.getAttribute("data-k"); render(); }

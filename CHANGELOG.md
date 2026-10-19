@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.117.0 – 2026-10-19
+- Unregelmäßige Verben: wahlweise **nur Simple Past** lernen (ohne die 3. Form, Past Participle). Umschalter „Formen lernen: Alle drei / Nur Simple Past“ oben in der Verbenliste (Lernen › Unregelmäßige Verben) und in den Einstellungen (Profil › Einstellungen › Unregelmäßige Verben). Bei „Nur Simple Past“ zeigen Einführung und Liste nur Grundform – Simple Past, es gibt nur zwei Beispielsätze (Gegenwart und Simple Past), die Lückenaufgabe nutzt nur diese beiden Formen und beim Tippen gibt es nur das Feld fürs Simple Past. Die Einstellung gilt pro Profil; Lernstand und Stufen bleiben erhalten.
+- Kein Server-Schritt nötig.
+
 ## 2.116.2 – 2026-10-18
 - Neues Wort: Die deutsche Übersetzung steht jetzt groß und hervorgehoben in einem eigenen Feld „Auf Deutsch“ unter dem englischen Wort (vorher klein darunter).
 - Kein Server-Schritt nötig.
