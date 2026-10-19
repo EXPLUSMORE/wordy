@@ -281,6 +281,16 @@
     var d = S.profiles(), x = d.list.filter(function (y) { return y.id === d.active; })[0];
     return x ? x.name : "";
   }
+  /* Sticker in der Kopfzeile: so viele zeigen, wie neben Rang, Münzen und Herzen Platz haben (nichts überlagern) */
+  function fitStickers() {
+    var h = $("#hStk"), top = $("#top"); if (!h || h.hidden || !top) return;
+    var k = [].slice.call(h.querySelectorAll(".stk")); k.forEach(function (x) { x.style.display = ""; });
+    var n = k.length; h.style.display = ""; top.classList.add("fit");   // Rang-Block darf beim Messen nicht schrumpfen
+    while (n > 0 && top.scrollWidth > top.clientWidth + 1) { n--; k[n].style.display = "none"; }
+    top.classList.remove("fit"); h.style.display = n ? "" : "none";
+  }
+  global.addEventListener("resize", fitStickers);
+  if (global.document && document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fitStickers(); });
   function renderHeader() {
     var st = S.state, r = S.rankOf(st.xp);
     $("#hAvatar").innerHTML = avatarHtml(st.profile.avatar);
@@ -296,6 +306,7 @@
     if (!st.settings.hearts) { hEl.textContent = "∞"; hEl.title = "Ohne Herzen"; }
     else { S.regenHearts(); hEl.innerHTML = "<span style='color:var(--bad)'>" + "♥".repeat(st.hearts) + "</span><span style='color:var(--line)'>" + "♥".repeat(5 - st.hearts) + "</span>"; }
     global.VTC.applyLook(st.profile, st.settings.themeMode, st.settings.design);
+    fitStickers();
     var hb = $("#hBoost");
     if (hb) {
       var bs = st.path && st.path.boost, on = !!(bs && bs.on && bs.left > 0);

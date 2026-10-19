@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.120.3 – 2026-10-19
+- Kopfzeile: Die Sticker überlagern Münzen, Streak und Herzen nicht mehr. Die App misst, wie viel Platz neben Rang, XP, Münzen, Streak und Herzen frei ist, und zeigt nur so viele Sticker, wie hineinpassen (bei großen Zahlen oder schmalen Handys weniger; der Rang-Name wird erst zuletzt gekürzt). Münzen, Streak und Herzen schrumpfen nicht mehr ineinander.
+- Kein Server-Schritt nötig.
+
 ## 2.120.2 – 2026-10-19
 - **Zauber-Drop** vorgezogen: Zauber-Eule (legendär), Sternenstaub-Rahmen (legendär), Zauberfunken (Effekt) und Titel „Wortzauberer“ sind ab heute im Shop (statt am 26.10.). Neue Wolke „🔮 Zauber-Drop!“ auf der Startseite führt in Shop › Figuren. Nächster Drop: Eis-Gipfel am Montag, 2.11.
 - Kein Server-Schritt nötig.
