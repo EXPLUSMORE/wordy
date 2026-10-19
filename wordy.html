@@ -854,7 +854,7 @@ details.fold>.fbody{padding:2px 0 14px}
 @keyframes hhdr{to{transform:translateX(560px)}}
 .hhst{position:absolute;inset:0;display:none;background-image:radial-gradient(2px 2px at 20px 30px,#fff,transparent),radial-gradient(2px 2px at 90px 80px,#fff,transparent),radial-gradient(1.5px 1.5px at 160px 40px,#fff,transparent),radial-gradient(2px 2px at 250px 110px,#fff,transparent),radial-gradient(1.5px 1.5px at 320px 60px,#fff,transparent),radial-gradient(2px 2px at 60px 160px,#fff,transparent);animation:hhtw 3s ease-in-out infinite alternate}
 .sky-n .hhst{display:block}@keyframes hhtw{from{opacity:.4}to{opacity:1}}
-.newscloud{position:absolute;z-index:5;right:8px;top:9%;max-width:47%;animation:ncwander 4.6s ease-in-out infinite alternate}
+.newscloud{position:absolute;z-index:5;right:8px;top:32%;max-width:47%;animation:ncwander 4.6s ease-in-out infinite alternate}
 .ncbody{position:relative;display:flex;align-items:center;gap:8px;padding:7px 14px 7px 10px;border:0;border-radius:999px;background:#fff;color:#14213d;box-shadow:0 5px 0 rgba(20,33,61,.22),0 8px 18px rgba(20,33,61,.18);font:inherit;text-align:left;cursor:pointer;animation:ncpulse 1.5s ease-in-out infinite}
 .ncbody:before,.ncbody:after{content:"";position:absolute;background:#fff;border-radius:50%;z-index:-1}.ncbody:before{width:34px;height:34px;left:16px;top:-14px}.ncbody:after{width:26px;height:26px;left:48px;top:-9px}
 .nci{font-size:22px;line-height:1;animation:ncufo 2.2s ease-in-out infinite}.nct b{display:block;font-size:13px;white-space:nowrap;font-weight:900;line-height:1.1}.nct small{display:block;font-size:10.5px;color:#4a5a78;margin-top:2px}
@@ -873,6 +873,13 @@ details.fold>.fbody{padding:2px 0 14px}
 .hhtop{position:relative;z-index:3;padding:16px 16px 0;max-width:68%}
 .hhdate{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;opacity:.9;text-shadow:0 1px 0 rgba(0,0,0,.35)}
 .hh h1{margin:4px 0 4px;font-size:26px;line-height:1.1;color:#fff;text-shadow:0 3px 0 #14213d}
+.hh h1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hh .hhtop{max-width:94%}.hh .stk-corner~.hhtop{max-width:68%}
+.hh h1 .ttl{display:inline-block;vertical-align:.1em;margin:0 .1em 0 .05em;padding:.06em .5em .1em;border-radius:999px;font-size:.6em;font-weight:900;letter-spacing:.02em;color:#fff;text-shadow:0 1px 0 rgba(20,33,61,.5);border:2px solid #14213d}
+.hh h1 .ttl.common{background:linear-gradient(#8fa6cf,#5f7aa6)}.hh h1 .ttl.auto{background:rgba(20,33,61,.55);border-color:rgba(255,255,255,.35)}
+.hh h1 .ttl.rare{background:linear-gradient(#5cb8ff,#1f6fe0);box-shadow:0 0 10px rgba(70,160,255,.8)}
+.hh h1 .ttl.epic{background:linear-gradient(#d2a0ff,#8a3de0);box-shadow:0 0 12px rgba(190,110,255,.9)}
+.hh h1 .ttl.legend{background:linear-gradient(100deg,#ffe58a,#ffb61e 45%,#ffe58a 55%,#ffb61e);background-size:220% 100%;color:#3a2000;text-shadow:none;box-shadow:0 0 14px rgba(255,200,70,.95);animation:ttlSh 3s linear infinite}
+@keyframes ttlSh{to{background-position:-220% 0}}@media (prefers-reduced-motion:reduce){.hh h1 .ttl.legend{animation:none}}
 .hhtip{margin:0;font-size:13px;font-weight:700;text-shadow:0 2px 0 rgba(20,33,61,.55)}
 .hhgoal{position:absolute;z-index:3;left:16px;top:146px;text-align:center}
 .hhring{--p:0;width:78px;height:78px;border-radius:50%;background:conic-gradient(#ffd21f calc(var(--p)*1%),rgba(20,33,61,.45) 0);display:grid;place-items:center;position:relative;border:3px solid #14213d;box-shadow:0 4px 0 rgba(20,33,61,.4)}
@@ -1197,7 +1204,7 @@ details.fold>.fbody{padding:2px 0 14px}
 </style>
 
 
-<script>window.WORDY_VERSION="2.117.0";window.WORDY_BUILD="e24313b2fd";</script>
+<script>window.WORDY_VERSION="2.118.0";window.WORDY_BUILD="0963704f97";</script>
 </head>
 <body>
 <div id="app">
@@ -5483,6 +5490,21 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     { id: "ti:profi",   kind: "title", label: "Vokabelprofi", cost: 120, val: "Vokabelprofi" },
     { id: "ti:genie",   kind: "title", label: "Sprachgenie",  cost: 350, val: "Sprachgenie" },
     { id: "ti:champ",   kind: "title", label: "Champion der Wörter", cost: 500, val: "Champion der Wörter", rank: "Champion" },
+    /* Titel (Begrüßung auf der Startseite, v2.119) */
+    { id: "ti:vninja",   kind: "title", label: "Vokabel-Ninja",        cost: 80,   val: "Vokabel-Ninja",        rar: "common" },
+    { id: "ti:quassel",  kind: "title", label: "Quasselstrippe",       cost: 80,   val: "Quasselstrippe",       rar: "common" },
+    { id: "ti:gladiator",kind: "title", label: "Grammatik-Gladiator",  cost: 220,  val: "Grammatik-Gladiator",  rar: "rare" },
+    { id: "ti:blitz",    kind: "title", label: "Blitz-Brain",          cost: 200,  val: "Blitz-Brain",          rar: "rare" },
+    { id: "ti:wolf",     kind: "title", label: "Wortwolf",             cost: 250,  val: "Wortwolf",             rar: "rare" },
+    { id: "ti:sheriff",  kind: "title", label: "Satz-Sheriff",         cost: 220,  val: "Satz-Sheriff",         rar: "rare" },
+    { id: "ti:boss",     kind: "title", label: "Boss-Bezwinger",       cost: 450,  val: "Boss-Bezwinger",       rar: "epic", rank: "Gold III" },
+    { id: "ti:virtuose", kind: "title", label: "Vokabel-Virtuose",     cost: 450,  val: "Vokabel-Virtuose",     rar: "epic", rank: "Platin I" },
+    { id: "ti:samurai",  kind: "title", label: "Sprach-Samurai",       cost: 500,  val: "Sprach-Samurai",       rar: "epic", rank: "Platin II" },
+    { id: "ti:eroberer", kind: "title", label: "Englisch-Eroberer",    cost: 500,  val: "Englisch-Eroberer",    rar: "epic", rank: "Platin III" },
+    { id: "ti:titan",    kind: "title", label: "Wörter-Titan",         cost: 1200, val: "Wörter-Titan",         rar: "legend", rank: "Diamant I" },
+    { id: "ti:unbesiegbar", kind: "title", label: "Unbesiegbar",       cost: 1000, val: "Unbesiegbar",          rar: "legend", rank: "Diamant III" },
+    { id: "ti:herrscher",kind: "title", label: "Herrscher der Vokabeln", cost: 1500, val: "Herrscher der Vokabeln", rar: "legend", rank: "Elite" },
+    { id: "ti:legende",  kind: "title", label: "Legende der Wörter",   cost: 1500, val: "Legende der Wörter",   rar: "legend", rank: "Unreal" },
 
     { id: "bg:none",   kind: "bg", label: "Schlicht", cost: 0,   val: "none" },
     { id: "bg:stars",  kind: "bg", label: "Sterne",   cost: 120, val: "stars" },
@@ -9380,11 +9402,25 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     return '<div class="newscloud duelcl ' + it.kind + '" data-id="' + cid + '"><i class="ncs s1">⚡</i><i class="ncs s2">⭐</i><i class="ncs s3">⚡</i><span class="ncnew">' + tag + '</span><button class="ncbody" data-act="duelcloud" data-kind="' + it.kind + '" data-id="' + cid + '"><span class="nci">' + icon + '</span><span class="nct"><b>' + head + '</b><small>' + sub + '</small></span></button><button class="ncx" data-act="duelx" data-kind="' + it.kind + '" data-id="' + cid + '" aria-label="Ausblenden">✕</button></div>';
   }
   function dayDiff2(a, b) { return Math.round((new Date(b + "T00:00:00") - new Date(a + "T00:00:00")) / 864e5); }
+  /* Titel in der Begrüßung: „Hallo [Titel] Name“. Ohne gekauften Titel gibt es einen Rangtitel, damit es alle sehen. */
+  var RANK_TITLE = { bronze: "Wort-Rookie", silber: "Entdecker", gold: "Wort-Profi", platin: "Wort-Meister", diamant: "Wort-Held", elite: "Wort-Elite", champion: "Wort-Champion", unreal: "Wort-Legende", "unreal-gold": "Unreal-Genie" };
+  function titleChip(r) {
+    var pf = S.state.profile, it = pf.title ? S.SHOP.filter(function (x) { return x.kind === "title" && x.val === pf.title; })[0] : null;
+    var txt = pf.title || RANK_TITLE[r.rank.t] || "Wort-Rookie", rar = it ? S.rarityOf(it) : "common";
+    return '<span class="ttl ' + rar + (it ? "" : " auto") + '">' + esc(txt) + '</span> ';
+  }
+  /* Begrüßung auf eine Zeile einpassen (Schrift schrumpft bei langem Titel und Namen) */
+  function fitGreet() {
+    var h = $(".hh h1"); if (!h) return;
+    var fs = 26; h.style.fontSize = fs + "px";
+    while (h.scrollWidth > h.clientWidth && fs > 12) { fs -= 1; h.style.fontSize = fs + "px"; }
+  }
+  global.addEventListener("resize", function () { if (tab === "home") fitGreet(); });
   function viewHome() {
     var st = S.state, r = S.rankOf(st.xp);
     var goalSec = S.goalMin() * 60, pct = Math.min(100, Math.round(st.daily.sec * 100 / goalSec));
     var toNext = r.next ? (r.next.xp - st.xp) : 0;
-    var pn = playerName(), greet = pn && !/^Spieler \d+$/.test(pn) ? "Hallo " + esc(pn) : "Willkommen zurück";
+    var pn = playerName(), named = pn && !/^Spieler \d+$/.test(pn), greet = named ? "Hallo " + titleChip(r) + esc(pn) : "Willkommen zurück";
     var hour = new Date().getHours();
     var biz = st.settings.track === "business";
     var tip = pct >= 100 ? "Tagesziel geschafft. Alles Weitere ist Bonus."
@@ -9428,6 +9464,8 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     html += '<div style="text-align:center"><button class="chip" data-act="goueben">Alle Spielmodi und Einheiten →</button></div>';
     html += '</div>';
     view.innerHTML = html;
+    fitGreet();
+    if (global.document && document.fonts && document.fonts.ready) document.fonts.ready.then(fitGreet);
   }
 
   /* ================= ÜBEN: Spielmodi und Einheiten ================= */

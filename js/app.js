@@ -969,11 +969,25 @@
     return '<div class="newscloud duelcl ' + it.kind + '" data-id="' + cid + '"><i class="ncs s1">⚡</i><i class="ncs s2">⭐</i><i class="ncs s3">⚡</i><span class="ncnew">' + tag + '</span><button class="ncbody" data-act="duelcloud" data-kind="' + it.kind + '" data-id="' + cid + '"><span class="nci">' + icon + '</span><span class="nct"><b>' + head + '</b><small>' + sub + '</small></span></button><button class="ncx" data-act="duelx" data-kind="' + it.kind + '" data-id="' + cid + '" aria-label="Ausblenden">✕</button></div>';
   }
   function dayDiff2(a, b) { return Math.round((new Date(b + "T00:00:00") - new Date(a + "T00:00:00")) / 864e5); }
+  /* Titel in der Begrüßung: „Hallo [Titel] Name“. Ohne gekauften Titel gibt es einen Rangtitel, damit es alle sehen. */
+  var RANK_TITLE = { bronze: "Wort-Rookie", silber: "Entdecker", gold: "Wort-Profi", platin: "Wort-Meister", diamant: "Wort-Held", elite: "Wort-Elite", champion: "Wort-Champion", unreal: "Wort-Legende", "unreal-gold": "Unreal-Genie" };
+  function titleChip(r) {
+    var pf = S.state.profile, it = pf.title ? S.SHOP.filter(function (x) { return x.kind === "title" && x.val === pf.title; })[0] : null;
+    var txt = pf.title || RANK_TITLE[r.rank.t] || "Wort-Rookie", rar = it ? S.rarityOf(it) : "common";
+    return '<span class="ttl ' + rar + (it ? "" : " auto") + '">' + esc(txt) + '</span> ';
+  }
+  /* Begrüßung auf eine Zeile einpassen (Schrift schrumpft bei langem Titel und Namen) */
+  function fitGreet() {
+    var h = $(".hh h1"); if (!h) return;
+    var fs = 26; h.style.fontSize = fs + "px";
+    while (h.scrollWidth > h.clientWidth && fs > 12) { fs -= 1; h.style.fontSize = fs + "px"; }
+  }
+  global.addEventListener("resize", function () { if (tab === "home") fitGreet(); });
   function viewHome() {
     var st = S.state, r = S.rankOf(st.xp);
     var goalSec = S.goalMin() * 60, pct = Math.min(100, Math.round(st.daily.sec * 100 / goalSec));
     var toNext = r.next ? (r.next.xp - st.xp) : 0;
-    var pn = playerName(), greet = pn && !/^Spieler \d+$/.test(pn) ? "Hallo " + esc(pn) : "Willkommen zurück";
+    var pn = playerName(), named = pn && !/^Spieler \d+$/.test(pn), greet = named ? "Hallo " + titleChip(r) + esc(pn) : "Willkommen zurück";
     var hour = new Date().getHours();
     var biz = st.settings.track === "business";
     var tip = pct >= 100 ? "Tagesziel geschafft. Alles Weitere ist Bonus."
@@ -1017,6 +1031,8 @@
     html += '<div style="text-align:center"><button class="chip" data-act="goueben">Alle Spielmodi und Einheiten →</button></div>';
     html += '</div>';
     view.innerHTML = html;
+    fitGreet();
+    if (global.document && document.fonts && document.fonts.ready) document.fonts.ready.then(fitGreet);
   }
 
   /* ================= ÜBEN: Spielmodi und Einheiten ================= */

@@ -9,6 +9,13 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.119.0 – 2026-10-19
+- Titel stehen jetzt in der Begrüßung auf der Startseite: „Hallo [Titel] Name“, als farbiges Schild nach Stufe (gewöhnlich grau-blau, selten blau mit Leuchten, episch violett mit Leuchten, legendär goldglänzend). Die Zeile schrumpft automatisch, damit Titel und Name immer in eine Zeile passen.
+- Wer keinen Titel gekauft hat, bekommt einen Rangtitel (Wort-Rookie, Entdecker, Wort-Profi, Wort-Meister, Wort-Held, Wort-Elite, Wort-Champion, Wort-Legende, Unreal-Genie), damit ihn alle sehen.
+- 14 neue Titel im Shop: Vokabel-Ninja, Quasselstrippe (gewöhnlich); Grammatik-Gladiator, Blitz-Brain, Wortwolf, Satz-Sheriff (selten); Boss-Bezwinger, Vokabel-Virtuose, Sprach-Samurai, Englisch-Eroberer (episch, ab Gold III bis Platin III); Wörter-Titan, Unbesiegbar, Herrscher der Vokabeln, Legende der Wörter (legendär, ab Diamant I bis Unreal).
+- Die Neuheiten-Wolke sitzt tiefer und verdeckt die Begrüßung nicht mehr.
+- Kein Server-Schritt nötig.
+
 ## 2.118.0 – 2026-10-19
 - Neun neue **Verkleidungen** im Shop (Outfits): Skater-Beanie und Cowboy (gewöhnlich, 100/120 🪙), Ninja und Chefkoch (selten, 250 🪙), Pirat und Ritter (episch, 450/500 🪙), Zauberer und Königsgewand (legendär, 1.000/1.200 🪙) sind sofort da. Der **Disco-DJ** (episch, 500 🪙, Goldjacke und pinke Kopfhörer) folgt am Montag, 26.10. als „Kommt bald“. Die Outfits tragen Kopfschmuck bzw. Umhang auf den Standardfiguren; bei Emoji- und Eisfiguren erscheint die Jackenfarbe.
 - Startseite: Neue Wolke „Neue Outfits!“ führt direkt in Shop › Outfits (verschwindet nach dem Antippen oder nach 14 Tagen; unter Profil › Ton & Aussehen wieder einblendbar).
