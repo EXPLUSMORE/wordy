@@ -181,18 +181,18 @@
   }
 
 
-  /* ---------- Figur schlägt die Spinne mit dem Baseballschläger weg ---------- */
+  /* ---------- Figur schlägt die Spinne mit dem Baseballschläger weg: 3D-Schwung von rechts nach links ---------- */
   var whacking = false;
-  function bat(c, hand, th, L) {   // Schläger zeichnen: Griff am Drehpunkt, dicker werdend, Holzmaserung
+  function bat(c, hand, th, L, ws) {   // Schläger zeichnen: Griff am Drehpunkt, Fass wird von der Perspektive (ws) dicker oder dünner
     c.save(); c.translate(hand.x, hand.y); c.rotate(th);
-    var g = c.createLinearGradient(-12, 0, 12, 0); g.addColorStop(0, "#F3D49A"); g.addColorStop(0.45, "#D9A55B"); g.addColorStop(1, "#8F5A22");
-    c.shadowColor = "rgba(0,0,0,.45)"; c.shadowBlur = 8;
-    c.beginPath(); c.moveTo(-4.4, 8); c.lineTo(-4.4, -L * 0.3); c.quadraticCurveTo(-6.5, -L * 0.6, -13.5, -L * 0.8); c.quadraticCurveTo(-15.5, -L * 0.99, 0, -L); c.quadraticCurveTo(15.5, -L * 0.99, 13.5, -L * 0.8); c.quadraticCurveTo(6.5, -L * 0.6, 4.4, -L * 0.3); c.lineTo(4.4, 8); c.closePath();
+    var w = 13.5 * ws, g = c.createLinearGradient(-w, 0, w, 0); g.addColorStop(0, "#F3D49A"); g.addColorStop(0.45, "#D9A55B"); g.addColorStop(1, "#8F5A22");
+    c.shadowColor = "rgba(0,0,0,.5)"; c.shadowBlur = 10;
+    c.beginPath(); c.moveTo(-4.4, 8); c.lineTo(-4.4, -L * 0.3); c.quadraticCurveTo(-6.5 * Math.max(.8, ws * .8), -L * 0.6, -w, -L * 0.8); c.quadraticCurveTo(-w * 1.15, -L * 0.99, 0, -L); c.quadraticCurveTo(w * 1.15, -L * 0.99, w, -L * 0.8); c.quadraticCurveTo(6.5 * Math.max(.8, ws * .8), -L * 0.6, 4.4, -L * 0.3); c.lineTo(4.4, 8); c.closePath();
     c.fillStyle = g; c.fill(); c.shadowBlur = 0;
-    c.fillStyle = "#2A1A12"; c.fillRect(-3.8, -L * 0.28, 7.6, L * 0.3 + 6);   // Griffband
-    c.fillStyle = "#5C3A18"; c.beginPath(); c.arc(0, 9, 5.2, 0, 6.283); c.fill();   // Knauf
-    c.strokeStyle = "rgba(255,255,255,.35)"; c.lineWidth = 1.6; c.beginPath(); c.moveTo(-4, -L * 0.45); c.quadraticCurveTo(-7.5, -L * 0.72, -6, -L * 0.9); c.stroke();
-    c.strokeStyle = "rgba(90,50,10,.5)"; c.lineWidth = 1; for (var k = 0; k < 3; k++) { c.beginPath(); c.moveTo(-8, -L * (0.55 + k * 0.1)); c.lineTo(8, -L * (0.57 + k * 0.1)); c.stroke(); }
+    c.fillStyle = "#2A1A12"; c.fillRect(-4.6, -L * 0.28, 9.2, L * 0.3 + 6);   // Griffband
+    c.fillStyle = "#5C3A18"; c.beginPath(); c.arc(0, 9, 5.4, 0, 6.283); c.fill();   // Knauf
+    c.strokeStyle = "rgba(255,255,255,.4)"; c.lineWidth = 1.6; c.beginPath(); c.moveTo(-5, -L * 0.45); c.quadraticCurveTo(-w * .55, -L * 0.72, -w * .45, -L * 0.92); c.stroke();
+    c.strokeStyle = "rgba(90,50,10,.5)"; c.lineWidth = 1; for (var k = 0; k < 3; k++) { c.beginPath(); c.moveTo(-w * .6, -L * (0.55 + k * 0.1)); c.lineTo(w * .6, -L * (0.57 + k * 0.1)); c.stroke(); }
     c.restore();
   }
   function whack(figEl, spiderEl, onEnd, silent) {
@@ -200,45 +200,50 @@
     var I = imgs(), W = global.innerWidth, H = global.innerHeight, dpr = Math.min(2, global.devicePixelRatio || 1), fr = figEl.getBoundingClientRect(), sr = spiderEl.getBoundingClientRect();
     var cv = document.createElement("canvas"); cv.width = W * dpr; cv.height = H * dpr; cv.style.cssText = "position:fixed;left:0;top:0;width:100%;height:100%;z-index:9996;pointer-events:none";
     document.body.appendChild(cv); var c = cv.getContext("2d"); c.setTransform(dpr, 0, 0, dpr, 0, 0);
-    var hand = { x: fr.left + fr.width * 0.8, y: fr.top + fr.height * 0.6 }, L = 104, TH = -62 * Math.PI / 180, pivot = { x: sr.left + sr.width / 2, y: 0 };
-    var S0 = { x: pivot.x, y: Math.max(40, sr.bottom - 18) }, A = { x: hand.x + Math.sin(TH) * L * 0.93, y: hand.y - Math.cos(TH) * L * 0.93 };
-    var t0 = 0, last = 0, hit = false, T_HIT = 0.46, fx = { x: A.x, y: A.y, vx: -420, vy: -560, z: 0, r: 0 }, ring = 0, endAt = 0, snd = !silent;
-    figEl.classList.add("hwFigSwing"); setTimeout(function () { figEl.classList.remove("hwFigSwing"); }, 1100);
-    try { if (snd && global.VTC && global.VTC.batSound) global.VTC.batSound(); } catch (e) {}
+    var D = 460, L = 138, DEG = Math.PI / 180, hand = { x: fr.left + fr.width * 0.88, y: fr.top + fr.height * 0.62 }, pivot = { x: sr.left + sr.width / 2, y: 0 };
+    var T_WIND = 1.05, T_SW = 1.3, T_HIT = 1.56, PSI_W = -20, PSI_H = 148, PSI_END = 215;   // Winkel in der Waagerechten: 0° = nach rechts, 90° = zum Betrachter, 180° = nach links
+    function tip(psi, yoff) { var r = psi * DEG, z = L * Math.sin(r), sc = D / (D - z); return { x: hand.x + L * Math.cos(r) * sc, y: hand.y + yoff * sc, s: sc, z: z }; }
+    var HIT = tip(PSI_H, -L * 0.2), A = { x: HIT.x, y: HIT.y }, S0 = { x: pivot.x, y: Math.max(40, sr.bottom - 18) };
+    var t0 = 0, last = 0, hit = false, fx = { x: A.x, y: A.y, vx: -430, vy: -520, z: 0, r: 0 }, ring = 0, endAt = 0, trail = [], size = 66;
+    setTimeout(function () { figEl.classList.add("hwFigSwing"); setTimeout(function () { figEl.classList.remove("hwFigSwing"); }, 1000); }, T_WIND * 1000 - 60);
+    try { if (!silent && global.VTC && global.VTC.batSound) global.VTC.batSound(); } catch (e) {}
     function done() { cv.remove(); whacking = false; if (onEnd) onEnd(); }
     function frame(now) {
       if (!t0) { t0 = now; last = now; } var t = (now - t0) / 1000, dt = Math.min(0.05, (now - last) / 1000); last = now; c.clearRect(0, 0, W, H);
-      var th, sx, sy, size = 64;
+      var psi = null, yoff = -L * 0.5;
+      if (t >= T_WIND) {
+        if (t < T_SW) { var kw = (t - T_WIND) / (T_SW - T_WIND); psi = 28 + (PSI_W - 28) * (kw * kw * (3 - 2 * kw)); yoff = -L * (0.62 - 0.08 * kw); }   // Ausholen nach hinten rechts, Schläger hoch
+        else if (t < T_HIT) { var k = (t - T_SW) / (T_HIT - T_SW); psi = PSI_W + (PSI_H - PSI_W) * (k * k * (1.6 - 0.6 * k)); yoff = -L * (0.54 - 0.34 * k); }   // Schwung von rechts nach links, beschleunigt
+        else { var kt = Math.min(1, (t - T_HIT) / 0.3); psi = PSI_H + (PSI_END - PSI_H) * (1 - Math.pow(1 - kt, 2)); yoff = -L * (0.2 + 0.1 * kt); }
+      }
+      // Spinne gleitet langsam an ihrem Faden herab und pendelt leicht
       if (t < T_HIT) {
-        var k = Math.max(0, (t - 0.12) / (T_HIT - 0.12)), e = k * k * (3 - 2 * k);
-        th = t < 0.12 ? (110 + 10 * (t / 0.12)) * Math.PI / 180 : (120 - 182 * (k * k)) * Math.PI / 180;
-        var ks = Math.min(1, t / 0.4), es = ks * ks * (3 - 2 * ks); sx = S0.x + (A.x - S0.x) * es; sy = S0.y + (A.y - S0.y) * es + Math.sin(t * 20) * 3 * (1 - es);
+        var ks = Math.min(1, t / T_HIT), es = ks * ks * (3 - 2 * ks), sx = S0.x + (A.x - S0.x) * es + Math.sin(t * 2.6) * 7 * (1 - es * 0.8), sy = S0.y + (A.y - S0.y) * es;
         c.strokeStyle = "rgba(225,210,195,.9)"; c.lineWidth = 1.6; c.beginPath(); c.moveTo(pivot.x, pivot.y); c.lineTo(sx, sy - size * 0.3); c.stroke();
-        if (I.s[0].complete) c.drawImage(I.s[(t * 14 | 0) % 2], sx - size / 2, sy - size / 2, size, size);
-        // Schwung-Spur
-        if (t > 0.12) { c.save(); c.translate(hand.x, hand.y); c.strokeStyle = "rgba(255,255,255," + 0.55 * e + ")"; c.lineWidth = 7; c.lineCap = "round"; c.beginPath(); c.arc(0, 0, L * 0.9, -Math.PI / 2 + th - 0.05, -Math.PI / 2 + th + 1.4 * e * (1 - e) * 2 + 0.2); c.stroke(); c.restore(); }
+        if (I.s[0].complete) c.drawImage(I.s[(t * 5 | 0) % 2], sx - size / 2, sy - size / 2, size, size);
       } else {
         if (!hit) {
-          hit = true; ring = t; th = TH;
-          var b = document.createElement("div"); b.className = "hwBoo hwKrack"; b.textContent = "KRACK!"; b.style.left = Math.max(80, A.x) + "px"; b.style.top = Math.max(80, A.y) + "px"; document.body.appendChild(b); setTimeout(function () { b.remove(); }, 1300);
+          hit = true; ring = t;
+          var bx = document.createElement("div"); bx.className = "hwBoo hwKrack"; bx.textContent = "KRACK!"; bx.style.left = Math.max(80, A.x) + "px"; bx.style.top = Math.max(90, A.y - 10) + "px"; document.body.appendChild(bx); setTimeout(function () { bx.remove(); }, 1300);
           spark(A.x, A.y, 18, ["#FFD166", "#FF8A1F", "#fff", "#FFE2BC"]); document.body.classList.add("hwShake2"); setTimeout(function () { document.body.classList.remove("hwShake2"); }, 320);
           try { if (global.navigator && navigator.vibrate) navigator.vibrate([40, 30, 60]); } catch (e) {}
         }
-        var tt = t - T_HIT; th = TH - Math.min(1, tt / 0.28) * 1.0;   // Durchschwung
-        // Stoßring
-        var rk = (t - ring) / 0.4; if (rk < 1) { c.strokeStyle = "rgba(255,230,160," + (1 - rk) + ")"; c.lineWidth = 6 * (1 - rk) + 1; c.beginPath(); c.arc(A.x, A.y, 8 + 110 * rk, 0, 6.283); c.stroke(); }
-        // Spinne fliegt in die Ferne
-        fx.vy += 260 * dt; fx.x += fx.vx * dt; fx.y += fx.vy * dt; fx.z += 700 * dt; fx.r += 15 * dt; var sc = 1 / (1 + fx.z / 220);
+        var rk = (t - ring) / 0.42; if (rk < 1) { c.strokeStyle = "rgba(255,230,160," + (1 - rk) + ")"; c.lineWidth = 6 * (1 - rk) + 1; c.beginPath(); c.arc(A.x, A.y, 8 + 120 * rk, 0, 6.283); c.stroke(); }
+        var tt = t - T_HIT; fx.vy += 260 * dt; fx.x += fx.vx * dt; fx.y += fx.vy * dt; fx.z += 700 * dt; fx.r -= 14 * dt; var sc = 1 / (1 + fx.z / 220);
         if (sc > 0.03) {
           c.save(); c.translate(fx.x, fx.y); c.rotate(fx.r); c.globalAlpha = Math.min(1, sc * 3 + 0.3); var sz = size * 1.5 * sc;
           c.shadowColor = "rgba(255,200,100,.9)"; c.shadowBlur = 16 * sc; if (I.s[0].complete) c.drawImage(I.s[(tt * 16 | 0) % 2], -sz / 2, -sz / 2, sz, sz); c.restore();
-          // Schweif aus Funken
           c.fillStyle = "rgba(255,210,120," + 0.6 * sc + ")"; for (var q = 1; q <= 5; q++) { c.beginPath(); c.arc(fx.x - fx.vx * dt * q * 2, fx.y - fx.vy * dt * q * 2, Math.max(1, 5 * sc - q * 0.6), 0, 6.283); c.fill(); }
         } else if (!endAt) { endAt = t; spark(fx.x, fx.y, 8, ["#fff", "#FFD166"]); }
         if (endAt && t - endAt > 0.4) { done(); return; }
       }
-      if (th != null && t < T_HIT + 0.9) { var al = t > T_HIT + 0.55 ? Math.max(0, 1 - (t - T_HIT - 0.55) / 0.35) : 1; c.globalAlpha = al; bat(c, hand, th, L); c.globalAlpha = 1; }
-      if (t > 4) { done(); return; }
+      if (psi != null) {
+        var tp = tip(psi, yoff), dx = tp.x - hand.x, dy = tp.y - hand.y, len = Math.max(26, Math.sqrt(dx * dx + dy * dy)), th = Math.atan2(dx, -dy), al = t > T_HIT + 0.5 ? Math.max(0, 1 - (t - T_HIT - 0.5) / 0.3) : 1;
+        trail.push({ x: tp.x, y: tp.y, s: tp.s, t: t }); while (trail.length && t - trail[0].t > 0.14) trail.shift();
+        if (t >= T_SW && trail.length > 1) { c.save(); c.lineCap = "round"; for (var i = 1; i < trail.length; i++) { c.strokeStyle = "rgba(255,255,255," + 0.5 * i / trail.length + ")"; c.lineWidth = 5 + 14 * tp.s * i / trail.length; c.beginPath(); c.moveTo(trail[i - 1].x, trail[i - 1].y); c.lineTo(trail[i].x, trail[i].y); c.stroke(); } c.restore(); }
+        c.globalAlpha = al; bat(c, hand, th, len, tp.s); c.globalAlpha = 1;
+      }
+      if (t > 6) { done(); return; }
       global.requestAnimationFrame(frame);
     }
     global.requestAnimationFrame(frame); return true;

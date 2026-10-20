@@ -336,8 +336,10 @@
     var len = a.sampleRate * 0.6, nb = a.createBuffer(1, len, a.sampleRate), d = nb.getChannelData(0); for (var i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
     function nz(t, dur, f0, f1, q, vol, type) { var s = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain(); s.buffer = nb; f.type = type || "bandpass"; f.Q.value = q; f.frequency.setValueAtTime(f0, t); f.frequency.exponentialRampToValueAtTime(f1, t + dur); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + dur * 0.5); g.gain.exponentialRampToValueAtTime(0.0001, t + dur); s.connect(f); f.connect(g); g.connect(m); s.start(t); s.stop(t + dur + 0.05); }
     function os(t, dur, f0, f1, type, vol) { var o = a.createOscillator(), g = a.createGain(); o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + dur); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + Math.min(0.02, dur / 3)); g.gain.exponentialRampToValueAtTime(0.0001, t + dur); o.connect(g); g.connect(m); o.start(t); o.stop(t + dur + 0.05); }
-    var hit = t0 + 0.46;
-    nz(t0 + 0.12, 0.34, 500, 2600, 1.1, 0.22);                 // Schwung: Zischen
+    var hit = t0 + 1.56;
+    os(t0 + 0.05, 0.9, 140, 90, "sawtooth", 0.018);            // Faden knarzt, Spinne gleitet herab
+    nz(t0 + 1.0, 0.25, 300, 700, 1.2, 0.06);                    // Ausholen
+    nz(t0 + 1.3, 0.28, 500, 2800, 1.1, 0.26);                   // Schwung: Zischen
     nz(hit - 0.01, 0.12, 2500, 900, 0.8, 0.6, "highpass");     // Krack
     os(hit, 0.18, 190, 70, "sine", 0.7);                       // dumpfer Schlag
     os(hit, 0.5, 2300, 2100, "sine", 0.12);                    // heller Ping wie beim Baseball
