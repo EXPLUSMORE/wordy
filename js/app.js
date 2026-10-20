@@ -310,12 +310,29 @@
     if (global.VTS && global.VTS.home) global.VTS.home(on && tab === "home" && sessionEl.hidden);
     if (on && h && !el) { el = document.createElement("div"); el.id = "hwSp"; el.className = "hwsp"; el.setAttribute("role", "button"); el.setAttribute("aria-label", "Spinne antippen"); el.style.setProperty("--cd", (150 + Math.random() * 140 | 0) + "px"); el.addEventListener("animationiteration", function (ev) { if (ev.animationName === "hwCrawl") el.style.setProperty("--cd", (100 + Math.random() * 200 | 0) + "px"); }); h.appendChild(el); }
     else if (!on && el) el.remove();
+    if (on) spiderCheerCheck();
   }
-  document.addEventListener("click", function (e) {
-    var sp = e.target.closest && e.target.closest("#hwSp"); if (!sp || !global.VTS || !sessionEl.hidden) return;
+  /* Spinne starten (Antippen oder nach einer geschafften Übung); versteckt die Kopfzeilen-Spinne, solange der Effekt läuft */
+  function spiderPlay(sp) {
+    if (!sp || !global.VTS || !sessionEl.hidden) return false;
     var r = sp.getBoundingClientRect(); sp.classList.add("gone");
-    if (!global.VTS.spider({ left: r.left, width: r.width, bottom: r.bottom }, function () { sp.classList.remove("gone"); }, S.state.settings.audio === false)) return;
-  });
+    if (global.VTS.spider({ left: r.left, width: r.width, bottom: r.bottom }, function () { var s2 = $("#hwSp"); if (s2) s2.classList.remove("gone"); }, S.state.settings.audio === false)) return true;
+    sp.classList.remove("gone"); return false;
+  }
+  document.addEventListener("click", function (e) { var sp = e.target.closest && e.target.closest("#hwSp"); if (sp) spiderPlay(sp); });
+  /* Wird eine Übung (Lernrunde, Spiel, Grammatik) komplett geschafft, feiert die Spinne mit, sobald man wieder auf der Startseite ist */
+  var spiderCheerAt = 0;
+  function spiderCheerMark() { if (seasonNow() === "halloween") spiderCheerAt = Date.now(); }
+  function spiderCheerCheck() {
+    if (!spiderCheerAt || tab !== "home" || !sessionEl.hidden || seasonNow() !== "halloween") return;
+    if (Date.now() - spiderCheerAt > 600000) { spiderCheerAt = 0; return; }
+    spiderCheerAt = 0;
+    setTimeout(function () {
+      var sp = $("#hwSp"); if (!sp || tab !== "home" || !sessionEl.hidden || (global.VTS && global.VTS.busy())) return;
+      var hb = $("#hhBub"); if (hb) hb.textContent = "Geschafft! Die Spinne feiert mit 🕷️🎉";
+      spiderPlay(sp);
+    }, 1100);
+  }
   var heard = false;
   document.addEventListener("pointerdown", function () { heard = true; ambientSync(); }, { passive: true });
   document.addEventListener("keydown", function () { heard = true; }, { passive: true });
@@ -908,6 +925,7 @@
     if (hit) { planMarkDone(hit.id); if (tab === "home" && sessionEl.hidden) render(); }
   }
   function planOnSession(d) {
+    if (d && d.end !== "quit" && d.mode === "arena") spiderCheerMark();
     if (!d || d.mode !== "arena" || d.end === "quit") return;
     var sub = String(d.sub || "");
     planComplete(/^grammar:/.test(sub) ? { act: "gram", topic: sub.slice(8) } : { act: "game", gid: sub });
@@ -2565,6 +2583,7 @@
     var sec = Math.round((Date.now() - SS.start) / 1000);
     if (reason === "done" && SS.planned) S.recordPace(sec, SS.planned);
     var rw = S.finishSession({ items: SS.items, correct: SS.correct, sec: sec, maxChain: SS.maxChain, newSeen: SS.newSeen, deep: SS.deep || 0, daily: SS.mode === "mix" || !!SS.cls, boxSolved: SS.boxSolved, mastered: SS.mastered, sentOk: SS.sentOk, complete: reason === "done" });
+    if (reason === "done") spiderCheerMark();
     if (reason === "done" && lastStartOpts) planComplete({ act: "start", mode: lastStartOpts.mode || (lastStartOpts.focus ? "focus" : "mix"), unit: lastStartOpts.unit || null, focus: lastStartOpts.focus || null });
     var st = S.state, acc = SS.items ? Math.round(SS.correct * 100 / SS.items) : 0;
     var done = reason === "done";   // nur komplett gemachte Runden zählen als geschafft (Challenge, Münzen, Sterne)

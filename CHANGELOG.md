@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.129.0 – 2026-10-20
+- Halloween: **Wird eine Übung komplett geschafft** (Lernrunde bis zum Ende, Spiel oder Grammatik-Lektion ohne Abbruch), **feiert die große Spinne mit**: Sobald man wieder auf der Startseite ist, steht in der Sprechblase „Geschafft! Die Spinne feiert mit 🕷️🎉“ und die Spinne spielt einen ihrer Effekte (Pendel, Jo-Jo, Netz oder Spinnenregen, zufällig). Abgebrochene Runden lösen nichts aus; die Feier wartet bis zu 10 Minuten, bis man auf der Startseite ist, und kommt nur einmal je geschaffter Übung.
+- Kein Server-Schritt nötig.
+
 ## 2.128.0 – 2026-10-20
 - **Große Spinne, Startseite: unterschiedlich weit am Faden.** Bei jedem Durchlauf (alle ca. 24 Sekunden) seilt sie sich zufällig 100 bis 300 Pixel weit ab, nicht mehr immer gleich weit.
 - **Antippen der Spinne löst vier verschiedene Effekte aus** (zufällig, nie zweimal derselbe hintereinander): das 3D-Pendel mit „BUH!“, **Jo-Jo** (saust mehrmals herab, dreht sich um die eigene Achse, springt mit Funken), **Netz schießen** (Fäden bis in alle Ecken, ein glitzerndes Netz entsteht, die Spinne läuft darauf herum) und **Spinnenregen** (18 kleine Spinnen seilen sich unterschiedlich weit ab, baumeln und ziehen sich wieder hoch). Jeweils mit eigenem Ton; ein Tipp springt zum Ende.
