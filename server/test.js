@@ -141,6 +141,11 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     const pu = await J("/api/admin/players/" + mk.j.id + "/pathunits", { method: "POST", headers: H, body: JSON.stringify({ units: ["H2-1a", "nicht-da", "H2-2a"] }) });
     assert.deepEqual(pu.j.units, ["H2-1a"], "Pfad: nur bekannte Einheiten");
     const sy2 = await J("/api/sync", { headers: T }); assert.deepEqual(sy2.j.pathUnits, ["H2-1a"], "Pfad-Einheiten kommen in der App an");
+    assert.equal((await J("/api/sync", { headers: T })).j.lookForce, "", "Look: Standard leer");
+    await J("/api/admin/players/" + mk.j.id + "/look", { method: "POST", headers: H, body: JSON.stringify({ look: "xmas" }) });
+    assert.equal((await J("/api/sync", { headers: T })).j.lookForce, "xmas", "Look-Vorgabe kommt in der App an");
+    await J("/api/admin/players/" + mk.j.id + "/look", { method: "POST", headers: H, body: JSON.stringify({ look: "quatsch" }) });
+    assert.equal((await J("/api/sync", { headers: T })).j.lookForce, "", "Look: ungültig wird leer");
     assert.equal((await J("/api/admin/players/" + mk.j.id + "/bossdiff", { headers: H })).j.diff, "normal", "Boss: Standard normal");
     await J("/api/admin/players/" + mk.j.id + "/bossdiff", { method: "POST", headers: H, body: JSON.stringify({ diff: "leicht" }) });
     assert.equal((await J("/api/sync", { headers: T })).j.bossDiff, "leicht", "Boss-Schwierigkeit kommt in der App an");

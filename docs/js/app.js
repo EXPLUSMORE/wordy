@@ -307,7 +307,9 @@
   }
   function seasonAuto() { var f = SEASONS.filter(function (x) { return seasonOpen(x[0]); })[0]; return f ? f[0] : ""; }
   /* Gewählte Looks gelten nur im offenen Fenster (danach bis zum nächsten Jahr gesperrt); settings.seasonPreview = Testhilfe */
+  function lookForce() { var r = global.WordySync && global.WordySync.remote ? global.WordySync.remote() : null; return (r && r.lookForce) || ""; }
   function seasonNow() {
+    var lf = lookForce(); if (lf === "off") return ""; if (lf && SEASON_WIN[lf]) return lf;   // Betreiber-Vorgabe (Dashboard › Spieler › Einstellungen)
     var m = S.state.settings.season || "auto"; if (m === "off") return ""; if (m === "on") m = "halloween";
     if (m === "auto") return seasonAuto();
     if (!SEASONS.some(function (x) { return x[0] === m; })) return "";
@@ -361,8 +363,8 @@
     var live = !calmMotion;   // „Bewegung reduzieren“: keine Szene, kein Wetter, keine Flieger
     if (global.VTS && global.VTS.home) global.VTS.home(t === "halloween" && home && live);
     if (global.VTS2) { global.VTS2.home(t && t !== "halloween" ? t : "", home && live); global.VTS2.weather(t && t !== "halloween" ? t : "", on && sessionEl.hidden && live); }
-    if (on) seasonBadge(t);
-    if (on && home) seasonSheet(t);
+    if (on && !lookForce()) seasonBadge(t);
+    if (on && home && !lookForce()) seasonSheet(t);
     if (on && h && !el) { el = document.createElement("div"); el.id = "hwSp"; el.className = "hwsp"; el.setAttribute("role", "button"); el.setAttribute("aria-label", "Maskottchen antippen"); el.style.setProperty("--cd", (150 + Math.random() * 140 | 0) + "px"); el.addEventListener("animationiteration", function (ev) { if (ev.animationName === "hwCrawl") el.style.setProperty("--cd", (100 + Math.random() * 200 | 0) + "px"); }); h.appendChild(el); }
     else if (!on && el) el.remove();
     if (on && t !== "halloween" && el && global.VTS2) global.VTS2.mount(el, t);
@@ -1529,7 +1531,7 @@
     if (m === "on") m = "halloween";
     var opts = [["auto", "Automatisch"]].concat(SEASONS.map(function (x) { return [x[0], x[1] + " " + x[2], !seasonOpen(x[0])]; })).concat([["off", "Aus"]]);
     var cur = SEASONS.filter(function (x) { return x[0] === t; })[0];
-    return '<section class="card"><div class="eyebrow">✨ Saison-Look</div><p class="small muted" style="margin:4px 0 10px">Besondere Looks mit Effekten über deinem Design. „Automatisch“ wählt den passenden Look nach Datum: ' + SEASONS.map(function (x) { return x[2] + " (" + x[3] + ")"; }).join(", ") + '. 🔒 Außerhalb der Zeit sind die Looks bis zum nächsten Jahr gesperrt.' + (cur ? ' <b>Gerade aktiv: ' + cur[1] + ' ' + cur[2] + '.</b>' : '') + '</p>' +
+    return '<section class="card"><div class="eyebrow">✨ Saison-Look</div>' + (lookForce() ? '<p class="small" style="margin:4px 0 8px"><b>Dein Look ist vorgegeben.</b> Die Wahl unten gilt erst wieder, wenn die Vorgabe aufgehoben wird.</p>' : '') + '<p class="small muted" style="margin:4px 0 10px">Besondere Looks mit Effekten über deinem Design. „Automatisch“ wählt den passenden Look nach Datum: ' + SEASONS.map(function (x) { return x[2] + " (" + x[3] + ")"; }).join(", ") + '. 🔒 Außerhalb der Zeit sind die Looks bis zum nächsten Jahr gesperrt.' + (cur ? ' <b>Gerade aktiv: ' + cur[1] + ' ' + cur[2] + '.</b>' : '') + '</p>' +
       '<div class="row wrap" style="gap:8px">' + opts.map(function (x) { return '<button class="chip" data-act="setseason" data-v="' + x[0] + '"' + (x[2] ? ' disabled style="opacity:.5"' : '') + ' aria-pressed="' + (m === x[0]) + '">' + (x[2] ? "🔒 " : "") + x[1] + (m === x[0] ? " ✓" : "") + '</button>'; }).join("") + '</div>' +
       '<div class="row" style="gap:8px;margin-top:12px;align-items:center"><button class="chip" data-act="seasonsound" aria-pressed="' + snd + '">🔊 Saison-Klänge ' + (snd ? "an" : "aus") + '</button><span class="small muted">leise Hintergrundmusik, nur wenn „Ton“ an ist und nicht beim Üben</span></div></section>';
   }

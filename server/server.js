@@ -706,6 +706,7 @@ function apiSync(pid) {
     selfChoose: selfChooseOf(pid),
     shop: shopPlan(),
     seasonPlan: seasonPlan(),
+    lookForce: lookForceOf(pid),
     coinFactor: coinFactorOf(pid),
     gifts: giftsOf(pid).slice(-20),
     season: seasonOf(pid),
@@ -756,6 +757,12 @@ function setSeasonPlan(body) {
   });
   q.kvSet.run("season_plan", JSON.stringify(out));
   return [200, { ok: true, plan: out }];
+}
+/* Look-Vorgabe je Spieler (nur Betreiber, zum Testen): "" = Standard, Look-ID = erzwingen (ohne Datumsfenster und Sperre), "off" = aus */
+function lookForceOf(pid) { const r = q.kvGet.get("look:" + pid); return r && (SEASON_IDS.includes(r.val) || r.val === "off") ? r.val : ""; }
+function setLookForce(pid, body) {
+  const v = body && (SEASON_IDS.includes(body.look) || body.look === "off") ? body.look : "";
+  q.kvSet.run("look:" + pid, v); return [200, { ok: true, look: v }];
 }
 function bossDiffOf(pid) { const r = q.kvGet.get("bossdiff:" + pid); return r && (r.val === "leicht" || r.val === "schwer") ? r.val : "normal"; }
 function setBossDiff(pid, body) {
@@ -1946,6 +1953,9 @@ const server = http.createServer(async (req, res) => {
         if (m[2] === "coinfactor" && req.method === "POST") { const [c, b] = setCoinFactor(pid, await readJson(req)); return send(res, c, b); }
         if (m[2] === "selfchoose" && req.method === "GET") return send(res, 200, { on: selfChooseOf(pid) });
         if (m[2] === "selfchoose" && req.method === "POST") { const [c, b] = setSelfChoose(pid, await readJson(req)); return send(res, c, b); }
+        if (m[2] === "look" && scope) return send(res, 403, { error: "Die Look-Vorgabe ist dem Betreiber vorbehalten." });
+        if (m[2] === "look" && req.method === "GET") return send(res, 200, { look: lookForceOf(pid) });
+        if (m[2] === "look" && req.method === "POST") { const [c, b] = setLookForce(pid, await readJson(req)); return send(res, c, b); }
         if (m[2] === "bossdiff" && req.method === "GET") return send(res, 200, { diff: bossDiffOf(pid) });
         if (m[2] === "bossdiff" && req.method === "POST") { const [c, b] = setBossDiff(pid, await readJson(req)); return send(res, c, b); }
         if (m[2] === "pathunits" && req.method === "GET") return send(res, 200, pathUnitsOf(pid));

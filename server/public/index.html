@@ -921,6 +921,7 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
     h += pp && pp.total ? '<p style="margin:0 0 6px"><b>' + pp.done + " von " + pp.total + '</b> Stationen geschafft</p><div class="mini"><i class="' + (pp.done >= pp.total ? "d" : "") + '" style="width:' + Math.round(pp.done * 100 / pp.total) + '%"></i></div>'
       : '<p class="muted small" style="margin:0">Noch kein Pfad-Fortschritt bekannt. Er erscheint, sobald die App ihn gesendet hat.</p>';
     var bl = (pp && pp.bosses) || [], MN = { match: "Match-Rausch", blitz: "Blitzrunde", survival: "Letztes Herz" };
+    h += '<h3 style="margin:14px 0 6px;font-size:15px">Saison-Look (nur für dich)</h3><div class="row" style="gap:8px;align-items:center;flex-wrap:wrap"><label class="small" for="lookForce">Look erzwingen</label><select id="lookForce"><option value="">Standard (Datum und Wahl des Kindes)</option><option value="halloween">🎃 Halloween</option><option value="winter">❄️ Winter</option><option value="xmas">🎄 Weihnachten</option><option value="spring">🌴 Spring Break</option><option value="off">Aus (kein Look)</option></select><span id="lookMsg" class="small"></span></div><p class="small muted" style="margin:4px 0 0">Gilt sofort für dieses Gerät/Profil, unabhängig von Datum und Sperre. Zum Testen: App öffnen, ein paar Sekunden warten (Abgleich), Startseite neu laden.</p>';
     h += '<h3 style="margin:14px 0 6px;font-size:15px">Boss-Runden</h3><div class="row" style="gap:8px;align-items:center;flex-wrap:wrap"><label class="small" for="bossDiff">Schwierigkeit</label>' +
       '<select id="bossDiff"><option value="leicht">leicht (Ziel × 0,7)</option><option value="normal">normal</option><option value="schwer">schwer (Ziel × 1,3)</option></select><span id="bossMsg" class="small"></span></div>' +
       '<div class="row opcoin" style="gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px"><label class="small" for="coinF">Münzfaktor</label><select id="coinF"><option value="0.5">0,5 (langsamer)</option><option value="1">1 (normal)</option><option value="1.5">1,5</option><option value="2">2 (doppelt)</option></select><span id="coinMsg" class="small"></span></div>' +
@@ -943,6 +944,10 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
     api("/api/admin/players/" + p.id + "/coinfactor").then(function (x) {
       var sl = document.getElementById("coinF"); if (!sl) return; sl.value = String(x.factor || 1);
       sl.onchange = function () { post("/api/admin/players/" + p.id + "/coinfactor", { factor: +sl.value }).then(function () { var m = document.getElementById("coinMsg"); if (m) { m.className = "small"; m.textContent = "Gespeichert. Die App übernimmt es beim nächsten Öffnen."; } }).catch(function (e) { var m = document.getElementById("coinMsg"); if (m) { m.className = "small err"; m.textContent = e.message; } }); };
+    }).catch(function () {});
+    api("/api/admin/players/" + p.id + "/look").then(function (x) {
+      var sl = document.getElementById("lookForce"); if (!sl) return; sl.value = x.look || "";
+      sl.onchange = function () { post("/api/admin/players/" + p.id + "/look", { look: sl.value }).then(function () { var m = document.getElementById("lookMsg"); if (m) { m.className = "small"; m.textContent = "Gespeichert. Die App übernimmt es beim nächsten Abgleich."; } }).catch(function (e) { var m = document.getElementById("lookMsg"); if (m) { m.className = "small err"; m.textContent = e.message; } }); };
     }).catch(function () {});
     api("/api/admin/players/" + p.id + "/bossdiff").then(function (x) {
       var sl = document.getElementById("bossDiff"); if (!sl) return; sl.value = x.diff || "normal";

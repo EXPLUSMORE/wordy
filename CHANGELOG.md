@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.133.0 – 2026-10-20
+- Betreiber-Dashboard › Spieler › Einstellungen: „Saison-Look (nur für dich)“. Ein Look (Halloween, Winter, Weihnachten, Spring Break oder Aus) lässt sich je Spieler erzwingen, unabhängig von Datum, Sperre und Wahl des Kindes – zum Testen. Dabei kein Abzeichen und kein Ankündigungsfenster. Endpunkt `/api/admin/players/:id/look` (nur Betreiber, nicht Familien), kommt als `lookForce` über `/api/sync`. **Server-Schritt nötig.**
+
 ## 2.132.0 – 2026-10-20
 - Saison-Looks: Ankündigung (Wolke „Bald: … -Look“ 3 Tage vorher, am Starttag einmal ein Fenster mit „Jetzt ausprobieren“ / „Lieber ohne“), Abzeichen je erlebtem Look und Jahr im Showroom (Pokale & Medaillen), Looks außerhalb ihrer Zeit gesperrt (🔒), bei „Bewegung reduzieren“ keine Szene, kein Wetter, keine Flieger.
 - Betreiber-Dashboard (Konto/Familien): Karte „Saison-Looks“ mit Modus Auto/An/Aus und eigenem Fenster je Look (`/api/admin/seasonplan`, kommt als `seasonPlan` über `/api/sync`). **Server-Schritt nötig** (Neustart von `wordy-server`).
