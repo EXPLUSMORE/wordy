@@ -293,43 +293,57 @@
   }
   global.addEventListener("resize", fitStickers);
   if (global.document && document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fitStickers(); });
-  /* Saison-Look (Halloween): Einstellung "auto" gilt vom 15.10. bis 2.11., "on" immer, "off" nie */
+  /* Saison-Looks: auto = nach Datum, sonst fest gewählt (halloween|winter|xmas|spring), off = nie; "on" (alt) = Halloween */
+  var SEASONS = [["halloween", "🎃", "Halloween", "15. Okt. – 2. Nov."], ["winter", "❄️", "Winter", "3. Nov. – 30. Nov. und 5. Jan. – 28. Feb."], ["xmas", "🎄", "Weihnachten", "1. Dez. – 26. Dez."], ["spring", "🌴", "Spring Break", "1. März – 20. Apr."]];
+  function seasonAuto() {
+    var d = new Date(), md = (d.getMonth() + 1) * 100 + d.getDate();
+    return md >= 1015 && md <= 1102 ? "halloween" : md >= 1103 && md <= 1130 ? "winter" : md >= 1201 && md <= 1226 ? "xmas" : (md >= 105 && md <= 228) ? "winter" : md >= 301 && md <= 420 ? "spring" : "";
+  }
   function seasonNow() {
     var m = S.state.settings.season || "auto"; if (m === "off") return ""; if (m === "on") return "halloween";
-    var d = new Date(), md = (d.getMonth() + 1) * 100 + d.getDate(); return md >= 1015 && md <= 1102 ? "halloween" : "";
+    if (m === "auto") return seasonAuto();
+    return SEASONS.some(function (x) { return x[0] === m; }) ? m : "";
   }
-  /* Leiser Halloween-Klangteppich: nur mit Saison-Look, Ton an, Gruselklängen an, außerhalb von Lernrunden und Spielen, solange die App sichtbar ist */
+  function seasonTheme() { var t = seasonNow(); return t && t !== "halloween" && global.VTS2 ? global.VTS2.theme(t) : null; }
+  /* Leiser Klangteppich: nur mit Saison-Look, Ton an, Klänge an, außerhalb von Lernrunden und Spielen, solange die App sichtbar ist */
   function ambientSync() {
-    var V = global.VTC; if (!V || !V.ambientStart) return;
-    var want = seasonNow() === "halloween" && S.state.settings.audio !== false && S.state.settings.seasonSound !== false && sessionEl.hidden && !document.hidden && heard;
-    if (want && !V.ambientOn()) V.ambientStart(); else if (!want && V.ambientOn()) V.ambientStop();
+    var V = global.VTC, V2 = global.VTS2, t = seasonNow(); if (!V || !V.ambientStart) return;
+    var want = t && S.state.settings.audio !== false && S.state.settings.seasonSound !== false && sessionEl.hidden && !document.hidden && heard;
+    if (V.ambientOn() && !(want && t === "halloween")) V.ambientStop();
+    if (V2 && V2.ambientOn() && !(want && t !== "halloween")) V2.ambientStop();
+    if (want && t === "halloween" && !V.ambientOn()) V.ambientStart();
+    else if (want && t !== "halloween" && V2 && !V2.ambientOn()) V2.ambientStart(t);
   }
-  /* Halloween-Spinne in der Kopfzeile als echtes Element (antippbar): Dekoration per CSS, Effekt in saison.js */
+  /* Maskottchen in der Kopfzeile als echtes Element (antippbar): Dekoration per CSS, Effekt in saison.js (Halloween) bzw. saison2.js */
   function spiderSync() {
-    var h = $("#top"), el = $("#hwSp"), on = seasonNow() === "halloween";
-    if (global.VTS && global.VTS.home) global.VTS.home(on && tab === "home" && sessionEl.hidden);
-    if (on && h && !el) { el = document.createElement("div"); el.id = "hwSp"; el.className = "hwsp"; el.setAttribute("role", "button"); el.setAttribute("aria-label", "Spinne antippen"); el.style.setProperty("--cd", (150 + Math.random() * 140 | 0) + "px"); el.addEventListener("animationiteration", function (ev) { if (ev.animationName === "hwCrawl") el.style.setProperty("--cd", (100 + Math.random() * 200 | 0) + "px"); }); h.appendChild(el); }
+    var h = $("#top"), el = $("#hwSp"), t = seasonNow(), on = !!t, home = on && tab === "home" && sessionEl.hidden;
+    if (global.VTS && global.VTS.home) global.VTS.home(t === "halloween" && home);
+    if (global.VTS2) { global.VTS2.home(t && t !== "halloween" ? t : "", home); global.VTS2.weather(t && t !== "halloween" ? t : "", on && sessionEl.hidden); }
+    if (on && h && !el) { el = document.createElement("div"); el.id = "hwSp"; el.className = "hwsp"; el.setAttribute("role", "button"); el.setAttribute("aria-label", "Maskottchen antippen"); el.style.setProperty("--cd", (150 + Math.random() * 140 | 0) + "px"); el.addEventListener("animationiteration", function (ev) { if (ev.animationName === "hwCrawl") el.style.setProperty("--cd", (100 + Math.random() * 200 | 0) + "px"); }); h.appendChild(el); }
     else if (!on && el) el.remove();
+    if (on && t !== "halloween" && el && global.VTS2) global.VTS2.mount(el, t);
     if (on) spiderCheerCheck();
   }
-  /* Spinne starten (Antippen oder nach einer geschafften Übung); versteckt die Kopfzeilen-Spinne, solange der Effekt läuft */
+  /* Maskottchen starten (Antippen oder nach einer geschafften Übung); versteckt das Kopfzeilen-Maskottchen, solange der Effekt läuft */
   function spiderPlay(sp) {
-    if (!sp || !global.VTS || !sessionEl.hidden) return false;
-    var r = sp.getBoundingClientRect(); sp.classList.add("gone");
-    if (global.VTS.spider({ left: r.left, width: r.width, bottom: r.bottom }, function () { var s2 = $("#hwSp"); if (s2) s2.classList.remove("gone"); }, S.state.settings.audio === false)) return true;
+    var t = seasonNow(); if (!sp || !t || !sessionEl.hidden) return false;
+    var r = sp.getBoundingClientRect(), back = function () { var s2 = $("#hwSp"); if (s2) s2.classList.remove("gone"); };
+    sp.classList.add("gone");
+    if (t === "halloween" ? (global.VTS && global.VTS.spider({ left: r.left, width: r.width, bottom: r.bottom }, back, S.state.settings.audio === false)) : (global.VTS2 && global.VTS2.tap(t, { left: r.left, width: r.width, bottom: r.bottom }, back, S.state.settings.audio === false))) return true;
     sp.classList.remove("gone"); return false;
   }
   document.addEventListener("click", function (e) { var sp = e.target.closest && e.target.closest("#hwSp"); if (sp) spiderPlay(sp); });
-  /* Wird eine Übung (Lernrunde, Spiel, Grammatik) komplett geschafft, feiert die Spinne mit, sobald man wieder auf der Startseite ist */
+  /* Wird eine Übung (Lernrunde, Spiel, Grammatik) komplett geschafft, feiert das Maskottchen mit, sobald man wieder auf der Startseite ist */
   var spiderCheerAt = 0;
-  function spiderCheerMark() { if (seasonNow() === "halloween") spiderCheerAt = Date.now(); }
+  function spiderCheerMark() { if (seasonNow()) spiderCheerAt = Date.now(); }
   function spiderCheerCheck() {
-    if (!spiderCheerAt || tab !== "home" || !sessionEl.hidden || seasonNow() !== "halloween") return;
+    if (!spiderCheerAt || tab !== "home" || !sessionEl.hidden || !seasonNow()) return;
     if (Date.now() - spiderCheerAt > 600000) { spiderCheerAt = 0; return; }
     spiderCheerAt = 0;
     setTimeout(function () {
-      var sp = $("#hwSp"); if (!sp || tab !== "home" || !sessionEl.hidden || (global.VTS && global.VTS.busy())) return;
-      var hb = $("#hhBub"); if (hb) hb.textContent = "Geschafft! Die Spinne feiert mit 🕷️🎉";
+      var t = seasonNow(), T = seasonTheme(), sp = $("#hwSp"); if (!t || !sp || tab !== "home" || !sessionEl.hidden) return;
+      if (t === "halloween" ? (global.VTS && global.VTS.busy()) : (global.VTS2 && global.VTS2.busy())) return;
+      var hb = $("#hhBub"); if (hb) hb.textContent = T ? T.cheer : "Geschafft! Die Spinne feiert mit 🕷️🎉";
       spiderPlay(sp);
     }, 1100);
   }
@@ -1058,7 +1072,7 @@
     var rec = lastRec = recommend(), mins = startMin || S.goalMin();
 
     var pf = S.state.profile, sky = hour >= 5 && hour < 11 ? "m" : hour < 17 ? "d" : hour < 21 ? "e" : "n";
-    var cheer = pct >= 100 ? "Tagesziel geschafft! 🎉" : biz ? "Bereit für die nächste Runde?" : (seasonNow() === "halloween" ? "Tipp mich – Spinne weg! 🕷️" : "Tipp mich an – ich tanze!");
+    var cheer = pct >= 100 ? "Tagesziel geschafft! 🎉" : biz ? "Bereit für die nächste Runde?" : (seasonNow() === "halloween" ? "Tipp mich – Spinne weg! 🕷️" : seasonTheme() ? seasonTheme().hint : "Tipp mich an – ich tanze!");
     var rn = r.rank ? r.rank.n : "", xpPct = r.next ? Math.min(100, Math.round(r.into * 100 / Math.max(1, r.span))) : 100;
     var html = '<div class="stack">';
     html += '<section class="hh sky-' + sky + '"><div class="hhsky"><i class="hhsun"></i><i class="hhcl c1"></i><i class="hhcl c2"></i><i class="hhst"></i></div>' +
@@ -1467,10 +1481,13 @@
     }
   }
   function seasonCard() {
-    var m = S.state.settings.season || "auto", on = seasonNow() === "halloween", snd = S.state.settings.seasonSound !== false;
-    return '<section class="card"><div class="eyebrow">🎃 Halloween-Look</div><p class="small muted" style="margin:4px 0 10px">Fledermäuse, Spinnen, Friedhof und Kürbisse über deinem Design. „Automatisch“ gilt vom 15. Oktober bis 2. November.' + (on ? ' <b>Gerade aktiv.</b>' : '') + '</p>' +
-      '<div class="row wrap" style="gap:8px">' + [["auto", "Automatisch"], ["on", "Immer an"], ["off", "Aus"]].map(function (x) { return '<button class="chip" data-act="setseason" data-v="' + x[0] + '" aria-pressed="' + (m === x[0]) + '">' + x[1] + (m === x[0] ? " ✓" : "") + '</button>'; }).join("") + '</div>' +
-      '<div class="row" style="gap:8px;margin-top:12px;align-items:center"><button class="chip" data-act="seasonsound" aria-pressed="' + snd + '">🔊 Gruselklänge ' + (snd ? "an" : "aus") + '</button><span class="small muted">leise Hintergrundmusik, nur wenn „Ton“ an ist und nicht beim Üben</span></div></section>';
+    var m = S.state.settings.season || "auto", t = seasonNow(), snd = S.state.settings.seasonSound !== false;
+    if (m === "on") m = "halloween";
+    var opts = [["auto", "Automatisch"]].concat(SEASONS.map(function (x) { return [x[0], x[1] + " " + x[2]]; })).concat([["off", "Aus"]]);
+    var cur = SEASONS.filter(function (x) { return x[0] === t; })[0];
+    return '<section class="card"><div class="eyebrow">✨ Saison-Look</div><p class="small muted" style="margin:4px 0 10px">Besondere Looks mit Effekten über deinem Design. „Automatisch“ wählt den passenden Look nach Datum: ' + SEASONS.map(function (x) { return x[2] + " (" + x[3] + ")"; }).join(", ") + '.' + (cur ? ' <b>Gerade aktiv: ' + cur[1] + ' ' + cur[2] + '.</b>' : '') + '</p>' +
+      '<div class="row wrap" style="gap:8px">' + opts.map(function (x) { return '<button class="chip" data-act="setseason" data-v="' + x[0] + '" aria-pressed="' + (m === x[0]) + '">' + x[1] + (m === x[0] ? " ✓" : "") + '</button>'; }).join("") + '</div>' +
+      '<div class="row" style="gap:8px;margin-top:12px;align-items:center"><button class="chip" data-act="seasonsound" aria-pressed="' + snd + '">🔊 Saison-Klänge ' + (snd ? "an" : "aus") + '</button><span class="small muted">leise Hintergrundmusik, nur wenn „Ton“ an ist und nicht beim Üben</span></div></section>';
   }
   function designCard() {
     var cur = S.state.settings.design || "gold";
@@ -3488,14 +3505,15 @@
     else if (a === "hhdance") {
       var hp = S.state.profile, hn = DANCE_NUM[hp.dance] || 1, hb = $("#hhBub"), CH = ["Yeah! 💪", "Weiter so, Champion! 🏆", "Heute knacken wir ein Wort mehr!", "Ich tanze nur für dich 💃", "Wörter sammeln macht stark!"];
       var hf = $("#hhFig"); if (!hf) return;
-      var hsp = $("#hwSp");   // Halloween: Figur schlägt die Spinne mit dem Baseballschläger weg
-      if (hsp && seasonNow() === "halloween" && global.VTS && global.VTS.whack && !hsp.classList.contains("gone")) {
+      var hsp = $("#hwSp"), st0 = seasonNow(), T0 = seasonTheme(), W = st0 === "halloween" ? global.VTS : global.VTS2;   // Figur schlägt/wirft das Maskottchen weg
+      if (hsp && st0 && W && W.whack && !hsp.classList.contains("gone")) {
         hsp.classList.add("gone"); var hb0 = hb ? hb.textContent : "";
         var onHit = function (mode) {   // Sprechblase erst nach dem Treffer
-          if (!hb) return; var TX = { weg: ["Homerun! 🏏", "Und raus! 💥", "Weg mit dir! ⚾"], loop: ["Looping! 🌀", "Ab durch die Mitte! 🎢"], pinball: ["Flipper! 🎯", "Bing, bing, bing! 🔔"], splat: ["Platsch! 💚", "Ups, direkt ans Fenster! 🪟"] }[mode] || ["Homerun! 🏏"];
+          if (!hb) return; var TX = (T0 ? T0.bubbles : { weg: ["Homerun! 🏏", "Und raus! 💥", "Weg mit dir! ⚾"], loop: ["Looping! 🌀", "Ab durch die Mitte! 🎢"], pinball: ["Flipper! 🎯", "Bing, bing, bing! 🔔"], splat: ["Platsch! 💚", "Ups, direkt ans Fenster! 🪟"] })[mode] || ["Homerun! 🏏"];
           hb.textContent = TX[Math.floor(Math.random() * TX.length)]; setTimeout(function () { var b2 = $("#hhBub"); if (b2 && b2.textContent !== hb0) b2.textContent = hb0; }, 3600);
         };
-        if (global.VTS.whack(hf, hsp, function () { var s2 = $("#hwSp"); if (s2) { s2.classList.add("back"); s2.classList.remove("gone"); setTimeout(function () { s2.classList.remove("back"); }, 1600); } }, S.state.settings.audio === false, onHit)) return;
+        var onEnd = function () { var s2 = $("#hwSp"); if (s2) { s2.classList.add("back"); s2.classList.remove("gone"); setTimeout(function () { s2.classList.remove("back"); }, 1600); } };
+        if (st0 === "halloween" ? W.whack(hf, hsp, onEnd, S.state.settings.audio === false, onHit) : W.whack(st0, hf, hsp, onEnd, S.state.settings.audio === false, onHit)) return;
         hsp.classList.remove("gone");
       }
       hf.innerHTML = heroHtml(hp.avatar, hn); if (hb) hb.textContent = CH[Math.floor(Math.random() * CH.length)];

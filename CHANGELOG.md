@@ -9,6 +9,11 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.131.0 – 2026-10-20
+- Drei neue Saison-Looks über jedem Design: **Winter** (Eiskristall-Maskottchen, Schneefall in 3D, Pinguine, Schneemann und Kiefern, Schneeball-Wurf), **Weihnachten** (Candy: Zuckerstangen-Rand, Lichterkette, rote Kugel, Geschenke in 3D, Lebkuchenmännchen, Schlitten, Zuckerstangen-Schlag) und **Spring Break** (Strandfarben, Papagei, Palmen, Strandbälle, Flamingo, Möwen, Seifenblasen). Jeweils eigene Tipp-Effekte, Figur-Tipp, Jubel nach geschaffter Übung und leise Klänge.
+- Einstellung „Saison-Look“ (Automatisch / Halloween / Winter / Weihnachten / Spring Break / Aus) mit „Saison-Klänge“. Automatik: Halloween 15.10.–2.11., Winter 3.–30.11. und 5.1.–28.2., Weihnachten 1.–26.12., Spring Break 1.3.–20.4.
+- Technik: `js/saison2.js` (`VTS2`), Stile aus `tools/season_themes.py`. Nur App, kein Server-Schritt.
+
 ## 2.130.0 – 2026-10-20
 - **Belohnungsbereich vorübergehend auch im Eltern-Dashboard.** Eltern sehen in den Einstellungen ihres Kindes die Gruppe „Belohnungen“ aus dem Betreiber-Dashboard: **Extramünzen schenken** (mit Nachricht), **Münzfaktor**, **Bonusmünzen und Geschenke bei Zielen und Plänen** und den **Wochenpass zusammenstellen**. Das gilt nur für die eigenen Kinder.
 - **Schalter beim Betreiber:** Im Betreiber-Dashboard unter „Familien“ gibt es die Karte „Belohnungsbereich für Eltern“ mit Haken „Für Eltern freigeschaltet“. Standard: **an**. Ausgeschaltet verschwindet der Bereich bei den Eltern wieder und der Server lehnt die Aufrufe ab (wie bisher); bereits gesetzte Werte, Geschenke und Pässe bleiben bestehen.
