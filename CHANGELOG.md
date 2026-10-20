@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.129.1 – 2026-10-20
+- Fehler behoben: Beim Tippen von Wörtern mit Auslassungspunkten („Next …“, „I didn't want to …“, „not … either“, „I'll have …“ u. a., ca. 10 Einträge im Lernbuch) wurde die richtige Antwort („next“) als falsch gewertet, weil das „…“ mitverglichen wurde. Die Auslassungspunkte zählen jetzt nicht mehr mit; „next“, „Next“, „next …“ und „next...“ sind alle richtig. Bei „not … either“ gilt „not either“.
+- Kein Server-Schritt nötig.
+
 ## 2.129.0 – 2026-10-20
 - Halloween: **Wird eine Übung komplett geschafft** (Lernrunde bis zum Ende, Spiel oder Grammatik-Lektion ohne Abbruch), **feiert die große Spinne mit**: Sobald man wieder auf der Startseite ist, steht in der Sprechblase „Geschafft! Die Spinne feiert mit 🕷️🎉“ und die Spinne spielt einen ihrer Effekte (Pendel, Jo-Jo, Netz oder Spinnenregen, zufällig). Abgebrochene Runden lösen nichts aus; die Feier wartet bis zu 10 Minuten, bis man auf der Startseite ist, und kommt nur einmal je geschaffter Übung.
 - Kein Server-Schritt nötig.

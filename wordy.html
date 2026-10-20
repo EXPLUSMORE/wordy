@@ -1279,7 +1279,7 @@ body.hwShake{animation:hwShake .65s cubic-bezier(.36,.07,.19,.97)}@keyframes hwS
 </style>
 
 
-<script>window.WORDY_VERSION="2.129.0";window.WORDY_BUILD="7a168c3988";</script>
+<script>window.WORDY_VERSION="2.129.1";window.WORDY_BUILD="09b2ae72de";</script>
 </head>
 <body>
 <div id="app">
@@ -9250,7 +9250,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
 
   /* ---------- Textvergleich ---------- */
   function norm(s) {
-    return String(s).toLowerCase().replace(/^to\s+/, "").replace(/^(a|an|the)\s+/, "")
+    return String(s).toLowerCase().replace(/\s*(…|\.{2,})\s*/g, " ").replace(/^to\s+/, "").replace(/^(a|an|the)\s+/, "")   // „Next …“ gilt auch als „next“ (Auslassungspunkte zählen nicht mit)
       .replace(/[.,!?;:'"´`]/g, "").replace(/\s+/g, " ").trim();
   }
   function lev(a, b) {

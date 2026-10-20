@@ -252,7 +252,7 @@
 
   /* ---------- Textvergleich ---------- */
   function norm(s) {
-    return String(s).toLowerCase().replace(/^to\s+/, "").replace(/^(a|an|the)\s+/, "")
+    return String(s).toLowerCase().replace(/\s*(…|\.{2,})\s*/g, " ").replace(/^to\s+/, "").replace(/^(a|an|the)\s+/, "")   // „Next …“ gilt auch als „next“ (Auslassungspunkte zählen nicht mit)
       .replace(/[.,!?;:'"´`]/g, "").replace(/\s+/g, " ").trim();
   }
   function lev(a, b) {
