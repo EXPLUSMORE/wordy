@@ -352,6 +352,11 @@
     function os(dt, dur, f0, f1, type, vol, vib) { var o = a.createOscillator(), g = a.createGain(); o.type = type; o.frequency.setValueAtTime(f0, t + dt); o.frequency.exponentialRampToValueAtTime(f1, t + dt + dur); if (vib) { var v = a.createOscillator(), vg = a.createGain(); v.frequency.value = 7; vg.gain.value = vib; v.connect(vg); vg.connect(o.frequency); v.start(t + dt); v.stop(t + dt + dur); } g.gain.setValueAtTime(0.0001, t + dt); g.gain.exponentialRampToValueAtTime(vol, t + dt + Math.min(0.03, dur / 3)); g.gain.exponentialRampToValueAtTime(0.0001, t + dt + dur); o.connect(g); g.connect(m); o.start(t + dt); o.stop(t + dt + dur + 0.05); }
     if (kind === "pk") { os(0, 0.12, 300, 700, "triangle", 0.2); os(0.1, 0.18, 500, 1100, "triangle", 0.15); os(0.22, 0.25, 800, 400, "sine", 0.1); }
     else if (kind === "gs") { os(0, 0.9, 190, 120, "sine", 0.18, 6); os(0.05, 0.9, 285, 180, "sine", 0.07, 8); }
+    else if (kind === "ping") { os(0, 0.25, 2600, 2000, "sine", 0.14); os(0, 0.12, 1300, 900, "triangle", 0.1); }
+    else if (kind === "splat") { os(0, 0.25, 160, 50, "sine", 0.5); for (var q = 0; q < 6; q++) os(0.03 + q * 0.05, 0.1, 500 - q * 50, 200, "sawtooth", 0.06); os(0.05, 0.3, 900, 150, "triangle", 0.1); }
+    else if (kind === "jojo") { for (var j = 0; j < 4; j++) { os(j * 1.05 + 0.3, 0.5, 220, 520 - j * 60, "triangle", 0.12 - j * 0.02, 5); os(j * 1.05 + 0.55, 0.3, 520, 160, "sine", 0.1 - j * 0.015); } os(4.25, 0.25, 300, 1400, "sine", 0.08); }
+    else if (kind === "netz") { for (var n = 0; n < 7; n++) os(0.8 + n * 0.07, 0.25, 700 + n * 120, 3200, "sawtooth", 0.035); for (var m = 0; m < 6; m++) os(1.5 + m * 0.22, 0.2, 1500 + m * 160, 2400 + m * 200, "sine", 0.04); for (var s = 0; s < 8; s++) os(3 + s * 0.15, 0.08, 3000 + Math.random() * 1500, 4200, "sine", 0.03); }
+    else if (kind === "regen") { for (var r = 0; r < 24; r++) os(0.1 + Math.random() * 1.2, 0.06, 2000 + Math.random() * 2000, 1500, "square", 0.025); os(0.1, 0.8, 600, 180, "triangle", 0.06); os(3.1, 0.7, 200, 900, "triangle", 0.06); }
     else { os(0, 0.07, 3400, 2200, "square", 0.05); os(0.09, 0.07, 3800, 2600, "square", 0.05); os(0.3, 0.3, 900, 200, "triangle", 0.08); }
   }
 

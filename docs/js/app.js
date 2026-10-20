@@ -308,7 +308,7 @@
   function spiderSync() {
     var h = $("#top"), el = $("#hwSp"), on = seasonNow() === "halloween";
     if (global.VTS && global.VTS.home) global.VTS.home(on && tab === "home" && sessionEl.hidden);
-    if (on && h && !el) { el = document.createElement("div"); el.id = "hwSp"; el.className = "hwsp"; el.setAttribute("role", "button"); el.setAttribute("aria-label", "Spinne antippen"); h.appendChild(el); }
+    if (on && h && !el) { el = document.createElement("div"); el.id = "hwSp"; el.className = "hwsp"; el.setAttribute("role", "button"); el.setAttribute("aria-label", "Spinne antippen"); el.style.setProperty("--cd", (150 + Math.random() * 140 | 0) + "px"); el.addEventListener("animationiteration", function (ev) { if (ev.animationName === "hwCrawl") el.style.setProperty("--cd", (100 + Math.random() * 200 | 0) + "px"); }); h.appendChild(el); }
     else if (!on && el) el.remove();
   }
   document.addEventListener("click", function (e) {
@@ -3471,8 +3471,12 @@
       var hf = $("#hhFig"); if (!hf) return;
       var hsp = $("#hwSp");   // Halloween: Figur schlägt die Spinne mit dem Baseballschläger weg
       if (hsp && seasonNow() === "halloween" && global.VTS && global.VTS.whack && !hsp.classList.contains("gone")) {
-        hsp.classList.add("gone");
-        if (global.VTS.whack(hf, hsp, function () { var s2 = $("#hwSp"); if (s2) { s2.classList.add("back"); s2.classList.remove("gone"); setTimeout(function () { s2.classList.remove("back"); }, 1600); } }, S.state.settings.audio === false)) { if (hb) hb.textContent = ["Weg mit dir! ⚾", "Homerun! 🏏", "Und raus! 💥"][Math.floor(Math.random() * 3)]; return; }
+        hsp.classList.add("gone"); var hb0 = hb ? hb.textContent : "";
+        var onHit = function (mode) {   // Sprechblase erst nach dem Treffer
+          if (!hb) return; var TX = { weg: ["Homerun! 🏏", "Und raus! 💥", "Weg mit dir! ⚾"], loop: ["Looping! 🌀", "Ab durch die Mitte! 🎢"], pinball: ["Flipper! 🎯", "Bing, bing, bing! 🔔"], splat: ["Platsch! 💚", "Ups, direkt ans Fenster! 🪟"] }[mode] || ["Homerun! 🏏"];
+          hb.textContent = TX[Math.floor(Math.random() * TX.length)]; setTimeout(function () { var b2 = $("#hhBub"); if (b2 && b2.textContent !== hb0) b2.textContent = hb0; }, 3600);
+        };
+        if (global.VTS.whack(hf, hsp, function () { var s2 = $("#hwSp"); if (s2) { s2.classList.add("back"); s2.classList.remove("gone"); setTimeout(function () { s2.classList.remove("back"); }, 1600); } }, S.state.settings.audio === false, onHit)) return;
         hsp.classList.remove("gone");
       }
       hf.innerHTML = heroHtml(hp.avatar, hn); if (hb) hb.textContent = CH[Math.floor(Math.random() * CH.length)];

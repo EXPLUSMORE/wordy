@@ -55,7 +55,7 @@ a(f"{S} .hh{{border-color:#FF8A1F;background:linear-gradient(#2C1050,#611F66 55%
 a(f"{S} .hh::before{{content:'';position:absolute;right:0;top:0;width:128px;height:128px;z-index:0;pointer-events:none;background:{u(web('#FFE2BC'))} 0 0/100% 100% no-repeat;opacity:.5;transform-origin:100% 0;animation:hwWeb 6s ease-in-out infinite alternate}}")
 a(f"{S} .hh::after{{content:'';position:absolute;left:-40px;top:10px;width:40px;height:20px;z-index:0;pointer-events:none;background:{u(bat('#FFD9A8'))} 0 0/100% 100% no-repeat;animation:hwFlap2 9s linear infinite;filter:drop-shadow(0 0 6px rgba(255,138,31,.8))}}")
 a(f"{S} .eyebrow{{color:#FFB066}}")
-a("@keyframes hwCrawl{0%,6%{height:76px}30%,52%{height:266px}78%,100%{height:76px}}")
+a("@keyframes hwCrawl{0%,6%{height:76px}30%,52%{height:var(--cd,266px)}78%,100%{height:76px}}")
 a("@keyframes hwSwing{from{transform:rotate(-8deg)}to{transform:rotate(8deg)}}")
 a("@keyframes hwFlap{0%{transform:translate(0,0) scale(1)}25%{transform:translate(30vw,-6px) scaleY(.8)}50%{transform:translate(60vw,3px) scaleY(1)}75%{transform:translate(90vw,-5px) scaleY(.8)}100%{transform:translate(118vw,0) scaleY(1)}}")
 a("@keyframes hwFlap2{0%{transform:translate(0,0)}20%{transform:translate(70px,14px) scaleY(.75)}40%{transform:translate(160px,0) scaleY(1)}60%{transform:translate(250px,18px) scaleY(.75)}80%{transform:translate(330px,4px) scaleY(1)}100%{transform:translate(430px,10px)}}")

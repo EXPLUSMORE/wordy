@@ -9,6 +9,13 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.128.0 – 2026-10-20
+- **Große Spinne, Startseite: unterschiedlich weit am Faden.** Bei jedem Durchlauf (alle ca. 24 Sekunden) seilt sie sich zufällig 100 bis 300 Pixel weit ab, nicht mehr immer gleich weit.
+- **Antippen der Spinne löst vier verschiedene Effekte aus** (zufällig, nie zweimal derselbe hintereinander): das 3D-Pendel mit „BUH!“, **Jo-Jo** (saust mehrmals herab, dreht sich um die eigene Achse, springt mit Funken), **Netz schießen** (Fäden bis in alle Ecken, ein glitzerndes Netz entsteht, die Spinne läuft darauf herum) und **Spinnenregen** (18 kleine Spinnen seilen sich unterschiedlich weit ab, baumeln und ziehen sich wieder hoch). Jeweils mit eigenem Ton; ein Tipp springt zum Ende.
+- **Der Baseballschlag löst vier verschiedene Spinnenflüge aus** (zufällig): in die Ferne nach links oben, **Looping**, **Flipper** (prallt viermal von den Bildschirmrändern ab, mit Ping und Funken) und **Platsch** (fliegt auf den Betrachter zu und klatscht als grüner Schleim an den Bildschirm).
+- Die Sprechblase mit „Homerun!“ & Co. erscheint jetzt **erst nach dem Treffer** und passt zum Flug („Looping!“, „Flipper!“, „Platsch!“); nach ein paar Sekunden steht wieder der normale Text da.
+- Kein Server-Schritt nötig.
+
 ## 2.127.1 – 2026-10-20
 - Baseballschlag überarbeitet: Die Spinne gleitet jetzt **langsam** (ca. 1,5 Sekunden) an ihrem Faden herab und pendelt dabei leicht. Die Figur holt hinten rechts aus (Schläger hoch) und schwingt ihn **in 3D von rechts nach links**: Er kommt dem Betrachter groß entgegen (Perspektive, das Fass wird dicker, der Schläger kürzer) und trifft die Spinne links; mit Schwung-Spur, „KRACK!“, Stoßring und Funken, danach fliegt die Spinne davon (jetzt nach links oben). Töne neu getaktet (Faden knarzt, Ausholen, Zischen, Krack).
 - Kein Server-Schritt nötig.
