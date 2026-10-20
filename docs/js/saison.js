@@ -113,5 +113,136 @@
     global.requestAnimationFrame(frame);
     return true;
   }
-  global.VTS = { spider: spider, busy: function () { return running; } };
+
+  /* ---------- Startseite: 3D-Friedhofsszene (Grabsteine, Kürbisse, Fledermäuse), alles antippbar ---------- */
+  var SC = null;
+  function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
+  function spark(x, y, n, colors) {
+    for (var i = 0; i < n; i++) {
+      var d = el("i", "hwsp3"); d.style.cssText = "position:fixed;left:" + x + "px;top:" + y + "px;width:6px;height:6px;border-radius:50%;pointer-events:none;z-index:9990;background:" + colors[i % colors.length] + ";box-shadow:0 0 8px " + colors[i % colors.length];
+      document.body.appendChild(d); var a = Math.random() * 6.283, v = 40 + Math.random() * 90;
+      d.animate([{ transform: "translate(0,0) scale(1)", opacity: 1 }, { transform: "translate(" + Math.cos(a) * v + "px," + (Math.sin(a) * v - 40) + "px) scale(.2)", opacity: 0 }], { duration: 650 + Math.random() * 350, easing: "cubic-bezier(.2,.7,.4,1)" }).onfinish = (function (n2) { return function () { n2.remove(); }; })(d);
+    }
+  }
+  function tone(kind) { try { global.VTC && global.VTC.homeSound && global.VTC.homeSound(kind); } catch (e) {} }
+  function ghostUp(x, y) {
+    var g = el("div", "hwGhost", "<svg viewBox='0 0 40 48'><path fill='#fff' d='M4 44V20C4 7 12 2 20 2s16 5 16 18v24l-5-5-5 5-6-5-6 5-5-5z'/><circle cx='14' cy='20' r='3.4' fill='#2B1763'/><circle cx='26' cy='20' r='3.4' fill='#2B1763'/><ellipse cx='20' cy='30' rx='4' ry='5' fill='#2B1763'/></svg>");
+    g.style.left = (x - 18) + "px"; g.style.top = (y - 40) + "px"; document.body.appendChild(g); setTimeout(function () { g.remove(); }, 2300);
+  }
+  function buildScene(navH) {
+    var W = global.innerWidth, root = el("div", "hs3"); root.id = "hwScene"; root.style.bottom = navH + "px";
+    root.appendChild(el("div", "hs3g"));
+    root.appendChild(el("div", "hs3tree", "<svg viewBox='0 0 60 70'><g stroke='#0A0510' stroke-linecap='round' fill='none'><path d='M30 70V34M30 46L14 30M30 40L46 24M14 30L8 18M14 30L22 20M46 24L54 12M46 24L38 14M30 34L30 14' stroke-width='5'/><path d='M8 18L3 10M22 20L24 8M54 12L58 6M38 14L36 4M30 14L26 5' stroke-width='2.5'/></g></svg>"));
+    var shapes = ["gs-r", "gs-c", "gs-o", "gs-r", "gs-c", "gs-o", "gs-r"], xs = [0.1, 0.26, 0.42, 0.55, 0.7, 0.84, 0.95], zs = [-90, -30, -110, -40, -100, -20, -70], sizes = [[34, 46], [38, 54], [30, 60], [36, 48], [40, 56], [32, 50], [34, 44]];
+    for (var i = 0; i < 7; i++) {
+      var g = el("div", "gs " + shapes[i]); g.style.cssText = "left:" + (xs[i] * W - sizes[i][0] / 2) + "px;--w:" + sizes[i][0] + "px;--h:" + sizes[i][1] + "px;--z:" + zs[i] + "px;--dl:" + (-i * 0.9) + "s;--dr:" + (5 + i % 3) + "s";
+      var L = ""; for (var k = 1; k <= 7; k++) L += "<b style='transform:translateZ(" + (-k * 1.6) + "px)'></b>";
+      g.innerHTML = L + "<i><u>R.I.P</u></i>"; g.setAttribute("data-k", "gs"); root.appendChild(g);
+    }
+    var ps = [[0.2, 34, 0], [0.62, 48, 1], [0.88, 40, 2]];
+    ps.forEach(function (q, i) {
+      var pk = el("div", "pk"); pk.style.cssText = "left:" + (q[0] * W - q[1] / 2) + "px;--s:" + q[1] + "px;--dl:" + (-i * 1.3) + "s"; pk.setAttribute("data-k", "pk");
+      var r = ""; for (var k = 0; k < 5; k++) r += "<i class='rib' style='--i:" + k + "'></i>";
+      pk.innerHTML = "<div class='pkb'>" + r + "<s class='st'></s><u class='fc'><em></em><em></em><b></b></u></div><span class='pks'></span>"; root.appendChild(pk);
+    });
+    document.body.appendChild(root);
+    root.addEventListener("pointerdown", function (e) {
+      var o = e.target.closest("[data-k]"); if (!o) return; var r = o.getBoundingClientRect(), k = o.getAttribute("data-k");
+      if (k === "pk") { if (o.classList.contains("jump")) return; o.classList.add("jump"); spark(r.left + r.width / 2, r.top + r.height * 0.3, 14, ["#FFD166", "#FF8A1F", "#FFF3E3"]); tone("pk"); setTimeout(function () { o.classList.remove("jump"); }, 900); }
+      else { if (o.classList.contains("wob")) return; o.classList.add("wob"); ghostUp(r.left + r.width / 2, r.top); tone("gs"); setTimeout(function () { o.classList.remove("wob"); }, 1100); }
+    });
+    return root;
+  }
+  function buildBats() {
+    var lay = el("div", "hwBats"); lay.id = "hwBats"; document.body.appendChild(lay);
+    var W = global.innerWidth, H = global.innerHeight, alive = true, timers = [];
+    function batSvgC(c) { return "<svg viewBox='0 0 40 20'><path fill='" + c + "' d='M20 6c-2-3-5-4-8-2C9 2 5 3 0 8c4-1 6 0 8 3 1-2 3-3 5-1 1-3 4-3 5-1l2 3 2-3c1-2 4-2 5 1 2-2 4-1 5 1 2-3 4-4 8-3-5-5-9-6-12-4-3-2-6-1-8 2z'/></svg>"; }
+    function mk(i) {
+      var b = el("div", "hwb"), col = ["#FFB066", "#FFD9A8", "#FF8A1F", "#E6A8FF", "#FFC857"][i % 5];
+      b.innerHTML = "<div class='bd'>" + batSvgC(col) + "</div>"; lay.appendChild(b);
+      var anim = null;
+      function fly() {
+        if (!alive) return; var dir = Math.random() < 0.5 ? 1 : -1, y0 = 70 + Math.random() * H * 0.4, dur = 8000 + Math.random() * 6000, kf = [];
+        for (var k = 0; k <= 8; k++) { var f = k / 8, x = dir > 0 ? -80 + (W + 160) * f : W + 80 - (W + 160) * f, z = 360 * Math.sin(f * 6.283 * 1.1 + i) - 40, y = y0 + 38 * Math.sin(f * 18 + i) + 60 * Math.sin(f * 4.2); kf.push({ transform: "translate3d(" + x + "px," + y + "px," + z + "px) rotateY(" + (dir > 0 ? 0 : 180) + "deg) rotateZ(" + 10 * Math.sin(f * 18) + "deg)", offset: f }); }
+        anim = b.animate(kf, { duration: dur, easing: "linear" }); anim.onfinish = function () { if (alive) timers.push(setTimeout(fly, 600 + Math.random() * 2500)); };
+      }
+      b.addEventListener("pointerdown", function (e) {
+        if (b.classList.contains("zap")) return; e.preventDefault(); var r = b.getBoundingClientRect(); b.classList.add("zap"); if (anim) anim.pause(); spark(r.left + r.width / 2, r.top + r.height / 2, 10, ["#FFD166", "#FF8A1F", "#fff"]); tone("bat");
+        var cur = getComputedStyle(b).transform; b.animate([{ transform: cur, opacity: 1 }, { transform: cur + " rotateZ(720deg) scale(1.8)", opacity: 1, offset: .4 }, { transform: cur + " rotateZ(1440deg) scale(.1) translateY(260px)", opacity: 0 }], { duration: 900, easing: "ease-in" }).onfinish = function () { b.style.visibility = "hidden"; timers.push(setTimeout(function () { b.style.visibility = ""; b.classList.remove("zap"); fly(); }, 2500)); };
+      });
+      timers.push(setTimeout(fly, i * 1400));
+    }
+    for (var i = 0; i < 4; i++) mk(i);
+    return { stop: function () { alive = false; timers.forEach(clearTimeout); lay.remove(); } };
+  }
+  function home(on) {
+    if (on && !SC) { var nav = document.getElementById("tabs"); SC = { root: buildScene(nav ? nav.offsetHeight : 56), bats: buildBats() }; }
+    else if (!on && SC) { SC.root.remove(); SC.bats.stop(); SC = null; }
+  }
+
+
+  /* ---------- Figur schlägt die Spinne mit dem Baseballschläger weg ---------- */
+  var whacking = false;
+  function bat(c, hand, th, L) {   // Schläger zeichnen: Griff am Drehpunkt, dicker werdend, Holzmaserung
+    c.save(); c.translate(hand.x, hand.y); c.rotate(th);
+    var g = c.createLinearGradient(-12, 0, 12, 0); g.addColorStop(0, "#F3D49A"); g.addColorStop(0.45, "#D9A55B"); g.addColorStop(1, "#8F5A22");
+    c.shadowColor = "rgba(0,0,0,.45)"; c.shadowBlur = 8;
+    c.beginPath(); c.moveTo(-4.4, 8); c.lineTo(-4.4, -L * 0.3); c.quadraticCurveTo(-6.5, -L * 0.6, -13.5, -L * 0.8); c.quadraticCurveTo(-15.5, -L * 0.99, 0, -L); c.quadraticCurveTo(15.5, -L * 0.99, 13.5, -L * 0.8); c.quadraticCurveTo(6.5, -L * 0.6, 4.4, -L * 0.3); c.lineTo(4.4, 8); c.closePath();
+    c.fillStyle = g; c.fill(); c.shadowBlur = 0;
+    c.fillStyle = "#2A1A12"; c.fillRect(-3.8, -L * 0.28, 7.6, L * 0.3 + 6);   // Griffband
+    c.fillStyle = "#5C3A18"; c.beginPath(); c.arc(0, 9, 5.2, 0, 6.283); c.fill();   // Knauf
+    c.strokeStyle = "rgba(255,255,255,.35)"; c.lineWidth = 1.6; c.beginPath(); c.moveTo(-4, -L * 0.45); c.quadraticCurveTo(-7.5, -L * 0.72, -6, -L * 0.9); c.stroke();
+    c.strokeStyle = "rgba(90,50,10,.5)"; c.lineWidth = 1; for (var k = 0; k < 3; k++) { c.beginPath(); c.moveTo(-8, -L * (0.55 + k * 0.1)); c.lineTo(8, -L * (0.57 + k * 0.1)); c.stroke(); }
+    c.restore();
+  }
+  function whack(figEl, spiderEl, onEnd, silent) {
+    if (running || whacking || !figEl || !spiderEl) return false; whacking = true;
+    var I = imgs(), W = global.innerWidth, H = global.innerHeight, dpr = Math.min(2, global.devicePixelRatio || 1), fr = figEl.getBoundingClientRect(), sr = spiderEl.getBoundingClientRect();
+    var cv = document.createElement("canvas"); cv.width = W * dpr; cv.height = H * dpr; cv.style.cssText = "position:fixed;left:0;top:0;width:100%;height:100%;z-index:9996;pointer-events:none";
+    document.body.appendChild(cv); var c = cv.getContext("2d"); c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    var hand = { x: fr.left + fr.width * 0.8, y: fr.top + fr.height * 0.6 }, L = 104, TH = -62 * Math.PI / 180, pivot = { x: sr.left + sr.width / 2, y: 0 };
+    var S0 = { x: pivot.x, y: Math.max(40, sr.bottom - 18) }, A = { x: hand.x + Math.sin(TH) * L * 0.93, y: hand.y - Math.cos(TH) * L * 0.93 };
+    var t0 = 0, last = 0, hit = false, T_HIT = 0.46, fx = { x: A.x, y: A.y, vx: -420, vy: -560, z: 0, r: 0 }, ring = 0, endAt = 0, snd = !silent;
+    figEl.classList.add("hwFigSwing"); setTimeout(function () { figEl.classList.remove("hwFigSwing"); }, 1100);
+    try { if (snd && global.VTC && global.VTC.batSound) global.VTC.batSound(); } catch (e) {}
+    function done() { cv.remove(); whacking = false; if (onEnd) onEnd(); }
+    function frame(now) {
+      if (!t0) { t0 = now; last = now; } var t = (now - t0) / 1000, dt = Math.min(0.05, (now - last) / 1000); last = now; c.clearRect(0, 0, W, H);
+      var th, sx, sy, size = 64;
+      if (t < T_HIT) {
+        var k = Math.max(0, (t - 0.12) / (T_HIT - 0.12)), e = k * k * (3 - 2 * k);
+        th = t < 0.12 ? (110 + 10 * (t / 0.12)) * Math.PI / 180 : (120 - 182 * (k * k)) * Math.PI / 180;
+        var ks = Math.min(1, t / 0.4), es = ks * ks * (3 - 2 * ks); sx = S0.x + (A.x - S0.x) * es; sy = S0.y + (A.y - S0.y) * es + Math.sin(t * 20) * 3 * (1 - es);
+        c.strokeStyle = "rgba(225,210,195,.9)"; c.lineWidth = 1.6; c.beginPath(); c.moveTo(pivot.x, pivot.y); c.lineTo(sx, sy - size * 0.3); c.stroke();
+        if (I.s[0].complete) c.drawImage(I.s[(t * 14 | 0) % 2], sx - size / 2, sy - size / 2, size, size);
+        // Schwung-Spur
+        if (t > 0.12) { c.save(); c.translate(hand.x, hand.y); c.strokeStyle = "rgba(255,255,255," + 0.55 * e + ")"; c.lineWidth = 7; c.lineCap = "round"; c.beginPath(); c.arc(0, 0, L * 0.9, -Math.PI / 2 + th - 0.05, -Math.PI / 2 + th + 1.4 * e * (1 - e) * 2 + 0.2); c.stroke(); c.restore(); }
+      } else {
+        if (!hit) {
+          hit = true; ring = t; th = TH;
+          var b = document.createElement("div"); b.className = "hwBoo hwKrack"; b.textContent = "KRACK!"; b.style.left = Math.max(80, A.x) + "px"; b.style.top = Math.max(80, A.y) + "px"; document.body.appendChild(b); setTimeout(function () { b.remove(); }, 1300);
+          spark(A.x, A.y, 18, ["#FFD166", "#FF8A1F", "#fff", "#FFE2BC"]); document.body.classList.add("hwShake2"); setTimeout(function () { document.body.classList.remove("hwShake2"); }, 320);
+          try { if (global.navigator && navigator.vibrate) navigator.vibrate([40, 30, 60]); } catch (e) {}
+        }
+        var tt = t - T_HIT; th = TH - Math.min(1, tt / 0.28) * 1.0;   // Durchschwung
+        // Stoßring
+        var rk = (t - ring) / 0.4; if (rk < 1) { c.strokeStyle = "rgba(255,230,160," + (1 - rk) + ")"; c.lineWidth = 6 * (1 - rk) + 1; c.beginPath(); c.arc(A.x, A.y, 8 + 110 * rk, 0, 6.283); c.stroke(); }
+        // Spinne fliegt in die Ferne
+        fx.vy += 260 * dt; fx.x += fx.vx * dt; fx.y += fx.vy * dt; fx.z += 700 * dt; fx.r += 15 * dt; var sc = 1 / (1 + fx.z / 220);
+        if (sc > 0.03) {
+          c.save(); c.translate(fx.x, fx.y); c.rotate(fx.r); c.globalAlpha = Math.min(1, sc * 3 + 0.3); var sz = size * 1.5 * sc;
+          c.shadowColor = "rgba(255,200,100,.9)"; c.shadowBlur = 16 * sc; if (I.s[0].complete) c.drawImage(I.s[(tt * 16 | 0) % 2], -sz / 2, -sz / 2, sz, sz); c.restore();
+          // Schweif aus Funken
+          c.fillStyle = "rgba(255,210,120," + 0.6 * sc + ")"; for (var q = 1; q <= 5; q++) { c.beginPath(); c.arc(fx.x - fx.vx * dt * q * 2, fx.y - fx.vy * dt * q * 2, Math.max(1, 5 * sc - q * 0.6), 0, 6.283); c.fill(); }
+        } else if (!endAt) { endAt = t; spark(fx.x, fx.y, 8, ["#fff", "#FFD166"]); }
+        if (endAt && t - endAt > 0.4) { done(); return; }
+      }
+      if (th != null && t < T_HIT + 0.9) { var al = t > T_HIT + 0.55 ? Math.max(0, 1 - (t - T_HIT - 0.55) / 0.35) : 1; c.globalAlpha = al; bat(c, hand, th, L); c.globalAlpha = 1; }
+      if (t > 4) { done(); return; }
+      global.requestAnimationFrame(frame);
+    }
+    global.requestAnimationFrame(frame); return true;
+  }
+
+  global.VTS = { whack: whack, whacking: function () { return whacking; }, home: home, spider: spider, busy: function () { return running; } };
 })(window);

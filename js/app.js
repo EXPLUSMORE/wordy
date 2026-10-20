@@ -307,6 +307,7 @@
   /* Halloween-Spinne in der Kopfzeile als echtes Element (antippbar): Dekoration per CSS, Effekt in saison.js */
   function spiderSync() {
     var h = $("#top"), el = $("#hwSp"), on = seasonNow() === "halloween";
+    if (global.VTS && global.VTS.home) global.VTS.home(on && tab === "home" && sessionEl.hidden);
     if (on && h && !el) { el = document.createElement("div"); el.id = "hwSp"; el.className = "hwsp"; el.setAttribute("role", "button"); el.setAttribute("aria-label", "Spinne antippen"); h.appendChild(el); }
     else if (!on && el) el.remove();
   }
@@ -1039,7 +1040,7 @@
     var rec = lastRec = recommend(), mins = startMin || S.goalMin();
 
     var pf = S.state.profile, sky = hour >= 5 && hour < 11 ? "m" : hour < 17 ? "d" : hour < 21 ? "e" : "n";
-    var cheer = pct >= 100 ? "Tagesziel geschafft! 🎉" : biz ? "Bereit für die nächste Runde?" : "Tipp mich an – ich tanze!";
+    var cheer = pct >= 100 ? "Tagesziel geschafft! 🎉" : biz ? "Bereit für die nächste Runde?" : (seasonNow() === "halloween" ? "Tipp mich – Spinne weg! 🕷️" : "Tipp mich an – ich tanze!");
     var rn = r.rank ? r.rank.n : "", xpPct = r.next ? Math.min(100, Math.round(r.into * 100 / Math.max(1, r.span))) : 100;
     var html = '<div class="stack">';
     html += '<section class="hh sky-' + sky + '"><div class="hhsky"><i class="hhsun"></i><i class="hhcl c1"></i><i class="hhcl c2"></i><i class="hhst"></i></div>' +
@@ -3468,6 +3469,12 @@
     else if (a === "hhdance") {
       var hp = S.state.profile, hn = DANCE_NUM[hp.dance] || 1, hb = $("#hhBub"), CH = ["Yeah! 💪", "Weiter so, Champion! 🏆", "Heute knacken wir ein Wort mehr!", "Ich tanze nur für dich 💃", "Wörter sammeln macht stark!"];
       var hf = $("#hhFig"); if (!hf) return;
+      var hsp = $("#hwSp");   // Halloween: Figur schlägt die Spinne mit dem Baseballschläger weg
+      if (hsp && seasonNow() === "halloween" && global.VTS && global.VTS.whack && !hsp.classList.contains("gone")) {
+        hsp.classList.add("gone");
+        if (global.VTS.whack(hf, hsp, function () { var s2 = $("#hwSp"); if (s2) { s2.classList.add("back"); s2.classList.remove("gone"); setTimeout(function () { s2.classList.remove("back"); }, 1600); } }, S.state.settings.audio === false)) { if (hb) hb.textContent = ["Weg mit dir! ⚾", "Homerun! 🏏", "Und raus! 💥"][Math.floor(Math.random() * 3)]; return; }
+        hsp.classList.remove("gone");
+      }
       hf.innerHTML = heroHtml(hp.avatar, hn); if (hb) hb.textContent = CH[Math.floor(Math.random() * CH.length)];
       try { global.VTC.burst("stars", hf.getBoundingClientRect().left + 55, hf.getBoundingClientRect().top + 40, 10, .9); } catch (e) {}
       clearTimeout(hhT); hhT = setTimeout(function () { var h2 = $("#hhFig"); if (h2) h2.innerHTML = heroHtml(S.state.profile.avatar, 0); }, 4200);
@@ -3653,6 +3660,7 @@
       tab = TABMAP[tab];
     }
     document.documentElement.setAttribute("data-tab", tab);   // für Saison-Looks (z. B. Spinne nur auf der Startseite)
+    spiderSync();
     $$("#tabs button").forEach(function (b) { b.setAttribute("aria-current", b.getAttribute("data-tab") === tab); });
     renderHeader();
     if (tab === "home") viewHome();

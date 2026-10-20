@@ -9,6 +9,11 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.127.0 – 2026-10-20
+- **Startseite, Halloween: 3D-Szene mit antippbaren Objekten** (nur auf der Startseite, die Friedhofs-Silhouette der Menüleiste weicht ihr dort): sieben Grabsteine als echte 3D-Platten mit Dicke und „R.I.P“, die langsam im Raum schwingen; drei rippige Kürbisse, die sich in 3D drehen, auf und ab schweben und mit flackerndem Gesicht leuchten; ein schwankender toter Baum; vier Fledermäuse, die auf Flugbahnen durch den Raum fliegen (kommen groß näher, fliegen klein weg, flattern). Antippen: **Kürbis** hüpft, dreht sich und sprüht Funken; **Grabstein** wackelt und lässt einen Geist aufsteigen; **Fledermaus** wirbelt davon und kommt nach ein paar Sekunden wieder. Kleine Töne dazu.
+- **Figur gegen Spinne**: Tippt man auf die Figur, schnappt sie sich einen Baseballschläger. Die Spinne stürzt herab, die Figur schlägt zu (Schwung-Spur, „KRACK!“, Stoßring, Funken, kurzes Wackeln, Vibration) und die Spinne fliegt im Bogen in die Ferne; kurz darauf seilt sie sich wieder von oben ab. Ton: Zischen, Krack, Ping, davonpfeifende Spinne. Die Sprechblase der Figur heißt in dieser Zeit „Tipp mich – Spinne weg!“.
+- Technik: `VTS.home`, `VTS.whack` in js/saison.js, `VTC.batSound/homeSound` in cosmetics.js, Szenen-CSS im Halloween-Block (`tools/season_halloween.py`). Kein Server-Schritt nötig.
+
 ## 2.126.1 – 2026-10-20
 - Texte zu Stickern korrigiert, weil es sie nicht mehr gratis zur Figur gibt: Shop › Ränge zeigt bei der Figurenwahl nicht mehr „(+ Sticker)“ und sagt, dass der Sticker nur im Shop gekauft wird; der Monatspass zeigt zu Pass-Figuren keine Gratis-Sticker mehr und die Pass-Erklärung nennt keinen Sticker mehr; die Hilfe nennt jetzt „bis zu zehn“ Sticker und „im Shop kaufen“; Dashboard-Hinweis beim Pass-Bauen, README und CLAUDE.md angepasst.
 - Kein Server-Schritt nötig.

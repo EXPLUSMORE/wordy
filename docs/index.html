@@ -1257,12 +1257,36 @@ body.hwShake{animation:hwShake .65s cubic-bezier(.36,.07,.19,.97)}@keyframes hwS
 @keyframes hwGlow{0%,100%{box-shadow:0 0 0 rgba(255,138,31,0)}50%{box-shadow:0 0 14px rgba(255,138,31,.55)}}
 @keyframes hwWeb{from{transform:rotate(-1.5deg) scale(1)}to{transform:rotate(1.5deg) scale(1.03)}}
 @keyframes hwMist{to{transform:translateX(25%)}}
+:root:root:root[data-season="halloween"][data-tab='home'] nav#tabs::before,:root:root:root[data-season="halloween"][data-tab='home'] nav#tabs::after{display:none}
+.hs3{position:fixed;left:0;right:0;height:120px;z-index:4;pointer-events:none;perspective:520px;perspective-origin:50% -30%}
+.hs3g{position:absolute;left:0;right:0;bottom:0;height:40px;background:linear-gradient(transparent,rgba(10,5,16,.92) 75%)}
+.hs3tree{position:absolute;left:2px;bottom:6px;width:54px;height:66px;transform-origin:50% 100%;animation:hsTree 7s ease-in-out infinite alternate}.hs3tree svg{width:100%;height:100%}
+.gs{position:absolute;bottom:16px;width:var(--w);height:var(--h);transform-style:preserve-3d;pointer-events:auto;cursor:pointer;transform:translateZ(var(--z)) rotateY(-14deg);animation:gsSw var(--dr) ease-in-out infinite alternate;animation-delay:var(--dl);-webkit-tap-highlight-color:transparent}
+.gs b{position:absolute;inset:0;background:#120D1E;border-radius:inherit}.gs i{position:absolute;inset:0;display:grid;place-items:start center;background:linear-gradient(160deg,#5A5380,#241E38);border-radius:inherit;box-shadow:inset 0 0 8px rgba(0,0,0,.6),inset 1px 1px 0 rgba(255,255,255,.2)}
+.gs u{text-decoration:none;font:700 8px/1 system-ui,sans-serif;color:#A8A1CC;margin-top:34%;text-shadow:0 1px 0 #000;letter-spacing:.04em}
+.gs-r{border-radius:50% 50% 3px 3px/30% 30% 3px 3px}.gs-c{border-radius:3px 14px 3px 3px}.gs-o{border-radius:50% 50% 2px 2px/60% 60% 2px 2px}
+@keyframes gsSw{from{transform:translateZ(var(--z)) rotateY(-20deg) rotateX(4deg)}to{transform:translateZ(var(--z)) rotateY(20deg) rotateX(-2deg)}}
+.gs.wob{animation:gsWob 1s ease-out}@keyframes gsWob{0%{transform:translateZ(var(--z)) rotateZ(0)}12%{transform:translateZ(var(--z)) rotateZ(-16deg) translateY(-8px)}28%{transform:translateZ(var(--z)) rotateZ(14deg)}44%{transform:translateZ(var(--z)) rotateZ(-9deg)}60%{transform:translateZ(var(--z)) rotateZ(6deg)}80%{transform:translateZ(var(--z)) rotateZ(-3deg)}100%{transform:translateZ(var(--z)) rotateZ(0)}}
+.hwGhost{position:fixed;width:36px;height:43px;z-index:9991;pointer-events:none;filter:drop-shadow(0 0 10px rgba(255,255,255,.85));animation:hwGh 2.2s ease-out forwards}.hwGhost svg{width:100%;height:100%}@keyframes hwGh{0%{transform:translateY(20px) scale(.4);opacity:0}15%{opacity:.95}100%{transform:translate(18px,-190px) scale(1.25) rotate(8deg);opacity:0}}
+.pk{position:absolute;bottom:10px;width:var(--s);height:calc(var(--s)*.86);pointer-events:auto;cursor:pointer;perspective:300px;animation:pkBob 3.2s ease-in-out infinite alternate;animation-delay:var(--dl);-webkit-tap-highlight-color:transparent}
+.pkb{position:absolute;inset:0;transform-style:preserve-3d;animation:pkRot 6s ease-in-out infinite alternate;animation-delay:var(--dl)}
+.rib{position:absolute;left:14%;width:72%;top:0;bottom:0;border-radius:50%;background:radial-gradient(ellipse at 38% 30%,#FFB752,#FF8A1F 45%,#C24D08);transform:rotateY(calc(var(--i)*36deg));box-shadow:inset 0 -6px 10px rgba(120,40,0,.45)}
+.st{position:absolute;left:44%;top:-14%;width:12%;height:24%;background:#3A7D2A;border-radius:2px 2px 0 0;transform:translateZ(2px) rotate(8deg)}
+.fc{position:absolute;inset:0;transform:translateZ(calc(var(--s)*.34));text-decoration:none;animation:pkGlow 2.4s ease-in-out infinite alternate;animation-delay:var(--dl)}.fc em{position:absolute;top:32%;width:22%;height:22%;background:#FFE08A;clip-path:polygon(50% 0,100% 100%,0 100%)}.fc em:first-child{left:20%}.fc em:nth-child(2){right:20%}.fc b{position:absolute;left:24%;right:24%;top:60%;height:18%;background:#FFE08A;clip-path:polygon(0 0,15% 100%,30% 30%,50% 100%,70% 30%,85% 100%,100% 0)}
+.pks{position:absolute;left:4%;right:4%;bottom:-8%;height:12%;background:rgba(0,0,0,.55);filter:blur(4px);border-radius:50%}
+@keyframes pkRot{from{transform:rotateY(-30deg)}to{transform:rotateY(30deg)}}@keyframes pkBob{to{transform:translateY(-7px)}}@keyframes pkGlow{to{filter:drop-shadow(0 0 6px #FFC857) brightness(1.25)}}@keyframes hsTree{from{transform:rotate(-2deg)}to{transform:rotate(2.5deg)}}
+.pk.jump{animation:pkJump .85s cubic-bezier(.3,.6,.4,1)}.pk.jump .pkb{animation:pkSpin .85s ease-in-out}@keyframes pkJump{0%{transform:translateY(0) scale(1,1)}20%{transform:translateY(0) scale(1.18,.8)}55%{transform:translateY(-62px) scale(.92,1.1)}85%{transform:translateY(0) scale(1.12,.88)}100%{transform:translateY(0) scale(1,1)}}@keyframes pkSpin{to{transform:rotateY(720deg)}}
+.hwBats{position:fixed;inset:0;z-index:8;pointer-events:none;perspective:700px;perspective-origin:50% 40%;overflow:hidden}.hwb{position:absolute;left:0;top:0;width:58px;height:36px;pointer-events:auto;transform-style:preserve-3d;filter:drop-shadow(0 0 8px rgba(255,138,31,.65));-webkit-tap-highlight-color:transparent}
+.hwb .bd{width:100%;height:100%;transform-origin:50% 40%;animation:flapB .16s ease-in-out infinite alternate}.hwb .bd svg{width:100%;height:100%;display:block}@keyframes flapB{from{transform:scaleY(1)}to{transform:scaleY(.4)}}
+.hwKrack{font-size:46px;letter-spacing:.02em}body.hwShake2{animation:hwShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes hwShake2{20%{transform:translate(-3px,2px)}40%{transform:translate(4px,-3px)}60%{transform:translate(-2px,1px)}80%{transform:translate(2px,-1px)}}
+.hhfig.hwFigSwing{animation:hwFigSwing 1s ease-out}@keyframes hwFigSwing{0%{transform:none}12%{transform:rotate(7deg) translateX(10px)}34%{transform:rotate(-12deg) translateX(-16px) scale(1.07)}60%{transform:rotate(3deg)}100%{transform:none}}
+:root:root:root[data-season="halloween"] .hwsp.back{animation:hwBack 1.6s ease-out}@keyframes hwBack{0%{opacity:0;transform:translateY(-110px)}60%{opacity:1;transform:translateY(6px)}100%{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){:root:root:root[data-season="halloween"] *,:root:root:root[data-season="halloween"] *::before,:root:root:root[data-season="halloween"] *::after,:root:root:root[data-season="halloween"] body::after{animation:none!important}}
 /* SEASON-HALLOWEEN:END */
 </style>
 
 
-<script>window.WORDY_VERSION="2.126.1";window.WORDY_BUILD="a2f3eedace";</script>
+<script>window.WORDY_VERSION="2.127.0";window.WORDY_BUILD="91d691a58b";</script>
 </head>
 <body>
 <div id="app">
@@ -1291,38 +1315,38 @@ body.hwShake{animation:hwShake .65s cubic-bezier(.36,.07,.19,.97)}@keyframes hwS
   <div id="session" hidden></div>
 </div>
 <div id="arena" hidden></div>
-<script src="data/klasse6.js?v=a2f3eedace"></script>
-<script src="data/klasse7.js?v=a2f3eedace"></script>
-<script src="data/klasse8.js?v=a2f3eedace"></script>
-<script src="data/business.js?v=a2f3eedace"></script>
-<script src="data/business-basis2.js?v=a2f3eedace"></script>
-<script src="data/business-aufbau2.js?v=a2f3eedace"></script>
-<script src="data/business-profi2.js?v=a2f3eedace"></script>
-<script src="data/smalltalk.js?v=a2f3eedace"></script>
-<script src="data/idioms.js?v=a2f3eedace"></script>
-<script src="data/saetze.js?v=a2f3eedace"></script>
-<script src="data/grammatik.js?v=a2f3eedace"></script>
-<script src="data/saetze2.js?v=a2f3eedace"></script>
-<script src="data/lernbuch.js?v=a2f3eedace"></script>
-<script src="data/verben.js?v=a2f3eedace"></script>
-<script src="data/open/business-aufbau.js?v=a2f3eedace"></script>
-<script src="data/open/business-basis.js?v=a2f3eedace"></script>
-<script src="data/open/business-profi.js?v=a2f3eedace"></script>
-<script src="data/open/saetze-open.js?v=a2f3eedace"></script>
-<script src="js/engine.js?v=a2f3eedace"></script>
-<script src="js/cosmetics.js?v=a2f3eedace"></script>
-<script src="js/saison.js?v=a2f3eedace"></script>
-<script src="js/fortnite.js?v=a2f3eedace"></script>
-<script src="js/figur.js?v=a2f3eedace"></script>
-<script src="js/stila.js?v=a2f3eedace"></script>
-<script src="js/stilb.js?v=a2f3eedace"></script>
-<script src="js/loot.js?v=a2f3eedace"></script>
-<script src="js/film.js?v=a2f3eedace"></script>
-<script src="js/app.js?v=a2f3eedace"></script>
-<script src="js/arena.js?v=a2f3eedace"></script>
-<script src="js/spiele.js?v=a2f3eedace"></script>
-<script src="js/grammatik.js?v=a2f3eedace"></script>
-<script src="js/sync.js?v=a2f3eedace"></script>
+<script src="data/klasse6.js?v=91d691a58b"></script>
+<script src="data/klasse7.js?v=91d691a58b"></script>
+<script src="data/klasse8.js?v=91d691a58b"></script>
+<script src="data/business.js?v=91d691a58b"></script>
+<script src="data/business-basis2.js?v=91d691a58b"></script>
+<script src="data/business-aufbau2.js?v=91d691a58b"></script>
+<script src="data/business-profi2.js?v=91d691a58b"></script>
+<script src="data/smalltalk.js?v=91d691a58b"></script>
+<script src="data/idioms.js?v=91d691a58b"></script>
+<script src="data/saetze.js?v=91d691a58b"></script>
+<script src="data/grammatik.js?v=91d691a58b"></script>
+<script src="data/saetze2.js?v=91d691a58b"></script>
+<script src="data/lernbuch.js?v=91d691a58b"></script>
+<script src="data/verben.js?v=91d691a58b"></script>
+<script src="data/open/business-aufbau.js?v=91d691a58b"></script>
+<script src="data/open/business-basis.js?v=91d691a58b"></script>
+<script src="data/open/business-profi.js?v=91d691a58b"></script>
+<script src="data/open/saetze-open.js?v=91d691a58b"></script>
+<script src="js/engine.js?v=91d691a58b"></script>
+<script src="js/cosmetics.js?v=91d691a58b"></script>
+<script src="js/saison.js?v=91d691a58b"></script>
+<script src="js/fortnite.js?v=91d691a58b"></script>
+<script src="js/figur.js?v=91d691a58b"></script>
+<script src="js/stila.js?v=91d691a58b"></script>
+<script src="js/stilb.js?v=91d691a58b"></script>
+<script src="js/loot.js?v=91d691a58b"></script>
+<script src="js/film.js?v=91d691a58b"></script>
+<script src="js/app.js?v=91d691a58b"></script>
+<script src="js/arena.js?v=91d691a58b"></script>
+<script src="js/spiele.js?v=91d691a58b"></script>
+<script src="js/grammatik.js?v=91d691a58b"></script>
+<script src="js/sync.js?v=91d691a58b"></script>
 
 <script>
 if ('serviceWorker' in navigator) {

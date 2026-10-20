@@ -328,6 +328,31 @@
     osc(t0 + hit + 0.1, 0.8, 880, 440, "triangle", 0.05);
   }
 
+
+  /* Baseballschläger-Ton und kleine Töne der Startseiten-Szene */
+  function batSound() {
+    var a = ctx(); if (!a) return; if (a.state === "suspended") { try { a.resume(); } catch (e) {} }
+    var t0 = a.currentTime + 0.02, m = a.createGain(); m.gain.value = 0.6; m.connect(a.destination);
+    var len = a.sampleRate * 0.6, nb = a.createBuffer(1, len, a.sampleRate), d = nb.getChannelData(0); for (var i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+    function nz(t, dur, f0, f1, q, vol, type) { var s = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain(); s.buffer = nb; f.type = type || "bandpass"; f.Q.value = q; f.frequency.setValueAtTime(f0, t); f.frequency.exponentialRampToValueAtTime(f1, t + dur); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + dur * 0.5); g.gain.exponentialRampToValueAtTime(0.0001, t + dur); s.connect(f); f.connect(g); g.connect(m); s.start(t); s.stop(t + dur + 0.05); }
+    function os(t, dur, f0, f1, type, vol) { var o = a.createOscillator(), g = a.createGain(); o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + dur); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + Math.min(0.02, dur / 3)); g.gain.exponentialRampToValueAtTime(0.0001, t + dur); o.connect(g); g.connect(m); o.start(t); o.stop(t + dur + 0.05); }
+    var hit = t0 + 0.46;
+    nz(t0 + 0.12, 0.34, 500, 2600, 1.1, 0.22);                 // Schwung: Zischen
+    nz(hit - 0.01, 0.12, 2500, 900, 0.8, 0.6, "highpass");     // Krack
+    os(hit, 0.18, 190, 70, "sine", 0.7);                       // dumpfer Schlag
+    os(hit, 0.5, 2300, 2100, "sine", 0.12);                    // heller Ping wie beim Baseball
+    os(hit + 0.04, 1.5, 1700, 260, "triangle", 0.07);          // Spinne pfeift davon
+    os(hit + 1.75, 0.25, 1800, 2600, "sine", 0.06);            // fernes Plink
+  }
+  function homeSound(kind) {
+    var a = ctx(); if (!a) return; if (a.state === "suspended") { try { a.resume(); } catch (e) {} }
+    var t = a.currentTime + 0.01, m = a.createGain(); m.gain.value = 0.5; m.connect(a.destination);
+    function os(dt, dur, f0, f1, type, vol, vib) { var o = a.createOscillator(), g = a.createGain(); o.type = type; o.frequency.setValueAtTime(f0, t + dt); o.frequency.exponentialRampToValueAtTime(f1, t + dt + dur); if (vib) { var v = a.createOscillator(), vg = a.createGain(); v.frequency.value = 7; vg.gain.value = vib; v.connect(vg); vg.connect(o.frequency); v.start(t + dt); v.stop(t + dt + dur); } g.gain.setValueAtTime(0.0001, t + dt); g.gain.exponentialRampToValueAtTime(vol, t + dt + Math.min(0.03, dur / 3)); g.gain.exponentialRampToValueAtTime(0.0001, t + dt + dur); o.connect(g); g.connect(m); o.start(t + dt); o.stop(t + dt + dur + 0.05); }
+    if (kind === "pk") { os(0, 0.12, 300, 700, "triangle", 0.2); os(0.1, 0.18, 500, 1100, "triangle", 0.15); os(0.22, 0.25, 800, 400, "sine", 0.1); }
+    else if (kind === "gs") { os(0, 0.9, 190, 120, "sine", 0.18, 6); os(0.05, 0.9, 285, 180, "sine", 0.07, 8); }
+    else { os(0, 0.07, 3400, 2200, "square", 0.05); os(0.09, 0.07, 3800, 2600, "square", 0.05); os(0.3, 0.3, 900, 200, "triangle", 0.08); }
+  }
+
   /* ---------- Halloween-Klangteppich (Web Audio, leise, ohne Dateien): Brummen, Wind, Spieluhr, ab und zu eine Eule ---------- */
   var amb = null;
   var NOTES = [220, 261.6, 293.7, 329.6, 392, 440, 523.3, 587.3];   // A-Moll-Pentatonik und Terz
@@ -484,5 +509,5 @@
     ov.addEventListener("click", done);
     global.setTimeout(done, reduce ? 1800 : 4200);
   }
-  global.VTC = { spiderSound: spiderSound, ambientStart: ambientStart, ambientStop: ambientStop, ambientOn: function () { return !!amb; }, dance: dance, stickerHtml: stickerHtml, runFinale: runFinale, avatarHtml: avatarHtml, frameClass: frameClass, applyLook: applyLook, DESIGNS: DESIGNS, burst: burst, finale: finale, sound: sound, ART: ART };
+  global.VTC = { batSound: batSound, homeSound: homeSound, spiderSound: spiderSound, ambientStart: ambientStart, ambientStop: ambientStop, ambientOn: function () { return !!amb; }, dance: dance, stickerHtml: stickerHtml, runFinale: runFinale, avatarHtml: avatarHtml, frameClass: frameClass, applyLook: applyLook, DESIGNS: DESIGNS, burst: burst, finale: finale, sound: sound, ART: ART };
 })(window);
