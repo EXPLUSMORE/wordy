@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.133.1 – 2026-10-20
+- Betreiber-Dashboard: „✨ Saison-Look“ ist jetzt eine eigene Gruppe in den Spieler-Einstellungen, zwischen „Erinnerung“ und „Belohnungen“. Sie enthält „Look für den Spieler erzwingen“ und die Zeitfenster der Looks (vorher unter Konto/Familien). Familienkonten sehen die Gruppe nicht. Nur Dashboard, **Server-Schritt** (Neustart) wie 2.133.0.
+
 ## 2.133.0 – 2026-10-20
 - Betreiber-Dashboard › Spieler › Einstellungen: „Saison-Look (nur für dich)“. Ein Look (Halloween, Winter, Weihnachten, Spring Break oder Aus) lässt sich je Spieler erzwingen, unabhängig von Datum, Sperre und Wahl des Kindes – zum Testen. Dabei kein Abzeichen und kein Ankündigungsfenster. Endpunkt `/api/admin/players/:id/look` (nur Betreiber, nicht Familien), kommt als `lookForce` über `/api/sync`. **Server-Schritt nötig.**
 
