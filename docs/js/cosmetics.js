@@ -299,6 +299,35 @@
   }
 
 
+
+  /* Spinnen-Effekt-Ton (zum Antippen der Halloween-Spinne): Knarzen, Windstöße beim Schwingen, steigender Ton beim Sprung, Knall und Trippeln */
+  function spiderSound(short) {
+    var a = ctx(); if (!a) return; if (a.state === "suspended") { try { a.resume(); } catch (e) {} }
+    var t0 = a.currentTime + 0.03, m = a.createGain(); m.gain.value = 0.55; m.connect(a.destination);
+    var len = a.sampleRate * 1.2, nb = a.createBuffer(1, len, a.sampleRate), d = nb.getChannelData(0); for (var i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+    function noise(t, dur, f0, f1, q, vol, type) {
+      var s = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain(); s.buffer = nb; f.type = type || "bandpass"; f.Q.value = q;
+      f.frequency.setValueAtTime(f0, t); f.frequency.exponentialRampToValueAtTime(f1, t + dur);
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + dur * 0.35); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      s.connect(f); f.connect(g); g.connect(m); s.start(t); s.stop(t + dur + 0.05);
+    }
+    function osc(t, dur, f0, f1, type, vol) {
+      var o = a.createOscillator(), g = a.createGain(); o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + dur);
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + Math.min(0.05, dur / 3)); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.connect(g); g.connect(m); o.start(t); o.stop(t + dur + 0.05);
+    }
+    var hit = short ? 0.2 : 5.05;
+    if (!short) {
+      osc(t0, 0.5, 90, 70, "sawtooth", 0.025);   // Faden knarzt
+      [0.9, 1.9, 2.9, 3.8].forEach(function (x, i) { noise(t0 + x, 0.9, 400 + i * 120, 1500 + i * 300, 1.2, 0.09 + i * 0.03); });   // Luftzug beim Vorbeischwingen
+      osc(t0 + 4.45, 0.62, 180, 1500, "sawtooth", 0.05); osc(t0 + 4.45, 0.62, 360, 2300, "square", 0.02);   // Sprung
+    }
+    osc(t0 + hit, 0.55, 110, 38, "sine", 0.5);   // Knall
+    noise(t0 + hit, 0.45, 3000, 300, 0.7, 0.35, "lowpass");
+    for (var k = 0; k < 22; k++) { var tt = t0 + hit + 0.12 + Math.random() * 1.5; osc(tt, 0.012, 2200 + Math.random() * 2500, 1800, "square", 0.04); }   // Trippeln
+    osc(t0 + hit + 0.1, 0.8, 880, 440, "triangle", 0.05);
+  }
+
   /* ---------- Halloween-Klangteppich (Web Audio, leise, ohne Dateien): Brummen, Wind, Spieluhr, ab und zu eine Eule ---------- */
   var amb = null;
   var NOTES = [220, 261.6, 293.7, 329.6, 392, 440, 523.3, 587.3];   // A-Moll-Pentatonik und Terz
@@ -455,5 +484,5 @@
     ov.addEventListener("click", done);
     global.setTimeout(done, reduce ? 1800 : 4200);
   }
-  global.VTC = { ambientStart: ambientStart, ambientStop: ambientStop, ambientOn: function () { return !!amb; }, dance: dance, stickerHtml: stickerHtml, runFinale: runFinale, avatarHtml: avatarHtml, frameClass: frameClass, applyLook: applyLook, DESIGNS: DESIGNS, burst: burst, finale: finale, sound: sound, ART: ART };
+  global.VTC = { spiderSound: spiderSound, ambientStart: ambientStart, ambientStop: ambientStop, ambientOn: function () { return !!amb; }, dance: dance, stickerHtml: stickerHtml, runFinale: runFinale, avatarHtml: avatarHtml, frameClass: frameClass, applyLook: applyLook, DESIGNS: DESIGNS, burst: burst, finale: finale, sound: sound, ART: ART };
 })(window);

@@ -9,6 +9,11 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.126.0 – 2026-10-20
+- **Spinnen-Effekt**: Tippt man die große, abgeseilte Halloween-Spinne an, wird der Bildschirm dunkel und die Spinne schwingt als 3D-Pendel durch den Raum (echte Perspektive: sie kommt dem Betrachter riesig entgegen und weicht wieder zurück, mit Schatten und Schweif). Dann springt sie auf den Bildschirm, es knallt („BUH!“, Bildschirm wackelt, Blitz) und sie platzt in einen Schwarm kleiner Spinnen, Fledermäuse, Mini-Kürbisse und Funken; Spinnennetze wachsen in die Ecken. Dauer ca. 7,5 Sekunden, ein Tipp auf den Bildschirm springt direkt zum Knall.
+- Ton dazu (Web Audio, nur wenn „Ton“ an ist): Knarzen, Luftzug bei jedem Vorbeischwingen, steigender Ton beim Sprung, tiefer Knall und Trippeln; Handy-Vibration beim Knall. Bei „Bewegung reduzieren“ gibt es nur den Knall ohne Schwingen.
+- Technik: neue Datei `js/saison.js` (`VTS.spider`), Spinne ist jetzt ein echtes Element `#hwSp` in der Kopfzeile (Dekoration per CSS im Halloween-Block, Erzeuger `tools/season_halloween.py`), `VTC.spiderSound` in cosmetics.js. Kein Server-Schritt nötig.
+
 ## 2.125.1 – 2026-10-20
 - Halloween-Look: Die Spinne in der Kopfzeile seilt sich auf der **Startseite** langsam rund 5 cm nach unten ab (pendelnd, mitten über die Startbühne), bleibt kurz hängen und klettert wieder hoch (Ablauf ca. 24 Sekunden). Auf den anderen Seiten pendelt sie wie bisher. Dafür setzt die App `data-tab` am `<html>`-Element.
 - Kein Server-Schritt nötig.

@@ -304,6 +304,17 @@
     var want = seasonNow() === "halloween" && S.state.settings.audio !== false && S.state.settings.seasonSound !== false && sessionEl.hidden && !document.hidden && heard;
     if (want && !V.ambientOn()) V.ambientStart(); else if (!want && V.ambientOn()) V.ambientStop();
   }
+  /* Halloween-Spinne in der Kopfzeile als echtes Element (antippbar): Dekoration per CSS, Effekt in saison.js */
+  function spiderSync() {
+    var h = $("#top"), el = $("#hwSp"), on = seasonNow() === "halloween";
+    if (on && h && !el) { el = document.createElement("div"); el.id = "hwSp"; el.className = "hwsp"; el.setAttribute("role", "button"); el.setAttribute("aria-label", "Spinne antippen"); h.appendChild(el); }
+    else if (!on && el) el.remove();
+  }
+  document.addEventListener("click", function (e) {
+    var sp = e.target.closest && e.target.closest("#hwSp"); if (!sp || !global.VTS || !sessionEl.hidden) return;
+    var r = sp.getBoundingClientRect(); sp.classList.add("gone");
+    if (!global.VTS.spider({ left: r.left, width: r.width, bottom: r.bottom }, function () { sp.classList.remove("gone"); }, S.state.settings.audio === false)) return;
+  });
   var heard = false;
   document.addEventListener("pointerdown", function () { heard = true; ambientSync(); }, { passive: true });
   document.addEventListener("keydown", function () { heard = true; }, { passive: true });
@@ -324,7 +335,7 @@
     if (!st.settings.hearts) { hEl.textContent = "∞"; hEl.title = "Ohne Herzen"; }
     else { S.regenHearts(); hEl.setAttribute("data-n", st.hearts); hEl.innerHTML = "<span style='color:var(--bad)'>" + "♥".repeat(st.hearts) + "</span><span style='color:var(--line)'>" + "♥".repeat(5 - st.hearts) + "</span>"; }
     global.VTC.applyLook(st.profile, st.settings.themeMode, st.settings.design, seasonNow());
-    ambientSync();
+    ambientSync(); spiderSync();
     var hb = $("#hBoost");
     if (hb) {
       var bs = st.path && st.path.boost, on = !!(bs && bs.on && bs.left > 0);
