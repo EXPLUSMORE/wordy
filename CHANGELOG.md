@@ -9,6 +9,11 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.130.0 – 2026-10-20
+- **Belohnungsbereich vorübergehend auch im Eltern-Dashboard.** Eltern sehen in den Einstellungen ihres Kindes die Gruppe „Belohnungen“ aus dem Betreiber-Dashboard: **Extramünzen schenken** (mit Nachricht), **Münzfaktor**, **Bonusmünzen und Geschenke bei Zielen und Plänen** und den **Wochenpass zusammenstellen**. Das gilt nur für die eigenen Kinder.
+- **Schalter beim Betreiber:** Im Betreiber-Dashboard unter „Familien“ gibt es die Karte „Belohnungsbereich für Eltern“ mit Haken „Für Eltern freigeschaltet“. Standard: **an**. Ausgeschaltet verschwindet der Bereich bei den Eltern wieder und der Server lehnt die Aufrufe ab (wie bisher); bereits gesetzte Werte, Geschenke und Pässe bleiben bestehen.
+- Technik: kv `feature:famrewards`, `famRewardsOn()` in server.js (Prüfungen bei season/gifts/coinfactor/goals/plans), Endpunkt `/api/admin/features` (nur Betreiber), `famRewards` im Bericht; Dashboard: `drawFeatures()`, Klasse `WFR`. Tests in `server/test.js`. **Server-Schritt nötig** (Neustart mit dem neuen Stand).
+
 ## 2.129.2 – 2026-10-20
 - **Fehler behoben: Lernrunden ließen sich nicht mehr pausieren oder beenden.** Seit 2.120.5 (Sticker am Rand der Kopfzeile) lag die Kopfzeile vor der Lernrunde und verdeckte deren oberste Leiste mit dem ✕. Ohne ✕ kam man weder zu „Später weitermachen“ noch zu „Beenden“. Die Kopfzeile liegt jetzt unter der Lernrunde (und unter Spielen und Fenstern), die Sticker hängen weiterhin über dem Seiteninhalt. Geprüft: Runde starten, drei Aufgaben beantworten, ✕, „Später weitermachen“ speichert die Runde („Daily Challenge · Aufgabe 4 von 126“) und sie erscheint auf der Startseite zum Weitermachen.
 - Kein Server-Schritt nötig.

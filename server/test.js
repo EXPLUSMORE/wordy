@@ -407,12 +407,25 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     assert.equal((await J("/api/fam/players/" + mk.j.id + "/analysis", { headers: F })).s, 404, "Familie kommt nicht an die Analyse des Betreibers");
     assert.equal((await J("/api/fam/players/" + kid.j.id + "/goals", { method: "POST", headers: F, body: JSON.stringify({ kind: "minutes", target: 20 }) })).s, 200, "Familie setzt Ziele für ihr Kind");
     assert.equal((await J("/api/fam/families", { headers: F })).s, 403, "Betreiber-Funktionen gesperrt");
+    assert.equal((await J("/api/fam/players/" + kid.j.id + "/report", { headers: F })).j.famRewards, true, "Belohnungsbereich für Eltern ist vorübergehend an");
+    assert.notEqual((await J("/api/fam/features", { method: "POST", headers: F, body: JSON.stringify({ famrewards: false }) })).s, 200, "Schalter dafür ist nur beim Betreiber");
+    assert.equal((await J("/api/admin/features", { headers: H })).j.famrewards, true, "Eltern können den Schalter nicht umlegen");
+    assert.equal((await J("/api/admin/features", { method: "POST", headers: H, body: JSON.stringify({ famrewards: false }) })).j.famrewards, false, "Betreiber schaltet den Belohnungsbereich für Eltern aus");
+    assert.equal((await J("/api/fam/players/" + kid.j.id + "/report", { headers: F })).j.famRewards, false);
     assert.equal((await J("/api/fam/players/" + kid.j.id + "/season", { method: "POST", headers: F, body: JSON.stringify({ title: "Eigener Pass" }) })).s, 403, "Eltern stellen den Wochenpass nicht zusammen");
     assert.equal((await J("/api/fam/players/" + kid.j.id + "/season", { headers: F })).s, 403, "und lesen ihn im Dashboard auch nicht");
     assert.equal((await J("/api/fam/players/" + kid.j.id + "/gifts", { method: "POST", headers: F, body: JSON.stringify({ coins: 50 }) })).s, 403, "Eltern schenken keine Extramünzen");
     assert.equal((await J("/api/fam/players/" + kid.j.id + "/coinfactor", { method: "POST", headers: F, body: JSON.stringify({ factor: 2 }) })).s, 403, "Eltern stellen den Münzfaktor nicht um");
     const gq = await J("/api/fam/players/" + kid.j.id + "/goals", { method: "POST", headers: F, body: JSON.stringify({ kind: "days", target: 3, coins: 400 }) }); assert.equal(gq.s, 200);
     assert.ok((await J("/api/fam/players/" + kid.j.id + "/goals", { headers: F })).j.every(x => !x.coins), "Ziele aus Elternkonten haben keine Bonusmünzen");
+    await J("/api/admin/features", { method: "POST", headers: H, body: JSON.stringify({ famrewards: true }) });
+    assert.equal((await J("/api/fam/players/" + kid.j.id + "/gifts", { method: "POST", headers: F, body: JSON.stringify({ coins: 40, note: "Von den Eltern" }) })).s, 200, "Freigeschaltet: Eltern schenken Extramünzen");
+    assert.equal((await J("/api/fam/players/" + kid.j.id + "/coinfactor", { method: "POST", headers: F, body: JSON.stringify({ factor: 1.5 }) })).s, 200, "Freigeschaltet: Eltern stellen den Münzfaktor ein");
+    assert.equal((await J("/api/fam/players/" + kid.j.id + "/season", { method: "POST", headers: F, body: JSON.stringify({ title: "Eltern-Pass", weeks: [{ title: "W1", need: 3, items: [], coins: 5 }] }) })).s, 200, "Freigeschaltet: Eltern stellen den Wochenpass zusammen");
+    { const g2 = await J("/api/fam/players/" + kid.j.id + "/goals", { method: "POST", headers: F, body: JSON.stringify({ kind: "days", target: 4, coins: 60 }) }); assert.equal(g2.s, 200); assert.ok((await J("/api/fam/players/" + kid.j.id + "/goals", { headers: F })).j.some(x => x.coins === 60), "Freigeschaltet: Bonusmünzen bei Zielen von Eltern"); }
+    await J("/api/fam/players/" + kid.j.id + "/season", { method: "POST", headers: F, body: JSON.stringify({ clear: true }) });
+    await J("/api/fam/players/" + kid.j.id + "/coinfactor", { method: "POST", headers: F, body: JSON.stringify({ factor: 1 }) });
+    await J("/api/admin/features", { method: "POST", headers: H, body: JSON.stringify({ famrewards: false }) });
     { const fg = await J("/api/fam/players/" + kid.j.id + "/goals", { method: "POST", headers: F, body: JSON.stringify({ kind: "days", target: 2, item: "av:kitty1" }) }); assert.equal(fg.s, 200);
       assert.ok((await J("/api/fam/players/" + kid.j.id + "/goals", { headers: F })).j.every(x => !x.item), "Gegenstände als Belohnung nur vom Betreiber");
       const og2 = await J("/api/admin/players/" + mk.j.id + "/goals", { method: "POST", headers: H, body: JSON.stringify({ kind: "days", target: 2, item: "av:kitty1", coins: 10 }) }); assert.equal(og2.s, 200);

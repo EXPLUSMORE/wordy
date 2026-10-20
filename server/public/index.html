@@ -7,7 +7,7 @@
 
 <title>Track Wordy</title>
 <style>
-.WFX .opcoin{display:none!important}
+.WFX:not(.WFR) .opcoin{display:none!important}
 :root{--bg:#F6F1E6;--card:#fff;--ink:#10151F;--ink2:#3B4656;--line:#E9E1CD;--acc:#1E6273;--acc2:#2E8BA0;--good:#2C7A57;--bad:#B8403B;--warn:#A9781F;--on-acc:#fff;--btn-sh:#134552;--l1:#E2B93B;--l2:#E69A3A;--l3:#4FA6B8;--l4:#2E8B57}
 @media (prefers-color-scheme:dark){:root{--bg:#0E1320;--card:#171F30;--ink:#F6EFE0;--ink2:#B9C0CE;--line:#243049;--acc:#E9BD62;--acc2:#F4C45E;--good:#63C79A;--bad:#E7817B;--warn:#E9BD62;--on-acc:#2a1c00;--btn-sh:#9b6f1c;--l1:#C9A233;--l2:#D18A33;--l3:#4698AA;--l4:#4DB380}}
 *{box-sizing:border-box}
@@ -220,8 +220,8 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
         '<div class="row" style="gap:8px"><input id="in" class="grow" maxlength="60" placeholder="Notiz, z. B. Familie Meier"><select id="iu"><option value="1">1 Familie</option><option value="3">3</option><option value="10">10</option></select><select id="ir"><option value="parent">Eltern</option><option value="teacher">Lehrkraft</option></select><button id="imk">Link erstellen</button></div><div id="iout"></div></div>' +
         '<div class="card"><h2>Offene Einladungen</h2>' + (inv.length ? inv.map(function (i) { return '<div class="row" style="gap:8px;padding:6px 0;border-top:1px solid var(--line)"><span class="grow small"><b>' + (i.role === "teacher" ? "🏫 " : "") + esc(i.note || "ohne Notiz") + '</b> · ' + i.uses + "/" + i.max + ' benutzt<br><span class="muted">' + esc(i.url) + '</span></span><button class="ghost sm" data-cp="' + esc(i.url) + '">Kopieren</button><button class="ghost sm" data-di="' + esc(i.code) + '">Löschen</button></div>'; }).join("") : '<p class="small muted" style="margin:0">Keine offenen Einladungen.</p>') + "</div>" +
         '<div class="card"><h2>Familien (' + fs.length + ')</h2>' + (fs.length ? fs.map(function (f) { return '<div class="row" style="gap:8px;padding:6px 0;border-top:1px solid var(--line)"><span class="grow small"><b>' + (f.role === "teacher" ? "🏫 " : "") + esc(f.email) + '</b> ' + (f.status === "blocked" ? '<span class="err">gesperrt</span>' : "") + '<br><span class="muted">' + f.children + ' Kinder · zuletzt angemeldet ' + fmtAgo(f.lastLogin) + '</span></span><button class="ghost sm" data-bl="' + f.id + '" data-b="' + (f.status === "blocked" ? 0 : 1) + '">' + (f.status === "blocked" ? "Entsperren" : "Sperren") + '</button><button class="ghost sm" data-df="' + f.id + '" data-n="' + esc(f.email) + '">Löschen</button></div>'; }).join("") : '<p class="small muted" style="margin:0">Noch keine Familien registriert.</p>') +
-        '<p class="small muted" style="margin:10px 0 0">Aus Datenschutzgründen siehst du hier nur Konten, nicht die Lernstände fremder Kinder.</p></div><div class="card" id="shopPlanCard"></div><div class="card" id="mailCard"></div>';
-      drawMail(); drawShopPlan();
+        '<p class="small muted" style="margin:10px 0 0">Aus Datenschutzgründen siehst du hier nur Konten, nicht die Lernstände fremder Kinder.</p></div><div class="card" id="featCard"></div><div class="card" id="shopPlanCard"></div><div class="card" id="mailCard"></div>';
+      drawFeatures(); drawMail(); drawShopPlan();
       document.getElementById("imk").onclick = function () { post("/api/admin/families/invites", { note: document.getElementById("in").value, uses: +document.getElementById("iu").value, role: document.getElementById("ir").value }).then(function (i) { viewFam().then(function () { document.getElementById("iout").innerHTML = '<p style="margin:10px 0 0"><b>Link:</b> <input readonly class="grow" style="width:100%" value="' + esc(i.url) + '" onclick="this.select()"></p>'; }); }).catch(function (e) { alert(e.message); }); };
       Array.prototype.forEach.call(view.querySelectorAll("[data-cp]"), function (b) { b.onclick = function () { navigator.clipboard.writeText(b.getAttribute("data-cp")); b.textContent = "Kopiert"; }; });
       Array.prototype.forEach.call(view.querySelectorAll("[data-di]"), function (b) { b.onclick = function () { api("/api/admin/families/invites/" + b.getAttribute("data-di"), { method: "DELETE" }).then(viewFam); }; });
@@ -628,6 +628,7 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
     }).catch(function (e) { el.innerHTML = '<div class="card err">' + esc(e.message) + '</div>'; });
   }
   function viewPlayer(p, r) {
+    if (window.WF) document.documentElement.classList.toggle("WFR", !!r.famRewards);   // Belohnungsbereich für Eltern (Betreiber schaltet ihn unter „Familien“ ein/aus)
     var m = r.meta || {}, t = r.totals, wk = r.week, h = "", D1 = "", D2 = "", D3 = "", D4 = "";
     var today = r.days[r.days.length - 1];
     h += '<div class="card"><div class="row"><div class="grow"><b style="font-size:18px">' + esc(p.name) + "</b>" +
@@ -660,7 +661,7 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
       sg("stoff", "🧭", "Lernstoff steuern", "Pfad-Einheiten · „Kind wählt selbst“ · Lernplan · Wochenziele · Boss", '<div class="card" id="pathCard"></div><div class="card" id="plansCard"></div><div class="card" id="goalsCard"></div>', true) +
       sg("ziel", "⏱️", "Tagesziel &amp; Wochenzeitplan", "Minuten je Tag · freie Tage", '<div class="card" id="wpCard"></div>', false) +
       sg("push", "🔔", "Erinnerung", "Zeitfenster · Abstand · An / Aus · Geräte", '<div class="card" id="pushCard"></div>', false) +
-      sg("belohn", "🎁", "Belohnungen", "Extramünzen · Pass (nur Betreiber)", '<div class="card" id="giftCard"></div><div class="card" id="passCard"></div>', false) +
+      sg("belohn", "🎁", "Belohnungen", (window.WF ? "Extramünzen · Pass · vorübergehend für Eltern freigeschaltet" : "Extramünzen · Pass · für Eltern freischaltbar"), '<div class="card" id="giftCard"></div><div class="card" id="passCard"></div>', false) +
       sg("sozial", "👥", "Freunde, Klasse, Crew", "Freigaben der Eltern", '<div class="card" id="friendCard"></div><div class="card" id="classCard"></div>', false) +
       sg("daten", "💾", "Sicherung &amp; Daten", "Lernstand wiederherstellen · Herunterladen", '<div class="card" id="backupCard"></div>', false) +
       sg("name", "✏️", "Name &amp; Spieler", "Umbenennen · Spieler löschen", '<div class="row" style="gap:8px;flex-wrap:wrap"><button class="ghost" id="ren">Umbenennen</button><button class="ghost" id="del">Löschen</button></div>', false);
@@ -737,7 +738,7 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
   var KIND_DE = { avatar: "Figuren", dance: "Tänze", outfit: "Outfits", kit: "Trikots", fx: "Effekte", frame: "Rahmen", title: "Titel", bg: "Hintergründe", snd: "Töne", theme: "Farbwelten" };
   function drawPass(p, r, ov) {
     var el = document.getElementById("passCard"); if (!el) return;
-    if (window.WF) { if (el.parentNode) el.parentNode.removeChild(el); return; }   // den Wochenpass stellt nur der Betreiber zusammen
+    if (window.WF && !r.famRewards) { if (el.parentNode) el.parentNode.removeChild(el); return; }   // den Wochenpass stellt der Betreiber zusammen (Eltern nur, solange der Betreiber den Belohnungsbereich freigibt)
     var m = r.meta || {}, ps = m.pass, shop = (m.shop && m.shop.length ? m.shop : []).concat(DEF_SHOP.filter(function (d) { return !(m.shop || []).some(function (x) { return x[0] === d[0]; }); }));
     el.innerHTML = "<h2>Pass: Wochen-Sets zusammenbauen</h2><p class='muted small'>Lade …</p>";
     api("/api/admin/players/" + p.id + "/season").then(function (cur) {
@@ -775,7 +776,7 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
   /* Extramünzen "überweisen": kommen beim nächsten Abgleich der App auf das Konto des Kindes */
   function drawGifts(p, r) {
     var el = document.getElementById("giftCard"); if (!el) return;
-    if (window.WF) { if (el.parentNode) el.parentNode.removeChild(el); return; }   // Extramünzen schenkt nur der Betreiber
+    if (window.WF && !r.famRewards) { if (el.parentNode) el.parentNode.removeChild(el); return; }   // Extramünzen schenkt der Betreiber (Eltern nur, solange er den Belohnungsbereich freigibt)
     var m = r.meta || {};
     el.innerHTML = "<h2>Extramünzen schenken</h2><p class='small muted' style='margin:0 0 8px'>Für besondere Leistungen. Die Münzen werden beim nächsten Öffnen der App gutgeschrieben, " + esc(p.name) + " sieht deine Nachricht." +
       (m.coins != null ? " Aktueller Stand laut App: <b>🪙 " + m.coins + "</b>, " + (m.xp || 0).toLocaleString("de-DE") + " XP." : "") + "</p>" +
@@ -1059,6 +1060,15 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
       : '<p class="muted small" style="margin:0">Noch keine Sicherung. Sie entsteht nach der nächsten Lernrunde mit der neuen App-Version.</p>');
   }
   /* Shop-Kalender (nur Betreiber): Go-live-Datum und „ab Woche N“ je Artikel */
+  /* Belohnungsbereich für Eltern: vorübergehend freigeschaltet, hier wieder abschaltbar */
+  function drawFeatures() {
+    var el = document.getElementById("featCard"); if (!el) return;
+    api("/api/admin/features").then(function (f) {
+      el.innerHTML = "<h2>Belohnungsbereich für Eltern</h2><p class='small muted' style='margin:0 0 8px'>Vorübergehend dürfen Eltern in ihrem Dashboard für ihre Kinder Extramünzen schenken, den Münzfaktor einstellen, Bonusmünzen und Geschenke bei Zielen und Plänen setzen und den Wochenpass zusammenstellen. Ausschalten: Der Bereich verschwindet im Elternkonto wieder; schon gesetzte Werte bleiben bestehen.</p>" +
+        '<label class="row" style="gap:8px;align-items:center"><input type="checkbox" id="frOn"' + (f.famrewards ? " checked" : "") + '> <span><b>Für Eltern freigeschaltet</b></span></label><p class="small" id="frMsg" style="margin:6px 0 0"></p>';
+      el.querySelector("#frOn").onchange = function () { var on = this.checked; post("/api/admin/features", { famrewards: on }).then(function (x) { var m = el.querySelector("#frMsg"); m.className = "small"; m.textContent = x.famrewards ? "Eltern sehen den Belohnungsbereich jetzt." : "Der Belohnungsbereich ist für Eltern wieder aus."; }).catch(function (e) { var m = el.querySelector("#frMsg"); m.className = "small err"; m.textContent = e.message; }); };
+    }).catch(function (e) { el.innerHTML = "<p class='small err'>" + esc(e.message) + "</p>"; });
+  }
   function drawShopPlan() {
     var el = document.getElementById("shopPlanCard"); if (!el) return;
     el.innerHTML = "<h2>Shop-Kalender</h2><p class='muted small'>Lade …</p>";

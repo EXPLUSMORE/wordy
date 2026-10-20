@@ -768,6 +768,9 @@ function setSeason(pid, body) {
   return [200, { ok: true, season }];
 }
 /* Münzfaktor: Eltern können Verdienst und damit das Tempo im Shop anpassen (0,5 bis 2) */
+/* Belohnungsbereich für Eltern (vorübergehend): Extramünzen, Münzfaktor, Bonusmünzen/Geschenke bei Zielen und Plänen, Wochenpass.
+   Der Betreiber schaltet ihn im Dashboard unter „Familien“ ein und aus (kv feature:famrewards, Standard: an). */
+function famRewardsOn() { const r = q.kvGet.get("feature:famrewards"); return !r || r.val !== "0"; }
 function coinFactorOf(pid) { const r = q.kvGet.get("coinfactor:" + pid); const v = r ? parseFloat(r.val) : 1; return [0.5, 1, 1.5, 2].includes(v) ? v : 1; }
 function setCoinFactor(pid, body) {
   const v = [0.5, 1, 1.5, 2].includes(+body.factor) ? +body.factor : 1;
@@ -1723,6 +1726,8 @@ const server = http.createServer(async (req, res) => {
         if (mcl[2] === "task" && mcl[3] && req.method === "DELETE") { const t = kq.task.get(+mcl[3]); if (!t || t.class !== c.id) return send(res, 404, { error: "Unbekannt." }); kq.delTask.run(t.id); return send(res, 200, { ok: true }); }
         if (mcl[2] === "kick" && mcl[3] && req.method === "POST") { const cm = kq.memberOf.get(+mcl[3]); if (cm && cm.class === c.id) kq.delMember.run(+mcl[3]); return send(res, 200, { ok: true }); }
       }
+      if (!scope && p === "/api/admin/features" && req.method === "GET") return send(res, 200, { famrewards: famRewardsOn() });
+      if (!scope && p === "/api/admin/features" && req.method === "POST") { const b = await readJson(req); if (typeof b.famrewards === "boolean") q.kvSet.run("feature:famrewards", b.famrewards ? "1" : "0"); return send(res, 200, { famrewards: famRewardsOn() }); }
       if (!scope && p === "/api/admin/shopplan" && req.method === "GET") return send(res, 200, shopPlan());
       if (!scope && p === "/api/admin/shopplan" && req.method === "POST") { const [c, b] = setShopPlan(await readJson(req)); return send(res, c, b); }
       if (scope && p === "/api/admin/me" && req.method === "GET") return send(res, 200, { email: scope.email, created: scope.created, weekly: !!scope.weekly, hasPassword: !!scope.pw, children: fq.kids.all(scope.fid).length, coparent: !!scope.owner, max: MAX_KIDS, mail: transportOn(), day: MAIL.day, hour: MAIL.hour });
@@ -1852,7 +1857,7 @@ const server = http.createServer(async (req, res) => {
         const pid = +m[1], pl = q.player.get(pid);
         if (!famPlayer(pl, scope)) return send(res, 404, { error: "Unbekannt." });
         if (!m[2] && req.method === "GET") return send(res, 200, { id: pid, name: pl.name });
-        if (m[2] === "report" && req.method === "GET") return send(res, 200, report(pid, Math.min(90, Math.max(7, +url.searchParams.get("days") || 30))));
+        if (m[2] === "report" && req.method === "GET") return send(res, 200, Object.assign(report(pid, Math.min(90, Math.max(7, +url.searchParams.get("days") || 30))), { famRewards: famRewardsOn() }));
         if (m[2] === "analysis" && req.method === "GET") return send(res, 200, analysis(pid, +url.searchParams.get("days") || 90));
         if (m[2] === "customplan" && req.method === "GET") {
           const st = customplanStore(pid);
@@ -1891,9 +1896,9 @@ const server = http.createServer(async (req, res) => {
         if (m[2] === "crewleave" && req.method === "POST") { crewLeave(pid); return send(res, 200, { ok: true }); }
         if (m[2] === "social" && req.method === "POST") { const on = !!(await readJson(req)).enabled; sq.setSocial.run(on ? 1 : 0, pid); if (on) fcodeOf(pid); return send(res, 200, { ok: true }); }
         if (m[2] === "goals" && req.method === "GET") return send(res, 200, weekGoals(pid));
-        if (m[2] === "goals" && req.method === "POST") { const gb = await readJson(req); if (scope) { gb.coins = 0; gb.item = ""; } const [c, b] = createGoal(pid, gb); return send(res, c, b); }
+        if (m[2] === "goals" && req.method === "POST") { const gb = await readJson(req); if (scope && !famRewardsOn()) { gb.coins = 0; gb.item = ""; } const [c, b] = createGoal(pid, gb); return send(res, c, b); }
         if (m[2] === "plans" && req.method === "GET") return send(res, 200, plansOf(pid));
-        if (m[2] === "plans" && req.method === "POST") { const pb = await readJson(req); if (scope) { pb.coins = 0; pb.item = ""; } const [c, b] = createPlan(pid, pb); return send(res, c, b); }
+        if (m[2] === "plans" && req.method === "POST") { const pb = await readJson(req); if (scope && !famRewardsOn()) { pb.coins = 0; pb.item = ""; } const [c, b] = createPlan(pid, pb); return send(res, c, b); }
         if (m[2] === "push" && req.method === "GET") return send(res, 200, pushView(pid));
         if (m[2] === "push" && req.method === "POST") {
           const b = await readJson(req), st = pushState(pid);
@@ -1911,10 +1916,10 @@ const server = http.createServer(async (req, res) => {
         }
         if (m[2] === "weekplan" && req.method === "GET") return send(res, 200, weekPlanOf(pid));
         if (m[2] === "weekplan" && req.method === "POST") { const [c, b] = setWeekPlan(pid, await readJson(req)); return send(res, c, b); }
-        if (m[2] === "season" && scope) return send(res, 403, { error: "Der Wochenpass wird vom Betreiber zusammengestellt." });
+        if (m[2] === "season" && scope && !famRewardsOn()) return send(res, 403, { error: "Der Wochenpass wird vom Betreiber zusammengestellt." });
         if (m[2] === "season" && req.method === "GET") return send(res, 200, seasonOf(pid));
         if (m[2] === "season" && req.method === "POST") { const [c, b] = setSeason(pid, await readJson(req)); return send(res, c, b); }
-        if ((m[2] === "gifts" || m[2] === "coinfactor") && scope) return send(res, 403, { error: "Extramünzen und der Münzfaktor sind dem Betreiber vorbehalten." });
+        if ((m[2] === "gifts" || m[2] === "coinfactor") && scope && !famRewardsOn()) return send(res, 403, { error: "Extramünzen und der Münzfaktor sind dem Betreiber vorbehalten." });
         if (m[2] === "gifts" && req.method === "GET") return send(res, 200, giftsOf(pid).slice(-20));
         if (m[2] === "gifts" && req.method === "POST") { const [c, b] = addGift(pid, await readJson(req)); return send(res, c, b); }
         if (m[2] === "coinfactor" && req.method === "GET") return send(res, 200, { factor: coinFactorOf(pid) });
