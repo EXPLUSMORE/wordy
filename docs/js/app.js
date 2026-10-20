@@ -564,7 +564,7 @@
       tierHtml += '<button class="ptr crew ' + (w.crew.got ? "got" : w.crew.ok ? "rdy" : "") + '" style="width:100%;margin-top:8px;flex-direction:row;justify-content:center;gap:8px" ' + (w.crew.ok && !w.crew.got ? 'data-act="passcrew" data-n="' + w.n + '"' : "disabled") + '><b>👥 Crew-Bonus</b><small>Crew-Wochenziel geholt</small><span>' + (w.crew.got ? "✓" : "+" + w.crew.c + " 🪙") + '</span></button>';
       det = '<div class="pdet"><b>Woche ' + w.n + ': ' + esc(w.title) + '</b><p class="small muted" style="margin:2px 0 0">' + esc(w.motto) + '</p><p class="small" style="margin:4px 0 6px">Schaffe an <b>' + w.need + ' Tagen</b> dein Tagesziel: <b class="tnum">' + w.cnt + ' / ' + w.need + '</b>' +
         (w.state === "cur" && w.left != null ? ' · noch ' + w.left + ' ' + plural(w.left, "Tag", "Tage") : w.state === "missed" ? ' · Zeit abgelaufen' : "") + '</p>' +
-        dayDots + tierHtml + '<div class="rcards" style="margin-top:10px">' + w.items.map(function (id) { var it = S.itemById(id), x = rcard(id, !w.claimed && w.state !== "ready"); return x + (it && it.kind === "avatar" && S.itemById("st:" + id.slice(3)) ? rcard("st:" + id.slice(3), !w.claimed && w.state !== "ready") : ""); }).join("") +
+        dayDots + tierHtml + '<div class="rcards" style="margin-top:10px">' + w.items.map(function (id) { var it = S.itemById(id), x = rcard(id, !w.claimed && w.state !== "ready"); return x; }).join("") +
         (w.slot ? '<div class="rcard extra"><span class="ri em">🏷️</span><b>+1 Sticker-Platz</b></div>' : "") + (w.coins ? '<div class="rcard extra"><span class="ri em">🪙</span><b>+' + w.coins + ' Münzen</b></div>' : "") + (w.boost ? '<div class="rcard extra"><span class="ri em">⚡</span><b>+' + w.boost + ' XP-Booster</b></div>' : "") + '</div>' +
         (w.state === "ready" ? '<button class="btn wide lg" data-act="passclaim" data-n="' + w.n + '" style="margin-top:10px">🎁 Set abholen</button>' : w.claimed ? '<p class="small muted" style="margin:10px 0 0">Schon abgeholt. 🎉</p>' : "") + '</div>';
     }
@@ -1444,7 +1444,7 @@
     else if (beuteSeg === "showroom") { viewShowroom(); topSegs(top); }
     else {
       view.innerHTML = '<div class="stack">' + top + passCard() +
-        '<section class="card"><div class="eyebrow">So funktioniert der Monatspass</div><p class="small muted" style="margin:6px 0 0">Der Pass läuft einen Monat in vier Wochen plus Finale. Jede Woche zählt, an wie vielen Tagen du dein Tagesziel schaffst, und jeder Tag gibt einen Stempel. Ein verpasster Tag pro Woche zählt als Joker mit. Sind genug Tage zusammen, öffnest du die Wochen-Beute mit Figur, Tanz, Sticker und Münzen. Schon ab 3 Tagen gibt es Bronze, bei 5 Silber, bei 7 Gold, jeweils mit Münzen. Mit doppeltem Tagesziel holst du einen verpassten Tag nach, ein Crew-Wochenziel gibt Bonusmünzen, und nächste Woche wartet ein geheimes Geschenk. Alle vier Wochen geschafft? Dann wartet das Finale.</p></section></div>';
+        '<section class="card"><div class="eyebrow">So funktioniert der Monatspass</div><p class="small muted" style="margin:6px 0 0">Der Pass läuft einen Monat in vier Wochen plus Finale. Jede Woche zählt, an wie vielen Tagen du dein Tagesziel schaffst, und jeder Tag gibt einen Stempel. Ein verpasster Tag pro Woche zählt als Joker mit. Sind genug Tage zusammen, öffnest du die Wochen-Beute mit Figur, Tanz und Münzen. Schon ab 3 Tagen gibt es Bronze, bei 5 Silber, bei 7 Gold, jeweils mit Münzen. Mit doppeltem Tagesziel holst du einen verpassten Tag nach, ein Crew-Wochenziel gibt Bonusmünzen, und nächste Woche wartet ein geheimes Geschenk. Alle vier Wochen geschafft? Dann wartet das Finale.</p></section></div>';
     }
   }
   function seasonCard() {
@@ -1815,11 +1815,11 @@
         '<b style="flex:1 1 auto">' + esc(r.n) + '</b><span class="small muted tnum">ab ' + r.xp.toLocaleString("de-DE") + ' XP</span></div>' +
         (isCur && next ? '<div class="bar" style="margin:6px 0 2px 32px"><i style="width:' + pc + '%"></i></div><div class="small muted" style="margin-left:32px">Noch ' +
           (next.xp - st.xp).toLocaleString("de-DE") + ' XP bis ' + esc(next.n) + '</div>' : "") +
-        (gift ? '<div class="small" style="margin:3px 0 0 32px">🎁 Figur zur Wahl: <b>' + esc(gift) + '</b> <span class="muted">(+ Sticker)</span></div>' : "") +
+        (gift ? '<div class="small" style="margin:3px 0 0 32px">🎁 Figur zur Wahl: <b>' + esc(gift) + '</b></div>' : "") +
         (unlocks.length ? '<div class="small muted" style="margin:3px 0 0 32px">🔓 Im Shop: ' + esc(unlocks.join(", ")) + '</div>' : "") + '</div>';
     }).join("");
     return '<section class="card"><div class="eyebrow">Alle Ränge</div>' +
-      '<p class="small muted" style="margin:6px 0 8px">Dein Stand: <b>' + st.xp.toLocaleString("de-DE") + ' XP</b> · ' + esc(cur.rank.n) + '. Bis Platin III darfst du dir bei manchen Rängen <b>eine Figur samt Sticker aussuchen</b>. Ab Diamant I wird nichts mehr geschenkt: Die legendären Figuren schaltet der Rang nur im Shop frei, du musst sie kaufen. Pass-Figuren gibt es nur im Wochenpass.</p>' + rows +
+      '<p class="small muted" style="margin:6px 0 8px">Dein Stand: <b>' + st.xp.toLocaleString("de-DE") + ' XP</b> · ' + esc(cur.rank.n) + '. Bis Platin III darfst du dir bei manchen Rängen <b>eine Figur aussuchen</b>. Den passenden Sticker gibt es immer nur im Shop zu kaufen. Ab Diamant I wird nichts mehr geschenkt: Die legendären Figuren schaltet der Rang nur im Shop frei, du musst sie kaufen. Pass-Figuren gibt es nur im Wochenpass.</p>' + rows +
       '<div class="eyebrow" style="margin-top:14px">So bekommst du XP</div>' +
       '<div class="small" style="margin-top:6px;line-height:1.7">' +
       '• Richtige Antwort: <b>+10</b> (sicher) oder <b>+6</b> (mit kleinem Tippfehler)<br>' +
@@ -2024,7 +2024,7 @@
     });
     return h;
   }
-  /* Rang-Figur zur Wahl: ein Fenster je erreichter Stufe, die Figur kommt samt Sticker geschenkt */
+  /* Rang-Figur zur Wahl: ein Fenster je erreichter Stufe, nur die Figur, der Sticker muss gekauft werden */
   function openRankPick() {
     if ($("#rankPick") || !sessionEl.hidden) return;
     var p = S.rankPicks()[0]; if (!p) return;
@@ -2255,7 +2255,7 @@
       ["⚡", "Arena", "Vier Zeitmodi unter <b>Spielen</b>: <b>Match-Rausch</b> (Paare in 60 Sekunden), <b>Blitzrunde</b> (Zeit sammeln), <b>Letztes Herz</b> (ein Fehler beendet), <b>Fehlerjagd</b> (Kartei leeren)."],
       ["📈", "Fortschritt", "Drei Ansichten: <b>Übersicht</b> (Wo stehe ich?), <b>Wörter</b> (schwierigste Wörter, Fehlerkartei, Verben) und <b>Verlauf</b> (die letzten 14 Tage, Satzbau)."],
       ["🪙", "Münzen & Shop", "Münzen gibt es für Fortschritt, Missionen und das Tagesziel. Im <b>Shop</b> kaufst du Figuren, Rahmen, Farben und mehr. Mit dem ⭐ setzt du einen Wunsch, auf den du sparst."],
-      ["⭐", "Sammlung & Abzeichen", "<b>Shop → Sammlung</b>: Tier-Album und Stickerbuch (Sticker antippen klebt sie auf, bis zu drei). <b>Abzeichen</b> und <b>Ränge</b> haben eigene Reiter im Shop."],
+      ["⭐", "Sammlung & Abzeichen", "<b>Shop → Sammlung</b>: Tier-Album und Stickerbuch (Sticker kaufst du im Shop; antippen klebt sie auf, so viele wie du Plätze freigeschaltet hast, bis zu zehn). <b>Abzeichen</b> und <b>Ränge</b> haben eigene Reiter im Shop."],
       ["⚙️", "Setup", "Das Zahnrad ⚙️ oben rechts: Spieler wechseln, Tagesziel und Ton einstellen, Auto-Save, eigene Vokabeln und Updates."]
     ];    return '<details class="how"><summary class="how-sum"><span class="chev" aria-hidden="true">▸</span><span style="flex:1 1 auto"><b>So funktioniert Wordy</b>' +
       '<span class="small muted" style="display:block">Kurz erklärt in zehn Schritten</span></span></summary>' +

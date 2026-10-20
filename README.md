@@ -140,9 +140,10 @@ Figuren (Emojis und gezeichnete Pummelfiguren, die seltenen erst ab einem
 Mindestrang), Rahmen, Titel, Hintergründe, Effekte bei richtigen Antworten
 (Konfetti, Sternenregen, Funken, Feuerwerk am Rundenende), Töne und Farben.
 Das Sammelalbum zeigt alle Figuren, noch fehlende grau. Jede Figur gibt es
-zusätzlich als **Sticker** (halber Preis, Stanzrand, bei seltenen Figuren und
-Clombo mit Glanz); bis zu drei davon klebt man im Stickerbuch auf Startseite und
-Profil. Katalog und
+zusätzlich als **Sticker** (fester Preis je Stufe: 120/300/700/1600, Stanzrand, bei seltenen Figuren und
+Clombo mit Glanz). Sticker gibt es nie gratis zur Figur, sie werden immer gekauft (nur der Fuchs
+und der Sticker zur Start-Figur im Willkommenspaket sind gratis). Bis zu zehn davon (je nach freigeschalteten
+Plätzen) klebt man im Stickerbuch auf Startseite und Profil. Katalog und
 Preise stehen in `js/engine.js` (`SHOP`), das Aussehen in `js/cosmetics.js`.
 
 ### Fortnite-Sammlung

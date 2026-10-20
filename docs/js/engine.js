@@ -218,7 +218,7 @@
   /* Sets: Wer alle Teile hat, bekommt die Belohnung geschenkt */
   var SETS = [{ id: "eis", name: "Eis-Set", icon: "❄️", fig: "svg:eisbaer", items: ["av:eisbaer", "of:polar", "dn:eislauf", "fx:schnee"], reward: "fr:eis" }];
   SHOP.forEach(function (x) { if (x.id === "st:clombo") x.cost = 300; });   // Clombo als Sticker: gleicher Preis und gleicher Mindestrang wie die Figur
-  /* Rang-Figuren (v2.108): 12 Stufen mit je 1 Figur zur Wahl (gewöhnlich 3, selten 3, episch 3, legendär 3). Die gewählte Figur samt Sticker wird
+  /* Rang-Figuren (v2.108): 12 Stufen mit je 1 Figur zur Wahl (gewöhnlich 3, selten 3, episch 3, legendär 3). Die gewählte Figur (ohne Sticker, der wird gekauft) wird
      geschenkt, die andere der Stufe ist ab diesem Rang im Shop kaufbar. Pass-Figuren bleiben nur über den Pass erlernbar. */
   var RANK_SLOTS = {
     "Bronze II": ["av:🐼", "av:🐢"],        "Silber I": ["av:🦉", "av:🐙"],         "Silber III": ["av:🦕", "av:pbaer"],
@@ -844,7 +844,7 @@
     for (var i = r0 + 1, r1 = rankIdx(state.xp); i <= r1; i++) rankGift(i);
     return v;   // tatsächlich gutgeschriebene XP (mit Booster), damit Runden sie melden können
   }
-  /* Rangaufstieg (ab v2.112): Ränge schenken nichts mehr, weder Münzen noch Stücke. Es gibt nur die Figurenwahl (rankPicks, Figur samt Sticker);
+  /* Rangaufstieg (ab v2.112): Ränge schenken nichts mehr, weder Münzen noch Stücke. Es gibt nur die Figurenwahl (rankPicks, nur die Figur, Sticker werden gekauft);
      alles andere muss gekauft oder erlernt werden. Rangstufen schalten Artikel im Shop frei (Mindestrang `rank`). */
   function rankGift(i) { checkSets(); }
   /* Rang-Figur zur Wahl: offen ist jede erreichte Stufe, die noch nicht abgeholt wurde (gilt rückwirkend). Wer alle Figuren der Stufe schon hat, bekommt Münzen. */

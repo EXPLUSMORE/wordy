@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.126.1 – 2026-10-20
+- Texte zu Stickern korrigiert, weil es sie nicht mehr gratis zur Figur gibt: Shop › Ränge zeigt bei der Figurenwahl nicht mehr „(+ Sticker)“ und sagt, dass der Sticker nur im Shop gekauft wird; der Monatspass zeigt zu Pass-Figuren keine Gratis-Sticker mehr und die Pass-Erklärung nennt keinen Sticker mehr; die Hilfe nennt jetzt „bis zu zehn“ Sticker und „im Shop kaufen“; Dashboard-Hinweis beim Pass-Bauen, README und CLAUDE.md angepasst.
+- Kein Server-Schritt nötig.
+
 ## 2.126.0 – 2026-10-20
 - **Spinnen-Effekt**: Tippt man die große, abgeseilte Halloween-Spinne an, wird der Bildschirm dunkel und die Spinne schwingt als 3D-Pendel durch den Raum (echte Perspektive: sie kommt dem Betrachter riesig entgegen und weicht wieder zurück, mit Schatten und Schweif). Dann springt sie auf den Bildschirm, es knallt („BUH!“, Bildschirm wackelt, Blitz) und sie platzt in einen Schwarm kleiner Spinnen, Fledermäuse, Mini-Kürbisse und Funken; Spinnennetze wachsen in die Ecken. Dauer ca. 7,5 Sekunden, ein Tipp auf den Bildschirm springt direkt zum Knall.
 - Ton dazu (Web Audio, nur wenn „Ton“ an ist): Knarzen, Luftzug bei jedem Vorbeischwingen, steigender Ton beim Sprung, tiefer Knall und Trippeln; Handy-Vibration beim Knall. Bei „Bewegung reduzieren“ gibt es nur den Knall ohne Schwingen.
