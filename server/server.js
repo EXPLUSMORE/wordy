@@ -705,6 +705,7 @@ function apiSync(pid) {
     bossDiff: bossDiffOf(pid),
     selfChoose: selfChooseOf(pid),
     shop: shopPlan(),
+    seasonPlan: seasonPlan(),
     coinFactor: coinFactorOf(pid),
     gifts: giftsOf(pid).slice(-20),
     season: seasonOf(pid),
@@ -738,6 +739,23 @@ function setShopPlan(body) {
   if (body.over && typeof body.over === "object") Object.keys(body.over).slice(0, 300).forEach(id => { if (/^[a-z]{2}:[^\s"<>]{1,40}$/.test(id)) over[id] = Math.max(0, Math.min(104, Math.round(+body.over[id]) || 0)); });
   q.kvSet.run("shop_start", start); q.kvSet.run("shop_over", JSON.stringify(over));
   return [200, { ok: true }];
+}
+/* Saison-Looks: Betreiber setzt je Look Modus (auto = Standardfenster, on = für alle an, off = aus) und optional ein eigenes Fenster (MM-DD) */
+const SEASON_IDS = ["halloween", "winter", "xmas", "spring"];
+function seasonPlan() {
+  const r = q.kvGet.get("season_plan"); let v = {}; try { v = r ? JSON.parse(r.val) : {}; } catch (e) {}
+  return v && typeof v === "object" ? v : {};
+}
+function setSeasonPlan(body) {
+  const out = {}, ok = d => /^(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/.test(d || "");
+  SEASON_IDS.forEach(id => {
+    const x = body && body[id]; if (!x || typeof x !== "object") return;
+    const mode = x.mode === "on" || x.mode === "off" ? x.mode : "auto", e = { mode };
+    if (ok(x.from) && ok(x.to)) { e.from = x.from; e.to = x.to; }
+    if (mode !== "auto" || e.from) out[id] = e;
+  });
+  q.kvSet.run("season_plan", JSON.stringify(out));
+  return [200, { ok: true, plan: out }];
 }
 function bossDiffOf(pid) { const r = q.kvGet.get("bossdiff:" + pid); return r && (r.val === "leicht" || r.val === "schwer") ? r.val : "normal"; }
 function setBossDiff(pid, body) {
@@ -1728,6 +1746,8 @@ const server = http.createServer(async (req, res) => {
       }
       if (!scope && p === "/api/admin/features" && req.method === "GET") return send(res, 200, { famrewards: famRewardsOn() });
       if (!scope && p === "/api/admin/features" && req.method === "POST") { const b = await readJson(req); if (typeof b.famrewards === "boolean") q.kvSet.run("feature:famrewards", b.famrewards ? "1" : "0"); return send(res, 200, { famrewards: famRewardsOn() }); }
+      if (!scope && p === "/api/admin/seasonplan" && req.method === "GET") return send(res, 200, seasonPlan());
+      if (!scope && p === "/api/admin/seasonplan" && req.method === "POST") { const [c, b] = setSeasonPlan(await readJson(req)); return send(res, c, b); }
       if (!scope && p === "/api/admin/shopplan" && req.method === "GET") return send(res, 200, shopPlan());
       if (!scope && p === "/api/admin/shopplan" && req.method === "POST") { const [c, b] = setShopPlan(await readJson(req)); return send(res, c, b); }
       if (scope && p === "/api/admin/me" && req.method === "GET") return send(res, 200, { email: scope.email, created: scope.created, weekly: !!scope.weekly, hasPassword: !!scope.pw, children: fq.kids.all(scope.fid).length, coparent: !!scope.owner, max: MAX_KIDS, mail: transportOn(), day: MAIL.day, hour: MAIL.hour });

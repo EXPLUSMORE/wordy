@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.132.0 – 2026-10-20
+- Saison-Looks: Ankündigung (Wolke „Bald: … -Look“ 3 Tage vorher, am Starttag einmal ein Fenster mit „Jetzt ausprobieren“ / „Lieber ohne“), Abzeichen je erlebtem Look und Jahr im Showroom (Pokale & Medaillen), Looks außerhalb ihrer Zeit gesperrt (🔒), bei „Bewegung reduzieren“ keine Szene, kein Wetter, keine Flieger.
+- Betreiber-Dashboard (Konto/Familien): Karte „Saison-Looks“ mit Modus Auto/An/Aus und eigenem Fenster je Look (`/api/admin/seasonplan`, kommt als `seasonPlan` über `/api/sync`). **Server-Schritt nötig** (Neustart von `wordy-server`).
+
 ## 2.131.0 – 2026-10-20
 - Drei neue Saison-Looks über jedem Design: **Winter** (Eiskristall-Maskottchen, Schneefall in 3D, Pinguine, Schneemann und Kiefern, Schneeball-Wurf), **Weihnachten** (Candy: Zuckerstangen-Rand, Lichterkette, rote Kugel, Geschenke in 3D, Lebkuchenmännchen, Schlitten, Zuckerstangen-Schlag) und **Spring Break** (Strandfarben, Papagei, Palmen, Strandbälle, Flamingo, Möwen, Seifenblasen). Jeweils eigene Tipp-Effekte, Figur-Tipp, Jubel nach geschaffter Übung und leise Klänge.
 - Einstellung „Saison-Look“ (Automatisch / Halloween / Winter / Weihnachten / Spring Break / Aus) mit „Saison-Klänge“. Automatik: Halloween 15.10.–2.11., Winter 3.–30.11. und 5.1.–28.2., Weihnachten 1.–26.12., Spring Break 1.3.–20.4.

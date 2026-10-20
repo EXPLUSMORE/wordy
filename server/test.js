@@ -214,6 +214,11 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     const sp = (await J("/api/admin/shopplan", { headers: H })).j; assert.equal(sp.start, "2026-11-02"); assert.equal(sp.over["av:fnfrosch"], 5); assert.ok(!("kaputt" in sp.over), "ungültige Artikel-ID abgelehnt");
     assert.equal((await J("/api/sync", { headers: { Authorization: "Bearer " + pr.j.token } })).j.shop.start, "2026-11-02", "App bekommt das Datum");
     assert.equal((await J("/api/admin/shopplan", { headers: { "X-Wordy": "1" } })).s, 401, "Shop-Kalender nur Betreiber");
+    assert.deepEqual((await J("/api/admin/seasonplan", { headers: H })).j, {}, "Saison-Plan Standard leer");
+    assert.equal((await J("/api/admin/seasonplan", { method: "POST", headers: H, body: JSON.stringify({ winter: { mode: "on" }, xmas: { mode: "auto", from: "12-03", to: "12-31" }, spring: { from: "13-40", to: "x" }, kaputt: { mode: "on" } }) })).s, 200);
+    const spl = (await J("/api/admin/seasonplan", { headers: H })).j; assert.equal(spl.winter.mode, "on"); assert.equal(spl.xmas.from, "12-03"); assert.ok(!spl.spring && !spl.kaputt, "ungültige Einträge verworfen");
+    assert.equal((await J("/api/admin/seasonplan", { headers: { "X-Wordy": "1" } })).s, 401, "Saison-Plan nur Betreiber");
+    await J("/api/admin/seasonplan", { method: "POST", headers: H, body: "{}" });
     /* Feedback: Betreiber, App (Bearer), Status/Antwort, Eingabeprüfung */
     const fbA = await J("/api/admin/feedback", { method: "POST", headers: H, body: JSON.stringify({ kind: "idea", text: "Die Challenge sollte kürzer sein." }) });
     assert.equal(fbA.s, 200, "Feedback (Dashboard)");

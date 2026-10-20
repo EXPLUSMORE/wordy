@@ -295,15 +295,56 @@
   if (global.document && document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fitStickers(); });
   /* Saison-Looks: auto = nach Datum, sonst fest gewählt (halloween|winter|xmas|spring), off = nie; "on" (alt) = Halloween */
   var SEASONS = [["halloween", "🎃", "Halloween", "15. Okt. – 2. Nov."], ["winter", "❄️", "Winter", "3. Nov. – 30. Nov. und 5. Jan. – 28. Feb."], ["xmas", "🎄", "Weihnachten", "1. Dez. – 26. Dez."], ["spring", "🌴", "Spring Break", "1. März – 20. Apr."]];
-  function seasonAuto() {
-    var d = new Date(), md = (d.getMonth() + 1) * 100 + d.getDate();
-    return md >= 1015 && md <= 1102 ? "halloween" : md >= 1103 && md <= 1130 ? "winter" : md >= 1201 && md <= 1226 ? "xmas" : (md >= 105 && md <= 228) ? "winter" : md >= 301 && md <= 420 ? "spring" : "";
+  var SEASON_WIN = { halloween: [[1015, 1102]], winter: [[1103, 1130], [105, 228]], xmas: [[1201, 1226]], spring: [[301, 420]] };
+  function mdNum(x) { var m = /^(\d\d)-(\d\d)$/.exec(x || ""); return m ? +m[1] * 100 + +m[2] : 0; }
+  function seasonPlanOf(id) { var r = global.WordySync && global.WordySync.remote ? global.WordySync.remote() : null; return (r && r.seasonPlan && r.seasonPlan[id]) || {}; }
+  function seasonRanges(id) { var pl = seasonPlanOf(id), f = mdNum(pl.from), t = mdNum(pl.to); return f && t ? [[f, t]] : SEASON_WIN[id]; }
+  function inRanges(md, rs) { return rs.some(function (r) { return r[0] <= r[1] ? md >= r[0] && md <= r[1] : md >= r[0] || md <= r[1]; }); }
+  /* Look ist offen: Betreiber „An“ (alle), „Aus“ (gesperrt) oder Datumsfenster */
+  function seasonOpen(id, d) {
+    var pl = seasonPlanOf(id); if (pl.mode === "off") return false; if (pl.mode === "on") return true;
+    d = d || new Date(); return inRanges((d.getMonth() + 1) * 100 + d.getDate(), seasonRanges(id));
   }
+  function seasonAuto() { var f = SEASONS.filter(function (x) { return seasonOpen(x[0]); })[0]; return f ? f[0] : ""; }
+  /* Gewählte Looks gelten nur im offenen Fenster (danach bis zum nächsten Jahr gesperrt); settings.seasonPreview = Testhilfe */
   function seasonNow() {
-    var m = S.state.settings.season || "auto"; if (m === "off") return ""; if (m === "on") return "halloween";
+    var m = S.state.settings.season || "auto"; if (m === "off") return ""; if (m === "on") m = "halloween";
     if (m === "auto") return seasonAuto();
-    return SEASONS.some(function (x) { return x[0] === m; }) ? m : "";
+    if (!SEASONS.some(function (x) { return x[0] === m; })) return "";
+    return seasonOpen(m) || S.state.settings.seasonPreview ? m : seasonAuto();
   }
+  /* Tage bis zum nächsten Start eines (noch geschlossenen) Looks, 0 = Start heute; sonst -1 */
+  function seasonStartIn(id) {
+    if (seasonOpen(id)) return -1; var pl = seasonPlanOf(id); if (pl.mode === "off") return -1;
+    var now = new Date(), best = -1; now.setHours(0, 0, 0, 0);
+    seasonRanges(id).forEach(function (r) { [0, 1].forEach(function (y) { var dt = new Date(now.getFullYear() + y, Math.floor(r[0] / 100) - 1, r[0] % 100), df = Math.round((dt - now) / 864e5); if (df >= 0 && (best < 0 || df < best)) best = df; }); });
+    return best;
+  }
+  var calmMotion = !!(global.matchMedia && global.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  function seasonSeen(k, set) { var pf = S.state.profile, sn = pf.seasonSeen || (pf.seasonSeen = {}); if (set) { sn[k] = 1; S.save(true); } return !!sn[k]; }
+  /* Ankündigung: Wolke auf der Startseite 3 Tage vor dem Start, am ersten Tag einmal ein Fenster */
+  function seasonCloud() {
+    var yr = new Date().getFullYear(), hit = SEASONS.filter(function (x) { var d = seasonStartIn(x[0]); return d >= 1 && d <= 3 && !seasonSeen(x[0] + "-pre-" + yr); })[0];
+    if (!hit) return "";
+    var d = seasonStartIn(hit[0]);
+    return '<div class="newscloud" data-id="' + hit[0] + '"><i class="ncs s1">✨</i><i class="ncs s2">⭐</i><i class="ncs s3">✨</i><span class="ncnew">BALD</span><button class="ncbody" data-act="seasoncloud" data-id="' + hit[0] + '"><span class="nci">' + hit[1] + '</span><span class="nct"><b>Bald: ' + hit[2] + '-Look!</b><small>' + (d === 1 ? "Schon morgen" : "In " + d + " Tagen") + ' – lass dich überraschen</small></span></button><button class="ncx" data-act="seasonx" data-id="' + hit[0] + '" aria-label="Ausblenden">✕</button></div>';
+  }
+  function seasonSheet(t) {
+    var yr = new Date().getFullYear(), k = t + "-start-" + yr, x = SEASONS.filter(function (z) { return z[0] === t; })[0];
+    if (!x || seasonSeen(k) || document.querySelector(".srmd") || S.welcomeNeeded()) return;
+    seasonSeen(k, true);
+    var T = global.VTS2 && t !== "halloween" ? global.VTS2.theme(t) : null, ov = document.createElement("div"); ov.className = "srmd"; ov.id = "seasonSheet";
+    ov.innerHTML = '<div class="dsh" style="text-align:center"><div class="dshg"></div><div style="font-size:54px;line-height:1.1">' + x[1] + '</div><div class="eyebrow">Neuer Look</div><h3>' + x[2] + '-Look ist da!</h3><p class="small muted" style="margin:4px 0 12px">Neue Effekte, Maskottchen zum Antippen' + (T ? "" : " und Spinne zum Wegkicken") + ' und leise Klänge. Er gilt nur für diese Saison.' + ' Du findest ihn unter Profil › Design › Saison-Look.</p>' +
+      '<div class="row" style="gap:10px;justify-content:center"><button class="btn" data-sx="go">Jetzt ausprobieren</button><button class="btn soft" data-sx="off">Lieber ohne</button></div></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-sx]"); if (!b) return; ov.remove();
+      if (b.getAttribute("data-sx") === "off") { S.state.settings.season = "off"; S.save(true); renderHeader(); render(); toast("Saison-Look aus. Du kannst ihn im Profil wieder anschalten."); }
+      else { var sp = $("#hwSp"); if (sp) setTimeout(function () { spiderPlay(sp); }, 300); }
+    });
+  }
+  /* Erlebte Saison-Looks als Abzeichen im Showroom (Jahr je Look) */
+  function seasonBadge(t) { var pf = S.state.profile, k = t + "-" + new Date().getFullYear(), sb = pf.seasonBadge || (pf.seasonBadge = {}); if (!sb[k]) { sb[k] = 1; S.save(true); } }
   function seasonTheme() { var t = seasonNow(); return t && t !== "halloween" && global.VTS2 ? global.VTS2.theme(t) : null; }
   /* Leiser Klangteppich: nur mit Saison-Look, Ton an, Klänge an, außerhalb von Lernrunden und Spielen, solange die App sichtbar ist */
   function ambientSync() {
@@ -317,8 +358,11 @@
   /* Maskottchen in der Kopfzeile als echtes Element (antippbar): Dekoration per CSS, Effekt in saison.js (Halloween) bzw. saison2.js */
   function spiderSync() {
     var h = $("#top"), el = $("#hwSp"), t = seasonNow(), on = !!t, home = on && tab === "home" && sessionEl.hidden;
-    if (global.VTS && global.VTS.home) global.VTS.home(t === "halloween" && home);
-    if (global.VTS2) { global.VTS2.home(t && t !== "halloween" ? t : "", home); global.VTS2.weather(t && t !== "halloween" ? t : "", on && sessionEl.hidden); }
+    var live = !calmMotion;   // „Bewegung reduzieren“: keine Szene, kein Wetter, keine Flieger
+    if (global.VTS && global.VTS.home) global.VTS.home(t === "halloween" && home && live);
+    if (global.VTS2) { global.VTS2.home(t && t !== "halloween" ? t : "", home && live); global.VTS2.weather(t && t !== "halloween" ? t : "", on && sessionEl.hidden && live); }
+    if (on) seasonBadge(t);
+    if (on && home) seasonSheet(t);
     if (on && h && !el) { el = document.createElement("div"); el.id = "hwSp"; el.className = "hwsp"; el.setAttribute("role", "button"); el.setAttribute("aria-label", "Maskottchen antippen"); el.style.setProperty("--cd", (150 + Math.random() * 140 | 0) + "px"); el.addEventListener("animationiteration", function (ev) { if (ev.animationName === "hwCrawl") el.style.setProperty("--cd", (100 + Math.random() * 200 | 0) + "px"); }); h.appendChild(el); }
     else if (!on && el) el.remove();
     if (on && t !== "halloween" && el && global.VTS2) global.VTS2.mount(el, t);
@@ -1079,7 +1123,7 @@
       '<div class="hhtop"><div class="hhdate">' + esc(S.today().split("-").reverse().join(".")) + ' · ' + (biz ? "Business English" : "Schule") + '</div>' +
       '<h1>' + greet + '</h1><p class="hhtip">' + esc(tip) + '</p></div>' +
       '<div class="hhgoal"><div class="hhring" style="--p:' + pct + '"><b class="tnum">' + pct + '%</b></div><small>Tagesziel</small></div>' +
-      newsCloud() + duelCloud() + '<div class="hhbubble" id="hhBub">' + esc(cheer) + '</div>' +
+      (seasonCloud() || newsCloud()) + duelCloud() + '<div class="hhbubble" id="hhBub">' + esc(cheer) + '</div>' +
       '<div class="hhpod"><i></i></div><button class="hhfig" id="hhFig" data-act="hhdance" aria-label="Figur antippen">' + heroHtml(pf.avatar, 0) + '</button>' +
       '<div class="hhbar"><div class="hhrank"><b>' + esc(rn) + '</b><div class="hhxp"><i style="width:' + xpPct + '%"></i></div><small class="tnum">' + (r.next ? toNext + ' XP bis ' + esc(r.next.n) : "Höchster Rang") + '</small></div>' +
       '<div class="hhchips"><span class="hhc">🔥 <b class="tnum">' + st.streak.count + '</b></span><span class="hhc">🪙 <b class="tnum">' + st.coins + '</b></span></div></div>' +
@@ -1483,10 +1527,10 @@
   function seasonCard() {
     var m = S.state.settings.season || "auto", t = seasonNow(), snd = S.state.settings.seasonSound !== false;
     if (m === "on") m = "halloween";
-    var opts = [["auto", "Automatisch"]].concat(SEASONS.map(function (x) { return [x[0], x[1] + " " + x[2]]; })).concat([["off", "Aus"]]);
+    var opts = [["auto", "Automatisch"]].concat(SEASONS.map(function (x) { return [x[0], x[1] + " " + x[2], !seasonOpen(x[0])]; })).concat([["off", "Aus"]]);
     var cur = SEASONS.filter(function (x) { return x[0] === t; })[0];
-    return '<section class="card"><div class="eyebrow">✨ Saison-Look</div><p class="small muted" style="margin:4px 0 10px">Besondere Looks mit Effekten über deinem Design. „Automatisch“ wählt den passenden Look nach Datum: ' + SEASONS.map(function (x) { return x[2] + " (" + x[3] + ")"; }).join(", ") + '.' + (cur ? ' <b>Gerade aktiv: ' + cur[1] + ' ' + cur[2] + '.</b>' : '') + '</p>' +
-      '<div class="row wrap" style="gap:8px">' + opts.map(function (x) { return '<button class="chip" data-act="setseason" data-v="' + x[0] + '" aria-pressed="' + (m === x[0]) + '">' + x[1] + (m === x[0] ? " ✓" : "") + '</button>'; }).join("") + '</div>' +
+    return '<section class="card"><div class="eyebrow">✨ Saison-Look</div><p class="small muted" style="margin:4px 0 10px">Besondere Looks mit Effekten über deinem Design. „Automatisch“ wählt den passenden Look nach Datum: ' + SEASONS.map(function (x) { return x[2] + " (" + x[3] + ")"; }).join(", ") + '. 🔒 Außerhalb der Zeit sind die Looks bis zum nächsten Jahr gesperrt.' + (cur ? ' <b>Gerade aktiv: ' + cur[1] + ' ' + cur[2] + '.</b>' : '') + '</p>' +
+      '<div class="row wrap" style="gap:8px">' + opts.map(function (x) { return '<button class="chip" data-act="setseason" data-v="' + x[0] + '"' + (x[2] ? ' disabled style="opacity:.5"' : '') + ' aria-pressed="' + (m === x[0]) + '">' + (x[2] ? "🔒 " : "") + x[1] + (m === x[0] ? " ✓" : "") + '</button>'; }).join("") + '</div>' +
       '<div class="row" style="gap:8px;margin-top:12px;align-items:center"><button class="chip" data-act="seasonsound" aria-pressed="' + snd + '">🔊 Saison-Klänge ' + (snd ? "an" : "aus") + '</button><span class="small muted">leise Hintergrundmusik, nur wenn „Ton“ an ist und nicht beim Üben</span></div></section>';
   }
   function designCard() {
@@ -3555,6 +3599,10 @@
       else if (dk2 === "res" || dk2 === "wait") { (pfd.duelSeen || (pfd.duelSeen = {}))[(dk2 === "wait" ? "w" : "") + did] = 1; S.save(true); if (a === "duelcloud") { tab = "spielen"; spielSeg = "freunde"; render(); } }
       else if (a === "duelx") duelHide[did] = 1;
       else { var dch = ((soc.inbox && soc.inbox.open) || []).filter(function (c) { return String(c.id) === did; })[0]; if (dch) acceptDuel(dch); else { tab = "spielen"; spielSeg = "freunde"; render(); } }
+    }
+    else if (a === "seasoncloud" || a === "seasonx") {
+      seasonSeen(act.getAttribute("data-id") + "-pre-" + new Date().getFullYear(), true); var scl = act.closest(".newscloud"); if (scl) scl.remove();
+      if (a === "seasoncloud") toast("Bald ist es soweit – schau in ein paar Tagen wieder rein!");
     }
     else if (a === "newscloud" || a === "newsx") {
       var nid = act.getAttribute("data-id"), pfc = S.state.profile; (pfc.cloudSeen || (pfc.cloudSeen = {}))[nid] = 1; if (pfc.cloudForce) delete pfc.cloudForce[nid]; S.save(true);
