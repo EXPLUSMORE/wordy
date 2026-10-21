@@ -11,7 +11,7 @@ def cta(bg, bd, glow, eb, btn, btnink, btnsh, boxbd, dayok, dayokink, now, ink, 
             f"--cta-box:rgba(255,255,255,.12);--cta-box-bd:{boxbd};--cta-day:rgba(255,255,255,.1);--cta-day-ink:{dayink};--cta-day-ok:{dayok};--cta-day-ok-ink:{dayokink};--cta-day-now:{now};")
 
 MASCOT = """
-{S} .hwsp{{position:absolute;left:calc(61% - 7px);top:0;width:44px;height:80px;z-index:6;cursor:pointer;-webkit-tap-highlight-color:transparent;transform-origin:22px 0;background:var(--sp) 50% 100%/38px 38px no-repeat,linear-gradient({th},{th}) 50% 0/1px 100% no-repeat;animation:hwSwing 3.4s ease-in-out infinite alternate;transition:opacity .25s;filter:drop-shadow(0 2px 6px {gl})}}
+{S} .hwsp{{position:absolute;left:calc(61% - 7px);top:0;width:44px;height:112px;z-index:6;cursor:pointer;-webkit-tap-highlight-color:transparent;transform-origin:22px 0;background:var(--sp) 50% 100%/38px 38px no-repeat,linear-gradient({th},{th}) 50% 0/1px 100% no-repeat;animation:hwSwing 3.4s ease-in-out infinite alternate;transition:opacity .25s;filter:drop-shadow(0 2px 6px {gl})}}
 {S}[data-tab='home'] .hwsp{{animation:hwSwing 3.4s ease-in-out infinite alternate,hwCrawl 24s ease-in-out infinite}}
 {S} .hwsp.gone{{opacity:0;pointer-events:none}}
 {S} .hwsp.back{{animation:hwBack 1.6s ease-out}}

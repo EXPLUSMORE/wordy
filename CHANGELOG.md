@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.133.3 – 2026-10-21
+- Saison-Looks: Das Maskottchen (Spinne, Kristall, Kugel, Papagei) hängt in Ruhe jetzt tiefer am Faden und verdeckt keinen Sticker mehr. Nur App, kein Server-Schritt.
+
 ## 2.133.2 – 2026-10-21
 - Sticker in der Kopfzeile: immer 42 px groß (vorher 30 px, ab vier Stickern nur noch 24 px). Anordnung und Überlappung unverändert (rechts, leicht überlappend). Nur App, kein Server-Schritt.
 

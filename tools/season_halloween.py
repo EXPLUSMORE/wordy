@@ -28,7 +28,7 @@ a(f"{S}{{color-scheme:dark;--paper:#0E0716;--card:#1C0F2E;--card-2:#271540;--ink
 a(f"{S} body{{background:radial-gradient(circle at 86% 3%,rgba(255,236,190,.95) 0 20px,rgba(255,190,90,.38) 21px 56px,rgba(255,138,31,.14) 57px 140px,transparent 141px),radial-gradient(circle at 8% 100%,rgba(255,94,0,.18),transparent 46%),radial-gradient(circle at 70% 55%,rgba(155,93,229,.13),transparent 50%),linear-gradient(#1B0C2C,#0A0510)!important;background-attachment:fixed}}")
 # Kopfzeile: Rand, Spinne am Faden, Fledermaus
 a(f"{S} header#top{{position:relative;background:rgba(24,10,36,.9);border-bottom:2px solid #FF8A1F;box-shadow:0 4px 20px rgba(255,138,31,.3)}}")
-a(f"{S} .hwsp{{position:absolute;left:calc(61% - 7px);top:0;width:44px;height:76px;z-index:6;cursor:pointer;-webkit-tap-highlight-color:transparent;transform-origin:22px 0;background:{u(spider_body(INK,'#FF9A2E'))} 50% 100%/30px 32px no-repeat,linear-gradient(#CDB8A5,#CDB8A5) 50% 0/1px 100% no-repeat;animation:hwSwing 3.4s ease-in-out infinite alternate;transition:opacity .25s}}")
+a(f"{S} .hwsp{{position:absolute;left:calc(61% - 7px);top:0;width:44px;height:112px;z-index:6;cursor:pointer;-webkit-tap-highlight-color:transparent;transform-origin:22px 0;background:{u(spider_body(INK,'#FF9A2E'))} 50% 100%/30px 32px no-repeat,linear-gradient(#CDB8A5,#CDB8A5) 50% 0/1px 100% no-repeat;animation:hwSwing 3.4s ease-in-out infinite alternate;transition:opacity .25s}}")
 a(f"{S}[data-tab='home'] .hwsp{{animation:hwSwing 3.4s ease-in-out infinite alternate,hwCrawl 24s ease-in-out infinite}}")
 a(f"{S} .hwsp.gone{{opacity:0;pointer-events:none}}")
 a(".hwBoo{position:fixed;left:50%;top:42%;z-index:9999;pointer-events:none;font:900 64px/1 system-ui,sans-serif;color:#FFD166;letter-spacing:.04em;-webkit-text-stroke:3px #2A0F00;text-shadow:0 6px 0 #A83F00,0 0 30px rgba(255,138,31,.9);transform:translate(-50%,-50%) rotate(-6deg) scale(0);animation:hwBoo 1.5s cubic-bezier(.2,1.6,.4,1) forwards}")
@@ -55,7 +55,7 @@ a(f"{S} .hh{{border-color:#FF8A1F;background:linear-gradient(#2C1050,#611F66 55%
 a(f"{S} .hh::before{{content:'';position:absolute;right:0;top:0;width:128px;height:128px;z-index:0;pointer-events:none;background:{u(web('#FFE2BC'))} 0 0/100% 100% no-repeat;opacity:.5;transform-origin:100% 0;animation:hwWeb 6s ease-in-out infinite alternate}}")
 a(f"{S} .hh::after{{content:'';position:absolute;left:-40px;top:10px;width:40px;height:20px;z-index:0;pointer-events:none;background:{u(bat('#FFD9A8'))} 0 0/100% 100% no-repeat;animation:hwFlap2 9s linear infinite;filter:drop-shadow(0 0 6px rgba(255,138,31,.8))}}")
 a(f"{S} .eyebrow{{color:#FFB066}}")
-a("@keyframes hwCrawl{0%,6%{height:76px}30%,52%{height:var(--cd,266px)}78%,100%{height:76px}}")
+a("@keyframes hwCrawl{0%,6%{height:112px}30%,52%{height:var(--cd,266px)}78%,100%{height:112px}}")
 a("@keyframes hwSwing{from{transform:rotate(-8deg)}to{transform:rotate(8deg)}}")
 a("@keyframes hwFlap{0%{transform:translate(0,0) scale(1)}25%{transform:translate(30vw,-6px) scaleY(.8)}50%{transform:translate(60vw,3px) scaleY(1)}75%{transform:translate(90vw,-5px) scaleY(.8)}100%{transform:translate(118vw,0) scaleY(1)}}")
 a("@keyframes hwFlap2{0%{transform:translate(0,0)}20%{transform:translate(70px,14px) scaleY(.75)}40%{transform:translate(160px,0) scaleY(1)}60%{transform:translate(250px,18px) scaleY(.75)}80%{transform:translate(330px,4px) scaleY(1)}100%{transform:translate(430px,10px)}}")
