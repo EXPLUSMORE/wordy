@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.133.2 – 2026-10-21
+- Sticker in der Kopfzeile: immer 42 px groß (vorher 30 px, ab vier Stickern nur noch 24 px). Anordnung und Überlappung unverändert (rechts, leicht überlappend). Nur App, kein Server-Schritt.
+
 ## 2.133.1 – 2026-10-20
 - Betreiber-Dashboard: „✨ Saison-Look“ ist jetzt eine eigene Gruppe in den Spieler-Einstellungen, zwischen „Erinnerung“ und „Belohnungen“. Sie enthält „Look für den Spieler erzwingen“ und die Zeitfenster der Looks (vorher unter Konto/Familien). Familienkonten sehen die Gruppe nicht. Nur Dashboard, **Server-Schritt** (Neustart) wie 2.133.0.
 

@@ -406,7 +406,7 @@
     $("#hAvatar").title = pn ? pn.name : "";
     $("#hRank").textContent = r.rank.n + (st.profile.title ? " · " + st.profile.title : "");
     $("#hXp").textContent = st.xp;
-    var hs = $("#hStk"); if (hs) { var sh = S.stickers().length ? placedStickers(30) : ""; hs.innerHTML = sh; hs.hidden = !sh; }   // Sticker immer oben neben den XP
+    var hs = $("#hStk"); if (hs) { var sh = S.stickers().length ? placedStickers(42, true) : ""; hs.innerHTML = sh; hs.hidden = !sh; }   // Sticker immer oben neben den XP
     $("#hCoins").textContent = st.coins;
     $("#hStreak").textContent = st.streak.count;
     var hEl = $("#hHearts");
@@ -1942,9 +1942,9 @@
     return global.VTC.stickerHtml(it.val, size, tilt || 0, !!it.rank || /clombo/.test(it.val), esc);
   }
   var TILTS = [-7, 5, -3, 6, -5];
-  function placedStickers(size) {
+  function placedStickers(size, noShrink) {
     var ids = S.stickers(); if (!ids.length) return "";
-    if (ids.length > 3) size = Math.round(size * 0.8);   // mehr als drei: etwas kleiner, damit alle Platz haben
+    if (ids.length > 3 && !noShrink) size = Math.round(size * 0.8);   // mehr als drei: etwas kleiner, damit alle Platz haben
     return '<span class="stk-row">' + ids.map(function (id, i) {
       var it = S.SHOP.filter(function (x) { return x.id === id; })[0];
       return it ? stickerHtml(it, size, TILTS[i % TILTS.length]) : "";
