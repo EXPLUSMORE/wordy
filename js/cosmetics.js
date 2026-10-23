@@ -208,7 +208,7 @@
     try {   // Farbe der Browserleiste
       var dark = design === "aurora" || (design === "gold" && (mode === "dark" || (mode !== "light" && global.matchMedia && global.matchMedia("(prefers-color-scheme: dark)").matches)));
       var m = document.querySelector('meta[name="theme-color"]'); if (!m) { m = document.createElement("meta"); m.setAttribute("name", "theme-color"); document.head.appendChild(m); }
-      m.setAttribute("content", season === "halloween" ? "#180A24" : season === "winter" ? "#0A1636" : season === "xmas" ? "#C81E4B" : season === "spring" ? "#0AA5C8" : design === "gold" ? (dark ? BAR.gold[0] : BAR.gold[1]) : (BAR[design] || BAR.klassisch)[0]);
+      m.setAttribute("content", season === "halloween" ? "#180A24" : season === "winter" ? "#0A1636" : season === "xmas" ? "#C81E4B" : season === "spring" ? "#0AA5C8" : season === "aqua" ? "#06406E" : design === "gold" ? (dark ? BAR.gold[0] : BAR.gold[1]) : (BAR[design] || BAR.klassisch)[0]);
     } catch (e) {}
     if (mode === "light" || mode === "dark") root.setAttribute("data-theme", mode); else root.removeAttribute("data-theme");
     root.setAttribute("data-accent", (p && p.theme) || "paper");

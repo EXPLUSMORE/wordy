@@ -1057,7 +1057,7 @@
     M("chal7", "Challenge 7", "rare", chBest >= 7, "Die Daily Challenge 7 Tage am Stück schaffen (Bestwert " + chBest + ")", "7");
     M("chal30", "Challenge 30", "legend", chBest >= 30, "Die Daily Challenge 30 Tage am Stück schaffen", "30");
     var sbd = (state.profile && state.profile.seasonBadge) || {}, yrN = new Date().getFullYear();
-    [["halloween", "Halloween", "🎃"], ["winter", "Winter", "❄️"], ["xmas", "Weihnachten", "🎄"], ["spring", "Spring Break", "🌴"]].forEach(function (z) {
+    [["halloween", "Halloween", "🎃"], ["winter", "Winter", "❄️"], ["xmas", "Weihnachten", "🎄"], ["spring", "Spring Break", "🌴"], ["aqua", "Aquarium", "🐠"]].forEach(function (z) {
       var ys = Object.keys(sbd).filter(function (k) { return k.indexOf(z[0] + "-") === 0; }).map(function (k) { return +k.slice(z[0].length + 1); });
       if (yrN && ys.indexOf(yrN) < 0) ys.push(yrN);
       ys.sort().forEach(function (y) { M("sea-" + z[0] + "-" + y, z[1] + " " + y, "rare", sbd[z[0] + "-" + y], "Den " + z[1] + "-Look im Jahr " + y + " erleben", z[2]); });

@@ -1074,12 +1074,12 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
   function drawLook(p) {
     var el = document.getElementById("lookCard"); if (!el || window.WF) { if (el) el.remove(); return; }
     api("/api/admin/players/" + p.id + "/look").then(function (x) {
-      el.innerHTML = '<h2>Look für ' + esc(p.name) + ' erzwingen</h2><div class="row" style="gap:8px;align-items:center;flex-wrap:wrap"><select id="lookForce"><option value="">Standard (Datum und Wahl des Kindes)</option><option value="halloween">🎃 Halloween</option><option value="winter">❄️ Winter</option><option value="xmas">🎄 Weihnachten</option><option value="spring">🌴 Spring Break</option><option value="off">Aus (kein Look)</option></select><span id="lookMsg" class="small"></span></div><p class="small muted" style="margin:6px 0 0">Gilt unabhängig von Datum und Sperre, ohne Abzeichen und Ankündigung. Zum Testen: App öffnen, kurz auf den Abgleich warten, Startseite neu laden.</p>';
+      el.innerHTML = '<h2>Look für ' + esc(p.name) + ' erzwingen</h2><div class="row" style="gap:8px;align-items:center;flex-wrap:wrap"><select id="lookForce"><option value="">Standard (Datum und Wahl des Kindes)</option><option value="halloween">🎃 Halloween</option><option value="winter">❄️ Winter</option><option value="xmas">🎄 Weihnachten</option><option value="spring">🌴 Spring Break</option><option value="aqua">🐠 Aquarium</option><option value="off">Aus (kein Look)</option></select><span id="lookMsg" class="small"></span></div><p class="small muted" style="margin:6px 0 0">Gilt unabhängig von Datum und Sperre, ohne Abzeichen und Ankündigung. Zum Testen: App öffnen, kurz auf den Abgleich warten, Startseite neu laden.</p>';
       var sl = el.querySelector("#lookForce"); sl.value = x.look || "";
       sl.onchange = function () { post("/api/admin/players/" + p.id + "/look", { look: sl.value }).then(function () { var m = el.querySelector("#lookMsg"); m.className = "small"; m.textContent = "Gespeichert. Die App übernimmt es beim nächsten Abgleich."; }).catch(function (e) { var m = el.querySelector("#lookMsg"); m.className = "small err"; m.textContent = e.message; }); };
     }).catch(function () { el.remove(); });
   }
-  var SEASON_ROWS = [["halloween", "🎃 Halloween", "10-15", "11-02"], ["winter", "❄️ Winter", "11-03", "11-30 (und 01-05 bis 02-28)"], ["xmas", "🎄 Weihnachten", "12-01", "12-26"], ["spring", "🌴 Spring Break", "03-01", "04-20"]];
+  var SEASON_ROWS = [["halloween", "🎃 Halloween", "10-15", "11-02"], ["winter", "❄️ Winter", "11-03", "11-30 (und 01-05 bis 02-28)"], ["xmas", "🎄 Weihnachten", "12-01", "12-26"], ["spring", "🌴 Spring Break", "03-01", "04-20"], ["aqua", "🐠 Aquarium", "04-21", "08-31"]];
   function drawSeasonPlan() {
     var el = document.getElementById("seasonPlanCard"); if (!el || window.WF) { if (el) el.remove(); return; }
     api("/api/admin/seasonplan").then(function (pl) {

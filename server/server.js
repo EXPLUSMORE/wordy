@@ -742,7 +742,7 @@ function setShopPlan(body) {
   return [200, { ok: true }];
 }
 /* Saison-Looks: Betreiber setzt je Look Modus (auto = Standardfenster, on = für alle an, off = aus) und optional ein eigenes Fenster (MM-DD) */
-const SEASON_IDS = ["halloween", "winter", "xmas", "spring"];
+const SEASON_IDS = ["halloween", "winter", "xmas", "spring", "aqua"];
 function seasonPlan() {
   const r = q.kvGet.get("season_plan"); let v = {}; try { v = r ? JSON.parse(r.val) : {}; } catch (e) {}
   return v && typeof v === "object" ? v : {};

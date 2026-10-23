@@ -294,8 +294,8 @@
   global.addEventListener("resize", fitStickers);
   if (global.document && document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fitStickers(); });
   /* Saison-Looks: auto = nach Datum, sonst fest gewählt (halloween|winter|xmas|spring), off = nie; "on" (alt) = Halloween */
-  var SEASONS = [["halloween", "🎃", "Halloween", "15. Okt. – 2. Nov."], ["winter", "❄️", "Winter", "3. Nov. – 30. Nov. und 5. Jan. – 28. Feb."], ["xmas", "🎄", "Weihnachten", "1. Dez. – 26. Dez."], ["spring", "🌴", "Spring Break", "1. März – 20. Apr."]];
-  var SEASON_WIN = { halloween: [[1015, 1102]], winter: [[1103, 1130], [105, 228]], xmas: [[1201, 1226]], spring: [[301, 420]] };
+  var SEASONS = [["halloween", "🎃", "Halloween", "15. Okt. – 2. Nov."], ["winter", "❄️", "Winter", "3. Nov. – 30. Nov. und 5. Jan. – 28. Feb."], ["xmas", "🎄", "Weihnachten", "1. Dez. – 26. Dez."], ["spring", "🌴", "Spring Break", "1. März – 20. Apr."], ["aqua", "🐠", "Aquarium", "21. Apr. – 31. Aug."]];
+  var SEASON_WIN = { halloween: [[1015, 1102]], winter: [[1103, 1130], [105, 228]], xmas: [[1201, 1226]], spring: [[301, 420]], aqua: [[421, 831]] };
   function mdNum(x) { var m = /^(\d\d)-(\d\d)$/.exec(x || ""); return m ? +m[1] * 100 + +m[2] : 0; }
   function seasonPlanOf(id) { var r = global.WordySync && global.WordySync.remote ? global.WordySync.remote() : null; return (r && r.seasonPlan && r.seasonPlan[id]) || {}; }
   function seasonRanges(id) { var pl = seasonPlanOf(id), f = mdNum(pl.from), t = mdNum(pl.to); return f && t ? [[f, t]] : SEASON_WIN[id]; }
