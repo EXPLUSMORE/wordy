@@ -120,7 +120,7 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     assert.equal(m1.cur, 12, "700 Sekunden = 12 Minuten"); assert.equal(m1.done, true);
     assert.equal(gl.j.find(g => g.kind === "unit").cur, 3, "1 von 37 Wörtern sicher = 3 %");
     assert.ok(gl.j.find(g => g.kind === "unit").title.includes("Unit 1"), "Titel nennt die Einheit");
-    const tomorrow = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Berlin", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(Date.now() + 3 * 86400000));
+    const tomorrow = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Berlin", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date()).replace(/^(\d{4})-(\d{2})-(\d{2})$/, (m0) => new Date(Date.parse(m0 + "T00:00:00Z") + 3 * 86400000).toISOString().slice(0, 10));   // Berlin-Datum plus 3 Kalendertage (nicht +72 h: die Zeitumstellung verschiebt sonst um einen Tag)
     assert.equal((await J("/api/admin/players/" + mk.j.id + "/plans", { method: "POST", headers: H, body: JSON.stringify({ title: "Arbeit", exam: "2020-01-01", units: ["H2-1a"] }) })).s, 400, "Datum in der Vergangenheit");
     assert.equal((await J("/api/admin/players/" + mk.j.id + "/plans", { method: "POST", headers: H, body: JSON.stringify({ title: "Arbeit Unit 1", exam: tomorrow, units: ["H2-1a"], coins: 50 }) })).s, 200);
     const sy = await J("/api/sync", { headers: { Authorization: "Bearer " + pr.j.token } });
@@ -644,6 +644,6 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     assert.equal((await J("/api/ping", { method: "POST", headers: T2(kp.j.token), body: "{}" })).s, 401, "Gerät des Kindes ist getrennt");
     assert.deepEqual((await J("/api/admin/families", { headers: H })).j.map(x => x.role), ["parent", "teacher", "teacher"], "Papa und die zwei Lehrkräfte bleiben");
     console.log("Alle Prüfungen bestanden.");
-  } catch (e) { console.error("FEHLER:", e.message); process.exitCode = 1; }
+  } catch (e) { console.error("FEHLER:", e.message, e.stack.split("\n").slice(1,4).join("|")); process.exitCode = 1; }
   srv.kill(); fake.close(); fs.rmSync(dir, { recursive: true, force: true });
 })();

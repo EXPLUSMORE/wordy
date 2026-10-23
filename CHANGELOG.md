@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.134.1 – 2026-10-23
+- Servertest: Das Prüfungsdatum „in 3 Tagen“ wird jetzt aus dem Berliner Kalenderdatum gerechnet statt aus +72 Stunden (bei der Zeitumstellung am 25.10. schlug der Test sonst zwischen 22 und 24 Uhr UTC fehl). Kein Eingriff in App oder Server.
+
 ## 2.134.0 – 2026-10-23
 - Neuer Saison-Look **Aquarium** 🐠: die ganze App als Unterwasserwelt (Wasserfarben mit Lichtstrahlen und Lichtreflexen, Glasrahmen, Glas-Karten, Wasseroberfläche oben, Sandboden mit Kieseln unten). Maskottchen ist ein Goldfisch an der Angel; Antippen lässt Fische regnen, springen, Blasenketten schießen oder ein Pendel schwingen. Die Figur angelt ihn mit der Angelrute weg (vier Flüge). Startseite: 3D-Seegras, Korallen, drehende Seesterne, Muschel mit Perle, laufende Krabbe und Schatzkiste (antippbar), schwimmende Fische (Clownfisch, Doktorfisch, Kaiserfisch, Kugelfisch) und aufsteigende Blasen. Klänge: Unterwasser-Rauschen, Blubbern, Walgesang, weiche Akkorde.
 - Automatisch vom 21.4. bis 31.8. (im Dashboard › Saison-Look änderbar); auch als Look erzwingbar. **Server-Schritt nötig** (Look-ID `aqua`).
