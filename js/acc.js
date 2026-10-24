@@ -50,7 +50,12 @@
     if (loadout.neck && ACCS[loadout.neck]) { out.neck = ACCS[loadout.neck][0]; any = true; }
     return any ? out : null;
   }
-  A.setAcc(function (av) { var VT = global.VT; if (!VT || !VT.accOf) return null; var l = VT.accOf(av); return Object.keys(l).length ? build(l) : null; });
+  /* lo = fremdes Zubehör (Freunde): nur Werte, die zum Platz passen */
+  A.setAcc(function (av, lo) {
+    var VT = global.VT, l = {}; if (!VT || !VT.accOf) return null;
+    if (lo) { Object.keys(lo).forEach(function (k) { var it = VT.itemById("ac:" + lo[k]); if (it && it.slot === k) l[k] = lo[k]; }); } else l = VT.accOf(av);
+    return Object.keys(l).length ? build(l) : null;
+  });
   /* kleines Bild eines Zubehörs (Shop, Showroom) */
   function thumb(val) {
     var a = ACCS[val]; if (!a) return ""; var sl = slotOf(val);

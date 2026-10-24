@@ -302,7 +302,8 @@
 
   /* ---------- Kopfzeile ---------- */
   /* Avatare sind Emojis oder, mit "svg:"-Präfix, Zeichnungen aus cosmetics.js */
-  function avatarHtml(v, own) { if (own && global.VTA && global.VTA.has(v) && S.accOf && Object.keys(S.accOf(v)).length) return global.VTA.headA(v); return global.VTC.avatarHtml(v, esc); }   // own: eigene Figur samt Zubehör
+  function avatarHtml(v, own, acc) { if (acc && global.VTA && global.VTA.has(v) && Object.keys(acc).length) return global.VTA.headA(v, acc);   // acc: Zubehör eines Freundes
+    if (own && global.VTA && global.VTA.has(v) && S.accOf && Object.keys(S.accOf(v)).length) return global.VTA.headA(v); return global.VTC.avatarHtml(v, esc); }   // own: eigene Figur samt Zubehör
   function playerName() {
     var d = S.profiles(), x = d.list.filter(function (y) { return y.id === d.active; })[0];
     return x ? x.name : "";
@@ -1268,9 +1269,9 @@
     if (!soc.me.enabled) return infoCard("👥 Freunde sind noch aus", "Deine Eltern können sie im Eltern-Dashboard unter <b>„Freunde &amp; Duelle“</b> einschalten. Dann bekommst du deinen Freundescode.");
     return "";
   }
-  function who(p, size) { return '<span class="fav" style="width:' + (size || 40) + 'px;height:' + (size || 40) + 'px">' + avatarHtml(p.avatar || "svg:pbaer") + '</span>'; }
+  function who(p, size) { return '<span class="fav" style="width:' + (size || 40) + 'px;height:' + (size || 40) + 'px">' + avatarHtml(p.avatar || "svg:pbaer", false, p.acc) + '</span>'; }
   /* Figur mit Rahmen des Freundes (Rahmen nur bei bestätigten Freunden) */
-  function whoFrame(f) { return '<span class="avatar ' + global.VTC.frameClass({ frame: f.frame }) + '" style="width:44px;height:44px;font-size:24px;overflow:visible;flex:none">' + avatarHtml(f.avatar || "svg:pbaer") + '</span>'; }
+  function whoFrame(f) { return '<span class="avatar ' + global.VTC.frameClass({ frame: f.frame }) + '" style="width:44px;height:44px;font-size:24px;overflow:visible;flex:none">' + avatarHtml(f.avatar || "svg:pbaer", false, f.acc) + '</span>'; }
   function duelResult(c) {
     var me = c.mine === "a" ? c.aScore : c.bScore, they = c.mine === "a" ? c.bScore : c.aScore, other = c.mine === "a" ? c.to : c.from;
     return { me: me, they: they, other: other, win: me > they, tie: me === they };

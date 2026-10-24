@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.139.1 – 2026-10-24
+- Zubehör bei Freunden: Die Freundesliste zeigt die Figur samt Zubehör (Mütze, Brille, Schal …), das die Freundin bzw. der Freund gerade trägt. Das Zubehör der gewählten Figur geht beim Abgleich mit (`meta.acc`), der Server prüft die Werte (`frLook`, nur Freunde mit bestätigter Freundschaft). **Server-Schritt nötig** (Neustart), die App zeigt bis dahin Freunde ohne Zubehör. Kopf-Symbole mit Zubehör haben einen etwas höheren Ausschnitt, damit Hüte nicht abgeschnitten werden.
+
 ## 2.139.0 – 2026-10-24
 - **Zubehör** (Shop › Zubehör 🎩, neben Figuren und Sticker): 29 witzige Teile für wenige Münzen (25–150 🪙), einmal kaufen und **jeder Figur einzeln** anziehen. Kopf: Wintermütze, Partyhut, Zylinder, Propeller-Kappe, Basecap, Strohhut, Blumenkranz, Heiligenschein, Hasenohren, Teufelshörner, Eis-Hut, Pizza-Hut, Goldkrone. Gesicht: Sonnenbrille, Nerd-Brille, Monokel, 3D-Brille, Herzbrille, Schnurrbart, Clown-Nase, Skibrille. Ohren: Kopfhörer, Ohrenwärmer, Ohrringe. Hals: Schal, Fliege, Goldkette, Halstuch, Medaille. Je Figur ein Look (Kopf, Gesicht, Ohren, Hals); oben wählst du die Figur zum Anprobieren. Sichtbar in Kopfzeile, Startseite, Tänzen, Showroom und Siegertanz. Neu im Showroom: Regal „Zubehör“; Abzeichen „Erstes Zubehör“ bis „29 Zubehör-Teile“.
 - **Figuren im Shop** stehen jetzt in jeder Seltenheitsstufe nach Rang geordnet (dann nach Preis), ebenso im Showroom. Nur App, kein Server-Schritt. Zubehör der Freunde wird noch nicht übertragen.

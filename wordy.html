@@ -1517,7 +1517,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.139.0";window.WORDY_BUILD="344f26e2ec";</script>
+<script>window.WORDY_VERSION="2.139.1";window.WORDY_BUILD="ff615d83a1";</script>
 </head>
 <body>
 <div id="app">
@@ -9263,15 +9263,15 @@ return '<svg class="afs" viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg
   }
   /* Zubehör (acc.js): Anbieter liefert je Figur { head, neck }; Hals-Teile liegen zwischen Körper und Kopf, Kopf-Teile über dem Kopf */
   var ACCP = null;
-  function addAcc(svg, av) {
-    var a = ACCP && ACCP(av); if (!a) return svg;
+  function addAcc(svg, av, lo) {
+    var a = ACCP && ACCP(av, lo); if (!a) return svg;
     var tail = svg.slice(-TAIL.length) === TAIL ? TAIL : svg.slice(-TAIL2.length) === TAIL2 ? TAIL2 : "";
     if (a.neck) svg = svg.replace('<g class="headG">', a.neck + '<g class="headG">');
     if (a.head && tail) svg = svg.slice(0, svg.length - tail.length) + a.head + tail;
     return svg;
   }
   function full(av, outfit) { return dress(full0(av, outfit), outfit); }
-  function fullA(av, outfit) { return addAcc(full(av, outfit), av); }
+  function fullA(av, outfit, lo) { return addAcc(full(av, outfit), av, lo); }
   function full0(av, outfit) {
     var k = KIND[av]; if (!k) return "";
     var c = (k !== "king" && OUT[outfit]) || DEFC[k] || EXTC[k] || ["#35c6ff", "#1a7fd0"], o = { jacket: c[0], jacketD: c[1] };
@@ -9289,7 +9289,7 @@ return '<svg class="afs" viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg
   function inner(av, outfit) { return full(av, outfit).replace(/^<svg[^>]*>/, "").replace(/<\/svg>$/, ""); }
   function dancer(av, outfit, n) { return '<div class="afig a' + n + '">' + fullA(av, outfit) + '</div>'; }
   /* Kopf-Symbol mit Zubehör (eigene Figur): etwas höherer Ausschnitt, damit Hüte nicht abgeschnitten werden */
-  function headA(av) { return fullA(av).replace('class="afs" viewBox="0 0 220 300"', 'class="afs" style="display:block;width:1.25em;height:1.25em;overflow:visible" viewBox="22 4 176 176"'); }
+  function headA(av, lo) { return fullA(av, undefined, lo).replace('class="afs" viewBox="0 0 220 300"', 'class="afs" style="display:block;width:1.25em;height:1.25em" viewBox="0 -52 220 232"'); }
   global.VTA = { setAcc: function (f) { ACCP = f; }, headA: headA, register: register, outfit: outfitAdd, inner: inner, has: function (av) { return !!KIND[av]; }, full: full, head: head, dancer: dancer, get kinds() { return Object.keys(KIND); } };
   if (global.VTC && global.VTC.ART) Object.keys(KIND).forEach(function (k) { global.VTC.ART[artKey(k)] = head(k); });
 })(window);
@@ -9776,7 +9776,12 @@ return '<svg class="afs" viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg
     if (loadout.neck && ACCS[loadout.neck]) { out.neck = ACCS[loadout.neck][0]; any = true; }
     return any ? out : null;
   }
-  A.setAcc(function (av) { var VT = global.VT; if (!VT || !VT.accOf) return null; var l = VT.accOf(av); return Object.keys(l).length ? build(l) : null; });
+  /* lo = fremdes Zubehör (Freunde): nur Werte, die zum Platz passen */
+  A.setAcc(function (av, lo) {
+    var VT = global.VT, l = {}; if (!VT || !VT.accOf) return null;
+    if (lo) { Object.keys(lo).forEach(function (k) { var it = VT.itemById("ac:" + lo[k]); if (it && it.slot === k) l[k] = lo[k]; }); } else l = VT.accOf(av);
+    return Object.keys(l).length ? build(l) : null;
+  });
   /* kleines Bild eines Zubehörs (Shop, Showroom) */
   function thumb(val) {
     var a = ACCS[val]; if (!a) return ""; var sl = slotOf(val);
@@ -10439,7 +10444,8 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
 
   /* ---------- Kopfzeile ---------- */
   /* Avatare sind Emojis oder, mit "svg:"-Präfix, Zeichnungen aus cosmetics.js */
-  function avatarHtml(v, own) { if (own && global.VTA && global.VTA.has(v) && S.accOf && Object.keys(S.accOf(v)).length) return global.VTA.headA(v); return global.VTC.avatarHtml(v, esc); }   // own: eigene Figur samt Zubehör
+  function avatarHtml(v, own, acc) { if (acc && global.VTA && global.VTA.has(v) && Object.keys(acc).length) return global.VTA.headA(v, acc);   // acc: Zubehör eines Freundes
+    if (own && global.VTA && global.VTA.has(v) && S.accOf && Object.keys(S.accOf(v)).length) return global.VTA.headA(v); return global.VTC.avatarHtml(v, esc); }   // own: eigene Figur samt Zubehör
   function playerName() {
     var d = S.profiles(), x = d.list.filter(function (y) { return y.id === d.active; })[0];
     return x ? x.name : "";
@@ -11405,9 +11411,9 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (!soc.me.enabled) return infoCard("👥 Freunde sind noch aus", "Deine Eltern können sie im Eltern-Dashboard unter <b>„Freunde &amp; Duelle“</b> einschalten. Dann bekommst du deinen Freundescode.");
     return "";
   }
-  function who(p, size) { return '<span class="fav" style="width:' + (size || 40) + 'px;height:' + (size || 40) + 'px">' + avatarHtml(p.avatar || "svg:pbaer") + '</span>'; }
+  function who(p, size) { return '<span class="fav" style="width:' + (size || 40) + 'px;height:' + (size || 40) + 'px">' + avatarHtml(p.avatar || "svg:pbaer", false, p.acc) + '</span>'; }
   /* Figur mit Rahmen des Freundes (Rahmen nur bei bestätigten Freunden) */
-  function whoFrame(f) { return '<span class="avatar ' + global.VTC.frameClass({ frame: f.frame }) + '" style="width:44px;height:44px;font-size:24px;overflow:visible;flex:none">' + avatarHtml(f.avatar || "svg:pbaer") + '</span>'; }
+  function whoFrame(f) { return '<span class="avatar ' + global.VTC.frameClass({ frame: f.frame }) + '" style="width:44px;height:44px;font-size:24px;overflow:visible;flex:none">' + avatarHtml(f.avatar || "svg:pbaer", false, f.acc) + '</span>'; }
   function duelResult(c) {
     var me = c.mine === "a" ? c.aScore : c.bScore, they = c.mine === "a" ? c.bScore : c.aScore, other = c.mine === "a" ? c.to : c.from;
     return { me: me, they: they, other: other, win: me > they, tie: me === they };
@@ -15767,7 +15773,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     VT.units().forEach(function (u) { units[u.id] = { id: u.id, title: u.title, k: u.track === "eigen" ? "Eigene Listen" : u.k, total: u.words.length }; });   // alle Einheiten (Schule, Beruf, eigene Listen), damit Ziele und Lernpläne jede wählen können
     var rk = VT.rankOf(st.xp), d = st.daily || {};
     var meta = {
-      name: st.profile.name || "", title: st.profile.title || "", avatar: st.profile.avatar || "", frame: st.profile.frame || "none", coins: st.coins, xp: st.xp, rank: rk.rank ? rk.rank.n : "", streak: st.streak.count, best: st.streak.best,
+      name: st.profile.name || "", title: st.profile.title || "", avatar: st.profile.avatar || "", acc: VT.accOf ? VT.accOf(st.profile.avatar) : {}, frame: st.profile.frame || "none", coins: st.coins, xp: st.xp, rank: rk.rank ? rk.rank.n : "", streak: st.streak.count, best: st.streak.best,
       track: st.settings.track || "schule", goalMin: VT.goalMin ? VT.goalMin() : st.settings.goalMin, todaySec: d.sec || 0, todayItems: d.items || 0, owned: (st.profile.owned || []).length,
       pass: VT.passMeta ? VT.passMeta() : null, shop: VT.shopList ? VT.shopList() : [], shopCat: VT.shopCatalog ? VT.shopCatalog() : [], gifts: Object.keys(st.goalsDone || {}).filter(function (k) { return k.indexOf("gift") === 0; }).map(function (k) { return k.slice(4); }), wish: (VT.wish && VT.wish()) ? VT.wish().label || VT.wish().id : "", klassen: st.settings.klassen, version: g.WORDY_VERSION || "", totals: st.totals, path: VT.pathProgress ? Object.assign(VT.pathProgress(), { sections: VT.pathSections(), bosses: VT.bossLog ? VT.bossLog() : [] }) : null
     };
