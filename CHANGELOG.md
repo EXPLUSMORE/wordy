@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.143.0 – 2026-10-24
+- **Eigener Look je Sticker**: Shop › Zubehör hat jetzt „🦊 Figuren | 🏷️ Sticker“. Jeder Sticker bekommt sein eigenes Zubehör (unabhängig von der Figur), mit Anprobe und Vorschau „Im Header“ in Originalgröße. Der Look erscheint überall, wo der Sticker steht (Header, Startseite, Profil, Stickerbuch) und bei Freunden (`meta.stkAcc`, Schlüssel = Sticker-ID). Ersetzt die automatische Übernahme vom Figuren-Look aus 2.142.0. **Server-Schritt nötig** (Neustart) für Freunde.
+
 ## 2.142.0 – 2026-10-24
 - Sticker tragen das Zubehör ihrer Figur (das Zubehör, das du der Figur im Shop › Zubehör anziehst). Überall, wo Sticker erscheinen (Header, Startseite, Profil, Stickerbuch, Freunde). Bei Freunden reist das Zubehör der Sticker über `meta.stkAcc` mit. **Server-Schritt nötig** (Neustart von `wordy-server`) für die Anzeige bei Freunden.
 

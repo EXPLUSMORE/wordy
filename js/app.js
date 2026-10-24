@@ -1968,7 +1968,7 @@
   }
   /* Sticker: Glanz nur für gezeichnete Figuren mit Rangsperre und für Clombo */
   function stickerHtml(it, size, tilt, acc) {
-    return global.VTC.stickerHtml(it.val, size, tilt || 0, !!it.rank || /clombo/.test(it.val), esc, acc || S.accOf(it.val));
+    return global.VTC.stickerHtml(it.val, size, tilt || 0, !!it.rank || /clombo/.test(it.val), esc, acc || S.accOf(it.id));
   }
   var TILTS = [-7, 5, -3, 6, -5];
   function placedStickers(size, noShrink, list, accMap) {
@@ -1976,7 +1976,7 @@
     if (ids.length > 3 && !noShrink) size = Math.round(size * 0.8);   // mehr als drei: etwas kleiner, damit alle Platz haben
     return '<span class="stk-row">' + ids.map(function (id, i) {
       var it = S.SHOP.filter(function (x) { return x.id === id; })[0];
-      return it ? stickerHtml(it, size, TILTS[i % TILTS.length], accMap ? accMap[it.val] || {} : undefined) : "";
+      return it ? stickerHtml(it, size, TILTS[i % TILTS.length], accMap ? accMap[it.id] || {} : undefined) : "";
     }).join("") + '</span>';
   }
   function stickerBook(set) {
@@ -2089,14 +2089,17 @@
   function accHtml() {
     var pf = S.state.profile, all = S.SHOP.filter(function (x) { return x.kind === "avatar" && global.VTA && global.VTA.has(x.val); });
     var figs = all.filter(function (x) { return S.owns(x); }).concat(all.filter(function (x) { return !S.owns(x); }));
-    if (!accFig || !all.some(function (f) { return f.val === accFig; })) { accFig = pf.avatar; accTry = {}; }
-    var fig = all.filter(function (f) { return f.val === accFig; })[0], figOwn = !fig || S.owns(fig), worn = S.accOf(accFig), look = accLook(accFig);
+    var isStk = accFig.indexOf("st:") === 0, sall = S.SHOP.filter(function (x) { return x.kind === "sticker" && S.shopVisible(x) && global.VTA && global.VTA.has(x.val); });
+    var stks = sall.filter(function (x) { return S.owns(x); }).concat(sall.filter(function (x) { return !S.owns(x); })), pool = isStk ? stks : figs;
+    if (!accFig || !pool.some(function (f) { return (isStk ? f.id : f.val) === accFig; })) { accFig = isStk && stks.length ? stks[0].id : pf.avatar; isStk = accFig.indexOf("st:") === 0; pool = isStk ? stks : figs; accTry = {}; }
+    var fig = pool.filter(function (f) { return (isStk ? f.id : f.val) === accFig; })[0], figOwn = !fig || S.owns(fig), worn = S.accOf(accFig), look = accLook(accFig);
     var tried = Object.keys(accTry).map(function (k) { return S.itemById("ac:" + accTry[k]); }).filter(Boolean), toBuy = tried.filter(function (x) { return !S.owns(x); }), sum = toBuy.reduce(function (t, x) { return t + S.priceOf(x); }, 0);
     var names = S.ACC_SLOTS.map(function (sl) { var it = look[sl[0]] && S.itemById("ac:" + look[sl[0]]); return it ? it.label + (accTry[sl[0]] ? " (Anprobe)" : "") : ""; }).filter(Boolean);
-    var h = '<p class="small muted" style="margin:0 0 8px">👀 <b>Wie sieht\'s aus?</b> Probiere alles an, bevor du kaufst – jede Figur, jedes Teil. Zubehör kaufst du <b>einmal</b> und ziehst es <b>jeder Figur einzeln</b> an. <span lang="en">Try it on first, then decide!</span></p>' +
-      '<div class="accfigs">' + figs.map(function (f) { var o = S.owns(f); return '<button class="accfig' + (f.val === accFig ? " on" : "") + (o ? "" : " lock") + '" data-act="accfig" data-av="' + esc(f.val) + '" title="' + esc(f.label + (o ? "" : " (noch nicht gekauft)")) + '" aria-label="' + esc(f.label) + '" aria-pressed="' + (f.val === accFig) + '"><span class="acch">' + avatarHtml(f.val, o) + '</span>' + (o ? "" : '<i class="acl">🔒</i>') + '</button>'; }).join("") + '</div>' +
-      '<div class="accpv"><div class="accst"><div class="accfl">' + heroWith(accFig, look, 0) + '</div></div><div class="accin"><b>' + esc(fig ? fig.label : "Fuchs") + '</b>' + (fig ? enLine(fig) : "") +
-      (S.stickers().length ? '<span class="fstk">' + placedStickers(30, true) + '</span>' : "") + '<span class="small muted">' + (names.length ? "trägt: " + esc(names.join(", ")) : "trägt noch nichts") + '</span>' +
+    var h = '<p class="small muted" style="margin:0 0 8px">👀 <b>Wie sieht\'s aus?</b> Probiere alles an, bevor du kaufst – jede Figur, jedes Teil. Zubehör kaufst du <b>einmal</b> und ziehst es <b>jeder Figur und jedem Sticker einzeln</b> an. <span lang="en">Try it on first, then decide!</span></p>' +
+      '<div class="row" style="gap:6px;margin:0 0 8px">' + [["fig", "🦊 Figuren"], ["stk", "🏷️ Sticker"]].map(function (m) { return '<button class="chip" data-act="accmode" data-k="' + m[0] + '" aria-pressed="' + ((m[0] === "stk") === isStk) + '">' + m[1] + '</button>'; }).join("") + '</div>' +
+      '<div class="accfigs">' + pool.map(function (f) { var o = S.owns(f), key = isStk ? f.id : f.val; return '<button class="accfig' + (key === accFig ? " on" : "") + (o ? "" : " lock") + '" data-act="accfig" data-av="' + esc(key) + '" title="' + esc(f.label + (o ? "" : " (noch nicht gekauft)")) + '" aria-label="' + esc(f.label) + '" aria-pressed="' + (key === accFig) + '"><span class="acch">' + (isStk ? stickerHtml(f, 36, 0, S.accOf(f.id)) : avatarHtml(f.val, o)) + '</span>' + (o ? "" : '<i class="acl">🔒</i>') + '</button>'; }).join("") + '</div>' +
+      '<div class="accpv"><div class="accst"><div class="accfl">' + (isStk ? '<span class="stkpv">' + stickerHtml(fig, 104, -4, look) + '</span>' : heroWith(accFig, look, 0)) + '</div></div><div class="accin"><b>' + esc(fig ? fig.label : "Fuchs") + '</b>' + (fig && !isStk ? enLine(fig) : "") +
+      (isStk ? '<span class="fstk">Im Header: ' + stickerHtml(fig, 42, -5, look) + '</span>' : "") + '<span class="small muted">' + (names.length ? "trägt: " + esc(names.join(", ")) : "trägt noch nichts") + '</span>' +
       (figOwn ? "" : '<span class="small" style="color:var(--accent)">Diese Figur gehört dir noch nicht – du probierst nur an.</span>') +
       (toBuy.length ? '<button class="btn" data-act="accbuytry">🪙 ' + sum + ' – ' + (toBuy.length === 1 ? "kaufen" : toBuy.length + " Teile kaufen") + '</button>' : "") +
       (Object.keys(accTry).length ? '<button class="chip" data-act="accuntry">Anprobe zurücksetzen</button>' : "") +
@@ -3635,6 +3638,7 @@
     else if (a === "passshare") { sharePass(); }
     else if (a === "passclaim") { openPassReward(act.getAttribute("data-n")); }
     else if (a === "accfig") { accFig = act.getAttribute("data-av"); accTry = {}; var sy0 = view.scrollTop; render(); view.scrollTop = sy0; }
+    else if (a === "accmode") { var stkMode = act.getAttribute("data-k") === "stk", pl = S.stickers().filter(function (id) { var x = S.itemById(id); return x && global.VTA && global.VTA.has(x.val); }); accFig = stkMode ? (pl[0] || "st:") : S.state.profile.avatar; accTry = {}; var sy5 = view.scrollTop; render(); view.scrollTop = sy5; }
     else if (a === "accclr") { S.accClear(accFig); accTry = {}; var sy1 = view.scrollTop; renderHeader(); render(); view.scrollTop = sy1; }
     else if (a === "accuntry") { accTry = {}; var sy3 = view.scrollTop; render(); view.scrollTop = sy3; }
     else if (a === "figtry") { openFigTry(act.getAttribute("data-id")); }
@@ -3642,14 +3646,14 @@
       var bought = [], berr = "";
       Object.keys(accTry).forEach(function (sl) { var bi = S.itemById("ac:" + accTry[sl]); if (bi && !S.owns(bi) && !berr) { var br0 = S.buy(bi.id); if (br0.error) berr = br0.error; else bought.push(bi.label); } });
       if (berr) toast(berr);
-      var fgi = S.SHOP.filter(function (x) { return x.kind === "avatar" && x.val === accFig; })[0];
+      var fgi = S.SHOP.filter(function (x) { return (x.kind === "avatar" && x.val === accFig) || x.id === accFig; })[0];
       if (!fgi || S.owns(fgi)) { Object.keys(accTry).forEach(function (sl) { var wi = S.itemById("ac:" + accTry[sl]); if (wi && S.owns(wi) && S.accOf(accFig)[sl] !== wi.val) S.accToggle(accFig, wi.id); }); accTry = {}; }
       if (bought.length) { try { if (S.state.settings.audio) global.VTC.sound(S.state.profile.snd, true); } catch (e) {} toast(bought.join(", ") + (bought.length > 1 ? " gekauft!" : " gekauft!")); }
       var sy4 = view.scrollTop; renderHeader(); render(); view.scrollTop = sy4;
     }
     else if (a === "acctile") {
       var aid = act.getAttribute("data-id"), ait = S.itemById(aid); if (!ait) return;
-      var figIt = S.SHOP.filter(function (x) { return x.kind === "avatar" && x.val === accFig; })[0], figOk = !figIt || S.owns(figIt), sy2 = view.scrollTop;
+      var figIt = S.SHOP.filter(function (x) { return (x.kind === "avatar" && x.val === accFig) || x.id === accFig; })[0], figOk = !figIt || S.owns(figIt), sy2 = view.scrollTop;
       if (S.owns(ait) && figOk) {   // gekauft: anziehen bzw. ausziehen
         delete accTry[ait.slot]; var tr = S.accToggle(accFig, aid); if (tr.error) { toast(tr.error); return; } if (!tr.on) toast(ait.label + " abgelegt");
         renderHeader();

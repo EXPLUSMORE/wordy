@@ -185,7 +185,7 @@ html[data-bg="stars"] .card,html[data-bg="clouds"] .card,html[data-bg="space"] .
   background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.7) 46%,rgba(120,255,240,.5) 50%,rgba(255,150,230,.5) 54%,transparent 64%) -150% 0/250% 100%;
   mix-blend-mode:screen;animation:stShine 3s ease-in-out infinite}
 @keyframes stShine{0%{background-position:150% 0}55%,100%{background-position:-60% 0}}
-.fstk{display:block;margin-top:4px;min-height:24px}
+.fstk{display:block;margin-top:4px;min-height:24px;font-size:12px}.stkpv{display:grid;place-items:center;height:100%}
 .stk-row{display:inline-flex;gap:0;align-items:center}
 .stk-row .stk+.stk{margin-left:-14px}
 .stk-corner{position:absolute;right:10px;bottom:6px;z-index:2;pointer-events:none}
@@ -1521,7 +1521,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.142.0";window.WORDY_BUILD="9d196512af";</script>
+<script>window.WORDY_VERSION="2.143.0";window.WORDY_BUILD="61cce86bfb";</script>
 </head>
 <body>
 <div id="app">
@@ -7112,8 +7112,8 @@ window.SENTENCES = (window.SENTENCES || []).concat([
   }
   function stickers() { var l = state.profile.stickers; if (!Array.isArray(l)) l = state.profile.stickers = []; return l; }
   function accOf(av) { var a = (state.profile.acc || {})[av]; return a ? Object.assign({}, a) : {}; }
-  function stickerAcc() {   // Zubehör der aufgeklebten Sticker-Figuren (für Freunde)
-    var o = {}; stickers().forEach(function (id) { var it = itemById(id); if (it && it.val) { var a = accOf(it.val); if (Object.keys(a).length) o[it.val] = a; } }); return o;
+  function stickerAcc() {   // Eigener Zubehör-Look je aufgeklebtem Sticker (für Freunde)
+    var o = {}; stickers().forEach(function (id) { var it = itemById(id); if (it && it.val) { var a = accOf(it.id); if (Object.keys(a).length) o[it.id] = a; } }); return o;
   }
   function accToggle(av, id) {
     var it = itemById(id); if (!it || it.kind !== "acc") return { error: "Das ist kein Zubehör." }; if (!owns(it)) return { error: "Das gehört dir noch nicht." };
@@ -12142,7 +12142,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   }
   /* Sticker: Glanz nur für gezeichnete Figuren mit Rangsperre und für Clombo */
   function stickerHtml(it, size, tilt, acc) {
-    return global.VTC.stickerHtml(it.val, size, tilt || 0, !!it.rank || /clombo/.test(it.val), esc, acc || S.accOf(it.val));
+    return global.VTC.stickerHtml(it.val, size, tilt || 0, !!it.rank || /clombo/.test(it.val), esc, acc || S.accOf(it.id));
   }
   var TILTS = [-7, 5, -3, 6, -5];
   function placedStickers(size, noShrink, list, accMap) {
@@ -12150,7 +12150,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (ids.length > 3 && !noShrink) size = Math.round(size * 0.8);   // mehr als drei: etwas kleiner, damit alle Platz haben
     return '<span class="stk-row">' + ids.map(function (id, i) {
       var it = S.SHOP.filter(function (x) { return x.id === id; })[0];
-      return it ? stickerHtml(it, size, TILTS[i % TILTS.length], accMap ? accMap[it.val] || {} : undefined) : "";
+      return it ? stickerHtml(it, size, TILTS[i % TILTS.length], accMap ? accMap[it.id] || {} : undefined) : "";
     }).join("") + '</span>';
   }
   function stickerBook(set) {
@@ -12263,14 +12263,17 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   function accHtml() {
     var pf = S.state.profile, all = S.SHOP.filter(function (x) { return x.kind === "avatar" && global.VTA && global.VTA.has(x.val); });
     var figs = all.filter(function (x) { return S.owns(x); }).concat(all.filter(function (x) { return !S.owns(x); }));
-    if (!accFig || !all.some(function (f) { return f.val === accFig; })) { accFig = pf.avatar; accTry = {}; }
-    var fig = all.filter(function (f) { return f.val === accFig; })[0], figOwn = !fig || S.owns(fig), worn = S.accOf(accFig), look = accLook(accFig);
+    var isStk = accFig.indexOf("st:") === 0, sall = S.SHOP.filter(function (x) { return x.kind === "sticker" && S.shopVisible(x) && global.VTA && global.VTA.has(x.val); });
+    var stks = sall.filter(function (x) { return S.owns(x); }).concat(sall.filter(function (x) { return !S.owns(x); })), pool = isStk ? stks : figs;
+    if (!accFig || !pool.some(function (f) { return (isStk ? f.id : f.val) === accFig; })) { accFig = isStk && stks.length ? stks[0].id : pf.avatar; isStk = accFig.indexOf("st:") === 0; pool = isStk ? stks : figs; accTry = {}; }
+    var fig = pool.filter(function (f) { return (isStk ? f.id : f.val) === accFig; })[0], figOwn = !fig || S.owns(fig), worn = S.accOf(accFig), look = accLook(accFig);
     var tried = Object.keys(accTry).map(function (k) { return S.itemById("ac:" + accTry[k]); }).filter(Boolean), toBuy = tried.filter(function (x) { return !S.owns(x); }), sum = toBuy.reduce(function (t, x) { return t + S.priceOf(x); }, 0);
     var names = S.ACC_SLOTS.map(function (sl) { var it = look[sl[0]] && S.itemById("ac:" + look[sl[0]]); return it ? it.label + (accTry[sl[0]] ? " (Anprobe)" : "") : ""; }).filter(Boolean);
-    var h = '<p class="small muted" style="margin:0 0 8px">👀 <b>Wie sieht\'s aus?</b> Probiere alles an, bevor du kaufst – jede Figur, jedes Teil. Zubehör kaufst du <b>einmal</b> und ziehst es <b>jeder Figur einzeln</b> an. <span lang="en">Try it on first, then decide!</span></p>' +
-      '<div class="accfigs">' + figs.map(function (f) { var o = S.owns(f); return '<button class="accfig' + (f.val === accFig ? " on" : "") + (o ? "" : " lock") + '" data-act="accfig" data-av="' + esc(f.val) + '" title="' + esc(f.label + (o ? "" : " (noch nicht gekauft)")) + '" aria-label="' + esc(f.label) + '" aria-pressed="' + (f.val === accFig) + '"><span class="acch">' + avatarHtml(f.val, o) + '</span>' + (o ? "" : '<i class="acl">🔒</i>') + '</button>'; }).join("") + '</div>' +
-      '<div class="accpv"><div class="accst"><div class="accfl">' + heroWith(accFig, look, 0) + '</div></div><div class="accin"><b>' + esc(fig ? fig.label : "Fuchs") + '</b>' + (fig ? enLine(fig) : "") +
-      (S.stickers().length ? '<span class="fstk">' + placedStickers(30, true) + '</span>' : "") + '<span class="small muted">' + (names.length ? "trägt: " + esc(names.join(", ")) : "trägt noch nichts") + '</span>' +
+    var h = '<p class="small muted" style="margin:0 0 8px">👀 <b>Wie sieht\'s aus?</b> Probiere alles an, bevor du kaufst – jede Figur, jedes Teil. Zubehör kaufst du <b>einmal</b> und ziehst es <b>jeder Figur und jedem Sticker einzeln</b> an. <span lang="en">Try it on first, then decide!</span></p>' +
+      '<div class="row" style="gap:6px;margin:0 0 8px">' + [["fig", "🦊 Figuren"], ["stk", "🏷️ Sticker"]].map(function (m) { return '<button class="chip" data-act="accmode" data-k="' + m[0] + '" aria-pressed="' + ((m[0] === "stk") === isStk) + '">' + m[1] + '</button>'; }).join("") + '</div>' +
+      '<div class="accfigs">' + pool.map(function (f) { var o = S.owns(f), key = isStk ? f.id : f.val; return '<button class="accfig' + (key === accFig ? " on" : "") + (o ? "" : " lock") + '" data-act="accfig" data-av="' + esc(key) + '" title="' + esc(f.label + (o ? "" : " (noch nicht gekauft)")) + '" aria-label="' + esc(f.label) + '" aria-pressed="' + (key === accFig) + '"><span class="acch">' + (isStk ? stickerHtml(f, 36, 0, S.accOf(f.id)) : avatarHtml(f.val, o)) + '</span>' + (o ? "" : '<i class="acl">🔒</i>') + '</button>'; }).join("") + '</div>' +
+      '<div class="accpv"><div class="accst"><div class="accfl">' + (isStk ? '<span class="stkpv">' + stickerHtml(fig, 104, -4, look) + '</span>' : heroWith(accFig, look, 0)) + '</div></div><div class="accin"><b>' + esc(fig ? fig.label : "Fuchs") + '</b>' + (fig && !isStk ? enLine(fig) : "") +
+      (isStk ? '<span class="fstk">Im Header: ' + stickerHtml(fig, 42, -5, look) + '</span>' : "") + '<span class="small muted">' + (names.length ? "trägt: " + esc(names.join(", ")) : "trägt noch nichts") + '</span>' +
       (figOwn ? "" : '<span class="small" style="color:var(--accent)">Diese Figur gehört dir noch nicht – du probierst nur an.</span>') +
       (toBuy.length ? '<button class="btn" data-act="accbuytry">🪙 ' + sum + ' – ' + (toBuy.length === 1 ? "kaufen" : toBuy.length + " Teile kaufen") + '</button>' : "") +
       (Object.keys(accTry).length ? '<button class="chip" data-act="accuntry">Anprobe zurücksetzen</button>' : "") +
@@ -13809,6 +13812,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     else if (a === "passshare") { sharePass(); }
     else if (a === "passclaim") { openPassReward(act.getAttribute("data-n")); }
     else if (a === "accfig") { accFig = act.getAttribute("data-av"); accTry = {}; var sy0 = view.scrollTop; render(); view.scrollTop = sy0; }
+    else if (a === "accmode") { var stkMode = act.getAttribute("data-k") === "stk", pl = S.stickers().filter(function (id) { var x = S.itemById(id); return x && global.VTA && global.VTA.has(x.val); }); accFig = stkMode ? (pl[0] || "st:") : S.state.profile.avatar; accTry = {}; var sy5 = view.scrollTop; render(); view.scrollTop = sy5; }
     else if (a === "accclr") { S.accClear(accFig); accTry = {}; var sy1 = view.scrollTop; renderHeader(); render(); view.scrollTop = sy1; }
     else if (a === "accuntry") { accTry = {}; var sy3 = view.scrollTop; render(); view.scrollTop = sy3; }
     else if (a === "figtry") { openFigTry(act.getAttribute("data-id")); }
@@ -13816,14 +13820,14 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       var bought = [], berr = "";
       Object.keys(accTry).forEach(function (sl) { var bi = S.itemById("ac:" + accTry[sl]); if (bi && !S.owns(bi) && !berr) { var br0 = S.buy(bi.id); if (br0.error) berr = br0.error; else bought.push(bi.label); } });
       if (berr) toast(berr);
-      var fgi = S.SHOP.filter(function (x) { return x.kind === "avatar" && x.val === accFig; })[0];
+      var fgi = S.SHOP.filter(function (x) { return (x.kind === "avatar" && x.val === accFig) || x.id === accFig; })[0];
       if (!fgi || S.owns(fgi)) { Object.keys(accTry).forEach(function (sl) { var wi = S.itemById("ac:" + accTry[sl]); if (wi && S.owns(wi) && S.accOf(accFig)[sl] !== wi.val) S.accToggle(accFig, wi.id); }); accTry = {}; }
       if (bought.length) { try { if (S.state.settings.audio) global.VTC.sound(S.state.profile.snd, true); } catch (e) {} toast(bought.join(", ") + (bought.length > 1 ? " gekauft!" : " gekauft!")); }
       var sy4 = view.scrollTop; renderHeader(); render(); view.scrollTop = sy4;
     }
     else if (a === "acctile") {
       var aid = act.getAttribute("data-id"), ait = S.itemById(aid); if (!ait) return;
-      var figIt = S.SHOP.filter(function (x) { return x.kind === "avatar" && x.val === accFig; })[0], figOk = !figIt || S.owns(figIt), sy2 = view.scrollTop;
+      var figIt = S.SHOP.filter(function (x) { return (x.kind === "avatar" && x.val === accFig) || x.id === accFig; })[0], figOk = !figIt || S.owns(figIt), sy2 = view.scrollTop;
       if (S.owns(ait) && figOk) {   // gekauft: anziehen bzw. ausziehen
         delete accTry[ait.slot]; var tr = S.accToggle(accFig, aid); if (tr.error) { toast(tr.error); return; } if (!tr.on) toast(ait.label + " abgelegt");
         renderHeader();

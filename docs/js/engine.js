@@ -1410,8 +1410,8 @@
   }
   function stickers() { var l = state.profile.stickers; if (!Array.isArray(l)) l = state.profile.stickers = []; return l; }
   function accOf(av) { var a = (state.profile.acc || {})[av]; return a ? Object.assign({}, a) : {}; }
-  function stickerAcc() {   // Zubehör der aufgeklebten Sticker-Figuren (für Freunde)
-    var o = {}; stickers().forEach(function (id) { var it = itemById(id); if (it && it.val) { var a = accOf(it.val); if (Object.keys(a).length) o[it.val] = a; } }); return o;
+  function stickerAcc() {   // Eigener Zubehör-Look je aufgeklebtem Sticker (für Freunde)
+    var o = {}; stickers().forEach(function (id) { var it = itemById(id); if (it && it.val) { var a = accOf(it.id); if (Object.keys(a).length) o[it.id] = a; } }); return o;
   }
   function accToggle(av, id) {
     var it = itemById(id); if (!it || it.kind !== "acc") return { error: "Das ist kein Zubehör." }; if (!owns(it)) return { error: "Das gehört dir noch nicht." };

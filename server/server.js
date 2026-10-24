@@ -1278,7 +1278,7 @@ function frLook(id, state) {
   const acc = {};   // Zubehör der gewählten Figur: nur bekannte Plätze, geprüfte Werte
   if (d.acc && typeof d.acc === "object") for (const k of ["head", "face", "ears", "neck"]) if (typeof d.acc[k] === "string" && /^[a-z0-9]{1,12}$/.test(d.acc[k])) acc[k] = d.acc[k];
   const stk = Array.isArray(d.stk) ? d.stk.filter(x => typeof x === "string" && /^st:[a-z0-9_-]{1,30}$/i.test(x)).slice(0, 10) : [];   // aufgeklebte Sticker (IDs)
-  const stkAcc = {};   // Zubehör je Sticker-Figur (Wert der Figur → Plätze)
+  const stkAcc = {};   // Zubehör je Sticker-Figur (Sticker-ID → Plätze)
   if (d.stkAcc && typeof d.stkAcc === "object") for (const [fv, a] of Object.entries(d.stkAcc).slice(0, 10)) {
     if (!AVATAR_RE.test(fv) || !a || typeof a !== "object") continue;
     const o = {}; for (const k of ["head", "face", "ears", "neck"]) if (typeof a[k] === "string" && /^[a-z0-9]{1,12}$/.test(a[k])) o[k] = a[k];
