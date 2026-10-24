@@ -1299,7 +1299,7 @@
       '<div class="row" style="gap:8px;margin-top:14px"><input id="socCode" class="grow soccode" maxlength="12" placeholder="Freundescode" autocapitalize="characters" autocomplete="off"><button class="btn" data-act="socadd">Hinzufügen</button></div><div id="socMsg" class="small muted" style="margin-top:6px"></div></section>';
     h += '<section class="card"><div class="eyebrow">Meine Freunde (' + me.friends.length + ')</div>' + (me.friends.length ? me.friends.map(function (f) {
       var st = f.state === "ok" ? "" : f.state === "mine" ? "wartet auf deine Eltern" : "wartet auf die Eltern von " + esc(f.name);
-      return '<div class="drow">' + whoFrame(f) + '<div class="grow"><b>' + esc(f.name) + '</b>' + (st ? '<div class="small muted">' + st + '</div>' : '') + friendRank(f) + (f.stk && f.stk.length ? '<div class="fstk">' + placedStickers(24, true, f.stk) + '</div>' : "") + '</div>' +
+      return '<div class="drow">' + whoFrame(f) + '<div class="grow"><b>' + esc(f.name) + '</b>' + (st ? '<div class="small muted">' + st + '</div>' : '') + friendRank(f) + (f.stk && f.stk.length ? '<div class="fstk">' + placedStickers(24, true, f.stk, f.stkAcc || {}) + '</div>' : "") + '</div>' +
         (f.state === "ok" ? '<button class="btn soft" data-act="socchallenge" data-id="' + f.id + '">⚔️ Duell</button>' : '<span class="pill">⏳</span>') + '<button class="chip" data-act="socdel" data-id="' + f.id + '" aria-label="Entfernen">✕</button></div>';
     }).join("") : '<p class="small muted" style="margin:8px 0 0">Noch keine Freunde. Tausche Codes aus!</p>') + '</section>';
     if (ib.waiting.length) h += '<section class="card"><div class="eyebrow">Warten auf Antwort</div>' + ib.waiting.map(function (c) { return '<div class="drow">' + who(c.to, 32) + '<div class="grow small"><b>' + esc(c.to.name) + '</b> · ' + modeName(c.mode) + ' · dein Wert <b class="tnum">' + c.aScore + '</b></div></div>'; }).join("") + '</section>';
@@ -1967,16 +1967,16 @@
     return "";
   }
   /* Sticker: Glanz nur für gezeichnete Figuren mit Rangsperre und für Clombo */
-  function stickerHtml(it, size, tilt) {
-    return global.VTC.stickerHtml(it.val, size, tilt || 0, !!it.rank || /clombo/.test(it.val), esc);
+  function stickerHtml(it, size, tilt, acc) {
+    return global.VTC.stickerHtml(it.val, size, tilt || 0, !!it.rank || /clombo/.test(it.val), esc, acc || S.accOf(it.val));
   }
   var TILTS = [-7, 5, -3, 6, -5];
-  function placedStickers(size, noShrink, list) {
+  function placedStickers(size, noShrink, list, accMap) {
     var ids = list || S.stickers(); if (!ids.length) return "";
     if (ids.length > 3 && !noShrink) size = Math.round(size * 0.8);   // mehr als drei: etwas kleiner, damit alle Platz haben
     return '<span class="stk-row">' + ids.map(function (id, i) {
       var it = S.SHOP.filter(function (x) { return x.id === id; })[0];
-      return it ? stickerHtml(it, size, TILTS[i % TILTS.length]) : "";
+      return it ? stickerHtml(it, size, TILTS[i % TILTS.length], accMap ? accMap[it.val] || {} : undefined) : "";
     }).join("") + '</span>';
   }
   function stickerBook(set) {

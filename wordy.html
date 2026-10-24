@@ -1521,7 +1521,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.141.0";window.WORDY_BUILD="cd7721d2d2";</script>
+<script>window.WORDY_VERSION="2.142.0";window.WORDY_BUILD="9d196512af";</script>
 </head>
 <body>
 <div id="app">
@@ -7112,6 +7112,9 @@ window.SENTENCES = (window.SENTENCES || []).concat([
   }
   function stickers() { var l = state.profile.stickers; if (!Array.isArray(l)) l = state.profile.stickers = []; return l; }
   function accOf(av) { var a = (state.profile.acc || {})[av]; return a ? Object.assign({}, a) : {}; }
+  function stickerAcc() {   // Zubehör der aufgeklebten Sticker-Figuren (für Freunde)
+    var o = {}; stickers().forEach(function (id) { var it = itemById(id); if (it && it.val) { var a = accOf(it.val); if (Object.keys(a).length) o[it.val] = a; } }); return o;
+  }
   function accToggle(av, id) {
     var it = itemById(id); if (!it || it.kind !== "acc") return { error: "Das ist kein Zubehör." }; if (!owns(it)) return { error: "Das gehört dir noch nicht." };
     var all = state.profile.acc || (state.profile.acc = {}), l = all[av] || (all[av] = {}), on = l[it.slot] !== it.val;
@@ -7403,7 +7406,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
   function resumeHas(key) { return resumeList().some(function (x) { return x.key === key; }); }
 
   global.VT = {
-    LEVELS: LEVELS, enName: enName, ACC: ACC, ACC_SLOTS: ACC_SLOTS, accOf: accOf, accToggle: accToggle, accClear: accClear, medalGroups: medalGroups, RANKS: RANKS, AVATARS: AVATARS, SHOP: SHOP, BADGES: BADGES,
+    LEVELS: LEVELS, enName: enName, ACC: ACC, ACC_SLOTS: ACC_SLOTS, accOf: accOf, stickerAcc: stickerAcc, accToggle: accToggle, accClear: accClear, medalGroups: medalGroups, RANKS: RANKS, AVATARS: AVATARS, SHOP: SHOP, BADGES: BADGES,
     SEC_PER_ITEM: SEC_PER_ITEM, secPerItem: secPerItem, itemsFor: itemsFor, recordPace: recordPace,
     resumePack: resumePack, resumeUnpack: resumeUnpack, resumeList: resumeList, resumeSave: resumeSave, resumeTake: resumeTake, resumeHas: resumeHas,
     load: load, save: save, get state() { return state; },
@@ -8079,11 +8082,13 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     return (maskCache[val] = 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")');
   }
   /* size in px; shine = Glanz (nur für gezeichnete Figuren); tilt = Neigung in Grad */
-  function stickerHtml(val, size, tilt, shine, esc) {
+  function stickerHtml(val, size, tilt, shine, esc, acc) {
     ensureCutFilters();
     var drawn = /^svg:/.test(val) || !!ART[val], big = size >= 90;
     var inner = drawn ? (ART[/^svg:/.test(val) ? val.slice(4) : val] || ART.pummel) : (esc ? esc(val) : String(val));
-    var holo = drawn && shine && size >= 44 ? '<span class="stk-holo" style="-webkit-mask-image:' + maskUrl(val) + ';mask-image:' + maskUrl(val) + '"></span>' : "";
+    var worn = drawn && acc && Object.keys(acc).length && global.VTA && global.VTA.has(val);
+    if (worn) inner = global.VTA.headA(val, acc);   // Zubehör der Figur auch auf dem Sticker
+    var holo = drawn && !worn && shine && size >= 44 ? '<span class="stk-holo" style="-webkit-mask-image:' + maskUrl(val) + ';mask-image:' + maskUrl(val) + '"></span>' : "";
     return '<span class="stk" style="--s:' + size + 'px;--r:' + (tilt || 0) + 'deg;--f:' + (drawn ? 1 : 0.62) + '">' +
       '<span class="stk-cut" style="filter:url(#' + (big ? "cutL" : "cutS") + ')">' + inner + '</span>' + holo + '</span>';
   }
@@ -11468,7 +11473,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       '<div class="row" style="gap:8px;margin-top:14px"><input id="socCode" class="grow soccode" maxlength="12" placeholder="Freundescode" autocapitalize="characters" autocomplete="off"><button class="btn" data-act="socadd">Hinzufügen</button></div><div id="socMsg" class="small muted" style="margin-top:6px"></div></section>';
     h += '<section class="card"><div class="eyebrow">Meine Freunde (' + me.friends.length + ')</div>' + (me.friends.length ? me.friends.map(function (f) {
       var st = f.state === "ok" ? "" : f.state === "mine" ? "wartet auf deine Eltern" : "wartet auf die Eltern von " + esc(f.name);
-      return '<div class="drow">' + whoFrame(f) + '<div class="grow"><b>' + esc(f.name) + '</b>' + (st ? '<div class="small muted">' + st + '</div>' : '') + friendRank(f) + (f.stk && f.stk.length ? '<div class="fstk">' + placedStickers(24, true, f.stk) + '</div>' : "") + '</div>' +
+      return '<div class="drow">' + whoFrame(f) + '<div class="grow"><b>' + esc(f.name) + '</b>' + (st ? '<div class="small muted">' + st + '</div>' : '') + friendRank(f) + (f.stk && f.stk.length ? '<div class="fstk">' + placedStickers(24, true, f.stk, f.stkAcc || {}) + '</div>' : "") + '</div>' +
         (f.state === "ok" ? '<button class="btn soft" data-act="socchallenge" data-id="' + f.id + '">⚔️ Duell</button>' : '<span class="pill">⏳</span>') + '<button class="chip" data-act="socdel" data-id="' + f.id + '" aria-label="Entfernen">✕</button></div>';
     }).join("") : '<p class="small muted" style="margin:8px 0 0">Noch keine Freunde. Tausche Codes aus!</p>') + '</section>';
     if (ib.waiting.length) h += '<section class="card"><div class="eyebrow">Warten auf Antwort</div>' + ib.waiting.map(function (c) { return '<div class="drow">' + who(c.to, 32) + '<div class="grow small"><b>' + esc(c.to.name) + '</b> · ' + modeName(c.mode) + ' · dein Wert <b class="tnum">' + c.aScore + '</b></div></div>'; }).join("") + '</section>';
@@ -12136,16 +12141,16 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     return "";
   }
   /* Sticker: Glanz nur für gezeichnete Figuren mit Rangsperre und für Clombo */
-  function stickerHtml(it, size, tilt) {
-    return global.VTC.stickerHtml(it.val, size, tilt || 0, !!it.rank || /clombo/.test(it.val), esc);
+  function stickerHtml(it, size, tilt, acc) {
+    return global.VTC.stickerHtml(it.val, size, tilt || 0, !!it.rank || /clombo/.test(it.val), esc, acc || S.accOf(it.val));
   }
   var TILTS = [-7, 5, -3, 6, -5];
-  function placedStickers(size, noShrink, list) {
+  function placedStickers(size, noShrink, list, accMap) {
     var ids = list || S.stickers(); if (!ids.length) return "";
     if (ids.length > 3 && !noShrink) size = Math.round(size * 0.8);   // mehr als drei: etwas kleiner, damit alle Platz haben
     return '<span class="stk-row">' + ids.map(function (id, i) {
       var it = S.SHOP.filter(function (x) { return x.id === id; })[0];
-      return it ? stickerHtml(it, size, TILTS[i % TILTS.length]) : "";
+      return it ? stickerHtml(it, size, TILTS[i % TILTS.length], accMap ? accMap[it.val] || {} : undefined) : "";
     }).join("") + '</span>';
   }
   function stickerBook(set) {
@@ -15848,7 +15853,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     VT.units().forEach(function (u) { units[u.id] = { id: u.id, title: u.title, k: u.track === "eigen" ? "Eigene Listen" : u.k, total: u.words.length }; });   // alle Einheiten (Schule, Beruf, eigene Listen), damit Ziele und Lernpläne jede wählen können
     var rk = VT.rankOf(st.xp), d = st.daily || {};
     var meta = {
-      name: st.profile.name || "", title: st.profile.title || "", avatar: st.profile.avatar || "", acc: VT.accOf ? VT.accOf(st.profile.avatar) : {}, stk: (VT.stickers ? VT.stickers() : []).slice(0, 10), frame: st.profile.frame || "none", coins: st.coins, xp: st.xp, rank: rk.rank ? rk.rank.n : "", streak: st.streak.count, best: st.streak.best,
+      name: st.profile.name || "", title: st.profile.title || "", avatar: st.profile.avatar || "", acc: VT.accOf ? VT.accOf(st.profile.avatar) : {}, stk: (VT.stickers ? VT.stickers() : []).slice(0, 10), stkAcc: VT.stickerAcc ? VT.stickerAcc() : {}, frame: st.profile.frame || "none", coins: st.coins, xp: st.xp, rank: rk.rank ? rk.rank.n : "", streak: st.streak.count, best: st.streak.best,
       track: st.settings.track || "schule", goalMin: VT.goalMin ? VT.goalMin() : st.settings.goalMin, todaySec: d.sec || 0, todayItems: d.items || 0, owned: (st.profile.owned || []).length,
       pass: VT.passMeta ? VT.passMeta() : null, shop: VT.shopList ? VT.shopList() : [], shopCat: VT.shopCatalog ? VT.shopCatalog() : [], gifts: Object.keys(st.goalsDone || {}).filter(function (k) { return k.indexOf("gift") === 0; }).map(function (k) { return k.slice(4); }), wish: (VT.wish && VT.wish()) ? VT.wish().label || VT.wish().id : "", klassen: st.settings.klassen, version: g.WORDY_VERSION || "", totals: st.totals, path: VT.pathProgress ? Object.assign(VT.pathProgress(), { sections: VT.pathSections(), bosses: VT.bossLog ? VT.bossLog() : [] }) : null
     };

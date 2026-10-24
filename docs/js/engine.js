@@ -1410,6 +1410,9 @@
   }
   function stickers() { var l = state.profile.stickers; if (!Array.isArray(l)) l = state.profile.stickers = []; return l; }
   function accOf(av) { var a = (state.profile.acc || {})[av]; return a ? Object.assign({}, a) : {}; }
+  function stickerAcc() {   // Zubehör der aufgeklebten Sticker-Figuren (für Freunde)
+    var o = {}; stickers().forEach(function (id) { var it = itemById(id); if (it && it.val) { var a = accOf(it.val); if (Object.keys(a).length) o[it.val] = a; } }); return o;
+  }
   function accToggle(av, id) {
     var it = itemById(id); if (!it || it.kind !== "acc") return { error: "Das ist kein Zubehör." }; if (!owns(it)) return { error: "Das gehört dir noch nicht." };
     var all = state.profile.acc || (state.profile.acc = {}), l = all[av] || (all[av] = {}), on = l[it.slot] !== it.val;
@@ -1701,7 +1704,7 @@
   function resumeHas(key) { return resumeList().some(function (x) { return x.key === key; }); }
 
   global.VT = {
-    LEVELS: LEVELS, enName: enName, ACC: ACC, ACC_SLOTS: ACC_SLOTS, accOf: accOf, accToggle: accToggle, accClear: accClear, medalGroups: medalGroups, RANKS: RANKS, AVATARS: AVATARS, SHOP: SHOP, BADGES: BADGES,
+    LEVELS: LEVELS, enName: enName, ACC: ACC, ACC_SLOTS: ACC_SLOTS, accOf: accOf, stickerAcc: stickerAcc, accToggle: accToggle, accClear: accClear, medalGroups: medalGroups, RANKS: RANKS, AVATARS: AVATARS, SHOP: SHOP, BADGES: BADGES,
     SEC_PER_ITEM: SEC_PER_ITEM, secPerItem: secPerItem, itemsFor: itemsFor, recordPace: recordPace,
     resumePack: resumePack, resumeUnpack: resumeUnpack, resumeList: resumeList, resumeSave: resumeSave, resumeTake: resumeTake, resumeHas: resumeHas,
     load: load, save: save, get state() { return state; },

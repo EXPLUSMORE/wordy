@@ -653,11 +653,13 @@
     return (maskCache[val] = 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")');
   }
   /* size in px; shine = Glanz (nur für gezeichnete Figuren); tilt = Neigung in Grad */
-  function stickerHtml(val, size, tilt, shine, esc) {
+  function stickerHtml(val, size, tilt, shine, esc, acc) {
     ensureCutFilters();
     var drawn = /^svg:/.test(val) || !!ART[val], big = size >= 90;
     var inner = drawn ? (ART[/^svg:/.test(val) ? val.slice(4) : val] || ART.pummel) : (esc ? esc(val) : String(val));
-    var holo = drawn && shine && size >= 44 ? '<span class="stk-holo" style="-webkit-mask-image:' + maskUrl(val) + ';mask-image:' + maskUrl(val) + '"></span>' : "";
+    var worn = drawn && acc && Object.keys(acc).length && global.VTA && global.VTA.has(val);
+    if (worn) inner = global.VTA.headA(val, acc);   // Zubehör der Figur auch auf dem Sticker
+    var holo = drawn && !worn && shine && size >= 44 ? '<span class="stk-holo" style="-webkit-mask-image:' + maskUrl(val) + ';mask-image:' + maskUrl(val) + '"></span>' : "";
     return '<span class="stk" style="--s:' + size + 'px;--r:' + (tilt || 0) + 'deg;--f:' + (drawn ? 1 : 0.62) + '">' +
       '<span class="stk-cut" style="filter:url(#' + (big ? "cutL" : "cutS") + ')">' + inner + '</span>' + holo + '</span>';
   }
