@@ -96,6 +96,12 @@
     { id: "av:fnchamp",    kind: "avatar", set: "fn", label: "Champion-Kristall", cost: 1500, val: "svg:fnchamp", rank: "Champion I" },
     { id: "av:fnkristall", kind: "avatar", set: "fn", label: "Kristall-Lama",  cost: 1500, val: "svg:fnkristall", rank: "Unreal I" },
     { id: "av:gepard",      kind: "avatar", label: "Turbo-Gepard",   cost: 700,  val: "svg:gepard",     rank: "Platin II", rar: "epic" },
+    { id: "av:greif",       kind: "avatar", label: "Goldgreif",       cost: 2200, val: "svg:greif",    rank: "Elite II", rar: "legend" },
+    { id: "av:kitsune",     kind: "avatar", label: "Geisterfuchs",    cost: 2400, val: "svg:kitsune",  rank: "Elite III", rar: "legend" },
+    { id: "av:pegasus",     kind: "avatar", label: "Sternen-Pegasus", cost: 2600, val: "svg:pegasus",  rank: "Champion I", rar: "legend" },
+    { id: "av:zyklop",      kind: "avatar", label: "Zyklop Zack",     cost: 2800, val: "svg:zyklop",   rank: "Champion II", rar: "legend" },
+    { id: "av:sphinx",      kind: "avatar", label: "Sonnen-Sphinx",   cost: 3000, val: "svg:sphinx",   rank: "Champion III", rar: "legend" },
+    { id: "av:golem",       kind: "avatar", label: "Lava-Golem",      cost: 3000, val: "svg:golem",    rank: "Champion III", rar: "legend" },
     { id: "av:fnrakete",   kind: "avatar", set: "fn", label: "Raketen-Lama",   cost: 700,  val: "svg:fnrakete",   rank: "Platin II", rar: "epic" },
     { id: "av:fngold",     kind: "avatar", set: "fn", label: "Goldkristall-Lama", cost: 2200, val: "svg:fngold",  rank: "Unreal Gold I", rar: "unreal" },
     { id: "av:fnunreal",   kind: "avatar", set: "fn", label: "Unreal-Kristall", cost: 2500, val: "svg:fnunreal",  rank: "Unreal I" },
@@ -232,7 +238,7 @@
     "Platin I": ["av:pphoenix", "av:kitty3"], "Platin II": ["av:fnrakete", "av:gepard"], "Platin III": ["av:pgold", "av:fnelite"],
     /* ab Diamant I: alles legendär, nichts wird geschenkt, der Rang schaltet die Figuren nur im Shop frei (Kauf) */
     "Diamant I": ["av:blitzwolf", "av:pregen"], "Diamant II": ["av:sdrache", "av:ninja"], "Diamant III": ["av:flamingo", "av:faultier"],
-    "Elite I": ["av:fnchamp", "av:pgalaxie"], "Champion I": ["av:fnkristall", "av:fnunreal"], "Unreal I": ["av:kitty4"], "Unreal Gold I": ["av:fngold"]
+    "Elite I": ["av:fnchamp", "av:pgalaxie"], "Elite II": ["av:greif"], "Elite III": ["av:kitsune"], "Champion I": ["av:fnkristall", "av:fnunreal", "av:pegasus"], "Champion II": ["av:zyklop"], "Champion III": ["av:sphinx", "av:golem"], "Unreal I": ["av:kitty4"], "Unreal Gold I": ["av:fngold"]
   };
   var SHOP_ONLY_FROM = "Diamant I";   // ab diesem Rang keine Figurenwahl mehr
   function rankPickable(rn) {

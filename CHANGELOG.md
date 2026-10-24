@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.137.0 – 2026-10-24
+- **Etappe 1 der Rang-Figuren (legendär, Fabelwesen):** Goldgreif (Elite II, 2.200 🪙), Geisterfuchs mit neun Schweifen und blauem Geisterfeuer (Elite III, 2.400), Sternen-Pegasus (Champion I, 2.600), Zyklop Zack (Champion II, 2.800), Sonnen-Sphinx und Lava-Golem (beide Champion III, je 3.000). Jede Figur mit Kopf-Symbol, ganzer Figur samt Tänzen und Sticker (1.600 🪙). Sie erscheinen im Shop (Legendär), im Rang-Pfad und im Showroom. Nur App, kein Server-Schritt.
+
 ## 2.136.0 – 2026-10-24
 - Neue Seltenheitsstufe **Unreal** (über legendär, ab Rang Unreal): eigene Farbe (Cyan-Violett-Pink mit Schimmer), eigener Abschnitt im Shop, Showroom und Sammlung, Sortierung nach legendär. Sticker dieser Stufe kosten 3.500 Münzen. Zugeordnet sind vorerst Kitty Sternenzauber, Goldkristall-Lama und der Titel „Legende der Wörter“; neue Figuren für die höheren Ränge kommen in dieser Stufe. Nur App, kein Server-Schritt.
 

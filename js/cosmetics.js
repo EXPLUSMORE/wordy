@@ -138,6 +138,68 @@
         '<path d="M10 27Q30 22 54 27Q44 24 40 14Q36 -6 30 0Q24 10 20 22z" fill="#3B2791" stroke="#FFD34D" stroke-width="1.2" stroke-linejoin="round"/><ellipse cx="32" cy="26.5" rx="25" ry="3.4" fill="#4B2FB8" stroke="#FFD34D" stroke-width="1"/>' + star(31, 12, 4, "#FFE27A") + star(43, 20, 2.4, "#fff"),
       face: ''
     }),
+    greif: pummel({
+      defs: '<linearGradient id="pmGr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFDF2"/><stop offset="1" stop-color="#F2DBA0"/></linearGradient>',
+      body: "url(#pmGr)", shade: "#C98A2B", eye: "#3B2108", pupil: "#fff",
+      behind: '<path d="M3 40Q-4 18 8 8Q10 22 20 30z" fill="#E0A53A" stroke="#9A6412" stroke-width="1"/><path d="M61 40Q68 18 56 8Q54 22 44 30z" fill="#E0A53A" stroke="#9A6412" stroke-width="1"/><path d="M6 30Q2 20 9 13M58 30Q62 20 55 13" fill="none" stroke="#FFE08A" stroke-width="1.4" stroke-linecap="round"/>',
+      ears: '<path d="M12 27L6 11l16 8z" fill="#C98A2B"/><path d="M52 27l6-16-16 8z" fill="#C98A2B"/><path d="M13 23l-2-8 7 4z" fill="#FFE08A"/><path d="M51 23l2-8-7 4z" fill="#FFE08A"/>',
+      front: '<path d="M22 22l3-13 4 8 3-11 3 11 4-8 3 13z" fill="#E0A53A" stroke="#9A6412" stroke-width="1" stroke-linejoin="round"/>' +
+        '<path d="M14 30l11 5M50 30l-11 5" stroke="#6B3E0A" stroke-width="2.2" stroke-linecap="round"/>' +
+        '<path d="M24 40q8-5 16 0q-2 11-8 14q-6-3-8-14z" fill="#FFB020" stroke="#B86A00" stroke-width="1.1" stroke-linejoin="round"/><path d="M27 41q5-3 10 0" stroke="#FFF1B0" stroke-width="1.4" stroke-linecap="round" fill="none"/>' +
+        '<path d="M16 46l3 3M20 50l2 3M48 46l-3 3M44 50l-2 3" stroke="#E0A53A" stroke-width="1.6" stroke-linecap="round"/>',
+      face: ''
+    }),
+    kitsune: pummel({
+      defs: '<radialGradient id="pmKf" cx=".5" cy=".8" r=".8"><stop offset="0" stop-color="#E6FBFF"/><stop offset=".5" stop-color="#59D6FF"/><stop offset="1" stop-color="#2F7BFF"/></radialGradient>',
+      body: "#FFE9D2", shade: "#F2761A", eye: "#2B1A2A", pupil: "#fff",
+      behind: '<path d="M57 40q8-4 5-14q-7 3-9 11z" fill="#FFB36B"/><path d="M7 40q-8-4-5-14q7 3 9 11z" fill="#FFB36B"/><path d="M60 24q-1 3 1 5q2-2-1-5z" fill="url(#pmKf)"/>',
+      ears: '<path d="M9 30L10 4l18 14z" fill="#FF9A4A"/><path d="M55 30L54 4L36 18z" fill="#FF9A4A"/><path d="M12 24l1-14 8 7z" fill="#2B1A2A"/><path d="M52 24l-1-14-8 7z" fill="#2B1A2A"/>',
+      front: '<path d="M7 38q6-12 17-8q-2 9-10 14zM57 38q-6-12-17-8q2 9 10 14z" fill="#FF9A4A"/>' +
+        '<path d="M28 23q4-9 4-14q4 5 4 14q-4-3-8 0z" fill="url(#pmKf)" stroke="#2F7BFF" stroke-width=".8"/>' +
+        '<path d="M14 36l6 1M50 36l-6 1" stroke="#E8123C" stroke-width="2" stroke-linecap="round"/><path d="M26 25l-2-3M38 25l2-3" stroke="#E8123C" stroke-width="1.8" stroke-linecap="round"/>' +
+        '<ellipse cx="32" cy="46" rx="10" ry="6.6" fill="#fff"/><path d="M30 42h4l-2 2.4z" fill="#2B1A2A"/>',
+      face: '<path d="M28 49q4 3 8 0" fill="none" stroke="#2B1A2A" stroke-width="1.6" stroke-linecap="round"/>'
+    }),
+    pegasus: pummel({
+      defs: '<linearGradient id="pmPm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6FC3FF"/><stop offset=".5" stop-color="#B78CFF"/><stop offset="1" stop-color="#FF9EC9"/></linearGradient>',
+      body: "#FFFFFF", shade: "#C9D8F2", eye: "#2B2166", pupil: "#fff",
+      behind: '<path d="M2 40Q-6 18 6 6Q10 20 20 30z" fill="#fff" stroke="#9DB9D8" stroke-width="1"/><path d="M62 40Q70 18 58 6Q54 20 44 30z" fill="#fff" stroke="#9DB9D8" stroke-width="1"/><path d="M4 26Q2 16 8 10M60 26Q62 16 56 10" fill="none" stroke="#BFE4FF" stroke-width="1.5" stroke-linecap="round"/>',
+      ears: '<path d="M14 26l-2-16 13 9z" fill="#fff" stroke="#C9D8F2" stroke-width="1"/><path d="M50 26l2-16-13 9z" fill="#fff" stroke="#C9D8F2" stroke-width="1"/><path d="M15 21l-1-8 6 5z" fill="#FFC4DE"/><path d="M49 21l1-8-6 5z" fill="#FFC4DE"/>',
+      front: '<path d="M18 22Q22 4 38 8Q50 12 48 26Q40 14 30 22Q24 14 18 22z" fill="url(#pmPm)" stroke="#8A6FE0" stroke-width="1" stroke-linejoin="round"/><path d="M44 10Q54 14 52 28Q50 18 44 16z" fill="url(#pmPm)"/>' +
+        '<ellipse cx="32" cy="46" rx="11" ry="7.5" fill="#FFE0F0"/><circle cx="28.5" cy="46" r="1.4" fill="#C77AA8"/><circle cx="35.5" cy="46" r="1.4" fill="#C77AA8"/>' + star(31, 14, 4.5, "#FFD34D"),
+      face: '<path d="M28 50q4 3 8 0" fill="none" stroke="#C77AA8" stroke-width="1.6" stroke-linecap="round"/>'
+    }),
+    zyklop: pummel({
+      body: "#5FD3B0", shade: "#1F8F6A", ownFace: true,
+      ears: '<path d="M14 26L9 8l14 10z" fill="#FFF3C9" stroke="#C9A24A" stroke-width="1"/><path d="M50 26l5-18-14 10z" fill="#FFF3C9" stroke="#C9A24A" stroke-width="1"/><ellipse cx="6" cy="38" rx="4" ry="6" fill="#4CBF9C"/><ellipse cx="58" cy="38" rx="4" ry="6" fill="#4CBF9C"/>',
+      front: '<path d="M16 26Q32 18 48 26" fill="none" stroke="#1F8F6A" stroke-width="2.4" stroke-linecap="round"/><circle cx="32" cy="32" r="12" fill="#fff" stroke="#1F6F55" stroke-width="1.6"/><circle cx="33" cy="33" r="6.6" fill="#FFB020"/><circle cx="33" cy="33" r="3.6" fill="#2B1A00"/><circle cx="35" cy="30.6" r="1.6" fill="#fff"/>' +
+        '<path d="M14 44q18 10 36 0q-2 12-18 12q-16 0-18-12z" fill="#7A1630" stroke="#1F6F55" stroke-width="1.2"/><path d="M19 46l2.4 5 2.4-4zM41 46l-2.4 5-2.4-4z" fill="#FFF3C9"/><path d="M26 46l2 3 2-3M34 46l2 3 2-3" fill="#fff"/><ellipse cx="32" cy="53" rx="6" ry="2.6" fill="#FF6F8E"/>' +
+        '<ellipse cx="14" cy="42" rx="3.4" ry="2.2" fill="#FF8FB8" opacity=".6"/><ellipse cx="50" cy="42" rx="3.4" ry="2.2" fill="#FF8FB8" opacity=".6"/>',
+      face: ''
+    }),
+    sphinx: pummel({
+      defs: '<linearGradient id="pmSp" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2F7BE8"/><stop offset=".5" stop-color="#FFD34D"/><stop offset="1" stop-color="#2F7BE8"/></linearGradient>',
+      body: "#F2C14E", shade: "#B88A1F", eye: "#1B1230", pupil: "#fff",
+      behind: '<path d="M11 18Q-2 30 6 60L20 52L18 28z" fill="url(#pmSp)" stroke="#173F8F" stroke-width="1"/><path d="M53 18Q66 30 58 60L44 52L46 28z" fill="url(#pmSp)" stroke="#173F8F" stroke-width="1"/><path d="M6 36l12 2M5 44l13 1M7 52l12-1M58 36L46 38M59 44L46 45M57 52L45 51" stroke="#FFD34D" stroke-width="1.4"/>',
+      ears: '',
+      front: '<path d="M12 28Q14 8 32 6Q50 8 52 28Q42 18 32 18Q22 18 12 28z" fill="url(#pmSp)" stroke="#173F8F" stroke-width="1.2" stroke-linejoin="round"/><path d="M18 22l4 4M26 16l3 5M38 16l-3 5M46 22l-4 4" stroke="#173F8F" stroke-width="1" opacity=".5"/>' +
+        '<path d="M32 3q-5 3-3 8q3-1 3-3q0 2 3 3q2-5-3-8z" fill="#FFD34D" stroke="#B88A1F" stroke-width="1"/>' +
+        '<path d="M14 36q5-2 9 1M50 36q-5-2-9 1" stroke="#1B1230" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M12 39l4 2M52 39l-4 2" stroke="#1B1230" stroke-width="1.6" stroke-linecap="round"/>' +
+        '<ellipse cx="32" cy="46" rx="10.5" ry="7" fill="#FFF3C9"/><path d="M29 41h6l-3 3z" fill="#FF7FA6"/><path d="M12 52Q32 66 52 52L48 60Q32 68 16 60z" fill="url(#pmSp)" stroke="#173F8F" stroke-width="1"/>',
+      face: MOUTH_CAT
+    }),
+    golem: pummel({
+      defs: '<linearGradient id="pmGo" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8E94AA"/><stop offset="1" stop-color="#4A4F66"/></linearGradient>',
+      body: "url(#pmGo)", shade: "#33374A", ownFace: true,
+      behind: '<path d="M10 28L4 10l14 8z" fill="#5A5F73"/><path d="M54 28l6-18-14 8z" fill="#5A5F73"/>',
+      ears: '<path d="M16 24L12 6l12 10z" fill="#6B7088" stroke="#33374A" stroke-width="1"/><path d="M48 24l4-18-12 10z" fill="#6B7088" stroke="#33374A" stroke-width="1"/>',
+      front: '<path d="M10 40l7-3 4 6-6 3zM54 40l-7-3-4 6 6 3z" fill="#5A5F73"/>' +
+        '<path d="M20 20l5 8-4 6 6 6M44 22l-5 7 5 5M32 12l-2 8 4 7" stroke="#FF8A1F" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 20l5 8-4 6 6 6M44 22l-5 7 5 5M32 12l-2 8 4 7" stroke="#FFE08A" stroke-width=".8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '<ellipse cx="23" cy="36" rx="5.4" ry="4.4" fill="#FF8A1F"/><ellipse cx="41" cy="36" rx="5.4" ry="4.4" fill="#FF8A1F"/><ellipse cx="23" cy="36" rx="2.6" ry="2.2" fill="#FFF3B0"/><ellipse cx="41" cy="36" rx="2.6" ry="2.2" fill="#FFF3B0"/>' +
+        '<path d="M20 47l4 3 4-4 4 4 4-4 4 3 4-3" fill="none" stroke="#FF8A1F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 47l4 3 4-4 4 4 4-4 4 3 4-3" fill="none" stroke="#FFE08A" stroke-width=".9" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '<ellipse cx="46" cy="22" rx="5" ry="2.6" fill="#7BCB5A" opacity=".85"/><circle cx="14" cy="46" r="1.2" fill="#FFB347"/><circle cx="52" cy="50" r="1" fill="#FFB347"/>',
+      face: ''
+    }),
     gepard: pummel({
       body: "#F6B73C", shade: "#C27A14", eye: "#2B1A00", pupil: "#fff",
       ears: '<circle cx="14" cy="20" r="8" fill="#F6B73C"/><circle cx="50" cy="20" r="8" fill="#F6B73C"/><circle cx="14" cy="21" r="4" fill="#3B2410"/><circle cx="50" cy="21" r="4" fill="#3B2410"/>',
