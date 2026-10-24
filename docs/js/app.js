@@ -252,7 +252,7 @@
 
   /* ---------- Textvergleich ---------- */
   function norm(s) {
-    return String(s).toLowerCase().replace(/\s*(…|\.{2,})\s*/g, " ").replace(/^to\s+/, "").replace(/^(a|an|the)\s+/, "")   // „Next …“ gilt auch als „next“ (Auslassungspunkte zählen nicht mit)
+    return String(s).toLowerCase().replace(/\s*(…|\.{2,})\s*/g, " ").replace(/(^|\s)(sb|sth)(\.|'s)?(?=\s|$)/g, " ").replace(/[()]/g, " ").replace(/\s+/g, " ").trim().replace(/^to\s+/, "").replace(/^(a|an|the)\s+/, "")   // „Next …“ gilt auch als „next“ (Auslassungspunkte zählen nicht mit)
       .replace(/[.,!?;:'"´`]/g, "").replace(/\s+/g, " ").trim();
   }
   function lev(a, b) {
@@ -263,14 +263,40 @@
       d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
     return d[m][n];
   }
-  function judgeTyped(input, target) {
-    var a = norm(input), alts = String(target).split(/\s*[\/,]\s*/).map(norm).filter(Boolean);
-    if (!a) return 0;
-    if (alts.indexOf(a) >= 0) return 2;
-    for (var i = 0; i < alts.length; i++) {
-      var d = lev(a, alts[i]);
-      if (d <= (alts[i].length > 6 ? 2 : 1)) return 1;
+  /* Zielwort in alle gültigen Schreibweisen zerlegen: Wörter in Klammern sind nur Hilfe (mit und ohne gültig, z. B. „(train) station“, „be scared (of)“, „rain (Nomen)“),
+     „a/b“ = Alternativen („be/feel homesick“ → „be homesick“, „feel homesick“), „ / “ und „,“ trennen Alternativen, „…“, „sb.“ und „sth.“ sind Platzhalter */
+  var ELL = /\s*(…|\.{2,})\s*/;
+  function enAlts(en) {
+    var src = String(en), groups = src.match(/\([^)]*\)/g) || [], n = Math.min(groups.length, 3), out = [], seen = {};
+    for (var mask = 0; mask < (1 << n); mask++) {
+      var gi = 0, v = src.replace(/\([^)]*\)/g, function (g) { var k = gi++; return k < n && (mask >> k & 1) ? g.slice(1, -1) : ""; });
+      var parts = v.split(/\s+\/\s+|\s*,\s*/); if (/,/.test(v)) parts.push(v.replace(/\s*,\s*/g, " "));
+      parts.forEach(function (part) {
+        var opts = [[]]; part.trim().split(/\s+/).forEach(function (tok) { var alts = tok.split("/"); var nx = []; opts.forEach(function (o) { alts.forEach(function (a2) { if (nx.length < 24) nx.push(o.concat([a2])); }); }); opts = nx; });
+        opts.forEach(function (o) { var str = o.join(" ").replace(/\s+/g, " ").trim(); if (str && !seen[str]) { seen[str] = 1; out.push(str); } });
+      });
     }
+    return out;
+  }
+  /* Kürzeste Schreibweise zum Tippen/Zusammensetzen: ohne Klammerwörter, ohne „…“, „sb.“, „sth.“ („bark (at sb.)“ → „bark“, „not … either“ → „not either“) */
+  function plainEn(en) {
+    var f = enAlts(en)[0] || String(en);
+    return f.replace(ELL, " ").replace(/(^|\s)(sb|sth)(\.|'s)?(?=\s|$)/gi, " ").replace(/\s+/g, " ").trim() || String(en);
+  }
+  function judgeTyped(input, target) {
+    var a = norm(input), alts = enAlts(target); if (!a) return 0;
+    var plain = [];
+    for (var i = 0; i < alts.length; i++) {
+      var alt = alts[i], nn = norm(alt); if (!nn) continue;
+      if (nn === a) return 2;
+      if (ELL.test(alt)) {   // „not … either“: an die Stelle der Punkte darf nichts oder beliebig viel kommen
+        var pieces = alt.split(ELL).filter(function (x, k) { return k % 2 === 0; }).map(function (x, k) { return norm(x); }), re = "";
+        var lead = /^\s*(…|\.{2,})/.test(alt), trail = /(…|\.{2,})\s*$/.test(alt), ps = pieces.filter(Boolean);
+        if (ps.length) { re = "^" + (lead ? "(?:.+ )?" : "") + ps.map(function (x) { return x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }).join("(?: .+)? ") + (trail ? "(?: .+)?" : "") + "$"; try { if (new RegExp(re).test(a)) return 2; } catch (e) {} }
+      }
+      plain.push(nn);
+    }
+    for (var j = 0; j < plain.length; j++) { var d = lev(a, plain[j]); if (d <= (plain[j].length > 6 ? 2 : 1)) return 1; }
     return 0;
   }
 
@@ -2956,10 +2982,11 @@
         inlineCheck() +
         '<div id="hintBox" class="small" style="min-height:22px;letter-spacing:.18em;font-weight:700" aria-live="polite"></div>' +
         '<button class="chip" id="hintBtn" type="button" style="align-self:flex-start">💡 Hinweis</button>' +
-        '<p class="small muted" style="margin:0">Kleine Tippfehler zählen halb – die Schreibweise siehst du gleich. Mit Hinweis gibt es keine XP.</p></div>';
+        '<p class="small muted" style="margin:0">Kleine Tippfehler zählen halb – die Schreibweise siehst du gleich. Mit Hinweis gibt es keine XP.</p>' +
+        (/…|\.{2,}|\bsb\b|\bsth\b|\(/.test(w.en) ? '<p class="small" style="margin:0">💬 Wörter in Klammern, „…“, „sb.“ und „sth.“ musst du nicht schreiben – nur den Rest.</p>' : "") + '</div>';
       foot.innerHTML = "";
       var inp = $("#typeIn"), btn = $("#inlineCheck");
-      var first = String(w.en).split(/\s*[\/,]\s*/)[0];
+      var first = plainEn(w.en);
       var pattern = first.split(" ").map(function (wd) { return wd.split("").map(function (c, k) { return k === 0 ? c : /[A-Za-z]/.test(c) ? "_" : c; }).join(" "); }).join("   ");
       var hb = $("#hintBtn"), hbox = $("#hintBox");
       hb.addEventListener("click", function () {
@@ -2978,7 +3005,7 @@
       setTimeout(function () { inp.focus(); }, 60);
     },
     spell: function (t, body, foot) {
-      var w = t.w, target = w.en.replace(/^to\s+/, "");
+      var w = t.w, target = plainEn(w.en).replace(/^to\s+/, "");
       t.target = target;
       var letters = S.shuffle(target.split("").map(function (ch, i) { return { ch: ch, i: i }; }));
       t.built = [];

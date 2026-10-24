@@ -1496,7 +1496,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.134.1";window.WORDY_BUILD="64db5544d0";</script>
+<script>window.WORDY_VERSION="2.135.0";window.WORDY_BUILD="f1ec2c4069";</script>
 </head>
 <body>
 <div id="app">
@@ -5705,7 +5705,8 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     { n: "Gemeistert",  short: "★",    hint: "langfristig gespeichert" }
   ];
 
-  /* Ränge nach dem Vorbild von Fortnite Ranked; "Unreal Gold" ist die eigene Spitze darüber */
+  /* Ränge nach dem Vorbild von Fortnite Ranked, darüber die eigene Spitze (Unreal bis The real Unreal). Elite I beginnt bei 35.000 XP;
+     jede weitere Stufe braucht 5.000 XP mehr, dann 6.000, 7.000 usw. (Abstand wächst je Stufe um 1.000). Der Rang folgt immer aus den XP. */
   var RANKS = [
     { xp: 0,     n: "Bronze I",     t: "bronze" },   { xp: 150,   n: "Bronze II",    t: "bronze" },
     { xp: 400,   n: "Bronze III",   t: "bronze" },   { xp: 800,   n: "Silber I",     t: "silber" },
@@ -5714,10 +5715,15 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     { xp: 6400,  n: "Gold III",     t: "gold" },     { xp: 9000,  n: "Platin I",     t: "platin" },
     { xp: 12000, n: "Platin II",    t: "platin" },   { xp: 15500, n: "Platin III",   t: "platin" },
     { xp: 19500, n: "Diamant I",    t: "diamant" },  { xp: 24000, n: "Diamant II",   t: "diamant" },
-    { xp: 29000, n: "Diamant III",  t: "diamant" },  { xp: 35000, n: "Elite",        t: "elite" },
-    { xp: 42000, n: "Champion",     t: "champion" }, { xp: 50000, n: "Unreal",       t: "unreal" },
-    { xp: 60000, n: "Unreal Gold",  t: "unreal-gold" }
+    { xp: 29000, n: "Diamant III",  t: "diamant" }
   ];
+  (function () {
+    var xp = 35000, step = 5000;
+    [["Elite", "elite"], ["Champion", "champion"], ["Unreal", "unreal"], ["Unreal Gold", "unreal-gold"], ["Unreal Platin", "unreal-platin"], ["Unreal Diamant", "unreal-diamant"]].forEach(function (g) {
+      ["I", "II", "III"].forEach(function (rm) { RANKS.push({ xp: xp, n: g[0] + " " + rm, t: g[1] }); xp += step; step += 1000; });
+    });
+    RANKS.push({ xp: xp, n: "The real Unreal", t: "real-unreal" });
+  })();
 
   var AVATARS = ["🦊","🐼","🦉","🐙","🦕","🐝","🦁","🐧","🦄","🐢","🦈","🐨"];
   /* Shop: kind = avatar | frame | title | bg | fx | snd | theme. cost 0 = gehört immer dazu.
@@ -5744,7 +5750,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     { id: "av:pphoenix", kind: "avatar", label: "Pummelphönix",  cost: 650,  val: "svg:pphoenix", rank: "Gold I" },
     { id: "av:pgold",    kind: "avatar", label: "Goldpummel",    cost: 800,  val: "svg:pgold", rank: "Platin I" },
     { id: "av:pregen",   kind: "avatar", label: "Regenbogenpummel", cost: 1500, val: "svg:pregen", rank: "Diamant I" },
-    { id: "av:pgalaxie", kind: "avatar", label: "Galaxiepummel", cost: 2000, val: "svg:pgalaxie", rank: "Elite" },
+    { id: "av:pgalaxie", kind: "avatar", label: "Galaxiepummel", cost: 2000, val: "svg:pgalaxie", rank: "Elite I" },
     { id: "av:blitzwolf", kind: "avatar", label: "Blitzwolf", cost: 1800, val: "svg:blitzwolf", rank: "Diamant I", rar: "legend" },
     { id: "av:ninja", kind: "avatar", label: "Nachtschatten", cost: 1800, val: "svg:ninja", rank: "Diamant II", rar: "legend" },
     { id: "av:flamingo", kind: "avatar", label: "Disco-Flamingo", cost: 2000, val: "svg:flamingo", rank: "Diamant III", rar: "legend" },
@@ -5763,13 +5769,13 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     { id: "av:fnwolf",     kind: "avatar", set: "fn", label: "Wolf",           cost: 250,  val: "svg:fnwolf",     rank: "Gold II" },
     { id: "av:fnraptor",   kind: "avatar", set: "fn", label: "Raptor",         cost: 350,  val: "svg:fnraptor",   rank: "Gold II" },
     { id: "av:fnllama",    kind: "avatar", set: "fn", label: "Beute-Lama",     cost: 350,  val: "svg:fnllama",    rank: "Gold II" },
-    { id: "av:fnelite",    kind: "avatar", set: "fn", label: "Elite-Kristall", cost: 800,  val: "svg:fnelite",    rank: "Elite" },
-    { id: "av:fnchamp",    kind: "avatar", set: "fn", label: "Champion-Kristall", cost: 1500, val: "svg:fnchamp", rank: "Champion" },
-    { id: "av:fnkristall", kind: "avatar", set: "fn", label: "Kristall-Lama",  cost: 1500, val: "svg:fnkristall", rank: "Unreal" },
+    { id: "av:fnelite",    kind: "avatar", set: "fn", label: "Elite-Kristall", cost: 800,  val: "svg:fnelite",    rank: "Elite I" },
+    { id: "av:fnchamp",    kind: "avatar", set: "fn", label: "Champion-Kristall", cost: 1500, val: "svg:fnchamp", rank: "Champion I" },
+    { id: "av:fnkristall", kind: "avatar", set: "fn", label: "Kristall-Lama",  cost: 1500, val: "svg:fnkristall", rank: "Unreal I" },
     { id: "av:gepard",      kind: "avatar", label: "Turbo-Gepard",   cost: 700,  val: "svg:gepard",     rank: "Platin II", rar: "epic" },
     { id: "av:fnrakete",   kind: "avatar", set: "fn", label: "Raketen-Lama",   cost: 700,  val: "svg:fnrakete",   rank: "Platin II", rar: "epic" },
-    { id: "av:fngold",     kind: "avatar", set: "fn", label: "Goldkristall-Lama", cost: 2200, val: "svg:fngold",  rank: "Unreal Gold", rar: "legend" },
-    { id: "av:fnunreal",   kind: "avatar", set: "fn", label: "Unreal-Kristall", cost: 2500, val: "svg:fnunreal",  rank: "Unreal" },
+    { id: "av:fngold",     kind: "avatar", set: "fn", label: "Goldkristall-Lama", cost: 2200, val: "svg:fngold",  rank: "Unreal Gold I", rar: "legend" },
+    { id: "av:fnunreal",   kind: "avatar", set: "fn", label: "Unreal-Kristall", cost: 2500, val: "svg:fnunreal",  rank: "Unreal I" },
 
     { id: "fr:eis",     kind: "frame", label: "Eiskristall-Rahmen", cost: 1500, val: "eis", reward: "eis" },
     { id: "fr:none",    kind: "frame", label: "Kein Rahmen", cost: 0,   val: "none" },
@@ -5783,7 +5789,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     { id: "ti:freund",  kind: "title", label: "Pummelfreund", cost: 120, val: "Pummelfreund" },
     { id: "ti:profi",   kind: "title", label: "Vokabelprofi", cost: 120, val: "Vokabelprofi" },
     { id: "ti:genie",   kind: "title", label: "Sprachgenie",  cost: 350, val: "Sprachgenie" },
-    { id: "ti:champ",   kind: "title", label: "Champion der Wörter", cost: 500, val: "Champion der Wörter", rank: "Champion" },
+    { id: "ti:champ",   kind: "title", label: "Champion der Wörter", cost: 500, val: "Champion der Wörter", rank: "Champion I" },
     /* Titel (Begrüßung auf der Startseite, v2.119) */
     { id: "ti:vninja",   kind: "title", label: "Vokabel-Ninja",        cost: 80,   val: "Vokabel-Ninja",        rar: "common" },
     { id: "ti:quassel",  kind: "title", label: "Quasselstrippe",       cost: 80,   val: "Quasselstrippe",       rar: "common" },
@@ -5798,8 +5804,8 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     { id: "ti:eroberer", kind: "title", label: "Englisch-Eroberer",    cost: 500,  val: "Englisch-Eroberer",    rar: "epic", rank: "Platin III" },
     { id: "ti:titan",    kind: "title", label: "Wörter-Titan",         cost: 1200, val: "Wörter-Titan",         rar: "legend", rank: "Diamant I" },
     { id: "ti:unbesiegbar", kind: "title", label: "Unbesiegbar",       cost: 1000, val: "Unbesiegbar",          rar: "legend", rank: "Diamant III" },
-    { id: "ti:herrscher",kind: "title", label: "Herrscher der Vokabeln", cost: 1500, val: "Herrscher der Vokabeln", rar: "legend", rank: "Elite" },
-    { id: "ti:legende",  kind: "title", label: "Legende der Wörter",   cost: 1500, val: "Legende der Wörter",   rar: "legend", rank: "Unreal" },
+    { id: "ti:herrscher",kind: "title", label: "Herrscher der Vokabeln", cost: 1500, val: "Herrscher der Vokabeln", rar: "legend", rank: "Elite I" },
+    { id: "ti:legende",  kind: "title", label: "Legende der Wörter",   cost: 1500, val: "Legende der Wörter",   rar: "legend", rank: "Unreal I" },
 
     { id: "bg:none",   kind: "bg", label: "Schlicht", cost: 0,   val: "none" },
     { id: "bg:stars",  kind: "bg", label: "Sterne",   cost: 120, val: "stars" },
@@ -5903,7 +5909,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     "Platin I": ["av:pphoenix", "av:kitty3"], "Platin II": ["av:fnrakete", "av:gepard"], "Platin III": ["av:pgold", "av:fnelite"],
     /* ab Diamant I: alles legendär, nichts wird geschenkt, der Rang schaltet die Figuren nur im Shop frei (Kauf) */
     "Diamant I": ["av:blitzwolf", "av:pregen"], "Diamant II": ["av:sdrache", "av:ninja"], "Diamant III": ["av:flamingo", "av:faultier"],
-    "Elite": ["av:fnchamp", "av:pgalaxie"], "Champion": ["av:fnkristall", "av:fnunreal"], "Unreal": ["av:kitty4"], "Unreal Gold": ["av:fngold"]
+    "Elite I": ["av:fnchamp", "av:pgalaxie"], "Champion I": ["av:fnkristall", "av:fnunreal"], "Unreal I": ["av:kitty4"], "Unreal Gold I": ["av:fngold"]
   };
   var SHOP_ONLY_FROM = "Diamant I";   // ab diesem Rang keine Figurenwahl mehr
   function rankPickable(rn) {
@@ -9931,7 +9937,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
 
   /* ---------- Textvergleich ---------- */
   function norm(s) {
-    return String(s).toLowerCase().replace(/\s*(…|\.{2,})\s*/g, " ").replace(/^to\s+/, "").replace(/^(a|an|the)\s+/, "")   // „Next …“ gilt auch als „next“ (Auslassungspunkte zählen nicht mit)
+    return String(s).toLowerCase().replace(/\s*(…|\.{2,})\s*/g, " ").replace(/(^|\s)(sb|sth)(\.|'s)?(?=\s|$)/g, " ").replace(/[()]/g, " ").replace(/\s+/g, " ").trim().replace(/^to\s+/, "").replace(/^(a|an|the)\s+/, "")   // „Next …“ gilt auch als „next“ (Auslassungspunkte zählen nicht mit)
       .replace(/[.,!?;:'"´`]/g, "").replace(/\s+/g, " ").trim();
   }
   function lev(a, b) {
@@ -9942,14 +9948,40 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
     return d[m][n];
   }
-  function judgeTyped(input, target) {
-    var a = norm(input), alts = String(target).split(/\s*[\/,]\s*/).map(norm).filter(Boolean);
-    if (!a) return 0;
-    if (alts.indexOf(a) >= 0) return 2;
-    for (var i = 0; i < alts.length; i++) {
-      var d = lev(a, alts[i]);
-      if (d <= (alts[i].length > 6 ? 2 : 1)) return 1;
+  /* Zielwort in alle gültigen Schreibweisen zerlegen: Wörter in Klammern sind nur Hilfe (mit und ohne gültig, z. B. „(train) station“, „be scared (of)“, „rain (Nomen)“),
+     „a/b“ = Alternativen („be/feel homesick“ → „be homesick“, „feel homesick“), „ / “ und „,“ trennen Alternativen, „…“, „sb.“ und „sth.“ sind Platzhalter */
+  var ELL = /\s*(…|\.{2,})\s*/;
+  function enAlts(en) {
+    var src = String(en), groups = src.match(/\([^)]*\)/g) || [], n = Math.min(groups.length, 3), out = [], seen = {};
+    for (var mask = 0; mask < (1 << n); mask++) {
+      var gi = 0, v = src.replace(/\([^)]*\)/g, function (g) { var k = gi++; return k < n && (mask >> k & 1) ? g.slice(1, -1) : ""; });
+      var parts = v.split(/\s+\/\s+|\s*,\s*/); if (/,/.test(v)) parts.push(v.replace(/\s*,\s*/g, " "));
+      parts.forEach(function (part) {
+        var opts = [[]]; part.trim().split(/\s+/).forEach(function (tok) { var alts = tok.split("/"); var nx = []; opts.forEach(function (o) { alts.forEach(function (a2) { if (nx.length < 24) nx.push(o.concat([a2])); }); }); opts = nx; });
+        opts.forEach(function (o) { var str = o.join(" ").replace(/\s+/g, " ").trim(); if (str && !seen[str]) { seen[str] = 1; out.push(str); } });
+      });
     }
+    return out;
+  }
+  /* Kürzeste Schreibweise zum Tippen/Zusammensetzen: ohne Klammerwörter, ohne „…“, „sb.“, „sth.“ („bark (at sb.)“ → „bark“, „not … either“ → „not either“) */
+  function plainEn(en) {
+    var f = enAlts(en)[0] || String(en);
+    return f.replace(ELL, " ").replace(/(^|\s)(sb|sth)(\.|'s)?(?=\s|$)/gi, " ").replace(/\s+/g, " ").trim() || String(en);
+  }
+  function judgeTyped(input, target) {
+    var a = norm(input), alts = enAlts(target); if (!a) return 0;
+    var plain = [];
+    for (var i = 0; i < alts.length; i++) {
+      var alt = alts[i], nn = norm(alt); if (!nn) continue;
+      if (nn === a) return 2;
+      if (ELL.test(alt)) {   // „not … either“: an die Stelle der Punkte darf nichts oder beliebig viel kommen
+        var pieces = alt.split(ELL).filter(function (x, k) { return k % 2 === 0; }).map(function (x, k) { return norm(x); }), re = "";
+        var lead = /^\s*(…|\.{2,})/.test(alt), trail = /(…|\.{2,})\s*$/.test(alt), ps = pieces.filter(Boolean);
+        if (ps.length) { re = "^" + (lead ? "(?:.+ )?" : "") + ps.map(function (x) { return x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }).join("(?: .+)? ") + (trail ? "(?: .+)?" : "") + "$"; try { if (new RegExp(re).test(a)) return 2; } catch (e) {} }
+      }
+      plain.push(nn);
+    }
+    for (var j = 0; j < plain.length; j++) { var d = lev(a, plain[j]); if (d <= (plain[j].length > 6 ? 2 : 1)) return 1; }
     return 0;
   }
 
@@ -12635,10 +12667,11 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
         inlineCheck() +
         '<div id="hintBox" class="small" style="min-height:22px;letter-spacing:.18em;font-weight:700" aria-live="polite"></div>' +
         '<button class="chip" id="hintBtn" type="button" style="align-self:flex-start">💡 Hinweis</button>' +
-        '<p class="small muted" style="margin:0">Kleine Tippfehler zählen halb – die Schreibweise siehst du gleich. Mit Hinweis gibt es keine XP.</p></div>';
+        '<p class="small muted" style="margin:0">Kleine Tippfehler zählen halb – die Schreibweise siehst du gleich. Mit Hinweis gibt es keine XP.</p>' +
+        (/…|\.{2,}|\bsb\b|\bsth\b|\(/.test(w.en) ? '<p class="small" style="margin:0">💬 Wörter in Klammern, „…“, „sb.“ und „sth.“ musst du nicht schreiben – nur den Rest.</p>' : "") + '</div>';
       foot.innerHTML = "";
       var inp = $("#typeIn"), btn = $("#inlineCheck");
-      var first = String(w.en).split(/\s*[\/,]\s*/)[0];
+      var first = plainEn(w.en);
       var pattern = first.split(" ").map(function (wd) { return wd.split("").map(function (c, k) { return k === 0 ? c : /[A-Za-z]/.test(c) ? "_" : c; }).join(" "); }).join("   ");
       var hb = $("#hintBtn"), hbox = $("#hintBox");
       hb.addEventListener("click", function () {
@@ -12657,7 +12690,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       setTimeout(function () { inp.focus(); }, 60);
     },
     spell: function (t, body, foot) {
-      var w = t.w, target = w.en.replace(/^to\s+/, "");
+      var w = t.w, target = plainEn(w.en).replace(/^to\s+/, "");
       t.target = target;
       var letters = S.shuffle(target.split("").map(function (ch, i) { return { ch: ch, i: i }; }));
       t.built = [];

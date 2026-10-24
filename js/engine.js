@@ -28,7 +28,8 @@
     { n: "Gemeistert",  short: "★",    hint: "langfristig gespeichert" }
   ];
 
-  /* Ränge nach dem Vorbild von Fortnite Ranked; "Unreal Gold" ist die eigene Spitze darüber */
+  /* Ränge nach dem Vorbild von Fortnite Ranked, darüber die eigene Spitze (Unreal bis The real Unreal). Elite I beginnt bei 35.000 XP;
+     jede weitere Stufe braucht 5.000 XP mehr, dann 6.000, 7.000 usw. (Abstand wächst je Stufe um 1.000). Der Rang folgt immer aus den XP. */
   var RANKS = [
     { xp: 0,     n: "Bronze I",     t: "bronze" },   { xp: 150,   n: "Bronze II",    t: "bronze" },
     { xp: 400,   n: "Bronze III",   t: "bronze" },   { xp: 800,   n: "Silber I",     t: "silber" },
@@ -37,10 +38,15 @@
     { xp: 6400,  n: "Gold III",     t: "gold" },     { xp: 9000,  n: "Platin I",     t: "platin" },
     { xp: 12000, n: "Platin II",    t: "platin" },   { xp: 15500, n: "Platin III",   t: "platin" },
     { xp: 19500, n: "Diamant I",    t: "diamant" },  { xp: 24000, n: "Diamant II",   t: "diamant" },
-    { xp: 29000, n: "Diamant III",  t: "diamant" },  { xp: 35000, n: "Elite",        t: "elite" },
-    { xp: 42000, n: "Champion",     t: "champion" }, { xp: 50000, n: "Unreal",       t: "unreal" },
-    { xp: 60000, n: "Unreal Gold",  t: "unreal-gold" }
+    { xp: 29000, n: "Diamant III",  t: "diamant" }
   ];
+  (function () {
+    var xp = 35000, step = 5000;
+    [["Elite", "elite"], ["Champion", "champion"], ["Unreal", "unreal"], ["Unreal Gold", "unreal-gold"], ["Unreal Platin", "unreal-platin"], ["Unreal Diamant", "unreal-diamant"]].forEach(function (g) {
+      ["I", "II", "III"].forEach(function (rm) { RANKS.push({ xp: xp, n: g[0] + " " + rm, t: g[1] }); xp += step; step += 1000; });
+    });
+    RANKS.push({ xp: xp, n: "The real Unreal", t: "real-unreal" });
+  })();
 
   var AVATARS = ["🦊","🐼","🦉","🐙","🦕","🐝","🦁","🐧","🦄","🐢","🦈","🐨"];
   /* Shop: kind = avatar | frame | title | bg | fx | snd | theme. cost 0 = gehört immer dazu.
@@ -67,7 +73,7 @@
     { id: "av:pphoenix", kind: "avatar", label: "Pummelphönix",  cost: 650,  val: "svg:pphoenix", rank: "Gold I" },
     { id: "av:pgold",    kind: "avatar", label: "Goldpummel",    cost: 800,  val: "svg:pgold", rank: "Platin I" },
     { id: "av:pregen",   kind: "avatar", label: "Regenbogenpummel", cost: 1500, val: "svg:pregen", rank: "Diamant I" },
-    { id: "av:pgalaxie", kind: "avatar", label: "Galaxiepummel", cost: 2000, val: "svg:pgalaxie", rank: "Elite" },
+    { id: "av:pgalaxie", kind: "avatar", label: "Galaxiepummel", cost: 2000, val: "svg:pgalaxie", rank: "Elite I" },
     { id: "av:blitzwolf", kind: "avatar", label: "Blitzwolf", cost: 1800, val: "svg:blitzwolf", rank: "Diamant I", rar: "legend" },
     { id: "av:ninja", kind: "avatar", label: "Nachtschatten", cost: 1800, val: "svg:ninja", rank: "Diamant II", rar: "legend" },
     { id: "av:flamingo", kind: "avatar", label: "Disco-Flamingo", cost: 2000, val: "svg:flamingo", rank: "Diamant III", rar: "legend" },
@@ -86,13 +92,13 @@
     { id: "av:fnwolf",     kind: "avatar", set: "fn", label: "Wolf",           cost: 250,  val: "svg:fnwolf",     rank: "Gold II" },
     { id: "av:fnraptor",   kind: "avatar", set: "fn", label: "Raptor",         cost: 350,  val: "svg:fnraptor",   rank: "Gold II" },
     { id: "av:fnllama",    kind: "avatar", set: "fn", label: "Beute-Lama",     cost: 350,  val: "svg:fnllama",    rank: "Gold II" },
-    { id: "av:fnelite",    kind: "avatar", set: "fn", label: "Elite-Kristall", cost: 800,  val: "svg:fnelite",    rank: "Elite" },
-    { id: "av:fnchamp",    kind: "avatar", set: "fn", label: "Champion-Kristall", cost: 1500, val: "svg:fnchamp", rank: "Champion" },
-    { id: "av:fnkristall", kind: "avatar", set: "fn", label: "Kristall-Lama",  cost: 1500, val: "svg:fnkristall", rank: "Unreal" },
+    { id: "av:fnelite",    kind: "avatar", set: "fn", label: "Elite-Kristall", cost: 800,  val: "svg:fnelite",    rank: "Elite I" },
+    { id: "av:fnchamp",    kind: "avatar", set: "fn", label: "Champion-Kristall", cost: 1500, val: "svg:fnchamp", rank: "Champion I" },
+    { id: "av:fnkristall", kind: "avatar", set: "fn", label: "Kristall-Lama",  cost: 1500, val: "svg:fnkristall", rank: "Unreal I" },
     { id: "av:gepard",      kind: "avatar", label: "Turbo-Gepard",   cost: 700,  val: "svg:gepard",     rank: "Platin II", rar: "epic" },
     { id: "av:fnrakete",   kind: "avatar", set: "fn", label: "Raketen-Lama",   cost: 700,  val: "svg:fnrakete",   rank: "Platin II", rar: "epic" },
-    { id: "av:fngold",     kind: "avatar", set: "fn", label: "Goldkristall-Lama", cost: 2200, val: "svg:fngold",  rank: "Unreal Gold", rar: "legend" },
-    { id: "av:fnunreal",   kind: "avatar", set: "fn", label: "Unreal-Kristall", cost: 2500, val: "svg:fnunreal",  rank: "Unreal" },
+    { id: "av:fngold",     kind: "avatar", set: "fn", label: "Goldkristall-Lama", cost: 2200, val: "svg:fngold",  rank: "Unreal Gold I", rar: "legend" },
+    { id: "av:fnunreal",   kind: "avatar", set: "fn", label: "Unreal-Kristall", cost: 2500, val: "svg:fnunreal",  rank: "Unreal I" },
 
     { id: "fr:eis",     kind: "frame", label: "Eiskristall-Rahmen", cost: 1500, val: "eis", reward: "eis" },
     { id: "fr:none",    kind: "frame", label: "Kein Rahmen", cost: 0,   val: "none" },
@@ -106,7 +112,7 @@
     { id: "ti:freund",  kind: "title", label: "Pummelfreund", cost: 120, val: "Pummelfreund" },
     { id: "ti:profi",   kind: "title", label: "Vokabelprofi", cost: 120, val: "Vokabelprofi" },
     { id: "ti:genie",   kind: "title", label: "Sprachgenie",  cost: 350, val: "Sprachgenie" },
-    { id: "ti:champ",   kind: "title", label: "Champion der Wörter", cost: 500, val: "Champion der Wörter", rank: "Champion" },
+    { id: "ti:champ",   kind: "title", label: "Champion der Wörter", cost: 500, val: "Champion der Wörter", rank: "Champion I" },
     /* Titel (Begrüßung auf der Startseite, v2.119) */
     { id: "ti:vninja",   kind: "title", label: "Vokabel-Ninja",        cost: 80,   val: "Vokabel-Ninja",        rar: "common" },
     { id: "ti:quassel",  kind: "title", label: "Quasselstrippe",       cost: 80,   val: "Quasselstrippe",       rar: "common" },
@@ -121,8 +127,8 @@
     { id: "ti:eroberer", kind: "title", label: "Englisch-Eroberer",    cost: 500,  val: "Englisch-Eroberer",    rar: "epic", rank: "Platin III" },
     { id: "ti:titan",    kind: "title", label: "Wörter-Titan",         cost: 1200, val: "Wörter-Titan",         rar: "legend", rank: "Diamant I" },
     { id: "ti:unbesiegbar", kind: "title", label: "Unbesiegbar",       cost: 1000, val: "Unbesiegbar",          rar: "legend", rank: "Diamant III" },
-    { id: "ti:herrscher",kind: "title", label: "Herrscher der Vokabeln", cost: 1500, val: "Herrscher der Vokabeln", rar: "legend", rank: "Elite" },
-    { id: "ti:legende",  kind: "title", label: "Legende der Wörter",   cost: 1500, val: "Legende der Wörter",   rar: "legend", rank: "Unreal" },
+    { id: "ti:herrscher",kind: "title", label: "Herrscher der Vokabeln", cost: 1500, val: "Herrscher der Vokabeln", rar: "legend", rank: "Elite I" },
+    { id: "ti:legende",  kind: "title", label: "Legende der Wörter",   cost: 1500, val: "Legende der Wörter",   rar: "legend", rank: "Unreal I" },
 
     { id: "bg:none",   kind: "bg", label: "Schlicht", cost: 0,   val: "none" },
     { id: "bg:stars",  kind: "bg", label: "Sterne",   cost: 120, val: "stars" },
@@ -226,7 +232,7 @@
     "Platin I": ["av:pphoenix", "av:kitty3"], "Platin II": ["av:fnrakete", "av:gepard"], "Platin III": ["av:pgold", "av:fnelite"],
     /* ab Diamant I: alles legendär, nichts wird geschenkt, der Rang schaltet die Figuren nur im Shop frei (Kauf) */
     "Diamant I": ["av:blitzwolf", "av:pregen"], "Diamant II": ["av:sdrache", "av:ninja"], "Diamant III": ["av:flamingo", "av:faultier"],
-    "Elite": ["av:fnchamp", "av:pgalaxie"], "Champion": ["av:fnkristall", "av:fnunreal"], "Unreal": ["av:kitty4"], "Unreal Gold": ["av:fngold"]
+    "Elite I": ["av:fnchamp", "av:pgalaxie"], "Champion I": ["av:fnkristall", "av:fnunreal"], "Unreal I": ["av:kitty4"], "Unreal Gold I": ["av:fngold"]
   };
   var SHOP_ONLY_FROM = "Diamant I";   // ab diesem Rang keine Figurenwahl mehr
   function rankPickable(rn) {
