@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.141.0 – 2026-10-24
+- Sticker: Die aufgeklebten Sticker erscheinen in der Zubehör-Vorschau (Shop › Zubehör) und bei „Meine Freunde“ unter dem Namen. Die Sticker-IDs reisen mit dem Lernstand-Abgleich (`meta.stk`), der Server prüft sie (`frLook`). **Server-Schritt nötig** (Neustart von `wordy-server`) für die Anzeige bei Freunden.
+
 ## 2.140.2 – 2026-10-24
 - Showroom: Die Abzeichen-Regale stehen jetzt nach den Shop-Gegenständen.
 

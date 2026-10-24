@@ -505,11 +505,12 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     assert.equal(pf.name, "Jonas"); assert.equal(pf.state, "mine", "Lenas Eltern sehen die offene Anfrage");
     assert.equal((await J("/api/fam/players/" + kid.j.id + "/friends/" + jm.j.id, { method: "POST", headers: F, body: JSON.stringify({ action: "approve" }) })).s, 200);
     assert.equal((await J("/api/social/me", { headers: lt })).j.friends[0].state, "ok", "Freunde bestätigt");
-    await J("/api/snapshot", { method: "POST", headers: jt, body: JSON.stringify({ meta: { xp: 1234, coins: 5, title: "Klugscheißer", avatar: "svg:pbaer", frame: "gold", acc: { head: "beanie", neck: "schal", ears: "x<y", bogus: "kopf" } } }) });
+    await J("/api/snapshot", { method: "POST", headers: jt, body: JSON.stringify({ meta: { xp: 1234, coins: 5, title: "Klugscheißer", avatar: "svg:pbaer", frame: "gold", acc: { head: "beanie", neck: "schal", ears: "x<y", bogus: "kopf" }, stk: ["st:fuchs", "x<y", 5, "st:eisbaer"] } }) });
     assert.equal((await J("/api/social/me", { headers: lt })).j.friends[0].xp, 1234, "Freunde sehen XP für den Rang-Fortschritt");
     assert.equal((await J("/api/social/me", { headers: lt })).j.friends[0].title, "Klugscheißer", "und den aktuellen Titel");
     assert.equal((await J("/api/social/me", { headers: lt })).j.friends[0].frame, "gold", "und den gewählten Rahmen");
     assert.deepEqual((await J("/api/social/me", { headers: lt })).j.friends[0].acc, { head: "beanie", neck: "schal" }, "und das Zubehör (nur geprüfte Werte)");
+    assert.deepEqual((await J("/api/social/me", { headers: lt })).j.friends[0].stk, ["st:fuchs", "st:eisbaer"], "und die Sticker (nur geprüfte IDs)");
     assert.equal((await J("/api/social/challenges", { method: "POST", headers: jt, body: JSON.stringify({ to: kid.j.id, mode: "blitz", words: WORDS.slice(0, 3), seed: 5, score: 100 }) })).s, 400, "zu wenige Wörter");
     assert.equal((await J("/api/social/challenges", { method: "POST", headers: jt, body: JSON.stringify({ to: kid.j.id, mode: "blitz", words: WORDS, seed: 5, score: 999999 }) })).s, 400, "unmögliche Punktzahl");
     const ch = await J("/api/social/challenges", { method: "POST", headers: jt, body: JSON.stringify({ to: kid.j.id, mode: "blitz", words: WORDS, seed: 5, score: 120 }) });

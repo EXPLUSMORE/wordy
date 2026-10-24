@@ -1299,7 +1299,7 @@
       '<div class="row" style="gap:8px;margin-top:14px"><input id="socCode" class="grow soccode" maxlength="12" placeholder="Freundescode" autocapitalize="characters" autocomplete="off"><button class="btn" data-act="socadd">Hinzufügen</button></div><div id="socMsg" class="small muted" style="margin-top:6px"></div></section>';
     h += '<section class="card"><div class="eyebrow">Meine Freunde (' + me.friends.length + ')</div>' + (me.friends.length ? me.friends.map(function (f) {
       var st = f.state === "ok" ? "" : f.state === "mine" ? "wartet auf deine Eltern" : "wartet auf die Eltern von " + esc(f.name);
-      return '<div class="drow">' + whoFrame(f) + '<div class="grow"><b>' + esc(f.name) + '</b>' + (st ? '<div class="small muted">' + st + '</div>' : '') + friendRank(f) + '</div>' +
+      return '<div class="drow">' + whoFrame(f) + '<div class="grow"><b>' + esc(f.name) + '</b>' + (st ? '<div class="small muted">' + st + '</div>' : '') + friendRank(f) + (f.stk && f.stk.length ? '<div class="fstk">' + placedStickers(24, true, f.stk) + '</div>' : "") + '</div>' +
         (f.state === "ok" ? '<button class="btn soft" data-act="socchallenge" data-id="' + f.id + '">⚔️ Duell</button>' : '<span class="pill">⏳</span>') + '<button class="chip" data-act="socdel" data-id="' + f.id + '" aria-label="Entfernen">✕</button></div>';
     }).join("") : '<p class="small muted" style="margin:8px 0 0">Noch keine Freunde. Tausche Codes aus!</p>') + '</section>';
     if (ib.waiting.length) h += '<section class="card"><div class="eyebrow">Warten auf Antwort</div>' + ib.waiting.map(function (c) { return '<div class="drow">' + who(c.to, 32) + '<div class="grow small"><b>' + esc(c.to.name) + '</b> · ' + modeName(c.mode) + ' · dein Wert <b class="tnum">' + c.aScore + '</b></div></div>'; }).join("") + '</section>';
@@ -1971,8 +1971,8 @@
     return global.VTC.stickerHtml(it.val, size, tilt || 0, !!it.rank || /clombo/.test(it.val), esc);
   }
   var TILTS = [-7, 5, -3, 6, -5];
-  function placedStickers(size, noShrink) {
-    var ids = S.stickers(); if (!ids.length) return "";
+  function placedStickers(size, noShrink, list) {
+    var ids = list || S.stickers(); if (!ids.length) return "";
     if (ids.length > 3 && !noShrink) size = Math.round(size * 0.8);   // mehr als drei: etwas kleiner, damit alle Platz haben
     return '<span class="stk-row">' + ids.map(function (id, i) {
       var it = S.SHOP.filter(function (x) { return x.id === id; })[0];
@@ -2096,7 +2096,7 @@
     var h = '<p class="small muted" style="margin:0 0 8px">👀 <b>Wie sieht\'s aus?</b> Probiere alles an, bevor du kaufst – jede Figur, jedes Teil. Zubehör kaufst du <b>einmal</b> und ziehst es <b>jeder Figur einzeln</b> an. <span lang="en">Try it on first, then decide!</span></p>' +
       '<div class="accfigs">' + figs.map(function (f) { var o = S.owns(f); return '<button class="accfig' + (f.val === accFig ? " on" : "") + (o ? "" : " lock") + '" data-act="accfig" data-av="' + esc(f.val) + '" title="' + esc(f.label + (o ? "" : " (noch nicht gekauft)")) + '" aria-label="' + esc(f.label) + '" aria-pressed="' + (f.val === accFig) + '"><span class="acch">' + avatarHtml(f.val, o) + '</span>' + (o ? "" : '<i class="acl">🔒</i>') + '</button>'; }).join("") + '</div>' +
       '<div class="accpv"><div class="accst"><div class="accfl">' + heroWith(accFig, look, 0) + '</div></div><div class="accin"><b>' + esc(fig ? fig.label : "Fuchs") + '</b>' + (fig ? enLine(fig) : "") +
-      '<span class="small muted">' + (names.length ? "trägt: " + esc(names.join(", ")) : "trägt noch nichts") + '</span>' +
+      (S.stickers().length ? '<span class="fstk">' + placedStickers(30, true) + '</span>' : "") + '<span class="small muted">' + (names.length ? "trägt: " + esc(names.join(", ")) : "trägt noch nichts") + '</span>' +
       (figOwn ? "" : '<span class="small" style="color:var(--accent)">Diese Figur gehört dir noch nicht – du probierst nur an.</span>') +
       (toBuy.length ? '<button class="btn" data-act="accbuytry">🪙 ' + sum + ' – ' + (toBuy.length === 1 ? "kaufen" : toBuy.length + " Teile kaufen") + '</button>' : "") +
       (Object.keys(accTry).length ? '<button class="chip" data-act="accuntry">Anprobe zurücksetzen</button>' : "") +

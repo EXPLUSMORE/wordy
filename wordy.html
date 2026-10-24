@@ -185,6 +185,7 @@ html[data-bg="stars"] .card,html[data-bg="clouds"] .card,html[data-bg="space"] .
   background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.7) 46%,rgba(120,255,240,.5) 50%,rgba(255,150,230,.5) 54%,transparent 64%) -150% 0/250% 100%;
   mix-blend-mode:screen;animation:stShine 3s ease-in-out infinite}
 @keyframes stShine{0%{background-position:150% 0}55%,100%{background-position:-60% 0}}
+.fstk{display:block;margin-top:4px;min-height:24px}
 .stk-row{display:inline-flex;gap:0;align-items:center}
 .stk-row .stk+.stk{margin-left:-14px}
 .stk-corner{position:absolute;right:10px;bottom:6px;z-index:2;pointer-events:none}
@@ -1520,7 +1521,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.140.2";window.WORDY_BUILD="7cd3907c30";</script>
+<script>window.WORDY_VERSION="2.141.0";window.WORDY_BUILD="cd7721d2d2";</script>
 </head>
 <body>
 <div id="app">
@@ -11467,7 +11468,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       '<div class="row" style="gap:8px;margin-top:14px"><input id="socCode" class="grow soccode" maxlength="12" placeholder="Freundescode" autocapitalize="characters" autocomplete="off"><button class="btn" data-act="socadd">Hinzufügen</button></div><div id="socMsg" class="small muted" style="margin-top:6px"></div></section>';
     h += '<section class="card"><div class="eyebrow">Meine Freunde (' + me.friends.length + ')</div>' + (me.friends.length ? me.friends.map(function (f) {
       var st = f.state === "ok" ? "" : f.state === "mine" ? "wartet auf deine Eltern" : "wartet auf die Eltern von " + esc(f.name);
-      return '<div class="drow">' + whoFrame(f) + '<div class="grow"><b>' + esc(f.name) + '</b>' + (st ? '<div class="small muted">' + st + '</div>' : '') + friendRank(f) + '</div>' +
+      return '<div class="drow">' + whoFrame(f) + '<div class="grow"><b>' + esc(f.name) + '</b>' + (st ? '<div class="small muted">' + st + '</div>' : '') + friendRank(f) + (f.stk && f.stk.length ? '<div class="fstk">' + placedStickers(24, true, f.stk) + '</div>' : "") + '</div>' +
         (f.state === "ok" ? '<button class="btn soft" data-act="socchallenge" data-id="' + f.id + '">⚔️ Duell</button>' : '<span class="pill">⏳</span>') + '<button class="chip" data-act="socdel" data-id="' + f.id + '" aria-label="Entfernen">✕</button></div>';
     }).join("") : '<p class="small muted" style="margin:8px 0 0">Noch keine Freunde. Tausche Codes aus!</p>') + '</section>';
     if (ib.waiting.length) h += '<section class="card"><div class="eyebrow">Warten auf Antwort</div>' + ib.waiting.map(function (c) { return '<div class="drow">' + who(c.to, 32) + '<div class="grow small"><b>' + esc(c.to.name) + '</b> · ' + modeName(c.mode) + ' · dein Wert <b class="tnum">' + c.aScore + '</b></div></div>'; }).join("") + '</section>';
@@ -12139,8 +12140,8 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     return global.VTC.stickerHtml(it.val, size, tilt || 0, !!it.rank || /clombo/.test(it.val), esc);
   }
   var TILTS = [-7, 5, -3, 6, -5];
-  function placedStickers(size, noShrink) {
-    var ids = S.stickers(); if (!ids.length) return "";
+  function placedStickers(size, noShrink, list) {
+    var ids = list || S.stickers(); if (!ids.length) return "";
     if (ids.length > 3 && !noShrink) size = Math.round(size * 0.8);   // mehr als drei: etwas kleiner, damit alle Platz haben
     return '<span class="stk-row">' + ids.map(function (id, i) {
       var it = S.SHOP.filter(function (x) { return x.id === id; })[0];
@@ -12264,7 +12265,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var h = '<p class="small muted" style="margin:0 0 8px">👀 <b>Wie sieht\'s aus?</b> Probiere alles an, bevor du kaufst – jede Figur, jedes Teil. Zubehör kaufst du <b>einmal</b> und ziehst es <b>jeder Figur einzeln</b> an. <span lang="en">Try it on first, then decide!</span></p>' +
       '<div class="accfigs">' + figs.map(function (f) { var o = S.owns(f); return '<button class="accfig' + (f.val === accFig ? " on" : "") + (o ? "" : " lock") + '" data-act="accfig" data-av="' + esc(f.val) + '" title="' + esc(f.label + (o ? "" : " (noch nicht gekauft)")) + '" aria-label="' + esc(f.label) + '" aria-pressed="' + (f.val === accFig) + '"><span class="acch">' + avatarHtml(f.val, o) + '</span>' + (o ? "" : '<i class="acl">🔒</i>') + '</button>'; }).join("") + '</div>' +
       '<div class="accpv"><div class="accst"><div class="accfl">' + heroWith(accFig, look, 0) + '</div></div><div class="accin"><b>' + esc(fig ? fig.label : "Fuchs") + '</b>' + (fig ? enLine(fig) : "") +
-      '<span class="small muted">' + (names.length ? "trägt: " + esc(names.join(", ")) : "trägt noch nichts") + '</span>' +
+      (S.stickers().length ? '<span class="fstk">' + placedStickers(30, true) + '</span>' : "") + '<span class="small muted">' + (names.length ? "trägt: " + esc(names.join(", ")) : "trägt noch nichts") + '</span>' +
       (figOwn ? "" : '<span class="small" style="color:var(--accent)">Diese Figur gehört dir noch nicht – du probierst nur an.</span>') +
       (toBuy.length ? '<button class="btn" data-act="accbuytry">🪙 ' + sum + ' – ' + (toBuy.length === 1 ? "kaufen" : toBuy.length + " Teile kaufen") + '</button>' : "") +
       (Object.keys(accTry).length ? '<button class="chip" data-act="accuntry">Anprobe zurücksetzen</button>' : "") +
@@ -15847,7 +15848,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     VT.units().forEach(function (u) { units[u.id] = { id: u.id, title: u.title, k: u.track === "eigen" ? "Eigene Listen" : u.k, total: u.words.length }; });   // alle Einheiten (Schule, Beruf, eigene Listen), damit Ziele und Lernpläne jede wählen können
     var rk = VT.rankOf(st.xp), d = st.daily || {};
     var meta = {
-      name: st.profile.name || "", title: st.profile.title || "", avatar: st.profile.avatar || "", acc: VT.accOf ? VT.accOf(st.profile.avatar) : {}, frame: st.profile.frame || "none", coins: st.coins, xp: st.xp, rank: rk.rank ? rk.rank.n : "", streak: st.streak.count, best: st.streak.best,
+      name: st.profile.name || "", title: st.profile.title || "", avatar: st.profile.avatar || "", acc: VT.accOf ? VT.accOf(st.profile.avatar) : {}, stk: (VT.stickers ? VT.stickers() : []).slice(0, 10), frame: st.profile.frame || "none", coins: st.coins, xp: st.xp, rank: rk.rank ? rk.rank.n : "", streak: st.streak.count, best: st.streak.best,
       track: st.settings.track || "schule", goalMin: VT.goalMin ? VT.goalMin() : st.settings.goalMin, todaySec: d.sec || 0, todayItems: d.items || 0, owned: (st.profile.owned || []).length,
       pass: VT.passMeta ? VT.passMeta() : null, shop: VT.shopList ? VT.shopList() : [], shopCat: VT.shopCatalog ? VT.shopCatalog() : [], gifts: Object.keys(st.goalsDone || {}).filter(function (k) { return k.indexOf("gift") === 0; }).map(function (k) { return k.slice(4); }), wish: (VT.wish && VT.wish()) ? VT.wish().label || VT.wish().id : "", klassen: st.settings.klassen, version: g.WORDY_VERSION || "", totals: st.totals, path: VT.pathProgress ? Object.assign(VT.pathProgress(), { sections: VT.pathSections(), bosses: VT.bossLog ? VT.bossLog() : [] }) : null
     };
