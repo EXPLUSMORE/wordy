@@ -69,7 +69,6 @@ header#top>*{min-width:0}header#top .stat{white-space:nowrap}header#top .avatar{
 header#top>div:nth-child(2){flex:0 1 auto;max-width:none}header#top.hc #hHearts span{display:none}header#top.hc #hHearts::before{content:"♥ " attr(data-n);color:var(--bad)}header#top .stat{flex:0 0 auto}header#top #hRank{white-space:nowrap}header#top.wr #hRank{white-space:normal;line-height:1.15}
 header#top .spacer{flex:1 1 0;min-width:0}header#top .hstk{position:absolute;right:14px;bottom:-21px;z-index:5;min-width:0;overflow:visible;display:flex;align-items:center;cursor:pointer;padding:0 2px}header#top .hstk .stk+.stk{margin-left:-11px}header#top .hstk .stk{filter:drop-shadow(0 2px 2px rgba(20,33,61,.45));transition:transform .15s}header#top .hstk:active .stk{transform:scale(1.08) rotate(0)}header#top .hstk .stk{transform:rotate(calc(var(--r,0deg)*1.7))}
 header#top .hstk.hs-m .stk{width:25px!important;height:25px!important}header#top .hstk.hs-m .stk+.stk{margin-left:-10px}header#top .hstk.hs-s .stk{width:20px!important;height:20px!important}header#top .hstk.hs-s .stk+.stk{margin-left:-8px}
-header#top .hstk .stk::after{content:"";position:absolute;left:14%;right:14%;top:38%;height:26%;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 26'%3E%3Crect x='2' y='3' width='26' height='17' rx='8' fill='%2314213d'/%3E%3Crect x='36' y='3' width='26' height='17' rx='8' fill='%2314213d'/%3E%3Cpath d='M28 8h8' stroke='%2314213d' stroke-width='3'/%3E%3Cpath d='M7 8l7-1M41 8l7-1' stroke='%23fff' stroke-width='2.2' stroke-linecap='round' opacity='.7'/%3E%3C/svg%3E") center/contain no-repeat;pointer-events:none;filter:drop-shadow(0 1px 1px rgba(0,0,0,.4))}
 header#top .hstk .stk::before{content:"";position:absolute;inset:-2px;z-index:2;pointer-events:none;background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.75) 50%,transparent 60%) -140% 0/260% 100% no-repeat;animation:stkSh 4.8s ease-in-out infinite;mix-blend-mode:overlay}
 header#top .hstk .stk:nth-child(2)::before{animation-delay:.5s}header#top .hstk .stk:nth-child(3)::before{animation-delay:1s}header#top .hstk .stk:nth-child(4)::before{animation-delay:1.5s}header#top .hstk .stk:nth-child(5)::before{animation-delay:2s}
 @keyframes stkSh{0%,55%{background-position:-140% 0}85%,100%{background-position:240% 0}}
@@ -180,6 +179,7 @@ html[data-bg="stars"] .card,html[data-bg="clouds"] .card,html[data-bg="space"] .
 /* Sticker */
 .stk{position:relative;display:inline-block;width:var(--s,64px);height:var(--s,64px);transform:rotate(var(--r,0deg));filter:drop-shadow(0 3px 4px rgba(0,0,0,.35));flex:0 0 auto;vertical-align:middle}
 .stk-cut{position:absolute;inset:calc(var(--s) * .1);display:grid;place-items:center;font-size:calc(var(--s) * .6)}
+.stk-worn .stk-cut{transform:translateY(-7%)}
 .stk-cut svg{width:calc(var(--s) * .8);height:calc(var(--s) * .8);display:block}
 .stk-holo{position:absolute;inset:calc(var(--s) * .1);-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center;-webkit-mask-size:100% 100%;mask-size:100% 100%;
   background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.7) 46%,rgba(120,255,240,.5) 50%,rgba(255,150,230,.5) 54%,transparent 64%) -150% 0/250% 100%;
@@ -1521,7 +1521,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.143.0";window.WORDY_BUILD="61cce86bfb";</script>
+<script>window.WORDY_VERSION="2.143.1";window.WORDY_BUILD="69146883ea";</script>
 </head>
 <body>
 <div id="app">
@@ -8087,9 +8087,9 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     var drawn = /^svg:/.test(val) || !!ART[val], big = size >= 90;
     var inner = drawn ? (ART[/^svg:/.test(val) ? val.slice(4) : val] || ART.pummel) : (esc ? esc(val) : String(val));
     var worn = drawn && acc && Object.keys(acc).length && global.VTA && global.VTA.has(val);
-    if (worn) inner = global.VTA.headA(val, acc);   // Zubehör der Figur auch auf dem Sticker
+    if (worn) inner = global.VTA.headA(val, acc).replace('viewBox="0 -52 220 232"', 'viewBox="22 -46 176 222"').replace("width:1.25em;height:1.25em", "width:1.7em;height:1.7em");   // Zubehör der Figur auch auf dem Sticker
     var holo = drawn && !worn && shine && size >= 44 ? '<span class="stk-holo" style="-webkit-mask-image:' + maskUrl(val) + ';mask-image:' + maskUrl(val) + '"></span>' : "";
-    return '<span class="stk" style="--s:' + size + 'px;--r:' + (tilt || 0) + 'deg;--f:' + (drawn ? 1 : 0.62) + '">' +
+    return '<span class="stk' + (worn ? " stk-worn" : "") + '" style="--s:' + size + 'px;--r:' + (tilt || 0) + 'deg;--f:' + (drawn ? 1 : 0.62) + '">' +
       '<span class="stk-cut" style="filter:url(#' + (big ? "cutL" : "cutS") + ')">' + inner + '</span>' + holo + '</span>';
   }
 

@@ -658,9 +658,9 @@
     var drawn = /^svg:/.test(val) || !!ART[val], big = size >= 90;
     var inner = drawn ? (ART[/^svg:/.test(val) ? val.slice(4) : val] || ART.pummel) : (esc ? esc(val) : String(val));
     var worn = drawn && acc && Object.keys(acc).length && global.VTA && global.VTA.has(val);
-    if (worn) inner = global.VTA.headA(val, acc);   // Zubehör der Figur auch auf dem Sticker
+    if (worn) inner = global.VTA.headA(val, acc).replace('viewBox="0 -52 220 232"', 'viewBox="22 -46 176 222"').replace("width:1.25em;height:1.25em", "width:1.7em;height:1.7em");   // Zubehör der Figur auch auf dem Sticker
     var holo = drawn && !worn && shine && size >= 44 ? '<span class="stk-holo" style="-webkit-mask-image:' + maskUrl(val) + ';mask-image:' + maskUrl(val) + '"></span>' : "";
-    return '<span class="stk" style="--s:' + size + 'px;--r:' + (tilt || 0) + 'deg;--f:' + (drawn ? 1 : 0.62) + '">' +
+    return '<span class="stk' + (worn ? " stk-worn" : "") + '" style="--s:' + size + 'px;--r:' + (tilt || 0) + 'deg;--f:' + (drawn ? 1 : 0.62) + '">' +
       '<span class="stk-cut" style="filter:url(#' + (big ? "cutL" : "cutS") + ')">' + inner + '</span>' + holo + '</span>';
   }
 
