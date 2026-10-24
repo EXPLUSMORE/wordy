@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.143.2 – 2026-10-24
+- Neuheiten-Wolke auf der Startseite kündigt das Zubehör für Figuren und Sticker an (Tippen führt in Shop › Zubehör).
+
 ## 2.143.1 – 2026-10-24
 - Header: Die Sonnenbrillen auf allen Stickern (CSS-Spielerei) sind entfernt.
 - Sticker mit Zubehör erscheinen jetzt in normaler Kopfgröße (vorher zu klein) und sitzen etwas höher.
