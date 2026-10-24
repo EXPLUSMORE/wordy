@@ -268,6 +268,13 @@
       var rn = at["av:" + x.id.slice(3)]; if (rn) x.rank = rn;
     });
   })();
+  /* Zubehör (acc.js): einmal kaufen, jeder Figur einzeln anziehen. [Wert, Platz, Name, Preis]; Platz: head | face | ears | neck */
+  var ACC_SLOTS = [["head", "Kopf"], ["face", "Gesicht"], ["ears", "Ohren"], ["neck", "Hals"]];
+  var ACC = [["beanie", "head", "Wintermütze", 60], ["party", "head", "Partyhut", 50], ["zylinder", "head", "Zylinder", 120], ["prop", "head", "Propeller-Kappe", 90], ["cap", "head", "Basecap", 50], ["stroh", "head", "Strohhut", 45], ["blumen", "head", "Blumenkranz", 45], ["heiligen", "head", "Heiligenschein", 80], ["hasen", "head", "Hasenohren", 70], ["teufel", "head", "Teufelshörner", 60], ["eishut", "head", "Eis-Hut", 90], ["pizza", "head", "Pizza-Hut", 80], ["krone", "head", "Goldkrone", 150],
+    ["sonne", "face", "Sonnenbrille", 40], ["nerd", "face", "Nerd-Brille", 40], ["mono", "face", "Monokel", 70], ["brille3d", "face", "3D-Brille", 50], ["herz", "face", "Herzbrille", 60], ["schnurr", "face", "Schnurrbart", 30], ["clown", "face", "Clown-Nase", 25], ["ski", "face", "Skibrille", 70],
+    ["kopf", "ears", "Kopfhörer", 80], ["waerme", "ears", "Ohrenwärmer", 45], ["ohrring", "ears", "Ohrringe", 35],
+    ["schal", "neck", "Schal", 50], ["fliege", "neck", "Fliege", 35], ["kette", "neck", "Goldkette", 90], ["tuch", "neck", "Halstuch", 35], ["medaille", "neck", "Medaille", 60]];
+  SHOP = SHOP.concat(ACC.map(function (a) { return { id: "ac:" + a[0], kind: "acc", slot: a[1], label: a[2], cost: a[3], val: a[0], rar: a[3] <= 40 ? "common" : a[3] <= 70 ? "rare" : a[3] <= 100 ? "epic" : "legend" }; }));
   var MAX_STICKERS = 10;
   /* Sticker-Plätze auf dem Profil: der erste ist gratis, die weiteren werden nacheinander freigeschaltet */
   var STICKER_SLOT_COST = [0, 150, 150, 300, 300, 300, 750, 750, 750, 1000];   // Preis für Platz n+1 (Platz 1 ist gratis)
@@ -1118,6 +1125,7 @@
     var g9 = G("sammler", "Sammler", "🎁");
     ladder(g9, "fig", [3, 5, 10, 15, 25, 40], figs, function (n) { return n + " Figuren"; }, function (n) { return n + " verschiedene Figuren besitzen"; });
     ladder(g9, "buy", [5, 10, 25, 50, 100, 200], buys, function (n) { return n + " Schätze"; }, function (n) { return n + " Dinge besitzen (Figuren, Rahmen, Effekte, Titel …)"; });
+    ladder(g9, "acc", [1, 5, 10, 20, 29], owned.filter(function (id) { return id.indexOf("ac:") === 0; }).length, function (n) { return n === 1 ? "Erstes Zubehör" : n + " Zubehör-Teile"; }, function (n) { return n === 1 ? "Ein Zubehör kaufen (Brille, Mütze, Schal …)" : n + " Zubehör-Teile besitzen"; });
     ladder(g9, "stk", [1, 3, 6, 10], stk, function (n) { return n === 1 ? "Erster Sticker" : n + " Sticker aufgeklebt"; }, function (n) { return n === 1 ? "Einen Sticker aufkleben" : n + " Sticker gleichzeitig aufgeklebt haben"; });
     var g10 = G("pass", "Pass & Saison", "❄️"), info = passInfo(), sid = info.season.id;
     info.weeks.forEach(function (w) { M(g10, sid + "p" + w.n, "Woche " + w.n, w.n === info.weeks.length ? "legend" : "epic", w.claimed, info.season.title + "-Pass, Woche " + w.n, String(w.n)); });
@@ -1148,12 +1156,13 @@
   var CUP_TIERS = [{ n: "Bronze", pct: 25, coins: 30 }, { n: "Silber", pct: 50, coins: 60 }, { n: "Gold", pct: 75, coins: 120 }, { n: "Platin", pct: 100, coins: 300 }];
   function collection(award) {
     function mk(x) { return { id: x.id, label: x.label, kind: x.kind, val: x.val, rar: rarityOf(x), owned: owns(x), how: howText(x), it: x }; }
-    var vis = SHOP.filter(function (x) { return !(x.val === "none" || x.val === ""); }), by = function (kinds) { return vis.filter(function (x) { return kinds.indexOf(x.kind) >= 0; }).map(mk).map(function (m, i) { m.o = i; return m; }).sort(function (p, q) { return (RAR_ORDER[p.rar] - RAR_ORDER[q.rar]) || (p.it.cost - q.it.cost) || (p.o - q.o); }); };   // immer: gewöhnlich, selten, episch, legendär
+    var vis = SHOP.filter(function (x) { return !(x.val === "none" || x.val === ""); }), by = function (kinds) { return vis.filter(function (x) { return kinds.indexOf(x.kind) >= 0; }).map(mk).map(function (m, i) { m.o = i; return m; }).sort(function (p, q) { return (RAR_ORDER[p.rar] - RAR_ORDER[q.rar]) || (minXp(p.it) - minXp(q.it)) || (p.it.cost - q.it.cost) || (p.o - q.o); }); };   // immer: gewöhnlich, selten, episch, legendär
     var shelves = medalGroups().map(function (g) { return { id: "medal-" + g.id, title: g.title, icon: g.icon, items: g.items, medals: true }; }).concat([
       { id: "fig", title: "Figuren", icon: "🦊", items: by(["avatar"]) },
       { id: "dance", title: "Tänze", icon: "💃", items: by(["dance"]) },
       { id: "outfit", title: "Outfits & Trikots", icon: "👕", items: by(["outfit", "kit"]) },
       { id: "sticker", title: "Sticker", icon: "🏷️", items: by(["sticker"]) },
+      { id: "acc", title: "Zubehör", icon: "🎩", items: by(["acc"]) },
       { id: "extra", title: "Rahmen, Effekte & mehr", icon: "🖼️", items: by(["frame", "fx", "snd", "bg", "theme", "title"]) }
     ]), own = 0, tot = 0, rar = { common: 0, rare: 0, epic: 0, legend: 0, unreal: 0 };
     shelves.forEach(function (s) { s.own = s.items.filter(function (i) { return i.owned; }).length; own += s.own; tot += s.items.length; s.items.forEach(function (i) { if (i.owned) rar[i.rar]++; }); });
@@ -1379,7 +1388,16 @@
     save(true); return { ok: true, slots: n + 1, cost: cost };
   }
   function stickers() { var l = state.profile.stickers; if (!Array.isArray(l)) l = state.profile.stickers = []; return l; }
+  function accOf(av) { var a = (state.profile.acc || {})[av]; return a ? Object.assign({}, a) : {}; }
+  function accToggle(av, id) {
+    var it = itemById(id); if (!it || it.kind !== "acc") return { error: "Das ist kein Zubehör." }; if (!owns(it)) return { error: "Das gehört dir noch nicht." };
+    var all = state.profile.acc || (state.profile.acc = {}), l = all[av] || (all[av] = {}), on = l[it.slot] !== it.val;
+    if (on) l[it.slot] = it.val; else delete l[it.slot]; if (!Object.keys(l).length) delete all[av];
+    save(true); return { ok: true, on: on, item: it };
+  }
+  function accClear(av) { if (state.profile.acc) delete state.profile.acc[av]; save(true); }
   function isActive(it) {
+    if (it.kind === "acc") return (accOf(state.profile.avatar))[it.slot] === it.val;
     if (it.kind === "sticker") return stickers().indexOf(it.id) >= 0; var v = state.profile[PROFILE_KEY[it.kind]]; return (v == null ? defaultOf(it.kind) : v) === it.val; }
   function defaultOf(kind) { return kind === "avatar" ? "🦊" : kind === "theme" ? "paper" : kind === "dance" ? "wackler" : (kind === "outfit" || kind === "kit") ? "natur" : kind === "title" ? "" : "none"; }
   function equip(id) {
@@ -1611,7 +1629,7 @@
     state.coins -= price; state.profile.owned.push(id);
     ev("buy", { id: id, name: it.label || it.id, cost: price });
     if (it.kind === "sticker") { var l = stickers(); l.push(it.id); while (l.length > stickerSlots()) l.shift(); }
-    else state.profile[PROFILE_KEY[it.kind]] = it.val;
+    else if (it.kind !== "acc") state.profile[PROFILE_KEY[it.kind]] = it.val;   // Zubehör zieht die Oberfläche selbst an (accToggle)
     checkSets();
     save(true); return { ok: true, item: it };
   }
@@ -1662,7 +1680,7 @@
   function resumeHas(key) { return resumeList().some(function (x) { return x.key === key; }); }
 
   global.VT = {
-    LEVELS: LEVELS, medalGroups: medalGroups, RANKS: RANKS, AVATARS: AVATARS, SHOP: SHOP, BADGES: BADGES,
+    LEVELS: LEVELS, ACC: ACC, ACC_SLOTS: ACC_SLOTS, accOf: accOf, accToggle: accToggle, accClear: accClear, medalGroups: medalGroups, RANKS: RANKS, AVATARS: AVATARS, SHOP: SHOP, BADGES: BADGES,
     SEC_PER_ITEM: SEC_PER_ITEM, secPerItem: secPerItem, itemsFor: itemsFor, recordPace: recordPace,
     resumePack: resumePack, resumeUnpack: resumeUnpack, resumeList: resumeList, resumeSave: resumeSave, resumeTake: resumeTake, resumeHas: resumeHas,
     load: load, save: save, get state() { return state; },

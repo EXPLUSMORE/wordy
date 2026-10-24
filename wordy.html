@@ -1216,6 +1216,14 @@ details.fold>.fbody{padding:2px 0 14px}
 .dsur input{width:20px;height:20px;flex:none;accent-color:#E9BD62}.dsur span{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}.dsur small{opacity:.7;flex:none}
 .dshs{border:1px solid rgba(255,255,255,.25);background:transparent;color:inherit;border-radius:12px;padding:6px 14px;font-weight:700;font-family:inherit;cursor:pointer}
 .dshb[disabled]{opacity:.45;box-shadow:none;cursor:default;transform:none}
+/* ZUBEHÖR (Shop › Zubehör) */
+.accfigs{display:flex;gap:6px;overflow-x:auto;padding:4px 2px 8px;margin:0 -2px}.accfig{flex:0 0 auto;width:48px;height:48px;border-radius:14px;border:2px solid var(--rule);background:var(--card);padding:4px;display:grid;place-items:center;cursor:pointer}
+.accfig.on{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}.accfig .acch{display:block;width:34px;height:34px;font-size:34px}
+.accpv{display:flex;gap:12px;align-items:center;margin:4px 0 8px}.accst{flex:0 0 132px;height:176px;position:relative;border-radius:16px;background:radial-gradient(circle at 50% 30%,var(--accent-soft),transparent 70%);overflow:visible}
+.accfl{position:absolute;left:0;bottom:0;width:100%;height:100%}.accin{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.acgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:6px 0 10px}.acct{position:relative;border:2px solid var(--rule);border-radius:14px;background:var(--card);padding:6px 4px 6px;text-align:center;cursor:pointer;color:inherit;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:2px}
+.acct .acci{display:block;width:100%;height:54px}.acct b{font-size:12px;line-height:1.1}.acct small{font-size:11px;color:var(--ink-2)}
+.acct.rare{border-color:#4aa3ff}.acct.epic{border-color:#b36bff}.acct.legend{border-color:#ffb02e}.acct.on{background:var(--accent-soft);box-shadow:0 0 0 2px var(--accent)}.acct:not(.own) .acci{opacity:.9}
 /* ABZEICHEN: Kategorien mit Stufenleitern (Shop › Abzeichen) */
 .mdrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.mdt{width:58px;text-align:center;background:none;border:0;padding:0;color:inherit;font-family:inherit;cursor:pointer}
 .mdt .mdi{display:block;width:46px;height:46px;margin:0 auto;filter:drop-shadow(0 2px 3px rgba(0,0,0,.3))}.mdt .mdi svg{width:100%;height:100%;overflow:visible}
@@ -1509,7 +1517,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.138.0";window.WORDY_BUILD="952ac53ed1";</script>
+<script>window.WORDY_VERSION="2.139.0";window.WORDY_BUILD="344f26e2ec";</script>
 </head>
 <body>
 <div id="app">
@@ -5958,6 +5966,13 @@ window.SENTENCES = (window.SENTENCES || []).concat([
       var rn = at["av:" + x.id.slice(3)]; if (rn) x.rank = rn;
     });
   })();
+  /* Zubehör (acc.js): einmal kaufen, jeder Figur einzeln anziehen. [Wert, Platz, Name, Preis]; Platz: head | face | ears | neck */
+  var ACC_SLOTS = [["head", "Kopf"], ["face", "Gesicht"], ["ears", "Ohren"], ["neck", "Hals"]];
+  var ACC = [["beanie", "head", "Wintermütze", 60], ["party", "head", "Partyhut", 50], ["zylinder", "head", "Zylinder", 120], ["prop", "head", "Propeller-Kappe", 90], ["cap", "head", "Basecap", 50], ["stroh", "head", "Strohhut", 45], ["blumen", "head", "Blumenkranz", 45], ["heiligen", "head", "Heiligenschein", 80], ["hasen", "head", "Hasenohren", 70], ["teufel", "head", "Teufelshörner", 60], ["eishut", "head", "Eis-Hut", 90], ["pizza", "head", "Pizza-Hut", 80], ["krone", "head", "Goldkrone", 150],
+    ["sonne", "face", "Sonnenbrille", 40], ["nerd", "face", "Nerd-Brille", 40], ["mono", "face", "Monokel", 70], ["brille3d", "face", "3D-Brille", 50], ["herz", "face", "Herzbrille", 60], ["schnurr", "face", "Schnurrbart", 30], ["clown", "face", "Clown-Nase", 25], ["ski", "face", "Skibrille", 70],
+    ["kopf", "ears", "Kopfhörer", 80], ["waerme", "ears", "Ohrenwärmer", 45], ["ohrring", "ears", "Ohrringe", 35],
+    ["schal", "neck", "Schal", 50], ["fliege", "neck", "Fliege", 35], ["kette", "neck", "Goldkette", 90], ["tuch", "neck", "Halstuch", 35], ["medaille", "neck", "Medaille", 60]];
+  SHOP = SHOP.concat(ACC.map(function (a) { return { id: "ac:" + a[0], kind: "acc", slot: a[1], label: a[2], cost: a[3], val: a[0], rar: a[3] <= 40 ? "common" : a[3] <= 70 ? "rare" : a[3] <= 100 ? "epic" : "legend" }; }));
   var MAX_STICKERS = 10;
   /* Sticker-Plätze auf dem Profil: der erste ist gratis, die weiteren werden nacheinander freigeschaltet */
   var STICKER_SLOT_COST = [0, 150, 150, 300, 300, 300, 750, 750, 750, 1000];   // Preis für Platz n+1 (Platz 1 ist gratis)
@@ -6808,6 +6823,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     var g9 = G("sammler", "Sammler", "🎁");
     ladder(g9, "fig", [3, 5, 10, 15, 25, 40], figs, function (n) { return n + " Figuren"; }, function (n) { return n + " verschiedene Figuren besitzen"; });
     ladder(g9, "buy", [5, 10, 25, 50, 100, 200], buys, function (n) { return n + " Schätze"; }, function (n) { return n + " Dinge besitzen (Figuren, Rahmen, Effekte, Titel …)"; });
+    ladder(g9, "acc", [1, 5, 10, 20, 29], owned.filter(function (id) { return id.indexOf("ac:") === 0; }).length, function (n) { return n === 1 ? "Erstes Zubehör" : n + " Zubehör-Teile"; }, function (n) { return n === 1 ? "Ein Zubehör kaufen (Brille, Mütze, Schal …)" : n + " Zubehör-Teile besitzen"; });
     ladder(g9, "stk", [1, 3, 6, 10], stk, function (n) { return n === 1 ? "Erster Sticker" : n + " Sticker aufgeklebt"; }, function (n) { return n === 1 ? "Einen Sticker aufkleben" : n + " Sticker gleichzeitig aufgeklebt haben"; });
     var g10 = G("pass", "Pass & Saison", "❄️"), info = passInfo(), sid = info.season.id;
     info.weeks.forEach(function (w) { M(g10, sid + "p" + w.n, "Woche " + w.n, w.n === info.weeks.length ? "legend" : "epic", w.claimed, info.season.title + "-Pass, Woche " + w.n, String(w.n)); });
@@ -6838,12 +6854,13 @@ window.SENTENCES = (window.SENTENCES || []).concat([
   var CUP_TIERS = [{ n: "Bronze", pct: 25, coins: 30 }, { n: "Silber", pct: 50, coins: 60 }, { n: "Gold", pct: 75, coins: 120 }, { n: "Platin", pct: 100, coins: 300 }];
   function collection(award) {
     function mk(x) { return { id: x.id, label: x.label, kind: x.kind, val: x.val, rar: rarityOf(x), owned: owns(x), how: howText(x), it: x }; }
-    var vis = SHOP.filter(function (x) { return !(x.val === "none" || x.val === ""); }), by = function (kinds) { return vis.filter(function (x) { return kinds.indexOf(x.kind) >= 0; }).map(mk).map(function (m, i) { m.o = i; return m; }).sort(function (p, q) { return (RAR_ORDER[p.rar] - RAR_ORDER[q.rar]) || (p.it.cost - q.it.cost) || (p.o - q.o); }); };   // immer: gewöhnlich, selten, episch, legendär
+    var vis = SHOP.filter(function (x) { return !(x.val === "none" || x.val === ""); }), by = function (kinds) { return vis.filter(function (x) { return kinds.indexOf(x.kind) >= 0; }).map(mk).map(function (m, i) { m.o = i; return m; }).sort(function (p, q) { return (RAR_ORDER[p.rar] - RAR_ORDER[q.rar]) || (minXp(p.it) - minXp(q.it)) || (p.it.cost - q.it.cost) || (p.o - q.o); }); };   // immer: gewöhnlich, selten, episch, legendär
     var shelves = medalGroups().map(function (g) { return { id: "medal-" + g.id, title: g.title, icon: g.icon, items: g.items, medals: true }; }).concat([
       { id: "fig", title: "Figuren", icon: "🦊", items: by(["avatar"]) },
       { id: "dance", title: "Tänze", icon: "💃", items: by(["dance"]) },
       { id: "outfit", title: "Outfits & Trikots", icon: "👕", items: by(["outfit", "kit"]) },
       { id: "sticker", title: "Sticker", icon: "🏷️", items: by(["sticker"]) },
+      { id: "acc", title: "Zubehör", icon: "🎩", items: by(["acc"]) },
       { id: "extra", title: "Rahmen, Effekte & mehr", icon: "🖼️", items: by(["frame", "fx", "snd", "bg", "theme", "title"]) }
     ]), own = 0, tot = 0, rar = { common: 0, rare: 0, epic: 0, legend: 0, unreal: 0 };
     shelves.forEach(function (s) { s.own = s.items.filter(function (i) { return i.owned; }).length; own += s.own; tot += s.items.length; s.items.forEach(function (i) { if (i.owned) rar[i.rar]++; }); });
@@ -7069,7 +7086,16 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     save(true); return { ok: true, slots: n + 1, cost: cost };
   }
   function stickers() { var l = state.profile.stickers; if (!Array.isArray(l)) l = state.profile.stickers = []; return l; }
+  function accOf(av) { var a = (state.profile.acc || {})[av]; return a ? Object.assign({}, a) : {}; }
+  function accToggle(av, id) {
+    var it = itemById(id); if (!it || it.kind !== "acc") return { error: "Das ist kein Zubehör." }; if (!owns(it)) return { error: "Das gehört dir noch nicht." };
+    var all = state.profile.acc || (state.profile.acc = {}), l = all[av] || (all[av] = {}), on = l[it.slot] !== it.val;
+    if (on) l[it.slot] = it.val; else delete l[it.slot]; if (!Object.keys(l).length) delete all[av];
+    save(true); return { ok: true, on: on, item: it };
+  }
+  function accClear(av) { if (state.profile.acc) delete state.profile.acc[av]; save(true); }
   function isActive(it) {
+    if (it.kind === "acc") return (accOf(state.profile.avatar))[it.slot] === it.val;
     if (it.kind === "sticker") return stickers().indexOf(it.id) >= 0; var v = state.profile[PROFILE_KEY[it.kind]]; return (v == null ? defaultOf(it.kind) : v) === it.val; }
   function defaultOf(kind) { return kind === "avatar" ? "🦊" : kind === "theme" ? "paper" : kind === "dance" ? "wackler" : (kind === "outfit" || kind === "kit") ? "natur" : kind === "title" ? "" : "none"; }
   function equip(id) {
@@ -7301,7 +7327,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     state.coins -= price; state.profile.owned.push(id);
     ev("buy", { id: id, name: it.label || it.id, cost: price });
     if (it.kind === "sticker") { var l = stickers(); l.push(it.id); while (l.length > stickerSlots()) l.shift(); }
-    else state.profile[PROFILE_KEY[it.kind]] = it.val;
+    else if (it.kind !== "acc") state.profile[PROFILE_KEY[it.kind]] = it.val;   // Zubehör zieht die Oberfläche selbst an (accToggle)
     checkSets();
     save(true); return { ok: true, item: it };
   }
@@ -7352,7 +7378,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
   function resumeHas(key) { return resumeList().some(function (x) { return x.key === key; }); }
 
   global.VT = {
-    LEVELS: LEVELS, medalGroups: medalGroups, RANKS: RANKS, AVATARS: AVATARS, SHOP: SHOP, BADGES: BADGES,
+    LEVELS: LEVELS, ACC: ACC, ACC_SLOTS: ACC_SLOTS, accOf: accOf, accToggle: accToggle, accClear: accClear, medalGroups: medalGroups, RANKS: RANKS, AVATARS: AVATARS, SHOP: SHOP, BADGES: BADGES,
     SEC_PER_ITEM: SEC_PER_ITEM, secPerItem: secPerItem, itemsFor: itemsFor, recordPace: recordPace,
     resumePack: resumePack, resumeUnpack: resumeUnpack, resumeList: resumeList, resumeSave: resumeSave, resumeTake: resumeTake, resumeHas: resumeHas,
     load: load, save: save, get state() { return state; },
@@ -9235,7 +9261,17 @@ return '<svg class="afs" viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg
     if (o.head) svg = svg.slice(0, svg.length - tail.length) + o.head + tail;
     return svg;
   }
+  /* Zubehör (acc.js): Anbieter liefert je Figur { head, neck }; Hals-Teile liegen zwischen Körper und Kopf, Kopf-Teile über dem Kopf */
+  var ACCP = null;
+  function addAcc(svg, av) {
+    var a = ACCP && ACCP(av); if (!a) return svg;
+    var tail = svg.slice(-TAIL.length) === TAIL ? TAIL : svg.slice(-TAIL2.length) === TAIL2 ? TAIL2 : "";
+    if (a.neck) svg = svg.replace('<g class="headG">', a.neck + '<g class="headG">');
+    if (a.head && tail) svg = svg.slice(0, svg.length - tail.length) + a.head + tail;
+    return svg;
+  }
   function full(av, outfit) { return dress(full0(av, outfit), outfit); }
+  function fullA(av, outfit) { return addAcc(full(av, outfit), av); }
   function full0(av, outfit) {
     var k = KIND[av]; if (!k) return "";
     var c = (k !== "king" && OUT[outfit]) || DEFC[k] || EXTC[k] || ["#35c6ff", "#1a7fd0"], o = { jacket: c[0], jacketD: c[1] };
@@ -9251,8 +9287,10 @@ return '<svg class="afs" viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg
   /* Kopf als Symbol (Avatar, Sticker, Karten) */
   function head(av) { return full(av).replace('class="afs" viewBox="0 0 220 300"', 'class="afs" style="display:block;width:1.25em;height:1.25em" viewBox="22 4 176 176"'); }
   function inner(av, outfit) { return full(av, outfit).replace(/^<svg[^>]*>/, "").replace(/<\/svg>$/, ""); }
-  function dancer(av, outfit, n) { return '<div class="afig a' + n + '">' + full(av, outfit) + '</div>'; }
-  global.VTA = { register: register, outfit: outfitAdd, inner: inner, has: function (av) { return !!KIND[av]; }, full: full, head: head, dancer: dancer, get kinds() { return Object.keys(KIND); } };
+  function dancer(av, outfit, n) { return '<div class="afig a' + n + '">' + fullA(av, outfit) + '</div>'; }
+  /* Kopf-Symbol mit Zubehör (eigene Figur): etwas höherer Ausschnitt, damit Hüte nicht abgeschnitten werden */
+  function headA(av) { return fullA(av).replace('class="afs" viewBox="0 0 220 300"', 'class="afs" style="display:block;width:1.25em;height:1.25em;overflow:visible" viewBox="22 4 176 176"'); }
+  global.VTA = { setAcc: function (f) { ACCP = f; }, headA: headA, register: register, outfit: outfitAdd, inner: inner, has: function (av) { return !!KIND[av]; }, full: full, head: head, dancer: dancer, get kinds() { return Object.keys(KIND); } };
   if (global.VTC && global.VTC.ART) Object.keys(KIND).forEach(function (k) { global.VTC.ART[artKey(k)] = head(k); });
 })(window);
 </script>
@@ -9684,6 +9722,67 @@ return '<svg class="afs" viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg
     var d = D[av], sp = d[1], c = d[2];
     A.register(av, d[0], function (jc, jd) { return critter(sp, jc, jd); }, c);
   });
+})(window);
+</script>
+<script>/* Zubehör für Figuren (Brillen, Mützen, Kopfhörer, Schals …): einmal kaufen, jeder Figur einzeln anziehen.
+   Zeichnung im Raum der Figuren (viewBox 0 0 220 300, Kopf = Ellipse um 110/100). Je Eintrag: slot (head | face | ears | neck) und SVG-Markup.
+   Kopf-, Gesichts- und Ohren-Teile liegen über dem Kopf (bewegen sich mit), Hals-Teile zwischen Körper und Kopf. Katalog (Preise): ACC in engine.js. */
+(function (global) {
+  "use strict";
+  var A = global.VTA; if (!A || !A.setAcc) return;
+  var L = "#14213d", O = ' stroke="' + L + '" stroke-width="5" stroke-linejoin="round"';
+  function flower(x, y, c) { var s = ""; for (var k = 0; k < 5; k++) { var a = k * 72 * Math.PI / 180; s += '<circle cx="' + (x + Math.cos(a) * 7).toFixed(1) + '" cy="' + (y + Math.sin(a) * 7).toFixed(1) + '" r="5.4" fill="' + c + '" stroke="' + L + '" stroke-width="2.4"/>'; } return s + '<circle cx="' + x + '" cy="' + y + '" r="4.6" fill="#ffe066" stroke="' + L + '" stroke-width="2.4"/>'; }
+  var ACCS = {
+    /* ---- Kopf ---- */
+    beanie: ['<path d="M48 64Q50 6 110 4Q170 6 172 64Q110 50 48 64z" fill="#e8123c"' + O + '/><rect x="44" y="56" width="132" height="22" rx="10" fill="#fff"' + O + '/><path d="M62 60v14M80 60v14M98 60v14M116 60v14M134 60v14M152 60v14" stroke="#ffd2da" stroke-width="3"/><circle cx="110" cy="2" r="15" fill="#fff"' + O + '/>'],
+    party: ['<path d="M110-34L74 54Q110 66 146 54z" fill="#b58cff"' + O + '/><path d="M98-6l-14 34M120-6l14 34" stroke="#ffe066" stroke-width="6" stroke-linecap="round"/><circle cx="110" cy="-34" r="11" fill="#ff6b8f" stroke="' + L + '" stroke-width="4"/>'],
+    zylinder: ['<ellipse cx="110" cy="48" rx="76" ry="14" fill="#2b2f45"' + O + '/><path d="M68 48L74-26h72L152 48z" fill="#2b2f45"' + O + '/><path d="M70 34h80" stroke="#ffd34d" stroke-width="10"/>'],
+    prop: ['<path d="M52 60Q56 14 110 12Q164 14 168 60Q110 48 52 60z" fill="#59c8ff"' + O + '/><path d="M110 12V-2" stroke="' + L + '" stroke-width="6"/><g><animateTransform attributeName="transform" type="rotate" from="0 110 -4" to="360 110 -4" dur=".5s" repeatCount="indefinite"/><path d="M110-4Q70-22 66-6Q90-8 110-4zM110-4Q150 14 154-2Q130 0 110-4z" fill="#ff6b8f" stroke="' + L + '" stroke-width="4" stroke-linejoin="round"/></g><circle cx="110" cy="-4" r="6" fill="#ffd34d" stroke="' + L + '" stroke-width="3"/>'],
+    cap: ['<path d="M54 68Q56 22 110 20Q164 22 166 68Q110 56 54 68z" fill="#e8123c"' + O + '/><path d="M148 62Q198 58 204 76Q172 82 140 72z" fill="#b01030"' + O + '/><circle cx="110" cy="20" r="7" fill="#fff" stroke="' + L + '" stroke-width="3.5"/><path d="M84 40q26-8 52 0" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".7" fill="none"/>'],
+    stroh: ['<ellipse cx="110" cy="56" rx="98" ry="20" fill="#f2cf6b"' + O + '/><path d="M60 56Q62 10 110 10Q158 10 160 56Q110 66 60 56z" fill="#f7dc86"' + O + '/><path d="M60 50Q110 62 160 50" stroke="#c0392b" stroke-width="9" fill="none"/><path d="M40 54q10 6 22 6M180 54q-10 6-22 6M78 28l10 8M100 20l6 10M124 20l-4 10M146 30l-10 8" stroke="#c99a2e" stroke-width="3" stroke-linecap="round"/>'],
+    blumen: [(function () { var s = '<path d="M52 82Q110 4 168 82" fill="none" stroke="#3aa357" stroke-width="9" stroke-linecap="round"/>', cols = ["#ff6b8f", "#fff", "#ffb347", "#b58cff", "#ff6b8f", "#fff", "#59c8ff"], k; for (k = 0; k < 7; k++) { var t = k / 6, a = Math.PI * (1 - t), x = 110 + Math.cos(a) * 58, y = 82 - Math.sin(a) * 70 + 4; s += flower(Math.round(x), Math.round(y), cols[k]); } return s; })()],
+    heiligen: ['<ellipse cx="110" cy="18" rx="44" ry="11" fill="none" stroke="' + L + '" stroke-width="12"/><ellipse cx="110" cy="18" rx="44" ry="11" fill="none" stroke="#ffe27a" stroke-width="6"><animate attributeName="opacity" values="1;.65;1" dur="1.6s" repeatCount="indefinite"/></ellipse>'],
+    hasen: ['<g' + O + '><ellipse cx="80" cy="-6" rx="14" ry="40" fill="#fff" transform="rotate(-10 80 -6)"/><ellipse cx="140" cy="-6" rx="14" ry="40" fill="#fff" transform="rotate(10 140 -6)"/></g><ellipse cx="80" cy="-2" rx="6" ry="28" fill="#ffc4de" transform="rotate(-10 80 -2)"/><ellipse cx="140" cy="-2" rx="6" ry="28" fill="#ffc4de" transform="rotate(10 140 -2)"/><path d="M54 66Q110 32 166 66" fill="none" stroke="' + L + '" stroke-width="12" stroke-linecap="round"/><path d="M54 66Q110 32 166 66" fill="none" stroke="#ff8fb8" stroke-width="6" stroke-linecap="round"/>'],
+    teufel: ['<g' + O + '><path d="M60 62Q44 36 56 10Q80 24 84 56z" fill="#e8123c"/><path d="M160 62Q176 36 164 10Q140 24 136 56z" fill="#e8123c"/></g><path d="M62 40q6-10 12-14M158 40q-6-10-12-14" stroke="#ff8a8a" stroke-width="3.5" stroke-linecap="round" opacity=".8"/>'],
+    eishut: ['<path d="M76 58L110 138L144 58z" fill="none"/><circle cx="92" cy="40" r="26" fill="#ff9ec9"' + O + '/><circle cx="128" cy="38" r="26" fill="#7de8c8"' + O + '/><circle cx="110" cy="14" r="24" fill="#fff3a0"' + O + '/><path d="M96 54q14 10 28 0" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".7" fill="none"/><circle cx="110" cy="-12" r="9" fill="#e8123c"' + O + '/><path d="M110-20q8-14 20-12" stroke="#2e8a35" stroke-width="4" fill="none" stroke-linecap="round"/>'],
+    pizza: ['<path d="M56 62Q110 18 164 62L110 -16z" fill="#ffd34d"' + O + '/><path d="M56 62Q110 18 164 62" stroke="#d9822b" stroke-width="12" fill="none" stroke-linecap="round"/><g fill="#e8123c" stroke="' + L + '" stroke-width="3"><circle cx="110" cy="14" r="9"/><circle cx="92" cy="40" r="8"/><circle cx="130" cy="38" r="8"/></g><path d="M104 -2l4 6M96 28l5 4M134 26l-5 4" stroke="#fff" stroke-width="2.6" stroke-linecap="round" opacity=".8"/>'],
+    krone: ['<path d="M56 62l-8-46l34 26l28-46l28 46l34-26l-8 46q-54 14-108 0z" fill="#ffd34d"' + O + '/><circle cx="110" cy="6" r="7" fill="#e8123c" stroke="' + L + '" stroke-width="3.5"/><circle cx="62" cy="22" r="5" fill="#59c8ff" stroke="' + L + '" stroke-width="3"/><circle cx="158" cy="22" r="5" fill="#59c8ff" stroke="' + L + '" stroke-width="3"/><path d="M74 52q36 8 72 0" stroke="#fff3a0" stroke-width="4" stroke-linecap="round" opacity=".8" fill="none"/>'],
+    /* ---- Gesicht ---- */
+    sonne: ['<g stroke="' + L + '" stroke-width="5" stroke-linejoin="round"><rect x="54" y="68" width="48" height="34" rx="13" fill="#14213d"/><rect x="118" y="68" width="48" height="34" rx="13" fill="#14213d"/><path d="M102 80h16" fill="none"/></g><path d="M62 76l14-4M126 76l14-4" stroke="#7be9ff" stroke-width="4" stroke-linecap="round"/><path d="M54 82L38 76M166 82l16-6" stroke="' + L + '" stroke-width="5" stroke-linecap="round"/>'],
+    nerd: ['<g stroke="#2b2f45" stroke-width="6"><circle cx="78" cy="88" r="23" fill="#bfe9ff" fill-opacity=".35"/><circle cx="142" cy="88" r="23" fill="#bfe9ff" fill-opacity=".35"/><path d="M101 86q9-6 18 0" fill="none"/></g><path d="M66 76q6-6 14-6" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".8"/>'],
+    mono: ['<circle cx="140" cy="86" r="30" fill="#bfe9ff" fill-opacity=".25" stroke="#ffd34d" stroke-width="7"/><path d="M162 108q12 30 4 70" stroke="#ffd34d" stroke-width="3.5" fill="none"/><path d="M126 70q8-8 20-8" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".8"/>'],
+    brille3d: ['<g stroke="' + L + '" stroke-width="5" stroke-linejoin="round"><rect x="52" y="70" width="50" height="34" rx="6" fill="#ff4d4d" fill-opacity=".75"/><rect x="118" y="70" width="50" height="34" rx="6" fill="#35c6ff" fill-opacity=".75"/><path d="M102 82h16" fill="none"/></g><path d="M52 80L38 76M168 80l14-4" stroke="' + L + '" stroke-width="5" stroke-linecap="round"/>'],
+    herz: ['<g stroke="' + L + '" stroke-width="5" stroke-linejoin="round"><path d="M80 106q-30-18-24-36q14-8 24 6q10-14 24-6q6 18-24 36z" fill="#ff5e8f" fill-opacity=".85"/><path d="M142 106q-30-18-24-36q14-8 24 6q10-14 24-6q6 18-24 36z" fill="#ff5e8f" fill-opacity=".85"/><path d="M104 80h14" fill="none"/></g><path d="M66 78q4-6 10-4M128 78q4-6 10-4" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".8"/>'],
+    schnurr: ['<path d="M110 120q-10-12-30-8q-16 4-14 16q16-6 28-2q10 2 16-6q6 8 16 6q12-4 28 2q2-12-14-16q-20-4-30 8z" fill="#3b2418"' + O.replace('5"', '4"') + '/><path d="M84 118q10-4 20 2" stroke="#6b4a32" stroke-width="3" stroke-linecap="round" fill="none"/>'],
+    clown: ['<circle cx="110" cy="116" r="13" fill="#e8123c"' + O.replace('5"', '4"') + '/><ellipse cx="105" cy="111" rx="4.4" ry="3" fill="#fff" opacity=".8"/>'],
+    ski: ['<path d="M44 84q66-22 132 0v14q-66-18-132 0z" fill="#ff8a1f"' + O + '/><path d="M54 74Q110 56 166 74Q172 104 150 108Q110 96 70 108Q48 104 54 74z" fill="#7be9ff" fill-opacity=".7"' + O + '/><path d="M66 78q20-8 44-6" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".8" fill="none"/>'],
+    /* ---- Ohren ---- */
+    kopf: ['<path d="M44 100Q40 6 110 6Q180 6 176 100" fill="none" stroke="' + L + '" stroke-width="17" stroke-linecap="round"/><path d="M44 100Q40 6 110 6Q180 6 176 100" fill="none" stroke="#ff3df0" stroke-width="9" stroke-linecap="round"/><g stroke="' + L + '" stroke-width="5"><rect x="28" y="78" width="30" height="48" rx="12" fill="#14213d"/><rect x="162" y="78" width="30" height="48" rx="12" fill="#14213d"/></g><rect x="33" y="86" width="8" height="32" rx="4" fill="#00e5ff"/><rect x="179" y="86" width="8" height="32" rx="4" fill="#00e5ff"/>'],
+    waerme: ['<path d="M50 92Q50 20 110 20Q170 20 170 92" fill="none" stroke="' + L + '" stroke-width="12" stroke-linecap="round"/><path d="M50 92Q50 20 110 20Q170 20 170 92" fill="none" stroke="#ff9ec9" stroke-width="6" stroke-linecap="round"/><g' + O + '><circle cx="44" cy="102" r="26" fill="#ffc4de"/><circle cx="176" cy="102" r="26" fill="#ffc4de"/></g><g fill="#fff" opacity=".85"><circle cx="38" cy="96" r="5"/><circle cx="50" cy="108" r="4"/><circle cx="170" cy="96" r="5"/><circle cx="182" cy="108" r="4"/></g>'],
+    ohrring: ['<g stroke="' + L + '" stroke-width="3.5"><circle cx="44" cy="128" r="9" fill="#ffd34d"/><circle cx="176" cy="128" r="9" fill="#ffd34d"/><circle cx="44" cy="146" r="6" fill="#59c8ff"/><circle cx="176" cy="146" r="6" fill="#59c8ff"/></g>'],
+    /* ---- Hals ---- */
+    schal: ['<path d="M54 158Q110 194 166 158L170 182Q110 218 50 182z" fill="#2f7be8"' + O + '/><path d="M80 176l4 22M104 184l2 24M128 184l-2 24M152 174l-4 22" stroke="#ffd34d" stroke-width="7"/><path d="M146 186l14 56l-26 6l-4-48z" fill="#2f7be8"' + O + '/><path d="M142 214l22-4M139 232l22-5" stroke="#ffd34d" stroke-width="6"/>'],
+    fliege: ['<g' + O + '><path d="M110 176L72 158Q64 176 72 194z" fill="#e8123c"/><path d="M110 176L148 158Q156 176 148 194z" fill="#e8123c"/></g><circle cx="110" cy="176" r="9" fill="#b01030" stroke="' + L + '" stroke-width="4"/><path d="M82 166l14 6M138 166l-14 6" stroke="#ff8a8a" stroke-width="3" stroke-linecap="round" opacity=".8"/>'],
+    kette: ['<path d="M62 160Q110 206 158 160" fill="none" stroke="' + L + '" stroke-width="9" stroke-linecap="round"/><path d="M62 160Q110 206 158 160" fill="none" stroke="#ffd34d" stroke-width="4.5" stroke-linecap="round" stroke-dasharray="7 3"/><circle cx="110" cy="198" r="15" fill="#ffd34d"' + O + '/><path d="M110 189l3 7 7 1-5 5 1 7-6-4-6 4 1-7-5-5 7-1z" fill="#fff3a0"/>'],
+    tuch: ['<path d="M58 158Q110 188 162 158L110 220z" fill="#e8123c"' + O + '/><g fill="#fff"><circle cx="90" cy="172" r="4"/><circle cx="130" cy="172" r="4"/><circle cx="110" cy="188" r="4"/><circle cx="110" cy="206" r="3.4"/></g>'],
+    medaille: ['<path d="M80 158l16 38M140 158l-16 38" stroke="' + L + '" stroke-width="12" stroke-linecap="round"/><path d="M80 158l16 38M140 158l-16 38" stroke="#2f7be8" stroke-width="6" stroke-linecap="round"/><circle cx="110" cy="206" r="19" fill="#ffd34d"' + O + '/><path d="M110 192l4 9 10 1-7 7 2 10-9-5-9 5 2-10-7-7 10-1z" fill="#fff3a0" stroke="' + L + '" stroke-width="2.4" stroke-linejoin="round"/>']
+  };
+  var VB = { head: "30 -50 160 130", face: "40 56 140 64", ears: "20 -6 180 150", neck: "40 148 140 110" };
+  function slotOf(val) { var it = global.VT && global.VT.itemById("ac:" + val); return it ? it.slot : "head"; }
+  /* Zubehör einer Figur als Markup: { head, neck } */
+  function build(loadout) {
+    var out = { head: "", neck: "" }, any = false;
+    ["ears", "face", "head"].forEach(function (sl) { var v = loadout[sl]; if (v && ACCS[v]) { out.head += ACCS[v][0]; any = true; } });
+    if (loadout.neck && ACCS[loadout.neck]) { out.neck = ACCS[loadout.neck][0]; any = true; }
+    return any ? out : null;
+  }
+  A.setAcc(function (av) { var VT = global.VT; if (!VT || !VT.accOf) return null; var l = VT.accOf(av); return Object.keys(l).length ? build(l) : null; });
+  /* kleines Bild eines Zubehörs (Shop, Showroom) */
+  function thumb(val) {
+    var a = ACCS[val]; if (!a) return ""; var sl = slotOf(val);
+    return '<svg viewBox="' + VB[sl] + '" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;overflow:hidden">' + a[0] + '</svg>';
+  }
+  global.VTACC = { thumb: thumb, has: function (v) { return !!ACCS[v]; } };
 })(window);
 </script>
 <script>/* Beute-Animationen: fünf Öffnungs-Szenen (Piñata, Nachschub-Kiste, Tresor, Kapsel, Eisblock). Vektor + CSS + Partikel, kein Bild. */
@@ -10340,7 +10439,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
 
   /* ---------- Kopfzeile ---------- */
   /* Avatare sind Emojis oder, mit "svg:"-Präfix, Zeichnungen aus cosmetics.js */
-  function avatarHtml(v) { return global.VTC.avatarHtml(v, esc); }
+  function avatarHtml(v, own) { if (own && global.VTA && global.VTA.has(v) && S.accOf && Object.keys(S.accOf(v)).length) return global.VTA.headA(v); return global.VTC.avatarHtml(v, esc); }   // own: eigene Figur samt Zubehör
   function playerName() {
     var d = S.profiles(), x = d.list.filter(function (y) { return y.id === d.active; })[0];
     return x ? x.name : "";
@@ -10464,7 +10563,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   setInterval(ambientSync, 1500);
   function renderHeader() {
     var st = S.state, r = S.rankOf(st.xp);
-    $("#hAvatar").innerHTML = avatarHtml(st.profile.avatar);
+    $("#hAvatar").innerHTML = avatarHtml(st.profile.avatar, true);
     $("#hAvatar").className = ("avatar " + global.VTC.frameClass(st.profile)).trim();
     var pd = S.profiles(); var pn = pd.list.filter(function (x) { return x.id === pd.active; })[0];
     $("#hAvatar").title = pn ? pn.name : "";
@@ -10770,7 +10869,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (c.kind === "sticker") return '<span class="srst">' + stickerHtml(c.it, 46) + '</span>';
     if (c.kind === "dance") return '<div class="srdisc" style="--c:' + col[1] + '"><i>♪</i></div>';
     if (c.kind === "outfit" || c.kind === "kit") return svgShirt(SHIRTS[c.val] || SHIRTS.natur);
-    if (c.kind === "frame") return '<span class="avatar fr-' + esc(c.val) + '" style="width:44px;height:44px;font-size:22px">' + avatarHtml(S.state.profile.avatar) + '</span>';
+    if (c.kind === "frame") return '<span class="avatar fr-' + esc(c.val) + '" style="width:44px;height:44px;font-size:22px">' + avatarHtml(S.state.profile.avatar, true) + '</span>';
     return '<span class="srem">' + (c.it ? shopIcon(c.it) : "🎁") + '</span>';
   }
   function medalStyle(id) {
@@ -10838,7 +10937,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       if (e.target === ov || mm === "x") { ov.remove(); render(); return; }
       if (mm === "fav") { var on = S.toggleFav(id); toast(on ? "Zu deinen Favoriten gelegt ⭐" : "Aus den Favoriten genommen"); ov.remove(); render(); }
       else if (mm === "eq") { var r = S.equip(it.it.id); if (r.error) return toast(r.error); ov.remove(); toast(it.kind === "sticker" ? (r.on ? "Aufgeklebt" : "Abgelöst") : "Getragen: " + it.label); render(); }
-      else if (mm === "try") { global.VTC.dance({ av: S.state.profile.avatar, avatar: avatarHtml(S.state.profile.avatar), outfit: it.kind === "dance" ? S.state.profile.outfit : it.it.val, dance: it.kind === "dance" ? it.it.val : (S.state.profile.dance || "wackler"), title: it.label }); }
+      else if (mm === "try") { global.VTC.dance({ av: S.state.profile.avatar, avatar: avatarHtml(S.state.profile.avatar, true), outfit: it.kind === "dance" ? S.state.profile.outfit : it.it.val, dance: it.kind === "dance" ? it.it.val : (S.state.profile.dance || "wackler"), title: it.label }); }
       else if (mm === "shop") { ov.remove(); shopTab = it.kind === "kit" ? "kit" : it.it.set === "fn" ? "fn" : it.kind; tab = "shop"; shopSeg = "shop"; render(); view.scrollTop = 0; }
       else if (mm === "pass") { ov.remove(); tab = "beute"; beuteSeg = "pass"; render(); view.scrollTop = 0; }
     });
@@ -10915,7 +11014,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     h += '<button class="pchest' + (pend ? " ready" : p.chests[first.section] ? " got" : "") + '" style="left:' + cp.x + '%;top:' + cp.y + 'px" data-tip="' + esc(ctip) + '" title="' + esc(ctip) + '" data-act="' + (pend ? "openchest" : "pathlocked") + '" aria-label="' + esc(ctip) + '">' + global.VTL.icon(global.VTL.typeFor(secNo - 1), p.chests[first.section] && !pend ? "looted" : "closed") + '</button>';
     if (isCur && p.pos < S.pathStations().length) {
       var cpt = pts[curIdx], side = cpt.x < 50 ? 1 : -1;
-      h += '<div class="pme" id="pme" style="left:calc(' + cpt.x + '% + ' + (side * 62) + 'px);top:' + (cpt.y - 4) + 'px">' + avatarHtml(S.state.profile.avatar) + '</div>' +
+      h += '<div class="pme" id="pme" style="left:calc(' + cpt.x + '% + ' + (side * 62) + 'px);top:' + (cpt.y - 4) + 'px">' + avatarHtml(S.state.profile.avatar, true) + '</div>' +
         '<div class="pbubble" style="left:calc(' + cpt.x + '% + ' + (side * 62) + 'px);top:' + (cpt.y - 46) + 'px;transform:translateX(-50%)">Los geht’s!</div>';
     }
     return { html: h + '</div></div>', pts: pts, curIdx: curIdx, H: H };
@@ -10965,7 +11064,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   /* Siegertanz der gewählten Figur: bei Boss immer der epische (wenn gekauft), sonst der gewählte */
   function danceWin(big, title) {
     var p = S.state.profile, sieg = S.SHOP.filter(function (x) { return x.id === "dn:sieg"; })[0];
-    global.VTC.dance({ av: p.avatar, avatar: avatarHtml(p.avatar), outfit: p.outfit, dance: big && sieg && S.owns(sieg) ? "sieg" : (p.dance || "wackler"), title: title, big: big });
+    global.VTC.dance({ av: p.avatar, avatar: avatarHtml(p.avatar, true), outfit: p.outfit, dance: big && sieg && S.owns(sieg) ? "sieg" : (p.dance || "wackler"), title: title, big: big });
   }
   /* Truhen im Lernpfad: zu (wartet oder noch gesperrt) und geplündert (aufgebrochen) */
   function dustPuff(el) {
@@ -11609,7 +11708,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   function profileCard() {
     var st = S.state, r = S.rankOf(st.xp), pn = playerName(), pf = st.profile, xpPct = r.next ? Math.min(100, Math.round(r.into * 100 / Math.max(1, r.span))) : 100;
     var favs = S.favs().map(function (id) { return '<button class="hhf" data-act="gotab" data-t="showroom" aria-label="Favorit">' + favIcon(id) + '</button>'; }).join("");
-    return '<section class="card"><div class="row" style="gap:14px;align-items:center"><div class="avatar ' + global.VTC.frameClass(pf) + '" style="width:64px;height:64px;font-size:34px;flex:none">' + avatarHtml(pf.avatar) + '</div>' +
+    return '<section class="card"><div class="row" style="gap:14px;align-items:center"><div class="avatar ' + global.VTC.frameClass(pf) + '" style="width:64px;height:64px;font-size:34px;flex:none">' + avatarHtml(pf.avatar, true) + '</div>' +
       '<div style="flex:1 1 auto;min-width:0"><b style="font-size:18px">' + esc(pn || "Spieler") + '</b><div class="small muted">' + esc(r.rank.n) + ' · <span class="tnum">' + st.xp + '</span> XP</div>' +
       '<div class="bar" style="margin-top:6px"><i style="width:' + xpPct + '%"></i></div></div></div>' +
       '<div class="row" style="gap:8px;margin-top:12px;align-items:center"><span class="small muted">⭐ Favoriten</span>' + (favs || '<span class="small muted">noch keine</span>') + '<button class="chip" style="margin-left:auto" data-act="gotab" data-t="showroom">🏆 Showroom</button></div></section>';
@@ -11979,7 +12078,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   }
   /* ---------- Shop und Sammelalbum ---------- */
   var SHOP_TABS = [
-    { k: "avatar", n: "Figuren" }, { k: "sticker", n: "Sticker" }, { k: "frame", n: "Rahmen" }, { k: "title", n: "Titel" },
+    { k: "avatar", n: "Figuren" }, { k: "sticker", n: "Sticker" }, { k: "acc", n: "Zubehör 🎩" }, { k: "frame", n: "Rahmen" }, { k: "title", n: "Titel" },
     { k: "fn", n: "Fortnite" }, { k: "bg", n: "Hintergründe" }, { k: "fx", n: "Effekte" }, { k: "dance", n: "Tänze 💃" }, { k: "outfit", n: "Outfits 👕" }, { k: "kit", n: "Trikots ⚽" }, { k: "sets", n: "Sets ⭐" }, { k: "snd", n: "Töne" }, { k: "theme", n: "Farben" }
   ];
   var KIND_NAME = { sticker: "Sticker", avatar: "Figur", frame: "Rahmen", title: "Titel", bg: "Hintergrund", fx: "Effekt", dance: "Tanz", outfit: "Outfit", kit: "Trikot", snd: "Ton", theme: "Farbwelt" };
@@ -11989,6 +12088,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   function shopIcon(it) {
     switch (it.kind) {
       case "avatar": return avatarHtml(it.val);
+      case "acc": return '<span style="display:inline-block;width:34px;height:26px">' + (global.VTACC ? global.VTACC.thumb(it.val) : "🎩") + '</span>';
       case "sticker": return stickerHtml(it, 38);
       case "theme": return '<span class="dot" style="background:' + (THEME_DOT[it.val] || "#1E6273") + '"></span>';
       case "frame": return '<span class="avatar fr-' + it.val + '" style="width:26px;height:26px;font-size:14px">' + (it.val === "none" ? "—" : "🙂") + '</span>';
@@ -12117,6 +12217,24 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       ov.remove(); toast("Willkommen! +" + r.coins + " 🪙, deine Figur und Konfetti sind da."); render(); renderHeader();
     });
   }
+  /* Zubehör: einmal kaufen, jeder Figur einzeln anziehen. accFig = Figur, die gerade anprobiert wird */
+  var accFig = "";
+  function accHtml() {
+    var pf = S.state.profile, figs = S.SHOP.filter(function (x) { return x.kind === "avatar" && S.owns(x) && global.VTA && global.VTA.has(x.val); });
+    if (!accFig || !figs.some(function (f) { return f.val === accFig; })) accFig = pf.avatar;
+    var cur = S.accOf(accFig), fig = figs.filter(function (f) { return f.val === accFig; })[0], worn = S.ACC_SLOTS.map(function (sl) { var it = cur[sl[0]] && S.itemById("ac:" + cur[sl[0]]); return it ? it.label : ""; }).filter(Boolean);
+    var h = '<p class="small muted" style="margin:0 0 8px">Zubehör kaufst du <b>einmal</b> und ziehst es <b>jeder Figur einzeln</b> an. Wähle eine Figur, tippe dann ein Teil an: Gekaufte ziehst du an oder aus, neue kaufst du für ein paar Münzen.</p>' +
+      '<div class="accfigs">' + figs.map(function (f) { return '<button class="accfig' + (f.val === accFig ? " on" : "") + '" data-act="accfig" data-av="' + esc(f.val) + '" title="' + esc(f.label) + '" aria-label="' + esc(f.label) + '" aria-pressed="' + (f.val === accFig) + '"><span class="acch">' + avatarHtml(f.val, true) + '</span></button>'; }).join("") + '</div>' +
+      '<div class="accpv"><div class="accst"><div class="accfl">' + heroHtml(accFig, 0) + '</div></div><div class="accin"><b>' + esc(fig ? fig.label : "Fuchs") + '</b><span class="small muted">' + (worn.length ? "trägt: " + esc(worn.join(", ")) : "trägt noch nichts") + '</span>' + (worn.length ? '<button class="chip" data-act="accclr">Alles ablegen</button>' : "") + '</div></div>';
+    S.ACC_SLOTS.forEach(function (sl) {
+      var list = S.SHOP.filter(function (x) { return x.kind === "acc" && x.slot === sl[0]; }).sort(function (a, b) { return a.cost - b.cost; });
+      h += '<div class="shsec" style="--c:#7a6adb"><b>' + sl[1] + '</b><small>' + list.filter(function (x) { return S.owns(x); }).length + ' / ' + list.length + '</small><i></i></div><div class="acgrid">' + list.map(function (x) {
+        var own = S.owns(x), on = cur[x.slot] === x.val;
+        return '<button class="acct ' + S.rarityOf(x) + (own ? " own" : "") + (on ? " on" : "") + '" data-act="acctile" data-id="' + esc(x.id) + '"><span class="acci">' + (global.VTACC ? global.VTACC.thumb(x.val) : "") + '</span><b>' + esc(x.label) + '</b><small>' + (on ? "✓ an" : own ? "Anziehen" : "🪙 " + x.cost) + '</small></button>';
+      }).join("") + '</div>';
+    });
+    return h;
+  }
   function shopCard() {
     var st = S.state, wishId = (S.wish() || {}).id, deal = S.dealItem(), sd = S.activeSetDeal();
     var html = '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Shop</div><span class="pill">🪙 ' + st.coins + '</span></div>' +
@@ -12127,6 +12245,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       '<div class="row wrap" style="gap:6px;margin-bottom:6px">' + SHOP_TABS.map(function (t) {
         return '<button class="chip" data-act="shoptab" data-k="' + t.k + '" aria-pressed="' + (shopTab === t.k) + '">' + t.n + '</button>';
       }).join("") + '</div>';
+    if (shopTab === "acc") return html + accHtml() + '</section>';
     if (shopTab === "sticker") html += slotsHtml();
     if (shopTab === "sets") {
       if (sd) html += '<div style="background:linear-gradient(135deg,#dff3ff,#eaf6ff);border-radius:12px;padding:10px 12px;margin:6px 0 10px"><b>❄️ Nur heute: ' + esc(sd.set.name) + ' für ' + sd.total + ' 🪙</b><div class="small muted" style="margin:2px 0 8px">Jedes fehlende Teil kostet heute ' + sd.price + ' 🪙 (' + sd.parts.length + ' ' + plural(sd.parts.length, "Teil", "Teile") + '). noch ' + untilMidnight() + '.</div><button class="btn" data-act="buyset">' + (sd.parts.some(function (x) { return S.minXp(x) > st.xp; }) ? "Alle freigeschalteten Teile kaufen · " + sd.parts.filter(function (x) { return S.minXp(x) <= st.xp; }).length * sd.price : "Komplettes Set kaufen · " + sd.total) + ' 🪙</button></div>';
@@ -12146,7 +12265,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     }
     var all = shopTab === "avatar" || shopTab === "sticker";   // Figuren und Sticker: alles zeigen (auch Fortnite-Reihe, Noch-nicht-Freigegebenes als gesperrte Silhouette)
     var list = S.SHOP.filter(function (it) { return all ? it.kind === shopTab : (shopTab === "fn" ? it.set === "fn" : it.kind === shopTab && !it.set) && S.shopVisible(it); })
-      .map(function (it, i) { return { it: it, i: i }; }).sort(function (a, b) { return (RO[S.rarityOf(a.it)] - RO[S.rarityOf(b.it)]) || (a.it.cost - b.it.cost) || (a.i - b.i); }).map(function (x) { return x.it; });
+      .map(function (it, i) { return { it: it, i: i }; }).sort(function (a, b) { return (RO[S.rarityOf(a.it)] - RO[S.rarityOf(b.it)]) || (S.minXp(a.it) - S.minXp(b.it)) || (a.it.cost - b.it.cost) || (a.i - b.i); }).map(function (x) { return x.it; });
     var tot = list.filter(function (it) { return it.cost > 0 || shopTab !== "avatar"; }), have = tot.filter(function (it) { return S.owns(it); }).length;
     html += teaserHtml() + '<div class="small muted" style="margin:2px 0 4px">Gesammelt: <b>' + have + ' / ' + tot.length + '</b></div>';
     ["common", "rare", "epic", "legend", "unreal"].forEach(function (r) {
@@ -12257,7 +12376,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       '<div class="kpi"><b class="tnum">' + s.acc + '%</b><span>richtig</span></div>' +
       '<div class="kpi"><b class="tnum">' + s.days + '</b><span>Lerntage</span></div>' +
       '</div>' +
-      '<div class="row" style="margin-top:14px;gap:12px"><div class="avatar ' + global.VTC.frameClass(st.profile) + '">' + avatarHtml(st.profile.avatar) + '</div>' +
+      '<div class="row" style="margin-top:14px;gap:12px"><div class="avatar ' + global.VTC.frameClass(st.profile) + '">' + avatarHtml(st.profile.avatar, true) + '</div>' +
       '<div style="flex:1 1 auto"><div class="row"><b>' + esc(r.rank.n) + '</b><span class="spacer"></span>' +
       '<span class="small muted tnum">' + st.xp + (r.next ? " / " + r.next.xp : "") + ' XP</span></div>' +
       '<div class="bar" style="margin-top:6px"><i style="width:' + (r.span ? Math.round(r.into * 100 / r.span) : 100) + '%"></i></div></div>' + placedStickers(46) + '</div></section>';
@@ -12733,7 +12852,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var pct = function (r) { return r.span ? Math.round(r.into * 100 / r.span) : 100; };
     var html = '<div class="sbody"><div class="stack" style="padding-top:20px">' +
       '<section class="card fin-top" style="text-align:center">' + (perfect ? '<div class="fin-stamp">PERFEKT!</div>' : "") +
-      (good ? '<div class="fin-hero"><div class="fin-rays"></div><div class="avatar fin-av ' + global.VTC.frameClass(st.profile) + '">' + avatarHtml(st.profile.avatar) + '</div></div>' +
+      (good ? '<div class="fin-hero"><div class="fin-rays"></div><div class="avatar fin-av ' + global.VTC.frameClass(st.profile) + '">' + avatarHtml(st.profile.avatar, true) + '</div></div>' +
         '<div class="fin-stars" aria-label="' + stars + ' von 3 Sternen">' + [0, 1, 2].map(function (i) { return star(i < stars, i); }).join("") + '</div>'
         : '<div style="font-size:40px">💤</div>') +
       '<h1 style="font-size:26px;margin-top:6px">' + head + '</h1><p class="muted small" style="margin:8px 0 0">' + esc(msg) + '</p>' +
@@ -13616,6 +13735,15 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     else if (a === "passcrew") { var cr2 = S.claimPassCrew(+act.getAttribute("data-n")); if (cr2.error) toast(cr2.error); else { toast("👥 Crew-Bonus! +" + cr2.coins + " 🪙"); renderHeader(); render(); } }
     else if (a === "passshare") { sharePass(); }
     else if (a === "passclaim") { openPassReward(act.getAttribute("data-n")); }
+    else if (a === "accfig") { accFig = act.getAttribute("data-av"); var sy0 = view.scrollTop; render(); view.scrollTop = sy0; }
+    else if (a === "accclr") { S.accClear(accFig); var sy1 = view.scrollTop; renderHeader(); render(); view.scrollTop = sy1; }
+    else if (a === "acctile") {
+      var aid = act.getAttribute("data-id"), ait = S.itemById(aid); if (!ait) return;
+      if (!S.owns(ait)) { var br = S.buy(aid); if (br.error) { toast(br.error); return; } try { if (S.state.settings.audio) global.VTC.sound(S.state.profile.snd, true); } catch (e) {} toast(ait.label + " gekauft und angezogen!"); }
+      var tr = S.accToggle(accFig, aid); if (tr.error) { toast(tr.error); return; }
+      if (!tr.on) toast(ait.label + " abgelegt");
+      var sy2 = view.scrollTop; renderHeader(); render(); view.scrollTop = sy2;
+    }
     else if (a === "sritem") { srModal(act.getAttribute("data-id")); }
     else if (a === "hhdance") {
       var hp = S.state.profile, hn = DANCE_NUM[hp.dance] || 1, hb = $("#hhBub"), CH = ["Yeah! 💪", "Weiter so, Champion! 🏆", "Heute knacken wir ein Wort mehr!", "Ich tanze nur für dich 💃", "Wörter sammeln macht stark!"];

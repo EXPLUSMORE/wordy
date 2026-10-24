@@ -23,7 +23,7 @@ if (OPEN.length) {
     process.exit(1);
   }
 }
-const CODE = ['js/engine.js','js/cosmetics.js','js/saison.js','js/saison2.js','js/fortnite.js','js/figur.js','js/stila.js','js/stilb.js','js/loot.js','js/film.js','js/app.js','js/arena.js','js/spiele.js','js/grammatik.js','js/sync.js'];
+const CODE = ['js/engine.js','js/cosmetics.js','js/saison.js','js/saison2.js','js/fortnite.js','js/figur.js','js/stila.js','js/stilb.js','js/acc.js','js/loot.js','js/film.js','js/app.js','js/arena.js','js/spiele.js','js/grammatik.js','js/sync.js'];
 const ICONS = ['icons/icon-192.png','icons/icon-512.png','icons/icon-maskable-512.png',
   'icons/apple-touch-icon.png','icons/favicon-32.png'];
 
