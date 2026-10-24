@@ -96,6 +96,19 @@
     { id: "av:fnchamp",    kind: "avatar", set: "fn", label: "Champion-Kristall", cost: 1500, val: "svg:fnchamp", rank: "Champion I" },
     { id: "av:fnkristall", kind: "avatar", set: "fn", label: "Kristall-Lama",  cost: 1500, val: "svg:fnkristall", rank: "Unreal I" },
     { id: "av:gepard",      kind: "avatar", label: "Turbo-Gepard",   cost: 700,  val: "svg:gepard",     rank: "Platin II", rar: "epic" },
+    { id: "av:prisma",       kind: "avatar", label: "Prisma-Drache",      cost: 3500,  val: "svg:prisma",       rank: "Unreal I", rar: "unreal" },
+    { id: "av:nebelwal",     kind: "avatar", label: "Nebel-Wal",          cost: 3800,  val: "svg:nebelwal",     rank: "Unreal II", rar: "unreal" },
+    { id: "av:donnervogel",  kind: "avatar", label: "Donnervogel",        cost: 4100,  val: "svg:donnervogel",  rank: "Unreal III", rar: "unreal" },
+    { id: "av:sonnenloewe",  kind: "avatar", label: "Sonnenlöwe",         cost: 4500,  val: "svg:sonnenloewe",  rank: "Unreal Gold I", rar: "unreal" },
+    { id: "av:athene",       kind: "avatar", label: "Gold-Athene",        cost: 4900,  val: "svg:athene",       rank: "Unreal Gold II", rar: "unreal" },
+    { id: "av:goldkrake",    kind: "avatar", label: "Gold-Kraken",        cost: 5300,  val: "svg:goldkrake",    rank: "Unreal Gold III", rar: "unreal" },
+    { id: "av:fenrir",       kind: "avatar", label: "Platin-Fenrir",      cost: 5800,  val: "svg:fenrir",       rank: "Unreal Platin I", rar: "unreal" },
+    { id: "av:mondhase",     kind: "avatar", label: "Mond-Hase",          cost: 6300,  val: "svg:mondhase",     rank: "Unreal Platin II", rar: "unreal" },
+    { id: "av:zeitschildi",  kind: "avatar", label: "Zeit-Schildkröte",   cost: 6800,  val: "svg:zeitschildi",  rank: "Unreal Platin III", rar: "unreal" },
+    { id: "av:kristallhirsch", kind: "avatar", label: "Kristall-Hirsch",  cost: 7500,  val: "svg:kristallhirsch", rank: "Unreal Diamant I", rar: "unreal" },
+    { id: "av:nebelpanther", kind: "avatar", label: "Galaxie-Panther",    cost: 8200,  val: "svg:nebelpanther", rank: "Unreal Diamant II", rar: "unreal" },
+    { id: "av:qilin",        kind: "avatar", label: "Orakel-Qilin",       cost: 9000,  val: "svg:qilin",        rank: "Unreal Diamant III", rar: "unreal" },
+    { id: "av:unreallama",   kind: "avatar", label: "Das echte Unreal",   cost: 12000, val: "svg:unreallama",   rank: "The real Unreal", rar: "unreal" },
     { id: "av:greif",       kind: "avatar", label: "Goldgreif",       cost: 2200, val: "svg:greif",    rank: "Elite II", rar: "legend" },
     { id: "av:kitsune",     kind: "avatar", label: "Geisterfuchs",    cost: 2400, val: "svg:kitsune",  rank: "Elite III", rar: "legend" },
     { id: "av:pegasus",     kind: "avatar", label: "Sternen-Pegasus", cost: 2600, val: "svg:pegasus",  rank: "Champion I", rar: "legend" },
@@ -238,7 +251,7 @@
     "Platin I": ["av:pphoenix", "av:kitty3"], "Platin II": ["av:fnrakete", "av:gepard"], "Platin III": ["av:pgold", "av:fnelite"],
     /* ab Diamant I: alles legendär, nichts wird geschenkt, der Rang schaltet die Figuren nur im Shop frei (Kauf) */
     "Diamant I": ["av:blitzwolf", "av:pregen"], "Diamant II": ["av:sdrache", "av:ninja"], "Diamant III": ["av:flamingo", "av:faultier"],
-    "Elite I": ["av:fnchamp", "av:pgalaxie"], "Elite II": ["av:greif"], "Elite III": ["av:kitsune"], "Champion I": ["av:fnkristall", "av:fnunreal", "av:pegasus"], "Champion II": ["av:zyklop"], "Champion III": ["av:sphinx", "av:golem"], "Unreal I": ["av:kitty4"], "Unreal Gold I": ["av:fngold"]
+    "Elite I": ["av:fnchamp", "av:pgalaxie"], "Elite II": ["av:greif"], "Elite III": ["av:kitsune"], "Champion I": ["av:fnkristall", "av:fnunreal", "av:pegasus"], "Champion II": ["av:zyklop"], "Champion III": ["av:sphinx", "av:golem"], "Unreal I": ["av:kitty4", "av:prisma"], "Unreal II": ["av:nebelwal"], "Unreal III": ["av:donnervogel"], "Unreal Gold I": ["av:fngold", "av:sonnenloewe"], "Unreal Gold II": ["av:athene"], "Unreal Gold III": ["av:goldkrake"], "Unreal Platin I": ["av:fenrir"], "Unreal Platin II": ["av:mondhase"], "Unreal Platin III": ["av:zeitschildi"], "Unreal Diamant I": ["av:kristallhirsch"], "Unreal Diamant II": ["av:nebelpanther"], "Unreal Diamant III": ["av:qilin"], "The real Unreal": ["av:unreallama"]
   };
   var SHOP_ONLY_FROM = "Diamant I";   // ab diesem Rang keine Figurenwahl mehr
   function rankPickable(rn) {
@@ -1048,35 +1061,83 @@
   /* ---------- Showroom: alles Gesammelte, Medaillen, Sammler-Pokale, Favoriten ---------- */
   function favs() { var f = state.profile.favs; if (!Array.isArray(f)) f = state.profile.favs = []; return f; }
   function toggleFav(id) { var f = favs(), i = f.indexOf(id); if (i >= 0) f.splice(i, 1); else { f.push(id); while (f.length > 3) f.shift(); } save(true); return i < 0; }
-  function medalList() {
-    var ms = [], ps = pathState(), bosses = pathStations().filter(function (s) { return s.last && ps.stars[s.id]; }).length, mast = stats().dist[4], best = state.streak.best || 0, info = passInfo(), sid = info.season.id;
-    function M(id, label, rar, done, how, val) { ms.push({ id: "md:" + id, label: label, kind: "medal", rar: rar, owned: !!done, how: how, val: val }); }
-    M("boss1", "Erster Boss", "common", bosses >= 1, "Eine Boss-Runde im Lernpfad besiegen", "⚔");
-    M("boss5", "Boss-Jäger", "rare", bosses >= 5, "5 Bosse besiegen (" + Math.min(bosses, 5) + "/5)", "⚔");
-    M("boss10", "Boss-König", "epic", bosses >= 10, "10 Bosse besiegen (" + Math.min(bosses, 10) + "/10)", "⚔");
-    M("serie7", "Serie 7", "rare", best >= 7, "7 Tage am Stück üben (Bestwert " + best + ")", "7");
-    M("serie30", "Serie 30", "epic", best >= 30, "30 Tage am Stück üben", "30");
-    M("serie100", "Serie 100", "legend", best >= 100, "100 Tage am Stück üben", "100");
-    M("w25", "25 Meister", "rare", mast >= 25, "25 Wörter meistern (" + Math.min(mast, 25) + "/25)", "25");
-    M("w100", "100 Meister", "epic", mast >= 100, "100 Wörter meistern (" + Math.min(mast, 100) + "/100)", "100");
-    var du = state.duels || { p: 0, w: 0 }, chBest = (state.chal && state.chal.best) || 0;
-    M("duel1", "Erstes Duell", "common", du.p >= 1, "Ein Duell gegen einen Freund spielen", "⚔");
-    M("duel5", "Duell-Held", "rare", du.w >= 5, "5 Duelle gewinnen (" + Math.min(du.w, 5) + "/5)", "5");
-    M("duel20", "Duell-König", "epic", du.w >= 20, "20 Duelle gewinnen (" + Math.min(du.w, 20) + "/20)", "20");
-    var crw = state.crew || { joined: 0, gold: 0 };
-    M("crew1", "Crew-Mitglied", "common", crw.joined, "Einer Crew beitreten", "★");
-    M("crewgold", "Team-Gold", "epic", crw.gold >= 1, "Mit deiner Crew ein Gold-Ziel schaffen", "★");
-    M("chal7", "Challenge 7", "rare", chBest >= 7, "Die Daily Challenge 7 Tage am Stück schaffen (Bestwert " + chBest + ")", "7");
-    M("chal30", "Challenge 30", "legend", chBest >= 30, "Die Daily Challenge 30 Tage am Stück schaffen", "30");
+  /* ---------- Abzeichen: Kategorien mit Stufenleitern (1, 5, 10, 25, 50, 100 …) ----------
+     Jede Leiter liest einen Zählerstand (aus Lernstand, state.totals usw.) und vergibt je Stufe ein Abzeichen (Seltenheit steigt mit der Stufe, die höchste lange Stufe ist „Unreal“).
+     IDs: md:<Kürzel><Schwelle>; alte IDs (boss1, serie7, w25, duel5, chal7 …) bleiben gültig. Zählerstände ab v2.138: state.totals.perfect/rounds/games. */
+  function kfmt(n) { return n >= 1000 ? (n % 1000 ? (n / 1000).toString().replace(".", ",") : n / 1000) + "K" : String(n); }
+  function nfmt(n) { return n.toLocaleString("de-DE"); }
+  function ladderRar(i, n) { return n >= 7 && i === n - 1 ? "unreal" : (i / Math.max(1, n - 1)) < 0.25 ? "common" : (i / Math.max(1, n - 1)) < 0.5 ? "rare" : (i / Math.max(1, n - 1)) < 0.78 ? "epic" : "legend"; }
+  function medalGroups() {
+    var ps = pathState(), st = stats(), t = state.totals || {}, groups = [];
+    var bosses = pathStations().filter(function (x) { return x.last && ps.stars[x.id]; }).length, stations = Object.keys(ps.stars || {}).length;
+    var mast = st.dist[4], seen = st.dist[1] + st.dist[2] + st.dist[3] + st.dist[4];
+    var best = (state.streak && state.streak.best) || 0, days = Object.keys(state.history || {}).length + (state.daily && state.daily.items ? 1 : 0);
+    var du = state.duels || { p: 0, w: 0 }, chBest = (state.chal && state.chal.best) || 0, crw = state.crew || { joined: 0, gold: 0 };
+    var perfect = Math.max(t.perfect || 0, state.badges.indexOf("clean") >= 0 ? 1 : 0), games = Math.max(t.games || 0, state.badges.indexOf("arena1") >= 0 ? 1 : 0);
+    var gram = 0; Object.keys(state.gram || {}).forEach(function (k) { gram += (state.gram[k] && state.gram[k].lessons) || 0; });
+    var owned = (state.profile && state.profile.owned) || [], figs = owned.filter(function (id) { return id.indexOf("av:") === 0; }).length, buys = owned.length;
+    var stk = ((state.profile && state.profile.stickers) || []).length;
+    function G(id, title, icon) { var g = { id: id, title: title, icon: icon, items: [] }; groups.push(g); return g; }
+    function M(g, id, label, rar, done, how, val, prog, need) { g.items.push({ id: "md:" + id, label: label, kind: "medal", rar: rar, owned: !!done, how: how, val: val, prog: prog, need: need }); }
+    /* Leiter: steps = Schwellen, cur = Zählerstand, name(n) = Titel, how(n) = Bedingung; ids = optionale alte IDs je Schwelle */
+    function ladder(g, key, steps, cur, name, how, rars) {
+      steps.forEach(function (n, i) { M(g, key + n, name(n), (rars && rars[n]) || ladderRar(i, steps.length), cur >= n, how(n) + (cur >= n ? "" : " (" + nfmt(Math.min(cur, n)) + "/" + nfmt(n) + ")"), kfmt(n), Math.min(cur, n), n); });
+    }
+    var g0 = G("start", "Meilensteine", "⭐");
+    var ML = { start: "⭐", chain15: "🔗", box0: "🧹", unit1: "📘", early: "📅", arena1: "🎮", combo15: "💥" };
+    BADGES.filter(function (b) { return ML[b.id]; }).forEach(function (b) { M(g0, "ms-" + b.id, b.n, "common", state.badges.indexOf(b.id) >= 0, b.d, ML[b.id]); });
+    var g1 = G("clean", "Fehlerfrei", "🎯");
+    ladder(g1, "pf", [1, 5, 10, 25, 50, 100, 250, 500], perfect, function (n) { return n === 1 ? "Fehlerfrei" : n + "× fehlerfrei"; }, function (n) { return n === 1 ? "Eine Runde (mindestens 8 Aufgaben) ohne einen Fehler abschließen" : n + " Runden ohne einen Fehler abschließen"; });
+    var g2 = G("woerter", "Wörter", "📚");
+    ladder(g2, "wk", [10, 50, 150, 300, 500, 1000, 2000], seen, function (n) { return n + " Wörter geübt"; }, function (n) { return n + " Vokabeln schon einmal geübt"; });
+    ladder(g2, "w", [10, 25, 50, 100, 250, 500, 1000, 2000], mast, function (n) { return n === 25 ? "25 Meister" : n === 100 ? "100 Meister" : n + " gemeistert"; }, function (n) { return n + " Wörter langfristig meistern"; }, { 25: "rare", 100: "epic" });
+    var g3 = G("fleiss", "Fleiß & Zeit", "⏱️");
+    ladder(g3, "ok", [100, 500, 1000, 2500, 5000, 10000, 25000], t.correct || 0, function (n) { return nfmt(n) + " richtig"; }, function (n) { return nfmt(n) + " Aufgaben richtig beantworten"; });
+    ladder(g3, "hr", [1, 5, 10, 25, 50, 100], Math.floor((t.sec || 0) / 3600), function (n) { return n + (n === 1 ? " Stunde" : " Stunden") + " geübt"; }, function (n) { return n + (n === 1 ? " Stunde" : " Stunden") + " echte Übungszeit"; });
+    ladder(g3, "tag", [7, 14, 30, 60, 100, 200, 365], days, function (n) { return n + " Übungstage"; }, function (n) { return "An " + n + " verschiedenen Tagen geübt"; });
+    var g4 = G("serien", "Serien", "🔥");
+    ladder(g4, "serie", [3, 7, 14, 30, 50, 100, 200, 365], best, function (n) { return "Serie " + n; }, function (n) { return n + " Tage am Stück das Tagesziel schaffen (Bestwert " + best + ")"; });
+    ladder(g4, "chal", [1, 3, 7, 14, 30, 60, 100], chBest, function (n) { return n === 1 ? "Challenge-Start" : "Challenge " + n; }, function (n) { return "Die Daily Challenge " + n + (n === 1 ? " Tag" : " Tage") + " am Stück schaffen (Bestwert " + chBest + ")"; });
+    var g5 = G("pfad", "Lernpfad", "🗺️");
+    ladder(g5, "st", [5, 10, 25, 50, 100, 200], stations, function (n) { return n + " Stationen"; }, function (n) { return n + " Stationen im Lernpfad schaffen"; });
+    ladder(g5, "boss", [1, 3, 5, 10, 15, 25], bosses, function (n) { return n === 1 ? "Erster Boss" : n === 5 ? "Boss-Jäger" : n === 10 ? "Boss-König" : n + " Bosse"; }, function (n) { return n === 1 ? "Eine Boss-Runde im Lernpfad besiegen" : n + " Bosse besiegen"; }, { 1: "common", 5: "rare", 10: "epic" });
+    var g6 = G("saetze", "Sätze & Grammatik", "✏️");
+    ladder(g6, "sat", [10, 25, 50, 100, 250, 500], t.sentOk || 0, function (n) { return n + " Sätze"; }, function (n) { return n + " Sätze richtig zusammensetzen"; });
+    ladder(g6, "gr", [1, 5, 10, 25, 50], gram, function (n) { return n === 1 ? "Grammatik-Start" : n + " Lektionen"; }, function (n) { return n === 1 ? "Eine Grammatik-Lektion abschließen" : n + " Grammatik-Lektionen abschließen"; });
+    var g7 = G("spiele", "Spiele & Duelle", "🕹️");
+    ladder(g7, "gm", [1, 10, 25, 50, 100, 250, 500], games, function (n) { return n === 1 ? "Spieler" : n + " Spielrunden"; }, function (n) { return n === 1 ? "Eine Runde in der Arena, einem Wortspiel oder der Grammatik spielen" : n + " Runden in Arena, Wortspielen oder Grammatik spielen"; });
+    M(g7, "duel1", "Erstes Duell", "common", du.p >= 1, "Ein Duell gegen einen Freund spielen", "⚔");
+    ladder(g7, "duel", [5, 20, 50, 100], du.w, function (n) { return n === 5 ? "Duell-Held" : n === 20 ? "Duell-König" : n + " Duellsiege"; }, function (n) { return n + " Duelle gewinnen"; }, { 5: "rare", 20: "epic" });
+    M(g7, "crew1", "Crew-Mitglied", "common", crw.joined, "Einer Crew beitreten", "★");
+    M(g7, "crewgold", "Team-Gold", "epic", crw.gold >= 1, "Mit deiner Crew ein Gold-Ziel schaffen", "★");
+    var g8 = G("raenge", "Ränge", "🥇");
+    [["silber", "S", "common"], ["gold", "G", "rare"], ["platin", "P", "rare"], ["diamant", "D", "epic"], ["elite", "E", "epic"], ["champion", "C", "legend"], ["unreal", "U", "unreal"], ["unreal-gold", "UG", "unreal"], ["unreal-platin", "UP", "unreal"], ["unreal-diamant", "UD", "unreal"], ["real-unreal", "★", "unreal"]].forEach(function (x) {
+      var r = RANKS.filter(function (q) { return q.t === x[0]; })[0]; if (!r) return;
+      M(g8, "rk-" + x[0], r.n.replace(/ I$/, ""), x[2], state.xp >= r.xp, "Rang " + r.n + " erreichen (ab " + nfmt(r.xp) + " XP)", x[1], Math.min(state.xp, r.xp), r.xp);
+    });
+    var g9 = G("sammler", "Sammler", "🎁");
+    ladder(g9, "fig", [3, 5, 10, 15, 25, 40], figs, function (n) { return n + " Figuren"; }, function (n) { return n + " verschiedene Figuren besitzen"; });
+    ladder(g9, "buy", [5, 10, 25, 50, 100, 200], buys, function (n) { return n + " Schätze"; }, function (n) { return n + " Dinge besitzen (Figuren, Rahmen, Effekte, Titel …)"; });
+    ladder(g9, "stk", [1, 3, 6, 10], stk, function (n) { return n === 1 ? "Erster Sticker" : n + " Sticker aufgeklebt"; }, function (n) { return n === 1 ? "Einen Sticker aufkleben" : n + " Sticker gleichzeitig aufgeklebt haben"; });
+    var g10 = G("pass", "Pass & Saison", "❄️"), info = passInfo(), sid = info.season.id;
+    info.weeks.forEach(function (w) { M(g10, sid + "p" + w.n, "Woche " + w.n, w.n === info.weeks.length ? "legend" : "epic", w.claimed, info.season.title + "-Pass, Woche " + w.n, String(w.n)); });
+    if (info.season.finale) M(g10, sid + "cup", info.season.title + "-Pokal", "legend", info.fin.claimed, "Alle Wochen und das Finale im " + info.season.title + "-Pass", "cup");
     var sbd = (state.profile && state.profile.seasonBadge) || {}, yrN = new Date().getFullYear();
     [["halloween", "Halloween", "🎃"], ["winter", "Winter", "❄️"], ["xmas", "Weihnachten", "🎄"], ["spring", "Spring Break", "🌴"], ["aqua", "Aquarium", "🐠"]].forEach(function (z) {
       var ys = Object.keys(sbd).filter(function (k) { return k.indexOf(z[0] + "-") === 0; }).map(function (k) { return +k.slice(z[0].length + 1); });
       if (yrN && ys.indexOf(yrN) < 0) ys.push(yrN);
-      ys.sort().forEach(function (y) { M("sea-" + z[0] + "-" + y, z[1] + " " + y, "rare", sbd[z[0] + "-" + y], "Den " + z[1] + "-Look im Jahr " + y + " erleben", z[2]); });
+      ys.sort().forEach(function (y) { M(g10, "sea-" + z[0] + "-" + y, z[1] + " " + y, "rare", sbd[z[0] + "-" + y], "Den " + z[1] + "-Look im Jahr " + y + " erleben", z[2]); });
     });
-    info.weeks.forEach(function (w) { M(sid + "p" + w.n, "Woche " + w.n, w.n === info.weeks.length ? "legend" : "epic", w.claimed, info.season.title + "-Pass, Woche " + w.n, String(w.n)); });
-    if (info.season.finale) M(sid + "cup", info.season.title + "-Pokal", "legend", info.fin.claimed, "Alle Wochen und das Finale im " + info.season.title + "-Pass", "cup");
-    return ms;
+    return groups;
+  }
+  function medalList() { var l = []; medalGroups().forEach(function (g) { l = l.concat(g.items); }); return l; }
+  /* Neu erreichte Abzeichen (ohne die Meilensteine, die checkBadges schon meldet): beim ersten Aufruf nur Bestand aufnehmen, sonst gäbe es für alles Alte ein Fenster */
+  function checkMedals() {
+    var got = state.medalsGot || (state.medalsGot = {}), first = !state.medalsInit, out = [];
+    medalGroups().forEach(function (g) { if (g.id === "pass" || g.id === "start") return; g.items.forEach(function (m) {
+      if (!m.owned || got[m.id]) return; got[m.id] = 1; if (!first) out.push({ id: m.id, n: m.label, d: m.how.replace(/ \(\d+\/\d+\)$/, "") });
+    }); });
+    state.medalsInit = 1; return out;
   }
   function howText(x) {
     if (x.pass) return "Gibt es im " + x.pass + "-Pass";
@@ -1088,14 +1149,13 @@
   function collection(award) {
     function mk(x) { return { id: x.id, label: x.label, kind: x.kind, val: x.val, rar: rarityOf(x), owned: owns(x), how: howText(x), it: x }; }
     var vis = SHOP.filter(function (x) { return !(x.val === "none" || x.val === ""); }), by = function (kinds) { return vis.filter(function (x) { return kinds.indexOf(x.kind) >= 0; }).map(mk).map(function (m, i) { m.o = i; return m; }).sort(function (p, q) { return (RAR_ORDER[p.rar] - RAR_ORDER[q.rar]) || (p.it.cost - q.it.cost) || (p.o - q.o); }); };   // immer: gewöhnlich, selten, episch, legendär
-    var shelves = [
-      { id: "medal", title: "Pokale & Medaillen", icon: "🏆", items: medalList() },
+    var shelves = medalGroups().map(function (g) { return { id: "medal-" + g.id, title: g.title, icon: g.icon, items: g.items, medals: true }; }).concat([
       { id: "fig", title: "Figuren", icon: "🦊", items: by(["avatar"]) },
       { id: "dance", title: "Tänze", icon: "💃", items: by(["dance"]) },
       { id: "outfit", title: "Outfits & Trikots", icon: "👕", items: by(["outfit", "kit"]) },
       { id: "sticker", title: "Sticker", icon: "🏷️", items: by(["sticker"]) },
       { id: "extra", title: "Rahmen, Effekte & mehr", icon: "🖼️", items: by(["frame", "fx", "snd", "bg", "theme", "title"]) }
-    ], own = 0, tot = 0, rar = { common: 0, rare: 0, epic: 0, legend: 0, unreal: 0 };
+    ]), own = 0, tot = 0, rar = { common: 0, rare: 0, epic: 0, legend: 0, unreal: 0 };
     shelves.forEach(function (s) { s.own = s.items.filter(function (i) { return i.owned; }).length; own += s.own; tot += s.items.length; s.items.forEach(function (i) { if (i.owned) rar[i.rar]++; }); });
     var pct = tot ? Math.floor(own * 100 / tot) : 0, cups = CUP_TIERS.map(function (t) { return { n: t.n, pct: t.pct, coins: t.coins, done: pct >= t.pct }; });
     if (award) {
@@ -1189,14 +1249,17 @@
         if (sb) logCoins("serie", sb, state.streak.count + " Tage am Stück!");
       }
     }
-    var complete = res.complete !== false;   // false = abgebrochen: Zeit, Antworten und XP zählen, Abschluss-Belohnungen (Daily Challenge, Bonus-Runden, Abzeichen für fehlerfreie Runde) nicht
+    var complete = res.complete !== false;
+    var tt = state.totals; tt.rounds = (tt.rounds || 0) + 1;   // Zähler für Abzeichen (ab v2.138)
+    if (complete && res.items >= 8 && res.correct === res.items) tt.perfect = (tt.perfect || 0) + 1;
+    if (complete && res.arena) tt.games = (tt.games || 0) + 1;   // false = abgebrochen: Zeit, Antworten und XP zählen, Abschluss-Belohnungen (Daily Challenge, Bonus-Runden, Abzeichen für fehlerfreie Runde) nicht
     if (complete && res.items >= 8 && res.correct === res.items) {
       if (state.badges.indexOf("clean") < 0) { state.badges.push("clean"); rewards.badges.push(BADGES.filter(function (b) { return b.id === "clean"; })[0]); }
     }
     if ((res.maxChain || 0) >= 15 && state.badges.indexOf("chain15") < 0) {
       state.badges.push("chain15"); rewards.badges.push(BADGES.filter(function (b) { return b.id === "chain15"; })[0]);
     }
-    rewards.badges = rewards.badges.concat(checkBadges());
+    rewards.badges = rewards.badges.concat(checkBadges()).concat(checkMedals());
     rewards.missions.forEach(function (m) { rewards.coins += m.coins; });
     rewards.parts = foldParts();
     /* Daily Challenge: die erste gemischte Runde des Tages (mind. 8 Aufgaben) gibt einmalig einen Bonus */
@@ -1599,7 +1662,7 @@
   function resumeHas(key) { return resumeList().some(function (x) { return x.key === key; }); }
 
   global.VT = {
-    LEVELS: LEVELS, RANKS: RANKS, AVATARS: AVATARS, SHOP: SHOP, BADGES: BADGES,
+    LEVELS: LEVELS, medalGroups: medalGroups, RANKS: RANKS, AVATARS: AVATARS, SHOP: SHOP, BADGES: BADGES,
     SEC_PER_ITEM: SEC_PER_ITEM, secPerItem: secPerItem, itemsFor: itemsFor, recordPace: recordPace,
     resumePack: resumePack, resumeUnpack: resumeUnpack, resumeList: resumeList, resumeSave: resumeSave, resumeTake: resumeTake, resumeHas: resumeHas,
     load: load, save: save, get state() { return state; },

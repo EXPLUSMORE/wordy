@@ -1216,6 +1216,12 @@ details.fold>.fbody{padding:2px 0 14px}
 .dsur input{width:20px;height:20px;flex:none;accent-color:#E9BD62}.dsur span{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}.dsur small{opacity:.7;flex:none}
 .dshs{border:1px solid rgba(255,255,255,.25);background:transparent;color:inherit;border-radius:12px;padding:6px 14px;font-weight:700;font-family:inherit;cursor:pointer}
 .dshb[disabled]{opacity:.45;box-shadow:none;cursor:default;transform:none}
+/* ABZEICHEN: Kategorien mit Stufenleitern (Shop › Abzeichen) */
+.mdrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.mdt{width:58px;text-align:center;background:none;border:0;padding:0;color:inherit;font-family:inherit;cursor:pointer}
+.mdt .mdi{display:block;width:46px;height:46px;margin:0 auto;filter:drop-shadow(0 2px 3px rgba(0,0,0,.3))}.mdt .mdi svg{width:100%;height:100%;overflow:visible}
+.mdt small{display:block;font-size:10px;line-height:1.1;margin-top:3px;height:22px;overflow:hidden}.mdt.lock .mdi{filter:grayscale(1) brightness(.7) opacity(.55)}
+.mdt.unreal:not(.lock) .mdi{filter:drop-shadow(0 0 6px rgba(160,120,255,.95))}.mdt.legend:not(.lock) .mdi{filter:drop-shadow(0 0 5px rgba(255,190,60,.8))}
+.srs.unreal{--c:#b43cff}
 /* RARITY-UNREAL: Stufe über „legendär“ (ab Rang Unreal), Regenbogen-Schimmer in Cyan/Violett/Pink */
 .srv{--unreal:#b43cff}.srrar .unreal{--rc:#9b30e0}.srs.unreal{--c:#b43cff}.srs.unreal:not(.lock) .it:after{content:"✦";position:absolute;right:-2px;top:-4px;font-size:16px;color:#e9fbff;text-shadow:0 0 8px #7df0ff,0 0 14px #ff4ddb}
 .rtile.unreal{box-shadow:0 4px 0 rgba(20,33,61,.35),0 0 24px var(--g);animation:rtpl 2.2s ease-in-out infinite alternate;border-color:#e9fbff}.rtile.unreal:after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 36%,rgba(125,240,255,.55) 46%,rgba(255,77,219,.45) 54%,transparent 64%);transform:translateX(-130%);animation:srgl 3.6s ease-in-out infinite;pointer-events:none}
@@ -1503,7 +1509,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.137.0";window.WORDY_BUILD="b761c261b7";</script>
+<script>window.WORDY_VERSION="2.138.0";window.WORDY_BUILD="952ac53ed1";</script>
 </head>
 <body>
 <div id="app">
@@ -5780,6 +5786,19 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     { id: "av:fnchamp",    kind: "avatar", set: "fn", label: "Champion-Kristall", cost: 1500, val: "svg:fnchamp", rank: "Champion I" },
     { id: "av:fnkristall", kind: "avatar", set: "fn", label: "Kristall-Lama",  cost: 1500, val: "svg:fnkristall", rank: "Unreal I" },
     { id: "av:gepard",      kind: "avatar", label: "Turbo-Gepard",   cost: 700,  val: "svg:gepard",     rank: "Platin II", rar: "epic" },
+    { id: "av:prisma",       kind: "avatar", label: "Prisma-Drache",      cost: 3500,  val: "svg:prisma",       rank: "Unreal I", rar: "unreal" },
+    { id: "av:nebelwal",     kind: "avatar", label: "Nebel-Wal",          cost: 3800,  val: "svg:nebelwal",     rank: "Unreal II", rar: "unreal" },
+    { id: "av:donnervogel",  kind: "avatar", label: "Donnervogel",        cost: 4100,  val: "svg:donnervogel",  rank: "Unreal III", rar: "unreal" },
+    { id: "av:sonnenloewe",  kind: "avatar", label: "Sonnenlöwe",         cost: 4500,  val: "svg:sonnenloewe",  rank: "Unreal Gold I", rar: "unreal" },
+    { id: "av:athene",       kind: "avatar", label: "Gold-Athene",        cost: 4900,  val: "svg:athene",       rank: "Unreal Gold II", rar: "unreal" },
+    { id: "av:goldkrake",    kind: "avatar", label: "Gold-Kraken",        cost: 5300,  val: "svg:goldkrake",    rank: "Unreal Gold III", rar: "unreal" },
+    { id: "av:fenrir",       kind: "avatar", label: "Platin-Fenrir",      cost: 5800,  val: "svg:fenrir",       rank: "Unreal Platin I", rar: "unreal" },
+    { id: "av:mondhase",     kind: "avatar", label: "Mond-Hase",          cost: 6300,  val: "svg:mondhase",     rank: "Unreal Platin II", rar: "unreal" },
+    { id: "av:zeitschildi",  kind: "avatar", label: "Zeit-Schildkröte",   cost: 6800,  val: "svg:zeitschildi",  rank: "Unreal Platin III", rar: "unreal" },
+    { id: "av:kristallhirsch", kind: "avatar", label: "Kristall-Hirsch",  cost: 7500,  val: "svg:kristallhirsch", rank: "Unreal Diamant I", rar: "unreal" },
+    { id: "av:nebelpanther", kind: "avatar", label: "Galaxie-Panther",    cost: 8200,  val: "svg:nebelpanther", rank: "Unreal Diamant II", rar: "unreal" },
+    { id: "av:qilin",        kind: "avatar", label: "Orakel-Qilin",       cost: 9000,  val: "svg:qilin",        rank: "Unreal Diamant III", rar: "unreal" },
+    { id: "av:unreallama",   kind: "avatar", label: "Das echte Unreal",   cost: 12000, val: "svg:unreallama",   rank: "The real Unreal", rar: "unreal" },
     { id: "av:greif",       kind: "avatar", label: "Goldgreif",       cost: 2200, val: "svg:greif",    rank: "Elite II", rar: "legend" },
     { id: "av:kitsune",     kind: "avatar", label: "Geisterfuchs",    cost: 2400, val: "svg:kitsune",  rank: "Elite III", rar: "legend" },
     { id: "av:pegasus",     kind: "avatar", label: "Sternen-Pegasus", cost: 2600, val: "svg:pegasus",  rank: "Champion I", rar: "legend" },
@@ -5922,7 +5941,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     "Platin I": ["av:pphoenix", "av:kitty3"], "Platin II": ["av:fnrakete", "av:gepard"], "Platin III": ["av:pgold", "av:fnelite"],
     /* ab Diamant I: alles legendär, nichts wird geschenkt, der Rang schaltet die Figuren nur im Shop frei (Kauf) */
     "Diamant I": ["av:blitzwolf", "av:pregen"], "Diamant II": ["av:sdrache", "av:ninja"], "Diamant III": ["av:flamingo", "av:faultier"],
-    "Elite I": ["av:fnchamp", "av:pgalaxie"], "Elite II": ["av:greif"], "Elite III": ["av:kitsune"], "Champion I": ["av:fnkristall", "av:fnunreal", "av:pegasus"], "Champion II": ["av:zyklop"], "Champion III": ["av:sphinx", "av:golem"], "Unreal I": ["av:kitty4"], "Unreal Gold I": ["av:fngold"]
+    "Elite I": ["av:fnchamp", "av:pgalaxie"], "Elite II": ["av:greif"], "Elite III": ["av:kitsune"], "Champion I": ["av:fnkristall", "av:fnunreal", "av:pegasus"], "Champion II": ["av:zyklop"], "Champion III": ["av:sphinx", "av:golem"], "Unreal I": ["av:kitty4", "av:prisma"], "Unreal II": ["av:nebelwal"], "Unreal III": ["av:donnervogel"], "Unreal Gold I": ["av:fngold", "av:sonnenloewe"], "Unreal Gold II": ["av:athene"], "Unreal Gold III": ["av:goldkrake"], "Unreal Platin I": ["av:fenrir"], "Unreal Platin II": ["av:mondhase"], "Unreal Platin III": ["av:zeitschildi"], "Unreal Diamant I": ["av:kristallhirsch"], "Unreal Diamant II": ["av:nebelpanther"], "Unreal Diamant III": ["av:qilin"], "The real Unreal": ["av:unreallama"]
   };
   var SHOP_ONLY_FROM = "Diamant I";   // ab diesem Rang keine Figurenwahl mehr
   function rankPickable(rn) {
@@ -6732,35 +6751,83 @@ window.SENTENCES = (window.SENTENCES || []).concat([
   /* ---------- Showroom: alles Gesammelte, Medaillen, Sammler-Pokale, Favoriten ---------- */
   function favs() { var f = state.profile.favs; if (!Array.isArray(f)) f = state.profile.favs = []; return f; }
   function toggleFav(id) { var f = favs(), i = f.indexOf(id); if (i >= 0) f.splice(i, 1); else { f.push(id); while (f.length > 3) f.shift(); } save(true); return i < 0; }
-  function medalList() {
-    var ms = [], ps = pathState(), bosses = pathStations().filter(function (s) { return s.last && ps.stars[s.id]; }).length, mast = stats().dist[4], best = state.streak.best || 0, info = passInfo(), sid = info.season.id;
-    function M(id, label, rar, done, how, val) { ms.push({ id: "md:" + id, label: label, kind: "medal", rar: rar, owned: !!done, how: how, val: val }); }
-    M("boss1", "Erster Boss", "common", bosses >= 1, "Eine Boss-Runde im Lernpfad besiegen", "⚔");
-    M("boss5", "Boss-Jäger", "rare", bosses >= 5, "5 Bosse besiegen (" + Math.min(bosses, 5) + "/5)", "⚔");
-    M("boss10", "Boss-König", "epic", bosses >= 10, "10 Bosse besiegen (" + Math.min(bosses, 10) + "/10)", "⚔");
-    M("serie7", "Serie 7", "rare", best >= 7, "7 Tage am Stück üben (Bestwert " + best + ")", "7");
-    M("serie30", "Serie 30", "epic", best >= 30, "30 Tage am Stück üben", "30");
-    M("serie100", "Serie 100", "legend", best >= 100, "100 Tage am Stück üben", "100");
-    M("w25", "25 Meister", "rare", mast >= 25, "25 Wörter meistern (" + Math.min(mast, 25) + "/25)", "25");
-    M("w100", "100 Meister", "epic", mast >= 100, "100 Wörter meistern (" + Math.min(mast, 100) + "/100)", "100");
-    var du = state.duels || { p: 0, w: 0 }, chBest = (state.chal && state.chal.best) || 0;
-    M("duel1", "Erstes Duell", "common", du.p >= 1, "Ein Duell gegen einen Freund spielen", "⚔");
-    M("duel5", "Duell-Held", "rare", du.w >= 5, "5 Duelle gewinnen (" + Math.min(du.w, 5) + "/5)", "5");
-    M("duel20", "Duell-König", "epic", du.w >= 20, "20 Duelle gewinnen (" + Math.min(du.w, 20) + "/20)", "20");
-    var crw = state.crew || { joined: 0, gold: 0 };
-    M("crew1", "Crew-Mitglied", "common", crw.joined, "Einer Crew beitreten", "★");
-    M("crewgold", "Team-Gold", "epic", crw.gold >= 1, "Mit deiner Crew ein Gold-Ziel schaffen", "★");
-    M("chal7", "Challenge 7", "rare", chBest >= 7, "Die Daily Challenge 7 Tage am Stück schaffen (Bestwert " + chBest + ")", "7");
-    M("chal30", "Challenge 30", "legend", chBest >= 30, "Die Daily Challenge 30 Tage am Stück schaffen", "30");
+  /* ---------- Abzeichen: Kategorien mit Stufenleitern (1, 5, 10, 25, 50, 100 …) ----------
+     Jede Leiter liest einen Zählerstand (aus Lernstand, state.totals usw.) und vergibt je Stufe ein Abzeichen (Seltenheit steigt mit der Stufe, die höchste lange Stufe ist „Unreal“).
+     IDs: md:<Kürzel><Schwelle>; alte IDs (boss1, serie7, w25, duel5, chal7 …) bleiben gültig. Zählerstände ab v2.138: state.totals.perfect/rounds/games. */
+  function kfmt(n) { return n >= 1000 ? (n % 1000 ? (n / 1000).toString().replace(".", ",") : n / 1000) + "K" : String(n); }
+  function nfmt(n) { return n.toLocaleString("de-DE"); }
+  function ladderRar(i, n) { return n >= 7 && i === n - 1 ? "unreal" : (i / Math.max(1, n - 1)) < 0.25 ? "common" : (i / Math.max(1, n - 1)) < 0.5 ? "rare" : (i / Math.max(1, n - 1)) < 0.78 ? "epic" : "legend"; }
+  function medalGroups() {
+    var ps = pathState(), st = stats(), t = state.totals || {}, groups = [];
+    var bosses = pathStations().filter(function (x) { return x.last && ps.stars[x.id]; }).length, stations = Object.keys(ps.stars || {}).length;
+    var mast = st.dist[4], seen = st.dist[1] + st.dist[2] + st.dist[3] + st.dist[4];
+    var best = (state.streak && state.streak.best) || 0, days = Object.keys(state.history || {}).length + (state.daily && state.daily.items ? 1 : 0);
+    var du = state.duels || { p: 0, w: 0 }, chBest = (state.chal && state.chal.best) || 0, crw = state.crew || { joined: 0, gold: 0 };
+    var perfect = Math.max(t.perfect || 0, state.badges.indexOf("clean") >= 0 ? 1 : 0), games = Math.max(t.games || 0, state.badges.indexOf("arena1") >= 0 ? 1 : 0);
+    var gram = 0; Object.keys(state.gram || {}).forEach(function (k) { gram += (state.gram[k] && state.gram[k].lessons) || 0; });
+    var owned = (state.profile && state.profile.owned) || [], figs = owned.filter(function (id) { return id.indexOf("av:") === 0; }).length, buys = owned.length;
+    var stk = ((state.profile && state.profile.stickers) || []).length;
+    function G(id, title, icon) { var g = { id: id, title: title, icon: icon, items: [] }; groups.push(g); return g; }
+    function M(g, id, label, rar, done, how, val, prog, need) { g.items.push({ id: "md:" + id, label: label, kind: "medal", rar: rar, owned: !!done, how: how, val: val, prog: prog, need: need }); }
+    /* Leiter: steps = Schwellen, cur = Zählerstand, name(n) = Titel, how(n) = Bedingung; ids = optionale alte IDs je Schwelle */
+    function ladder(g, key, steps, cur, name, how, rars) {
+      steps.forEach(function (n, i) { M(g, key + n, name(n), (rars && rars[n]) || ladderRar(i, steps.length), cur >= n, how(n) + (cur >= n ? "" : " (" + nfmt(Math.min(cur, n)) + "/" + nfmt(n) + ")"), kfmt(n), Math.min(cur, n), n); });
+    }
+    var g0 = G("start", "Meilensteine", "⭐");
+    var ML = { start: "⭐", chain15: "🔗", box0: "🧹", unit1: "📘", early: "📅", arena1: "🎮", combo15: "💥" };
+    BADGES.filter(function (b) { return ML[b.id]; }).forEach(function (b) { M(g0, "ms-" + b.id, b.n, "common", state.badges.indexOf(b.id) >= 0, b.d, ML[b.id]); });
+    var g1 = G("clean", "Fehlerfrei", "🎯");
+    ladder(g1, "pf", [1, 5, 10, 25, 50, 100, 250, 500], perfect, function (n) { return n === 1 ? "Fehlerfrei" : n + "× fehlerfrei"; }, function (n) { return n === 1 ? "Eine Runde (mindestens 8 Aufgaben) ohne einen Fehler abschließen" : n + " Runden ohne einen Fehler abschließen"; });
+    var g2 = G("woerter", "Wörter", "📚");
+    ladder(g2, "wk", [10, 50, 150, 300, 500, 1000, 2000], seen, function (n) { return n + " Wörter geübt"; }, function (n) { return n + " Vokabeln schon einmal geübt"; });
+    ladder(g2, "w", [10, 25, 50, 100, 250, 500, 1000, 2000], mast, function (n) { return n === 25 ? "25 Meister" : n === 100 ? "100 Meister" : n + " gemeistert"; }, function (n) { return n + " Wörter langfristig meistern"; }, { 25: "rare", 100: "epic" });
+    var g3 = G("fleiss", "Fleiß & Zeit", "⏱️");
+    ladder(g3, "ok", [100, 500, 1000, 2500, 5000, 10000, 25000], t.correct || 0, function (n) { return nfmt(n) + " richtig"; }, function (n) { return nfmt(n) + " Aufgaben richtig beantworten"; });
+    ladder(g3, "hr", [1, 5, 10, 25, 50, 100], Math.floor((t.sec || 0) / 3600), function (n) { return n + (n === 1 ? " Stunde" : " Stunden") + " geübt"; }, function (n) { return n + (n === 1 ? " Stunde" : " Stunden") + " echte Übungszeit"; });
+    ladder(g3, "tag", [7, 14, 30, 60, 100, 200, 365], days, function (n) { return n + " Übungstage"; }, function (n) { return "An " + n + " verschiedenen Tagen geübt"; });
+    var g4 = G("serien", "Serien", "🔥");
+    ladder(g4, "serie", [3, 7, 14, 30, 50, 100, 200, 365], best, function (n) { return "Serie " + n; }, function (n) { return n + " Tage am Stück das Tagesziel schaffen (Bestwert " + best + ")"; });
+    ladder(g4, "chal", [1, 3, 7, 14, 30, 60, 100], chBest, function (n) { return n === 1 ? "Challenge-Start" : "Challenge " + n; }, function (n) { return "Die Daily Challenge " + n + (n === 1 ? " Tag" : " Tage") + " am Stück schaffen (Bestwert " + chBest + ")"; });
+    var g5 = G("pfad", "Lernpfad", "🗺️");
+    ladder(g5, "st", [5, 10, 25, 50, 100, 200], stations, function (n) { return n + " Stationen"; }, function (n) { return n + " Stationen im Lernpfad schaffen"; });
+    ladder(g5, "boss", [1, 3, 5, 10, 15, 25], bosses, function (n) { return n === 1 ? "Erster Boss" : n === 5 ? "Boss-Jäger" : n === 10 ? "Boss-König" : n + " Bosse"; }, function (n) { return n === 1 ? "Eine Boss-Runde im Lernpfad besiegen" : n + " Bosse besiegen"; }, { 1: "common", 5: "rare", 10: "epic" });
+    var g6 = G("saetze", "Sätze & Grammatik", "✏️");
+    ladder(g6, "sat", [10, 25, 50, 100, 250, 500], t.sentOk || 0, function (n) { return n + " Sätze"; }, function (n) { return n + " Sätze richtig zusammensetzen"; });
+    ladder(g6, "gr", [1, 5, 10, 25, 50], gram, function (n) { return n === 1 ? "Grammatik-Start" : n + " Lektionen"; }, function (n) { return n === 1 ? "Eine Grammatik-Lektion abschließen" : n + " Grammatik-Lektionen abschließen"; });
+    var g7 = G("spiele", "Spiele & Duelle", "🕹️");
+    ladder(g7, "gm", [1, 10, 25, 50, 100, 250, 500], games, function (n) { return n === 1 ? "Spieler" : n + " Spielrunden"; }, function (n) { return n === 1 ? "Eine Runde in der Arena, einem Wortspiel oder der Grammatik spielen" : n + " Runden in Arena, Wortspielen oder Grammatik spielen"; });
+    M(g7, "duel1", "Erstes Duell", "common", du.p >= 1, "Ein Duell gegen einen Freund spielen", "⚔");
+    ladder(g7, "duel", [5, 20, 50, 100], du.w, function (n) { return n === 5 ? "Duell-Held" : n === 20 ? "Duell-König" : n + " Duellsiege"; }, function (n) { return n + " Duelle gewinnen"; }, { 5: "rare", 20: "epic" });
+    M(g7, "crew1", "Crew-Mitglied", "common", crw.joined, "Einer Crew beitreten", "★");
+    M(g7, "crewgold", "Team-Gold", "epic", crw.gold >= 1, "Mit deiner Crew ein Gold-Ziel schaffen", "★");
+    var g8 = G("raenge", "Ränge", "🥇");
+    [["silber", "S", "common"], ["gold", "G", "rare"], ["platin", "P", "rare"], ["diamant", "D", "epic"], ["elite", "E", "epic"], ["champion", "C", "legend"], ["unreal", "U", "unreal"], ["unreal-gold", "UG", "unreal"], ["unreal-platin", "UP", "unreal"], ["unreal-diamant", "UD", "unreal"], ["real-unreal", "★", "unreal"]].forEach(function (x) {
+      var r = RANKS.filter(function (q) { return q.t === x[0]; })[0]; if (!r) return;
+      M(g8, "rk-" + x[0], r.n.replace(/ I$/, ""), x[2], state.xp >= r.xp, "Rang " + r.n + " erreichen (ab " + nfmt(r.xp) + " XP)", x[1], Math.min(state.xp, r.xp), r.xp);
+    });
+    var g9 = G("sammler", "Sammler", "🎁");
+    ladder(g9, "fig", [3, 5, 10, 15, 25, 40], figs, function (n) { return n + " Figuren"; }, function (n) { return n + " verschiedene Figuren besitzen"; });
+    ladder(g9, "buy", [5, 10, 25, 50, 100, 200], buys, function (n) { return n + " Schätze"; }, function (n) { return n + " Dinge besitzen (Figuren, Rahmen, Effekte, Titel …)"; });
+    ladder(g9, "stk", [1, 3, 6, 10], stk, function (n) { return n === 1 ? "Erster Sticker" : n + " Sticker aufgeklebt"; }, function (n) { return n === 1 ? "Einen Sticker aufkleben" : n + " Sticker gleichzeitig aufgeklebt haben"; });
+    var g10 = G("pass", "Pass & Saison", "❄️"), info = passInfo(), sid = info.season.id;
+    info.weeks.forEach(function (w) { M(g10, sid + "p" + w.n, "Woche " + w.n, w.n === info.weeks.length ? "legend" : "epic", w.claimed, info.season.title + "-Pass, Woche " + w.n, String(w.n)); });
+    if (info.season.finale) M(g10, sid + "cup", info.season.title + "-Pokal", "legend", info.fin.claimed, "Alle Wochen und das Finale im " + info.season.title + "-Pass", "cup");
     var sbd = (state.profile && state.profile.seasonBadge) || {}, yrN = new Date().getFullYear();
     [["halloween", "Halloween", "🎃"], ["winter", "Winter", "❄️"], ["xmas", "Weihnachten", "🎄"], ["spring", "Spring Break", "🌴"], ["aqua", "Aquarium", "🐠"]].forEach(function (z) {
       var ys = Object.keys(sbd).filter(function (k) { return k.indexOf(z[0] + "-") === 0; }).map(function (k) { return +k.slice(z[0].length + 1); });
       if (yrN && ys.indexOf(yrN) < 0) ys.push(yrN);
-      ys.sort().forEach(function (y) { M("sea-" + z[0] + "-" + y, z[1] + " " + y, "rare", sbd[z[0] + "-" + y], "Den " + z[1] + "-Look im Jahr " + y + " erleben", z[2]); });
+      ys.sort().forEach(function (y) { M(g10, "sea-" + z[0] + "-" + y, z[1] + " " + y, "rare", sbd[z[0] + "-" + y], "Den " + z[1] + "-Look im Jahr " + y + " erleben", z[2]); });
     });
-    info.weeks.forEach(function (w) { M(sid + "p" + w.n, "Woche " + w.n, w.n === info.weeks.length ? "legend" : "epic", w.claimed, info.season.title + "-Pass, Woche " + w.n, String(w.n)); });
-    if (info.season.finale) M(sid + "cup", info.season.title + "-Pokal", "legend", info.fin.claimed, "Alle Wochen und das Finale im " + info.season.title + "-Pass", "cup");
-    return ms;
+    return groups;
+  }
+  function medalList() { var l = []; medalGroups().forEach(function (g) { l = l.concat(g.items); }); return l; }
+  /* Neu erreichte Abzeichen (ohne die Meilensteine, die checkBadges schon meldet): beim ersten Aufruf nur Bestand aufnehmen, sonst gäbe es für alles Alte ein Fenster */
+  function checkMedals() {
+    var got = state.medalsGot || (state.medalsGot = {}), first = !state.medalsInit, out = [];
+    medalGroups().forEach(function (g) { if (g.id === "pass" || g.id === "start") return; g.items.forEach(function (m) {
+      if (!m.owned || got[m.id]) return; got[m.id] = 1; if (!first) out.push({ id: m.id, n: m.label, d: m.how.replace(/ \(\d+\/\d+\)$/, "") });
+    }); });
+    state.medalsInit = 1; return out;
   }
   function howText(x) {
     if (x.pass) return "Gibt es im " + x.pass + "-Pass";
@@ -6772,14 +6839,13 @@ window.SENTENCES = (window.SENTENCES || []).concat([
   function collection(award) {
     function mk(x) { return { id: x.id, label: x.label, kind: x.kind, val: x.val, rar: rarityOf(x), owned: owns(x), how: howText(x), it: x }; }
     var vis = SHOP.filter(function (x) { return !(x.val === "none" || x.val === ""); }), by = function (kinds) { return vis.filter(function (x) { return kinds.indexOf(x.kind) >= 0; }).map(mk).map(function (m, i) { m.o = i; return m; }).sort(function (p, q) { return (RAR_ORDER[p.rar] - RAR_ORDER[q.rar]) || (p.it.cost - q.it.cost) || (p.o - q.o); }); };   // immer: gewöhnlich, selten, episch, legendär
-    var shelves = [
-      { id: "medal", title: "Pokale & Medaillen", icon: "🏆", items: medalList() },
+    var shelves = medalGroups().map(function (g) { return { id: "medal-" + g.id, title: g.title, icon: g.icon, items: g.items, medals: true }; }).concat([
       { id: "fig", title: "Figuren", icon: "🦊", items: by(["avatar"]) },
       { id: "dance", title: "Tänze", icon: "💃", items: by(["dance"]) },
       { id: "outfit", title: "Outfits & Trikots", icon: "👕", items: by(["outfit", "kit"]) },
       { id: "sticker", title: "Sticker", icon: "🏷️", items: by(["sticker"]) },
       { id: "extra", title: "Rahmen, Effekte & mehr", icon: "🖼️", items: by(["frame", "fx", "snd", "bg", "theme", "title"]) }
-    ], own = 0, tot = 0, rar = { common: 0, rare: 0, epic: 0, legend: 0, unreal: 0 };
+    ]), own = 0, tot = 0, rar = { common: 0, rare: 0, epic: 0, legend: 0, unreal: 0 };
     shelves.forEach(function (s) { s.own = s.items.filter(function (i) { return i.owned; }).length; own += s.own; tot += s.items.length; s.items.forEach(function (i) { if (i.owned) rar[i.rar]++; }); });
     var pct = tot ? Math.floor(own * 100 / tot) : 0, cups = CUP_TIERS.map(function (t) { return { n: t.n, pct: t.pct, coins: t.coins, done: pct >= t.pct }; });
     if (award) {
@@ -6873,14 +6939,17 @@ window.SENTENCES = (window.SENTENCES || []).concat([
         if (sb) logCoins("serie", sb, state.streak.count + " Tage am Stück!");
       }
     }
-    var complete = res.complete !== false;   // false = abgebrochen: Zeit, Antworten und XP zählen, Abschluss-Belohnungen (Daily Challenge, Bonus-Runden, Abzeichen für fehlerfreie Runde) nicht
+    var complete = res.complete !== false;
+    var tt = state.totals; tt.rounds = (tt.rounds || 0) + 1;   // Zähler für Abzeichen (ab v2.138)
+    if (complete && res.items >= 8 && res.correct === res.items) tt.perfect = (tt.perfect || 0) + 1;
+    if (complete && res.arena) tt.games = (tt.games || 0) + 1;   // false = abgebrochen: Zeit, Antworten und XP zählen, Abschluss-Belohnungen (Daily Challenge, Bonus-Runden, Abzeichen für fehlerfreie Runde) nicht
     if (complete && res.items >= 8 && res.correct === res.items) {
       if (state.badges.indexOf("clean") < 0) { state.badges.push("clean"); rewards.badges.push(BADGES.filter(function (b) { return b.id === "clean"; })[0]); }
     }
     if ((res.maxChain || 0) >= 15 && state.badges.indexOf("chain15") < 0) {
       state.badges.push("chain15"); rewards.badges.push(BADGES.filter(function (b) { return b.id === "chain15"; })[0]);
     }
-    rewards.badges = rewards.badges.concat(checkBadges());
+    rewards.badges = rewards.badges.concat(checkBadges()).concat(checkMedals());
     rewards.missions.forEach(function (m) { rewards.coins += m.coins; });
     rewards.parts = foldParts();
     /* Daily Challenge: die erste gemischte Runde des Tages (mind. 8 Aufgaben) gibt einmalig einen Bonus */
@@ -7283,7 +7352,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
   function resumeHas(key) { return resumeList().some(function (x) { return x.key === key; }); }
 
   global.VT = {
-    LEVELS: LEVELS, RANKS: RANKS, AVATARS: AVATARS, SHOP: SHOP, BADGES: BADGES,
+    LEVELS: LEVELS, medalGroups: medalGroups, RANKS: RANKS, AVATARS: AVATARS, SHOP: SHOP, BADGES: BADGES,
     SEC_PER_ITEM: SEC_PER_ITEM, secPerItem: secPerItem, itemsFor: itemsFor, recordPace: recordPace,
     resumePack: resumePack, resumeUnpack: resumeUnpack, resumeList: resumeList, resumeSave: resumeSave, resumeTake: resumeTake, resumeHas: resumeHas,
     load: load, save: save, get state() { return state; },
@@ -7505,6 +7574,104 @@ window.SENTENCES = (window.SENTENCES || []).concat([
         '<path d="M20 47l4 3 4-4 4 4 4-4 4 3 4-3" fill="none" stroke="#FF8A1F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 47l4 3 4-4 4 4 4-4 4 3 4-3" fill="none" stroke="#FFE08A" stroke-width=".9" stroke-linecap="round" stroke-linejoin="round"/>' +
         '<ellipse cx="46" cy="22" rx="5" ry="2.6" fill="#7BCB5A" opacity=".85"/><circle cx="14" cy="46" r="1.2" fill="#FFB347"/><circle cx="52" cy="50" r="1" fill="#FFB347"/>',
       face: ''
+    }),
+    prisma: pummel({
+      defs: '<linearGradient id="pmPr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF8FB3"/><stop offset=".3" stop-color="#FFD27A"/><stop offset=".6" stop-color="#7DF0B0"/><stop offset="1" stop-color="#6FC3FF"/></linearGradient>',
+      body: "url(#pmPr)", shade: "#8F7DFF", eye: "#2B2166", pupil: "#fff",
+      behind: '<path d="M3 40Q-4 20 8 10Q10 24 20 32z" fill="#CFF6FF" stroke="#7FB8E8" stroke-width="1"/><path d="M61 40Q68 20 56 10Q54 24 44 32z" fill="#CFF6FF" stroke="#7FB8E8" stroke-width="1"/>',
+      ears: '<path d="M15 26L9 4l14 12z" fill="#E8FBFF" stroke="#7FB8E8" stroke-width="1" stroke-linejoin="round"/><path d="M49 26l6-22-14 12z" fill="#E8FBFF" stroke="#7FB8E8" stroke-width="1" stroke-linejoin="round"/>',
+      front: '<path d="M32 4l5 10-5 9-5-9z" fill="#BFF4FF" stroke="#5CB8E8" stroke-width="1.2" stroke-linejoin="round"/><path d="M28 14h8" stroke="#fff" stroke-width="1" opacity=".8"/><ellipse cx="32" cy="47" rx="11" ry="7" fill="#fff" opacity=".85"/><circle cx="29" cy="45" r="1" fill="#8F7DFF"/><circle cx="35" cy="45" r="1" fill="#8F7DFF"/>' + star(9, 22, 3, "#fff") + star(56, 24, 3, "#fff"),
+      face: '<path d="M28 50q4 3 8 0" fill="none" stroke="#6D4FD8" stroke-width="1.6" stroke-linecap="round"/>'
+    }),
+    nebelwal: pummel({
+      body: "#4F6CFF", shade: "#1B1F6B", eye: "#14213D", pupil: "#fff",
+      behind: '<ellipse cx="5" cy="42" rx="7" ry="11" fill="#3B4FD0" transform="rotate(25 5 42)"/><ellipse cx="59" cy="42" rx="7" ry="11" fill="#3B4FD0" transform="rotate(-25 59 42)"/>',
+      ears: '',
+      front: '<path d="M10 44Q32 66 54 44Q54 56 32 58Q10 56 10 44z" fill="#CFE0FF"/><path d="M30 20Q22 12 30 3Q31 10 32 8Q33 10 34 3Q42 12 34 20z" fill="#9FE7FF" stroke="#59B8E8" stroke-width=".8"/><g fill="#fff"><circle cx="14" cy="32" r="1.2"/><circle cx="48" cy="28" r="1.5"/><circle cx="52" cy="38" r="1"/><circle cx="20" cy="26" r="1"/><circle cx="40" cy="24" r="1"/></g>' + star(46, 30, 2.6, "#FFE27A"),
+      face: '<path d="M22 48q10 8 20 0" fill="none" stroke="#14213D" stroke-width="1.8" stroke-linecap="round"/>'
+    }),
+    donnervogel: pummel({
+      body: "#2B3A8F", shade: "#141C5E", eye: "#FFE04A", pupil: "#14213D",
+      behind: '<path d="M3 40Q-4 18 9 8L12 22L7 24L14 32z" fill="#FFE04A" stroke="#C99A00" stroke-width="1" stroke-linejoin="round"/><path d="M61 40Q68 18 55 8L52 22L57 24L50 32z" fill="#FFE04A" stroke="#C99A00" stroke-width="1" stroke-linejoin="round"/>',
+      ears: '',
+      front: '<path d="M20 22l5-16l3 9l4-13l4 13l3-9l5 16z" fill="#FFE04A" stroke="#C99A00" stroke-width="1" stroke-linejoin="round"/>' +
+        '<path d="M12 34l6-3-2 6 6-3M52 34l-6-3 2 6-6-3" fill="none" stroke="#FFE04A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '<path d="M26 41q6-5 12 0q-1 9-6 12q-5-3-6-12z" fill="#FF9A1F" stroke="#B85F00" stroke-width="1" stroke-linejoin="round"/>',
+      face: ''
+    }),
+    sonnenloewe: pummel({
+      body: "#FFC24A", shade: "#E08A0A", eye: "#3B2108", pupil: "#fff",
+      behind: '<circle cx="32" cy="37" r="31" fill="#FF7A1F"/><path d="M32 0l4 8l8-5l1 9l9-2l-3 9l9 3l-7 6l7 7l-9 3l3 9l-9-2l-1 9l-8-5l-4 8l-4-8l-8 5l-1-9l-9 2l3-9l-9-3l7-7l-7-6l9-3l-3-9l9 2l1-9l8 5z" fill="#FFB32E" stroke="#E0601A" stroke-width="1" stroke-linejoin="round"/>',
+      ears: '<circle cx="15" cy="21" r="6" fill="#FFC24A"/><circle cx="49" cy="21" r="6" fill="#FFC24A"/>',
+      front: '<ellipse cx="32" cy="46" rx="10.5" ry="7" fill="#FFF3C9"/><path d="M28 41h8l-4 4z" fill="#E86A8F"/><path d="M26 15q6-14 12 0q-6-3-12 0z" fill="#FFE27A" stroke="#E0601A" stroke-width=".8"/>',
+      face: MOUTH_CAT
+    }),
+    athene: pummel({
+      body: "#F2E2B4", shade: "#C9A24A", ownFace: true,
+      ears: '<path d="M10 28L12 8l12 10z" fill="#E8C06A"/><path d="M54 28l-2-20-12 10z" fill="#E8C06A"/>',
+      front: '<circle cx="21" cy="37" r="10" fill="#FFF7D6" stroke="#C9A24A" stroke-width="1.4"/><circle cx="43" cy="37" r="10" fill="#FFF7D6" stroke="#C9A24A" stroke-width="1.4"/><circle cx="22" cy="38" r="5.4" fill="#FFB020"/><circle cx="42" cy="38" r="5.4" fill="#FFB020"/><circle cx="22" cy="38" r="2.8" fill="#2B1A00"/><circle cx="42" cy="38" r="2.8" fill="#2B1A00"/><circle cx="23.4" cy="36.4" r="1.2" fill="#fff"/><circle cx="43.4" cy="36.4" r="1.2" fill="#fff"/>' +
+        '<path d="M27 42q5-3 10 0q-1 8-5 10q-4-2-5-10z" fill="#FF9A1F" stroke="#B85F00" stroke-width="1" stroke-linejoin="round"/>' +
+        '<path d="M8 30Q8 4 32 4Q56 4 56 30Q32 20 8 30z" fill="#FFD34D" stroke="#B8860B" stroke-width="1.3"/><path d="M8 30l2 10M56 30l-2 10" stroke="#B8860B" stroke-width="2.2" stroke-linecap="round"/><path d="M18 8Q32-6 46 8Q40 4 32 12Q24 4 18 8z" fill="#E8123C" stroke="#8E0A24" stroke-width=".8"/>',
+      face: ''
+    }),
+    goldkrake: pummel({
+      defs: '<linearGradient id="pmGk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE27A"/><stop offset="1" stop-color="#E8A81E"/></linearGradient>',
+      body: "url(#pmGk)", shade: "#B8780A", eye: "#3B2108", pupil: "#fff",
+      behind: '<path d="M5 46q-8 8 0 14q6-2 5-8zM59 46q8 8 0 14q-6-2-5-8z" fill="#E8A81E"/><path d="M14 54q-6 8 2 10q4-2 4-8zM50 54q6 8-2 10q-4-2-4-8z" fill="#FFC83A"/>',
+      ears: '',
+      front: '<path d="M14 24l4-12 6 8 8-14 8 14 6-8 4 12z" fill="#FFF3A0" stroke="#B8860B" stroke-width="1.2" stroke-linejoin="round"/><circle cx="32" cy="10" r="2.6" fill="#E8123C"/><circle cx="20" cy="17" r="1.8" fill="#59C8FF"/><circle cx="44" cy="17" r="1.8" fill="#59C8FF"/>' +
+        '<g fill="#FFF3A0" opacity=".9"><circle cx="14" cy="45" r="1.8"/><circle cx="50" cy="45" r="1.8"/><circle cx="19" cy="52" r="1.5"/><circle cx="45" cy="52" r="1.5"/></g>',
+      face: ''
+    }),
+    fenrir: pummel({
+      body: "#D7DEEE", shade: "#7D8AA6", eye: "#59D6FF", pupil: "#fff",
+      ears: '<path d="M8 32L10 4l18 14z" fill="#D7DEEE" stroke="#7D8AA6" stroke-width="1"/><path d="M56 32L54 4L36 18z" fill="#D7DEEE" stroke="#7D8AA6" stroke-width="1"/><path d="M13 24l1.5-13 8 6z" fill="#6D7A94"/><path d="M51 24l-1.5-13-8 6z" fill="#6D7A94"/>',
+      front: '<ellipse cx="32" cy="46" rx="12" ry="8" fill="#F5F8FF"/><path d="M28 41h8l-4 4z" fill="#14213D"/><path d="M11 27Q32 18 53 27v4Q32 23 11 31z" fill="#B8C4D8" stroke="#6D7A94" stroke-width="1"/><path d="M32 20l3 4-3 4-3-4z" fill="#59D6FF" stroke="#14213D" stroke-width=".8"/><path d="M45 31l5 10" stroke="#7D8AA6" stroke-width="1.6" stroke-linecap="round"/><path d="M6 40l5 2M58 40l-5 2" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>',
+      face: '<path d="M28 50q4 3 8 0" fill="none" stroke="#14213D" stroke-width="1.6" stroke-linecap="round"/>'
+    }),
+    mondhase: pummel({
+      body: "#EEF2FF", shade: "#B8C4E8", eye: "#2B2166", pupil: "#fff",
+      ears: '<ellipse cx="21" cy="9" rx="6.4" ry="15" fill="#EEF2FF" stroke="#B8C4E8" stroke-width="1" transform="rotate(-10 21 9)"/><ellipse cx="43" cy="9" rx="6.4" ry="15" fill="#EEF2FF" stroke="#B8C4E8" stroke-width="1" transform="rotate(10 43 9)"/><ellipse cx="21" cy="10" rx="3" ry="10" fill="#FFC4DE" transform="rotate(-10 21 10)"/><ellipse cx="43" cy="10" rx="3" ry="10" fill="#FFC4DE" transform="rotate(10 43 10)"/>',
+      front: '<path d="M34 20a8 8 0 1 0 0 14a6.4 6.4 0 1 1 0-14z" fill="#FFD34D" stroke="#C99A00" stroke-width=".8"/><ellipse cx="32" cy="46" rx="10" ry="6.6" fill="#fff"/><path d="M29.4 42q2.6-2 5.2 0q0 3-2.6 4q-2.6-1-2.6-4z" fill="#FF8FB8"/><rect x="29.4" y="49" width="2.4" height="3.6" rx="1" fill="#fff" stroke="#B8C4E8" stroke-width=".6"/><rect x="32.2" y="49" width="2.4" height="3.6" rx="1" fill="#fff" stroke="#B8C4E8" stroke-width=".6"/>' + star(10, 24, 3, "#FFE27A") + star(55, 22, 2.6, "#fff"),
+      face: ''
+    }),
+    zeitschildi: pummel({
+      body: "#8EE0C8", shade: "#4FA89A", eye: "#14213D", pupil: "#fff",
+      behind: '<ellipse cx="32" cy="30" rx="30" ry="26" fill="#6D7FA6" stroke="#3A4A6E" stroke-width="1"/>',
+      ears: '',
+      front: '<circle cx="32" cy="13" r="10" fill="#fff" stroke="#3A4A6E" stroke-width="1.6"/><g stroke="#3A4A6E" stroke-width="1.2" stroke-linecap="round"><path d="M32 13V7M32 13l4 3"/><path d="M32 4v2M32 22v2M23 13h2M39 13h2"/></g><circle cx="32" cy="13" r="1.2" fill="#E8123C"/>' +
+        '<path d="M4 22l3-3M60 22l-3-3" stroke="#B8C4E8" stroke-width="2" stroke-linecap="round"/><circle cx="10" cy="14" r="3.4" fill="none" stroke="#FFD34D" stroke-width="1.6" stroke-dasharray="2 1.4"/><circle cx="54" cy="12" r="2.6" fill="none" stroke="#FFD34D" stroke-width="1.4" stroke-dasharray="1.6 1.2"/><ellipse cx="32" cy="48" rx="11" ry="7" fill="#D9F7EC"/>',
+      face: ''
+    }),
+    kristallhirsch: pummel({
+      body: "#F2F8FF", shade: "#9CC4F0", eye: "#2B3A8F", pupil: "#fff",
+      behind: '<g stroke="#3E7FC8" stroke-width="1" stroke-linejoin="round" fill="#BFE9FF"><path d="M16 22L6 8l8 2zM9 12L1 4l10 2zM20 14L14 0l8 6zM48 22l10-14-8 2zM55 12l8-8-10 2zM44 14l6-14-8 6z"/></g>',
+      ears: '<path d="M10 30L6 20l14 4z" fill="#F2F8FF" stroke="#9CC4F0" stroke-width="1"/><path d="M54 30l4-10-14 4z" fill="#F2F8FF" stroke="#9CC4F0" stroke-width="1"/>',
+      front: '<ellipse cx="32" cy="46" rx="10" ry="6.6" fill="#DCEEFF"/><ellipse cx="32" cy="42.6" rx="3.2" ry="2.2" fill="#2B3A8F"/><g fill="#fff"><circle cx="16" cy="30" r="1.4"/><circle cx="48" cy="30" r="1.4"/><circle cx="22" cy="24" r="1.1"/><circle cx="42" cy="24" r="1.1"/></g><path d="M32 17l3 4-3 4-3-4z" fill="#BFF4FF" stroke="#3E7FC8" stroke-width=".8"/>',
+      face: '<path d="M28 50q4 3 8 0" fill="none" stroke="#2B3A8F" stroke-width="1.6" stroke-linecap="round"/>'
+    }),
+    nebelpanther: pummel({
+      defs: '<radialGradient id="pmNp" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#8A4FD8"/><stop offset=".55" stop-color="#3A2A7A"/><stop offset="1" stop-color="#14123A"/></radialGradient>',
+      body: "url(#pmNp)", shade: "#14123A", eye: "#00F0FF", pupil: "#14213D",
+      ears: '<path d="M10 30L12 6l16 12z" fill="#3A2A7A"/><path d="M54 30L52 6L36 18z" fill="#3A2A7A"/><path d="M14 24l2-12 7 6z" fill="#FF7FD0"/><path d="M50 24l-2-12-7 6z" fill="#FF7FD0"/>',
+      front: '<g fill="#fff"><circle cx="14" cy="30" r="1.1"/><circle cx="50" cy="28" r="1.4"/><circle cx="20" cy="22" r="1"/><circle cx="44" cy="22" r="1.1"/><circle cx="52" cy="40" r="1"/><circle cx="12" cy="42" r="1.2"/></g><path d="M18 26q6-3 8 2M46 26q-6-3-8 2" fill="none" stroke="#00E5FF" stroke-width="1.6" stroke-linecap="round"/><ellipse cx="32" cy="46" rx="9" ry="6" fill="#4B3A9A"/><path d="M29 42h6l-3 3z" fill="#FF7FD0"/><path d="M6 44l9 2M58 44l-9 2M7 49l9-1M57 49l-9-1" stroke="#CFE6FF" stroke-width="1.1" stroke-linecap="round"/>' + star(46, 30, 2.4, "#FFE27A"),
+      face: '<path d="M28 49q4 3 8 0" fill="none" stroke="#FF7FD0" stroke-width="1.6" stroke-linecap="round"/>'
+    }),
+    qilin: pummel({
+      defs: '<linearGradient id="pmQl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#46E0A4"/><stop offset="1" stop-color="#1F9C74"/></linearGradient>',
+      body: "url(#pmQl)", shade: "#E8483C", eye: "#3B1208", pupil: "#fff",
+      behind: '<path d="M4 44Q-6 30 4 14Q10 28 16 32zM60 44Q70 30 60 14Q54 28 48 32z" fill="#FF6A3D" stroke="#B8300F" stroke-width="1" stroke-linejoin="round"/><path d="M8 44Q0 34 6 22M56 44Q64 34 58 22" fill="none" stroke="#FFD34D" stroke-width="1.6" stroke-linecap="round"/>',
+      ears: '<path d="M22 22L16 4l3 8l-9-6l7 14zM42 22l6-18l-3 8l9-6l-7 14z" fill="#FFD34D" stroke="#B8860B" stroke-width=".9" stroke-linejoin="round"/>',
+      front: '<g fill="#7DF0C0" opacity=".7"><path d="M12 36q3-3 6 0q-3 3-6 0zM46 36q3-3 6 0q-3 3-6 0zM22 28q3-3 6 0q-3 3-6 0zM36 28q3-3 6 0q-3 3-6 0z"/></g><circle cx="32" cy="24" r="3.2" fill="#FFF3A0" stroke="#C99A00" stroke-width=".9"/><ellipse cx="32" cy="47" rx="10.5" ry="7" fill="#FFF3C9"/><circle cx="29" cy="45" r="1" fill="#B8300F"/><circle cx="35" cy="45" r="1" fill="#B8300F"/><path d="M8 48q-6 2-8 8M56 48q6 2 8 8" fill="none" stroke="#FFD34D" stroke-width="1.8" stroke-linecap="round"/>',
+      face: '<path d="M28 50q4 3 8 0" fill="none" stroke="#B8300F" stroke-width="1.6" stroke-linecap="round"/>'
+    }),
+    unreallama: pummel({
+      defs: '<linearGradient id="pmUl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF8FD0"/><stop offset=".3" stop-color="#8F7DFF"/><stop offset=".65" stop-color="#37C6E8"/><stop offset="1" stop-color="#FFD66B"/></linearGradient>',
+      body: "url(#pmUl)", shade: "#6D4FD8", eye: "#2B1A60", pupil: "#fff",
+      behind: '<circle cx="32" cy="34" r="31" fill="#FFF3A0" opacity=".35"/><path d="M2 40Q-6 18 8 6Q10 22 20 30z" fill="url(#pmUl)" stroke="#fff" stroke-width="1"/><path d="M62 40Q70 18 56 6Q54 22 44 30z" fill="url(#pmUl)" stroke="#fff" stroke-width="1"/>',
+      ears: '<path d="M16 28L10 0l14 16z" fill="#FF8FD0" stroke="#8F4FD0" stroke-width="1" stroke-linejoin="round"/><path d="M48 28l6-28-14 16z" fill="#37C6E8" stroke="#8F4FD0" stroke-width="1" stroke-linejoin="round"/>',
+      front: '<ellipse cx="32" cy="3" rx="13" ry="3.4" fill="none" stroke="#FFF3A0" stroke-width="2.2"/><path d="M20 20l3-8 5 5 4-9 4 9 5-5 3 8z" fill="#FFD34D" stroke="#B8860B" stroke-width="1" stroke-linejoin="round"/><circle cx="32" cy="11" r="1.8" fill="#E8123C"/><ellipse cx="32" cy="47" rx="11" ry="7.4" fill="#fff"/><circle cx="29" cy="45" r="1" fill="#6D4FD8"/><circle cx="35" cy="45" r="1" fill="#6D4FD8"/>' + star(8, 30, 3.4, "#fff") + star(56, 28, 3.4, "#FFE27A") + star(10, 50, 2.4, "#FFE27A"),
+      face: '<path d="M28 50q4 3 8 0" fill="none" stroke="#6D4FD8" stroke-width="1.6" stroke-linecap="round"/>'
     }),
     gepard: pummel({
       body: "#F6B73C", shade: "#C27A14", eye: "#2B1A00", pupil: "#fff",
@@ -8873,6 +9040,19 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     "svg:zyklop": ["fur", "#5FD3B0", "#D8FFF0", "#1F8F6A", "dino", "#5FD3B0"],
     "svg:sphinx": ["fur", "#F2C14E", "#FFF3C9", "#B88A1F", "tuft", "#F2C14E", "wings", "#2F7BE8"],
     "svg:golem": ["fur", "#6B7088", "#4A4F66", "#3C4055", "dino", "#6B7088", "spikes", "#FF8A1F"],
+    "svg:prisma": ["fur", "#9BE8A8", "#FFFFFF", "#FFD27A", "dino", "#9BE8A8", "spikes", "#8ED0F8"],
+    "svg:nebelwal": ["fur", "#4660E8", "#DFE9FF", "#1F2A8F", "fish", "#4660E8", "fin", "#3B4FD0"],
+    "svg:donnervogel": ["bird", "#2B3A8F", "#9FB0FF", "#FFE04A", "feat", "#FFE04A"],
+    "svg:sonnenloewe": ["fur", "#FFC24A", "#FFF3C9", "#E08A0A", "tuft", "#FF7A1F", "", "#8A4B14"],
+    "svg:athene": ["bird", "#E8C06A", "#FFF8DC", "#FFD34D", "feat", "#C98A2B"],
+    "svg:goldkrake": ["tent", "#FFC83A", "#FFF3C9", "#FFC83A", "", ""],
+    "svg:fenrir": ["fur", "#B8C4D8", "#FFFFFF", "#6D7A94", "tuft", "#B8C4D8", "", "#FFFFFF"],
+    "svg:mondhase": ["fur", "#EEF2FF", "#FFFFFF", "#B8C4E8", "pom", "#FFFFFF"],
+    "svg:zeitschildi": ["fur", "#8EE0C8", "#D9F7EC", "#4FA89A", "", "", "shell", "#6D7FA6"],
+    "svg:kristallhirsch": ["fur", "#F2F8FF", "#DCEFFF", "#9CC4F0", "pom", "#BFE9FF"],
+    "svg:nebelpanther": ["fur", "#3A2A7A", "#4B3A9A", "#14123A", "cat", "#3A2A7A"],
+    "svg:qilin": ["fur", "#46E0A4", "#FFF3C9", "#1F9C74", "fox", "#FF6A3D"],
+    "svg:unreallama": ["fur", "#8F7DFF", "#FFFFFF", "#37C6E8", "rb", ""],
     "svg:gepard": ["fur", "#F6B73C", "#FFF3C9", "#C27A14", "cat", "#F6B73C"],
     "svg:yeti": ["fur", "#E4F1FF", "#A9D6FF", "#B6D4F2", "pom", "#FFFFFF"],
     "svg:flamingo": ["bird", "#FF6FA8", "#FFE0EF", "#FFD34D", "feat", "#FF8FC0"],
@@ -9376,6 +9556,56 @@ return '<svg class="afs" viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg
       hfront: '<ellipse cx="80" cy="90" rx="17" ry="14" fill="#ff8a1f" stroke="' + L + '" stroke-width="4.5"><animate attributeName="fill" values="#ff8a1f;#ffc04d;#ff8a1f" dur="1.6s" repeatCount="indefinite"/></ellipse><ellipse cx="140" cy="90" rx="17" ry="14" fill="#ff8a1f" stroke="' + L + '" stroke-width="4.5"><animate attributeName="fill" values="#ff8a1f;#ffc04d;#ff8a1f" dur="1.6s" repeatCount="indefinite"/></ellipse><ellipse cx="80" cy="90" rx="7" ry="6" fill="#fff3b0"/><ellipse cx="140" cy="90" rx="7" ry="6" fill="#fff3b0"/>' +
         '<path d="M76 128l14 10l10-12l10 12l10-12l14 10" fill="none" stroke="' + L + '" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><path d="M76 128l14 10l10-12l10 12l10-12l14 10" fill="none" stroke="#ff8a1f" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>' +
         '<ellipse cx="152" cy="50" rx="22" ry="9" fill="#7bcb5a" stroke="' + L + '" stroke-width="3.5"/><circle cx="160" cy="40" r="5" fill="#ff8fb8" stroke="' + L + '" stroke-width="2.5"/>' }, ["#ff8a1f", "#b3360a"]],
+    "svg:prisma": ["prisma", { fur: ["#ff9fb3", "#ffd27a", "#9be8a8", "#8ed0f8"], belly: "#ffffff", ears: "", face: "dino", cheek: false, hand: "#9be8a8", pants: "#7a5fe0", shoe: "#ffffff", badge: "#ffffff", under: FACETS,
+      back: wings("#cfeaff", "#ffffff") + tail("#9be8a8", "#ffd27a"),
+      hback: '<path d="M60 64L42 6L92 42z" fill="#e8fbff" stroke="' + L + '" stroke-width="5" stroke-linejoin="round"/><path d="M160 64L178 6L128 42z" fill="#e8fbff" stroke="' + L + '" stroke-width="5" stroke-linejoin="round"/>',
+      hfront: crystals(["#bff4ff", "#ffffff"], false) + star(48, 44, 8, "#fff") + star(176, 40, 9, "#ffe27a") + star(40, 120, 6, "#fff") }, ["#8f7dff", "#4a2fd0"]],
+    "svg:nebelwal": ["nebelwal", { fur: ["#7f9bff", "#4660e8", "#1f2a8f"], belly: "#dfe9ff", ears: "", face: "small", nose: "#ff8fb8", hand: "#4660e8", pants: "#1f2a8f", shoe: "#cfe0ff", badge: "#ffe27a",
+      under: '<g fill="#fff"><circle cx="64" cy="78" r="3"/><circle cx="160" cy="70" r="4"/><circle cx="80" cy="50" r="2.6"/><circle cx="144" cy="44" r="3"/><circle cx="172" cy="104" r="2.6"/><circle cx="52" cy="108" r="3"/></g>' + star(150, 84, 7, "#ffe27a") + star(70, 62, 5, "#fff"),
+      back: '<path d="M148 244Q196 252 206 196Q184 206 176 222Q172 196 150 200z" fill="#4660e8" stroke="' + L + '" stroke-width="5" stroke-linejoin="round"/><path d="M62 178q-50-30-52 22q4 20 48 20z" fill="#3b4fd0" stroke="' + L + '" stroke-width="5" stroke-linejoin="round"/>',
+      hfront: '<path d="M110 44Q84 22 110 0Q136 22 110 44z" fill="#bff4ff" stroke="' + L + '" stroke-width="4.5" stroke-linejoin="round"><animate attributeName="opacity" values="1;.6;1" dur="1.6s" repeatCount="indefinite"/></path><g fill="#bff4ff" stroke="' + L + '" stroke-width="3"><circle cx="84" cy="14" r="5"/><circle cx="138" cy="10" r="4"/><circle cx="96" cy="-6" r="3.4"/></g>' }, ["#5c7cff", "#1f2a8f"]],
+    "svg:donnervogel": ["donnervogel", { fur: ["#5a6cff", "#2b3a8f", "#141c5e"], belly: "#9fb0ff", ears: "", face: "beak", cheek: false, eyes: "big", sclera: "#fff6b0", pupil: "#14213d", hand: "#2b3a8f", pants: "#141c5e", shoe: "#ffe04a", badge: "#ffe04a",
+      back: wings("#ffe04a", "#fff3a0") + bolt(190, 250, 2.4, "#ffe04a"),
+      under: '<path d="M52 92l14-6-6 14l14-6M168 92l-14-6 6 14l-14-6" fill="none" stroke="#ffe04a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>',
+      hfront: '<path d="M70 52l12-44l8 22l12-34l12 34l8-22l12 44z" fill="#ffe04a" stroke="' + L + '" stroke-width="4.5" stroke-linejoin="round"/><path d="M98 20l6 14M122 20l-6 14" stroke="#fff3a0" stroke-width="3.5" stroke-linecap="round"/>' }, ["#ffe04a", "#c99a00"]],
+    "svg:sonnenloewe": ["sonnenloewe", { fur: ["#ffe27a", "#ffc24a", "#e08a0a"], belly: "#fff3c9", ears: "round", earIn: "#ff9a3d", face: "cat", cheek: false, hand: "#ffc24a", pants: "#c2400a", shoe: "#ffd34d", badge: "#fff3a0",
+      hback: '<path d="M110,2 L128,24 L153,12 L160,39 L188,39 L182,66 L207,78 L190,100 L207,122 L182,134 L188,161 L160,161 L153,188 L128,176 L110,198 L92,176 L67,188 L60,161 L32,161 L38,134 L13,122 L30,100 L13,78 L38,66 L32,39 L60,39 L67,12 L92,24z" fill="#ff9a1f" stroke="' + L + '" stroke-width="5" stroke-linejoin="round"/><circle cx="110" cy="100" r="78" fill="#ffc24a" stroke="' + L + '" stroke-width="4"/>',
+      back: tail("#ffc24a", "#ff7a1f"),
+      hfront: '<path d="M92 50q4-32 18-50q14 18 18 50q-18-8-36 0z" fill="#ffe27a" stroke="' + L + '" stroke-width="4.5" stroke-linejoin="round"><animate attributeName="opacity" values="1;.7;1" dur="1.3s" repeatCount="indefinite"/></path>' + star(60, 40, 7, "#fff3a0") + star(164, 44, 7, "#fff3a0") }, ["#ffb32e", "#c2400a"]],
+    "svg:athene": ["athene", { fur: ["#fff1c2", "#f2e2b4", "#c9a24a"], belly: "#fff8dc", ears: "point", earIn: "#e8c06a", face: "beak", cheek: false, eyes: "big", sclera: "#fff7d6", pupil: "#2b1a00", hand: "#e8c06a", pants: "#7a4a1a", shoe: "#ffd34d", badge: "#ffd34d",
+      back: wings("#ffd34d", "#fff3a0") + tail("#c98a2b", "#fff1c2"),
+      hfront: '<path d="M52 84Q50 18 110 14Q170 18 168 84Q140 58 110 58Q80 58 52 84z" fill="#ffd34d" stroke="' + L + '" stroke-width="5" stroke-linejoin="round"/><path d="M64 40Q110 26 156 40" stroke="#fff3a0" stroke-width="5" fill="none" opacity=".85" stroke-linecap="round"/><path d="M70 24Q110-34 150 24Q130 8 110 30Q90 8 70 24z" fill="#e8123c" stroke="' + L + '" stroke-width="5" stroke-linejoin="round"/><path d="M104 58h12v32l-6 8l-6-8z" fill="#ffd34d" stroke="' + L + '" stroke-width="4" stroke-linejoin="round"/>' }, ["#ffd34d", "#b8860b"]],
+    "svg:goldkrake": ["goldkrake", { fur: ["#fff0a0", "#ffc83a", "#e8a81e"], belly: "#fff3c9", ears: "", face: "small", nose: "#ff8fb8", eyes: "big", sclera: "#fff", pupil: "#3b2108", hand: "#ffc83a", cheek: true,
+      hback: '<ellipse cx="110" cy="46" rx="58" ry="48" fill="url(#$If)" stroke="' + L + '" stroke-width="5"/>',
+      legs: '<g stroke="' + L + '" stroke-width="5" stroke-linejoin="round" fill="#ffc83a"><path d="M70 226q-16 30 6 46q12-6 8-16q-4-14 6-30z"/><path d="M96 232q-4 34 14 40q16-6 6-40z"/><path d="M124 232q-10 34 6 40q18-6 14-40z"/><path d="M150 226q16 30-6 46q-12-6-8-16q4-14-6-30z"/></g><g fill="#fff3a0" opacity=".9"><circle cx="76" cy="258" r="3"/><circle cx="108" cy="262" r="3"/><circle cx="136" cy="262" r="3"/><circle cx="150" cy="256" r="3"/></g>',
+      hfront: '<path d="M68 54l-4-36l30 22l16-40l16 40l30-22l-4 36q-42 12-84 0z" fill="#fff3a0" stroke="' + L + '" stroke-width="5" stroke-linejoin="round"/><circle cx="110" cy="22" r="6" fill="#e8123c" stroke="' + L + '" stroke-width="3"/><circle cx="82" cy="36" r="4.4" fill="#59c8ff" stroke="' + L + '" stroke-width="3"/><circle cx="138" cy="36" r="4.4" fill="#59c8ff" stroke="' + L + '" stroke-width="3"/>' }, ["#e8a81e", "#8a5a00"]],
+    "svg:fenrir": ["fenrir", { fur: ["#f4f7ff", "#b8c4d8", "#6d7a94"], belly: "#ffffff", ears: "point", earIn: "#6d7a94", face: "wolf", cheek: false, eyes: "big", sclera: "#dff7ff", pupil: "#1b8fb8", hand: "#b8c4d8", pants: "#3a4560", shoe: "#cfd8ea", badge: "#59d6ff",
+      hback: mane(["#ffffff", "#b8c4d8", "#d9e4f5", "#ffffff"]), back: tail("#b8c4d8", "#ffffff"),
+      hfront: '<path d="M52 68Q110 40 168 68L170 86Q110 60 50 86z" fill="#b8c4d8" stroke="' + L + '" stroke-width="5" stroke-linejoin="round"/><path d="M110 30l12 16l-12 16l-12-16z" fill="#59d6ff" stroke="' + L + '" stroke-width="4.5" stroke-linejoin="round"><animate attributeName="opacity" values="1;.55;1" dur="1.4s" repeatCount="indefinite"/></path><path d="M150 76l14 30" stroke="#6d7a94" stroke-width="6" stroke-linecap="round"/>' }, ["#b8c4d8", "#4a5570"]],
+    "svg:mondhase": ["mondhase", { fur: ["#ffffff", "#eef2ff", "#b8c4e8"], belly: "#ffffff", ears: "long", earIn: "#ffc4de", face: "bunny", cheek: true, hand: "#eef2ff", pants: "#4b3bb0", shoe: "#ffe27a", badge: "#ffd34d",
+      back: '<circle cx="170" cy="240" r="24" fill="#fff" stroke="' + L + '" stroke-width="5"/>',
+      hfront: '<path d="M120 28a28 28 0 1 0 0 52a22 22 0 1 1 0-52z" fill="#ffd34d" stroke="' + L + '" stroke-width="5" stroke-linejoin="round"><animate attributeName="opacity" values="1;.75;1" dur="2.2s" repeatCount="indefinite"/></path>' + star(150, 40, 7, "#fff3a0") + star(64, 52, 6, "#fff3a0") + star(170, 96, 5, "#ffe27a") }, ["#7a63f0", "#3a2da8"]],
+    "svg:zeitschildi": ["zeitschildi", { fur: ["#bff3e4", "#8ee0c8", "#4fa89a"], belly: "#d9f7ec", ears: "", face: "small", nose: "#2e8a7a", cheek: true, hand: "#8ee0c8", pants: "#3a4a6e", shoe: "#ffd34d", badge: "#ffd34d",
+      back: '<g stroke="' + L + '" stroke-width="5" stroke-linejoin="round"><ellipse cx="110" cy="196" rx="100" ry="88" fill="#6d7fa6"/><ellipse cx="110" cy="196" rx="82" ry="72" fill="#9aa8c4"/></g><g stroke="' + L + '" stroke-width="4" stroke-linecap="round" opacity=".55"><path d="M110 124v-4M110 268v4M28 196h-4M192 196h4"/></g><circle cx="34" cy="150" r="11" fill="none" stroke="#ffd34d" stroke-width="6" stroke-dasharray="7 4"><animateTransform attributeName="transform" type="rotate" from="0 34 150" to="360 34 150" dur="6s" repeatCount="indefinite"/></circle><circle cx="188" cy="236" r="9" fill="none" stroke="#ffd34d" stroke-width="5" stroke-dasharray="6 3"><animateTransform attributeName="transform" type="rotate" from="360 188 236" to="0 188 236" dur="5s" repeatCount="indefinite"/></circle>',
+      hfront: '<circle cx="110" cy="46" r="26" fill="#fff" stroke="' + L + '" stroke-width="5"/><g stroke="' + L + '" stroke-width="3" stroke-linecap="round"><path d="M110 24v6M110 62v6M88 46h6M126 46h6"/></g><g stroke="' + L + '" stroke-width="4.5" stroke-linecap="round"><path d="M110 46v-16"/><path d="M110 46l12 8"><animateTransform attributeName="transform" type="rotate" from="0 110 46" to="360 110 46" dur="6s" repeatCount="indefinite"/></path></g><circle cx="110" cy="46" r="3.6" fill="#e8123c"/>' }, ["#5a6ccf", "#2a3a8f"]],
+    "svg:kristallhirsch": ["kristallhirsch", { fur: ["#ffffff", "#f2f8ff", "#9cc4f0"], belly: "#dcefff", ears: "small", face: "small", nose: "#2b3a8f", cheek: false, eyes: "big", sclera: "#fff", pupil: "#2b3a8f", hand: "#f2f8ff", pants: "#3e7fc8", shoe: "#bff4ff", badge: "#bff4ff", under: FACETS,
+      hback: '<g stroke="' + L + '" stroke-width="4.5" stroke-linejoin="round" fill="#bfe9ff"><path d="M74 66L38 26L52 20L44 -6L68 14L76 -14L90 22L100 58z"/><path d="M146 66L182 26L168 20L176 -6L152 14L144 -14L130 22L120 58z"/></g><path d="M52 24l10 14M70 8l4 16M168 24l-10 14M150 8l-4 16" stroke="#fff" stroke-width="3.5" stroke-linecap="round" opacity=".8"/>',
+      back: tail("#f2f8ff", "#bfe9ff"),
+      hfront: '<path d="M110 30l12 16l-12 16l-12-16z" fill="#bff4ff" stroke="' + L + '" stroke-width="4.5" stroke-linejoin="round"/>' + star(58, 60, 7, "#fff") + star(166, 56, 7, "#bff4ff") }, ["#6fc3ff", "#1f6fd0"]],
+    "svg:nebelpanther": ["nebelpanther", { fur: ["#8a4fd8", "#3a2a7a", "#14123a"], belly: "#4b3a9a", ears: "point", earIn: "#ff7fd0", face: "cat", cheek: false, eyes: "big", sclera: "#aaf8ff", pupil: "#14213d", hand: "#3a2a7a", pants: "#14123a", shoe: "#00e5ff", badge: "#ff7fd0",
+      under: '<g fill="#fff"><circle cx="62" cy="70" r="3"/><circle cx="158" cy="64" r="3.6"/><circle cx="84" cy="48" r="2.6"/><circle cx="138" cy="44" r="3"/><circle cx="170" cy="100" r="2.6"/><circle cx="50" cy="104" r="3"/><circle cx="110" cy="40" r="2.4"/></g>' + star(150, 80, 6, "#ffe27a") + star(70, 56, 5, "#fff"),
+      back: tail("#3a2a7a", "#00e5ff"),
+      hfront: '<path d="M56 62q22-16 42 0M122 62q22-16 42 0" stroke="#00e5ff" stroke-width="6" fill="none" stroke-linecap="round"><animate attributeName="opacity" values="1;.5;1" dur="1.5s" repeatCount="indefinite"/></path>' }, ["#8a4fd8", "#3a1f8f"]],
+    "svg:qilin": ["qilin", { fur: ["#7df0c0", "#46e0a4", "#1f9c74"], belly: "#fff3c9", ears: "", face: "small", nose: "#ffb84d", cheek: false, hand: "#46e0a4", pants: "#b8300f", shoe: "#ffd34d", badge: "#ffd34d",
+      hback: mane(["#ff6a3d", "#ffb347", "#ff6a3d", "#ffd34d"]) + '<path d="M80 60L58 12L74 20L72-6L92 28z" fill="#ffd34d" stroke="' + L + '" stroke-width="4.5" stroke-linejoin="round"/><path d="M140 60L162 12L146 20L148-6L128 28z" fill="#ffd34d" stroke="' + L + '" stroke-width="4.5" stroke-linejoin="round"/>',
+      back: tail("#ff6a3d", "#ffd34d"),
+      under: '<g fill="#7df0c0" opacity=".8" stroke="#1f9c74" stroke-width="2"><path d="M54 96q8-8 16 0q-8 8-16 0zM150 96q8-8 16 0q-8 8-16 0zM72 66q8-8 16 0q-8 8-16 0zM132 66q8-8 16 0q-8 8-16 0z"/></g>',
+      hfront: '<circle cx="110" cy="54" r="11" fill="#fff3a0" stroke="' + L + '" stroke-width="4"><animate attributeName="opacity" values="1;.7;1" dur="1.8s" repeatCount="indefinite"/></circle><path d="M60 122q-30 4-44 24M160 122q30 4 44 24" stroke="' + L + '" stroke-width="10" stroke-linecap="round" fill="none"/><path d="M60 122q-30 4-44 24M160 122q30 4 44 24" stroke="#ffd34d" stroke-width="5" stroke-linecap="round" fill="none"/>' }, ["#ff6a3d", "#b8300f"]],
+    "svg:unreallama": ["unreallama", { fur: ["#ff8fd0", "#8f7dff", "#37c6e8", "#ffd66b"], belly: "#ffffff", ears: "llama", face: "small", nose: "#ff8fb8", cheek: true, hand: "#8f7dff", pants: "#6a4be0", shoe: "#ffd34d", badge: "#fff3a0", under: FACETS,
+      defs: '<radialGradient id="$Iau" cx=".5" cy=".5" r=".5"><stop offset=".55" stop-color="#fff3a0" stop-opacity=".0"/><stop offset=".8" stop-color="#fff3a0" stop-opacity=".75"/><stop offset="1" stop-color="#ff8fd0" stop-opacity="0"/></radialGradient>',
+      hback: '<circle cx="110" cy="100" r="104" fill="url(#$Iau)"><animate attributeName="opacity" values=".5;1;.5" dur="2.2s" repeatCount="indefinite"/></circle>' + crystals(["#ff8fd0", "#37c6e8"], true),
+      back: wings("#ff8fd0", "#ffd66b") + '<g fill="#fff"><circle cx="24" cy="170" r="3.5"><animate attributeName="opacity" values="1;.2;1" dur="1.2s" repeatCount="indefinite"/></circle><circle cx="198" cy="160" r="3.5"><animate attributeName="opacity" values=".2;1;.2" dur="1.2s" repeatCount="indefinite"/></circle><circle cx="20" cy="230" r="3"/><circle cx="202" cy="236" r="3"/></g>',
+      hfront: '<ellipse cx="110" cy="20" rx="44" ry="11" fill="none" stroke="' + L + '" stroke-width="12"/><ellipse cx="110" cy="20" rx="44" ry="11" fill="none" stroke="#ffe27a" stroke-width="6"><animate attributeName="opacity" values="1;.7;1" dur="1.6s" repeatCount="indefinite"/></ellipse><path d="M70 62l8-30l22 22l10-32l10 32l22-22l8 30q-40 12-80 0z" fill="#ffd34d" stroke="' + L + '" stroke-width="5" stroke-linejoin="round"/><circle cx="110" cy="34" r="6" fill="#e8123c" stroke="' + L + '" stroke-width="3"/><circle cx="84" cy="46" r="4" fill="#59c8ff" stroke="' + L + '" stroke-width="3"/><circle cx="136" cy="46" r="4" fill="#59c8ff" stroke="' + L + '" stroke-width="3"/>' + star(50, 70, 8, "#fff") + star(172, 66, 9, "#ffe27a") }, ["#8f7dff", "#4a2fd0"]],
     "svg:gepard": ["gepard", { fur: ["#ffe27a", "#f6b73c", "#c27a14"], belly: "#fff3c9", ears: "round", earIn: "#3b2410", face: "cat", cheek: false, eyes: "big", sclera: "#fff", pupil: "#2b1a00", hand: "#f6b73c", pants: "#2b2f45", shoe: "#ff5a36",
       under: '<g fill="#3b2410"><circle cx="70" cy="140" r="4"/><circle cx="150" cy="140" r="4"/><circle cx="82" cy="170" r="4.5"/><circle cx="138" cy="170" r="4.5"/><circle cx="110" cy="196" r="4"/></g>',
       hfront: '<g fill="#3b2410"><circle cx="76" cy="38" r="4"/><circle cx="144" cy="38" r="4"/><circle cx="60" cy="70" r="3.5"/><circle cx="160" cy="70" r="3.5"/><circle cx="98" cy="24" r="3"/><circle cx="122" cy="24" r="3"/></g><path d="M80 98q-6 14-2 26M140 98q6 14 2 26" fill="none" stroke="#3b2410" stroke-width="5" stroke-linecap="round"/>' +
@@ -10544,6 +10774,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     return '<span class="srem">' + (c.it ? shopIcon(c.it) : "🎁") + '</span>';
   }
   function medalStyle(id) {
+    var hit = S.medalList().filter(function (x) { return x.id === id; })[0]; if (hit) return { rar: hit.rar, val: hit.val };
     var m = /^md:(\w+?)(?:p(\d)|cup)?$/.exec(id) || [], k = id.slice(3), T = { boss1: ["common", "⚔"], boss5: ["rare", "⚔"], boss10: ["epic", "⚔"], serie7: ["rare", "7"], serie30: ["epic", "30"], serie100: ["legend", "100"], crew1: ["common", "★"], crewgold: ["epic", "★"], duel1: ["common", "⚔"], duel5: ["rare", "5"], duel20: ["epic", "20"], chal7: ["rare", "7"], chal30: ["legend", "30"], w25: ["rare", "25"], w100: ["epic", "100"] };
     if (T[k]) return { rar: T[k][0], val: T[k][1] };
     var pm = /p(\d)$/.exec(k); if (pm) return { rar: +pm[1] >= S.passInfo().weeks.length ? "legend" : "epic", val: pm[1] };
@@ -11949,7 +12180,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     ov.innerHTML = '<div class="dsh" style="text-align:center"><div class="dshg"></div><div class="eyebrow">⬆️ Rang ' + esc(p.rank) + '</div><h3>' + (many ? "Such dir eine Figur aus!" : "Deine neue Figur!") + '</h3>' +
       '<div class="row wrap" style="gap:12px;justify-content:center;margin:10px 0">' + its.map(function (it) {
         var r = S.rarityOf(it);
-        return '<button class="chip rpk" data-pick="' + esc(it.id) + '" style="min-width:120px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:4px;border-radius:14px">' + itemIcon(it, true) + '<b>' + esc(it.label) + '</b><span class="small muted">' + RAR_NAME[r] + ' · + Sticker</span></button>';
+        return '<button class="chip rpk" data-pick="' + esc(it.id) + '" style="min-width:120px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:4px;border-radius:14px">' + itemIcon(it, true) + '<b>' + esc(it.label) + '</b><span class="small muted">' + RAR_NAME[r] + '</span></button>';
       }).join("") + '</div>' +
       '<p class="small muted">' + (many ? "Die andere Figur kannst du ab jetzt im Shop kaufen." : "Den passenden Sticker kannst du im Shop kaufen.") + '</p></div>';
     document.body.appendChild(ov);
@@ -12117,11 +12348,14 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     html += segBar("shop", shopSeg, [["shop", "Shop"], ["sammlung", "Sammlung"], ["abzeichen", "Abzeichen"], ["raenge", "Ränge"]]);
     if (shopSeg === "sammlung") html += albumCard() + albumCard("fn") + stickerBook() + stickerBook("fn");
     else if (shopSeg === "abzeichen") {
-      html += '<section class="card"><div class="eyebrow">Abzeichen · ' + st.badges.length + ' von ' + S.BADGES.length + '</div><div class="badges" style="margin-top:10px">' +
-        S.BADGES.map(function (b) {
-          var has = st.badges.indexOf(b.id) >= 0;
-          return '<div class="badge' + (has ? "" : " off") + '" title="' + esc(b.d) + '"><div class="g">' + (has ? "🏅" : "🔒") + '</div><b>' + esc(b.n) + '</b></div>';
-        }).join("") + '</div></section>';
+      var mg = S.medalGroups(), mo = 0, mt = 0; mg.forEach(function (g) { g.items.forEach(function (m) { mt++; if (m.owned) mo++; }); });
+      html += '<section class="card"><div class="eyebrow">Abzeichen · ' + mo + ' von ' + mt + '</div><p class="small muted" style="margin:6px 0 0">Sammle Abzeichen in elf Kategorien. Je höher die Stufe, desto seltener das Abzeichen – ganz oben wartet „Unreal“. Tippe ein Abzeichen an, um zu sehen, wie du es bekommst.</p></section>';
+      mg.forEach(function (g) {
+        var own = g.items.filter(function (m) { return m.owned; }).length, nx = g.items.filter(function (m) { return !m.owned; })[0];
+        html += '<section class="card"><div class="row" style="align-items:center"><div class="eyebrow" style="flex:1 1 auto">' + g.icon + ' ' + esc(g.title) + '</div><span class="pill tnum">' + own + ' / ' + g.items.length + '</span></div><div class="mdrow">' +
+          g.items.map(function (m) { return '<button class="mdt ' + m.rar + (m.owned ? "" : " lock") + '" data-act="sritem" data-id="' + esc(m.id) + '" title="' + esc(m.label) + '" aria-label="' + esc(m.label) + '"><span class="mdi">' + srIcon(m) + '</span><small>' + esc(m.label) + '</small></button>'; }).join("") + '</div>' +
+          (nx ? '<div class="small muted" style="margin-top:8px">Als Nächstes: <b>' + esc(nx.label) + '</b> – ' + esc(nx.how) + '</div>' + (nx.need ? '<div class="bar" style="margin-top:4px"><i style="width:' + Math.round(nx.prog * 100 / nx.need) + '%"></i></div>' : "") : '<div class="small" style="margin-top:8px">✓ Alles geschafft in dieser Kategorie!</div>') + '</section>';
+      });
     }
     else if (shopSeg === "raenge") html += ranksCard();
     else html += wishCard() + coinsCard() + shopCard();

@@ -1210,6 +1210,12 @@ details.fold>.fbody{padding:2px 0 14px}
 .dsur input{width:20px;height:20px;flex:none;accent-color:#E9BD62}.dsur span{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}.dsur small{opacity:.7;flex:none}
 .dshs{border:1px solid rgba(255,255,255,.25);background:transparent;color:inherit;border-radius:12px;padding:6px 14px;font-weight:700;font-family:inherit;cursor:pointer}
 .dshb[disabled]{opacity:.45;box-shadow:none;cursor:default;transform:none}
+/* ABZEICHEN: Kategorien mit Stufenleitern (Shop › Abzeichen) */
+.mdrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.mdt{width:58px;text-align:center;background:none;border:0;padding:0;color:inherit;font-family:inherit;cursor:pointer}
+.mdt .mdi{display:block;width:46px;height:46px;margin:0 auto;filter:drop-shadow(0 2px 3px rgba(0,0,0,.3))}.mdt .mdi svg{width:100%;height:100%;overflow:visible}
+.mdt small{display:block;font-size:10px;line-height:1.1;margin-top:3px;height:22px;overflow:hidden}.mdt.lock .mdi{filter:grayscale(1) brightness(.7) opacity(.55)}
+.mdt.unreal:not(.lock) .mdi{filter:drop-shadow(0 0 6px rgba(160,120,255,.95))}.mdt.legend:not(.lock) .mdi{filter:drop-shadow(0 0 5px rgba(255,190,60,.8))}
+.srs.unreal{--c:#b43cff}
 /* RARITY-UNREAL: Stufe über „legendär“ (ab Rang Unreal), Regenbogen-Schimmer in Cyan/Violett/Pink */
 .srv{--unreal:#b43cff}.srrar .unreal{--rc:#9b30e0}.srs.unreal{--c:#b43cff}.srs.unreal:not(.lock) .it:after{content:"✦";position:absolute;right:-2px;top:-4px;font-size:16px;color:#e9fbff;text-shadow:0 0 8px #7df0ff,0 0 14px #ff4ddb}
 .rtile.unreal{box-shadow:0 4px 0 rgba(20,33,61,.35),0 0 24px var(--g);animation:rtpl 2.2s ease-in-out infinite alternate;border-color:#e9fbff}.rtile.unreal:after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 36%,rgba(125,240,255,.55) 46%,rgba(255,77,219,.45) 54%,transparent 64%);transform:translateX(-130%);animation:srgl 3.6s ease-in-out infinite;pointer-events:none}

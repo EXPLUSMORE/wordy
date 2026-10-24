@@ -736,6 +736,7 @@
     return '<span class="srem">' + (c.it ? shopIcon(c.it) : "🎁") + '</span>';
   }
   function medalStyle(id) {
+    var hit = S.medalList().filter(function (x) { return x.id === id; })[0]; if (hit) return { rar: hit.rar, val: hit.val };
     var m = /^md:(\w+?)(?:p(\d)|cup)?$/.exec(id) || [], k = id.slice(3), T = { boss1: ["common", "⚔"], boss5: ["rare", "⚔"], boss10: ["epic", "⚔"], serie7: ["rare", "7"], serie30: ["epic", "30"], serie100: ["legend", "100"], crew1: ["common", "★"], crewgold: ["epic", "★"], duel1: ["common", "⚔"], duel5: ["rare", "5"], duel20: ["epic", "20"], chal7: ["rare", "7"], chal30: ["legend", "30"], w25: ["rare", "25"], w100: ["epic", "100"] };
     if (T[k]) return { rar: T[k][0], val: T[k][1] };
     var pm = /p(\d)$/.exec(k); if (pm) return { rar: +pm[1] >= S.passInfo().weeks.length ? "legend" : "epic", val: pm[1] };
@@ -2141,7 +2142,7 @@
     ov.innerHTML = '<div class="dsh" style="text-align:center"><div class="dshg"></div><div class="eyebrow">⬆️ Rang ' + esc(p.rank) + '</div><h3>' + (many ? "Such dir eine Figur aus!" : "Deine neue Figur!") + '</h3>' +
       '<div class="row wrap" style="gap:12px;justify-content:center;margin:10px 0">' + its.map(function (it) {
         var r = S.rarityOf(it);
-        return '<button class="chip rpk" data-pick="' + esc(it.id) + '" style="min-width:120px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:4px;border-radius:14px">' + itemIcon(it, true) + '<b>' + esc(it.label) + '</b><span class="small muted">' + RAR_NAME[r] + ' · + Sticker</span></button>';
+        return '<button class="chip rpk" data-pick="' + esc(it.id) + '" style="min-width:120px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:4px;border-radius:14px">' + itemIcon(it, true) + '<b>' + esc(it.label) + '</b><span class="small muted">' + RAR_NAME[r] + '</span></button>';
       }).join("") + '</div>' +
       '<p class="small muted">' + (many ? "Die andere Figur kannst du ab jetzt im Shop kaufen." : "Den passenden Sticker kannst du im Shop kaufen.") + '</p></div>';
     document.body.appendChild(ov);
@@ -2309,11 +2310,14 @@
     html += segBar("shop", shopSeg, [["shop", "Shop"], ["sammlung", "Sammlung"], ["abzeichen", "Abzeichen"], ["raenge", "Ränge"]]);
     if (shopSeg === "sammlung") html += albumCard() + albumCard("fn") + stickerBook() + stickerBook("fn");
     else if (shopSeg === "abzeichen") {
-      html += '<section class="card"><div class="eyebrow">Abzeichen · ' + st.badges.length + ' von ' + S.BADGES.length + '</div><div class="badges" style="margin-top:10px">' +
-        S.BADGES.map(function (b) {
-          var has = st.badges.indexOf(b.id) >= 0;
-          return '<div class="badge' + (has ? "" : " off") + '" title="' + esc(b.d) + '"><div class="g">' + (has ? "🏅" : "🔒") + '</div><b>' + esc(b.n) + '</b></div>';
-        }).join("") + '</div></section>';
+      var mg = S.medalGroups(), mo = 0, mt = 0; mg.forEach(function (g) { g.items.forEach(function (m) { mt++; if (m.owned) mo++; }); });
+      html += '<section class="card"><div class="eyebrow">Abzeichen · ' + mo + ' von ' + mt + '</div><p class="small muted" style="margin:6px 0 0">Sammle Abzeichen in elf Kategorien. Je höher die Stufe, desto seltener das Abzeichen – ganz oben wartet „Unreal“. Tippe ein Abzeichen an, um zu sehen, wie du es bekommst.</p></section>';
+      mg.forEach(function (g) {
+        var own = g.items.filter(function (m) { return m.owned; }).length, nx = g.items.filter(function (m) { return !m.owned; })[0];
+        html += '<section class="card"><div class="row" style="align-items:center"><div class="eyebrow" style="flex:1 1 auto">' + g.icon + ' ' + esc(g.title) + '</div><span class="pill tnum">' + own + ' / ' + g.items.length + '</span></div><div class="mdrow">' +
+          g.items.map(function (m) { return '<button class="mdt ' + m.rar + (m.owned ? "" : " lock") + '" data-act="sritem" data-id="' + esc(m.id) + '" title="' + esc(m.label) + '" aria-label="' + esc(m.label) + '"><span class="mdi">' + srIcon(m) + '</span><small>' + esc(m.label) + '</small></button>'; }).join("") + '</div>' +
+          (nx ? '<div class="small muted" style="margin-top:8px">Als Nächstes: <b>' + esc(nx.label) + '</b> – ' + esc(nx.how) + '</div>' + (nx.need ? '<div class="bar" style="margin-top:4px"><i style="width:' + Math.round(nx.prog * 100 / nx.need) + '%"></i></div>' : "") : '<div class="small" style="margin-top:8px">✓ Alles geschafft in dieser Kategorie!</div>') + '</section>';
+      });
     }
     else if (shopSeg === "raenge") html += ranksCard();
     else html += wishCard() + coinsCard() + shopCard();
