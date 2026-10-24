@@ -28,6 +28,7 @@ Lernfortschritts-Server: https://track.wordy.explusmore.com (eigenständig, Node
 
 ## Hinweise
 - Ränge (v2.135): `RANKS` in engine.js, Elite/Champion/Unreal/Unreal Gold/Unreal Platin/Unreal Diamant je I–III, dazu „The real Unreal“ (ab 278.000 XP); Elite I = 35.000 XP, Abstände +5.000, +6.000, +7.000 … Rang folgt immer aus den XP. `RANK_SLOTS` und `rank:` der Artikel nutzen die Namen („Elite I“ …). Für die neuen Stufen ab „Elite II“ gibt es noch keine eigenen Figuren/Sticker.
+- XP-Auswertung (v2.135.1): `tools/xp_analyse.js` (liest `/api/admin/players/:id/report`, nur lesend; Betreiber setzt `WORDY_URL/USER/PASS`, Rangleiter dort doppelt – bei Änderung an `RANKS` nachziehen).
 - Tippen (v2.135): `enAlts()`/`plainEn()`/`judgeTyped()` in app.js: Klammerwörter optional, „a/b“-Alternativen, „sb./sth.“ optional, „…“ = beliebige Wörter; Hinweis und „Wort zusammensetzen“ nutzen `plainEn()`.
 - Sprache der App und Antworten: Deutsch, Magnus ist Kind → motivierend (Shop/Münzen/Wochenziele).
 - Sprachausgabe: `speechClean()` entfernt Abkürzungen wie „sb.“ vor dem Vorlesen.
