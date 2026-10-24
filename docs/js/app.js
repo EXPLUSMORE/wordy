@@ -622,7 +622,7 @@
 
   /* ---------- Pass: Monat aus Wochen-Sets ---------- */
   var passSel = null;
-  var RAR_COL = { common: ["#7a9a6a", "#4f6f46"], rare: ["#2f8cff", "#1b57c9"], epic: ["#a855f7", "#6d28d9"], legend: ["#ffb61e", "#e8730c"] };
+  var RAR_COL = { common: ["#7a9a6a", "#4f6f46"], rare: ["#2f8cff", "#1b57c9"], epic: ["#a855f7", "#6d28d9"], legend: ["#ffb61e", "#e8730c"], unreal: ["#7df0ff", "#b43cff"] };
   function itemIcon(it, big) {
     if (!it) return "";
     if (it.kind === "avatar") return '<span class="ri">' + avatarHtml(it.val) + '</span>';
@@ -701,7 +701,7 @@
   function passIcon(s) { return { Zauberwald: "🔮", "Beute-Insel": "🪂", Sternenreise: "🌌" }[s.title] || "❄️"; }
   /* Die 2 bis 3 größten Geschenke einer Saison: höchste Seltenheit, in Reihenfolge der Wochen */
   function passHighlights(info) {
-    var rk = { common: 0, rare: 1, epic: 2, legend: 3 }, c = [];
+    var rk = { common: 0, rare: 1, epic: 2, legend: 3, unreal: 4 }, c = [];
     function main(items) { var its = (items || []).map(S.itemById).filter(Boolean); return (its.filter(function (x) { return x.kind === "avatar"; })[0] || its[0] || {}).id; }
     info.weeks.forEach(function (w) { var id = main(w.items); if (id) c.push({ id: id, n: w.n, claimed: w.claimed, label: "Woche " + w.n }); });
     var f = info.season.finale; if (f && main(f.items)) c.push({ id: main(f.items), n: "fin", claimed: info.fin.claimed, label: "Finale" });
@@ -710,9 +710,9 @@
   }
   /* ---------- Showroom (Trophäenschrank) ---------- */
   var DANCE_NUM = { wackler: 1, huepfer: 2, drehung: 3, roboter: 4, moonwalk: 5, sieg: 6, eislauf: 7 };
-  var RAR_NAME = { common: "Gewöhnlich", rare: "Selten", epic: "Episch", legend: "Legendär" };
-  var RAR_GLOW = { common: "rgba(150,200,130,.7)", rare: "rgba(70,160,255,.8)", epic: "rgba(190,110,255,.85)", legend: "rgba(255,200,70,.95)" };
-  var MED_COL = { common: ["#9bd48a", "#4f9a46"], rare: ["#7fd0ff", "#2f8cff"], epic: ["#d79bff", "#a855f7"], legend: ["#ffe58a", "#ffb61e"] };
+  var RAR_NAME = { common: "Gewöhnlich", rare: "Selten", epic: "Episch", legend: "Legendär", unreal: "Unreal" };
+  var RAR_GLOW = { common: "rgba(150,200,130,.7)", rare: "rgba(70,160,255,.8)", epic: "rgba(190,110,255,.85)", legend: "rgba(255,200,70,.95)", unreal: "rgba(140,120,255,.95)" };
+  var MED_COL = { common: ["#9bd48a", "#4f9a46"], rare: ["#7fd0ff", "#2f8cff"], epic: ["#d79bff", "#a855f7"], legend: ["#ffe58a", "#ffb61e"], unreal: ["#c9f6ff", "#b43cff"] };
   var SHIRTS = { skater: ["#ff8a3d", "#ff8a3d", ""], cowboy: ["#9a6a35", "#9a6a35", "★"], ninja: ["#3a3a5c", "#3a3a5c", ""], chef: ["#ffffff", "#ffffff", ""], pirat: ["#c0392b", "#c0392b", "☠"], ritter: ["#cfd6e4", "#cfd6e4", "⚔"], dj: ["#ffd34d", "#ffd34d", "♫"], zauberer: ["#7a4fff", "#7a4fff", "★"], koenig: ["#d12036", "#d12036", "♛"], natur: ["#b9c9de", "#b9c9de", ""], shirt: ["#35c6ff", "#35c6ff", ""], hoodie: ["#7a63f0", "#7a63f0", ""], trikot: [["#e53935", "#fff"], "#e53935", "7"], held: ["#2b6fe0", "#c62828", "★"], raum: ["#dfe6ee", "#dfe6ee", "★"], rock: ["#ffd23d", "#ffd23d", "♪"], polar: ["#3f9bff", "#3f9bff", "❄"],
     "k-muenchen": ["#d4151f", "#d4151f", "7"], "k-barcelona": [["#a50044", "#004d98"], "#004d98", "7"], "k-turin": [["#111", "#fff"], "#111", "7"], "k-deutschland": ["#f1f1f4", "#fff", "7"], "k-argentinien": [["#74acdf", "#fff"], "#74acdf", "7"], "k-portugal": ["#c1121f", "#c1121f", "7"] };
   function svgCup(c1, c2) { return '<svg viewBox="0 0 64 64"><path d="M16 8h32v14q0 14-16 18q-16-4-16-18z" fill="' + c1 + '" stroke="#14213d" stroke-width="4" stroke-linejoin="round"/><path d="M16 14H6q0 14 12 16M48 14h10q0 14-12 16" fill="none" stroke="#14213d" stroke-width="4"/><rect x="28" y="40" width="8" height="8" fill="' + c2 + '" stroke="#14213d" stroke-width="3"/><rect x="18" y="48" width="28" height="10" rx="3" fill="' + c2 + '" stroke="#14213d" stroke-width="4"/><path d="M22 14q0 10 6 14" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".6" fill="none"/><path d="M32 18l3 6l6 1l-4.5 4l1 6l-5.5-3l-5.5 3l1-6l-4.5-4l6-1z" fill="#fff" opacity=".85"/></svg>'; }
@@ -759,7 +759,7 @@
     if (!srAv) srAv = pf.avatar;
     var h = '<div class="stack srv"><div><h1 style="font-size:22px">🏆 Mein Showroom</h1><p class="small muted" style="margin:2px 0 0">Alles, was du gesammelt, gekauft und erspielt hast. Tippe auf ein Stück.</p></div>' +
       '<section class="srtop"><div class="srring" style="--p:' + c.pct + '"><b>' + c.pct + '%</b></div><div class="srcups">' + c.cups.map(function (t) { var col = { Bronze: ["#e0975a", "#8a4a1e"], Silber: ["#eef2fa", "#8794ad"], Gold: ["#ffd24a", "#c8780a"], Platin: ["#c9efff", "#7a8fff"] }[t.n]; return '<div class="srcup' + (t.done ? "" : " lock") + '">' + svgCup(col[0], col[1]) + '<b>' + t.n + '</b><small>ab ' + t.pct + '%</small></div>'; }).join("") + '</div></section>' +
-      '<div class="srrar">' + ["common", "rare", "epic", "legend"].map(function (r) { return '<span class="' + r + '"><b>' + c.rar[r] + '</b>' + RAR_NAME[r] + '</span>'; }).join("") + '</div>' +
+      '<div class="srrar">' + ["common", "rare", "epic", "legend", "unreal"].map(function (r) { return '<span class="' + r + '"><b>' + c.rar[r] + '</b>' + RAR_NAME[r] + '</span>'; }).join("") + '</div>' +
       '<section class="srstage"><div class="srray"></div><div class="srfloor"></div><div class="srfav">' + favHtml + '</div><div class="srlbl">Favoriten</div><div class="srpod"><i></i></div><div class="srhero" id="srHero"></div>' +
       '<div class="srname" id="srName"></div><div class="srbtns"><button class="sbtn" data-act="srdance">💃 Tanzen</button><button class="sbtn b2" data-act="srswap">🔄 Wechseln</button></div></section>' +
       '<button class="sbtn b5 srwear" id="srWear" data-act="srwear" hidden>✅ Als Avatar übernehmen</button>' +
@@ -2100,7 +2100,7 @@
       }).join("");
       return html + '</section>';
     }
-    var RO = { common: 0, rare: 1, epic: 2, legend: 3 };   // Sortierung immer: gewöhnlich, selten, episch, legendär, danach nach Preis
+    var RO = { common: 0, rare: 1, epic: 2, legend: 3, unreal: 4 };   // Sortierung immer: gewöhnlich, selten, episch, legendär, danach nach Preis
     if (shopTab === "avatar") {
       html += '<div class="eyebrow" style="margin:14px 0 4px">Ansicht</div><div class="seg2">' + [["stufe", "🧩 Nach Stufe"], ["pfad", "🗺️ Rang-Pfad"]].map(function (v) { return '<button data-act="shopview" data-k="' + v[0] + '" aria-pressed="' + (shopView === v[0]) + '">' + v[1] + '</button>'; }).join("") + '</div>';
       if (shopView === "pfad") return html + rankPathHtml() + '</section>';
@@ -2110,7 +2110,7 @@
       .map(function (it, i) { return { it: it, i: i }; }).sort(function (a, b) { return (RO[S.rarityOf(a.it)] - RO[S.rarityOf(b.it)]) || (a.it.cost - b.it.cost) || (a.i - b.i); }).map(function (x) { return x.it; });
     var tot = list.filter(function (it) { return it.cost > 0 || shopTab !== "avatar"; }), have = tot.filter(function (it) { return S.owns(it); }).length;
     html += teaserHtml() + '<div class="small muted" style="margin:2px 0 4px">Gesammelt: <b>' + have + ' / ' + tot.length + '</b></div>';
-    ["common", "rare", "epic", "legend"].forEach(function (r) {
+    ["common", "rare", "epic", "legend", "unreal"].forEach(function (r) {
       var l = list.filter(function (it) { return S.rarityOf(it) === r; }); if (!l.length) return;
       var own = l.filter(function (it) { return S.owns(it); }).length, free = l.filter(function (it) { return !S.owns(it) && !it.pass && !it.reward && S.minXp(it) <= S.state.xp; }).length;
       var mins = l.filter(function (it) { return !S.owns(it) && S.minXp(it) > S.state.xp; }).map(function (it) { return S.minXp(it); }), first = mins.length && !free ? S.rankOf(Math.min.apply(null, mins)).rank.n : "";

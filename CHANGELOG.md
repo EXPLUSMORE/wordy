@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.136.0 – 2026-10-24
+- Neue Seltenheitsstufe **Unreal** (über legendär, ab Rang Unreal): eigene Farbe (Cyan-Violett-Pink mit Schimmer), eigener Abschnitt im Shop, Showroom und Sammlung, Sortierung nach legendär. Sticker dieser Stufe kosten 3.500 Münzen. Zugeordnet sind vorerst Kitty Sternenzauber, Goldkristall-Lama und der Titel „Legende der Wörter“; neue Figuren für die höheren Ränge kommen in dieser Stufe. Nur App, kein Server-Schritt.
+
 ## 2.135.1 – 2026-10-24
 - Neues Hilfsprogramm `tools/xp_analyse.js`: wertet XP und Münzen aus den Dashboard-Berichten aus (je Spieler Tempo, XP je Minute, Münzen je 100 XP, Anteil Spiele/Lernrunden, Rang-Prognose nach der neuen Leiter und Szenarien „weniger XP, mehr Münzen“). Nur lesend, läuft beim Betreiber (Zugang per Umgebungsvariablen) oder offline mit gespeicherten Berichten. Kein Eingriff in App oder Server.
 

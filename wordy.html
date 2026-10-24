@@ -1216,6 +1216,13 @@ details.fold>.fbody{padding:2px 0 14px}
 .dsur input{width:20px;height:20px;flex:none;accent-color:#E9BD62}.dsur span{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}.dsur small{opacity:.7;flex:none}
 .dshs{border:1px solid rgba(255,255,255,.25);background:transparent;color:inherit;border-radius:12px;padding:6px 14px;font-weight:700;font-family:inherit;cursor:pointer}
 .dshb[disabled]{opacity:.45;box-shadow:none;cursor:default;transform:none}
+/* RARITY-UNREAL: Stufe über „legendär“ (ab Rang Unreal), Regenbogen-Schimmer in Cyan/Violett/Pink */
+.srv{--unreal:#b43cff}.srrar .unreal{--rc:#9b30e0}.srs.unreal{--c:#b43cff}.srs.unreal:not(.lock) .it:after{content:"✦";position:absolute;right:-2px;top:-4px;font-size:16px;color:#e9fbff;text-shadow:0 0 8px #7df0ff,0 0 14px #ff4ddb}
+.rtile.unreal{box-shadow:0 4px 0 rgba(20,33,61,.35),0 0 24px var(--g);animation:rtpl 2.2s ease-in-out infinite alternate;border-color:#e9fbff}.rtile.unreal:after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 36%,rgba(125,240,255,.55) 46%,rgba(255,77,219,.45) 54%,transparent 64%);transform:translateX(-130%);animation:srgl 3.6s ease-in-out infinite;pointer-events:none}
+.rtile.unreal .rtag{background:linear-gradient(90deg,#7df0ff,#b43cff,#ff4ddb);color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.5)}
+.rkx.unreal{border-color:#b9a3ff;box-shadow:0 0 10px rgba(140,120,255,.6)}.phc.unreal{border-color:#b9a3ff;box-shadow:0 0 14px rgba(140,120,255,.5)}
+.drow .ttl.unreal,.hh h1 .ttl.unreal{background:linear-gradient(100deg,#7df0ff,#b43cff 35%,#ff4ddb 65%,#7df0ff);background-size:240% 100%;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.5);box-shadow:0 0 12px rgba(160,120,255,.95);animation:ttlSh 3s linear infinite}
+@media (prefers-reduced-motion:reduce){.rtile.unreal,.rtile.unreal:after,.drow .ttl.unreal,.hh h1 .ttl.unreal{animation:none!important}}
 /* SEASON-HALLOWEEN:BEGIN (erzeugt von tools/season_halloween.py, nicht von Hand ändern) */
 :root:root:root[data-season="halloween"]{color-scheme:dark;--paper:#0E0716;--card:#1C0F2E;--card-2:#271540;--ink:#FFF3E3;--ink-2:#EBD3B8;--ink-3:#B39AA6;--rule:#5B3066;--line:#3F2350;--accent:#FF8A1F;--accent-ink:#2A0F00;--accent-soft:#4D2411;--gold:#FFC857;--bar:linear-gradient(90deg,#FF5E00,#FFC857);--eyebrow:#FFB066;--btn-sh:#A83F00;--shadow:0 10px 30px rgba(0,0,0,.5);--cta-bg:linear-gradient(165deg,#2E1349,#140A22);--cta-bd:rgba(255,138,31,.65);--cta-ring:rgba(255,138,31,.12);--cta-glow:rgba(255,138,31,.42);--cta-ink:#FFF3E3;--cta-sub:#EBD3B8;--cta-eb:#FFC857;--cta-btn:linear-gradient(#FFA23C,#FF6A00);--cta-btn-ink:#2A0F00;--cta-btn-sh:#A83F00;--cta-box:rgba(255,255,255,.05);--cta-box-bd:rgba(255,138,31,.55);--cta-day:rgba(255,255,255,.06);--cta-day-ink:#C9AFA0;--cta-day-ok:rgba(255,138,31,.22);--cta-day-ok-ink:#FFD59A;--cta-day-now:#FF8A1F;}
 :root:root:root[data-season="halloween"] body{background:radial-gradient(circle at 86% 3%,rgba(255,236,190,.95) 0 20px,rgba(255,190,90,.38) 21px 56px,rgba(255,138,31,.14) 57px 140px,transparent 141px),radial-gradient(circle at 8% 100%,rgba(255,94,0,.18),transparent 46%),radial-gradient(circle at 70% 55%,rgba(155,93,229,.13),transparent 50%),linear-gradient(#1B0C2C,#0A0510)!important;background-attachment:fixed}
@@ -1496,7 +1503,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.135.1";window.WORDY_BUILD="a66b6711f4";</script>
+<script>window.WORDY_VERSION="2.136.0";window.WORDY_BUILD="4390be4fe7";</script>
 </head>
 <body>
 <div id="app">
@@ -5760,7 +5767,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     { id: "av:kitty1", kind: "avatar", label: "Kitty Schleife",      cost: 50,  val: "svg:kitty1", rar: "common" },
     { id: "av:kitty2", kind: "avatar", label: "Kitty Regenbogen",    cost: 150, val: "svg:kitty2", rar: "rare" },
     { id: "av:kitty3", kind: "avatar", label: "Kitty Prinzessin",    cost: 250, val: "svg:kitty3", rar: "epic" },
-    { id: "av:kitty4", kind: "avatar", label: "Kitty Sternenzauber", cost: 2500, val: "svg:kitty4", rar: "legend" },
+    { id: "av:kitty4", kind: "avatar", label: "Kitty Sternenzauber", cost: 2500, val: "svg:kitty4", rar: "unreal" },
 
     /* Fortnite-Sammlung (eigene Zeichnungen): Tiere ab Gold II, Rang-Kristalle ab ihrem Rang, Unreal-Stücke erst ab Unreal */
     { id: "av:fnhuhn",     kind: "avatar", set: "fn", label: "Huhn",           cost: 120,  val: "svg:fnhuhn",     rank: "Gold II" },
@@ -5774,7 +5781,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     { id: "av:fnkristall", kind: "avatar", set: "fn", label: "Kristall-Lama",  cost: 1500, val: "svg:fnkristall", rank: "Unreal I" },
     { id: "av:gepard",      kind: "avatar", label: "Turbo-Gepard",   cost: 700,  val: "svg:gepard",     rank: "Platin II", rar: "epic" },
     { id: "av:fnrakete",   kind: "avatar", set: "fn", label: "Raketen-Lama",   cost: 700,  val: "svg:fnrakete",   rank: "Platin II", rar: "epic" },
-    { id: "av:fngold",     kind: "avatar", set: "fn", label: "Goldkristall-Lama", cost: 2200, val: "svg:fngold",  rank: "Unreal Gold I", rar: "legend" },
+    { id: "av:fngold",     kind: "avatar", set: "fn", label: "Goldkristall-Lama", cost: 2200, val: "svg:fngold",  rank: "Unreal Gold I", rar: "unreal" },
     { id: "av:fnunreal",   kind: "avatar", set: "fn", label: "Unreal-Kristall", cost: 2500, val: "svg:fnunreal",  rank: "Unreal I" },
 
     { id: "fr:eis",     kind: "frame", label: "Eiskristall-Rahmen", cost: 1500, val: "eis", reward: "eis" },
@@ -5805,7 +5812,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     { id: "ti:titan",    kind: "title", label: "Wörter-Titan",         cost: 1200, val: "Wörter-Titan",         rar: "legend", rank: "Diamant I" },
     { id: "ti:unbesiegbar", kind: "title", label: "Unbesiegbar",       cost: 1000, val: "Unbesiegbar",          rar: "legend", rank: "Diamant III" },
     { id: "ti:herrscher",kind: "title", label: "Herrscher der Vokabeln", cost: 1500, val: "Herrscher der Vokabeln", rar: "legend", rank: "Elite I" },
-    { id: "ti:legende",  kind: "title", label: "Legende der Wörter",   cost: 1500, val: "Legende der Wörter",   rar: "legend", rank: "Unreal I" },
+    { id: "ti:legende",  kind: "title", label: "Legende der Wörter",   cost: 1500, val: "Legende der Wörter",   rar: "unreal", rank: "Unreal I" },
 
     { id: "bg:none",   kind: "bg", label: "Schlicht", cost: 0,   val: "none" },
     { id: "bg:stars",  kind: "bg", label: "Sterne",   cost: 120, val: "stars" },
@@ -5889,7 +5896,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     { id: "ti:eis",        kind: "title",  label: "Eisbrecher",      cost: 250, val: "Eisbrecher", rar: "rare" }
   ];
   /* Sticker: jede Figur gibt es zusätzlich als Aufkleber (fester Preis je Stufe, nicht mehr gratis zur Figur), die man auf Startseite und Profil klebt */
-  var STICKER_PRICE = { common: 120, rare: 300, epic: 700, legend: 1600 };
+  var STICKER_PRICE = { common: 120, rare: 300, epic: 700, legend: 1600, unreal: 3500 };
   SHOP = SHOP.concat(SHOP.filter(function (a) { return a.kind === "avatar"; }).map(function (a) {
     var ra = rarityOf(a);
     return { id: "st:" + a.id.slice(3), kind: "sticker", set: a.set, label: a.label + "-Sticker", cost: a.cost ? STICKER_PRICE[ra] : 0, val: a.val, rank: a.rank, rar: ra };
@@ -6710,7 +6717,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     var i = passInfo();
     return { id: i.season.id, title: i.season.title, start: i.start, idx: i.idx, weeks: i.weeks.map(function (w) { return { n: w.n, cnt: w.cnt, need: w.need, c: w.claimed ? 1 : 0 }; }), fin: i.fin.claimed ? 1 : 0 };
   }
-  var RAR_ORDER = { common: 0, rare: 1, epic: 2, legend: 3 };
+  var RAR_ORDER = { common: 0, rare: 1, epic: 2, legend: 3, unreal: 4 };   // „Unreal“ = Stufe über legendär, ab Rang Unreal
   function rarityOf(it) { return it.rar || (it.cost <= 120 ? "common" : it.cost <= 350 ? "rare" : it.cost <= 800 ? "epic" : "legend"); }
   function shopCatalog() { return SHOP.filter(function (x) { return x.kind !== "sticker" && !x.reward && x.cost > 0 && SHOP_WEEK[x.id] != null; }).map(function (x) { return [x.id, x.label, x.kind, SHOP_WEEK[x.id] || 0]; }); }
   function shopWeeks() { var o = {}; SHOP.forEach(function (x) { if (x.kind !== "sticker" && !x.reward) o[x.id] = SHOP_WEEK[x.id] || 0; }); return o; }
@@ -6766,7 +6773,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
       { id: "outfit", title: "Outfits & Trikots", icon: "👕", items: by(["outfit", "kit"]) },
       { id: "sticker", title: "Sticker", icon: "🏷️", items: by(["sticker"]) },
       { id: "extra", title: "Rahmen, Effekte & mehr", icon: "🖼️", items: by(["frame", "fx", "snd", "bg", "theme", "title"]) }
-    ], own = 0, tot = 0, rar = { common: 0, rare: 0, epic: 0, legend: 0 };
+    ], own = 0, tot = 0, rar = { common: 0, rare: 0, epic: 0, legend: 0, unreal: 0 };
     shelves.forEach(function (s) { s.own = s.items.filter(function (i) { return i.owned; }).length; own += s.own; tot += s.items.length; s.items.forEach(function (i) { if (i.owned) rar[i.rar]++; }); });
     var pct = tot ? Math.floor(own * 100 / tot) : 0, cups = CUP_TIERS.map(function (t) { return { n: t.n, pct: t.pct, coins: t.coins, done: pct >= t.pct }; });
     if (award) {
@@ -10307,7 +10314,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
 
   /* ---------- Pass: Monat aus Wochen-Sets ---------- */
   var passSel = null;
-  var RAR_COL = { common: ["#7a9a6a", "#4f6f46"], rare: ["#2f8cff", "#1b57c9"], epic: ["#a855f7", "#6d28d9"], legend: ["#ffb61e", "#e8730c"] };
+  var RAR_COL = { common: ["#7a9a6a", "#4f6f46"], rare: ["#2f8cff", "#1b57c9"], epic: ["#a855f7", "#6d28d9"], legend: ["#ffb61e", "#e8730c"], unreal: ["#7df0ff", "#b43cff"] };
   function itemIcon(it, big) {
     if (!it) return "";
     if (it.kind === "avatar") return '<span class="ri">' + avatarHtml(it.val) + '</span>';
@@ -10386,7 +10393,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   function passIcon(s) { return { Zauberwald: "🔮", "Beute-Insel": "🪂", Sternenreise: "🌌" }[s.title] || "❄️"; }
   /* Die 2 bis 3 größten Geschenke einer Saison: höchste Seltenheit, in Reihenfolge der Wochen */
   function passHighlights(info) {
-    var rk = { common: 0, rare: 1, epic: 2, legend: 3 }, c = [];
+    var rk = { common: 0, rare: 1, epic: 2, legend: 3, unreal: 4 }, c = [];
     function main(items) { var its = (items || []).map(S.itemById).filter(Boolean); return (its.filter(function (x) { return x.kind === "avatar"; })[0] || its[0] || {}).id; }
     info.weeks.forEach(function (w) { var id = main(w.items); if (id) c.push({ id: id, n: w.n, claimed: w.claimed, label: "Woche " + w.n }); });
     var f = info.season.finale; if (f && main(f.items)) c.push({ id: main(f.items), n: "fin", claimed: info.fin.claimed, label: "Finale" });
@@ -10395,9 +10402,9 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   }
   /* ---------- Showroom (Trophäenschrank) ---------- */
   var DANCE_NUM = { wackler: 1, huepfer: 2, drehung: 3, roboter: 4, moonwalk: 5, sieg: 6, eislauf: 7 };
-  var RAR_NAME = { common: "Gewöhnlich", rare: "Selten", epic: "Episch", legend: "Legendär" };
-  var RAR_GLOW = { common: "rgba(150,200,130,.7)", rare: "rgba(70,160,255,.8)", epic: "rgba(190,110,255,.85)", legend: "rgba(255,200,70,.95)" };
-  var MED_COL = { common: ["#9bd48a", "#4f9a46"], rare: ["#7fd0ff", "#2f8cff"], epic: ["#d79bff", "#a855f7"], legend: ["#ffe58a", "#ffb61e"] };
+  var RAR_NAME = { common: "Gewöhnlich", rare: "Selten", epic: "Episch", legend: "Legendär", unreal: "Unreal" };
+  var RAR_GLOW = { common: "rgba(150,200,130,.7)", rare: "rgba(70,160,255,.8)", epic: "rgba(190,110,255,.85)", legend: "rgba(255,200,70,.95)", unreal: "rgba(140,120,255,.95)" };
+  var MED_COL = { common: ["#9bd48a", "#4f9a46"], rare: ["#7fd0ff", "#2f8cff"], epic: ["#d79bff", "#a855f7"], legend: ["#ffe58a", "#ffb61e"], unreal: ["#c9f6ff", "#b43cff"] };
   var SHIRTS = { skater: ["#ff8a3d", "#ff8a3d", ""], cowboy: ["#9a6a35", "#9a6a35", "★"], ninja: ["#3a3a5c", "#3a3a5c", ""], chef: ["#ffffff", "#ffffff", ""], pirat: ["#c0392b", "#c0392b", "☠"], ritter: ["#cfd6e4", "#cfd6e4", "⚔"], dj: ["#ffd34d", "#ffd34d", "♫"], zauberer: ["#7a4fff", "#7a4fff", "★"], koenig: ["#d12036", "#d12036", "♛"], natur: ["#b9c9de", "#b9c9de", ""], shirt: ["#35c6ff", "#35c6ff", ""], hoodie: ["#7a63f0", "#7a63f0", ""], trikot: [["#e53935", "#fff"], "#e53935", "7"], held: ["#2b6fe0", "#c62828", "★"], raum: ["#dfe6ee", "#dfe6ee", "★"], rock: ["#ffd23d", "#ffd23d", "♪"], polar: ["#3f9bff", "#3f9bff", "❄"],
     "k-muenchen": ["#d4151f", "#d4151f", "7"], "k-barcelona": [["#a50044", "#004d98"], "#004d98", "7"], "k-turin": [["#111", "#fff"], "#111", "7"], "k-deutschland": ["#f1f1f4", "#fff", "7"], "k-argentinien": [["#74acdf", "#fff"], "#74acdf", "7"], "k-portugal": ["#c1121f", "#c1121f", "7"] };
   function svgCup(c1, c2) { return '<svg viewBox="0 0 64 64"><path d="M16 8h32v14q0 14-16 18q-16-4-16-18z" fill="' + c1 + '" stroke="#14213d" stroke-width="4" stroke-linejoin="round"/><path d="M16 14H6q0 14 12 16M48 14h10q0 14-12 16" fill="none" stroke="#14213d" stroke-width="4"/><rect x="28" y="40" width="8" height="8" fill="' + c2 + '" stroke="#14213d" stroke-width="3"/><rect x="18" y="48" width="28" height="10" rx="3" fill="' + c2 + '" stroke="#14213d" stroke-width="4"/><path d="M22 14q0 10 6 14" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".6" fill="none"/><path d="M32 18l3 6l6 1l-4.5 4l1 6l-5.5-3l-5.5 3l1-6l-4.5-4l6-1z" fill="#fff" opacity=".85"/></svg>'; }
@@ -10444,7 +10451,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (!srAv) srAv = pf.avatar;
     var h = '<div class="stack srv"><div><h1 style="font-size:22px">🏆 Mein Showroom</h1><p class="small muted" style="margin:2px 0 0">Alles, was du gesammelt, gekauft und erspielt hast. Tippe auf ein Stück.</p></div>' +
       '<section class="srtop"><div class="srring" style="--p:' + c.pct + '"><b>' + c.pct + '%</b></div><div class="srcups">' + c.cups.map(function (t) { var col = { Bronze: ["#e0975a", "#8a4a1e"], Silber: ["#eef2fa", "#8794ad"], Gold: ["#ffd24a", "#c8780a"], Platin: ["#c9efff", "#7a8fff"] }[t.n]; return '<div class="srcup' + (t.done ? "" : " lock") + '">' + svgCup(col[0], col[1]) + '<b>' + t.n + '</b><small>ab ' + t.pct + '%</small></div>'; }).join("") + '</div></section>' +
-      '<div class="srrar">' + ["common", "rare", "epic", "legend"].map(function (r) { return '<span class="' + r + '"><b>' + c.rar[r] + '</b>' + RAR_NAME[r] + '</span>'; }).join("") + '</div>' +
+      '<div class="srrar">' + ["common", "rare", "epic", "legend", "unreal"].map(function (r) { return '<span class="' + r + '"><b>' + c.rar[r] + '</b>' + RAR_NAME[r] + '</span>'; }).join("") + '</div>' +
       '<section class="srstage"><div class="srray"></div><div class="srfloor"></div><div class="srfav">' + favHtml + '</div><div class="srlbl">Favoriten</div><div class="srpod"><i></i></div><div class="srhero" id="srHero"></div>' +
       '<div class="srname" id="srName"></div><div class="srbtns"><button class="sbtn" data-act="srdance">💃 Tanzen</button><button class="sbtn b2" data-act="srswap">🔄 Wechseln</button></div></section>' +
       '<button class="sbtn b5 srwear" id="srWear" data-act="srwear" hidden>✅ Als Avatar übernehmen</button>' +
@@ -11785,7 +11792,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       }).join("");
       return html + '</section>';
     }
-    var RO = { common: 0, rare: 1, epic: 2, legend: 3 };   // Sortierung immer: gewöhnlich, selten, episch, legendär, danach nach Preis
+    var RO = { common: 0, rare: 1, epic: 2, legend: 3, unreal: 4 };   // Sortierung immer: gewöhnlich, selten, episch, legendär, danach nach Preis
     if (shopTab === "avatar") {
       html += '<div class="eyebrow" style="margin:14px 0 4px">Ansicht</div><div class="seg2">' + [["stufe", "🧩 Nach Stufe"], ["pfad", "🗺️ Rang-Pfad"]].map(function (v) { return '<button data-act="shopview" data-k="' + v[0] + '" aria-pressed="' + (shopView === v[0]) + '">' + v[1] + '</button>'; }).join("") + '</div>';
       if (shopView === "pfad") return html + rankPathHtml() + '</section>';
@@ -11795,7 +11802,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       .map(function (it, i) { return { it: it, i: i }; }).sort(function (a, b) { return (RO[S.rarityOf(a.it)] - RO[S.rarityOf(b.it)]) || (a.it.cost - b.it.cost) || (a.i - b.i); }).map(function (x) { return x.it; });
     var tot = list.filter(function (it) { return it.cost > 0 || shopTab !== "avatar"; }), have = tot.filter(function (it) { return S.owns(it); }).length;
     html += teaserHtml() + '<div class="small muted" style="margin:2px 0 4px">Gesammelt: <b>' + have + ' / ' + tot.length + '</b></div>';
-    ["common", "rare", "epic", "legend"].forEach(function (r) {
+    ["common", "rare", "epic", "legend", "unreal"].forEach(function (r) {
       var l = list.filter(function (it) { return S.rarityOf(it) === r; }); if (!l.length) return;
       var own = l.filter(function (it) { return S.owns(it); }).length, free = l.filter(function (it) { return !S.owns(it) && !it.pass && !it.reward && S.minXp(it) <= S.state.xp; }).length;
       var mins = l.filter(function (it) { return !S.owns(it) && S.minXp(it) > S.state.xp; }).map(function (it) { return S.minXp(it); }), first = mins.length && !free ? S.rankOf(Math.min.apply(null, mins)).rank.n : "";

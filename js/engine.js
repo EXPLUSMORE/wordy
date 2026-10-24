@@ -83,7 +83,7 @@
     { id: "av:kitty1", kind: "avatar", label: "Kitty Schleife",      cost: 50,  val: "svg:kitty1", rar: "common" },
     { id: "av:kitty2", kind: "avatar", label: "Kitty Regenbogen",    cost: 150, val: "svg:kitty2", rar: "rare" },
     { id: "av:kitty3", kind: "avatar", label: "Kitty Prinzessin",    cost: 250, val: "svg:kitty3", rar: "epic" },
-    { id: "av:kitty4", kind: "avatar", label: "Kitty Sternenzauber", cost: 2500, val: "svg:kitty4", rar: "legend" },
+    { id: "av:kitty4", kind: "avatar", label: "Kitty Sternenzauber", cost: 2500, val: "svg:kitty4", rar: "unreal" },
 
     /* Fortnite-Sammlung (eigene Zeichnungen): Tiere ab Gold II, Rang-Kristalle ab ihrem Rang, Unreal-Stücke erst ab Unreal */
     { id: "av:fnhuhn",     kind: "avatar", set: "fn", label: "Huhn",           cost: 120,  val: "svg:fnhuhn",     rank: "Gold II" },
@@ -97,7 +97,7 @@
     { id: "av:fnkristall", kind: "avatar", set: "fn", label: "Kristall-Lama",  cost: 1500, val: "svg:fnkristall", rank: "Unreal I" },
     { id: "av:gepard",      kind: "avatar", label: "Turbo-Gepard",   cost: 700,  val: "svg:gepard",     rank: "Platin II", rar: "epic" },
     { id: "av:fnrakete",   kind: "avatar", set: "fn", label: "Raketen-Lama",   cost: 700,  val: "svg:fnrakete",   rank: "Platin II", rar: "epic" },
-    { id: "av:fngold",     kind: "avatar", set: "fn", label: "Goldkristall-Lama", cost: 2200, val: "svg:fngold",  rank: "Unreal Gold I", rar: "legend" },
+    { id: "av:fngold",     kind: "avatar", set: "fn", label: "Goldkristall-Lama", cost: 2200, val: "svg:fngold",  rank: "Unreal Gold I", rar: "unreal" },
     { id: "av:fnunreal",   kind: "avatar", set: "fn", label: "Unreal-Kristall", cost: 2500, val: "svg:fnunreal",  rank: "Unreal I" },
 
     { id: "fr:eis",     kind: "frame", label: "Eiskristall-Rahmen", cost: 1500, val: "eis", reward: "eis" },
@@ -128,7 +128,7 @@
     { id: "ti:titan",    kind: "title", label: "Wörter-Titan",         cost: 1200, val: "Wörter-Titan",         rar: "legend", rank: "Diamant I" },
     { id: "ti:unbesiegbar", kind: "title", label: "Unbesiegbar",       cost: 1000, val: "Unbesiegbar",          rar: "legend", rank: "Diamant III" },
     { id: "ti:herrscher",kind: "title", label: "Herrscher der Vokabeln", cost: 1500, val: "Herrscher der Vokabeln", rar: "legend", rank: "Elite I" },
-    { id: "ti:legende",  kind: "title", label: "Legende der Wörter",   cost: 1500, val: "Legende der Wörter",   rar: "legend", rank: "Unreal I" },
+    { id: "ti:legende",  kind: "title", label: "Legende der Wörter",   cost: 1500, val: "Legende der Wörter",   rar: "unreal", rank: "Unreal I" },
 
     { id: "bg:none",   kind: "bg", label: "Schlicht", cost: 0,   val: "none" },
     { id: "bg:stars",  kind: "bg", label: "Sterne",   cost: 120, val: "stars" },
@@ -212,7 +212,7 @@
     { id: "ti:eis",        kind: "title",  label: "Eisbrecher",      cost: 250, val: "Eisbrecher", rar: "rare" }
   ];
   /* Sticker: jede Figur gibt es zusätzlich als Aufkleber (fester Preis je Stufe, nicht mehr gratis zur Figur), die man auf Startseite und Profil klebt */
-  var STICKER_PRICE = { common: 120, rare: 300, epic: 700, legend: 1600 };
+  var STICKER_PRICE = { common: 120, rare: 300, epic: 700, legend: 1600, unreal: 3500 };
   SHOP = SHOP.concat(SHOP.filter(function (a) { return a.kind === "avatar"; }).map(function (a) {
     var ra = rarityOf(a);
     return { id: "st:" + a.id.slice(3), kind: "sticker", set: a.set, label: a.label + "-Sticker", cost: a.cost ? STICKER_PRICE[ra] : 0, val: a.val, rank: a.rank, rar: ra };
@@ -1033,7 +1033,7 @@
     var i = passInfo();
     return { id: i.season.id, title: i.season.title, start: i.start, idx: i.idx, weeks: i.weeks.map(function (w) { return { n: w.n, cnt: w.cnt, need: w.need, c: w.claimed ? 1 : 0 }; }), fin: i.fin.claimed ? 1 : 0 };
   }
-  var RAR_ORDER = { common: 0, rare: 1, epic: 2, legend: 3 };
+  var RAR_ORDER = { common: 0, rare: 1, epic: 2, legend: 3, unreal: 4 };   // „Unreal“ = Stufe über legendär, ab Rang Unreal
   function rarityOf(it) { return it.rar || (it.cost <= 120 ? "common" : it.cost <= 350 ? "rare" : it.cost <= 800 ? "epic" : "legend"); }
   function shopCatalog() { return SHOP.filter(function (x) { return x.kind !== "sticker" && !x.reward && x.cost > 0 && SHOP_WEEK[x.id] != null; }).map(function (x) { return [x.id, x.label, x.kind, SHOP_WEEK[x.id] || 0]; }); }
   function shopWeeks() { var o = {}; SHOP.forEach(function (x) { if (x.kind !== "sticker" && !x.reward) o[x.id] = SHOP_WEEK[x.id] || 0; }); return o; }
@@ -1089,7 +1089,7 @@
       { id: "outfit", title: "Outfits & Trikots", icon: "👕", items: by(["outfit", "kit"]) },
       { id: "sticker", title: "Sticker", icon: "🏷️", items: by(["sticker"]) },
       { id: "extra", title: "Rahmen, Effekte & mehr", icon: "🖼️", items: by(["frame", "fx", "snd", "bg", "theme", "title"]) }
-    ], own = 0, tot = 0, rar = { common: 0, rare: 0, epic: 0, legend: 0 };
+    ], own = 0, tot = 0, rar = { common: 0, rare: 0, epic: 0, legend: 0, unreal: 0 };
     shelves.forEach(function (s) { s.own = s.items.filter(function (i) { return i.owned; }).length; own += s.own; tot += s.items.length; s.items.forEach(function (i) { if (i.owned) rar[i.rar]++; }); });
     var pct = tot ? Math.floor(own * 100 / tot) : 0, cups = CUP_TIERS.map(function (t) { return { n: t.n, pct: t.pct, coins: t.coins, done: pct >= t.pct }; });
     if (award) {
