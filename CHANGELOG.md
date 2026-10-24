@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.140.1 – 2026-10-24
+- Anprobe im Zubehör-Bereich: Figur-Vorschau mit Kaufknopf bleibt beim Scrollen oben fixiert, Zubehör scrollt darunter.
+
 ## 2.140.0 – 2026-10-24
 - **Anprobe („Wie sieht's aus“)**: Im Shop › Zubehör kann jedes Teil an jeder Figur (auch noch nicht gekauften) anprobiert werden, mit Knopf „kaufen“ und „Anprobe zurücksetzen“. An Figuren im Shop gibt es 👀 für ein Anprobe-Fenster (Tanzen, Vorlesen, Aktivieren/Kaufen).
 - **Englische Namen** für Figuren, Zubehör und weitere Artikel (Shop, Zubehör, Showroom) mit Vorlesen.
