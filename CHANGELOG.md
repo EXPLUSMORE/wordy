@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.140.2 – 2026-10-24
+- Showroom: Die Abzeichen-Regale stehen jetzt nach den Shop-Gegenständen.
+
 ## 2.140.1 – 2026-10-24
 - Anprobe im Zubehör-Bereich: Figur-Vorschau mit Kaufknopf bleibt beim Scrollen oben fixiert, Zubehör scrollt darunter.
 

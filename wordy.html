@@ -1520,7 +1520,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.140.1";window.WORDY_BUILD="11b4eef201";</script>
+<script>window.WORDY_VERSION="2.140.2";window.WORDY_BUILD="7cd3907c30";</script>
 </head>
 <body>
 <div id="app">
@@ -6879,14 +6879,14 @@ window.SENTENCES = (window.SENTENCES || []).concat([
   function collection(award) {
     function mk(x) { return { id: x.id, label: x.label, kind: x.kind, val: x.val, rar: rarityOf(x), owned: owns(x), how: howText(x), it: x }; }
     var vis = SHOP.filter(function (x) { return !(x.val === "none" || x.val === ""); }), by = function (kinds) { return vis.filter(function (x) { return kinds.indexOf(x.kind) >= 0; }).map(mk).map(function (m, i) { m.o = i; return m; }).sort(function (p, q) { return (RAR_ORDER[p.rar] - RAR_ORDER[q.rar]) || (minXp(p.it) - minXp(q.it)) || (p.it.cost - q.it.cost) || (p.o - q.o); }); };   // immer: gewöhnlich, selten, episch, legendär
-    var shelves = medalGroups().map(function (g) { return { id: "medal-" + g.id, title: g.title, icon: g.icon, items: g.items, medals: true }; }).concat([
+    var shelves = ([
       { id: "fig", title: "Figuren", icon: "🦊", items: by(["avatar"]) },
       { id: "dance", title: "Tänze", icon: "💃", items: by(["dance"]) },
       { id: "outfit", title: "Outfits & Trikots", icon: "👕", items: by(["outfit", "kit"]) },
       { id: "sticker", title: "Sticker", icon: "🏷️", items: by(["sticker"]) },
       { id: "acc", title: "Zubehör", icon: "🎩", items: by(["acc"]) },
       { id: "extra", title: "Rahmen, Effekte & mehr", icon: "🖼️", items: by(["frame", "fx", "snd", "bg", "theme", "title"]) }
-    ]), own = 0, tot = 0, rar = { common: 0, rare: 0, epic: 0, legend: 0, unreal: 0 };
+    ]).concat(medalGroups().map(function (g) { return { id: "medal-" + g.id, title: g.title, icon: g.icon, items: g.items, medals: true }; })), own = 0, tot = 0, rar = { common: 0, rare: 0, epic: 0, legend: 0, unreal: 0 };
     shelves.forEach(function (s) { s.own = s.items.filter(function (i) { return i.owned; }).length; own += s.own; tot += s.items.length; s.items.forEach(function (i) { if (i.owned) rar[i.rar]++; }); });
     var pct = tot ? Math.floor(own * 100 / tot) : 0, cups = CUP_TIERS.map(function (t) { return { n: t.n, pct: t.pct, coins: t.coins, done: pct >= t.pct }; });
     if (award) {
