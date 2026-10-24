@@ -514,7 +514,7 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     assert.equal((await J("/api/social/challenges", { method: "POST", headers: jt, body: JSON.stringify({ to: kid.j.id, mode: "blitz", words: WORDS, seed: 5, score: 999999 }) })).s, 400, "unmögliche Punktzahl");
     const ch = await J("/api/social/challenges", { method: "POST", headers: jt, body: JSON.stringify({ to: kid.j.id, mode: "blitz", words: WORDS, seed: 5, score: 120 }) });
     assert.equal(ch.s, 200);
-    const ib = (await J("/api/social/inbox", { headers: lt })).j; assert.equal(ib.open.length, 1); assert.equal(ib.open[0].from.name, "Jonas"); assert.equal(ib.open[0].aScore, 120); assert.deepEqual(ib.open[0].words, WORDS);
+    const ib = (await J("/api/social/inbox", { headers: lt })).j; assert.equal(ib.open.length, 1); assert.equal(ib.open[0].from.name, "Jonas"); assert.equal(ib.open[0].aScore, 120); assert.deepEqual(ib.open[0].from.acc, { head: "beanie", neck: "schal" }, "Duell zeigt Figur samt Zubehör"); assert.deepEqual(ib.open[0].words, WORDS);
     assert.equal((await J("/api/social/challenges/" + ch.j.id + "/result", { method: "POST", headers: jt, body: JSON.stringify({ score: 1 }) })).s, 403, "Herausforderer kann nicht selbst antworten");
     assert.equal((await J("/api/social/challenges/" + ch.j.id + "/react", { method: "POST", headers: lt, body: JSON.stringify({ emoji: "👏" }) })).s, 400, "Reaktion erst nach dem Spiel");
     assert.equal((await J("/api/social/challenges/" + ch.j.id + "/result", { method: "POST", headers: lt, body: JSON.stringify({ score: 150 }) })).s, 200);

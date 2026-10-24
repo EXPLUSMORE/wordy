@@ -788,7 +788,7 @@
     var ms = id.indexOf("md:") === 0 ? medalStyle(id) : null, rar = ms ? ms.rar : it.rar, col = MED_COL[rar] || MED_COL.common, val = ms ? ms.val : it.val;
     var c = { kind: it.kind, val: val, rar: rar, it: it.it }, canEq = it.owned && it.kind !== "medal", eq = it.it && S.isActive(it.it);
     var ov = document.createElement("div"); ov.className = "srmd";
-    ov.innerHTML = '<div class="srmc" style="--c:' + col[1] + ';--g:' + RAR_GLOW[rar] + '"><div class="eyebrow" style="color:#fff;opacity:.85">' + RAR_NAME[rar] + '</div><div class="big' + (it.owned ? "" : " lock") + '">' + srIcon(c) + '</div><h3>' + esc(it.label) + '</h3><p>' + (it.owned ? "Gehört dir! " : "Noch nicht gesammelt. ") + esc(it.how || "") + '</p><div class="row wrap" style="gap:8px;justify-content:center">' +
+    ov.innerHTML = '<div class="srmc" style="--c:' + col[1] + ';--g:' + RAR_GLOW[rar] + '"><div class="eyebrow" style="color:#fff;opacity:.85">' + RAR_NAME[rar] + '</div><div class="big' + (it.owned ? "" : " lock") + '">' + srIcon(c) + '</div><h3>' + esc(it.label) + '</h3>' + (it.it ? enLine(it.it) : "") + '<p>' + (it.owned ? "Gehört dir! ": "Noch nicht gesammelt. ") + esc(it.how || "") + '</p><div class="row wrap" style="gap:8px;justify-content:center">' +
       (it.owned ? '<button class="sbtn" data-m="fav">' + (fav ? "★ Favorit" : "☆ Als Favorit") + '</button>' : "") +
       (canEq ? '<button class="sbtn b2" data-m="eq">' + (it.kind === "sticker" ? (eq ? "Ablösen" : "Aufkleben") : eq ? "✓ Aktiv" : "Tragen") + '</button>' : "") +
       (it.owned && (it.kind === "dance" || it.kind === "outfit" || it.kind === "kit") ? '<button class="sbtn b3" data-m="try">▶ Ansehen</button>' : "") +
@@ -2034,11 +2034,11 @@
       : locked ? '<span class="rpill">🔒 ab ' + esc(it.rank) + '</span>'
       : '<button class="rbtn buy" data-act="buy" data-id="' + esc(it.id) + '">🪙 ' + (deal ? '<s>' + it.cost + '</s> ' : "") + price + '</button>';
     var sub = KIND_NAME[it.kind] + (it.bundle ? " · ❄️ Eis-Set" : "") + (it.rank && !own && (!locked || soon) ? " · ab " + esc(it.rank) : "");
-    var prev = (it.kind === "dance" || it.kind === "outfit" || it.kind === "kit") ? '<button class="rprev" data-act="dancetry" data-id="' + esc(it.id) + '" aria-label="Vorschau">▶︎</button>' : "";
+    var prev = (it.kind === "dance" || it.kind === "outfit" || it.kind === "kit") ? '<button class="rprev" data-act="dancetry" data-id="' + esc(it.id) + '" aria-label="Vorschau">▶︎</button>' : it.kind === "avatar" && !soon && global.VTA && global.VTA.has(it.val) ? '<button class="rprev" data-act="figtry" data-id="' + esc(it.id) + '" aria-label="Anprobe">👀</button>' : "";
     return '<div class="rtile ' + rar + (own ? " own" : "") + (locked ? " lock" : "") + '"' + (locked ? ' data-act="lockinfo" data-id="' + esc(it.id) + '"' : "") + ' style="--c1:' + c[0] + ';--c2:' + c[1] + ';--g:' + RAR_GLOW[rar] + '">' +
       '<span class="rtag">' + RAR_NAME[rar] + (S.shopIsNew(it) && !own ? ' · NEU' : '') + '</span>' + (own || it.pass || it.reward || locked ? "" : star) + (own ? '<span class="rown">✓</span>' : "") +
       '<div class="rico">' + (soon ? '<span class="ri em" style="display:grid;place-items:center;height:64px;font-size:44px;filter:grayscale(1) brightness(.55)">❔</span>' : srIcon({ kind: it.kind, val: it.val, rar: rar, it: it }) + prev) + '</div>' +
-      '<b class="rname">' + (soon ? "???" : esc(it.label)) + '</b><span class="rsub">' + sub + '</span><div class="ract">' + action + '</div></div>';
+      '<b class="rname">' + (soon ? "???" : esc(it.label)) + '</b>' + (soon ? "" : enLine(it)) + '<span class="rsub">' + sub + '</span><div class="ract">' + action + '</div></div>';
   }
   function shopRow(it, wishId) {
     var own = S.owns(it), act = S.isActive(it), locked = !own && lockNote(it), price = S.priceOf(it), deal = price !== it.cost;
@@ -2046,7 +2046,7 @@
     var buyBtn = it.pass ? '<span class="pill" title="Gibt es nur im Pass">🎁 ' + esc(it.pass) + '-Pass</span>' : it.reward ? '<span class="pill" title="Gibt es nur für das komplette Set">🎁 ' + esc(setName) + '</span>'
       : '<button class="chip" data-act="wish" data-id="' + esc(it.id) + '" aria-pressed="' + (wishId === it.id) + '" aria-label="Wunsch" style="margin-right:6px">⭐</button><button class="btn soft" data-act="buy" data-id="' + esc(it.id) + '">🪙 ' + (deal ? '<s style="opacity:.55;font-weight:500">' + it.cost + '</s> ' : "") + price + '</button>';
     return '<div class="shopitem"><span class="si">' + shopIcon(it) + '</span>' +
-      '<span style="flex:1 1 auto"><b class="small">' + esc(it.label) + '</b><br><span class="small muted">' + KIND_NAME[it.kind] + (it.cost > 0 ? " · " + tierOf(it.cost) : "") +
+      '<span style="flex:1 1 auto"><b class="small">' + esc(it.label) + '</b>' + enLine(it) + '<br><span class="small muted">' + KIND_NAME[it.kind] + (it.cost > 0 ? " · " + tierOf(it.cost) : "") +
       (it.rank && !own ? " · ab " + esc(it.rank) : "") + (it.bundle ? " · ❄️ Eis-Set" : "") + '</span></span>' +
       ((it.kind === "dance" || it.kind === "outfit" || it.kind === "kit") ? '<button class="chip" data-act="dancetry" data-id="' + esc(it.id) + '" aria-label="Vorschau" style="margin-right:6px">▶︎</button>' : '') +
       (own ? '<button class="chip" data-act="equip" data-id="' + esc(it.id) + '" aria-pressed="' + act + '">' + (act ? "aktiv" : "auswählen") + '</button>'
@@ -2081,23 +2081,58 @@
       ov.remove(); toast("Willkommen! +" + r.coins + " 🪙, deine Figur und Konfetti sind da."); render(); renderHeader();
     });
   }
-  /* Zubehör: einmal kaufen, jeder Figur einzeln anziehen. accFig = Figur, die gerade anprobiert wird */
-  var accFig = "";
+  /* Zubehör: einmal kaufen, jeder Figur einzeln anziehen. accFig = Figur, die gerade anprobiert wird; accTry = Anprobe (noch nicht angezogen/gekauft): { Platz: Wert } */
+  var accFig = "", accTry = {};
+  function accLook(av) { var m = S.accOf(av); Object.keys(accTry).forEach(function (k) { m[k] = accTry[k]; }); return m; }
+  function heroWith(av, lo, dn) { if (global.VTACC) global.VTACC.setOver({ av: av, lo: lo }); try { return heroHtml(av, dn || 0); } finally { if (global.VTACC) global.VTACC.setOver(null); } }
+  function enLine(it) { var e = S.enName(it); return e ? '<em class="ren">' + esc(e) + '</em>' : ""; }
   function accHtml() {
-    var pf = S.state.profile, figs = S.SHOP.filter(function (x) { return x.kind === "avatar" && S.owns(x) && global.VTA && global.VTA.has(x.val); });
-    if (!accFig || !figs.some(function (f) { return f.val === accFig; })) accFig = pf.avatar;
-    var cur = S.accOf(accFig), fig = figs.filter(function (f) { return f.val === accFig; })[0], worn = S.ACC_SLOTS.map(function (sl) { var it = cur[sl[0]] && S.itemById("ac:" + cur[sl[0]]); return it ? it.label : ""; }).filter(Boolean);
-    var h = '<p class="small muted" style="margin:0 0 8px">Zubehör kaufst du <b>einmal</b> und ziehst es <b>jeder Figur einzeln</b> an. Wähle eine Figur, tippe dann ein Teil an: Gekaufte ziehst du an oder aus, neue kaufst du für ein paar Münzen.</p>' +
-      '<div class="accfigs">' + figs.map(function (f) { return '<button class="accfig' + (f.val === accFig ? " on" : "") + '" data-act="accfig" data-av="' + esc(f.val) + '" title="' + esc(f.label) + '" aria-label="' + esc(f.label) + '" aria-pressed="' + (f.val === accFig) + '"><span class="acch">' + avatarHtml(f.val, true) + '</span></button>'; }).join("") + '</div>' +
-      '<div class="accpv"><div class="accst"><div class="accfl">' + heroHtml(accFig, 0) + '</div></div><div class="accin"><b>' + esc(fig ? fig.label : "Fuchs") + '</b><span class="small muted">' + (worn.length ? "trägt: " + esc(worn.join(", ")) : "trägt noch nichts") + '</span>' + (worn.length ? '<button class="chip" data-act="accclr">Alles ablegen</button>' : "") + '</div></div>';
+    var pf = S.state.profile, all = S.SHOP.filter(function (x) { return x.kind === "avatar" && global.VTA && global.VTA.has(x.val); });
+    var figs = all.filter(function (x) { return S.owns(x); }).concat(all.filter(function (x) { return !S.owns(x); }));
+    if (!accFig || !all.some(function (f) { return f.val === accFig; })) { accFig = pf.avatar; accTry = {}; }
+    var fig = all.filter(function (f) { return f.val === accFig; })[0], figOwn = !fig || S.owns(fig), worn = S.accOf(accFig), look = accLook(accFig);
+    var tried = Object.keys(accTry).map(function (k) { return S.itemById("ac:" + accTry[k]); }).filter(Boolean), toBuy = tried.filter(function (x) { return !S.owns(x); }), sum = toBuy.reduce(function (t, x) { return t + S.priceOf(x); }, 0);
+    var names = S.ACC_SLOTS.map(function (sl) { var it = look[sl[0]] && S.itemById("ac:" + look[sl[0]]); return it ? it.label + (accTry[sl[0]] ? " (Anprobe)" : "") : ""; }).filter(Boolean);
+    var h = '<p class="small muted" style="margin:0 0 8px">👀 <b>Wie sieht\'s aus?</b> Probiere alles an, bevor du kaufst – jede Figur, jedes Teil. Zubehör kaufst du <b>einmal</b> und ziehst es <b>jeder Figur einzeln</b> an. <span lang="en">Try it on first, then decide!</span></p>' +
+      '<div class="accfigs">' + figs.map(function (f) { var o = S.owns(f); return '<button class="accfig' + (f.val === accFig ? " on" : "") + (o ? "" : " lock") + '" data-act="accfig" data-av="' + esc(f.val) + '" title="' + esc(f.label + (o ? "" : " (noch nicht gekauft)")) + '" aria-label="' + esc(f.label) + '" aria-pressed="' + (f.val === accFig) + '"><span class="acch">' + avatarHtml(f.val, o) + '</span>' + (o ? "" : '<i class="acl">🔒</i>') + '</button>'; }).join("") + '</div>' +
+      '<div class="accpv"><div class="accst"><div class="accfl">' + heroWith(accFig, look, 0) + '</div></div><div class="accin"><b>' + esc(fig ? fig.label : "Fuchs") + '</b>' + (fig ? enLine(fig) : "") +
+      '<span class="small muted">' + (names.length ? "trägt: " + esc(names.join(", ")) : "trägt noch nichts") + '</span>' +
+      (figOwn ? "" : '<span class="small" style="color:var(--accent)">Diese Figur gehört dir noch nicht – du probierst nur an.</span>') +
+      (toBuy.length ? '<button class="btn" data-act="accbuytry">🪙 ' + sum + ' – ' + (toBuy.length === 1 ? "kaufen" : toBuy.length + " Teile kaufen") + '</button>' : "") +
+      (Object.keys(accTry).length ? '<button class="chip" data-act="accuntry">Anprobe zurücksetzen</button>' : "") +
+      (Object.keys(worn).length ? '<button class="chip" data-act="accclr">Alles ablegen</button>' : "") +
+      (!figOwn && fig ? '<button class="chip" data-act="figtry" data-id="' + esc(fig.id) + '">Zur Figur</button>' : "") + '</div></div>';
     S.ACC_SLOTS.forEach(function (sl) {
       var list = S.SHOP.filter(function (x) { return x.kind === "acc" && x.slot === sl[0]; }).sort(function (a, b) { return a.cost - b.cost; });
       h += '<div class="shsec" style="--c:#7a6adb"><b>' + sl[1] + '</b><small>' + list.filter(function (x) { return S.owns(x); }).length + ' / ' + list.length + '</small><i></i></div><div class="acgrid">' + list.map(function (x) {
-        var own = S.owns(x), on = cur[x.slot] === x.val;
-        return '<button class="acct ' + S.rarityOf(x) + (own ? " own" : "") + (on ? " on" : "") + '" data-act="acctile" data-id="' + esc(x.id) + '"><span class="acci">' + (global.VTACC ? global.VTACC.thumb(x.val) : "") + '</span><b>' + esc(x.label) + '</b><small>' + (on ? "✓ an" : own ? "Anziehen" : "🪙 " + x.cost) + '</small></button>';
+        var own = S.owns(x), on = worn[x.slot] === x.val && !accTry[x.slot], tr = accTry[x.slot] === x.val;
+        return '<button class="acct ' + S.rarityOf(x) + (own ? " own" : "") + (on ? " on" : "") + (tr ? " try" : "") + '" data-act="acctile" data-id="' + esc(x.id) + '"><span class="acci">' + (global.VTACC ? global.VTACC.thumb(x.val) : "") + '</span><b>' + esc(x.label) + '</b>' + enLine(x) + '<small>' + (tr ? "👀 Anprobe" + (own ? "" : " · 🪙 " + S.priceOf(x)) : on ? "✓ an" : own ? "Anziehen" : "🪙 " + S.priceOf(x)) + '</small></button>';
       }).join("") + '</div>';
     });
     return h;
+  }
+  /* Anprobe einer Figur im Shop: mit deinem Zubehör, tanzen, anhören, dann kaufen oder lassen */
+  var figTryDn = 0;
+  function openFigTry(id) {
+    var it = S.itemById(id); if (!it || it.kind !== "avatar") return; if ($("#figTry")) $("#figTry").remove();
+    var pf = S.state.profile, lo = S.accOf(pf.avatar), ov = document.createElement("div"); ov.className = "srmd"; ov.id = "figTry"; figTryDn = 0;
+    function body() {
+      var own = S.owns(it), lock = !own && lockNote(it), price = S.priceOf(it), en = S.enName(it);
+      ov.innerHTML = '<div class="dsh" style="text-align:center"><div class="dshg"></div><div class="eyebrow">👀 Wie sieht\'s aus?</div><h3 style="margin:2px 0">' + esc(it.label) + '</h3>' + (en ? '<div class="small muted" lang="en">' + esc(en) + '</div>' : "") +
+        '<div class="ftst"><div class="ftfl">' + heroWith(it.val, lo, figTryDn) + '</div></div>' +
+        '<div class="small muted" style="margin:2px 0 8px">' + RAR_NAME[S.rarityOf(it)] + (it.rank ? " · ab " + esc(it.rank) : "") + (Object.keys(lo).length ? " · mit deinem Zubehör" : "") + '</div>' +
+        '<div class="row" style="gap:8px;justify-content:center;flex-wrap:wrap"><button class="btn soft" data-ft="dance">💃 Tanzen</button>' + (en ? '<button class="btn soft" data-ft="say">🔊 ' + esc(en) + '</button>' : "") + '</div>' +
+        '<div class="row" style="gap:8px;justify-content:center;margin-top:8px;flex-wrap:wrap">' + (own ? '<button class="btn" data-ft="use">' + (S.isActive(it) ? "✓ aktiv" : "Auswählen") + '</button>' : it.pass ? '<span class="rpill">🎁 ' + esc(it.pass) + '-Pass</span>' : lock ? '<span class="rpill">🔒 ab ' + esc(it.rank) + '</span>' : '<button class="btn" data-ft="buy">🪙 ' + price + ' kaufen</button>') + '<button class="btn soft" data-ft="x">Schließen</button></div></div>';
+    }
+    body(); document.body.appendChild(ov);
+    ov.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-ft]"), k = b && b.getAttribute("data-ft");
+      if (e.target === ov || k === "x") { ov.remove(); return; }
+      if (k === "dance") { figTryDn = (figTryDn % 7) + 1; body(); return; }
+      if (k === "say") { speak(S.enName(it)); return; }
+      if (k === "use") { S.equip(it.id); ov.remove(); renderHeader(); render(); return; }
+      if (k === "buy") { var r = S.buy(it.id); if (r.error) { toast(r.error); return; } try { if (S.state.settings.audio) global.VTC.sound(S.state.profile.snd, true); } catch (e2) {} toast(it.label + " gehört dir!"); ov.remove(); renderHeader(); render(); }
+    });
   }
   function shopCard() {
     var st = S.state, wishId = (S.wish() || {}).id, deal = S.dealItem(), sd = S.activeSetDeal();
@@ -3599,14 +3634,27 @@
     else if (a === "passcrew") { var cr2 = S.claimPassCrew(+act.getAttribute("data-n")); if (cr2.error) toast(cr2.error); else { toast("👥 Crew-Bonus! +" + cr2.coins + " 🪙"); renderHeader(); render(); } }
     else if (a === "passshare") { sharePass(); }
     else if (a === "passclaim") { openPassReward(act.getAttribute("data-n")); }
-    else if (a === "accfig") { accFig = act.getAttribute("data-av"); var sy0 = view.scrollTop; render(); view.scrollTop = sy0; }
-    else if (a === "accclr") { S.accClear(accFig); var sy1 = view.scrollTop; renderHeader(); render(); view.scrollTop = sy1; }
+    else if (a === "accfig") { accFig = act.getAttribute("data-av"); accTry = {}; var sy0 = view.scrollTop; render(); view.scrollTop = sy0; }
+    else if (a === "accclr") { S.accClear(accFig); accTry = {}; var sy1 = view.scrollTop; renderHeader(); render(); view.scrollTop = sy1; }
+    else if (a === "accuntry") { accTry = {}; var sy3 = view.scrollTop; render(); view.scrollTop = sy3; }
+    else if (a === "figtry") { openFigTry(act.getAttribute("data-id")); }
+    else if (a === "accbuytry") {
+      var bought = [], berr = "";
+      Object.keys(accTry).forEach(function (sl) { var bi = S.itemById("ac:" + accTry[sl]); if (bi && !S.owns(bi) && !berr) { var br0 = S.buy(bi.id); if (br0.error) berr = br0.error; else bought.push(bi.label); } });
+      if (berr) toast(berr);
+      var fgi = S.SHOP.filter(function (x) { return x.kind === "avatar" && x.val === accFig; })[0];
+      if (!fgi || S.owns(fgi)) { Object.keys(accTry).forEach(function (sl) { var wi = S.itemById("ac:" + accTry[sl]); if (wi && S.owns(wi) && S.accOf(accFig)[sl] !== wi.val) S.accToggle(accFig, wi.id); }); accTry = {}; }
+      if (bought.length) { try { if (S.state.settings.audio) global.VTC.sound(S.state.profile.snd, true); } catch (e) {} toast(bought.join(", ") + (bought.length > 1 ? " gekauft!" : " gekauft!")); }
+      var sy4 = view.scrollTop; renderHeader(); render(); view.scrollTop = sy4;
+    }
     else if (a === "acctile") {
       var aid = act.getAttribute("data-id"), ait = S.itemById(aid); if (!ait) return;
-      if (!S.owns(ait)) { var br = S.buy(aid); if (br.error) { toast(br.error); return; } try { if (S.state.settings.audio) global.VTC.sound(S.state.profile.snd, true); } catch (e) {} toast(ait.label + " gekauft und angezogen!"); }
-      var tr = S.accToggle(accFig, aid); if (tr.error) { toast(tr.error); return; }
-      if (!tr.on) toast(ait.label + " abgelegt");
-      var sy2 = view.scrollTop; renderHeader(); render(); view.scrollTop = sy2;
+      var figIt = S.SHOP.filter(function (x) { return x.kind === "avatar" && x.val === accFig; })[0], figOk = !figIt || S.owns(figIt), sy2 = view.scrollTop;
+      if (S.owns(ait) && figOk) {   // gekauft: anziehen bzw. ausziehen
+        delete accTry[ait.slot]; var tr = S.accToggle(accFig, aid); if (tr.error) { toast(tr.error); return; } if (!tr.on) toast(ait.label + " abgelegt");
+        renderHeader();
+      } else { if (accTry[ait.slot] === ait.val) delete accTry[ait.slot]; else accTry[ait.slot] = ait.val; }   // Anprobe
+      render(); view.scrollTop = sy2;
     }
     else if (a === "sritem") { srModal(act.getAttribute("data-id")); }
     else if (a === "hhdance") {

@@ -9,6 +9,11 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.140.0 – 2026-10-24
+- **Anprobe („Wie sieht's aus“)**: Im Shop › Zubehör kann jedes Teil an jeder Figur (auch noch nicht gekauften) anprobiert werden, mit Knopf „kaufen“ und „Anprobe zurücksetzen“. An Figuren im Shop gibt es 👀 für ein Anprobe-Fenster (Tanzen, Vorlesen, Aktivieren/Kaufen).
+- **Englische Namen** für Figuren, Zubehör und weitere Artikel (Shop, Zubehör, Showroom) mit Vorlesen.
+- **Zubehör bei Duell, Liga und Crew**: Mitspieler erscheinen mit ihrem Zubehör. **Server-Schritt nötig** (Neustart von `wordy-server`).
+
 ## 2.139.1 – 2026-10-24
 - Zubehör bei Freunden: Die Freundesliste zeigt die Figur samt Zubehör (Mütze, Brille, Schal …), das die Freundin bzw. der Freund gerade trägt. Das Zubehör der gewählten Figur geht beim Abgleich mit (`meta.acc`), der Server prüft die Werte (`frLook`, nur Freunde mit bestätigter Freundschaft). **Server-Schritt nötig** (Neustart), die App zeigt bis dahin Freunde ohne Zubehör. Kopf-Symbole mit Zubehör haben einen etwas höheren Ausschnitt, damit Hüte nicht abgeschnitten werden.
 

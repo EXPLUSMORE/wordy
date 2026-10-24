@@ -1286,7 +1286,9 @@ function friendsOf(pid) {
 const areFriends = (a, b) => { const [lo, hi] = pairOf(a, b), f = sq.fr.get(lo, hi); return !!(f && f.lo_ok && f.hi_ok); };
 const weekKey = () => mondayOf(dayOf(Date.now()));
 function socialGuard(pid) { const me = sq.me.get(pid); return me && me.social ? null : [403, { error: "Die Freunde-Funktion ist noch nicht freigeschaltet. Bitte deine Eltern." }]; }
-const chView = (c, me) => { const a = sq.me.get(c.a), b = sq.me.get(c.b); return { id: c.id, mode: c.mode, seed: c.seed, words: JSON.parse(c.words), from: { id: a.id, name: a.name, avatar: a.avatar || "" }, to: { id: b.id, name: b.name, avatar: b.avatar || "" }, aScore: c.a_score, bScore: c.b_score, created: c.created, done: c.b_ts, mine: me === c.a ? "a" : "b", myReact: me === c.a ? c.a_react : c.b_react, theirReact: me === c.a ? c.b_react : c.a_react }; };
+/* Figur samt Zubehör für Duell, Liga und Crew (Beteiligte sind Freunde bzw. Crew-Mitglieder) */
+const lookOf = o => { const l = frLook(o.id, "ok"); return { avatar: l.avatar || o.avatar || "", acc: l.acc }; };
+const chView = (c, me) => { const a = sq.me.get(c.a), b = sq.me.get(c.b); return { id: c.id, mode: c.mode, seed: c.seed, words: JSON.parse(c.words), from: Object.assign({ id: a.id, name: a.name }, lookOf(a)), to: Object.assign({ id: b.id, name: b.name }, lookOf(b)), aScore: c.a_score, bScore: c.b_score, created: c.created, done: c.b_ts, mine: me === c.a ? "a" : "b", myReact: me === c.a ? c.a_react : c.b_react, theirReact: me === c.a ? c.b_react : c.a_react }; };
 async function apiSocial(pid, method, p, url, req, ip) {
   const g = socialGuard(pid);
   if (p === "/api/social/profile" && method === "POST") { const av = clean((await readJson(req)).avatar, 40); if (av && AVATAR_RE.test(av)) sq.setAvatar.run(av, pid); return [200, { ok: true }]; }
@@ -1349,7 +1351,7 @@ async function apiSocial(pid, method, p, url, req, ip) {
   if (p === "/api/social/board" && method === "GET") {
     const mode = url.searchParams.get("mode") || "blitz"; if (!SOCIAL_MAX[mode]) return [400, { error: "Unbekanntes Spiel." }];
     const ids = [pid, ...friendsOf(pid).filter(f => f.state === "ok" && f.social).map(f => f.id)], wk = weekKey();
-    const rows = ids.map(id => { const o = sq.me.get(id), s = sq.score.get(id, mode, wk); return { id, name: o.name, avatar: o.avatar || "", score: s ? s.best : 0, me: id === pid }; }).sort((x, y) => y.score - x.score);
+    const rows = ids.map(id => { const o = sq.me.get(id), s = sq.score.get(id, mode, wk); return Object.assign({ id, name: o.name }, lookOf(o), { score: s ? s.best : 0, me: id === pid }); }).sort((x, y) => y.score - x.score);
     return [200, { mode, week: wk, rows }];
   }
   return [404, { error: "Nicht gefunden." }];
@@ -1391,7 +1393,7 @@ function crewStreak(crewId, monNow) {   // Wochen in Folge mit mindestens zwei e
 function crewView(pid) {
   const c = cq.crewOf.get(pid); if (!c) return null;
   const mon = weekKey(), w = crewWeek(c.id, mon), myClaims = new Set(cq.claimsOf.all(pid, mon).map(x => x.quest + ":" + x.tier));
-  const members = w.ms.map(id => { const o = sq.me.get(id), s = w.per[id]; return { id, name: o.name, avatar: o.avatar || "", min: s.min, words: s.words, days: s.days, today: !!s.today, score: s.min + s.words * 2 + s.days * 10, you: id === pid, owner: id === c.owner }; });
+  const members = w.ms.map(id => { const o = sq.me.get(id), s = w.per[id]; return Object.assign({ id, name: o.name }, lookOf(o), { min: s.min, words: s.words, days: s.days, today: !!s.today, score: s.min + s.words * 2 + s.days * 10, you: id === pid, owner: id === c.owner }); });
   const best = Math.max(0, ...members.map(m => m.score)); members.forEach(m => { m.mvp = best > 0 && m.score === best; });
   const mine = w.per[pid];
   const quests = w.quests.map(x => ({ ...x, tiers: TIERS.map((t, i) => { const per = x.targets[i] / w.n, my = mine[x.id === "min" ? "min" : x.id]; return { n: t.n, target: x.targets[i], coins: t.coins, reached: x.total >= x.targets[i], claimed: myClaims.has(x.id + ":" + (i + 1)), eligible: x.total >= x.targets[i] && my >= per / 3 }; }), mine: mine[x.id === "min" ? "min" : x.id] }));

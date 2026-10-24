@@ -1216,6 +1216,9 @@ details.fold>.fbody{padding:2px 0 14px}
 .dsur input{width:20px;height:20px;flex:none;accent-color:#E9BD62}.dsur span{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}.dsur small{opacity:.7;flex:none}
 .dshs{border:1px solid rgba(255,255,255,.25);background:transparent;color:inherit;border-radius:12px;padding:6px 14px;font-weight:700;font-family:inherit;cursor:pointer}
 .dshb[disabled]{opacity:.45;box-shadow:none;cursor:default;transform:none}
+.ren{display:block;font-style:normal;font-size:10px;line-height:1.1;opacity:.8;margin-top:1px;font-weight:600}.rtile .ren{color:inherit}.accin .ren{font-size:12px;color:var(--ink-2);opacity:1}
+.accfig{position:relative}.accfig.lock{opacity:.7}.accfig .acl{position:absolute;right:-2px;bottom:-2px;font-size:11px;font-style:normal}.acct.try{border-style:dashed;background:var(--accent-soft)}
+.ftst{position:relative;width:200px;height:272px;margin:6px auto}.ftfl{position:absolute;left:0;bottom:0;width:100%;height:100%}
 /* ZUBEHÖR (Shop › Zubehör) */
 .accfigs{display:flex;gap:6px;overflow-x:auto;padding:4px 2px 8px;margin:0 -2px}.accfig{flex:0 0 auto;width:48px;height:48px;border-radius:14px;border:2px solid var(--rule);background:var(--card);padding:4px;display:grid;place-items:center;cursor:pointer}
 .accfig.on{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}.accfig .acch{display:block;width:34px;height:34px;font-size:34px}
@@ -1517,7 +1520,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.139.1";window.WORDY_BUILD="ff615d83a1";</script>
+<script>window.WORDY_VERSION="2.140.0";window.WORDY_BUILD="80d105794d";</script>
 </head>
 <body>
 <div id="app">
@@ -5973,6 +5976,27 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     ["kopf", "ears", "Kopfhörer", 80], ["waerme", "ears", "Ohrenwärmer", 45], ["ohrring", "ears", "Ohrringe", 35],
     ["schal", "neck", "Schal", 50], ["fliege", "neck", "Fliege", 35], ["kette", "neck", "Goldkette", 90], ["tuch", "neck", "Halstuch", 35], ["medaille", "neck", "Medaille", 60]];
   SHOP = SHOP.concat(ACC.map(function (a) { return { id: "ac:" + a[0], kind: "acc", slot: a[1], label: a[2], cost: a[3], val: a[0], rar: a[3] <= 40 ? "common" : a[3] <= 70 ? "rare" : a[3] <= 100 ? "epic" : "legend" }; }));
+  /* Englische Namen aller Gegenstände (Gadget: nebenbei Vokabeln lernen). Sticker = Name der Figur + " sticker". */
+  var EN = {
+    "av:🦊": "Fox", "av:🐼": "Panda", "av:🐢": "Turtle", "av:🦉": "Owl", "av:🐙": "Octopus", "av:🦕": "Dino", "av:🦈": "Shark", "av:🦄": "Unicorn", "av:eisbaer": "Polar bear", "av:eispingu": "Ice penguin", "av:eisrobbe": "Ice seal", "av:eiskoenig": "Ice king",
+    "av:pbaer": "Chubby bear", "av:phase": "Chubby bunny", "av:pkatze": "Chubby cat", "av:pummel": "Chubby unicorn", "av:pdrache": "Chubby dragon", "av:clombo": "Clombo", "av:pphoenix": "Chubby phoenix", "av:pgold": "Golden chubby", "av:pregen": "Rainbow chubby", "av:pgalaxie": "Galaxy chubby",
+    "av:blitzwolf": "Lightning wolf", "av:ninja": "Night shadow", "av:flamingo": "Disco flamingo", "av:faultier": "Donut sloth", "av:sdrache": "Star dragon", "av:kitty1": "Kitty Bow", "av:kitty2": "Kitty Rainbow", "av:kitty3": "Kitty Princess", "av:kitty4": "Kitty Star Magic",
+    "av:fnhuhn": "Chicken", "av:fnschwein": "Wild boar", "av:fnfrosch": "Frog", "av:fnwolf": "Wolf", "av:fnraptor": "Raptor", "av:fnllama": "Loot llama", "av:fnelite": "Elite crystal", "av:fnchamp": "Champion crystal", "av:fnkristall": "Crystal llama", "av:fnrakete": "Rocket llama", "av:fngold": "Gold crystal llama", "av:fnunreal": "Unreal crystal",
+    "av:gepard": "Turbo cheetah", "av:cyberfuchs": "Cyber fox", "av:pirat": "Pirate parrot", "av:zauber": "Magic owl", "av:yeti": "Yeti", "av:greif": "Golden griffin", "av:kitsune": "Spirit fox", "av:pegasus": "Star Pegasus", "av:zyklop": "Cyclops Zack", "av:sphinx": "Sun sphinx", "av:golem": "Lava golem",
+    "av:prisma": "Prism dragon", "av:nebelwal": "Mist whale", "av:donnervogel": "Thunderbird", "av:sonnenloewe": "Sun lion", "av:athene": "Golden Athena", "av:goldkrake": "Golden kraken", "av:fenrir": "Platinum Fenrir", "av:mondhase": "Moon rabbit", "av:zeitschildi": "Time turtle", "av:kristallhirsch": "Crystal stag", "av:nebelpanther": "Galaxy panther", "av:qilin": "Oracle qilin", "av:unreallama": "The real Unreal",
+    "fr:eis": "Ice crystal frame", "fr:none": "No frame", "fr:gold": "Gold frame", "fr:rainbow": "Rainbow frame", "fr:fire": "Flame frame", "fr:neon": "Neon frame", "fr:pirat": "Pirate frame", "fr:sterne": "Stardust frame", "fr:kristall": "Ice crystal frame",
+    "ti:none": "No title", "ti:wort": "Word hunter", "ti:streber": "Straight-A student", "ti:freund": "Chubby friend", "ti:profi": "Vocab pro", "ti:genie": "Language genius", "ti:champ": "Word champion", "ti:vninja": "Vocab ninja", "ti:quassel": "Chatterbox", "ti:klug": "Smarty-pants", "ti:gladiator": "Grammar gladiator", "ti:blitz": "Lightning brain", "ti:wolf": "Word wolf", "ti:sheriff": "Sentence sheriff", "ti:boss": "Boss beater", "ti:virtuose": "Vocab virtuoso", "ti:samurai": "Language samurai", "ti:eroberer": "English conqueror", "ti:titan": "Word titan", "ti:unbesiegbar": "Unbeatable", "ti:herrscher": "Ruler of vocabulary", "ti:legende": "Legend of words", "ti:pixel": "Pixel pro", "ti:schatz": "Treasure hunter", "ti:zauber": "Word wizard", "ti:eis": "Icebreaker",
+    "bg:none": "Plain", "bg:stars": "Stars", "bg:clouds": "Clouds", "bg:space": "Outer space",
+    "fx:none": "No effects", "fx:confetti": "Confetti", "fx:stars": "Star rain", "fx:sparks": "Sparks", "fx:schnee": "Snowfall", "fx:firework": "Fireworks", "fx:pixel": "Pixel rain", "fx:gold": "Gold rain", "fx:magie": "Magic sparks",
+    "dn:wackler": "Wiggler", "dn:huepfer": "Hopper", "dn:drehung": "Spin", "dn:roboter": "Robot", "dn:moonwalk": "Moonwalk", "dn:eislauf": "Ice skating", "dn:sieg": "Epic victory",
+    "kt:muenchen": "Munich · red and white", "kt:barcelona": "Barcelona · blue and red", "kt:turin": "Turin · black and white", "kt:deutschland": "Germany · white", "kt:argentinien": "Argentina · sky blue and white", "kt:portugal": "Portugal · red and green",
+    "of:natur": "Natural", "of:shirt": "T-shirt", "of:hoodie": "Hoodie", "of:trikot": "Football jersey", "of:held": "Superhero with cape", "of:raum": "Space suit", "of:polar": "Polar jacket", "of:rock": "Rock star", "of:kitty1": "Kitty bow", "of:kitty2": "Kitty rainbow", "of:kitty3": "Kitty princess", "of:kitty4": "Kitty star magic", "of:skater": "Skater beanie", "of:cowboy": "Cowboy", "of:ninja": "Ninja", "of:chef": "Chef", "of:pirat": "Pirate", "of:ritter": "Knight", "of:zauberer": "Wizard", "of:koenig": "Royal robe", "of:dj": "Disco DJ",
+    "sn:none": "Mute", "sn:bell": "Little bell", "sn:arcade": "Arcade", "sn:harp": "Harp", "th:paper": "Paper", "th:mint": "Mint", "th:plum": "Plum", "th:amber": "Amber",
+    "ac:beanie": "Winter hat", "ac:party": "Party hat", "ac:zylinder": "Top hat", "ac:prop": "Propeller cap", "ac:cap": "Baseball cap", "ac:stroh": "Straw hat", "ac:blumen": "Flower crown", "ac:heiligen": "Halo", "ac:hasen": "Bunny ears", "ac:teufel": "Devil horns", "ac:eishut": "Ice-cream hat", "ac:pizza": "Pizza hat", "ac:krone": "Gold crown",
+    "ac:sonne": "Sunglasses", "ac:nerd": "Nerd glasses", "ac:mono": "Monocle", "ac:brille3d": "3D glasses", "ac:herz": "Heart glasses", "ac:schnurr": "Moustache", "ac:clown": "Clown nose", "ac:ski": "Ski goggles",
+    "ac:kopf": "Headphones", "ac:waerme": "Earmuffs", "ac:ohrring": "Earrings", "ac:schal": "Scarf", "ac:fliege": "Bow tie", "ac:kette": "Gold chain", "ac:tuch": "Neckerchief", "ac:medaille": "Medal"
+  };
+  function enName(it) { if (!it) return ""; if (it.kind === "sticker") { var b = EN["av:" + it.id.slice(3)]; return b ? b + " sticker" : ""; } return EN[it.id] || ""; }
   var MAX_STICKERS = 10;
   /* Sticker-Plätze auf dem Profil: der erste ist gratis, die weiteren werden nacheinander freigeschaltet */
   var STICKER_SLOT_COST = [0, 150, 150, 300, 300, 300, 750, 750, 750, 1000];   // Preis für Platz n+1 (Platz 1 ist gratis)
@@ -7378,7 +7402,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
   function resumeHas(key) { return resumeList().some(function (x) { return x.key === key; }); }
 
   global.VT = {
-    LEVELS: LEVELS, ACC: ACC, ACC_SLOTS: ACC_SLOTS, accOf: accOf, accToggle: accToggle, accClear: accClear, medalGroups: medalGroups, RANKS: RANKS, AVATARS: AVATARS, SHOP: SHOP, BADGES: BADGES,
+    LEVELS: LEVELS, enName: enName, ACC: ACC, ACC_SLOTS: ACC_SLOTS, accOf: accOf, accToggle: accToggle, accClear: accClear, medalGroups: medalGroups, RANKS: RANKS, AVATARS: AVATARS, SHOP: SHOP, BADGES: BADGES,
     SEC_PER_ITEM: SEC_PER_ITEM, secPerItem: secPerItem, itemsFor: itemsFor, recordPace: recordPace,
     resumePack: resumePack, resumeUnpack: resumeUnpack, resumeList: resumeList, resumeSave: resumeSave, resumeTake: resumeTake, resumeHas: resumeHas,
     load: load, save: save, get state() { return state; },
@@ -9767,6 +9791,7 @@ return '<svg class="afs" viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg
     tuch: ['<path d="M58 158Q110 188 162 158L110 220z" fill="#e8123c"' + O + '/><g fill="#fff"><circle cx="90" cy="172" r="4"/><circle cx="130" cy="172" r="4"/><circle cx="110" cy="188" r="4"/><circle cx="110" cy="206" r="3.4"/></g>'],
     medaille: ['<path d="M80 158l16 38M140 158l-16 38" stroke="' + L + '" stroke-width="12" stroke-linecap="round"/><path d="M80 158l16 38M140 158l-16 38" stroke="#2f7be8" stroke-width="6" stroke-linecap="round"/><circle cx="110" cy="206" r="19" fill="#ffd34d"' + O + '/><path d="M110 192l4 9 10 1-7 7 2 10-9-5-9 5 2-10-7-7 10-1z" fill="#fff3a0" stroke="' + L + '" stroke-width="2.4" stroke-linejoin="round"/>']
   };
+  var over = null;   // { av, lo } nur während die Anprobe gezeichnet wird
   var VB = { head: "30 -50 160 130", face: "40 56 140 64", ears: "20 -6 180 150", neck: "40 148 140 110" };
   function slotOf(val) { var it = global.VT && global.VT.itemById("ac:" + val); return it ? it.slot : "head"; }
   /* Zubehör einer Figur als Markup: { head, neck } */
@@ -9779,6 +9804,7 @@ return '<svg class="afs" viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg
   /* lo = fremdes Zubehör (Freunde): nur Werte, die zum Platz passen */
   A.setAcc(function (av, lo) {
     var VT = global.VT, l = {}; if (!VT || !VT.accOf) return null;
+    if (!lo && over && over.av === av) lo = over.lo;   // Anprobe: Vorschau mit nicht gekauften Teilen
     if (lo) { Object.keys(lo).forEach(function (k) { var it = VT.itemById("ac:" + lo[k]); if (it && it.slot === k) l[k] = lo[k]; }); } else l = VT.accOf(av);
     return Object.keys(l).length ? build(l) : null;
   });
@@ -9787,7 +9813,7 @@ return '<svg class="afs" viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg
     var a = ACCS[val]; if (!a) return ""; var sl = slotOf(val);
     return '<svg viewBox="' + VB[sl] + '" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;overflow:hidden">' + a[0] + '</svg>';
   }
-  global.VTACC = { thumb: thumb, has: function (v) { return !!ACCS[v]; } };
+  global.VTACC = { setOver: function (o) { over = o; }, thumb: thumb, has: function (v) { return !!ACCS[v]; } };
 })(window);
 </script>
 <script>/* Beute-Animationen: fünf Öffnungs-Szenen (Piñata, Nachschub-Kiste, Tresor, Kapsel, Eisblock). Vektor + CSS + Partikel, kein Bild. */
@@ -10930,7 +10956,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var ms = id.indexOf("md:") === 0 ? medalStyle(id) : null, rar = ms ? ms.rar : it.rar, col = MED_COL[rar] || MED_COL.common, val = ms ? ms.val : it.val;
     var c = { kind: it.kind, val: val, rar: rar, it: it.it }, canEq = it.owned && it.kind !== "medal", eq = it.it && S.isActive(it.it);
     var ov = document.createElement("div"); ov.className = "srmd";
-    ov.innerHTML = '<div class="srmc" style="--c:' + col[1] + ';--g:' + RAR_GLOW[rar] + '"><div class="eyebrow" style="color:#fff;opacity:.85">' + RAR_NAME[rar] + '</div><div class="big' + (it.owned ? "" : " lock") + '">' + srIcon(c) + '</div><h3>' + esc(it.label) + '</h3><p>' + (it.owned ? "Gehört dir! " : "Noch nicht gesammelt. ") + esc(it.how || "") + '</p><div class="row wrap" style="gap:8px;justify-content:center">' +
+    ov.innerHTML = '<div class="srmc" style="--c:' + col[1] + ';--g:' + RAR_GLOW[rar] + '"><div class="eyebrow" style="color:#fff;opacity:.85">' + RAR_NAME[rar] + '</div><div class="big' + (it.owned ? "" : " lock") + '">' + srIcon(c) + '</div><h3>' + esc(it.label) + '</h3>' + (it.it ? enLine(it.it) : "") + '<p>' + (it.owned ? "Gehört dir! ": "Noch nicht gesammelt. ") + esc(it.how || "") + '</p><div class="row wrap" style="gap:8px;justify-content:center">' +
       (it.owned ? '<button class="sbtn" data-m="fav">' + (fav ? "★ Favorit" : "☆ Als Favorit") + '</button>' : "") +
       (canEq ? '<button class="sbtn b2" data-m="eq">' + (it.kind === "sticker" ? (eq ? "Ablösen" : "Aufkleben") : eq ? "✓ Aktiv" : "Tragen") + '</button>' : "") +
       (it.owned && (it.kind === "dance" || it.kind === "outfit" || it.kind === "kit") ? '<button class="sbtn b3" data-m="try">▶ Ansehen</button>' : "") +
@@ -12176,11 +12202,11 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       : locked ? '<span class="rpill">🔒 ab ' + esc(it.rank) + '</span>'
       : '<button class="rbtn buy" data-act="buy" data-id="' + esc(it.id) + '">🪙 ' + (deal ? '<s>' + it.cost + '</s> ' : "") + price + '</button>';
     var sub = KIND_NAME[it.kind] + (it.bundle ? " · ❄️ Eis-Set" : "") + (it.rank && !own && (!locked || soon) ? " · ab " + esc(it.rank) : "");
-    var prev = (it.kind === "dance" || it.kind === "outfit" || it.kind === "kit") ? '<button class="rprev" data-act="dancetry" data-id="' + esc(it.id) + '" aria-label="Vorschau">▶︎</button>' : "";
+    var prev = (it.kind === "dance" || it.kind === "outfit" || it.kind === "kit") ? '<button class="rprev" data-act="dancetry" data-id="' + esc(it.id) + '" aria-label="Vorschau">▶︎</button>' : it.kind === "avatar" && !soon && global.VTA && global.VTA.has(it.val) ? '<button class="rprev" data-act="figtry" data-id="' + esc(it.id) + '" aria-label="Anprobe">👀</button>' : "";
     return '<div class="rtile ' + rar + (own ? " own" : "") + (locked ? " lock" : "") + '"' + (locked ? ' data-act="lockinfo" data-id="' + esc(it.id) + '"' : "") + ' style="--c1:' + c[0] + ';--c2:' + c[1] + ';--g:' + RAR_GLOW[rar] + '">' +
       '<span class="rtag">' + RAR_NAME[rar] + (S.shopIsNew(it) && !own ? ' · NEU' : '') + '</span>' + (own || it.pass || it.reward || locked ? "" : star) + (own ? '<span class="rown">✓</span>' : "") +
       '<div class="rico">' + (soon ? '<span class="ri em" style="display:grid;place-items:center;height:64px;font-size:44px;filter:grayscale(1) brightness(.55)">❔</span>' : srIcon({ kind: it.kind, val: it.val, rar: rar, it: it }) + prev) + '</div>' +
-      '<b class="rname">' + (soon ? "???" : esc(it.label)) + '</b><span class="rsub">' + sub + '</span><div class="ract">' + action + '</div></div>';
+      '<b class="rname">' + (soon ? "???" : esc(it.label)) + '</b>' + (soon ? "" : enLine(it)) + '<span class="rsub">' + sub + '</span><div class="ract">' + action + '</div></div>';
   }
   function shopRow(it, wishId) {
     var own = S.owns(it), act = S.isActive(it), locked = !own && lockNote(it), price = S.priceOf(it), deal = price !== it.cost;
@@ -12188,7 +12214,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var buyBtn = it.pass ? '<span class="pill" title="Gibt es nur im Pass">🎁 ' + esc(it.pass) + '-Pass</span>' : it.reward ? '<span class="pill" title="Gibt es nur für das komplette Set">🎁 ' + esc(setName) + '</span>'
       : '<button class="chip" data-act="wish" data-id="' + esc(it.id) + '" aria-pressed="' + (wishId === it.id) + '" aria-label="Wunsch" style="margin-right:6px">⭐</button><button class="btn soft" data-act="buy" data-id="' + esc(it.id) + '">🪙 ' + (deal ? '<s style="opacity:.55;font-weight:500">' + it.cost + '</s> ' : "") + price + '</button>';
     return '<div class="shopitem"><span class="si">' + shopIcon(it) + '</span>' +
-      '<span style="flex:1 1 auto"><b class="small">' + esc(it.label) + '</b><br><span class="small muted">' + KIND_NAME[it.kind] + (it.cost > 0 ? " · " + tierOf(it.cost) : "") +
+      '<span style="flex:1 1 auto"><b class="small">' + esc(it.label) + '</b>' + enLine(it) + '<br><span class="small muted">' + KIND_NAME[it.kind] + (it.cost > 0 ? " · " + tierOf(it.cost) : "") +
       (it.rank && !own ? " · ab " + esc(it.rank) : "") + (it.bundle ? " · ❄️ Eis-Set" : "") + '</span></span>' +
       ((it.kind === "dance" || it.kind === "outfit" || it.kind === "kit") ? '<button class="chip" data-act="dancetry" data-id="' + esc(it.id) + '" aria-label="Vorschau" style="margin-right:6px">▶︎</button>' : '') +
       (own ? '<button class="chip" data-act="equip" data-id="' + esc(it.id) + '" aria-pressed="' + act + '">' + (act ? "aktiv" : "auswählen") + '</button>'
@@ -12223,23 +12249,58 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       ov.remove(); toast("Willkommen! +" + r.coins + " 🪙, deine Figur und Konfetti sind da."); render(); renderHeader();
     });
   }
-  /* Zubehör: einmal kaufen, jeder Figur einzeln anziehen. accFig = Figur, die gerade anprobiert wird */
-  var accFig = "";
+  /* Zubehör: einmal kaufen, jeder Figur einzeln anziehen. accFig = Figur, die gerade anprobiert wird; accTry = Anprobe (noch nicht angezogen/gekauft): { Platz: Wert } */
+  var accFig = "", accTry = {};
+  function accLook(av) { var m = S.accOf(av); Object.keys(accTry).forEach(function (k) { m[k] = accTry[k]; }); return m; }
+  function heroWith(av, lo, dn) { if (global.VTACC) global.VTACC.setOver({ av: av, lo: lo }); try { return heroHtml(av, dn || 0); } finally { if (global.VTACC) global.VTACC.setOver(null); } }
+  function enLine(it) { var e = S.enName(it); return e ? '<em class="ren">' + esc(e) + '</em>' : ""; }
   function accHtml() {
-    var pf = S.state.profile, figs = S.SHOP.filter(function (x) { return x.kind === "avatar" && S.owns(x) && global.VTA && global.VTA.has(x.val); });
-    if (!accFig || !figs.some(function (f) { return f.val === accFig; })) accFig = pf.avatar;
-    var cur = S.accOf(accFig), fig = figs.filter(function (f) { return f.val === accFig; })[0], worn = S.ACC_SLOTS.map(function (sl) { var it = cur[sl[0]] && S.itemById("ac:" + cur[sl[0]]); return it ? it.label : ""; }).filter(Boolean);
-    var h = '<p class="small muted" style="margin:0 0 8px">Zubehör kaufst du <b>einmal</b> und ziehst es <b>jeder Figur einzeln</b> an. Wähle eine Figur, tippe dann ein Teil an: Gekaufte ziehst du an oder aus, neue kaufst du für ein paar Münzen.</p>' +
-      '<div class="accfigs">' + figs.map(function (f) { return '<button class="accfig' + (f.val === accFig ? " on" : "") + '" data-act="accfig" data-av="' + esc(f.val) + '" title="' + esc(f.label) + '" aria-label="' + esc(f.label) + '" aria-pressed="' + (f.val === accFig) + '"><span class="acch">' + avatarHtml(f.val, true) + '</span></button>'; }).join("") + '</div>' +
-      '<div class="accpv"><div class="accst"><div class="accfl">' + heroHtml(accFig, 0) + '</div></div><div class="accin"><b>' + esc(fig ? fig.label : "Fuchs") + '</b><span class="small muted">' + (worn.length ? "trägt: " + esc(worn.join(", ")) : "trägt noch nichts") + '</span>' + (worn.length ? '<button class="chip" data-act="accclr">Alles ablegen</button>' : "") + '</div></div>';
+    var pf = S.state.profile, all = S.SHOP.filter(function (x) { return x.kind === "avatar" && global.VTA && global.VTA.has(x.val); });
+    var figs = all.filter(function (x) { return S.owns(x); }).concat(all.filter(function (x) { return !S.owns(x); }));
+    if (!accFig || !all.some(function (f) { return f.val === accFig; })) { accFig = pf.avatar; accTry = {}; }
+    var fig = all.filter(function (f) { return f.val === accFig; })[0], figOwn = !fig || S.owns(fig), worn = S.accOf(accFig), look = accLook(accFig);
+    var tried = Object.keys(accTry).map(function (k) { return S.itemById("ac:" + accTry[k]); }).filter(Boolean), toBuy = tried.filter(function (x) { return !S.owns(x); }), sum = toBuy.reduce(function (t, x) { return t + S.priceOf(x); }, 0);
+    var names = S.ACC_SLOTS.map(function (sl) { var it = look[sl[0]] && S.itemById("ac:" + look[sl[0]]); return it ? it.label + (accTry[sl[0]] ? " (Anprobe)" : "") : ""; }).filter(Boolean);
+    var h = '<p class="small muted" style="margin:0 0 8px">👀 <b>Wie sieht\'s aus?</b> Probiere alles an, bevor du kaufst – jede Figur, jedes Teil. Zubehör kaufst du <b>einmal</b> und ziehst es <b>jeder Figur einzeln</b> an. <span lang="en">Try it on first, then decide!</span></p>' +
+      '<div class="accfigs">' + figs.map(function (f) { var o = S.owns(f); return '<button class="accfig' + (f.val === accFig ? " on" : "") + (o ? "" : " lock") + '" data-act="accfig" data-av="' + esc(f.val) + '" title="' + esc(f.label + (o ? "" : " (noch nicht gekauft)")) + '" aria-label="' + esc(f.label) + '" aria-pressed="' + (f.val === accFig) + '"><span class="acch">' + avatarHtml(f.val, o) + '</span>' + (o ? "" : '<i class="acl">🔒</i>') + '</button>'; }).join("") + '</div>' +
+      '<div class="accpv"><div class="accst"><div class="accfl">' + heroWith(accFig, look, 0) + '</div></div><div class="accin"><b>' + esc(fig ? fig.label : "Fuchs") + '</b>' + (fig ? enLine(fig) : "") +
+      '<span class="small muted">' + (names.length ? "trägt: " + esc(names.join(", ")) : "trägt noch nichts") + '</span>' +
+      (figOwn ? "" : '<span class="small" style="color:var(--accent)">Diese Figur gehört dir noch nicht – du probierst nur an.</span>') +
+      (toBuy.length ? '<button class="btn" data-act="accbuytry">🪙 ' + sum + ' – ' + (toBuy.length === 1 ? "kaufen" : toBuy.length + " Teile kaufen") + '</button>' : "") +
+      (Object.keys(accTry).length ? '<button class="chip" data-act="accuntry">Anprobe zurücksetzen</button>' : "") +
+      (Object.keys(worn).length ? '<button class="chip" data-act="accclr">Alles ablegen</button>' : "") +
+      (!figOwn && fig ? '<button class="chip" data-act="figtry" data-id="' + esc(fig.id) + '">Zur Figur</button>' : "") + '</div></div>';
     S.ACC_SLOTS.forEach(function (sl) {
       var list = S.SHOP.filter(function (x) { return x.kind === "acc" && x.slot === sl[0]; }).sort(function (a, b) { return a.cost - b.cost; });
       h += '<div class="shsec" style="--c:#7a6adb"><b>' + sl[1] + '</b><small>' + list.filter(function (x) { return S.owns(x); }).length + ' / ' + list.length + '</small><i></i></div><div class="acgrid">' + list.map(function (x) {
-        var own = S.owns(x), on = cur[x.slot] === x.val;
-        return '<button class="acct ' + S.rarityOf(x) + (own ? " own" : "") + (on ? " on" : "") + '" data-act="acctile" data-id="' + esc(x.id) + '"><span class="acci">' + (global.VTACC ? global.VTACC.thumb(x.val) : "") + '</span><b>' + esc(x.label) + '</b><small>' + (on ? "✓ an" : own ? "Anziehen" : "🪙 " + x.cost) + '</small></button>';
+        var own = S.owns(x), on = worn[x.slot] === x.val && !accTry[x.slot], tr = accTry[x.slot] === x.val;
+        return '<button class="acct ' + S.rarityOf(x) + (own ? " own" : "") + (on ? " on" : "") + (tr ? " try" : "") + '" data-act="acctile" data-id="' + esc(x.id) + '"><span class="acci">' + (global.VTACC ? global.VTACC.thumb(x.val) : "") + '</span><b>' + esc(x.label) + '</b>' + enLine(x) + '<small>' + (tr ? "👀 Anprobe" + (own ? "" : " · 🪙 " + S.priceOf(x)) : on ? "✓ an" : own ? "Anziehen" : "🪙 " + S.priceOf(x)) + '</small></button>';
       }).join("") + '</div>';
     });
     return h;
+  }
+  /* Anprobe einer Figur im Shop: mit deinem Zubehör, tanzen, anhören, dann kaufen oder lassen */
+  var figTryDn = 0;
+  function openFigTry(id) {
+    var it = S.itemById(id); if (!it || it.kind !== "avatar") return; if ($("#figTry")) $("#figTry").remove();
+    var pf = S.state.profile, lo = S.accOf(pf.avatar), ov = document.createElement("div"); ov.className = "srmd"; ov.id = "figTry"; figTryDn = 0;
+    function body() {
+      var own = S.owns(it), lock = !own && lockNote(it), price = S.priceOf(it), en = S.enName(it);
+      ov.innerHTML = '<div class="dsh" style="text-align:center"><div class="dshg"></div><div class="eyebrow">👀 Wie sieht\'s aus?</div><h3 style="margin:2px 0">' + esc(it.label) + '</h3>' + (en ? '<div class="small muted" lang="en">' + esc(en) + '</div>' : "") +
+        '<div class="ftst"><div class="ftfl">' + heroWith(it.val, lo, figTryDn) + '</div></div>' +
+        '<div class="small muted" style="margin:2px 0 8px">' + RAR_NAME[S.rarityOf(it)] + (it.rank ? " · ab " + esc(it.rank) : "") + (Object.keys(lo).length ? " · mit deinem Zubehör" : "") + '</div>' +
+        '<div class="row" style="gap:8px;justify-content:center;flex-wrap:wrap"><button class="btn soft" data-ft="dance">💃 Tanzen</button>' + (en ? '<button class="btn soft" data-ft="say">🔊 ' + esc(en) + '</button>' : "") + '</div>' +
+        '<div class="row" style="gap:8px;justify-content:center;margin-top:8px;flex-wrap:wrap">' + (own ? '<button class="btn" data-ft="use">' + (S.isActive(it) ? "✓ aktiv" : "Auswählen") + '</button>' : it.pass ? '<span class="rpill">🎁 ' + esc(it.pass) + '-Pass</span>' : lock ? '<span class="rpill">🔒 ab ' + esc(it.rank) + '</span>' : '<button class="btn" data-ft="buy">🪙 ' + price + ' kaufen</button>') + '<button class="btn soft" data-ft="x">Schließen</button></div></div>';
+    }
+    body(); document.body.appendChild(ov);
+    ov.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-ft]"), k = b && b.getAttribute("data-ft");
+      if (e.target === ov || k === "x") { ov.remove(); return; }
+      if (k === "dance") { figTryDn = (figTryDn % 7) + 1; body(); return; }
+      if (k === "say") { speak(S.enName(it)); return; }
+      if (k === "use") { S.equip(it.id); ov.remove(); renderHeader(); render(); return; }
+      if (k === "buy") { var r = S.buy(it.id); if (r.error) { toast(r.error); return; } try { if (S.state.settings.audio) global.VTC.sound(S.state.profile.snd, true); } catch (e2) {} toast(it.label + " gehört dir!"); ov.remove(); renderHeader(); render(); }
+    });
   }
   function shopCard() {
     var st = S.state, wishId = (S.wish() || {}).id, deal = S.dealItem(), sd = S.activeSetDeal();
@@ -13741,14 +13802,27 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     else if (a === "passcrew") { var cr2 = S.claimPassCrew(+act.getAttribute("data-n")); if (cr2.error) toast(cr2.error); else { toast("👥 Crew-Bonus! +" + cr2.coins + " 🪙"); renderHeader(); render(); } }
     else if (a === "passshare") { sharePass(); }
     else if (a === "passclaim") { openPassReward(act.getAttribute("data-n")); }
-    else if (a === "accfig") { accFig = act.getAttribute("data-av"); var sy0 = view.scrollTop; render(); view.scrollTop = sy0; }
-    else if (a === "accclr") { S.accClear(accFig); var sy1 = view.scrollTop; renderHeader(); render(); view.scrollTop = sy1; }
+    else if (a === "accfig") { accFig = act.getAttribute("data-av"); accTry = {}; var sy0 = view.scrollTop; render(); view.scrollTop = sy0; }
+    else if (a === "accclr") { S.accClear(accFig); accTry = {}; var sy1 = view.scrollTop; renderHeader(); render(); view.scrollTop = sy1; }
+    else if (a === "accuntry") { accTry = {}; var sy3 = view.scrollTop; render(); view.scrollTop = sy3; }
+    else if (a === "figtry") { openFigTry(act.getAttribute("data-id")); }
+    else if (a === "accbuytry") {
+      var bought = [], berr = "";
+      Object.keys(accTry).forEach(function (sl) { var bi = S.itemById("ac:" + accTry[sl]); if (bi && !S.owns(bi) && !berr) { var br0 = S.buy(bi.id); if (br0.error) berr = br0.error; else bought.push(bi.label); } });
+      if (berr) toast(berr);
+      var fgi = S.SHOP.filter(function (x) { return x.kind === "avatar" && x.val === accFig; })[0];
+      if (!fgi || S.owns(fgi)) { Object.keys(accTry).forEach(function (sl) { var wi = S.itemById("ac:" + accTry[sl]); if (wi && S.owns(wi) && S.accOf(accFig)[sl] !== wi.val) S.accToggle(accFig, wi.id); }); accTry = {}; }
+      if (bought.length) { try { if (S.state.settings.audio) global.VTC.sound(S.state.profile.snd, true); } catch (e) {} toast(bought.join(", ") + (bought.length > 1 ? " gekauft!" : " gekauft!")); }
+      var sy4 = view.scrollTop; renderHeader(); render(); view.scrollTop = sy4;
+    }
     else if (a === "acctile") {
       var aid = act.getAttribute("data-id"), ait = S.itemById(aid); if (!ait) return;
-      if (!S.owns(ait)) { var br = S.buy(aid); if (br.error) { toast(br.error); return; } try { if (S.state.settings.audio) global.VTC.sound(S.state.profile.snd, true); } catch (e) {} toast(ait.label + " gekauft und angezogen!"); }
-      var tr = S.accToggle(accFig, aid); if (tr.error) { toast(tr.error); return; }
-      if (!tr.on) toast(ait.label + " abgelegt");
-      var sy2 = view.scrollTop; renderHeader(); render(); view.scrollTop = sy2;
+      var figIt = S.SHOP.filter(function (x) { return x.kind === "avatar" && x.val === accFig; })[0], figOk = !figIt || S.owns(figIt), sy2 = view.scrollTop;
+      if (S.owns(ait) && figOk) {   // gekauft: anziehen bzw. ausziehen
+        delete accTry[ait.slot]; var tr = S.accToggle(accFig, aid); if (tr.error) { toast(tr.error); return; } if (!tr.on) toast(ait.label + " abgelegt");
+        renderHeader();
+      } else { if (accTry[ait.slot] === ait.val) delete accTry[ait.slot]; else accTry[ait.slot] = ait.val; }   // Anprobe
+      render(); view.scrollTop = sy2;
     }
     else if (a === "sritem") { srModal(act.getAttribute("data-id")); }
     else if (a === "hhdance") {

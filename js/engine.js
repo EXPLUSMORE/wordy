@@ -275,6 +275,27 @@
     ["kopf", "ears", "Kopfhörer", 80], ["waerme", "ears", "Ohrenwärmer", 45], ["ohrring", "ears", "Ohrringe", 35],
     ["schal", "neck", "Schal", 50], ["fliege", "neck", "Fliege", 35], ["kette", "neck", "Goldkette", 90], ["tuch", "neck", "Halstuch", 35], ["medaille", "neck", "Medaille", 60]];
   SHOP = SHOP.concat(ACC.map(function (a) { return { id: "ac:" + a[0], kind: "acc", slot: a[1], label: a[2], cost: a[3], val: a[0], rar: a[3] <= 40 ? "common" : a[3] <= 70 ? "rare" : a[3] <= 100 ? "epic" : "legend" }; }));
+  /* Englische Namen aller Gegenstände (Gadget: nebenbei Vokabeln lernen). Sticker = Name der Figur + " sticker". */
+  var EN = {
+    "av:🦊": "Fox", "av:🐼": "Panda", "av:🐢": "Turtle", "av:🦉": "Owl", "av:🐙": "Octopus", "av:🦕": "Dino", "av:🦈": "Shark", "av:🦄": "Unicorn", "av:eisbaer": "Polar bear", "av:eispingu": "Ice penguin", "av:eisrobbe": "Ice seal", "av:eiskoenig": "Ice king",
+    "av:pbaer": "Chubby bear", "av:phase": "Chubby bunny", "av:pkatze": "Chubby cat", "av:pummel": "Chubby unicorn", "av:pdrache": "Chubby dragon", "av:clombo": "Clombo", "av:pphoenix": "Chubby phoenix", "av:pgold": "Golden chubby", "av:pregen": "Rainbow chubby", "av:pgalaxie": "Galaxy chubby",
+    "av:blitzwolf": "Lightning wolf", "av:ninja": "Night shadow", "av:flamingo": "Disco flamingo", "av:faultier": "Donut sloth", "av:sdrache": "Star dragon", "av:kitty1": "Kitty Bow", "av:kitty2": "Kitty Rainbow", "av:kitty3": "Kitty Princess", "av:kitty4": "Kitty Star Magic",
+    "av:fnhuhn": "Chicken", "av:fnschwein": "Wild boar", "av:fnfrosch": "Frog", "av:fnwolf": "Wolf", "av:fnraptor": "Raptor", "av:fnllama": "Loot llama", "av:fnelite": "Elite crystal", "av:fnchamp": "Champion crystal", "av:fnkristall": "Crystal llama", "av:fnrakete": "Rocket llama", "av:fngold": "Gold crystal llama", "av:fnunreal": "Unreal crystal",
+    "av:gepard": "Turbo cheetah", "av:cyberfuchs": "Cyber fox", "av:pirat": "Pirate parrot", "av:zauber": "Magic owl", "av:yeti": "Yeti", "av:greif": "Golden griffin", "av:kitsune": "Spirit fox", "av:pegasus": "Star Pegasus", "av:zyklop": "Cyclops Zack", "av:sphinx": "Sun sphinx", "av:golem": "Lava golem",
+    "av:prisma": "Prism dragon", "av:nebelwal": "Mist whale", "av:donnervogel": "Thunderbird", "av:sonnenloewe": "Sun lion", "av:athene": "Golden Athena", "av:goldkrake": "Golden kraken", "av:fenrir": "Platinum Fenrir", "av:mondhase": "Moon rabbit", "av:zeitschildi": "Time turtle", "av:kristallhirsch": "Crystal stag", "av:nebelpanther": "Galaxy panther", "av:qilin": "Oracle qilin", "av:unreallama": "The real Unreal",
+    "fr:eis": "Ice crystal frame", "fr:none": "No frame", "fr:gold": "Gold frame", "fr:rainbow": "Rainbow frame", "fr:fire": "Flame frame", "fr:neon": "Neon frame", "fr:pirat": "Pirate frame", "fr:sterne": "Stardust frame", "fr:kristall": "Ice crystal frame",
+    "ti:none": "No title", "ti:wort": "Word hunter", "ti:streber": "Straight-A student", "ti:freund": "Chubby friend", "ti:profi": "Vocab pro", "ti:genie": "Language genius", "ti:champ": "Word champion", "ti:vninja": "Vocab ninja", "ti:quassel": "Chatterbox", "ti:klug": "Smarty-pants", "ti:gladiator": "Grammar gladiator", "ti:blitz": "Lightning brain", "ti:wolf": "Word wolf", "ti:sheriff": "Sentence sheriff", "ti:boss": "Boss beater", "ti:virtuose": "Vocab virtuoso", "ti:samurai": "Language samurai", "ti:eroberer": "English conqueror", "ti:titan": "Word titan", "ti:unbesiegbar": "Unbeatable", "ti:herrscher": "Ruler of vocabulary", "ti:legende": "Legend of words", "ti:pixel": "Pixel pro", "ti:schatz": "Treasure hunter", "ti:zauber": "Word wizard", "ti:eis": "Icebreaker",
+    "bg:none": "Plain", "bg:stars": "Stars", "bg:clouds": "Clouds", "bg:space": "Outer space",
+    "fx:none": "No effects", "fx:confetti": "Confetti", "fx:stars": "Star rain", "fx:sparks": "Sparks", "fx:schnee": "Snowfall", "fx:firework": "Fireworks", "fx:pixel": "Pixel rain", "fx:gold": "Gold rain", "fx:magie": "Magic sparks",
+    "dn:wackler": "Wiggler", "dn:huepfer": "Hopper", "dn:drehung": "Spin", "dn:roboter": "Robot", "dn:moonwalk": "Moonwalk", "dn:eislauf": "Ice skating", "dn:sieg": "Epic victory",
+    "kt:muenchen": "Munich · red and white", "kt:barcelona": "Barcelona · blue and red", "kt:turin": "Turin · black and white", "kt:deutschland": "Germany · white", "kt:argentinien": "Argentina · sky blue and white", "kt:portugal": "Portugal · red and green",
+    "of:natur": "Natural", "of:shirt": "T-shirt", "of:hoodie": "Hoodie", "of:trikot": "Football jersey", "of:held": "Superhero with cape", "of:raum": "Space suit", "of:polar": "Polar jacket", "of:rock": "Rock star", "of:kitty1": "Kitty bow", "of:kitty2": "Kitty rainbow", "of:kitty3": "Kitty princess", "of:kitty4": "Kitty star magic", "of:skater": "Skater beanie", "of:cowboy": "Cowboy", "of:ninja": "Ninja", "of:chef": "Chef", "of:pirat": "Pirate", "of:ritter": "Knight", "of:zauberer": "Wizard", "of:koenig": "Royal robe", "of:dj": "Disco DJ",
+    "sn:none": "Mute", "sn:bell": "Little bell", "sn:arcade": "Arcade", "sn:harp": "Harp", "th:paper": "Paper", "th:mint": "Mint", "th:plum": "Plum", "th:amber": "Amber",
+    "ac:beanie": "Winter hat", "ac:party": "Party hat", "ac:zylinder": "Top hat", "ac:prop": "Propeller cap", "ac:cap": "Baseball cap", "ac:stroh": "Straw hat", "ac:blumen": "Flower crown", "ac:heiligen": "Halo", "ac:hasen": "Bunny ears", "ac:teufel": "Devil horns", "ac:eishut": "Ice-cream hat", "ac:pizza": "Pizza hat", "ac:krone": "Gold crown",
+    "ac:sonne": "Sunglasses", "ac:nerd": "Nerd glasses", "ac:mono": "Monocle", "ac:brille3d": "3D glasses", "ac:herz": "Heart glasses", "ac:schnurr": "Moustache", "ac:clown": "Clown nose", "ac:ski": "Ski goggles",
+    "ac:kopf": "Headphones", "ac:waerme": "Earmuffs", "ac:ohrring": "Earrings", "ac:schal": "Scarf", "ac:fliege": "Bow tie", "ac:kette": "Gold chain", "ac:tuch": "Neckerchief", "ac:medaille": "Medal"
+  };
+  function enName(it) { if (!it) return ""; if (it.kind === "sticker") { var b = EN["av:" + it.id.slice(3)]; return b ? b + " sticker" : ""; } return EN[it.id] || ""; }
   var MAX_STICKERS = 10;
   /* Sticker-Plätze auf dem Profil: der erste ist gratis, die weiteren werden nacheinander freigeschaltet */
   var STICKER_SLOT_COST = [0, 150, 150, 300, 300, 300, 750, 750, 750, 1000];   // Preis für Platz n+1 (Platz 1 ist gratis)
@@ -1680,7 +1701,7 @@
   function resumeHas(key) { return resumeList().some(function (x) { return x.key === key; }); }
 
   global.VT = {
-    LEVELS: LEVELS, ACC: ACC, ACC_SLOTS: ACC_SLOTS, accOf: accOf, accToggle: accToggle, accClear: accClear, medalGroups: medalGroups, RANKS: RANKS, AVATARS: AVATARS, SHOP: SHOP, BADGES: BADGES,
+    LEVELS: LEVELS, enName: enName, ACC: ACC, ACC_SLOTS: ACC_SLOTS, accOf: accOf, accToggle: accToggle, accClear: accClear, medalGroups: medalGroups, RANKS: RANKS, AVATARS: AVATARS, SHOP: SHOP, BADGES: BADGES,
     SEC_PER_ITEM: SEC_PER_ITEM, secPerItem: secPerItem, itemsFor: itemsFor, recordPace: recordPace,
     resumePack: resumePack, resumeUnpack: resumeUnpack, resumeList: resumeList, resumeSave: resumeSave, resumeTake: resumeTake, resumeHas: resumeHas,
     load: load, save: save, get state() { return state; },

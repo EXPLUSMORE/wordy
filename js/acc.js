@@ -41,6 +41,7 @@
     tuch: ['<path d="M58 158Q110 188 162 158L110 220z" fill="#e8123c"' + O + '/><g fill="#fff"><circle cx="90" cy="172" r="4"/><circle cx="130" cy="172" r="4"/><circle cx="110" cy="188" r="4"/><circle cx="110" cy="206" r="3.4"/></g>'],
     medaille: ['<path d="M80 158l16 38M140 158l-16 38" stroke="' + L + '" stroke-width="12" stroke-linecap="round"/><path d="M80 158l16 38M140 158l-16 38" stroke="#2f7be8" stroke-width="6" stroke-linecap="round"/><circle cx="110" cy="206" r="19" fill="#ffd34d"' + O + '/><path d="M110 192l4 9 10 1-7 7 2 10-9-5-9 5 2-10-7-7 10-1z" fill="#fff3a0" stroke="' + L + '" stroke-width="2.4" stroke-linejoin="round"/>']
   };
+  var over = null;   // { av, lo } nur während die Anprobe gezeichnet wird
   var VB = { head: "30 -50 160 130", face: "40 56 140 64", ears: "20 -6 180 150", neck: "40 148 140 110" };
   function slotOf(val) { var it = global.VT && global.VT.itemById("ac:" + val); return it ? it.slot : "head"; }
   /* Zubehör einer Figur als Markup: { head, neck } */
@@ -53,6 +54,7 @@
   /* lo = fremdes Zubehör (Freunde): nur Werte, die zum Platz passen */
   A.setAcc(function (av, lo) {
     var VT = global.VT, l = {}; if (!VT || !VT.accOf) return null;
+    if (!lo && over && over.av === av) lo = over.lo;   // Anprobe: Vorschau mit nicht gekauften Teilen
     if (lo) { Object.keys(lo).forEach(function (k) { var it = VT.itemById("ac:" + lo[k]); if (it && it.slot === k) l[k] = lo[k]; }); } else l = VT.accOf(av);
     return Object.keys(l).length ? build(l) : null;
   });
@@ -61,5 +63,5 @@
     var a = ACCS[val]; if (!a) return ""; var sl = slotOf(val);
     return '<svg viewBox="' + VB[sl] + '" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;overflow:hidden">' + a[0] + '</svg>';
   }
-  global.VTACC = { thumb: thumb, has: function (v) { return !!ACCS[v]; } };
+  global.VTACC = { setOver: function (o) { over = o; }, thumb: thumb, has: function (v) { return !!ACCS[v]; } };
 })(window);
