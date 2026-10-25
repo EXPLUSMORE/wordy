@@ -1414,6 +1414,13 @@
   function stickerAcc() {   // Eigener Zubehör-Look je aufgeklebtem Sticker (für Freunde)
     var o = {}; stickers().forEach(function (id) { var it = itemById(id); if (it && it.val) { var a = accOf(it.id); if (Object.keys(a).length) o[it.id] = a; } }); return o;
   }
+  /* Aussehen mit Namen für das Elternteil-Dashboard (nur Text): Figur, Zubehör, Rahmen, Titel, Sticker */
+  function lookInfo() {
+    var pf = state.profile, lab = function (kind, val) { var it = SHOP.filter(function (x) { return x.kind === kind && x.val === val; })[0]; return it ? it.label : ""; };
+    var accNames = function (key) { var a = accOf(key); return ACC_SLOTS.map(function (sl) { var it = a[sl[0]] && itemById("ac:" + a[sl[0]]); return it ? it.label : ""; }).filter(Boolean); };
+    return { fig: lab("avatar", pf.avatar) || "Fuchs", figAcc: accNames(pf.avatar), frame: pf.frame && pf.frame !== "none" ? lab("frame", pf.frame) : "", title: pf.title || "",
+      stk: stickers().map(function (id) { var it = itemById(id); return it ? { n: it.label.replace("-Sticker", ""), acc: accNames(id) } : null; }).filter(Boolean) };
+  }
   function accToggle(av, id) {
     var it = itemById(id); if (!it || it.kind !== "acc") return { error: "Das ist kein Zubehör." }; if (!owns(it)) return { error: "Das gehört dir noch nicht." };
     var all = state.profile.acc || (state.profile.acc = {}), l = all[av] || (all[av] = {}), on = l[it.slot] !== it.val;
@@ -1705,7 +1712,7 @@
   function resumeHas(key) { return resumeList().some(function (x) { return x.key === key; }); }
 
   global.VT = {
-    LEVELS: LEVELS, enName: enName, ACC: ACC, ACC_SLOTS: ACC_SLOTS, accOf: accOf, stickerAcc: stickerAcc, accToggle: accToggle, accClear: accClear, medalGroups: medalGroups, RANKS: RANKS, AVATARS: AVATARS, SHOP: SHOP, BADGES: BADGES,
+    LEVELS: LEVELS, enName: enName, ACC: ACC, ACC_SLOTS: ACC_SLOTS, accOf: accOf, stickerAcc: stickerAcc, lookInfo: lookInfo, accToggle: accToggle, accClear: accClear, medalGroups: medalGroups, RANKS: RANKS, AVATARS: AVATARS, SHOP: SHOP, BADGES: BADGES,
     SEC_PER_ITEM: SEC_PER_ITEM, secPerItem: secPerItem, itemsFor: itemsFor, recordPace: recordPace,
     resumePack: resumePack, resumeUnpack: resumeUnpack, resumeList: resumeList, resumeSave: resumeSave, resumeTake: resumeTake, resumeHas: resumeHas,
     load: load, save: save, get state() { return state; },

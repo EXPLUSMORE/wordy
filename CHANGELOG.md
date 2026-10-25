@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.144.0 – 2026-10-24
+- Dashboard (Betreiber und Eltern): neue Karte „Aussehen“ im Reiter Dashboard › Überblick, ganz oben: gewählte Figur mit Zubehör, Rahmen, Titel und die aufgeklebten Sticker mit ihrem Zubehör (als Text). Die Daten kommen mit dem Lernstand-Abgleich (`meta.look`). **Server-Schritt nötig** (Neustart von `wordy-server`) wegen der Dashboard-Seite; die Karte füllt sich nach dem nächsten Abgleich des Kindes.
+
 ## 2.143.3 – 2026-10-24
 - Lernrunden: Wenn nicht genug Wörter fällig sind, füllt die Runde jetzt mit den Wörtern auf, die als Nächstes fällig werden (vorher in Einheiten-Reihenfolge, dadurch kamen auch Wörter mit „Kommt in 400 Tagen wieder“). Wörter mit weit entferntem Termin kommen zuletzt.
 
