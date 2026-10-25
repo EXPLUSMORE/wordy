@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.143.3 – 2026-10-24
+- Lernrunden: Wenn nicht genug Wörter fällig sind, füllt die Runde jetzt mit den Wörtern auf, die als Nächstes fällig werden (vorher in Einheiten-Reihenfolge, dadurch kamen auch Wörter mit „Kommt in 400 Tagen wieder“). Wörter mit weit entferntem Termin kommen zuletzt.
+
 ## 2.143.2 – 2026-10-24
 - Neuheiten-Wolke auf der Startseite kündigt das Zubehör für Figuren und Sticker an (Tippen führt in Shop › Zubehör).
 

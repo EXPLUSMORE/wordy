@@ -803,6 +803,7 @@
       if (r.due <= now) due.push(w); else learning.push(w);
     });
     due.sort(function (a, b) { return state.w[a.id].due - state.w[b.id].due; });
+    learning.sort(function (a, b) { return state.w[a.id].due - state.w[b.id].due; });   // zum Auffüllen zuerst die, die bald fällig werden (nicht die mit 400 Tagen)
     box.sort(function (a, b) { return (state.w[b.id].lapses - state.w[a.id].lapses) || (state.w[a.id].last - state.w[b.id].last); });
     return { due: due, box: box, fresh: fresh, learning: learning, all: act };
   }
