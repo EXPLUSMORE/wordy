@@ -9,6 +9,13 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.151.0 – 2026-10-25
+- **Einmaleins: jede Übung mit und ohne Zeit.** Im Reiter Einmaleins wählst du „Spielweise: ⏱ Mit Zeit | 🧘 Ohne Zeit“ (Einstellung `malTimed`, Standard mit Zeit).
+  - Blitz und Stimmt's? ohne Zeit: 20 Aufgaben in Ruhe, kein Zeitbalken, nach einem Fehler bleibt die richtige Lösung länger stehen; der Fortschrittsbalken zeigt, wie viele Aufgaben schon dran waren.
+  - Match ohne Zeit: keine Uhr und keine Strafsekunden, ein falscher Tipp wird nur als Fehler gezählt.
+  - **Ohne Zeit gibt es die halbe Belohnung** (XP aufgerundet, Münzen abgerundet) und keine Rekorde oder Bestzeiten. Die Tageslimits (150 XP, 150 Münzen) gelten gemeinsam.
+  - Dashboard: Runden ohne Zeit stehen mit „· ohne Zeit“ und „n von 20 richtig“ in der Liste (Ereignis-Felder `tm`, `n`).
+
 ## 2.150.3 – 2026-10-25
 - Einmaleins: Die Ansicht wird jetzt hart gegen seitliches Wegrutschen gesichert: Seite dahinter festgehalten (`html.mal-lock`), nur noch vertikales Scrollen erlaubt (`touch-action: pan-y`), Überlauf nach rechts abgeschnitten, Ansicht fest auf Bildschirmbreite.
 

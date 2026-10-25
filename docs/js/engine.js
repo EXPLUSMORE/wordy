@@ -962,6 +962,7 @@
       rollDay(); var d = state.daily;
       if (r.kind === "match") { xp = r.errors === 0 ? 25 : 15; coins = r.errors === 0 ? 8 : 4; }
       else { xp = Math.min(30, r.score); coins = Math.min(10, Math.floor(r.score / 5)); }
+      if (r.timed === false) { xp = Math.ceil(xp / 2); coins = Math.floor(coins / 2); r.record = false; }   // ohne Zeit: halbe Belohnung, kein Rekordbonus
       if (r.record) coins += 5;
       var xl = Math.max(0, MAL_XP_DAY - (d.malXp || 0)), cl = Math.max(0, MAL_COINS_DAY - (d.malCoins || 0));
       capped = xp > xl || coins > cl; xp = Math.min(xp, xl); coins = Math.min(coins, cl);

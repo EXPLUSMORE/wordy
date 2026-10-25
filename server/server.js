@@ -372,7 +372,7 @@ function report(pid, days) {
     } else if (e.k === "mal") {   // Einmaleins-Runde: echte XP/Münzen zählen mit, Zeit und Aufgaben nicht (kein Wortschatz, kein Tagesziel)
       const x = day(e.ts); x.coins += d.coins || 0; x.xp += d.xp || 0;
       x.malRuns = (x.malRuns || 0) + 1; x.malSec = (x.malSec || 0) + (d.sec || 0); x.malXp = (x.malXp || 0) + (d.xp || 0); x.malCoins = (x.malCoins || 0) + (d.coins || 0);
-      malRuns.push({ ts: e.ts, k: String(d.k || "").slice(0, 10), lv: String(d.lv || "").slice(0, 10), score: d.score || 0, err: d.err || 0, sec: d.sec || 0, ms: d.ms || 0, xp: d.xp || 0, coins: d.coins || 0, rec: d.rec ? 1 : 0 });
+      malRuns.push({ ts: e.ts, k: String(d.k || "").slice(0, 10), lv: String(d.lv || "").slice(0, 10), score: d.score || 0, err: d.err || 0, sec: d.sec || 0, ms: d.ms || 0, xp: d.xp || 0, coins: d.coins || 0, rec: d.rec ? 1 : 0, tm: d.tm === 0 ? 0 : 1, n: d.n || 0 });
     } else if (e.k === "buy") buys.push({ ts: e.ts, name: d.name || d.id, cost: d.cost || 0 });
   }
   const runsBy = {}, badBy = {};
