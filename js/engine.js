@@ -1417,7 +1417,7 @@
   /* Aussehen mit Namen für das Elternteil-Dashboard (nur Text): Figur, Zubehör, Rahmen, Titel, Sticker */
   function lookInfo() {
     var pf = state.profile, lab = function (kind, val) { var it = SHOP.filter(function (x) { return x.kind === kind && x.val === val; })[0]; return it ? it.label : ""; };
-    var accNames = function (key) { var a = accOf(key); return ACC_SLOTS.map(function (sl) { var it = a[sl[0]] && itemById("ac:" + a[sl[0]]); return it ? it.label : ""; }).filter(Boolean); };
+    var accNames = function (key) { var a = accOf(key); return ACC_SLOTS.map(function (sl) { var it = a[sl[0]] && itemById("ac:" + a[sl[0]]); return it ? (enName(it) || it.label) : ""; }).filter(Boolean); };   // Dashboard: Zubehör auf Englisch
     var accCode = function (key) { var a = accOf(key); return ACC_SLOTS.map(function (sl) { return a[sl[0]] ? sl[0] + ":" + a[sl[0]] : ""; }).filter(Boolean).join(","); };
     return { fig: lab("avatar", pf.avatar) || "Fuchs", figV: pf.avatar || "", figA: accCode(pf.avatar), figAcc: accNames(pf.avatar), frame: pf.frame && pf.frame !== "none" ? lab("frame", pf.frame) : "", title: pf.title || "",
       stk: stickers().map(function (id) { var it = itemById(id); return it ? { n: it.label.replace("-Sticker", ""), acc: accNames(id), v: it.val, a: accCode(id) } : null; }).filter(Boolean) };

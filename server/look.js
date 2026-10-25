@@ -9,9 +9,11 @@ function load() {
   try {
     const eng = fs.readFileSync(path.join(ROOT, "js", "engine.js"), "utf8"), slot = {};
     for (const m of eng.matchAll(/\["(\w+)",\s*"(head|face|ears|neck)",\s*"[^"]*"/g)) slot[m[1]] = m[2];   // Zubehör-Katalog ACC: Wert → Platz
-    const c = { console: { log() {}, error() {} } }; c.window = c; c.global = c;
+    const noop = () => {}, el = () => ({ style: {}, setAttribute: noop, appendChild: noop, addEventListener: noop, classList: { add: noop, remove: noop } });
+    const c = { console: { log() {}, error() {} }, document: { body: null, documentElement: el(), createElement: el, getElementById: () => null, addEventListener: noop, querySelector: () => null }, navigator: {}, matchMedia: () => ({ matches: false, addEventListener: noop }), setTimeout: noop, setInterval: noop }; c.window = c; c.global = c;
     c.VT = { itemById: id => { const v = String(id).replace(/^ac:/, ""); return slot[v] ? { slot: slot[v] } : null; }, accOf: () => ({}) };
     vm.createContext(c);
+    try { vm.runInContext(fs.readFileSync(path.join(ROOT, "js", "cosmetics.js"), "utf8"), c, { filename: "cosmetics.js", timeout: 5000 }); } catch (e) { console.error("cosmetics.js nicht geladen (Sticker wie Clombo ohne Bild):", e.message); }   // Köpfe wie Clombo stehen nur dort
     for (const f of ["stila.js", "stilb.js", "acc.js"]) vm.runInContext(fs.readFileSync(path.join(ROOT, "js", f), "utf8"), c, { filename: f, timeout: 5000 });
     ctx = c.VTA && c.VTA.headA ? c : false;
   } catch (e) { console.error("Dashboard-Bilder nicht verfügbar:", e.message); ctx = false; }
@@ -25,7 +27,15 @@ function cleanAcc(s) {   // "head:beanie,face:sonne"
 }
 /* kind: "fig" (Kopf mit Oberkörper, wie in der App) oder "stk" (Sticker-Kopf, mit weißem Rand per CSS im Dashboard) */
 function render(av, acc, kind) {
-  const c = load(); if (!c || !c.VTA.has(av)) return null;
+  const c = load(); if (!c) return null;
+  if (!c.VTA.has(av)) {   // Köpfe ohne Figur-Baukasten (z. B. Clombo): fertiges Kopfbild aus cosmetics.js, ohne Zubehör
+    const art = c.VTC && c.VTC.ART && c.VTC.ART[/^svg:/.test(av) ? av.slice(4) : av];
+    if (typeof art !== "string" || !art.startsWith("<svg")) return null;
+    let one = art.replace(/ style="[^"]*"/, "");
+    if (!/xmlns=/.test(one.slice(0, 120))) one = one.replace("<svg ", '<svg xmlns="http://www.w3.org/2000/svg" ');
+    one = one.replace(/ (width|height)="[^"]*"/g, (m, k) => (k === "width" || k === "height") && one.indexOf(m) < 200 ? "" : m);
+    return one.replace("<svg ", '<svg width="176" height="176" ');
+  }
   const lo = cleanAcc(acc);
   let svg = c.VTA.headA(av, lo);
   svg = svg.replace('style="display:block;width:1.25em;height:1.25em"', 'width="220" height="232"');
