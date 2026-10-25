@@ -1,5 +1,5 @@
 /* Einmaleins-Training (kein Bestandteil des Vokabellernens, im Profil ein-/ausblendbar: settings.einmaleins).
-   Kleines Einmaleins = Reihen 1–10 mal 1–10, großes = Reihen 11–20 mal 2–10. Zwei Übungen: Blitz-Einmaleins (60 Sekunden, Zifferntasten)
+   Kleines Einmaleins = Reihen 1–10 mal 1–10, großes = Reihen 11–25 mal 2–25 (zweiter Faktor wahlweise nur bis 10). Zwei Übungen: Blitz-Einmaleins (60 Sekunden, Zifferntasten)
    und Match gegen die Zeit (Aufgaben und Ergebnisse verbinden, Fehler kosten 2 Sekunden). Schwache Aufgaben kommen häufiger.
    Lernstand: state.mal = { f: { "7x8": { ok, no } }, best: { "blitz-klein": Punkte, "match-klein": Millisekunden } }. Keine XP, keine Münzen. */
 (function (global) {
@@ -8,11 +8,14 @@
 
   function st() { var s = VT.state; if (!s.mal) s.mal = {}; if (!s.mal.f) s.mal.f = {}; if (!s.mal.best) s.mal.best = {}; return s.mal; }
   function cfg() {
-    var s = VT.state.settings, lv = s.malLevel === "gross" ? "gross" : "klein", lo = lv === "gross" ? 11 : 1, rows = [], i;
-    (Array.isArray(s.malRows) ? s.malRows : []).forEach(function (r) { if (r >= lo && r <= lo + 9 && rows.indexOf(r) < 0) rows.push(r); });
-    if (!rows.length) for (i = lo; i < lo + 10; i++) rows.push(i);
-    return { lv: lv, lo: lo, rows: rows.sort(function (a, b) { return a - b; }), bs: lv === "gross" ? [2, 3, 4, 5, 6, 7, 8, 9, 10] : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] };
+    var s = VT.state.settings, lv = s.malLevel === "gross" ? "gross" : "klein", lo = lv === "gross" ? 11 : 1, hi = lv === "gross" ? 25 : 10, rows = [], bs = [], i;
+    var bmax = lv === "gross" && s.malMax === 10 ? 10 : hi;   // großes Einmaleins: zweiter Faktor bis 25 (oder nur bis 10)
+    (Array.isArray(s.malRows) ? s.malRows : []).forEach(function (r) { if (r >= lo && r <= hi && rows.indexOf(r) < 0) rows.push(r); });
+    if (!rows.length) for (i = lo; i <= hi; i++) rows.push(i);
+    for (i = lv === "gross" ? 2 : 1; i <= bmax; i++) bs.push(i);
+    return { lv: lv, lo: lo, hi: hi, n: hi - lo + 1, bmax: bmax, rows: rows.sort(function (a, b) { return a - b; }), bs: bs };
   }
+  function rk(c) { return c.lv === "gross" ? "gross" + c.bmax : "klein"; }   // Rekorde getrennt je Stufe (groß bis 10 und bis 25 sind nicht vergleichbar)
   function facts(c) { var l = []; c.rows.forEach(function (a) { c.bs.forEach(function (b) { l.push({ a: a, b: b, k: a + "x" + b, p: a * b }); }); }); return l; }
   function weight(k) { var f = st().f[k] || { ok: 0, no: 0 }; return Math.max(0.4, 1 + 1.5 * Math.min(f.no, 4) - 0.4 * Math.min(f.ok, 5)); }
   function pick(list, notKey) {
@@ -64,7 +67,7 @@
       paint(); if (typed.length >= String(cur.p).length) submit();
     }
     function end() {
-      over = true; clearInterval(tick); tick = null; var b = st().best, key = "blitz-" + c.lv, rec0 = !b[key] || score > b[key];
+      over = true; clearInterval(tick); tick = null; var b = st().best, key = "blitz-" + rk(c), rec0 = !b[key] || score > b[key];
       if (rec0 && score > 0) b[key] = score; save();
       var ml = Object.keys(missed).map(function (k) { return '<span class="mal-chip">' + term(missed[k]) + " = " + missed[k].p + "</span>"; }).join("");
       ov.querySelector(".mal-in").innerHTML = '<div class="mal-res"><div class="mal-big">' + score + '</div><div class="mal-sub">richtig in 60 Sekunden' + (miss ? " · " + miss + " Fehler" : "") + '</div>' +
@@ -102,7 +105,7 @@
     function find(k) { return set.filter(function (x) { return x.k === k; })[0]; }
     function elapsed() { return Date.now() - t0 + errs * 2000; }
     function end() {
-      over = true; clearInterval(tick); tick = null; var t = elapsed(), b = st().best, key = "match-" + c.lv, rec0 = !b[key] || t < b[key];
+      over = true; clearInterval(tick); tick = null; var t = elapsed(), b = st().best, key = "match-" + rk(c), rec0 = !b[key] || t < b[key];
       if (rec0) b[key] = t; save();
       ov.querySelector(".mal-in").innerHTML = '<div class="mal-res"><div class="mal-big">' + fmtT(t) + '</div><div class="mal-sub">für ' + ROUNDS * PER + ' Aufgaben' + (errs ? " · " + errs + " Fehler (+" + errs * 2 + " s)" : " · keine Fehler") + '</div>' +
         (rec0 ? '<div class="mal-rec">🏆 Neue Bestzeit!</div>' : '<div class="mal-sub">Bestzeit: ' + fmtT(b[key]) + '</div>') +
@@ -131,14 +134,15 @@
   /* ---------- Übersicht im Reiter Lernen ---------- */
   function panel() {
     var c = cfg(), b = st().best, f = st().f, i, lv = c.lv;
-    var rowsAll = []; for (i = c.lo; i < c.lo + 10; i++) rowsAll.push(i);
+    var rowsAll = []; for (i = c.lo; i <= c.hi; i++) rowsAll.push(i);
     var weak = facts(c).filter(function (x) { var q = f[x.k]; return q && q.no > 0; }).sort(function (x, y) { return (f[y.k].no - f[y.k].ok * 0.5) - (f[x.k].no - f[x.k].ok * 0.5); }).slice(0, 6);
-    var bl = b["blitz-" + lv], bm = b["match-" + lv];
+    var bl = b["blitz-" + rk(c)], bm = b["match-" + rk(c)];
     return '<section class="card"><div class="eyebrow">Einmaleins</div><h2 style="margin:4px 0 6px">✖️ Einmaleins trainieren</h2>' +
       '<p class="small muted" style="margin:0 0 10px">Kurz und schnell: jeden Tag ein paar Minuten, dann sitzt es. Das hier zählt nicht für XP und Münzen, es ist nur zum Üben.</p>' +
-      '<div class="row wrap" style="gap:6px;margin-bottom:10px">' + [["klein", "Kleines Einmaleins (1–10)"], ["gross", "Großes Einmaleins (11–20)"]].map(function (x) { return '<button class="chip" data-act="mallevel" data-v="' + x[0] + '" aria-pressed="' + (lv === x[0]) + '">' + x[1] + '</button>'; }).join("") + '</div>' +
+      '<div class="row wrap" style="gap:6px;margin-bottom:10px">' + [["klein", "Kleines Einmaleins (1–10)"], ["gross", "Großes Einmaleins (11–25)"]].map(function (x) { return '<button class="chip" data-act="mallevel" data-v="' + x[0] + '" aria-pressed="' + (lv === x[0]) + '">' + x[1] + '</button>'; }).join("") + '</div>' +
+      (lv === "gross" ? '<div class="row wrap" style="gap:6px;margin-bottom:10px"><span class="small muted">Zweiter Faktor:</span>' + [10, 25].map(function (m) { return '<button class="chip" data-act="malmax" data-v="' + m + '" aria-pressed="' + (c.bmax === m) + '">bis ' + m + '</button>'; }).join("") + '</div>' : "") +
       '<div class="small muted" style="margin-bottom:4px">Welche Reihen? <span class="muted">(nichts gewählt = alle)</span></div>' +
-      '<div class="row wrap" style="gap:6px;margin-bottom:12px">' + rowsAll.map(function (r) { var on = c.rows.length < 10 && c.rows.indexOf(r) >= 0; return '<button class="chip" data-act="malrow" data-v="' + r + '" aria-pressed="' + on + '">' + r + 'er</button>'; }).join("") + '</div>' +
+      '<div class="row wrap" style="gap:6px;margin-bottom:12px">' + rowsAll.map(function (r) { var on = c.rows.length < c.n && c.rows.indexOf(r) >= 0; return '<button class="chip" data-act="malrow" data-v="' + r + '" aria-pressed="' + on + '">' + r + 'er</button>'; }).join("") + '</div>' +
       '<div class="mal-cards"><button class="mal-card" data-act="malgo" data-v="blitz"><span class="mal-ic">⚡</span><b>Blitz-Einmaleins</b><span class="small muted">60 Sekunden, so viele richtig wie möglich' + (bl ? " · Rekord " + bl : "") + '</span></button>' +
       '<button class="mal-card" data-act="malgo" data-v="match"><span class="mal-ic">🔗</span><b>Match gegen die Zeit</b><span class="small muted">Aufgabe und Ergebnis verbinden, 18 Paare' + (bm ? " · Bestzeit " + fmtT(bm) : "") + '</span></button></div>' +
       (weak.length ? '<div class="small muted" style="margin:14px 0 4px">Hier hakt es noch:</div><div class="mal-chips">' + weak.map(function (x) { return '<span class="mal-chip">' + term(x) + " = " + x.p + "</span>"; }).join("") + '</div>' : "") +
@@ -146,11 +150,12 @@
   }
   function setLevel(v) { VT.state.settings.malLevel = v === "gross" ? "gross" : "klein"; VT.state.settings.malRows = []; VT.save(true); }
   function toggleRow(n) {
-    var s = VT.state.settings, c = cfg(), sel = (c.rows.length < 10 ? c.rows : []).slice(), i = sel.indexOf(n);
+    var s = VT.state.settings, c = cfg(), sel = (c.rows.length < c.n ? c.rows : []).slice(), i = sel.indexOf(n);
     if (i >= 0) sel.splice(i, 1); else sel.push(n);
     s.malRows = sel; VT.save(true);
   }
+  function setMax(v) { VT.state.settings.malMax = +v === 10 ? 10 : 25; VT.save(true); }
   function start(kind, o) { if (kind === "match") match(o || {}); else blitz(o || {}); }
 
-  global.VTM = { panel: panel, setLevel: setLevel, toggleRow: toggleRow, start: start, close: close };
+  global.VTM = { panel: panel, setLevel: setLevel, toggleRow: toggleRow, setMax: setMax, start: start, close: close };
 })(window);

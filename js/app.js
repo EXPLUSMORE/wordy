@@ -3531,6 +3531,7 @@
     } else if (a === "unit") { detailUnit = act.getAttribute("data-id"); render(); }
     else if (a === "vtoggle") { var vs2 = act.nextElementSibling; if (vs2 && vs2.classList.contains("vsent")) { vs2.hidden = !vs2.hidden; var ch = act.querySelector(".vchev"); if (ch) ch.textContent = vs2.hidden ? "▸" : "▾"; } }
     else if (a === "mallevel") { global.VTM.setLevel(act.getAttribute("data-v")); var syM = view.scrollTop; render(); view.scrollTop = syM; }
+    else if (a === "malmax") { global.VTM.setMax(act.getAttribute("data-v")); var syX = view.scrollTop; render(); view.scrollTop = syX; }
     else if (a === "malrow") { global.VTM.toggleRow(+act.getAttribute("data-v")); var syR = view.scrollTop; render(); view.scrollTop = syR; }
     else if (a === "malgo") { global.VTM.start(act.getAttribute("data-v"), { sfx: feedback, onClose: function () { if (tab === "lernen") render(); } }); }
     else if (a === "verblist") { detailUnit = "__verbs"; tab = "ueben"; uebenSeg = "units"; render(); view.scrollTop = 0; }

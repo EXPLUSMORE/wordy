@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.147.1 – 2026-10-25
+- Einmaleins: Das große Einmaleins geht jetzt bis 25 × 25 (Reihen 11–25, zweiter Faktor 2–25 oder nur bis 10 wählbar). Rekorde und Bestzeiten werden getrennt gespeichert (klein, groß bis 10, groß bis 25).
+
 ## 2.147.0 – 2026-10-25
 - **Einmaleins-Training** (kein Teil des Wortschatzes): Unter Lernen gibt es neben „Fortschritt“ den Reiter „✖️ Einmaleins“. Er ist standardmäßig **aus** und wird im Profil unter Lernen mit „Einmaleins-Training“ ein-/ausgeblendet.
   - Kleines Einmaleins (Reihen 1–10) oder großes (Reihen 11–20 mal 2–10), einzelne Reihen wählbar (z. B. nur die 7er).
