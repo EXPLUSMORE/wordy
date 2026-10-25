@@ -3536,7 +3536,7 @@
     else if (a === "mallevel") { global.VTM.setLevel(act.getAttribute("data-v")); var syM = view.scrollTop; render(); view.scrollTop = syM; }
     else if (a === "malmax") { global.VTM.setMax(act.getAttribute("data-v")); var syX = view.scrollTop; render(); view.scrollTop = syX; }
     else if (a === "malrow") { global.VTM.toggleRow(+act.getAttribute("data-v")); var syR = view.scrollTop; render(); view.scrollTop = syR; }
-    else if (a === "malgo") { global.VTM.start(act.getAttribute("data-v"), { sfx: feedback, onClose: function () { if (tab === "lernen") render(); } }); }
+    else if (a === "malgo") { global.VTM.start(act.getAttribute("data-v"), { sfx: feedback, refresh: renderHeader, onClose: function () { if (tab === "lernen") render(); } }); }
     else if (a === "verblist") { detailUnit = "__verbs"; tab = "ueben"; uebenSeg = "units"; render(); view.scrollTop = 0; }
     else if (a === "seg") {
       var sg = act.getAttribute("data-g"), sv = act.getAttribute("data-v");

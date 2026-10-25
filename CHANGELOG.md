@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.149.0 – 2026-10-25
+- **Einmaleins: neuer Modus „🤔 Stimmt's?“**: Es steht eine Rechnung mit Ergebnis da („4 × 3 = 8“), etwa die Hälfte der Ergebnisse ist falsch (nah dran, z. B. eine Reihe daneben oder ±1/±10). 60 Sekunden, „Stimmt“ oder „Stimmt nicht“ (Tasten ← →, J/N). Bei einem Fehler wird die richtige Rechnung gezeigt.
+- **Einmaleins gibt jetzt XP und Münzen** (für Spaß und Motivation, Boost und Münzfaktor gelten): Blitz und Stimmt's bis 30 XP und 10 Münzen je nach Punkten, Match 25 XP und 8 Münzen (mit Fehlern 15 und 4), neuer Rekord oder Bestzeit +5 Münzen. **Eigene Tageslimits: 80 XP und 25 Münzen pro Tag**, damit es die Wortschatz-Belohnungen nicht verschiebt. Zählt nicht als Übungszeit, Tagesziel oder Mission. Engine `malReward()`.
+
 ## 2.148.0 – 2026-10-25
 - **Alternative richtige Antworten beim Tippen**: neue Datei `data/alternativen.js` (`window.ALTS`) mit 74 Einträgen (britisch/amerikanisch, Schreibweise, Kurzformen, Synonyme gleicher Bedeutung). Eine Alternative zählt wie die Hauptantwort (volle Wertung, kein Fehler). Auf der Ergebnisseite steht bei Wörtern mit Alternativen „Auch richtig: …“.
   - Schlüssel = englisches Wort wie im Wortschatz; Wort-Einträge und IDs bleiben unverändert.
