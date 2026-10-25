@@ -353,7 +353,7 @@ function report(pid, days) {
   const evs = q.events.all(pid, now - Math.max(days, 15) * 86400000).map(r => ({ ts: r.ts, k: r.k, d: JSON.parse(r.d) }));
   const perDay = {};
   const day = ts => (perDay[dayOf(ts)] = perDay[dayOf(ts)] || { date: dayOf(ts), sec: 0, items: 0, correct: 0, neu: 0, coins: 0, xp: 0, sessions: 0 });
-  const bad = {}, sessions = [], buys = [], unitEarn = {}, wordEarn = { xp: 0, coins: 0, runs: 0 };
+  const bad = {}, sessions = [], buys = [], unitEarn = {}, wordEarn = { xp: 0, coins: 0, runs: 0 }, malRuns = [];
   for (const e of evs) {
     const d = e.d;
     if (e.ts < from) continue;       // die Zeitraum-Auswahl gilt für Tagesbalken, Problemwörter und Runden
@@ -369,6 +369,10 @@ function report(pid, days) {
       if (d.mode !== "arena") { wordEarn.xp += d.xp || 0; wordEarn.coins += d.coins || 0; wordEarn.runs++; }   // Lernrunden mit Wörtern, ohne Arena, Spiele und Grammatik
       if (d.unit) { const ue = unitEarn[String(d.unit)] = unitEarn[String(d.unit)] || { xp: 0, coins: 0, runs: 0 }; ue.xp += d.xp || 0; ue.coins += d.coins || 0; ue.runs++; }
       sessions.push({ ts: e.ts, sec: d.sec || 0, items: d.items || 0, correct: d.correct || 0, mode: d.mode || "", sub: String(d.sub || "").slice(0, 40), score: d.score || 0, unit: d.unit || "", coins: d.coins || 0, xp: d.xp == null ? null : d.xp });
+    } else if (e.k === "mal") {   // Einmaleins-Runde: echte XP/Münzen zählen mit, Zeit und Aufgaben nicht (kein Wortschatz, kein Tagesziel)
+      const x = day(e.ts); x.coins += d.coins || 0; x.xp += d.xp || 0;
+      x.malRuns = (x.malRuns || 0) + 1; x.malSec = (x.malSec || 0) + (d.sec || 0); x.malXp = (x.malXp || 0) + (d.xp || 0); x.malCoins = (x.malCoins || 0) + (d.coins || 0);
+      malRuns.push({ ts: e.ts, k: String(d.k || "").slice(0, 10), lv: String(d.lv || "").slice(0, 10), score: d.score || 0, err: d.err || 0, sec: d.sec || 0, ms: d.ms || 0, xp: d.xp || 0, coins: d.coins || 0, rec: d.rec ? 1 : 0 });
     } else if (e.k === "buy") buys.push({ ts: e.ts, name: d.name || d.id, cost: d.cost || 0 });
   }
   const runsBy = {}, badBy = {};
@@ -414,6 +418,9 @@ function report(pid, days) {
   const last7 = dayList.slice(-7);
   const c = q.evCount.get(pid);
   return {
+    mal: (() => { const t = dayOf(now), w7 = dayOf(now - 6 * 86400000), sm = f => malRuns.reduce((a, r) => a + f(r), 0), td = malRuns.filter(r => dayOf(r.ts) >= t), wk = malRuns.filter(r => dayOf(r.ts) >= w7);
+      return { total: { runs: malRuns.length, sec: sm(r => r.sec), xp: sm(r => r.xp), coins: sm(r => r.coins) }, today: { runs: td.length, sec: td.reduce((a, r) => a + r.sec, 0), xp: td.reduce((a, r) => a + r.xp, 0), coins: td.reduce((a, r) => a + r.coins, 0) },
+        week: { runs: wk.length, sec: wk.reduce((a, r) => a + r.sec, 0), xp: wk.reduce((a, r) => a + r.xp, 0), coins: wk.reduce((a, r) => a + r.coins, 0), days: new Set(wk.map(r => dayOf(r.ts))).size }, last: malRuns.slice(-10).reverse() }; })(),
     days: dayList, today: todayInfo, calWeek: weekInfo, units, unitEarn, wordEarn, problems: badList, sessions: sessions.slice(-25).reverse(), buys: buys.slice(-20).reverse(), meta: meta ? meta.d : null,
     metaTs: meta ? meta.ts : null,
     totals: { sec: sum(x => x.sec), items: sum(x => x.items), correct: sum(x => x.correct), neu: sum(x => x.neu), xp: sum(x => x.xp), coins: sum(x => x.coins), activeDays: dayList.filter(x => x.items > 0).length },

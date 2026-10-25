@@ -947,9 +947,15 @@
     return f;
   }
   function boost(c) { return c > 0 ? Math.max(1, Math.round(c * coinFactor())) : c; }
-  /* Einmaleins-Training (js/einmaleins.js): XP und Münzen für Spaß und Abwechslung, mit eigenen Tageslimits (80 XP, 25 Münzen); zählt nicht als Übungszeit, Tagesziel oder Mission.
+  /* Einmaleins-Training (js/einmaleins.js): XP und Münzen für Spaß und Abwechslung, mit eigenen Tageslimits (150 XP, 150 Münzen); zählt nicht als Übungszeit, Tagesziel oder Mission.
      r = { kind: "blitz" | "stimmts" | "match", score, errors, record, complete } */
-  var MAL_XP_DAY = 80, MAL_COINS_DAY = 25;
+  var MAL_XP_DAY = 150, MAL_COINS_DAY = 150;
+  function malInfo() {   // für das Eltern-Dashboard: Rekorde und Aufgaben, bei denen es noch hakt
+    var m = state.mal; if (!m) return null;
+    var weak = Object.keys(m.f || {}).map(function (k) { return { k: k, no: m.f[k].no || 0, ok: m.f[k].ok || 0 }; }).filter(function (x) { return x.no > 0; })
+      .sort(function (a, b) { return (b.no - b.ok * 0.5) - (a.no - a.ok * 0.5); }).slice(0, 8);
+    return { best: m.best || {}, weak: weak, on: state.settings.einmaleins === true };
+  }
   function malReward(r) {
     var xp = 0, coins = 0, capped = false;
     if (r && r.complete && r.score > 0) {
@@ -1745,7 +1751,7 @@
     srec: srec, groupsOf: groupsOf, setTrack: setTrack,
     newBlocked: newBlocked, crewReward: crewReward, crewJoined: crewJoined, duelDone: duelDone, chalInfo: chalInfo, challengeDone: function () { return !!(state.daily && state.daily.date === today() && state.daily.chal); }, rankOf: rankOf, shopSoon: shopSoon, shopIsNew: shopIsNew, rankPicks: rankPicks, rankPickable: rankPickable, rankPickClaim: rankPickClaim, RANK_SLOTS: RANK_SLOTS, addXp: addXp, addCoins: addCoins, finishSession: finishSession,
     stats: stats, today: today, shuffle: shuffle, regenHearts: regenHearts, heartsIn: heartsIn,
-    rollDay: rollDay, malReward: malReward, verbs: function () { return verbs; }, verbPools: verbPools, planVerbs: planVerbs, verbStats: verbStats, parseCsv: parseCsv, removeCustom: removeCustom,
+    rollDay: rollDay, malReward: malReward, malInfo: malInfo, verbs: function () { return verbs; }, verbPools: verbPools, planVerbs: planVerbs, verbStats: verbStats, parseCsv: parseCsv, removeCustom: removeCustom,
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,

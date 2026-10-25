@@ -1538,7 +1538,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.149.1";window.WORDY_BUILD="ab7db421c6";</script>
+<script>window.WORDY_VERSION="2.150.0";window.WORDY_BUILD="8ca52d2713";</script>
 </head>
 <body>
 <div id="app">
@@ -6689,9 +6689,15 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     return f;
   }
   function boost(c) { return c > 0 ? Math.max(1, Math.round(c * coinFactor())) : c; }
-  /* Einmaleins-Training (js/einmaleins.js): XP und Münzen für Spaß und Abwechslung, mit eigenen Tageslimits (80 XP, 25 Münzen); zählt nicht als Übungszeit, Tagesziel oder Mission.
+  /* Einmaleins-Training (js/einmaleins.js): XP und Münzen für Spaß und Abwechslung, mit eigenen Tageslimits (150 XP, 150 Münzen); zählt nicht als Übungszeit, Tagesziel oder Mission.
      r = { kind: "blitz" | "stimmts" | "match", score, errors, record, complete } */
-  var MAL_XP_DAY = 80, MAL_COINS_DAY = 25;
+  var MAL_XP_DAY = 150, MAL_COINS_DAY = 150;
+  function malInfo() {   // für das Eltern-Dashboard: Rekorde und Aufgaben, bei denen es noch hakt
+    var m = state.mal; if (!m) return null;
+    var weak = Object.keys(m.f || {}).map(function (k) { return { k: k, no: m.f[k].no || 0, ok: m.f[k].ok || 0 }; }).filter(function (x) { return x.no > 0; })
+      .sort(function (a, b) { return (b.no - b.ok * 0.5) - (a.no - a.ok * 0.5); }).slice(0, 8);
+    return { best: m.best || {}, weak: weak, on: state.settings.einmaleins === true };
+  }
   function malReward(r) {
     var xp = 0, coins = 0, capped = false;
     if (r && r.complete && r.score > 0) {
@@ -7487,7 +7493,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     srec: srec, groupsOf: groupsOf, setTrack: setTrack,
     newBlocked: newBlocked, crewReward: crewReward, crewJoined: crewJoined, duelDone: duelDone, chalInfo: chalInfo, challengeDone: function () { return !!(state.daily && state.daily.date === today() && state.daily.chal); }, rankOf: rankOf, shopSoon: shopSoon, shopIsNew: shopIsNew, rankPicks: rankPicks, rankPickable: rankPickable, rankPickClaim: rankPickClaim, RANK_SLOTS: RANK_SLOTS, addXp: addXp, addCoins: addCoins, finishSession: finishSession,
     stats: stats, today: today, shuffle: shuffle, regenHearts: regenHearts, heartsIn: heartsIn,
-    rollDay: rollDay, malReward: malReward, verbs: function () { return verbs; }, verbPools: verbPools, planVerbs: planVerbs, verbStats: verbStats, parseCsv: parseCsv, removeCustom: removeCustom,
+    rollDay: rollDay, malReward: malReward, malInfo: malInfo, verbs: function () { return verbs; }, verbPools: verbPools, planVerbs: planVerbs, verbStats: verbStats, parseCsv: parseCsv, removeCustom: removeCustom,
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
@@ -10293,7 +10299,11 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (!rw.xp && !rw.coins) return '<div class="mal-sub">Für heute sind die Einmaleins-Belohnungen aufgebraucht – morgen gibt es wieder XP und Münzen. 😊</div>';
     return '<div class="mal-rw">✨ +' + rw.xp + ' XP' + (rw.coins ? ' · 🪙 +' + rw.coins + ' Münzen' : '') + (rw.capped ? ' <span class="mal-sub">(Tageslimit erreicht)</span>' : '') + '</div>';
   }
-  function pay(o, r) { var rw = null; try { rw = VT.malReward ? VT.malReward(r) : null; } catch (e) {} if (o && o.refresh) o.refresh(); return rw; }
+  function pay(o, r) {
+    var rw = null; try { rw = VT.malReward ? VT.malReward(r) : null; } catch (e) {}
+    try { if (global.WordySync && global.WordySync.malEnd) global.WordySync.malEnd({ k: r.kind, lv: r.lv, score: r.score, err: r.errors || 0, sec: r.sec || 0, ms: r.ms || 0, rec: r.record ? 1 : 0, xp: rw ? rw.xp : 0, coins: rw ? rw.coins : 0 }); } catch (e) {}
+    if (o && o.refresh) o.refresh(); return rw;
+  }
   function save() { try { VT.save(true); } catch (e) {} }
   function vib(ok) { try { if (navigator.vibrate) navigator.vibrate(ok ? 12 : [30, 40, 30]); } catch (e) {} }
 
@@ -10325,7 +10335,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     function end() {
       over = true; clearInterval(tick); tick = null; var b = st().best, key = "blitz-" + rk(c), had = !!b[key], rec0 = !b[key] || score > b[key];
       if (rec0 && score > 0) b[key] = score; save();
-      var rw = pay(o, { kind: "blitz", score: score, errors: miss, record: rec0 && had, complete: true });
+      var rw = pay(o, { kind: "blitz", lv: rk(c), score: score, errors: miss, sec: 60, record: rec0 && had, complete: true });
       var ml = Object.keys(missed).map(function (k) { return '<span class="mal-chip">' + term(missed[k]) + " = " + missed[k].p + "</span>"; }).join("");
       ov.querySelector(".mal-in").innerHTML = '<div class="mal-res"><div class="mal-big">' + score + '</div><div class="mal-sub">richtig in 60 Sekunden' + (miss ? " · " + miss + " Fehler" : "") + '</div>' +
         (rec0 && score > 0 ? '<div class="mal-rec">🏆 Neuer Rekord!</div>' : (b[key] ? '<div class="mal-sub">Rekord: ' + b[key] + '</div>' : "")) + rwLine(rw) +
@@ -10368,7 +10378,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     function end() {
       over = true; clearInterval(tick); tick = null; var b = st().best, key = "stimmts-" + rk(c), had = !!b[key], rec0 = !b[key] || score > b[key];
       if (rec0 && score > 0) b[key] = score; save();
-      var rw = pay(o, { kind: "stimmts", score: score, errors: miss, record: rec0 && had, complete: true });
+      var rw = pay(o, { kind: "stimmts", lv: rk(c), score: score, errors: miss, sec: 60, record: rec0 && had, complete: true });
       var ml = Object.keys(missed).map(function (k) { return '<span class="mal-chip">' + term(missed[k]) + " = " + missed[k].p + "</span>"; }).join("");
       ov.querySelector(".mal-in").innerHTML = '<div class="mal-res"><div class="mal-big">' + score + '</div><div class="mal-sub">richtig beurteilt in 60 Sekunden' + (miss ? " · " + miss + " Fehler" : "") + '</div>' +
         (rec0 && score > 0 ? '<div class="mal-rec">🏆 Neuer Rekord!</div>' : (b[key] ? '<div class="mal-sub">Rekord: ' + b[key] + '</div>' : "")) + rwLine(rw) +
@@ -10409,7 +10419,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     function end() {
       over = true; clearInterval(tick); tick = null; var t = elapsed(), b = st().best, key = "match-" + rk(c), had = !!b[key], rec0 = !b[key] || t < b[key];
       if (rec0) b[key] = t; save();
-      var rw = pay(o, { kind: "match", score: ROUNDS * PER, errors: errs, record: rec0 && had, complete: true });
+      var rw = pay(o, { kind: "match", lv: rk(c), score: ROUNDS * PER, errors: errs, sec: Math.round((Date.now() - t0) / 1000), ms: t, record: rec0 && had, complete: true });
       ov.querySelector(".mal-in").innerHTML = '<div class="mal-res"><div class="mal-big">' + fmtT(t) + '</div><div class="mal-sub">für ' + ROUNDS * PER + ' Aufgaben' + (errs ? " · " + errs + " Fehler (+" + errs * 2 + " s)" : " · keine Fehler") + '</div>' +
         (rec0 ? '<div class="mal-rec">🏆 Neue Bestzeit!</div>' : '<div class="mal-sub">Bestzeit: ' + fmtT(b[key]) + '</div>') + rwLine(rw) +
         '<div class="mal-act"><button class="btn" data-m="again">Nochmal</button><button class="btn soft" data-m="close">Fertig</button></div></div>';
@@ -16164,7 +16174,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     VT.units().forEach(function (u) { units[u.id] = { id: u.id, title: u.title, k: u.track === "eigen" ? "Eigene Listen" : u.k, total: u.words.length }; });   // alle Einheiten (Schule, Beruf, eigene Listen), damit Ziele und Lernpläne jede wählen können
     var rk = VT.rankOf(st.xp), d = st.daily || {};
     var meta = {
-      name: st.profile.name || "", title: st.profile.title || "", avatar: st.profile.avatar || "", acc: VT.accOf ? VT.accOf(st.profile.avatar) : {}, stk: (VT.stickers ? VT.stickers() : []).slice(0, 10), stkAcc: VT.stickerAcc ? VT.stickerAcc() : {}, look: VT.lookInfo ? VT.lookInfo() : null, frame: st.profile.frame || "none", coins: st.coins, xp: st.xp, rank: rk.rank ? rk.rank.n : "", streak: st.streak.count, best: st.streak.best,
+      name: st.profile.name || "", title: st.profile.title || "", avatar: st.profile.avatar || "", acc: VT.accOf ? VT.accOf(st.profile.avatar) : {}, stk: (VT.stickers ? VT.stickers() : []).slice(0, 10), stkAcc: VT.stickerAcc ? VT.stickerAcc() : {}, mal: VT.malInfo ? VT.malInfo() : null, look: VT.lookInfo ? VT.lookInfo() : null, frame: st.profile.frame || "none", coins: st.coins, xp: st.xp, rank: rk.rank ? rk.rank.n : "", streak: st.streak.count, best: st.streak.best,
       track: st.settings.track || "schule", goalMin: VT.goalMin ? VT.goalMin() : st.settings.goalMin, todaySec: d.sec || 0, todayItems: d.items || 0, owned: (st.profile.owned || []).length,
       pass: VT.passMeta ? VT.passMeta() : null, shop: VT.shopList ? VT.shopList() : [], shopCat: VT.shopCatalog ? VT.shopCatalog() : [], gifts: Object.keys(st.goalsDone || {}).filter(function (k) { return k.indexOf("gift") === 0; }).map(function (k) { return k.slice(4); }), wish: (VT.wish && VT.wish()) ? VT.wish().label || VT.wish().id : "", klassen: st.settings.klassen, version: g.WORDY_VERSION || "", totals: st.totals, path: VT.pathProgress ? Object.assign(VT.pathProgress(), { sections: VT.pathSections(), bosses: VT.bossLog ? VT.bossLog() : [] }) : null
     };
@@ -16397,6 +16407,12 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     W.log("ss", d);
     W.check();
     flush(false).then(function () { return W.snapshot(); }).then(function () { return W.pull(true); }).then(function () { return W.pushState(true); });
+  };
+  /* Einmaleins-Runde beendet (js/einmaleins.js): als eigenes Ereignis "mal" melden, damit das Dashboard es getrennt von den Lernrunden zeigt */
+  W.malEnd = function (d) {
+    if (!W.connected() || (cfg() || {}).hidden) return;
+    W.log("mal", d);
+    flush(false).then(function () { return W.snapshot(); });
   };
   /* Aussehen (Figur, Sticker, Zubehör) geändert: Übersicht für die Eltern zeitnah nachliefern (nicht erst nach der nächsten Runde) */
   var lookSig = "";

@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.150.0 – 2026-10-25
+- Einmaleins: **Tageslimit auf 150 XP und 150 Münzen** erhöht (vorher 80 und 25).
+- **Dashboard (Betreiber und Eltern) trackt das Einmaleins**: neue Karte „Einmaleins“ im Reiter Dashboard › Überblick mit Runden, Zeit, XP und Münzen für heute und die letzten 7 Tage, den Rekorden (Blitz, Stimmt's?, Match je Stufe), den Aufgaben, bei denen es noch hakt, und den letzten Runden. Die App meldet jede fertige Runde als Ereignis `mal` (`WordySync.malEnd`), die Rekorde und Schwächen als `meta.mal`. Die verdienten XP und Münzen zählen in den Dashboard-Summen mit, Übungszeit und Aufgaben nicht. **Server-Schritt nötig** (Neustart von `wordy-server`).
+
 ## 2.149.1 – 2026-10-25
 - Einmaleins › Match: Zu den 6 Aufgaben je Runde stehen jetzt 8 Ergebnisse zur Auswahl, zwei davon sind falsch (nah dran, passen zu keiner Aufgabe). Ein Tipp auf ein falsches Ergebnis zählt als Fehler (+2 Sekunden).
 

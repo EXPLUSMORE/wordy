@@ -43,7 +43,11 @@
     if (!rw.xp && !rw.coins) return '<div class="mal-sub">Für heute sind die Einmaleins-Belohnungen aufgebraucht – morgen gibt es wieder XP und Münzen. 😊</div>';
     return '<div class="mal-rw">✨ +' + rw.xp + ' XP' + (rw.coins ? ' · 🪙 +' + rw.coins + ' Münzen' : '') + (rw.capped ? ' <span class="mal-sub">(Tageslimit erreicht)</span>' : '') + '</div>';
   }
-  function pay(o, r) { var rw = null; try { rw = VT.malReward ? VT.malReward(r) : null; } catch (e) {} if (o && o.refresh) o.refresh(); return rw; }
+  function pay(o, r) {
+    var rw = null; try { rw = VT.malReward ? VT.malReward(r) : null; } catch (e) {}
+    try { if (global.WordySync && global.WordySync.malEnd) global.WordySync.malEnd({ k: r.kind, lv: r.lv, score: r.score, err: r.errors || 0, sec: r.sec || 0, ms: r.ms || 0, rec: r.record ? 1 : 0, xp: rw ? rw.xp : 0, coins: rw ? rw.coins : 0 }); } catch (e) {}
+    if (o && o.refresh) o.refresh(); return rw;
+  }
   function save() { try { VT.save(true); } catch (e) {} }
   function vib(ok) { try { if (navigator.vibrate) navigator.vibrate(ok ? 12 : [30, 40, 30]); } catch (e) {} }
 
@@ -75,7 +79,7 @@
     function end() {
       over = true; clearInterval(tick); tick = null; var b = st().best, key = "blitz-" + rk(c), had = !!b[key], rec0 = !b[key] || score > b[key];
       if (rec0 && score > 0) b[key] = score; save();
-      var rw = pay(o, { kind: "blitz", score: score, errors: miss, record: rec0 && had, complete: true });
+      var rw = pay(o, { kind: "blitz", lv: rk(c), score: score, errors: miss, sec: 60, record: rec0 && had, complete: true });
       var ml = Object.keys(missed).map(function (k) { return '<span class="mal-chip">' + term(missed[k]) + " = " + missed[k].p + "</span>"; }).join("");
       ov.querySelector(".mal-in").innerHTML = '<div class="mal-res"><div class="mal-big">' + score + '</div><div class="mal-sub">richtig in 60 Sekunden' + (miss ? " · " + miss + " Fehler" : "") + '</div>' +
         (rec0 && score > 0 ? '<div class="mal-rec">🏆 Neuer Rekord!</div>' : (b[key] ? '<div class="mal-sub">Rekord: ' + b[key] + '</div>' : "")) + rwLine(rw) +
@@ -118,7 +122,7 @@
     function end() {
       over = true; clearInterval(tick); tick = null; var b = st().best, key = "stimmts-" + rk(c), had = !!b[key], rec0 = !b[key] || score > b[key];
       if (rec0 && score > 0) b[key] = score; save();
-      var rw = pay(o, { kind: "stimmts", score: score, errors: miss, record: rec0 && had, complete: true });
+      var rw = pay(o, { kind: "stimmts", lv: rk(c), score: score, errors: miss, sec: 60, record: rec0 && had, complete: true });
       var ml = Object.keys(missed).map(function (k) { return '<span class="mal-chip">' + term(missed[k]) + " = " + missed[k].p + "</span>"; }).join("");
       ov.querySelector(".mal-in").innerHTML = '<div class="mal-res"><div class="mal-big">' + score + '</div><div class="mal-sub">richtig beurteilt in 60 Sekunden' + (miss ? " · " + miss + " Fehler" : "") + '</div>' +
         (rec0 && score > 0 ? '<div class="mal-rec">🏆 Neuer Rekord!</div>' : (b[key] ? '<div class="mal-sub">Rekord: ' + b[key] + '</div>' : "")) + rwLine(rw) +
@@ -159,7 +163,7 @@
     function end() {
       over = true; clearInterval(tick); tick = null; var t = elapsed(), b = st().best, key = "match-" + rk(c), had = !!b[key], rec0 = !b[key] || t < b[key];
       if (rec0) b[key] = t; save();
-      var rw = pay(o, { kind: "match", score: ROUNDS * PER, errors: errs, record: rec0 && had, complete: true });
+      var rw = pay(o, { kind: "match", lv: rk(c), score: ROUNDS * PER, errors: errs, sec: Math.round((Date.now() - t0) / 1000), ms: t, record: rec0 && had, complete: true });
       ov.querySelector(".mal-in").innerHTML = '<div class="mal-res"><div class="mal-big">' + fmtT(t) + '</div><div class="mal-sub">für ' + ROUNDS * PER + ' Aufgaben' + (errs ? " · " + errs + " Fehler (+" + errs * 2 + " s)" : " · keine Fehler") + '</div>' +
         (rec0 ? '<div class="mal-rec">🏆 Neue Bestzeit!</div>' : '<div class="mal-sub">Bestzeit: ' + fmtT(b[key]) + '</div>') + rwLine(rw) +
         '<div class="mal-act"><button class="btn" data-m="again">Nochmal</button><button class="btn soft" data-m="close">Fertig</button></div></div>';
