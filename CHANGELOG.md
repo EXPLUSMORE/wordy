@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.150.2 – 2026-10-25
+- Einmaleins (alle Modi): Die Ansicht verschob sich nach und nach nach rechts unten. Wahrscheinliche Ursache: Doppeltipp-Zoom und Verschieben der Seite beim schnellen Tippen auf Ziffern- und Antworttasten (iOS). Jetzt gesperrt: `touch-action: manipulation`, kein Pinch- oder Doppeltipp-Zoom, keine Textauswahl, kein Mitscrollen der Seite dahinter.
+
 ## 2.150.1 – 2026-10-25
 - Einmaleins › Match wie bei den Vokabeln: Es liegen immer 6 Aufgaben und 8 Ergebnisse (zwei davon falsch) aus. Ein richtiges Paar verschwindet, und eine neue Aufgabe samt Ergebnis rückt nach (das Ergebnis wird an zufälliger Stelle eingemischt). Fertig sind 18 Aufgaben; angezeigt wird „n von 18“. Es liegen nie zwei gleiche Ergebnisse gleichzeitig aus.
 

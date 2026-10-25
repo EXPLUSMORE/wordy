@@ -187,7 +187,8 @@ html[data-bg="stars"] .card,html[data-bg="clouds"] .card,html[data-bg="space"] .
 @keyframes stShine{0%{background-position:150% 0}55%,100%{background-position:-60% 0}}
 .fstk{display:block;margin-top:4px;min-height:24px;font-size:12px}.stkpv{display:grid;place-items:center;height:100%}
 /* EINMALEINS */
-.mal-ov{position:fixed;inset:0;z-index:9000;background:var(--paper);overflow:auto}
+.mal-ov{position:fixed;inset:0;z-index:9000;background:var(--paper);overflow:auto;overscroll-behavior:contain}
+.mal-ov,.mal-ov *{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}   /* schnelles Tippen darf nicht zoomen oder die Seite verschieben (Doppeltipp-Zoom) */
 .mal-in{max-width:480px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;padding:12px 14px calc(16px + env(safe-area-inset-bottom))}
 .mal-top{display:flex;align-items:center;gap:10px;font-size:18px}.mal-top b{flex:1 1 auto}.mal-x{border:0;background:var(--card);color:var(--ink);width:40px;height:40px;border-radius:12px;font-size:18px;cursor:pointer;box-shadow:var(--shadow)}
 .mal-sc{font-weight:800;font-size:22px;font-variant-numeric:tabular-nums;color:var(--accent)}
@@ -1538,7 +1539,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.150.1";window.WORDY_BUILD="6312096458";</script>
+<script>window.WORDY_VERSION="2.150.2";window.WORDY_BUILD="16d1428a77";</script>
 </head>
 <body>
 <div id="app">
@@ -10292,7 +10293,10 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   }
   function open(inner) {
     close(); ov = document.createElement("div"); ov.className = "mal-ov"; ov.setAttribute("role", "dialog"); ov.setAttribute("aria-label", "Einmaleins");
-    ov.innerHTML = '<div class="mal-in">' + inner + '</div>'; document.body.appendChild(ov); return ov;
+    ov.innerHTML = '<div class="mal-in">' + inner + '</div>'; document.body.appendChild(ov);
+    ["gesturestart", "gesturechange", "dblclick"].forEach(function (t) { ov.addEventListener(t, function (e) { e.preventDefault(); }); });   // kein Pinch- oder Doppeltipp-Zoom (iOS)
+    ov.addEventListener("touchmove", function (e) { if (ov.scrollHeight <= ov.clientHeight + 1) e.preventDefault(); }, { passive: false });   // passt alles auf den Schirm, gibt es nichts zu verschieben
+    return ov;
   }
   function rwLine(rw) {   // Belohnung unter dem Ergebnis
     if (!rw) return "";

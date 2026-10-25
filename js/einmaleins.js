@@ -36,7 +36,10 @@
   }
   function open(inner) {
     close(); ov = document.createElement("div"); ov.className = "mal-ov"; ov.setAttribute("role", "dialog"); ov.setAttribute("aria-label", "Einmaleins");
-    ov.innerHTML = '<div class="mal-in">' + inner + '</div>'; document.body.appendChild(ov); return ov;
+    ov.innerHTML = '<div class="mal-in">' + inner + '</div>'; document.body.appendChild(ov);
+    ["gesturestart", "gesturechange", "dblclick"].forEach(function (t) { ov.addEventListener(t, function (e) { e.preventDefault(); }); });   // kein Pinch- oder Doppeltipp-Zoom (iOS)
+    ov.addEventListener("touchmove", function (e) { if (ov.scrollHeight <= ov.clientHeight + 1) e.preventDefault(); }, { passive: false });   // passt alles auf den Schirm, gibt es nichts zu verschieben
+    return ov;
   }
   function rwLine(rw) {   // Belohnung unter dem Ergebnis
     if (!rw) return "";
