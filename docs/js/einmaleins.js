@@ -1,0 +1,156 @@
+/* Einmaleins-Training (kein Bestandteil des Vokabellernens, im Profil ein-/ausblendbar: settings.einmaleins).
+   Kleines Einmaleins = Reihen 1–10 mal 1–10, großes = Reihen 11–20 mal 2–10. Zwei Übungen: Blitz-Einmaleins (60 Sekunden, Zifferntasten)
+   und Match gegen die Zeit (Aufgaben und Ergebnisse verbinden, Fehler kosten 2 Sekunden). Schwache Aufgaben kommen häufiger.
+   Lernstand: state.mal = { f: { "7x8": { ok, no } }, best: { "blitz-klein": Punkte, "match-klein": Millisekunden } }. Keine XP, keine Münzen. */
+(function (global) {
+  "use strict";
+  var VT = global.VT, ov = null, tick = null, keyH = null;
+
+  function st() { var s = VT.state; if (!s.mal) s.mal = {}; if (!s.mal.f) s.mal.f = {}; if (!s.mal.best) s.mal.best = {}; return s.mal; }
+  function cfg() {
+    var s = VT.state.settings, lv = s.malLevel === "gross" ? "gross" : "klein", lo = lv === "gross" ? 11 : 1, rows = [], i;
+    (Array.isArray(s.malRows) ? s.malRows : []).forEach(function (r) { if (r >= lo && r <= lo + 9 && rows.indexOf(r) < 0) rows.push(r); });
+    if (!rows.length) for (i = lo; i < lo + 10; i++) rows.push(i);
+    return { lv: lv, lo: lo, rows: rows.sort(function (a, b) { return a - b; }), bs: lv === "gross" ? [2, 3, 4, 5, 6, 7, 8, 9, 10] : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] };
+  }
+  function facts(c) { var l = []; c.rows.forEach(function (a) { c.bs.forEach(function (b) { l.push({ a: a, b: b, k: a + "x" + b, p: a * b }); }); }); return l; }
+  function weight(k) { var f = st().f[k] || { ok: 0, no: 0 }; return Math.max(0.4, 1 + 1.5 * Math.min(f.no, 4) - 0.4 * Math.min(f.ok, 5)); }
+  function pick(list, notKey) {
+    var pool = list.filter(function (x) { return x.k !== notKey; }), sum = 0, r;
+    pool.forEach(function (x) { sum += weight(x.k); }); r = Math.random() * sum;
+    for (var i = 0; i < pool.length; i++) { r -= weight(pool[i].k); if (r <= 0) return pool[i]; }
+    return pool[pool.length - 1];
+  }
+  function rec(k, ok) { var f = st().f[k] || (st().f[k] = { ok: 0, no: 0 }); if (ok) f.ok++; else f.no++; }
+  function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function term(x) { return x.a + " × " + x.b; }
+  function fmtT(ms) { var s = ms / 1000, m = Math.floor(s / 60); return m + ":" + (s - m * 60 < 10 ? "0" : "") + (s - m * 60).toFixed(1).replace(".", ","); }
+
+  function close() {
+    if (tick) { clearInterval(tick); tick = null; }
+    if (keyH) { document.removeEventListener("keydown", keyH); keyH = null; }
+    if (ov) { ov.remove(); ov = null; }
+  }
+  function open(inner) {
+    close(); ov = document.createElement("div"); ov.className = "mal-ov"; ov.setAttribute("role", "dialog"); ov.setAttribute("aria-label", "Einmaleins");
+    ov.innerHTML = '<div class="mal-in">' + inner + '</div>'; document.body.appendChild(ov); return ov;
+  }
+  function save() { try { VT.save(true); } catch (e) {} }
+  function vib(ok) { try { if (navigator.vibrate) navigator.vibrate(ok ? 12 : [30, 40, 30]); } catch (e) {} }
+
+  /* ---------- Blitz-Einmaleins: 60 Sekunden, so viele richtige wie möglich ---------- */
+  function blitz(o) {
+    var c = cfg(), list = facts(c), score = 0, miss = 0, last = "", cur = null, typed = "", locked = false, missed = {}, DUR = 60000, t0 = Date.now(), over = false;
+    open('<div class="mal-top"><button class="mal-x" data-m="close" aria-label="Schließen">✕</button><b>⚡ Blitz</b><span class="mal-sc" id="malSc">0</span></div>' +
+      '<div class="mal-bar"><i id="malBar"></i></div><div class="mal-q" id="malQ"></div><div class="mal-a" id="malA" aria-live="polite">&nbsp;</div>' +
+      '<div class="mal-pad">' + [1, 2, 3, 4, 5, 6, 7, 8, 9].map(function (d) { return '<button data-d="' + d + '">' + d + '</button>'; }).join("") + '<button data-d="back" aria-label="Löschen">⌫</button><button data-d="0">0</button><button data-d="ok" class="mal-ok" aria-label="Fertig">OK</button></div>');
+    function next() { cur = pick(list, last); last = cur.k; typed = ""; locked = false; paint(); }
+    function paint(cls) {
+      ov.querySelector("#malQ").textContent = term(cur) + " = ?";
+      var a = ov.querySelector("#malA"); a.textContent = typed || " "; a.className = "mal-a" + (cls ? " " + cls : "");
+      ov.querySelector("#malSc").textContent = String(score);
+    }
+    function submit() {
+      if (locked || over || !typed) return;
+      var ok = +typed === cur.p; locked = true; rec(cur.k, ok); vib(ok); if (o && o.sfx) o.sfx(ok);
+      if (ok) { score++; paint("ok"); setTimeout(function () { if (!over) next(); }, 220); }
+      else { miss++; missed[cur.k] = cur; var a = ov.querySelector("#malA"); a.textContent = typed + " ✗  " + cur.p; a.className = "mal-a no"; setTimeout(function () { if (!over) next(); }, 1300); }
+    }
+    function press(d) {
+      if (locked || over) return;
+      if (d === "back") typed = typed.slice(0, -1);
+      else if (d === "ok") return submit();
+      else if (typed.length < 4) typed += d;
+      paint(); if (typed.length >= String(cur.p).length) submit();
+    }
+    function end() {
+      over = true; clearInterval(tick); tick = null; var b = st().best, key = "blitz-" + c.lv, rec0 = !b[key] || score > b[key];
+      if (rec0 && score > 0) b[key] = score; save();
+      var ml = Object.keys(missed).map(function (k) { return '<span class="mal-chip">' + term(missed[k]) + " = " + missed[k].p + "</span>"; }).join("");
+      ov.querySelector(".mal-in").innerHTML = '<div class="mal-res"><div class="mal-big">' + score + '</div><div class="mal-sub">richtig in 60 Sekunden' + (miss ? " · " + miss + " Fehler" : "") + '</div>' +
+        (rec0 && score > 0 ? '<div class="mal-rec">🏆 Neuer Rekord!</div>' : (b[key] ? '<div class="mal-sub">Rekord: ' + b[key] + '</div>' : "")) +
+        (ml ? '<div class="mal-sub" style="margin-top:14px">Das üben wir nochmal:</div><div class="mal-chips">' + ml + '</div>' : '<div class="mal-sub" style="margin-top:14px">Alles richtig – stark! 💪</div>') +
+        '<div class="mal-act"><button class="btn" data-m="again">Nochmal</button><button class="btn soft" data-m="close">Fertig</button></div></div>';
+    }
+    ov.addEventListener("click", function (e) {
+      var b = e.target.closest("button"); if (!b) return; var m = b.getAttribute("data-m"), d = b.getAttribute("data-d");
+      if (m === "close") { over = true; close(); save(); if (o && o.onClose) o.onClose(); } else if (m === "again") blitz(o); else if (d) press(d);
+    });
+    keyH = function (e) { if (/^[0-9]$/.test(e.key)) press(e.key); else if (e.key === "Backspace") press("back"); else if (e.key === "Enter") press("ok"); else if (e.key === "Escape") { over = true; close(); save(); if (o && o.onClose) o.onClose(); } };
+    document.addEventListener("keydown", keyH);
+    tick = setInterval(function () {
+      var left = Math.max(0, DUR - (Date.now() - t0)), bar = ov && ov.querySelector("#malBar"); if (!bar) return;
+      bar.style.width = (left / DUR * 100) + "%"; bar.parentNode.className = "mal-bar" + (left < 10000 ? " low" : "");
+      if (left <= 0 && !over) end();
+    }, 100);
+    next();
+  }
+
+  /* ---------- Match gegen die Zeit: 3 Runden mit je 6 Aufgaben; Fehler = 2 Sekunden Strafe ---------- */
+  function match(o) {
+    var c = cfg(), list = facts(c), ROUNDS = 3, PER = 6, round = 0, pairs = 0, errs = 0, sel = null, t0 = Date.now(), over = false, set = [];
+    open('<div class="mal-top"><button class="mal-x" data-m="close" aria-label="Schließen">✕</button><b>🔗 Match</b><span class="mal-sc" id="malSc">0:00,0</span></div>' +
+      '<div class="mal-sub" id="malRound" style="text-align:center"></div><div class="mal-grid" id="malGrid"></div>');
+    function build() {
+      var seen = {}, pool = shuffle(list).sort(function (x, y) { return weight(y.k) - weight(x.k) + (Math.random() - .5) * 1.5; }); set = [];
+      for (var i = 0; i < pool.length && set.length < PER; i++) if (!seen[pool[i].p]) { seen[pool[i].p] = 1; set.push(pool[i]); }   // jedes Ergebnis nur einmal
+      pairs = 0; sel = null;
+      ov.querySelector("#malRound").textContent = "Runde " + (round + 1) + " von " + ROUNDS;
+      ov.querySelector("#malGrid").innerHTML = '<div>' + shuffle(set).map(function (x) { return '<button data-t="' + x.k + '">' + term(x) + '</button>'; }).join("") + '</div>' +
+        '<div>' + shuffle(set).map(function (x) { return '<button data-r="' + x.k + '">' + x.p + '</button>'; }).join("") + '</div>';
+    }
+    function find(k) { return set.filter(function (x) { return x.k === k; })[0]; }
+    function elapsed() { return Date.now() - t0 + errs * 2000; }
+    function end() {
+      over = true; clearInterval(tick); tick = null; var t = elapsed(), b = st().best, key = "match-" + c.lv, rec0 = !b[key] || t < b[key];
+      if (rec0) b[key] = t; save();
+      ov.querySelector(".mal-in").innerHTML = '<div class="mal-res"><div class="mal-big">' + fmtT(t) + '</div><div class="mal-sub">für ' + ROUNDS * PER + ' Aufgaben' + (errs ? " · " + errs + " Fehler (+" + errs * 2 + " s)" : " · keine Fehler") + '</div>' +
+        (rec0 ? '<div class="mal-rec">🏆 Neue Bestzeit!</div>' : '<div class="mal-sub">Bestzeit: ' + fmtT(b[key]) + '</div>') +
+        '<div class="mal-act"><button class="btn" data-m="again">Nochmal</button><button class="btn soft" data-m="close">Fertig</button></div></div>';
+    }
+    ov.addEventListener("click", function (e) {
+      var b = e.target.closest("button"); if (!b || over && !b.getAttribute("data-m")) return; var m = b.getAttribute("data-m");
+      if (m === "close") { over = true; close(); save(); if (o && o.onClose) o.onClose(); return; }
+      if (m === "again") return match(o);
+      if (b.disabled) return;
+      var t = b.getAttribute("data-t"), r = b.getAttribute("data-r");
+      if (t) { ov.querySelectorAll("[data-t]").forEach(function (x) { x.classList.remove("sel"); }); b.classList.add("sel"); sel = { k: t, el: b }; return; }
+      if (r && sel) {
+        var f = find(sel.k), ok = f.k === r;   // Ergebnisse sind je Runde eindeutig, also reicht der Aufgaben-Schlüssel
+        if (ok) { rec(f.k, true); b.classList.add("ok"); sel.el.classList.add("ok"); sel.el.classList.remove("sel"); b.disabled = true; sel.el.disabled = true; sel = null; vib(true); if (o && o.sfx) o.sfx(true);
+          pairs++; if (pairs === PER) { round++; if (round >= ROUNDS) setTimeout(end, 250); else setTimeout(function () { if (!over && ov) build(); }, 350); } }
+        else { errs++; rec(f.k, false); vib(false); if (o && o.sfx) o.sfx(false); b.classList.add("no"); setTimeout(function () { b.classList.remove("no"); }, 450); sel.el.classList.remove("sel"); sel = null; }
+      }
+    });
+    keyH = function (e) { if (e.key === "Escape") { over = true; close(); save(); if (o && o.onClose) o.onClose(); } };
+    document.addEventListener("keydown", keyH);
+    tick = setInterval(function () { var s = ov && ov.querySelector("#malSc"); if (s && !over) s.textContent = fmtT(elapsed()); }, 100);
+    build();
+  }
+
+  /* ---------- Übersicht im Reiter Lernen ---------- */
+  function panel() {
+    var c = cfg(), b = st().best, f = st().f, i, lv = c.lv;
+    var rowsAll = []; for (i = c.lo; i < c.lo + 10; i++) rowsAll.push(i);
+    var weak = facts(c).filter(function (x) { var q = f[x.k]; return q && q.no > 0; }).sort(function (x, y) { return (f[y.k].no - f[y.k].ok * 0.5) - (f[x.k].no - f[x.k].ok * 0.5); }).slice(0, 6);
+    var bl = b["blitz-" + lv], bm = b["match-" + lv];
+    return '<section class="card"><div class="eyebrow">Einmaleins</div><h2 style="margin:4px 0 6px">✖️ Einmaleins trainieren</h2>' +
+      '<p class="small muted" style="margin:0 0 10px">Kurz und schnell: jeden Tag ein paar Minuten, dann sitzt es. Das hier zählt nicht für XP und Münzen, es ist nur zum Üben.</p>' +
+      '<div class="row wrap" style="gap:6px;margin-bottom:10px">' + [["klein", "Kleines Einmaleins (1–10)"], ["gross", "Großes Einmaleins (11–20)"]].map(function (x) { return '<button class="chip" data-act="mallevel" data-v="' + x[0] + '" aria-pressed="' + (lv === x[0]) + '">' + x[1] + '</button>'; }).join("") + '</div>' +
+      '<div class="small muted" style="margin-bottom:4px">Welche Reihen? <span class="muted">(nichts gewählt = alle)</span></div>' +
+      '<div class="row wrap" style="gap:6px;margin-bottom:12px">' + rowsAll.map(function (r) { var on = c.rows.length < 10 && c.rows.indexOf(r) >= 0; return '<button class="chip" data-act="malrow" data-v="' + r + '" aria-pressed="' + on + '">' + r + 'er</button>'; }).join("") + '</div>' +
+      '<div class="mal-cards"><button class="mal-card" data-act="malgo" data-v="blitz"><span class="mal-ic">⚡</span><b>Blitz-Einmaleins</b><span class="small muted">60 Sekunden, so viele richtig wie möglich' + (bl ? " · Rekord " + bl : "") + '</span></button>' +
+      '<button class="mal-card" data-act="malgo" data-v="match"><span class="mal-ic">🔗</span><b>Match gegen die Zeit</b><span class="small muted">Aufgabe und Ergebnis verbinden, 18 Paare' + (bm ? " · Bestzeit " + fmtT(bm) : "") + '</span></button></div>' +
+      (weak.length ? '<div class="small muted" style="margin:14px 0 4px">Hier hakt es noch:</div><div class="mal-chips">' + weak.map(function (x) { return '<span class="mal-chip">' + term(x) + " = " + x.p + "</span>"; }).join("") + '</div>' : "") +
+      '</section>';
+  }
+  function setLevel(v) { VT.state.settings.malLevel = v === "gross" ? "gross" : "klein"; VT.state.settings.malRows = []; VT.save(true); }
+  function toggleRow(n) {
+    var s = VT.state.settings, c = cfg(), sel = (c.rows.length < 10 ? c.rows : []).slice(), i = sel.indexOf(n);
+    if (i >= 0) sel.splice(i, 1); else sel.push(n);
+    s.malRows = sel; VT.save(true);
+  }
+  function start(kind, o) { if (kind === "match") match(o || {}); else blitz(o || {}); }
+
+  global.VTM = { panel: panel, setLevel: setLevel, toggleRow: toggleRow, start: start, close: close };
+})(window);

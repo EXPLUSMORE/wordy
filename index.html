@@ -180,6 +180,21 @@ html[data-bg="stars"] .card,html[data-bg="clouds"] .card,html[data-bg="space"] .
   mix-blend-mode:screen;animation:stShine 3s ease-in-out infinite}
 @keyframes stShine{0%{background-position:150% 0}55%,100%{background-position:-60% 0}}
 .fstk{display:block;margin-top:4px;min-height:24px;font-size:12px}.stkpv{display:grid;place-items:center;height:100%}
+/* EINMALEINS */
+.mal-ov{position:fixed;inset:0;z-index:9000;background:var(--paper);overflow:auto}
+.mal-in{max-width:480px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;padding:12px 14px calc(16px + env(safe-area-inset-bottom))}
+.mal-top{display:flex;align-items:center;gap:10px;font-size:18px}.mal-top b{flex:1 1 auto}.mal-x{border:0;background:var(--card);color:var(--ink);width:40px;height:40px;border-radius:12px;font-size:18px;cursor:pointer;box-shadow:var(--shadow)}
+.mal-sc{font-weight:800;font-size:22px;font-variant-numeric:tabular-nums;color:var(--accent)}
+.mal-bar{height:10px;background:var(--line);border-radius:6px;margin:12px 0 4px;overflow:hidden}.mal-bar i{display:block;height:100%;width:100%;background:var(--accent);border-radius:6px}.mal-bar.low i{background:var(--bad)}
+.mal-q{font-size:clamp(44px,13vw,64px);font-weight:800;text-align:center;margin-top:auto;padding-top:18px;font-variant-numeric:tabular-nums}
+.mal-a{font-size:clamp(40px,11vw,54px);font-weight:800;text-align:center;min-height:1.3em;margin:6px auto 14px;width:70%;border-bottom:3px solid var(--rule);color:var(--ink);font-variant-numeric:tabular-nums}.mal-a.ok{color:var(--good);border-color:var(--good)}.mal-a.no{color:var(--bad);border-color:var(--bad)}
+.mal-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.mal-pad button{height:clamp(54px,9vh,70px);font-size:26px;font-weight:700;border-radius:14px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;box-shadow:var(--shadow)}.mal-pad button:active{transform:scale(.96)}.mal-pad .mal-ok{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+.mal-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}.mal-grid>div{display:grid;gap:10px;align-content:start}.mal-grid button{height:clamp(52px,9vh,66px);font-size:24px;font-weight:700;border-radius:14px;border:2px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;font-variant-numeric:tabular-nums}.mal-grid button.sel{border-color:var(--accent);background:var(--accent-soft)}.mal-grid button.ok{border-color:var(--good);background:var(--good-soft);color:var(--good);opacity:.7}.mal-grid button.no{border-color:var(--bad);background:var(--bad-soft);animation:malShake .3s}
+@keyframes malShake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.mal-res{margin:auto 0;text-align:center}.mal-big{font-size:clamp(64px,22vw,96px);font-weight:800;color:var(--accent);line-height:1}.mal-sub{color:var(--ink-2);font-size:15px;margin-top:6px}.mal-rec{font-size:20px;font-weight:800;color:var(--gold);margin-top:10px}
+.mal-chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px}.mal-chip{display:inline-block;padding:5px 10px;border-radius:999px;background:var(--card-2);border:1px solid var(--line);font-size:14px;font-variant-numeric:tabular-nums}
+.mal-act{display:grid;gap:10px;margin-top:22px}
+.mal-cards{display:grid;gap:10px}.mal-card{display:flex;flex-direction:column;gap:2px;text-align:left;padding:14px;border-radius:14px;border:1px solid var(--line);background:var(--card-2);color:var(--ink);cursor:pointer;font:inherit}.mal-card b{font-size:17px}.mal-ic{font-size:26px}
 .stk-row{display:inline-flex;gap:0;align-items:center}
 .stk-row .stk+.stk{margin-left:-14px}
 .stk-corner{position:absolute;right:10px;bottom:6px;z-index:2;pointer-events:none}
@@ -1566,6 +1581,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 <script src="js/acc.js"></script>
 <script src="js/loot.js"></script>
 <script src="js/film.js"></script>
+<script src="js/einmaleins.js"></script>
 <script src="js/app.js"></script>
 <script src="js/arena.js"></script>
 <script src="js/spiele.js"></script>

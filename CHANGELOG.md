@@ -9,6 +9,14 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.147.0 – 2026-10-25
+- **Einmaleins-Training** (kein Teil des Wortschatzes): Unter Lernen gibt es neben „Fortschritt“ den Reiter „✖️ Einmaleins“. Er ist standardmäßig **aus** und wird im Profil unter Lernen mit „Einmaleins-Training“ ein-/ausgeblendet.
+  - Kleines Einmaleins (Reihen 1–10) oder großes (Reihen 11–20 mal 2–10), einzelne Reihen wählbar (z. B. nur die 7er).
+  - ⚡ **Blitz-Einmaleins**: 60 Sekunden, Ziffernfeld, so viele richtige wie möglich; Fehler zeigen die richtige Lösung; Rekord wird gemerkt.
+  - 🔗 **Match gegen die Zeit**: 3 Runden mit je 6 Aufgaben und Ergebnissen verbinden, jeder Fehler kostet 2 Sekunden; Bestzeit wird gemerkt.
+  - Schwache Aufgaben kommen häufiger; „Hier hakt es noch“ zeigt die Aufgaben mit Fehlern. Keine XP, keine Münzen.
+  - Lernstand: `state.mal`. Neue Datei `js/einmaleins.js` (`VTM`).
+
 ## 2.146.1 – 2026-10-25
 - Zuordnen: Nach dem letzten Paar wird nicht mehr das erste Wort der Aufgabe noch einmal vorgelesen. Jedes englische Wort wird schon beim Antippen gesprochen.
 

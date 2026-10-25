@@ -1476,14 +1476,18 @@
       }).join("") + '</section>';
     return h;
   }
+  /* Einmaleins-Training (nicht Teil des Wortschatzes): im Profil ein-/ausblendbar, Standard aus */
+  function einmalOn() { return !!global.VTM && S.state.settings.einmaleins === true; }
   function viewLernen() {
     var seg = detailUnit ? "units" : lernSeg;
+    if (seg === "mal" && !einmalOn()) seg = lernSeg = "ueben";
     var pfadOn = S.state.settings.pathOn !== false && S.pathStations().length > 0;
     if (seg === "pfad" && !pfadOn) seg = "ueben";
-    var top = segBar("lernen", seg, [["units", "📚 Was lernen?"]].concat(pfadOn ? [["pfad", "🗺️ Pfad"]] : []).concat([["ueben", "🎮 Üben"]]).concat([["stats", "📈 Fortschritt"]]));
+    var top = segBar("lernen", seg, [["units", "📚 Was lernen?"]].concat(pfadOn ? [["pfad", "🗺️ Pfad"]] : []).concat([["ueben", "🎮 Üben"]]).concat([["stats", "📈 Fortschritt"]]).concat(einmalOn() ? [["mal", "✖️ Einmaleins"]] : []));
     if (detailUnit === "__verbs") return viewVerbList();
     if (detailUnit) return viewUnitDetail(detailUnit);
     if (seg === "stats") viewStats();
+    else if (seg === "mal") view.innerHTML = '<div class="stack">' + global.VTM.panel() + '</div>';
     else if (seg === "pfad") view.innerHTML = '<div class="stack">' + pathCard() + '</div>';
     else if (seg === "gram") view.innerHTML = '<div class="stack"><button class="chip" data-act="seg" data-g="lernen" data-v="units" style="align-self:flex-start">← Was lernen?</button>' + gramHtml() + '</div>';
     else {
@@ -2474,6 +2478,8 @@
       '<select id="setVForms" style="width:auto"><option value="all"' + (!vPastOnly() ? " selected" : "") + '>Alle drei Formen</option><option value="past"' + (vPastOnly() ? " selected" : "") + '>Nur Simple Past</option></select></label>' +
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Pause nach der Antwort<br><span class="small muted">Die Lösung bleibt kurz stehen. Bei Fehlern wird sie vorgelesen und das Wort einmal abgeschrieben</span></span>' +
       '<input type="checkbox" id="setPause" ' + (st.settings.pause !== false ? "checked" : "") + ' style="width:auto"></label>' +
+      '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Einmaleins-Training<br><span class="small muted">Zeigt unter Lernen den Reiter „Einmaleins“ (Blitz und Match). Gehört nicht zum Wortschatz, zählt nicht für XP</span></span>' +
+      '<input type="checkbox" id="setMal" ' + (st.settings.einmaleins === true ? "checked" : "") + ' style="width:auto"></label>' +
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Lernpfad auf dem Start-Tab<br><span class="small muted">Stationen und Truhen. Aus = nur die Empfehlung</span></span>' +
       '<input type="checkbox" id="setPathOn" ' + (st.settings.pathOn !== false ? "checked" : "") + ' style="width:auto"></label>' +
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Arena als Tagesmission<br><span class="small muted">Ab und zu ist eine Arena-Runde eine der drei Tagesmissionen</span></span>' +
@@ -2543,6 +2549,7 @@
     pushInit();
     $("#setCloud").onclick = function () { var pf2 = st.profile; pf2.cloudSeen = {}; pf2.cloudForce = {}; NEWS.forEach(function (n) { pf2.cloudForce[n.id] = 1; }); S.save(true); toast("Die Wolke erscheint wieder auf der Startseite."); };
     $("#setWake").onchange = function () { st.settings.wake = this.checked; S.save(true); wakeSync(); };
+    if ($("#setMal")) $("#setMal").onchange = function () { st.settings.einmaleins = this.checked; if (!this.checked && lernSeg === "mal") lernSeg = "ueben"; S.save(true); };
     if ($("#setPathOn")) $("#setPathOn").onchange = function () { st.settings.pathOn = this.checked; S.save(true); };
     if ($("#setArenaM")) $("#setArenaM").onchange = function () { st.settings.arenaMissions = this.checked; S.save(true); };
     if ($("#setPause")) $("#setPause").onchange = function () { st.settings.pause = this.checked; S.save(true); };
@@ -3523,6 +3530,9 @@
       st.settings.units = []; S.save(true); render();
     } else if (a === "unit") { detailUnit = act.getAttribute("data-id"); render(); }
     else if (a === "vtoggle") { var vs2 = act.nextElementSibling; if (vs2 && vs2.classList.contains("vsent")) { vs2.hidden = !vs2.hidden; var ch = act.querySelector(".vchev"); if (ch) ch.textContent = vs2.hidden ? "▸" : "▾"; } }
+    else if (a === "mallevel") { global.VTM.setLevel(act.getAttribute("data-v")); var syM = view.scrollTop; render(); view.scrollTop = syM; }
+    else if (a === "malrow") { global.VTM.toggleRow(+act.getAttribute("data-v")); var syR = view.scrollTop; render(); view.scrollTop = syR; }
+    else if (a === "malgo") { global.VTM.start(act.getAttribute("data-v"), { sfx: feedback, onClose: function () { if (tab === "lernen") render(); } }); }
     else if (a === "verblist") { detailUnit = "__verbs"; tab = "ueben"; uebenSeg = "units"; render(); view.scrollTop = 0; }
     else if (a === "seg") {
       var sg = act.getAttribute("data-g"), sv = act.getAttribute("data-v");
