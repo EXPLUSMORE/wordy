@@ -294,6 +294,18 @@
     W.check();
     flush(false).then(function () { return W.snapshot(); }).then(function () { return W.pull(true); }).then(function () { return W.pushState(true); });
   };
+  /* Aussehen (Figur, Sticker, Zubehör) geändert: Übersicht für die Eltern zeitnah nachliefern (nicht erst nach der nächsten Runde) */
+  var lookSig = "";
+  function lookWatch() {
+    try {
+      if (!VT.lookInfo || !W.connected()) return;
+      var sig = JSON.stringify([VT.lookInfo(), VT.state.profile.avatar, VT.stickerAcc ? VT.stickerAcc() : 0]);
+      if (!lookSig) { lookSig = sig; return; }
+      if (sig !== lookSig) { lookSig = sig; W.snapshot(); }
+    } catch (e) {}
+  }
+  setInterval(lookWatch, 30000);
+  document.addEventListener("visibilitychange", function () { if (document.hidden) lookWatch(); });
   W.maybeSnapshot = function () { if (W.connected() && Date.now() - lastSnap > 10 * 60000) W.snapshot(); };
 
   g.addEventListener("visibilitychange", function () { if (g.document.visibilityState === "hidden") { flush(true); W.pushState(false); } else { W.syncMode().then(function () { flush(false); W.pull(false); }); } });
