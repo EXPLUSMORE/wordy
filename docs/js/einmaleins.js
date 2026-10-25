@@ -33,10 +33,12 @@
     if (tick) { clearInterval(tick); tick = null; }
     if (keyH) { document.removeEventListener("keydown", keyH); keyH = null; }
     if (ov) { ov.remove(); ov = null; }
+    document.documentElement.classList.remove("mal-lock");
   }
   function open(inner) {
     close(); ov = document.createElement("div"); ov.className = "mal-ov"; ov.setAttribute("role", "dialog"); ov.setAttribute("aria-label", "Einmaleins");
     ov.innerHTML = '<div class="mal-in">' + inner + '</div>'; document.body.appendChild(ov);
+    document.documentElement.classList.add("mal-lock"); try { global.scrollTo(0, 0); } catch (e) {}   // Seite dahinter festhalten: nichts darf seitlich wegrutschen
     ["gesturestart", "gesturechange", "dblclick"].forEach(function (t) { ov.addEventListener(t, function (e) { e.preventDefault(); }); });   // kein Pinch- oder Doppeltipp-Zoom (iOS)
     ov.addEventListener("touchmove", function (e) { if (ov.scrollHeight <= ov.clientHeight + 1) e.preventDefault(); }, { passive: false });   // passt alles auf den Schirm, gibt es nichts zu verschieben
     return ov;

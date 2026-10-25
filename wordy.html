@@ -187,9 +187,10 @@ html[data-bg="stars"] .card,html[data-bg="clouds"] .card,html[data-bg="space"] .
 @keyframes stShine{0%{background-position:150% 0}55%,100%{background-position:-60% 0}}
 .fstk{display:block;margin-top:4px;min-height:24px;font-size:12px}.stkpv{display:grid;place-items:center;height:100%}
 /* EINMALEINS */
-.mal-ov{position:fixed;inset:0;z-index:9000;background:var(--paper);overflow:auto;overscroll-behavior:contain}
-.mal-ov,.mal-ov *{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}   /* schnelles Tippen darf nicht zoomen oder die Seite verschieben (Doppeltipp-Zoom) */
-.mal-in{max-width:480px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;padding:12px 14px calc(16px + env(safe-area-inset-bottom))}
+.mal-ov{position:fixed;left:0;top:0;width:100%;height:100%;max-width:100vw;z-index:9000;background:var(--paper);overflow-x:hidden;overflow-y:auto;overscroll-behavior:none;contain:layout paint}
+.mal-ov,.mal-ov *{touch-action:pan-y;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}   /* schnelles Tippen darf nicht zoomen oder die Seite verschieben (Doppeltipp-Zoom) */
+html.mal-lock,html.mal-lock body{overflow:hidden!important;overscroll-behavior:none;touch-action:pan-y}
+.mal-in{max-width:480px;width:100%;box-sizing:border-box;margin:0 auto;min-height:100%;display:flex;flex-direction:column;padding:12px 14px calc(16px + env(safe-area-inset-bottom))}
 .mal-top{display:flex;align-items:center;gap:10px;font-size:18px}.mal-top b{flex:1 1 auto}.mal-x{border:0;background:var(--card);color:var(--ink);width:40px;height:40px;border-radius:12px;font-size:18px;cursor:pointer;box-shadow:var(--shadow)}
 .mal-sc{font-weight:800;font-size:22px;font-variant-numeric:tabular-nums;color:var(--accent)}
 .mal-bar{height:10px;background:var(--line);border-radius:6px;margin:12px 0 4px;overflow:hidden}.mal-bar i{display:block;height:100%;width:100%;background:var(--accent);border-radius:6px}.mal-bar.low i{background:var(--bad)}
@@ -1539,7 +1540,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.150.2";window.WORDY_BUILD="16d1428a77";</script>
+<script>window.WORDY_VERSION="2.150.3";window.WORDY_BUILD="b5517e9603";</script>
 </head>
 <body>
 <div id="app">
@@ -10290,10 +10291,12 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (tick) { clearInterval(tick); tick = null; }
     if (keyH) { document.removeEventListener("keydown", keyH); keyH = null; }
     if (ov) { ov.remove(); ov = null; }
+    document.documentElement.classList.remove("mal-lock");
   }
   function open(inner) {
     close(); ov = document.createElement("div"); ov.className = "mal-ov"; ov.setAttribute("role", "dialog"); ov.setAttribute("aria-label", "Einmaleins");
     ov.innerHTML = '<div class="mal-in">' + inner + '</div>'; document.body.appendChild(ov);
+    document.documentElement.classList.add("mal-lock"); try { global.scrollTo(0, 0); } catch (e) {}   // Seite dahinter festhalten: nichts darf seitlich wegrutschen
     ["gesturestart", "gesturechange", "dblclick"].forEach(function (t) { ov.addEventListener(t, function (e) { e.preventDefault(); }); });   // kein Pinch- oder Doppeltipp-Zoom (iOS)
     ov.addEventListener("touchmove", function (e) { if (ov.scrollHeight <= ov.clientHeight + 1) e.preventDefault(); }, { passive: false });   // passt alles auf den Schirm, gibt es nichts zu verschieben
     return ov;
