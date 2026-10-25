@@ -1536,7 +1536,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.147.1";window.WORDY_BUILD="e4c57f8a8c";</script>
+<script>window.WORDY_VERSION="2.148.0";window.WORDY_BUILD="b93488772f";</script>
 </head>
 <body>
 <div id="app">
@@ -3668,6 +3668,29 @@ window.GRAMMAR = [
     ]
   }
 ];
+</script>
+<script>/* Weitere richtige Antworten beim Tippen (Englisch). Schlüssel = englisches Wort genau wie im Wortschatz (kleingeschrieben), Wert = zusätzlich gültige Schreibweisen/Wörter.
+   Wirkt in allen Einheiten mit diesem Wort; IDs und Wort-Einträge bleiben unverändert. Die Auflösung „to“ am Anfang, Artikel und Satzzeichen ignoriert der Vergleich ohnehin.
+   Nur Alternativen, die zur deutschen Bedeutung des Eintrags passen. Erweitern = Zeile ergänzen. */
+window.ALTS = {
+  /* britisch / amerikanisch */
+  "autumn": ["fall"], "flat": ["apartment"], "lift": ["elevator"], "lorry": ["truck"], "rubbish": ["trash", "garbage"], "bin": ["trash can", "garbage can", "dustbin"],
+  "queue": ["line"], "holiday": ["vacation"], "football": ["soccer"], "film": ["movie"], "cinema": ["movie theater", "movie theatre", "movies"],
+  "trousers": ["pants"], "rubber": ["eraser"], "mobile phone": ["cell phone", "cellphone", "mobile", "cell"], "motorway": ["highway"], "car park": ["parking lot"],
+  "ground floor": ["first floor"], "fortnight": ["two weeks"], "cooker": ["stove"], "garden": ["yard"], "school yard": ["schoolyard"], "post": ["mail"], "to post": ["to mail"],
+  "letter box": ["mailbox", "postbox"], "underground": ["subway", "tube"], "plane": ["airplane", "aeroplane"], "rucksack": ["backpack"], "hoover": ["vacuum"],
+  "exercise book": ["notebook"], "timetable": ["schedule"], "mark": ["grade"], "pupil": ["student"], "shop": ["store"], "shopping centre": ["shopping center", "mall"],
+  /* Schreibweise */
+  "neighbour": ["neighbor"], "neighbourhood": ["neighborhood"], "metre": ["meter"], "kilometre": ["kilometer"], "tyre": ["tire"], "licence": ["license"],
+  "driving licence": ["driver's license", "driving license"], "cost centre": ["cost center"], "cheque": ["check"], "to practise": ["to practice"], "to realise": ["to realize"],
+  "lunch box": ["lunchbox"], "hairdryer": ["hair dryer"], "take photos": ["take pictures"],
+  /* Kurzformen */
+  "fridge": ["refrigerator"], "bicycle": ["bike"], "grandmother": ["grandma", "granny"], "grandfather": ["grandpa", "granddad"],
+  /* Synonyme gleicher Bedeutung */
+  "big": ["large"], "small": ["little"], "ill": ["sick"], "sick": ["ill"], "sad": ["unhappy"], "angry": ["mad"], "clever": ["smart"], "difficult": ["hard"], "easy": ["simple"],
+  "beautiful": ["pretty", "lovely"], "terrible": ["awful", "horrible"], "begin": ["start"], "shout": ["yell"], "street": ["road"], "sofa": ["couch"],
+  "choose": ["pick"], "pick": ["choose"], "to choose": ["to pick"], "to fix": ["to repair"], "to repair": ["to fix"], "to speak": ["to talk"], "shop assistant": ["salesperson", "salesclerk", "clerk"]
+};
 </script>
 <script>/* Zusätzliche Sätze (angehängt, damit bestehende IDs gleich bleiben) */
 window.SENTENCES = window.SENTENCES.concat([
@@ -10651,8 +10674,10 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var f = enAlts(en)[0] || String(en);
     return f.replace(ELL, " ").replace(/(^|\s)(sb|sth)(\.|'s)?(?=\s|$)/gi, " ").replace(/\s+/g, " ").trim() || String(en);
   }
+  /* Weitere richtige Antworten aus data/alternativen.js (Schlüssel = englisches Wort wie im Wortschatz) */
+  function altsOf(en) { var l = global.ALTS && global.ALTS[String(en).toLowerCase().trim()]; return Array.isArray(l) ? l : []; }
   function judgeTyped(input, target) {
-    var a = norm(input), alts = enAlts(target); if (!a) return 0;
+    var a = norm(input), alts = enAlts(target).concat(altsOf(target)); if (!a) return 0;
     var plain = [];
     for (var i = 0; i < alts.length; i++) {
       var alt = alts[i], nn = norm(alt); if (!nn) continue;
@@ -13560,6 +13585,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       '<span class="cmp">' +
       (audioAvailable() ? '<button class="mini-speak" data-act="say" data-text="' + esc(w.en) + '" aria-label="' + esc(w.en) + ' anhören">🔊</button>' : '') +
       esc(w.en) + " – " + esc(w.de) + (comp ? " · " + comp : "") + '</span>' +
+      (altsOf(w.en).length ? '<span class="cmp small muted">Auch richtig: ' + esc(altsOf(w.en).join(", ")) + '</span>' : "") +
       (w.exHtml ? w.exHtml : (w.ex && audioAvailable() ? '<span class="cmp"><button class="mini-speak" data-act="say" data-text="' + esc(w.ex) + '" aria-label="Beispielsatz anhören">🔊</button>' + esc(w.ex) + '</span>' : "")) +
       '</div>' +
       '<button class="btn wide lg" data-act="next" id="mainBtn">Weiter</button>';

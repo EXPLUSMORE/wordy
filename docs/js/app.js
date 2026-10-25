@@ -283,8 +283,10 @@
     var f = enAlts(en)[0] || String(en);
     return f.replace(ELL, " ").replace(/(^|\s)(sb|sth)(\.|'s)?(?=\s|$)/gi, " ").replace(/\s+/g, " ").trim() || String(en);
   }
+  /* Weitere richtige Antworten aus data/alternativen.js (Schlüssel = englisches Wort wie im Wortschatz) */
+  function altsOf(en) { var l = global.ALTS && global.ALTS[String(en).toLowerCase().trim()]; return Array.isArray(l) ? l : []; }
   function judgeTyped(input, target) {
-    var a = norm(input), alts = enAlts(target); if (!a) return 0;
+    var a = norm(input), alts = enAlts(target).concat(altsOf(target)); if (!a) return 0;
     var plain = [];
     for (var i = 0; i < alts.length; i++) {
       var alt = alts[i], nn = norm(alt); if (!nn) continue;
@@ -3192,6 +3194,7 @@
       '<span class="cmp">' +
       (audioAvailable() ? '<button class="mini-speak" data-act="say" data-text="' + esc(w.en) + '" aria-label="' + esc(w.en) + ' anhören">🔊</button>' : '') +
       esc(w.en) + " – " + esc(w.de) + (comp ? " · " + comp : "") + '</span>' +
+      (altsOf(w.en).length ? '<span class="cmp small muted">Auch richtig: ' + esc(altsOf(w.en).join(", ")) + '</span>' : "") +
       (w.exHtml ? w.exHtml : (w.ex && audioAvailable() ? '<span class="cmp"><button class="mini-speak" data-act="say" data-text="' + esc(w.ex) + '" aria-label="Beispielsatz anhören">🔊</button>' + esc(w.ex) + '</span>' : "")) +
       '</div>' +
       '<button class="btn wide lg" data-act="next" id="mainBtn">Weiter</button>';

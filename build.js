@@ -6,7 +6,7 @@ const fs = require('fs'), path = require('path');
 /* Altbestand: wird ohne Herkunftsangaben (src/lic) ausgeliefert, siehe SOURCES.md */
 const LEGACY = ['data/klasse6.js','data/klasse7.js','data/klasse8.js','data/business.js',
   'data/business-basis2.js','data/business-aufbau2.js','data/business-profi2.js',
-  'data/smalltalk.js','data/idioms.js','data/saetze.js','data/saetze2.js','data/lernbuch.js','data/verben.js','data/grammatik.js'];
+  'data/smalltalk.js','data/idioms.js','data/saetze.js','data/saetze2.js','data/lernbuch.js','data/verben.js','data/grammatik.js','data/alternativen.js'];
 /* Offene Daten (data/open/*.js): jeder Eintrag braucht src und lic von der Whitelist, sonst bricht der Build ab.
    Private Dateien (private/, *.private.*, data/private/) werden nie gelesen. */
 const OPEN = fs.existsSync('data/open') ? fs.readdirSync('data/open').filter(f => /\.js$/.test(f)).sort().map(f => 'data/open/' + f) : [];

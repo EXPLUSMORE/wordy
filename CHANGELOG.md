@@ -9,6 +9,11 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.148.0 – 2026-10-25
+- **Alternative richtige Antworten beim Tippen**: neue Datei `data/alternativen.js` (`window.ALTS`) mit 74 Einträgen (britisch/amerikanisch, Schreibweise, Kurzformen, Synonyme gleicher Bedeutung). Eine Alternative zählt wie die Hauptantwort (volle Wertung, kein Fehler). Auf der Ergebnisseite steht bei Wörtern mit Alternativen „Auch richtig: …“.
+  - Schlüssel = englisches Wort wie im Wortschatz; Wort-Einträge und IDs bleiben unverändert.
+  - Erweitern = eine Zeile in `data/alternativen.js` ergänzen.
+
 ## 2.147.1 – 2026-10-25
 - Einmaleins: Das große Einmaleins geht jetzt bis 25 × 25 (Reihen 11–25, zweiter Faktor 2–25 oder nur bis 10 wählbar). Rekorde und Bestzeiten werden getrennt gespeichert (klein, groß bis 10, groß bis 25).
 
