@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.145.4 – 2026-10-25
+- Clombo: Die Stachelkrone sitzt jetzt mittig und symmetrisch auf dem Kopf (vorher nach rechts verschoben).
+
 ## 2.145.3 – 2026-10-25
 - Clombo ist jetzt eine Baukasten-Figur (Stachelkrone, große Augen, Zähne wie vorher) und lässt sich im Zubehör als Figur und als Sticker auswählen und umgestalten. Im Dashboard erscheint er dadurch auch mit Zubehör. Sein Aussehen ist neu gezeichnet, aber im selben Stil. **Server-Schritt nötig** (Neustart) für die Anzeige im Dashboard.
 
