@@ -3206,7 +3206,7 @@
     /* Nach jeder Antwort (richtig oder falsch) wird die englische Lösung vorgelesen; bei Lückensätzen der ganze Satz (liest check), bei Verblücken der Satz mit der Form */
     var tk = SS && SS.tasks[SS.i];
     if (tk && tk.type === "verbgap") speak(tk.v.s[tk.idx].en, 0.9);
-    else if (!tk || tk.type !== "gap") speak(w.en);
+    else if (!tk || (tk.type !== "gap" && tk.type !== "match")) speak(w.en);   // Zuordnen: jedes Wort wurde schon beim Antippen gesprochen, kein erstes Wort am Ende nochmal
   }
   /* Pause nach der Antwort: der Weiter-Knopf ist kurz gesperrt (Füllbalken), damit die Lösung gesehen wird */
   function pauseOn() { return S.state.settings.pause !== false; }
