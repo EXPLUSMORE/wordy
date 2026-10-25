@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.145.0 – 2026-10-24
+- Dashboard (Betreiber und Eltern): Die Karte „Aussehen“ zeigt Figur und Sticker jetzt als Bild, mit Zubehör (Sticker mit weißem Rand wie in der App). Der Server zeichnet sie selbst aus den Zeichen-Dateien der App (`server/look.js`, Endpunkt `/api/admin|fam/look.svg`, nur Zeichnen, keine Spielerdaten). Fehlt ein Bild, bleibt der Text. **Server-Schritt nötig:** `wordy-server` neu starten und den Repository-Stand mit `js/` auf dem Server aktualisieren (`deploy.sh`), weil der Server die Zeichen-Dateien aus `js/` liest.
+
 ## 2.144.0 – 2026-10-24
 - Dashboard (Betreiber und Eltern): neue Karte „Aussehen“ im Reiter Dashboard › Überblick, ganz oben: gewählte Figur mit Zubehör, Rahmen, Titel und die aufgeklebten Sticker mit ihrem Zubehör (als Text). Die Daten kommen mit dem Lernstand-Abgleich (`meta.look`). **Server-Schritt nötig** (Neustart von `wordy-server`) wegen der Dashboard-Seite; die Karte füllt sich nach dem nächsten Abgleich des Kindes.
 

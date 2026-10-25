@@ -511,6 +511,9 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     assert.equal((await J("/api/social/me", { headers: lt })).j.friends[0].frame, "gold", "und den gewählten Rahmen");
     assert.deepEqual((await J("/api/social/me", { headers: lt })).j.friends[0].acc, { head: "beanie", neck: "schal" }, "und das Zubehör (nur geprüfte Werte)");
     assert.equal((await J("/api/admin/players/" + jm.j.id + "/report?days=14", { headers: H })).j.meta.look.stk[0].n, "Fuchs", "Dashboard bekommt den Aussehen-Text (Figur, Sticker, Zubehör)");
+    { const lk = await fetch(base + "/api/admin/look.svg?k=fig&av=" + encodeURIComponent("svg:pbaer") + "&acc=" + encodeURIComponent("head:beanie,face:sonne,bogus:x"), { headers: H }); const tx = await lk.text();
+      assert.equal(lk.status, 200); assert.match(lk.headers.get("content-type"), /image\/svg\+xml/); assert.ok(tx.startsWith("<svg") && tx.includes("xmlns"), "Figur als eigenständiges SVG");
+      assert.equal((await fetch(base + "/api/admin/look.svg?av=" + encodeURIComponent("<x>"), { headers: H })).status, 404, "ungültige Figur: kein Bild"); }
     assert.deepEqual((await J("/api/social/me", { headers: lt })).j.friends[0].stk, ["st:fuchs", "st:eisbaer"], "und die Sticker (nur geprüfte IDs)");
     assert.deepEqual((await J("/api/social/me", { headers: lt })).j.friends[0].stkAcc, { "st:fuchs": { head: "beanie" } }, "und der Look der Sticker");
     assert.equal((await J("/api/social/challenges", { method: "POST", headers: jt, body: JSON.stringify({ to: kid.j.id, mode: "blitz", words: WORDS.slice(0, 3), seed: 5, score: 100 }) })).s, 400, "zu wenige Wörter");

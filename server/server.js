@@ -1566,6 +1566,7 @@ if (!q.kvGet.get("social_default_v1")) {
 
 /* ---------- Routing ---------- */
 const PUBLIC = path.join(__dirname, "public");
+const LOOK = require("./look.js");
 const server = http.createServer(async (req, res) => {
   const ip = clientIp(req), url = new URL(req.url, "http://x"); let p = url.pathname, scope = null;   // scope = Familie, wenn über das Elternkonto zugegriffen wird
   try {
@@ -1889,6 +1890,11 @@ const server = http.createServer(async (req, res) => {
         if (act === "approve") { (pid === lo ? sq.okLo : sq.okHi).run(lo, hi); return send(res, 200, { ok: true }); }
         if (act === "remove") { sq.delFr.run(lo, hi); return send(res, 200, { ok: true }); }
         return send(res, 400, { error: "Unbekannte Aktion." });
+      }
+      if (p === "/api/admin/look.svg" && req.method === "GET") {   // Figur oder Sticker als Bild (Dashboard); nur Zeichnen, keine Spielerdaten
+        const av = url.searchParams.get("av") || "", svg = AVATAR_RE.test(av) ? LOOK.render(av, url.searchParams.get("acc"), url.searchParams.get("k") === "stk" ? "stk" : "fig") : null;
+        if (!svg) return send(res, 404, { error: "Kein Bild." });
+        res.writeHead(200, { "Content-Type": "image/svg+xml", "Cache-Control": "private, max-age=3600", "X-Content-Type-Options": "nosniff", "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'" }); return res.end(svg);
       }
       const m = p.match(/^\/api\/admin\/players\/(\d+)(?:\/(\w+))?$/);
       if (m) {

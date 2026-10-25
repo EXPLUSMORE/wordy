@@ -973,12 +973,16 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
   function lookCard(m) {
     var l = m && m.look; if (!l || typeof l !== "object") return "";
     var cut = function (x, n) { return esc(String(x == null ? "" : x).slice(0, n || 40)); }, list = function (a) { return Array.isArray(a) ? a.slice(0, 4).map(function (x) { return cut(x, 24); }).join(", ") : ""; };
-    var stk = Array.isArray(l.stk) ? l.stk.slice(0, 10).map(function (s) { return "<b>" + cut(s && s.n, 24) + "</b>" + (s && s.acc && s.acc.length ? " <span class=\"muted\">(" + list(s.acc) + ")</span>" : ""); }).join(" · ") : "";
-    return '<div class="card"><h2>Aussehen</h2><div class="small" style="line-height:1.7">' +
+    var img = function (v, a, k, w) { return v ? '<img src="/api/admin/look.svg?k=' + k + '&av=' + encodeURIComponent(String(v).slice(0, 40)) + '&acc=' + encodeURIComponent(String(a || "").slice(0, 80)) + '" width="' + w + '" alt="" loading="lazy" onerror="this.style.display=\'none\'">' : ""; };
+    var stk = Array.isArray(l.stk) ? l.stk.slice(0, 10).map(function (s) {
+      return '<div class="lkst">' + img(s && s.v, s && s.a, "stk", 56) + '<div class="small"><b>' + cut(s && s.n, 24) + '</b>' + (s && s.acc && s.acc.length ? '<br><span class="muted">' + list(s.acc) + '</span>' : "") + '</div></div>';
+    }).join("") : "";
+    return '<style>.lkst{display:inline-flex;flex-direction:column;align-items:center;text-align:center;width:84px;margin:6px 4px 0 0;vertical-align:top}.lkst img{filter:drop-shadow(1px 0 0 #fff) drop-shadow(-1px 0 0 #fff) drop-shadow(0 1px 0 #fff) drop-shadow(0 -1px 0 #fff) drop-shadow(0 2px 3px rgba(0,0,0,.35))}.lkfig{display:flex;gap:12px;align-items:center}</style>' +
+      '<div class="card"><h2>Aussehen</h2><div class="lkfig">' + img(l.figV, l.figA, "fig", 88) + '<div class="small" style="line-height:1.7">' +
       '<div>Figur: <b>' + cut(l.fig) + '</b>' + (l.figAcc && l.figAcc.length ? ' <span class="muted">trägt ' + list(l.figAcc) + '</span>' : "") + '</div>' +
       (l.frame ? '<div>Rahmen: <b>' + cut(l.frame) + '</b></div>' : "") +
-      (l.title ? '<div>Titel: <b>„' + cut(l.title, 30) + '“</b></div>' : "") +
-      '<div>Sticker: ' + (stk || '<span class="muted">noch keine aufgeklebt</span>') + '</div></div></div>';
+      (l.title ? '<div>Titel: <b>„' + cut(l.title, 30) + '“</b></div>' : "") + '</div></div>' +
+      '<div style="margin-top:8px"><div class="small muted">Sticker</div>' + (stk || '<span class="muted small">noch keine aufgeklebt</span>') + '</div></div>';
   }
   function shopOf(r) { var m = (r && r.meta) || {}, own = m.shop && m.shop.length ? m.shop : []; return own.concat(DEF_SHOP.filter(function (d) { return !own.some(function (x) { return x[0] === d[0]; }); })); }
   function itemLabel(r, id) { var x = shopOf(r).filter(function (y) { return y[0] === id; })[0]; return x ? x[1] : id; }

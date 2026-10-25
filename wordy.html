@@ -1521,7 +1521,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.144.0";window.WORDY_BUILD="d0328c411e";</script>
+<script>window.WORDY_VERSION="2.145.0";window.WORDY_BUILD="05d4bd5c88";</script>
 </head>
 <body>
 <div id="app">
@@ -7120,8 +7120,9 @@ window.SENTENCES = (window.SENTENCES || []).concat([
   function lookInfo() {
     var pf = state.profile, lab = function (kind, val) { var it = SHOP.filter(function (x) { return x.kind === kind && x.val === val; })[0]; return it ? it.label : ""; };
     var accNames = function (key) { var a = accOf(key); return ACC_SLOTS.map(function (sl) { var it = a[sl[0]] && itemById("ac:" + a[sl[0]]); return it ? it.label : ""; }).filter(Boolean); };
-    return { fig: lab("avatar", pf.avatar) || "Fuchs", figAcc: accNames(pf.avatar), frame: pf.frame && pf.frame !== "none" ? lab("frame", pf.frame) : "", title: pf.title || "",
-      stk: stickers().map(function (id) { var it = itemById(id); return it ? { n: it.label.replace("-Sticker", ""), acc: accNames(id) } : null; }).filter(Boolean) };
+    var accCode = function (key) { var a = accOf(key); return ACC_SLOTS.map(function (sl) { return a[sl[0]] ? sl[0] + ":" + a[sl[0]] : ""; }).filter(Boolean).join(","); };
+    return { fig: lab("avatar", pf.avatar) || "Fuchs", figV: pf.avatar || "", figA: accCode(pf.avatar), figAcc: accNames(pf.avatar), frame: pf.frame && pf.frame !== "none" ? lab("frame", pf.frame) : "", title: pf.title || "",
+      stk: stickers().map(function (id) { var it = itemById(id); return it ? { n: it.label.replace("-Sticker", ""), acc: accNames(id), v: it.val, a: accCode(id) } : null; }).filter(Boolean) };
   }
   function accToggle(av, id) {
     var it = itemById(id); if (!it || it.kind !== "acc") return { error: "Das ist kein Zubehör." }; if (!owns(it)) return { error: "Das gehört dir noch nicht." };
