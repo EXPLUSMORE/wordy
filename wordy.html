@@ -1521,7 +1521,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.145.5";window.WORDY_BUILD="4963aefb60";</script>
+<script>window.WORDY_VERSION="2.146.0";window.WORDY_BUILD="eb3c386add";</script>
 </head>
 <body>
 <div id="app">
@@ -5794,9 +5794,9 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     { id: "av:fnwolf",     kind: "avatar", set: "fn", label: "Wolf",           cost: 250,  val: "svg:fnwolf",     rank: "Gold II" },
     { id: "av:fnraptor",   kind: "avatar", set: "fn", label: "Raptor",         cost: 350,  val: "svg:fnraptor",   rank: "Gold II" },
     { id: "av:fnllama",    kind: "avatar", set: "fn", label: "Beute-Lama",     cost: 350,  val: "svg:fnllama",    rank: "Gold II" },
-    { id: "av:fnelite",    kind: "avatar", set: "fn", label: "Elite-Kristall", cost: 800,  val: "svg:fnelite",    rank: "Elite I" },
-    { id: "av:fnchamp",    kind: "avatar", set: "fn", label: "Champion-Kristall", cost: 1500, val: "svg:fnchamp", rank: "Champion I" },
-    { id: "av:fnkristall", kind: "avatar", set: "fn", label: "Kristall-Lama",  cost: 1500, val: "svg:fnkristall", rank: "Unreal I" },
+    { id: "av:fnelite",    kind: "avatar", set: "fn", label: "Elite-Kristall", cost: 800,  val: "svg:fnelite",    rank: "Elite I", rar: "legend" },
+    { id: "av:fnchamp",    kind: "avatar", set: "fn", label: "Champion-Kristall", cost: 1500, val: "svg:fnchamp", rank: "Champion I", rar: "legend" },
+    { id: "av:fnkristall", kind: "avatar", set: "fn", label: "Kristall-Lama",  cost: 1500, val: "svg:fnkristall", rank: "Champion II", rar: "legend" },
     { id: "av:gepard",      kind: "avatar", label: "Turbo-Gepard",   cost: 700,  val: "svg:gepard",     rank: "Platin II", rar: "epic" },
     { id: "av:prisma",       kind: "avatar", label: "Prisma-Drache",      cost: 3500,  val: "svg:prisma",       rank: "Unreal I", rar: "unreal" },
     { id: "av:nebelwal",     kind: "avatar", label: "Nebel-Wal",          cost: 3800,  val: "svg:nebelwal",     rank: "Unreal II", rar: "unreal" },
@@ -5819,7 +5819,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     { id: "av:golem",       kind: "avatar", label: "Lava-Golem",      cost: 3000, val: "svg:golem",    rank: "Champion III", rar: "legend" },
     { id: "av:fnrakete",   kind: "avatar", set: "fn", label: "Raketen-Lama",   cost: 700,  val: "svg:fnrakete",   rank: "Platin II", rar: "epic" },
     { id: "av:fngold",     kind: "avatar", set: "fn", label: "Goldkristall-Lama", cost: 2200, val: "svg:fngold",  rank: "Unreal Gold I", rar: "unreal" },
-    { id: "av:fnunreal",   kind: "avatar", set: "fn", label: "Unreal-Kristall", cost: 2500, val: "svg:fnunreal",  rank: "Unreal I" },
+    { id: "av:fnunreal",   kind: "avatar", set: "fn", label: "Unreal-Kristall", cost: 2500, val: "svg:fnunreal",  rank: "Unreal I", rar: "unreal" },
 
     { id: "fr:eis",     kind: "frame", label: "Eiskristall-Rahmen", cost: 1500, val: "eis", reward: "eis" },
     { id: "fr:none",    kind: "frame", label: "Kein Rahmen", cost: 0,   val: "none" },
@@ -5950,10 +5950,10 @@ window.SENTENCES = (window.SENTENCES || []).concat([
   var RANK_SLOTS = {
     "Bronze II": ["av:🐼", "av:🐢"],        "Silber I": ["av:🦉", "av:🐙"],         "Silber III": ["av:🦕", "av:pbaer"],
     "Gold I": ["av:🦈", "av:🦄"],           "Gold II": ["av:phase", "av:pkatze"],   "Gold III": ["av:pummel", "av:fnllama"],
-    "Platin I": ["av:pphoenix", "av:kitty3"], "Platin II": ["av:fnrakete", "av:gepard"], "Platin III": ["av:pgold", "av:fnelite"],
+    "Platin I": ["av:pphoenix", "av:kitty3"], "Platin II": ["av:fnrakete", "av:gepard"], "Platin III": ["av:pgold"],
     /* ab Diamant I: alles legendär, nichts wird geschenkt, der Rang schaltet die Figuren nur im Shop frei (Kauf) */
     "Diamant I": ["av:blitzwolf", "av:pregen"], "Diamant II": ["av:sdrache", "av:ninja"], "Diamant III": ["av:flamingo", "av:faultier"],
-    "Elite I": ["av:fnchamp", "av:pgalaxie"], "Elite II": ["av:greif"], "Elite III": ["av:kitsune"], "Champion I": ["av:fnkristall", "av:pegasus"], "Champion II": ["av:zyklop"], "Champion III": ["av:sphinx", "av:golem"], "Unreal I": ["av:kitty4", "av:prisma", "av:fnunreal"], "Unreal II": ["av:nebelwal"], "Unreal III": ["av:donnervogel"], "Unreal Gold I": ["av:fngold", "av:sonnenloewe"], "Unreal Gold II": ["av:athene"], "Unreal Gold III": ["av:goldkrake"], "Unreal Platin I": ["av:fenrir"], "Unreal Platin II": ["av:mondhase"], "Unreal Platin III": ["av:zeitschildi"], "Unreal Diamant I": ["av:kristallhirsch"], "Unreal Diamant II": ["av:nebelpanther"], "Unreal Diamant III": ["av:qilin"], "The real Unreal": ["av:unreallama"]
+    "Elite I": ["av:fnelite", "av:pgalaxie"], "Elite II": ["av:greif"], "Elite III": ["av:kitsune"], "Champion I": ["av:fnchamp", "av:pegasus"], "Champion II": ["av:zyklop", "av:fnkristall"], "Champion III": ["av:sphinx", "av:golem"], "Unreal I": ["av:kitty4", "av:prisma", "av:fnunreal"], "Unreal II": ["av:nebelwal"], "Unreal III": ["av:donnervogel"], "Unreal Gold I": ["av:fngold", "av:sonnenloewe"], "Unreal Gold II": ["av:athene"], "Unreal Gold III": ["av:goldkrake"], "Unreal Platin I": ["av:fenrir"], "Unreal Platin II": ["av:mondhase"], "Unreal Platin III": ["av:zeitschildi"], "Unreal Diamant I": ["av:kristallhirsch"], "Unreal Diamant II": ["av:nebelpanther"], "Unreal Diamant III": ["av:qilin"], "The real Unreal": ["av:unreallama"]
   };
   var SHOP_ONLY_FROM = "Diamant I";   // ab diesem Rang keine Figurenwahl mehr
   function rankPickable(rn) {

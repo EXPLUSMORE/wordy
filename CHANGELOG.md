@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.146.0 – 2026-10-25
+- Kristall-Figuren auf ihren Namen gezogen: Elite-Kristall → Elite I (vorher Platin III), Champion-Kristall → Champion I (vorher Elite I), Kristall-Lama → Champion II (vorher Champion I), Unreal-Kristall → Unreal I (Seltenheit „unreal“, Sticker 3.500 statt 1.600 Münzen). Bereits gekaufte oder gewählte Figuren und Sticker bleiben. Der Goldkristall-Lama bleibt bei Unreal Gold I.
+
 ## 2.145.5 – 2026-10-25
 - Unreal-Kristall (Figur und Sticker) gibt es erst ab Rang Unreal I statt Champion I (Rang-Auswahl und Shop-Sperre). Wer die Figur schon hat, behält sie. Die Seltenheit und die Preise bleiben unverändert.
 
