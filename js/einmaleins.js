@@ -143,28 +143,39 @@
     next();
   }
 
-  /* ---------- Match gegen die Zeit: 3 Runden mit je 6 Aufgaben; Fehler = 2 Sekunden Strafe ---------- */
+  /* ---------- Match gegen die Zeit: 18 Aufgaben, es liegen immer 6 Paare aus; ein gelöstes Paar verschwindet und eine neue Aufgabe samt Ergebnis rückt nach.
+     Dazu zwei falsche Ergebnisse zur Auswahl. Fehler (auch ein Tipp auf ein falsches Ergebnis) kosten 2 Sekunden. ---------- */
   function match(o) {
-    var c = cfg(), list = facts(c), ROUNDS = 3, PER = 6, round = 0, pairs = 0, errs = 0, sel = null, t0 = Date.now(), over = false, set = [];
+    var c = cfg(), list = facts(c), TOTAL = 18, SHOWN = 6, done = 0, errs = 0, sel = null, t0 = Date.now(), over = false, active = {}, decoys = [], used = {};
     open('<div class="mal-top"><button class="mal-x" data-m="close" aria-label="Schließen">✕</button><b>🔗 Match</b><span class="mal-sc" id="malSc">0:00,0</span></div>' +
-      '<div class="mal-sub" id="malRound" style="text-align:center"></div><div class="mal-grid" id="malGrid"></div>');
-    function build() {
-      var seen = {}, pool = shuffle(list).sort(function (x, y) { return weight(y.k) - weight(x.k) + (Math.random() - .5) * 1.5; }); set = [];
-      for (var i = 0; i < pool.length && set.length < PER; i++) if (!seen[pool[i].p]) { seen[pool[i].p] = 1; set.push(pool[i]); }   // jedes Ergebnis nur einmal
-      pairs = 0; sel = null;
-      var used = {}, decoys = [], tries = 0; set.forEach(function (x) { used[x.p] = 1; });   // zwei falsche Ergebnisse zur Auswahl (nah dran, passen zu keiner Aufgabe)
-      while (decoys.length < 2 && tries++ < 60) { var dv = fake(set[Math.floor(Math.random() * set.length)]); if (!used[dv]) { used[dv] = 1; decoys.push(dv); } }
-      ov.querySelector("#malRound").textContent = "Runde " + (round + 1) + " von " + ROUNDS + " · zwei Ergebnisse passen zu keiner Aufgabe";
-      ov.querySelector("#malGrid").innerHTML = '<div>' + shuffle(set).map(function (x) { return '<button data-t="' + x.k + '">' + term(x) + '</button>'; }).join("") + '</div>' +
-        '<div>' + shuffle(set.map(function (x) { return '<button data-r="' + x.k + '">' + x.p + '</button>'; }).concat(decoys.map(function (v, i) { return '<button data-r="d' + i + '">' + v + '</button>'; }))).join("") + '</div>';
+      '<div class="mal-sub" id="malRound" style="text-align:center"></div><div class="mal-grid"><div id="malL"></div><div id="malR"></div></div>');
+    var L = ov.querySelector("#malL"), R = ov.querySelector("#malR");
+    function visible(v) { return !!used[v]; }
+    function nextFact() {   // nächste Aufgabe, deren Ergebnis gerade nicht ausliegt (Ergebnisse sind sichtbar eindeutig)
+      var inUse = {}; Object.keys(active).forEach(function (k) { inUse[k] = 1; });
+      var pool = list.filter(function (x) { return !inUse[x.k] && !visible(x.p); });
+      if (!pool.length) pool = list.filter(function (x) { return !inUse[x.k]; });
+      var f = pick(pool.length ? pool : list, ""); return f;
     }
-    function find(k) { return set.filter(function (x) { return x.k === k; })[0]; }
+    function addFact(x) {
+      active[x.k] = x; used[x.p] = (used[x.p] || 0) + 1;
+      var t = document.createElement("button"); t.setAttribute("data-t", x.k); t.textContent = term(x); L.appendChild(t);
+      var r = document.createElement("button"); r.setAttribute("data-r", x.k); r.textContent = x.p;
+      var kids = R.children, at = Math.floor(Math.random() * (kids.length + 1)); R.insertBefore(r, kids[at] || null);   // Ergebnis an zufälliger Stelle einmischen
+    }
+    function addDecoy(i) {
+      var tries = 0, v, base = Object.keys(active).map(function (k) { return active[k]; });
+      do { v = fake(base[Math.floor(Math.random() * base.length)] || list[0]); } while ((visible(v) || decoys.indexOf(v) >= 0) && tries++ < 60);
+      decoys[i] = v; used[v] = (used[v] || 0) + 1;
+      var r = document.createElement("button"); r.setAttribute("data-r", "d" + i); r.textContent = v; var kids = R.children; R.insertBefore(r, kids[Math.floor(Math.random() * (kids.length + 1))] || null);
+    }
+    function label() { ov.querySelector("#malRound").textContent = done + " von " + TOTAL + " · zwei Ergebnisse passen zu keiner Aufgabe"; }
     function elapsed() { return Date.now() - t0 + errs * 2000; }
     function end() {
       over = true; clearInterval(tick); tick = null; var t = elapsed(), b = st().best, key = "match-" + rk(c), had = !!b[key], rec0 = !b[key] || t < b[key];
       if (rec0) b[key] = t; save();
-      var rw = pay(o, { kind: "match", lv: rk(c), score: ROUNDS * PER, errors: errs, sec: Math.round((Date.now() - t0) / 1000), ms: t, record: rec0 && had, complete: true });
-      ov.querySelector(".mal-in").innerHTML = '<div class="mal-res"><div class="mal-big">' + fmtT(t) + '</div><div class="mal-sub">für ' + ROUNDS * PER + ' Aufgaben' + (errs ? " · " + errs + " Fehler (+" + errs * 2 + " s)" : " · keine Fehler") + '</div>' +
+      var rw = pay(o, { kind: "match", lv: rk(c), score: TOTAL, errors: errs, sec: Math.round((Date.now() - t0) / 1000), ms: t, record: rec0 && had, complete: true });
+      ov.querySelector(".mal-in").innerHTML = '<div class="mal-res"><div class="mal-big">' + fmtT(t) + '</div><div class="mal-sub">für ' + TOTAL + ' Aufgaben' + (errs ? " · " + errs + " Fehler (+" + errs * 2 + " s)" : " · keine Fehler") + '</div>' +
         (rec0 ? '<div class="mal-rec">🏆 Neue Bestzeit!</div>' : '<div class="mal-sub">Bestzeit: ' + fmtT(b[key]) + '</div>') + rwLine(rw) +
         '<div class="mal-act"><button class="btn" data-m="again">Nochmal</button><button class="btn soft" data-m="close">Fertig</button></div></div>';
     }
@@ -174,18 +185,25 @@
       if (m === "again") return match(o);
       if (b.disabled) return;
       var t = b.getAttribute("data-t"), r = b.getAttribute("data-r");
-      if (t) { ov.querySelectorAll("[data-t]").forEach(function (x) { x.classList.remove("sel"); }); b.classList.add("sel"); sel = { k: t, el: b }; return; }
+      if (t) { L.querySelectorAll("button").forEach(function (x) { x.classList.remove("sel"); }); b.classList.add("sel"); sel = { k: t, el: b }; return; }
       if (r && sel) {
-        var f = find(sel.k), ok = f.k === r;   // Ergebnisse sind je Runde eindeutig, also reicht der Aufgaben-Schlüssel
-        if (ok) { rec(f.k, true); b.classList.add("ok"); sel.el.classList.add("ok"); sel.el.classList.remove("sel"); b.disabled = true; sel.el.disabled = true; sel = null; vib(true); if (o && o.sfx) o.sfx(true);
-          pairs++; if (pairs === PER) { round++; if (round >= ROUNDS) setTimeout(end, 250); else setTimeout(function () { if (!over && ov) build(); }, 350); } }
-        else { errs++; rec(f.k, false); vib(false); if (o && o.sfx) o.sfx(false); b.classList.add("no"); setTimeout(function () { b.classList.remove("no"); }, 450); sel.el.classList.remove("sel"); sel = null; }
+        var f = active[sel.k], ok = f && f.k === r, selEl = sel.el; sel = null;   // Ergebnisse liegen je Aufgabe eindeutig aus, also reicht der Aufgaben-Schlüssel
+        if (ok) {
+          rec(f.k, true); vib(true); if (o && o.sfx) o.sfx(true); b.classList.add("ok"); selEl.classList.remove("sel"); selEl.classList.add("ok"); b.disabled = true; selEl.disabled = true;
+          delete active[f.k]; used[f.p]--; done++; label();
+          setTimeout(function () {   // Paar verschwindet, die nächste Aufgabe rückt nach
+            if (over || !ov) return; if (b.parentNode) b.remove(); if (selEl.parentNode) selEl.remove();
+            if (done >= TOTAL) return end();
+            if (done + Object.keys(active).length < TOTAL) addFact(nextFact());
+          }, 320);
+        } else { errs++; if (f) rec(f.k, false); vib(false); if (o && o.sfx) o.sfx(false); b.classList.add("no"); setTimeout(function () { b.classList.remove("no"); }, 450); selEl.classList.remove("sel"); }
       }
     });
     keyH = function (e) { if (e.key === "Escape") { over = true; close(); save(); if (o && o.onClose) o.onClose(); } };
     document.addEventListener("keydown", keyH);
     tick = setInterval(function () { var s = ov && ov.querySelector("#malSc"); if (s && !over) s.textContent = fmtT(elapsed()); }, 100);
-    build();
+    for (var n = 0; n < SHOWN; n++) addFact(nextFact());
+    addDecoy(0); addDecoy(1); label();
   }
 
   /* ---------- Übersicht im Reiter Lernen ---------- */
@@ -202,7 +220,7 @@
       '<div class="row wrap" style="gap:6px;margin-bottom:12px">' + rowsAll.map(function (r) { var on = c.rows.length < c.n && c.rows.indexOf(r) >= 0; return '<button class="chip" data-act="malrow" data-v="' + r + '" aria-pressed="' + on + '">' + r + 'er</button>'; }).join("") + '</div>' +
       '<div class="mal-cards"><button class="mal-card" data-act="malgo" data-v="blitz"><span class="mal-ic">⚡</span><b>Blitz-Einmaleins</b><span class="small muted">60 Sekunden, so viele richtig wie möglich' + (bl ? " · Rekord " + bl : "") + '</span></button>' +
       '<button class="mal-card" data-act="malgo" data-v="stimmts"><span class="mal-ic">🤔</span><b>Stimmt\'s?</b><span class="small muted">Ist die Rechnung richtig? Manche Ergebnisse sind falsch – 60 Sekunden' + (bs ? " · Rekord " + bs : "") + '</span></button>' +
-      '<button class="mal-card" data-act="malgo" data-v="match"><span class="mal-ic">🔗</span><b>Match gegen die Zeit</b><span class="small muted">Aufgabe und Ergebnis verbinden, 18 Paare – Vorsicht: zwei Ergebnisse je Runde sind falsch' + (bm ? " · Bestzeit " + fmtT(bm) : "") + '</span></button></div>' +
+      '<button class="mal-card" data-act="malgo" data-v="match"><span class="mal-ic">🔗</span><b>Match gegen die Zeit</b><span class="small muted">Aufgabe und Ergebnis verbinden, 18 Paare – gelöste verschwinden, neue rücken nach; Vorsicht: zwei Ergebnisse sind falsch' + (bm ? " · Bestzeit " + fmtT(bm) : "") + '</span></button></div>' +
       (weak.length ? '<div class="small muted" style="margin:14px 0 4px">Hier hakt es noch:</div><div class="mal-chips">' + weak.map(function (x) { return '<span class="mal-chip">' + term(x) + " = " + x.p + "</span>"; }).join("") + '</div>' : "") +
       '</section>';
   }
