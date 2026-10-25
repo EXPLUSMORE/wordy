@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.145.5 – 2026-10-25
+- Unreal-Kristall (Figur und Sticker) gibt es erst ab Rang Unreal I statt Champion I (Rang-Auswahl und Shop-Sperre). Wer die Figur schon hat, behält sie. Die Seltenheit und die Preise bleiben unverändert.
+
 ## 2.145.4 – 2026-10-25
 - Clombo: Die Stachelkrone sitzt jetzt mittig und symmetrisch auf dem Kopf (vorher nach rechts verschoben).
 
