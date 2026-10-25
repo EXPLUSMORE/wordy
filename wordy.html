@@ -1538,7 +1538,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.149.0";window.WORDY_BUILD="589342e171";</script>
+<script>window.WORDY_VERSION="2.149.1";window.WORDY_BUILD="ab7db421c6";</script>
 </head>
 <body>
 <div id="app">
@@ -10398,9 +10398,11 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       var seen = {}, pool = shuffle(list).sort(function (x, y) { return weight(y.k) - weight(x.k) + (Math.random() - .5) * 1.5; }); set = [];
       for (var i = 0; i < pool.length && set.length < PER; i++) if (!seen[pool[i].p]) { seen[pool[i].p] = 1; set.push(pool[i]); }   // jedes Ergebnis nur einmal
       pairs = 0; sel = null;
-      ov.querySelector("#malRound").textContent = "Runde " + (round + 1) + " von " + ROUNDS;
+      var used = {}, decoys = [], tries = 0; set.forEach(function (x) { used[x.p] = 1; });   // zwei falsche Ergebnisse zur Auswahl (nah dran, passen zu keiner Aufgabe)
+      while (decoys.length < 2 && tries++ < 60) { var dv = fake(set[Math.floor(Math.random() * set.length)]); if (!used[dv]) { used[dv] = 1; decoys.push(dv); } }
+      ov.querySelector("#malRound").textContent = "Runde " + (round + 1) + " von " + ROUNDS + " · zwei Ergebnisse passen zu keiner Aufgabe";
       ov.querySelector("#malGrid").innerHTML = '<div>' + shuffle(set).map(function (x) { return '<button data-t="' + x.k + '">' + term(x) + '</button>'; }).join("") + '</div>' +
-        '<div>' + shuffle(set).map(function (x) { return '<button data-r="' + x.k + '">' + x.p + '</button>'; }).join("") + '</div>';
+        '<div>' + shuffle(set.map(function (x) { return '<button data-r="' + x.k + '">' + x.p + '</button>'; }).concat(decoys.map(function (v, i) { return '<button data-r="d' + i + '">' + v + '</button>'; }))).join("") + '</div>';
     }
     function find(k) { return set.filter(function (x) { return x.k === k; })[0]; }
     function elapsed() { return Date.now() - t0 + errs * 2000; }
@@ -10446,7 +10448,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       '<div class="row wrap" style="gap:6px;margin-bottom:12px">' + rowsAll.map(function (r) { var on = c.rows.length < c.n && c.rows.indexOf(r) >= 0; return '<button class="chip" data-act="malrow" data-v="' + r + '" aria-pressed="' + on + '">' + r + 'er</button>'; }).join("") + '</div>' +
       '<div class="mal-cards"><button class="mal-card" data-act="malgo" data-v="blitz"><span class="mal-ic">⚡</span><b>Blitz-Einmaleins</b><span class="small muted">60 Sekunden, so viele richtig wie möglich' + (bl ? " · Rekord " + bl : "") + '</span></button>' +
       '<button class="mal-card" data-act="malgo" data-v="stimmts"><span class="mal-ic">🤔</span><b>Stimmt\'s?</b><span class="small muted">Ist die Rechnung richtig? Manche Ergebnisse sind falsch – 60 Sekunden' + (bs ? " · Rekord " + bs : "") + '</span></button>' +
-      '<button class="mal-card" data-act="malgo" data-v="match"><span class="mal-ic">🔗</span><b>Match gegen die Zeit</b><span class="small muted">Aufgabe und Ergebnis verbinden, 18 Paare' + (bm ? " · Bestzeit " + fmtT(bm) : "") + '</span></button></div>' +
+      '<button class="mal-card" data-act="malgo" data-v="match"><span class="mal-ic">🔗</span><b>Match gegen die Zeit</b><span class="small muted">Aufgabe und Ergebnis verbinden, 18 Paare – Vorsicht: zwei Ergebnisse je Runde sind falsch' + (bm ? " · Bestzeit " + fmtT(bm) : "") + '</span></button></div>' +
       (weak.length ? '<div class="small muted" style="margin:14px 0 4px">Hier hakt es noch:</div><div class="mal-chips">' + weak.map(function (x) { return '<span class="mal-chip">' + term(x) + " = " + x.p + "</span>"; }).join("") + '</div>' : "") +
       '</section>';
   }

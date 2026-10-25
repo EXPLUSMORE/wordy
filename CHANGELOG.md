@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.149.1 – 2026-10-25
+- Einmaleins › Match: Zu den 6 Aufgaben je Runde stehen jetzt 8 Ergebnisse zur Auswahl, zwei davon sind falsch (nah dran, passen zu keiner Aufgabe). Ein Tipp auf ein falsches Ergebnis zählt als Fehler (+2 Sekunden).
+
 ## 2.149.0 – 2026-10-25
 - **Einmaleins: neuer Modus „🤔 Stimmt's?“**: Es steht eine Rechnung mit Ergebnis da („4 × 3 = 8“), etwa die Hälfte der Ergebnisse ist falsch (nah dran, z. B. eine Reihe daneben oder ±1/±10). 60 Sekunden, „Stimmt“ oder „Stimmt nicht“ (Tasten ← →, J/N). Bei einem Fehler wird die richtige Rechnung gezeigt.
 - **Einmaleins gibt jetzt XP und Münzen** (für Spaß und Motivation, Boost und Münzfaktor gelten): Blitz und Stimmt's bis 30 XP und 10 Münzen je nach Punkten, Match 25 XP und 8 Münzen (mit Fehlern 15 und 4), neuer Rekord oder Bestzeit +5 Münzen. **Eigene Tageslimits: 80 XP und 25 Münzen pro Tag**, damit es die Wortschatz-Belohnungen nicht verschiebt. Zählt nicht als Übungszeit, Tagesziel oder Mission. Engine `malReward()`.
