@@ -1540,7 +1540,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.151.0";window.WORDY_BUILD="e14ec22052";</script>
+<script>window.WORDY_VERSION="2.151.1";window.WORDY_BUILD="54739f3229";</script>
 </head>
 <body>
 <div id="app">
@@ -11586,17 +11586,18 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   }
   /* Neuheiten-Wolke auf der Startseite: kündigt ein neues Spiel an. Neues Spiel = Eintrag in NEWS (id = Spiel-ID aus VTG.GAMES, date = Datum der Veröffentlichung).
      Sie verschwindet nach dem ersten Spielen, nach ✕, nach dem Antippen oder nach 14 Tagen (pro Profil in profile.cloudSeen). */
-  var NEWS = [{ id: "zubehoer", icon: "🎩", title: "Zubehör ist da!", sub: "Für Figuren & Sticker, mit Anprobe", date: "2026-10-24", shop: "acc" },
+  var NEWS = [{ id: "einmaleins", icon: "✖️", title: "Neu: 1 × 1 üben!", sub: "Blitz, Stimmt's? und Match – mit und ohne Zeit", date: "2026-10-25", go: "mal" },
+    { id: "zubehoer", icon: "🎩", title: "Zubehör ist da!", sub: "Für Figuren & Sticker, mit Anprobe", date: "2026-10-24", shop: "acc" },
     { id: "dropzauber", icon: "🔮", title: "Zauber-Drop!", sub: "Zauber-Eule, Sternenstaub & mehr", date: "2026-10-19", shop: "avatar" },
     { id: "verkleidung", icon: "🎭", title: "Neue Outfits!", sub: "Ritter, Ninja, Zauberer … ab in den Shop", date: "2026-10-19", shop: "outfit" },
     { id: "blast3d", icon: "🛸", title: "Blast 3D", sub: "Weich den Wörtern aus!", date: "2026-10-11" }];
   function newsCloud() {
     var pf = S.state.profile, seen = pf.cloudSeen || {}, ar = S.state.arena || {}, today = S.today();
     var n = NEWS.filter(function (x) {
-      if (seen[x.id] || (!x.shop && (!global.VTG || !global.VTG.GAMES.some(function (g) { return g.id === x.id; })))) return false;
+      if (seen[x.id] || (x.go === "mal" && !einmalOn()) || (!x.shop && !x.go && (!global.VTG || !global.VTG.GAMES.some(function (g) { return g.id === x.id; })))) return false;   // go = springt in einen Bereich (Einmaleins nur, wenn im Profil eingeschaltet)
       if (dayDiff2(x.date, today) > 14 && !(pf.cloudForce || {})[x.id]) return false;
       if ((pf.cloudForce || {})[x.id]) return true;   // „Wolke wieder anzeigen“ unter Profil › Ton & Aussehen
-      return x.shop ? true : !Object.keys(ar).some(function (k) { return k.indexOf("g_" + x.id + ":") === 0; });
+      return x.shop || x.go ? true : !Object.keys(ar).some(function (k) { return k.indexOf("g_" + x.id + ":") === 0; });
     })[0];
     if (!n) return "";
     return '<div class="newscloud" data-id="' + esc(n.id) + '"><i class="ncs s1">✨</i><i class="ncs s2">⭐</i><i class="ncs s3">✨</i><span class="ncnew">NEU</span><button class="ncbody" data-act="newscloud" data-id="' + esc(n.id) + '"><span class="nci">' + n.icon + '</span><span class="nct"><b>' + esc(n.title) + '</b><small>' + esc(n.sub) + '</small></span></button><button class="ncx" data-act="newsx" data-id="' + esc(n.id) + '" aria-label="Ausblenden">✕</button></div>';
@@ -14253,7 +14254,8 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       var nid = act.getAttribute("data-id"), pfc = S.state.profile; (pfc.cloudSeen || (pfc.cloudSeen = {}))[nid] = 1; if (pfc.cloudForce) delete pfc.cloudForce[nid]; S.save(true);
       var cl = act.closest(".newscloud"); if (cl) cl.remove();
       var nn = NEWS.filter(function (x) { return x.id === nid; })[0];
-      if (a === "newscloud" && nn && nn.shop) { tab = "beute"; beuteSeg = "shop"; shopTab = nn.shop; render(); view.scrollTop = 0; }
+      if (a === "newscloud" && nn && nn.go === "mal") { tab = "lernen"; lernSeg = "mal"; uebenSeg = "modi"; detailUnit = null; render(); view.scrollTop = 0; }
+      else if (a === "newscloud" && nn && nn.shop) { tab = "beute"; beuteSeg = "shop"; shopTab = nn.shop; render(); view.scrollTop = 0; }
       else if (a === "newscloud" && global.VTG) global.VTG.start(nid);
     }
     else if (a === "film") {

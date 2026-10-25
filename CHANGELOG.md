@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.151.1 – 2026-10-25
+- Neuheiten-Wolke „✖️ Neu: 1 × 1 üben!“ auf der Startseite. Ein Tipp darauf springt direkt nach Lernen › Einmaleins. Die Wolke erscheint nur, wenn das Einmaleins-Training im Profil eingeschaltet ist, und bleibt wie die anderen Wolken 14 Tage (Eintrag in `NEWS` mit `go: "mal"`).
+
 ## 2.151.0 – 2026-10-25
 - **Einmaleins: jede Übung mit und ohne Zeit.** Im Reiter Einmaleins wählst du „Spielweise: ⏱ Mit Zeit | 🧘 Ohne Zeit“ (Einstellung `malTimed`, Standard mit Zeit).
   - Blitz und Stimmt's? ohne Zeit: 20 Aufgaben in Ruhe, kein Zeitbalken, nach einem Fehler bleibt die richtige Lösung länger stehen; der Fortschrittsbalken zeigt, wie viele Aufgaben schon dran waren.
