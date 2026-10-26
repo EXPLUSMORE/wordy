@@ -315,14 +315,14 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
     wireCopy();
   }
 
-  function bars(list) {
+  function bars(list, unit) {
     var w = 640, h = 130, pad = 18, n = list.length, bw = (w - pad * 2) / n, max = Math.max(600, Math.max.apply(null, list.map(function (d) { return d.sec; })));
     var s = '<svg viewBox="0 0 ' + w + " " + (h + 22) + '" width="100%" role="img" aria-label="Übungszeit pro Tag">';
     [0, 0.5, 1].forEach(function (f) { var y = h - f * (h - 8); s += '<line x1="' + pad + '" x2="' + (w - pad) + '" y1="' + y + '" y2="' + y + '" stroke="var(--line)"/>'; });
     s += '<text x="0" y="' + (h - (h - 8) + 3) + '">' + Math.round(max / 60) + "</text>";
     list.forEach(function (d, i) {
       var bh = Math.max(d.sec ? 2 : 0, d.sec / max * (h - 8)), x = pad + i * bw + bw * 0.15, bwi = bw * 0.7;
-      s += '<rect x="' + x + '" y="' + (h - bh) + '" width="' + bwi + '" height="' + bh + '" rx="3" fill="' + (d.sec >= 600 ? "var(--good)" : d.sec ? "var(--acc2)" : "var(--line)") + '"><title>' + d.date + ": " + fmtMin(d.sec) + ", " + d.items + " Aufgaben, " + (d.xp || 0) + " XP, " + (d.coins || 0) + " Münzen</title></rect>";
+      s += '<rect x="' + x + '" y="' + (h - bh) + '" width="' + bwi + '" height="' + bh + '" rx="3" fill="' + (d.sec >= 600 ? "var(--good)" : d.sec ? "var(--acc2)" : "var(--line)") + '"><title>' + d.date + ": " + fmtMin(d.sec) + ", " + d.items + (unit || " Aufgaben") + ", " + (d.xp || 0) + " XP, " + (d.coins || 0) + " Münzen</title></rect>";
       if (n <= 16 || i % 5 === 0) s += '<text x="' + (x + bwi / 2) + '" y="' + (h + 14) + '" text-anchor="middle">' + d.date.slice(8) + "." + d.date.slice(5, 7) + "</text>";
     });
     return s + "</svg>";
@@ -638,6 +638,8 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
     D2 += '<div class="card"><div class="row"><h2 class="grow" style="margin:0">Übungszeit pro Tag</h2><button class="tab" data-d="14" aria-pressed="' + (days === 14) + '">14 Tage</button><button class="tab" data-d="30" aria-pressed="' + (days === 30) + '">30 Tage</button><button class="tab" data-d="90" aria-pressed="' + (days === 90) + '">90 Tage</button></div>' +
       bars(r.days) + '<div class="legend"><span><i style="background:var(--good)"></i>10 Min. oder mehr</span><span><i style="background:var(--acc2)"></i>weniger</span><span class="muted">Insgesamt ' + fmtMin(t.sec) + ", " + t.items + " Aufgaben, " + t.activeDays + " aktive Tage · ✨ " + t.xp + " XP · 🪙 " + t.coins + " Münzen</span></div></div>";
 
+    if (r.days.some(function (d) { return d.malRuns; })) D2 += '<div class="card"><h2 style="margin:0 0 6px">Einmaleins pro Tag</h2>' + bars(r.days.map(function (d) { return { date: d.date, sec: d.malSec || 0, items: d.malRuns || 0, xp: d.malXp, coins: d.malCoins }; }), " Runden") +
+      '<div class="legend"><span class="muted">Getrennt von der Übungszeit oben · Minuten pro Tag, Tipp auf einen Balken zeigt die Runden</span></div></div>';
     D2 += tageCard(r, m);
     D3 += earnCard(r, days) + unitsCard(r, m);
 
@@ -655,6 +657,9 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
     }).join("") + "</table>" : '<p class="muted small">Noch keine Runden.</p>';
     D4 += "</div>";
 
+    if (r.mal && r.mal.last && r.mal.last.length) D4 += '<div class="card"><h2>Einmaleins-Runden</h2><table><tr><th>Wann</th><th>Art</th><th class="n">Dauer</th><th class="n">Ergebnis</th><th class="n">Fehler</th><th class="n">XP</th><th class="n">Münzen</th></tr>' + r.mal.last.map(function (x) {
+      return "<tr><td>" + fmtDate(x.ts) + "</td><td>" + esc((MAL_K[x.k] || x.k) + " " + (MAL_LV[x.lv] || "") + (x.tm === 0 ? " · ohne Zeit" : "")) + '</td><td class="n">' + fmtMin(x.sec) + '</td><td class="n">' + (x.k === "match" && x.tm !== 0 ? malMs(x.ms) : (x.score || 0) + (x.tm === 0 ? " von " + (x.n || 0) : " richtig")) + '</td><td class="n">' + (x.err || 0) + '</td><td class="n">' + (x.xp || 0) + '</td><td class="n">' + (x.coins || 0) + "</td></tr>";
+    }).join("") + "</table></div>";
     if (r.buys.length) D4 += '<div class="card"><h2>Käufe im Shop</h2><p class="small muted" style="margin:0 0 6px">Ausgegeben: <b>🪙 ' + r.buys.reduce(function (a, b) { return a + (b.cost || 0); }, 0) + "</b> für " + r.buys.length + (r.buys.length === 1 ? " Kauf" : " Käufe") + ' (die letzten 20). Gekauft wird nur mit Münzen, XP werden dabei nicht verbraucht.</p><table>' + r.buys.map(function (b) { return "<tr><td>" + fmtDate(b.ts) + "</td><td>" + esc(b.name) + '</td><td class="n">🪙 ' + b.cost + "</td></tr>"; }).join("") + "</table></div>";
     var sg = function (key, icon, title, sub, inner, open) { return '<details class="sg" data-sg="' + key + '"' + ((setOpen[key] === undefined ? open : setOpen[key]) ? " open" : "") + '><summary><span class="chev">▸</span><span class="grow"><b>' + icon + " " + title + '</b><span class="small muted" style="display:block">' + sub + '</span></span></summary><div class="sgb">' + inner + '</div></details>'; };
     var SET = sg("conn", "🔗", "Verbindung &amp; Geräte", "Neuer Code oder Link · Geräte trennen · Nur sichern", '<div class="row" style="gap:8px;flex-wrap:wrap"><button class="ghost" id="inv">Neuer Code / Link</button><button class="ghost" id="rev">Geräte trennen</button><button class="ghost" id="hid">Nur sichern</button></div>' + (window.WT ? "" : '<div style="margin-top:12px">' + pairCard("pairKid") + "</div>"), true) +

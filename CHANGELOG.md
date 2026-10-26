@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.152.0 – 2026-10-26
+- Propeller-Kappe (und Heiligenschein-Puls) drehen sich jetzt per CSS-Animation statt SVG-Animation. Auf dem iPhone (WebKit) blieb die Kappe an Stickern stehen. Bei „Bewegung reduzieren“ steht sie bewusst still. Die Dashboard-Bilder (`look.js`) bringen die Animation selbst mit (Server neu starten).
+- Dashboard: Verlauf mit eigener Reihe „Einmaleins pro Tag“ (Minuten, getrennt von der Übungszeit), Aktivität mit Liste „Einmaleins-Runden“, Wochenmail mit Zeile „Einmaleins“ (Runden, Tage, Minuten).
+
 ## 2.151.1 – 2026-10-25
 - Neuheiten-Wolke „✖️ Neu: 1 × 1 üben!“ auf der Startseite. Ein Tipp darauf springt direkt nach Lernen › Einmaleins. Die Wolke erscheint nur, wenn das Einmaleins-Training im Profil eingeschaltet ist, und bleibt wie die anderen Wolken 14 Tage (Eintrag in `NEWS` mit `go: "mal"`).
 

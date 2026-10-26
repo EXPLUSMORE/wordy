@@ -662,7 +662,9 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
       const rp = (await J("/api/admin/players/" + mm.j.id + "/report?days=14", { headers: H })).j;
       assert.equal(rp.mal.total.runs, 2, "zwei Einmaleins-Runden"); assert.equal(rp.mal.today.xp, 39, "XP heute"); assert.equal(rp.mal.today.coins, 10); assert.equal(rp.mal.last[0].k, "match", "letzte Runde zuerst");
       assert.equal(rp.totals.sec, pre.totals.sec, "Einmaleins zählt nicht als Übungszeit"); assert.equal(rp.totals.items, pre.totals.items, "und nicht als Aufgaben");
-      assert.equal(rp.totals.xp, pre.totals.xp + 39, "aber die echten XP zählen mit"); assert.equal(rp.meta.mal.weak[0].k, "7x8", "Schwäche im Dashboard"); }
+      assert.equal(rp.totals.xp, pre.totals.xp + 39, "aber die echten XP zählen mit"); assert.equal(rp.meta.mal.weak[0].k, "7x8", "Schwäche im Dashboard");
+      const dm = rp.days.reduce((a, d) => ({ r: a.r + (d.malRuns || 0), s: a.s + (d.malSec || 0) }), { r: 0, s: 0 }); assert.equal(dm.r, 2, "Einmaleins-Runden je Tag"); assert.equal(dm.s, 100, "Einmaleins-Sekunden je Tag");
+      mailGot = ""; assert.equal((await J("/api/admin/mail/test", { method: "POST", headers: H })).j.ok, true); assert.ok(/Einmaleins: 2 Runden/.test(mailGot.split(/--wordy-[0-9a-f]+/).filter(x => /text\/plain/.test(x)).map(x => Buffer.from(x.split(/\r?\n\r?\n/)[1].replace(/\s/g, ""), "base64").toString()).join("")), "Wochenmail nennt Einmaleins"); }
     console.log("Alle Prüfungen bestanden.");
   } catch (e) { console.error("FEHLER:", e.message, e.stack.split("\n").slice(1,4).join("|")); process.exitCode = 1; }
   srv.kill(); fake.close(); fs.rmSync(dir, { recursive: true, force: true });

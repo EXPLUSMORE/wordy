@@ -40,6 +40,7 @@ function render(av, acc, kind) {
   let svg = c.VTA.headA(av, lo);
   svg = svg.replace('style="display:block;width:1.25em;height:1.25em"', 'width="220" height="232"');
   if (!/xmlns=/.test(svg.slice(0, 120))) svg = svg.replace("<svg ", '<svg xmlns="http://www.w3.org/2000/svg" ');
+  svg = svg.replace(/(<svg [^>]*>)/, "$1<style>.acc-spin{animation:accSpin .5s linear infinite}@keyframes accSpin{to{transform:rotate(360deg)}}.acc-pulse{animation:accPulse 1.6s ease-in-out infinite}@keyframes accPulse{50%{opacity:.65}}</style>");   // Animationen im eigenständigen Bild
   if (kind === "stk") svg = svg.replace('viewBox="0 -52 220 232"', 'viewBox="22 -46 176 222"').replace('width="220" height="232"', 'width="176" height="222"');
   return svg;
 }

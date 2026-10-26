@@ -855,6 +855,7 @@ function weeklyData(pid) {
   const sum = (l, f) => l.reduce((a, x) => a + f(x), 0);
   return {
     mon, sec: sum(wk, d => d.sec), items: sum(wk, d => d.items), correct: sum(wk, d => d.correct), neu: sum(wk, d => d.neu),
+    mal: { runs: sum(wk, d => d.malRuns || 0), sec: sum(wk, d => d.malSec || 0), xp: sum(wk, d => d.malXp || 0), coins: sum(wk, d => d.malCoins || 0), days: wk.filter(d => d.malRuns).length },
     active: wk.filter(d => d.sec >= 300).length, prevSec: sum(pw, d => d.sec), prevItems: sum(pw, d => d.items),
     goals: r.goals.filter(g => g.current), plans: r.plans, problems: r.problems.slice(0, 5), meta: r.meta
   };
@@ -869,14 +870,15 @@ function mailContent(list, link) {
     const probs = d.problems.map(x => x.en + " (" + x.n + "×)");
     texts.push([p.name, "  Übungszeit: " + fmtMin(d.sec) + (trend ? " (" + trend + ")" : ""), "  Aktive Tage (mind. 5 Min.): " + d.active + " von 7",
       "  Aufgaben: " + d.items + ", richtig: " + pctOf(d.correct, d.items), "  Neue Wörter: " + d.neu,
-      ...(goals.length ? ["  Wochenziele:", ...goals.map(x => "    " + x)] : []), ...(plans.length ? ["  Lernplan:", ...plans.map(x => "    " + x)] : []),
+      ...(d.mal.runs ? ["  Einmaleins: " + d.mal.runs + " Runde" + (d.mal.runs === 1 ? "" : "n") + " an " + d.mal.days + " Tag" + (d.mal.days === 1 ? "" : "en") + ", " + fmtMin(d.mal.sec) + " (zählt nicht zur Übungszeit)"] : []), ...(goals.length ? ["  Wochenziele:", ...goals.map(x => "    " + x)] : []), ...(plans.length ? ["  Lernplan:", ...plans.map(x => "    " + x)] : []),
       ...(probs.length ? ["  Schwierige Wörter: " + probs.join(", ")] : []), ...(idle ? ["  Diese Woche wurde noch nicht gelernt."] : [])].join("\n"));
     parts.push('<h2 style="margin:22px 0 6px;font-size:18px">' + esc(p.name) + "</h2>" +
       (idle ? '<p style="color:#8a5a00">Diese Woche wurde noch nicht gelernt.</p>' : "") +
       '<table style="border-collapse:collapse;font-size:15px"><tr><td style="padding:3px 14px 3px 0;color:#555">Übungszeit</td><td><b>' + esc(fmtMin(d.sec)) + "</b> " + esc(trend) + "</td></tr>" +
       '<tr><td style="padding:3px 14px 3px 0;color:#555">Aktive Tage</td><td><b>' + d.active + " von 7</b> (mind. 5 Min.)</td></tr>" +
       '<tr><td style="padding:3px 14px 3px 0;color:#555">Aufgaben</td><td><b>' + d.items + "</b>, richtig " + pctOf(d.correct, d.items) + "</td></tr>" +
-      '<tr><td style="padding:3px 14px 3px 0;color:#555">Neue Wörter</td><td><b>' + d.neu + "</b></td></tr></table>" +
+      '<tr><td style="padding:3px 14px 3px 0;color:#555">Neue Wörter</td><td><b>' + d.neu + "</b></td></tr>" +
+      (d.mal.runs ? '<tr><td style="padding:3px 14px 3px 0;color:#555">Einmaleins</td><td><b>' + d.mal.runs + " Runde" + (d.mal.runs === 1 ? "" : "n") + "</b> an " + d.mal.days + " Tag" + (d.mal.days === 1 ? "" : "en") + ", " + esc(fmtMin(d.mal.sec)) + "</td></tr>" : "") + "</table>" +
       (goals.length ? '<p style="margin:12px 0 4px"><b>Wochenziele</b></p><ul style="margin:0;padding-left:20px">' + goals.map(x => "<li>" + esc(x) + "</li>").join("") + "</ul>" : "") +
       (plans.length ? '<p style="margin:12px 0 4px"><b>Lernplan</b></p><ul style="margin:0;padding-left:20px">' + plans.map(x => "<li>" + esc(x) + "</li>").join("") + "</ul>" : "") +
       (probs.length ? '<p style="margin:12px 0 4px"><b>Schwierige Wörter</b></p><p style="margin:0">' + esc(probs.join(", ")) + "</p>" : ""));
