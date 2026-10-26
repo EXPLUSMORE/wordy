@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.152.2 – 2026-10-26
+- Schutz beim Verbinden: Liegt auf dem Server ein deutlich größerer Lernstand (mind. 20 Wörter und mehr als das 1,6-fache) als auf dem Gerät, sendet die App nichts (kein Schnappschuss, keine Ereignisse, keine Sicherung), bis entschieden ist. Dialog: Lernstand wiederherstellen (empfohlen), trotzdem verbinden oder wieder trennen. Setup zeigt bei offener Entscheidung einen Hinweis mit „Diesen Stand trotzdem senden“.
+
 ## 2.152.1 – 2026-10-26
 - Propeller-Kappe: Drehung jetzt per Skript (rotate-Attribut je Bildaufbau) statt SVG-/CSS-Animation, weil iOS-Safari beides in den Sticker-SVGs nicht zeichnete. Bei „Bewegung reduzieren“ bleibt sie still. Dashboard-Bilder behalten die CSS-Animation.
 

@@ -1824,6 +1824,7 @@
           ? '<p class="small muted" style="margin:0 0 10px">Es wird nur eine Sicherung deines Lernstands auf dem Server abgelegt. Im Dashboard taucht niemand mit deinen Zahlen auf, es werden keine Antworten oder Zeiten übertragen.</p>'
           : '<p class="small muted" style="margin:0 0 10px">Die Eltern sehen, wann und was gelernt wurde: Übungszeit, richtige und falsche Antworten, Fortschritt pro Einheit und die Käufe im Shop. ' +
             (i.last ? 'Zuletzt gesendet ' + agoText(i.last) + '. ' : 'Noch nichts gesendet. ') + (i.pending ? i.pending + ' Einträge warten auf Netz.' : '') + '</p>') +
+        (i.hold ? '<p class="small" style="margin:0 0 10px;color:var(--bad)"><b>Es wird noch nichts gesendet.</b> Auf dem Server liegt ein größerer Lernstand. Stelle ihn unten wieder her, oder sende diesen Stand bewusst.</p><button class="btn ghost" data-act="syncrelease" style="margin-bottom:10px">Diesen Stand trotzdem senden</button>' : '') +
         (i.error ? '<p class="small" style="margin:0 0 10px;color:var(--bad)">' + esc(i.error) + '</p>' : '') +
         '<p class="small muted" style="margin:0 0 10px">Dein Lernstand wird nach jeder Runde auch auf dem Server gesichert' + (i.stateAt ? ' (zuletzt ' + agoText(i.stateAt) + ')' : '') + '. Geht das Handy kaputt oder werden die Daten gelöscht, kannst du ihn hier wiederherstellen.</p>' +
         (i.stateErr ? '<p class="small" style="margin:0 0 10px;color:var(--bad)">' + esc(i.stateErr) + '</p>' : '') +
@@ -1849,7 +1850,17 @@
       '<div class="row wrap" style="gap:8px;justify-content:center"><button class="btn soft" data-act="pairshare">Code teilen</button><button class="btn ghost" data-act="paircancel">Abbrechen</button></div>' +
       '<div class="small muted" style="margin-top:8px">' + esc(msg || "Warte auf deine Eltern …") + '</div></div>';
   }
+  /* Verbindung mit großem Server-Stand und kleinem Stand auf diesem Gerät: erst Wiederherstellen anbieten, nichts überschreiben */
+  function holdAsk(r) {
+    var W = window.WordySync, pick = r.backups.filter(function (x) { return x.words >= r.max * 0.8; })[0] || r.backups[0], dt = new Date(pick.ts);
+    if (confirm("Achtung: Auf dem Server liegt für " + r.name + " ein viel größerer Lernstand (" + pick.words + " Wörter, " + pick.coins + " Münzen, " + dt.toLocaleDateString("de-DE") + ") als auf diesem Gerät (" + r.mine + " Wörter).\n\nOK = Lernstand vom Server wiederherstellen (empfohlen)\nAbbrechen = weitere Auswahl")) {
+      W.restore(pick.day).then(function (rr) { toast(rr.error || "Lernstand wiederhergestellt."); render(); }); return;
+    }
+    if (confirm("Trotzdem verbinden?\n\nOK = Dieses Gerät sendet seinen kleineren Stand. Das Dashboard zeigt dann diese Zahlen (die Sicherungen auf dem Server bleiben erhalten).\nAbbrechen = Verbindung wieder trennen.")) { W.release().then(function () { toast("Verbunden."); render(); }); }
+    else { W.disconnect(); toast("Nicht verbunden."); render(); }
+  }
   function afterPair(r) {
+    if (r.hold) { holdAsk(r); return; }
     toast(window.WordySync.info().hidden ? "Verbunden. Dein Lernstand wird gesichert." : "Verbunden. Deine Eltern sehen jetzt deinen Lernfortschritt.");
     if (r.backups && r.backups.length) {
       var b0 = r.backups[0], dt = new Date(b0.ts);
@@ -3636,6 +3647,9 @@
       act.disabled = true; act.textContent = "Stelle wieder her …";
       window.WordySync.restore(dayv).then(function (r) { if (r.error) { toast(r.error); act.disabled = false; act.textContent = "Diese Sicherung wiederherstellen"; return; } toast("Lernstand wiederhergestellt."); render(); });
     }
+    else if (a === "syncrelease") {
+      if (confirm("Diesen kleineren Stand an den Server senden? Das Dashboard zeigt dann diese Zahlen. Die Sicherungen auf dem Server bleiben erhalten.")) window.WordySync.release().then(function () { toast("Gesendet."); render(); });
+    }
     else if (a === "syncnow") {
       var Wn = window.WordySync;
       Wn.snapshot().then(function () { return Wn.flush(); }).then(function () { return Wn.pushState(true); })
@@ -3931,6 +3945,7 @@
       if (!confirm("Dieses Gerät mit dem Lernfortschritt deiner Eltern verbinden?\n\nDeine Eltern sehen dann, wie du lernst, und dein Lernstand wird gesichert.")) return;
       window.WordySync.pair(code).then(function (r) {
         if (r.error) { toast(r.error); return; }
+        if (r.hold) { holdAsk(r); return; }
         toast("Verbunden als " + r.name + ".");
         if (r.backups && r.backups.length) {
           var b0 = r.backups[0], dt = new Date(b0.ts);

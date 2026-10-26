@@ -15,7 +15,7 @@
   function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
 
   W.connected = function () { var c = cfg(); return !!(c && c.url && c.token); };
-  W.info = function () { var c = cfg() || {}; return { connected: W.connected(), name: c.name || "", url: c.url || "", last: c.last || 0, pending: queue().length, error: c.err || "", stateAt: c.stateAt || 0, stateErr: c.stateErr || "", hidden: !!c.hidden }; };
+  W.info = function () { var c = cfg() || {}; return { connected: W.connected(), hold: !!c.hold, name: c.name || "", url: c.url || "", last: c.last || 0, pending: queue().length, error: c.err || "", stateAt: c.stateAt || 0, stateErr: c.stateErr || "", hidden: !!c.hidden }; };
 
   /* Ereignis vormerken (nur wenn verbunden) */
   W.log = function (kind, d) {
@@ -34,7 +34,7 @@
 
   function flush(keep) {
     var c = cfg();
-    if (!c || !c.token || busy || !g.fetch) return Promise.resolve(false);
+    if (!c || !c.token || busy || c.hold || !g.fetch) return Promise.resolve(false);
     var q = queue(); if (!q.length) return Promise.resolve(true);
     busy = true;
     var batch = q.slice(0, BATCH);
@@ -52,7 +52,7 @@
 
   /* Stand der Wörter, Einheiten und Münzen: damit sieht man auch, was schon vor der Verbindung gelernt war */
   W.snapshot = function () {
-    var c = cfg(); if (!c || !c.token || !g.fetch) return Promise.resolve(false);
+    var c = cfg(); if (!c || !c.token || c.hold || !g.fetch) return Promise.resolve(false);   // hold = Verbindung wartet auf Entscheidung (Wiederherstellen oder bewusst überschreiben)
     var st = VT.state, words = {}, units = {}, id;
     if (c.hidden) return Promise.resolve(false);
     var fresh = VT.isFresh();   // ein leerer Stand (neues Gerät) darf Wörter und Übersicht auf dem Server nicht überschreiben; die Einheitenliste ist unkritisch und geht immer mit
@@ -196,7 +196,7 @@
     return g.fetch(c.url + path, { method: method, headers: { "Content-Type": "application/json", Authorization: "Bearer " + c.token }, body: body ? JSON.stringify(body) : undefined });
   }
   W.pushState = function (force) {
-    var c = cfg(); if (!c || !c.token || !g.fetch) return Promise.resolve(false);
+    var c = cfg(); if (!c || !c.token || c.hold || !g.fetch) return Promise.resolve(false);
     if (VT.isFresh()) return Promise.resolve(false);
     if (!force && Date.now() - lastState < 10 * 60000) return Promise.resolve(false);
     lastState = Date.now();
@@ -216,7 +216,7 @@
       .then(function (x) {
         if (!x.ok) return { error: x.j && x.j.error || "Wiederherstellen hat nicht geklappt." };
         var res = VT.restoreState(x.j.state); if (res.error) return res;
-        setCfg({ stateErr: "" }); lastState = 0;
+        setCfg({ stateErr: "", hold: false }); lastState = 0;
         return W.snapshot().then(function () { return W.pull(true); }).then(function () { return { ok: true, ts: x.j.ts, coins: x.j.coins }; });
       }).catch(function () { return { error: "Der Server ist nicht erreichbar." }; });
   };
@@ -254,9 +254,22 @@
       }).catch(function () { return { error: "Der Server ist nicht erreichbar. Gibt es Netz, und stimmt die Adresse?" }; });
   };
   /* gemeinsamer Abschluss: Token speichern, ersten Abgleich machen, ggf. Sicherungen anbieten */
+  /* Schutz: Liegt auf dem Server ein deutlich größerer Lernstand als hier, wird nichts gesendet (hold), bis wiederhergestellt oder bewusst weitergemacht wird */
+  W.release = function () {
+    setCfg({ hold: false });
+    return W.snapshot().then(function () { return flush(false); }).then(function () { return W.pull(true); }).then(function () { return W.pushState(true); });
+  };
   function finishPair(url, token, name, hidden) {
     lsSet("wordy.sync." + pid(), { url: url, token: token, name: name, last: 0, hidden: !!hidden });
     W.log("hello", { v: g.WORDY_VERSION || "" });
+    if (!hidden) return W.stateList().then(function (l) {
+      var srv = l.reduce(function (m, x) { return Math.max(m, x.words || 0); }, 0), mine = Object.keys(VT.state.w).length;
+      if (srv >= 20 && mine < srv * 0.6) { setCfg({ hold: true }); return { ok: true, name: name, backups: l, hold: true, mine: mine, max: srv }; }
+      return finishPair2(name);
+    });
+    return finishPair2(name);
+  }
+  function finishPair2(name) {
     if (VT.isFresh()) return W.snapshot().then(function () { return flush(false); }).then(function () { return W.pull(true); }).then(function () { return W.stateList(); }).then(function (l) { return { ok: true, name: name, backups: l }; });
     return W.snapshot().then(function () { return flush(false); }).then(function () { return W.pull(true); }).then(function () { W.pushState(true); return { ok: true, name: name }; });
   }
