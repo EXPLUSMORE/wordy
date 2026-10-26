@@ -181,9 +181,9 @@ html[data-bg="stars"] .card,html[data-bg="clouds"] .card,html[data-bg="space"] .
 @keyframes stShine{0%{background-position:150% 0}55%,100%{background-position:-60% 0}}
 .fstk{display:block;margin-top:4px;min-height:24px;font-size:12px}.stkpv{display:grid;place-items:center;height:100%}
 /* ZUBEHÖR-ANIMATIONEN (CSS statt SVG-Animation, läuft auch in Safari/WebKit; im Dashboard-Bild steckt dieselbe Regel im SVG, siehe server/look.js) */
-.acc-spin{animation:accSpin .5s linear infinite}@keyframes accSpin{to{transform:rotate(360deg)}}
+
 .acc-pulse{animation:accPulse 1.6s ease-in-out infinite}@keyframes accPulse{50%{opacity:.65}}
-@media (prefers-reduced-motion:reduce){.acc-spin,.acc-pulse{animation:none}}
+@media (prefers-reduced-motion:reduce){.acc-pulse{animation:none}}
 /* EINMALEINS */
 .mal-ov{position:fixed;left:0;top:0;width:100%;height:100%;max-width:100vw;z-index:9000;background:var(--paper);overflow-x:hidden;overflow-y:auto;overscroll-behavior:none;contain:layout paint}
 .mal-ov,.mal-ov *{touch-action:pan-y;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}   /* schnelles Tippen darf nicht zoomen oder die Seite verschieben (Doppeltipp-Zoom) */

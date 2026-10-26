@@ -63,5 +63,16 @@
     var a = ACCS[val]; if (!a) return ""; var sl = slotOf(val);
     return '<svg viewBox="' + VB[sl] + '" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;overflow:hidden">' + a[0] + '</svg>';
   }
+  /* Propeller: per Skript gedreht (rotate-Attribut), weil iOS-Safari weder SMIL noch CSS-Animationen in diesen Sticker-SVGs zuverlässig zeichnet */
+  if (global.document && global.requestAnimationFrame) {
+    var calm = global.matchMedia && global.matchMedia("(prefers-reduced-motion: reduce)");
+    (function tick(t) {
+      if (!(calm && calm.matches) && !global.document.hidden) {
+        var els = global.document.getElementsByClassName("acc-spin"), a = ((t || 0) % 500) / 500 * 360;
+        for (var i = 0; i < els.length; i++) els[i].setAttribute("transform", "rotate(" + a.toFixed(1) + ")");
+      }
+      global.requestAnimationFrame(tick);
+    })();
+  }
   global.VTACC = { setOver: function (o) { over = o; }, thumb: thumb, has: function (v) { return !!ACCS[v]; } };
 })(window);
