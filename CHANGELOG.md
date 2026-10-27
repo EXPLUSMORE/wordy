@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.155.0 – 2026-10-27
+- Zwei neue Hals-Teile im Zubehör (legendär, je 150 Münzen): **Boss-Kette ($)** mit fettem goldenem Dollarzeichen und **Fette Goldkette mit M** mit goldenem M. Dicke Goldkette mit Gliedern, Anhänger mit dunkler Kontur und Glanz. In Shop › Zubehör, Anprobe, Showroom, bei Freunden und im Dashboard (Bild über `look.js`). Englische Namen: Boss chain ($), Fat gold chain with M. Hinweis: In reinen Kopf-Ansichten (Sticker, Kopfzeile) sieht man nur den oberen Teil der Kette, der Anhänger zeigt sich bei der ganzen Figur.
+
 ## 2.154.9 – 2026-10-27
 - **Fehler bei „Kommt in x Tagen wieder“ behoben:** Der Wiederholungsabstand wuchs bei jeder richtigen Antwort, auch wenn das Wort noch gar nicht fällig war (Füllwörter in Runden, Wörter einer Einheit, Spiele). Nach rund 7 richtigen Antworten, auch an einem einzigen Tag, stand dort „in 400 Tage“, obwohl das Wort schon in den nächsten Runden wieder drankam.
   - Jetzt ändert eine richtige Antwort auf ein noch nicht fälliges Wort den Plan nicht mehr (zählt als Zusatzübung: Antwort und XP ja, kein Fortschritt im Abstand, keine Münzen wie bisher). Die Rückmeldung sagt „Zusatzübung: … kommt in N Tagen zur Wiederholung“ und zeigt die tatsächlich verbleibende Zeit.
