@@ -1350,7 +1350,7 @@
     /* Zeit-Münzen: je Schwelle (10, 20, 30, 45, 60 Min. …) einmal am Tag */
     var tsi = d.timeStep || 0, tcs = 0;
     while (tsi < TIME_STEPS.length && d.sec >= TIME_STEPS[tsi][0] * 60) { tcs += TIME_STEPS[tsi][1]; tsi++; }
-    if (tcs > 0) { d.timeStep = tsi; var tb = boost(tcs); addCoins(tb); addCl("ziel", tb); rewards.coins += tb; rewards.timeBonus = { coins: tb, min: TIME_STEPS[tsi - 1][0] }; rewards.parts.push({ c: tb, t: "Zeit-Bonus: " + TIME_STEPS[tsi - 1][0] + " Min. geübt" }); }
+    if (tcs > 0) { d.timeStep = tsi; var tb = boost(tcs); addCoins(tb); addCl("ziel", tb); rewards.coins += tb; rewards.timeBonus = { coins: tb, min: TIME_STEPS[tsi - 1][0] }; ev("bonus", { k: "zeit", c: tb, min: TIME_STEPS[tsi - 1][0] }); rewards.parts.push({ c: tb, t: "Zeit-Bonus: " + TIME_STEPS[tsi - 1][0] + " Min. geübt" }); }
     /* Wochen-Münzen: 3, 5 und 7 Tage mit erreichtem Tagesziel in der Woche (Mo–So) */
     if (rewards.goalReached) {
       var wmon = weekMon(d.date), wk = state.wk;
@@ -1358,7 +1358,7 @@
       wk.n += 1;
       var wcs = 0, wdays = 0;
       WEEK_STEPS.forEach(function (st) { if (wk.n >= st[0] && wk.paid < st[0]) { wcs += st[1]; wk.paid = st[0]; wdays = st[0]; } });
-      if (wcs > 0) { var wb = boost(wcs); addCoins(wb); addCl("ziel", wb); rewards.coins += wb; rewards.weekBonus = { coins: wb, days: wdays }; rewards.parts.push({ c: wb, t: "Wochen-Bonus: " + wdays + " Tage Tagesziel geschafft" }); }
+      if (wcs > 0) { var wb = boost(wcs); addCoins(wb); addCl("ziel", wb); rewards.coins += wb; rewards.weekBonus = { coins: wb, days: wdays }; ev("bonus", { k: "woche", c: wb, days: wdays }); rewards.parts.push({ c: wb, t: "Wochen-Bonus: " + wdays + " Tage Tagesziel geschafft" }); }
     }
     progressLog = { neu: 0, stufe: 0, gemeistert: 0, kartei: 0, einheit: 0, serie: 0, parts: [], n: {} };
     save(true);

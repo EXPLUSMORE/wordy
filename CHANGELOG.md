@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.154.1 – 2026-10-27
+- Auswertung: Zeit- und Wochen-Münzen werden getrennt erfasst. Die App meldet sie als Ereignis „bonus“ (`zeit`/`woche`), der Server zählt sie je Tag (`days[].timeCoins/weekCoins`) und gesamt (`bonus`), ohne die Münzen doppelt zu zählen. Dashboard › Wörter: Zeile „Bonus-Münzen“ in der Karte „Verdient mit Wörtern“. `tools/xp_analyse.js`: neue Zeilen Zeit-Münzen, Wochen-Münzen, Anteil an allen Münzen, Münzen je Woche, aktive Tage je Woche. **Server-Update nötig** (nur dann zählt das Dashboard; die App sendet die Ereignisse schon vorher mit).
+
 ## 2.154.0 – 2026-10-27
 - Münzkonzept (Grundlage: Auswertung von Magnus, Chrissi, Ani): Wer täglich 30 Minuten übt, kann sich jede Woche etwas Ordentliches kaufen.
   - Tagesaufgaben +50 %: Tagesziel 20 → 30, Daily Challenge 10 → 15, Bonus-Runden 5 → 8, Missionen × 1,5 (15 bis 27).

@@ -112,6 +112,7 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
   function earnCard(r, days) {
     var e = r.wordEarn || { xp: 0, coins: 0, runs: 0 };
     return '<div class="card"><h2>Verdient mit Wörtern (' + days + ' Tage)</h2><div class="kpis">' + kpi("✨ " + e.xp, "XP aus Lernrunden") + kpi("🪙 " + e.coins, "Münzen aus Lernrunden") + kpi(e.runs, e.runs === 1 ? "Runde" : "Runden") + "</div>" +
+      (r.bonus && (r.bonus.timeCoins || r.bonus.weekCoins) ? '<p class="small" style="margin:10px 0 0"><b>Bonus-Münzen (' + days + ' Tage):</b> 🪙 ' + r.bonus.timeCoins + ' Zeit-Münzen an ' + r.bonus.timeDays + (r.bonus.timeDays === 1 ? ' Tag' : ' Tagen') + ' · 🪙 ' + r.bonus.weekCoins + ' Wochen-Münzen (' + r.bonus.weekN + 'x erreicht). <span class="muted">Schon in den Münzen oben enthalten.</span></p>' : '') +
       '<p class="small muted" style="margin:8px 0 0">Gezählt sind Lernrunden (gemischt, neue Wörter, Fehlerkartei, Sätze, Verben, Lernpfad). Arena, Spiele und Grammatik stehen im Reiter Aktivität. Bei den Einheiten siehst du, was in Runden mit genau dieser Einheit verdient wurde; Runden ohne feste Einheit und ältere Runden sind dort nicht zugeordnet.</p></div>';
   }
   function xpTxt(s) { return s.xp == null ? "–" : s.xp; }

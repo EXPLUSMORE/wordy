@@ -45,6 +45,8 @@ function analyse(name, rep) {
     learnXp: learn.xp, learnCoins: learn.coins, otherXp: Math.max(0, xp - learn.xp), otherCoins: Math.max(0, coins - learn.coins),
     xpNow: meta.xp || 0, coinsNow: meta.coins || 0, spent20: buys.reduce((a, b) => a + (b.cost || 0), 0), buys20: buys.length, modeSec,
     perItem: (t.items || 0) ? xp / t.items : 0,
+    timeCoins: (rep.bonus || {}).timeCoins || 0, weekCoins: (rep.bonus || {}).weekCoins || 0, timeDays: (rep.bonus || {}).timeDays || 0, weekN: (rep.bonus || {}).weekN || 0,
+    weeklyCoinsReal: coins / (N / 7),
   };
 }
 
@@ -62,6 +64,10 @@ function report(list, scen) {
   row("Davon Lernrunden: XP / Münzen", a => fmt(a.learnXp) + " / " + fmt(a.learnCoins)); row("Davon Spiele, Arena, Grammatik: XP / Münzen", a => fmt(a.otherXp) + " / " + fmt(a.otherCoins));
   row("XP jetzt (Stand App)", a => fmt(a.xpNow)); row("Rang jetzt (neue Leiter)", a => RANKS[rankOf(a.xpNow)][1]);
   row("Münzen jetzt (Kontostand)", a => fmt(a.coinsNow)); row("Käufe (letzte " + 20 + "): Anzahl / Münzen", a => a.buys20 + " / " + fmt(a.spent20));
+  row("Zeit-Münzen (seit v2.154): Münzen / Tage", a => fmt(a.timeCoins) + " / " + a.timeDays);
+  row("Wochen-Münzen (seit v2.154): Münzen / Mal erreicht", a => fmt(a.weekCoins) + " / " + a.weekN);
+  row("Anteil Zeit- und Wochen-Münzen an allen Münzen", a => a.coins ? f1((a.timeCoins + a.weekCoins) * 100 / a.coins) + " %" : "–");
+  row("Münzen je Woche (Durchschnitt)", a => fmt(a.weeklyCoinsReal)); row("Aktive Tage je Woche", a => f1(a.activeDays / (a.days / 7)));
   L.push("\n## Rang-Prognose (bei gleichem Tempo wie im Zeitraum, je Kalendertag)\n");
   L.push("| Spieler | Rang jetzt | nächster Rang | Tage bis dorthin | Tage bis „The real Unreal“ |", "|---|---|---|---:|---:|");
   const last = RANKS[RANKS.length - 1][0];
@@ -75,7 +81,7 @@ function report(list, scen) {
   scen.forEach(([fx, fc]) => {
     L.push("| " + fx + " | " + fc + " | " + list.map(a => { const i = rankOf(a.xpNow), nx = RANKS[i + 1], per = a.xpPerDay * fx; return nx && per ? fmt((nx[0] - a.xpNow) / per) : "–"; }).join(" | ") + " | " + list.map(a => fmt(a.coinsPerDay * 7 * fc)).join(" | ") + " |");
   });
-  L.push("\n## Hinweise\n- Münzen kommen auch aus Missionen, Pass und Serien; sie stecken in „Münzen gesamt“, soweit sie über Lernrunden verbucht wurden.\n- „Käufe“ zeigt nur die letzten 20; der Kontostand sagt, wie viel ungenutzt liegt.\n- Große Unterschiede bei „XP je Minute“ zwischen Spielern zeigen, ob die Vergabe Vielspieler oder Schnelltipper bevorzugt.");
+  L.push("\n## Hinweise\n- Münzen kommen auch aus Missionen, Pass und Serien; sie stecken in „Münzen gesamt“, soweit sie über Lernrunden verbucht wurden.\n- Zeit- und Wochen-Münzen sind in den Münzen gesamt schon enthalten (Aufteilung). Zeigt die Zeile 0, hat der Server die Ereignisse noch nicht (Server-Update) oder es wurde noch nichts davon verdient. Für den Zwei-Wochen-Test: „node tools/xp_analyse.js 14 Magnus,Chrissi,Checker“.\n- „Käufe“ zeigt nur die letzten 20; der Kontostand sagt, wie viel ungenutzt liegt.\n- Große Unterschiede bei „XP je Minute“ zwischen Spielern zeigen, ob die Vergabe Vielspieler oder Schnelltipper bevorzugt.");
   return L.join("\n");
 }
 
