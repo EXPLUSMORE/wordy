@@ -905,10 +905,16 @@
   }
   /* Rangaufstieg (ab v2.112): Ränge schenken nichts mehr, weder Münzen noch Stücke. Es gibt nur die Figurenwahl (rankPicks, nur die Figur, Sticker werden gekauft);
      alles andere muss gekauft oder erlernt werden. Rangstufen schalten Artikel im Shop frei (Mindestrang `rank`). */
-  var RANK_COINS = 1000;   // v2.154.4: jeder Rangaufstieg gibt 1.000 Münzen (ohne Münzfaktor)
+  /* Münzen je Rangaufstieg (v2.154.5): 10 % der XP-Strecke zum vorigen Rang, auf 5 gerundet, mindestens 25, nie weniger als beim Rang davor (Bronze II 25 … Elite 600 … The real Unreal 1.350); ohne Münzfaktor */
+  var RANK_COIN_TAB = null;
+  function rankCoins(i) {
+    if (!RANK_COIN_TAB) { RANK_COIN_TAB = [0]; var prev = 0; for (var k = 1; k < RANKS.length; k++) { prev = Math.max(prev, 25, Math.round((RANKS[k].xp - RANKS[k - 1].xp) / 50) * 5); RANK_COIN_TAB.push(prev); } }
+    return RANK_COIN_TAB[i] || 0;
+  }
   function rankGift(i) {
     checkSets();
-    if (i > 0 && state.daily) { addCoins(RANK_COINS); addCl("rang", RANK_COINS); ev("bonus", { k: "rang", c: RANK_COINS, rank: RANKS[i] && RANKS[i].n }); }
+    var rc = rankCoins(i);
+    if (i > 0 && rc > 0 && state.daily) { addCoins(rc); addCl("rang", rc); ev("bonus", { k: "rang", c: rc, rank: RANKS[i] && RANKS[i].n }); }
   }
   /* Rang-Figur zur Wahl: offen ist jede erreichte Stufe, die noch nicht abgeholt wurde (gilt rückwirkend). Wer alle Figuren der Stufe schon hat, bekommt Münzen. */
   /* Neue Figur in einer Stufe (v2.123): Wer die Stufe schon erreicht hatte, bekommt nachträglich keine Wahl angeboten (Platin II hatte vorher nur das Raketen-Lama) */
@@ -1765,7 +1771,7 @@
   function resumeHas(key) { return resumeList().some(function (x) { return x.key === key; }); }
 
   global.VT = {
-    RANK_COINS: RANK_COINS, LEVELS: LEVELS, enName: enName, ACC: ACC, ACC_SLOTS: ACC_SLOTS, accOf: accOf, stickerAcc: stickerAcc, lookInfo: lookInfo, accToggle: accToggle, accClear: accClear, medalGroups: medalGroups, RANKS: RANKS, AVATARS: AVATARS, SHOP: SHOP, BADGES: BADGES,
+    rankCoins: rankCoins, LEVELS: LEVELS, enName: enName, ACC: ACC, ACC_SLOTS: ACC_SLOTS, accOf: accOf, stickerAcc: stickerAcc, lookInfo: lookInfo, accToggle: accToggle, accClear: accClear, medalGroups: medalGroups, RANKS: RANKS, AVATARS: AVATARS, SHOP: SHOP, BADGES: BADGES,
     SEC_PER_ITEM: SEC_PER_ITEM, secPerItem: secPerItem, itemsFor: itemsFor, recordPace: recordPace,
     resumePack: resumePack, resumeUnpack: resumeUnpack, resumeList: resumeList, resumeSave: resumeSave, resumeTake: resumeTake, resumeHas: resumeHas,
     load: load, save: save, get state() { return state; },

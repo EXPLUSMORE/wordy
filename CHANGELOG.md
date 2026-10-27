@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.154.6 – 2026-10-27
+- Rangaufstieg-Münzen gestaffelt statt 1.000 für alle: 10 % der XP-Strecke zum vorigen Rang, auf 5 gerundet, mindestens 25 und nie weniger als beim Rang davor. Beispiele: Bronze II/III +25, Silber I +40, Gold I +100, Platin I +260, Diamant I +400, Elite I–III und Champion I +600, Unreal I +750, The real Unreal +1.350. Alle 33 Aufstiege zusammen ca. 20.300 Münzen (statt 33.000). Ohne Münzfaktor. Die Ränge-Liste zeigt die Münzen je Rang, das Rang-Fenster die Summe.
+
 ## 2.154.5 – 2026-10-27
 - Duell-Sieg gibt 20 statt 5 Münzen (weiterhin höchstens 3 Siege am Tag). Boss-Truhen geben 25 bis 50 statt 10 bis 25 Münzen (Obergrenze 50, auch mit Münzfaktor). Erklärtext „So verdienst du Münzen“ angepasst.
 

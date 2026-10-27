@@ -1072,7 +1072,7 @@
   }
   /* Neuheiten-Wolke auf der Startseite: kündigt ein neues Spiel an. Neues Spiel = Eintrag in NEWS (id = Spiel-ID aus VTG.GAMES, date = Datum der Veröffentlichung).
      Sie verschwindet nach dem ersten Spielen, nach ✕, nach dem Antippen oder nach 14 Tagen (pro Profil in profile.cloudSeen). */
-  var NEWS = [{ id: "muenzen", icon: "🪙", title: "Mehr Münzen!", sub: "Zeit-/Wochen-Bonus, 1.000 pro Rang", date: "2026-10-27", go: "verdienst" },
+  var NEWS = [{ id: "muenzen", icon: "🪙", title: "Mehr Münzen!", sub: "Zeit-/Wochen-Bonus, Münzen pro Rang", date: "2026-10-27", go: "verdienst" },
     { id: "einmaleins", icon: "✖️", title: "Neu: 1 × 1 üben!", sub: "Blitz, Stimmt's? und Match – mit und ohne Zeit", date: "2026-10-25", go: "mal" },
     { id: "zubehoer", icon: "🎩", title: "Zubehör ist da!", sub: "Für Figuren & Sticker, mit Anprobe", date: "2026-10-24", shop: "acc" },
     { id: "dropzauber", icon: "🔮", title: "Zauber-Drop!", sub: "Zauber-Eule, Sternenstaub & mehr", date: "2026-10-19", shop: "avatar" },
@@ -1940,7 +1940,7 @@
       '• Einmaleins bis <b>10</b> je Runde, höchstens <b>150</b> am Tag<br>' +
       '<b style="display:block;margin-top:6px">Extras</b>' +
       '• Boss-Truhen <b>25 bis 50</b>, manchmal mit Überraschung · Pass-Geschenke<br>' +
-      '• <b>Jeder Rangaufstieg +1.000</b> 🪙 (gibt es unabhängig vom Münzfaktor) · dazu neue Shop-Artikel und manchmal eine Figur zur Wahl<br>' +
+      '• <b>Jeder Rangaufstieg</b> gibt Münzen, je höher der Rang, desto mehr (Bronze II <b>+25</b>, Gold I <b>+100</b>, Diamant I <b>+400</b>, Elite I <b>+600</b> … bis <b>+1.350</b>; die Liste siehst du unter Ränge) · dazu neue Shop-Artikel und manchmal eine Figur zur Wahl<br>' +
       '• Erste Woche <b>×1,5</b> Münzen · jeden Tag ein <b>Tagesangebot</b> mit 20 % Rabatt · Unreal-Sachen kosten nur noch die Hälfte<br>' +
       '<span class="muted">Jedes Wort zahlt höchstens einmal pro Tag und nur, wenn es zur Wiederholung dran war. Immer dieselben Wörter zu üben bringt nichts – neue Einheiten und fällige Wörter schon. Missionen, Tagesziel und Serien werden am Ende der Runde gutgeschrieben.</span></div></details></section>';
   }
@@ -1954,7 +1954,7 @@
       var pc = isCur && next ? Math.round(cur.into * 100 / cur.span) : 0;
       return '<div class="rank-i' + (isCur ? " cur" : reached ? "" : " off") + '"><div class="row" style="gap:10px;align-items:center">' +
         '<span style="width:22px;text-align:center">' + (isCur ? "▶" : reached ? "✓" : "🔒") + '</span>' +
-        '<b style="flex:1 1 auto">' + esc(r.n) + '</b><span class="small muted tnum">ab ' + r.xp.toLocaleString("de-DE") + ' XP</span></div>' +
+        '<b style="flex:1 1 auto">' + esc(r.n) + '</b><span class="small muted tnum">' + (i > 0 ? '🪙 +' + S.rankCoins(i).toLocaleString("de-DE") + ' · ' : '') + 'ab ' + r.xp.toLocaleString("de-DE") + ' XP</span></div>' +
         (isCur && next ? '<div class="bar" style="margin:6px 0 2px 32px"><i style="width:' + pc + '%"></i></div><div class="small muted" style="margin-left:32px">Noch ' +
           (next.xp - st.xp).toLocaleString("de-DE") + ' XP bis ' + esc(next.n) + '</div>' : "") +
         (gift ? '<div class="small" style="margin:3px 0 0 32px">🎁 Figur zur Wahl: <b>' + esc(gift) + '</b></div>' : "") +
@@ -2807,7 +2807,7 @@
       (coinGain ? '<span class="pill fin-coin" style="margin-left:10px">🪙 +<b data-count="' + coinGain + '">' + coinGain + '</b></span>' : "") + '</div>' +
       '<div class="row" style="margin-top:8px"><b>' + esc(r1.rank.n) + '</b><span class="spacer"></span><span class="small muted tnum">' + st.xp + (r1.next ? " / " + r1.next.xp : "") + ' XP</span></div>' +
       '<div class="bar fin-bar" style="margin-top:6px"><i style="width:' + pct(r1) + '%"></i></div>' +
-      (rankUp ? '<div class="fin-rankup"><span>⬆️ Neuer Rang</span><b>' + esc(r1.rank.n) + '</b><span>+' + (Math.max(1, S.RANKS.indexOf(r1.rank) - S.RANKS.indexOf(r0.rank)) * S.RANK_COINS).toLocaleString("de-DE") + ' 🪙</span></div>' : "") +
+      (rankUp ? '<div class="fin-rankup"><span>⬆️ Neuer Rang</span><b>' + esc(r1.rank.n) + '</b><span>+' + (function () { var t = 0, i0 = S.RANKS.indexOf(r0.rank), i1 = S.RANKS.indexOf(r1.rank); for (var q = i0 + 1; q <= i1; q++) t += S.rankCoins(q); return t; })().toLocaleString("de-DE") + ' 🪙</span></div>' : "") +
       ((rw.parts || []).length ? '<div class="fin-parts"><div class="eyebrow" style="margin:12px 0 4px">Wofür es Münzen gab</div>' +
         rw.parts.map(function (x) { return '<div class="row small"><span style="flex:1 1 auto">' + esc(x.t) + '</span><b class="tnum">+' + x.c + ' 🪙</b></div>'; }).join("") + '</div>' : "") + '</section>';
     if (SS.sentOk) html += '<section class="card"><div class="eyebrow">Satzbau</div><p style="margin:6px 0 0">' + SS.sentOk + ' ' + plural(SS.sentOk, "Satz", "Sätze") + ' richtig zusammengesetzt.</p></section>';
