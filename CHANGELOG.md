@@ -9,6 +9,11 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.154.9 – 2026-10-27
+- **Fehler bei „Kommt in x Tagen wieder“ behoben:** Der Wiederholungsabstand wuchs bei jeder richtigen Antwort, auch wenn das Wort noch gar nicht fällig war (Füllwörter in Runden, Wörter einer Einheit, Spiele). Nach rund 7 richtigen Antworten, auch an einem einzigen Tag, stand dort „in 400 Tage“, obwohl das Wort schon in den nächsten Runden wieder drankam.
+  - Jetzt ändert eine richtige Antwort auf ein noch nicht fälliges Wort den Plan nicht mehr (zählt als Zusatzübung: Antwort und XP ja, kein Fortschritt im Abstand, keine Münzen wie bisher). Die Rückmeldung sagt „Zusatzübung: … kommt in N Tagen zur Wiederholung“ und zeigt die tatsächlich verbleibende Zeit.
+  - Einmalige Korrektur bestehender Lernstände: Abstände, die länger sind als zweimal das Alter des Profils plus 3 Tage, werden darauf gekürzt (nie verlängert). Dadurch kann bei einzelnen Wörtern die Stufe etwas sinken (z. B. „Gemeistert“ → „Sitzt“), und sie kommen früher zur Wiederholung.
+
 ## 2.154.8 – 2026-10-27
 - Neue Übung **„Stimmt's?“** für Wörter der Stufe 0 und 1 (ersetzt „Was passt nicht?“): englisches Wort mit einer deutschen Bedeutung, in der Hälfte der Fälle die falsche (ähnliches Wort derselben Einheit). Antwort ✔ Stimmt / ✘ Stimmt nicht (Tasten 1 und 2). Richtig zählt als „ordentlich“ statt „sicher“ (Raten ist möglich: 6 statt 10 XP, schwächerer Lernfaktor); bei einem Fehler kommt das Wort später als normale Übersetzungs-Aufgabe wieder.
 

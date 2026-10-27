@@ -3213,7 +3213,10 @@
       var r = S.state.w[w.id];
       comp = res.after > res.before && res.after === 4 ? "Dieses Wort sitzt jetzt langfristig. ★"
         : res.after > res.before ? "Stufe erreicht: " + S.LEVELS[res.after].n + "."
-        : r.iv >= 1 ? "Kommt in " + r.iv + " " + plural(r.iv, "Tag", "Tagen") + " wieder." : "";
+        : "";
+      var dl = Math.max(1, Math.round((r.due - Date.now()) / 864e5));
+      if (res.early) comp = "Zusatzübung: Das Wort war noch nicht fällig. Es kommt in " + dl + " " + plural(dl, "Tag", "Tagen") + " zur Wiederholung.";
+      else if (!comp && r.iv >= 1) comp = "Kommt in " + dl + " " + plural(dl, "Tag", "Tagen") + " wieder.";
     } else if (!ok) comp = "Kommt gleich noch einmal – und häufiger, bis es sitzt.";
     foot.innerHTML = '<div class="verdict ' + (ok ? "ok" : "no") + ' pop">' + (ok ? "Richtig" : "Noch nicht") +
       (note ? " · " + esc(note) : "") +

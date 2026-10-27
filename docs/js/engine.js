@@ -417,6 +417,7 @@
     if (!ok && readBackup("auto")) { state = Object.assign(freshState(), readBackup("auto").s); restored = true; }
     buildCatalogue(state);
     priceMigrate();
+    ivMigrate();
     rankPickSkip();
     rollDay();
     regenHearts();
@@ -619,6 +620,10 @@
       r.no++; r.lapses++; r.chain = 0; r.reps = 0; r.iv = 0;
       r.ef = clamp(r.ef - 0.2, 1.3, 2.8);
       r.due = Date.now() + 60000;
+    } else if (!wasDue) {
+      /* v2.154.9: Zusatzübung (Wort war noch gar nicht fällig, z. B. als Füllwort einer Runde oder im Spiel): zählt als richtig, ändert aber den Wiederholungsplan nicht.
+         Vorher wuchs der Abstand bei jeder richtigen Antwort (nach 7 Antworten an einem Tag „in 400 Tagen“), obwohl das Wort schon nächste Woche wieder gebraucht wurde. */
+      r.ok++; r.chain = o.hint ? 0 : r.chain + 1;
     } else {
       r.ok++; r.chain = o.hint ? 0 : r.chain + 1;
       if (o.hint) {
@@ -637,7 +642,7 @@
     var it = byId[id], vi = !it && id.indexOf("v#") === 0 ? verbs[+id.slice(2)] : null;   // unregelmäßige Verben haben keinen Wort-Eintrag
     if (vi) it = { en: vi.en, de: vi.de, unit: "verbs" };
     ev("a", { id: id, g: g, h: o.hint ? 1 : 0, b: before, a: after, en: it ? it.en : "", de: it ? it.de : "", u: it ? it.unit : "" });
-    return { before: before, after: after, rec: r };
+    return { before: before, after: after, rec: r, early: g > 0 && !wasDue };
   }
 
   /* ---------- Fortschrittsmünzen ----------
@@ -1253,6 +1258,18 @@
     });
     if (refund > 0) { state.coins += refund; state.priceNote = refund; }
     pf.priceVer = 4;
+  }
+
+  /* Einmalige Korrektur (v2.154.9): Abstände, die nur durch Zusatzübungen so groß geworden sind (bis 400 Tage), auf das Mögliche begrenzen:
+     ein Abstand kann nie viel länger sein als das Profil alt ist (zweifaches Alter plus 3 Tage). Es wird nur gekürzt, nie verlängert. */
+  function ivMigrate() {
+    if (!state || state.ivFix) return;
+    var now = Date.now(), age = Math.max(1, Math.ceil((now - (state.created || now)) / 864e5)), cap = Math.min(400, Math.ceil(age * 2) + 3), n = 0;
+    Object.keys(state.w || {}).forEach(function (id) {
+      var r = state.w[id]; if (!r || !(r.iv > cap)) return;
+      r.iv = cap; var d = (r.last || now) + cap * 864e5; if (r.due > d) r.due = d; n++;
+    });
+    state.ivFix = 1; if (n) state.ivFixed = n;
   }
 
   function boostActive() { var b = state.path && state.path.boost; return !!(b && b.on && b.left > 0); }
