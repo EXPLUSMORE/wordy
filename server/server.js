@@ -374,7 +374,7 @@ function report(pid, days) {
       x.malRuns = (x.malRuns || 0) + 1; x.malSec = (x.malSec || 0) + (d.sec || 0); x.malXp = (x.malXp || 0) + (d.xp || 0); x.malCoins = (x.malCoins || 0) + (d.coins || 0);
       malRuns.push({ ts: e.ts, k: String(d.k || "").slice(0, 10), lv: String(d.lv || "").slice(0, 10), score: d.score || 0, err: d.err || 0, sec: d.sec || 0, ms: d.ms || 0, xp: d.xp || 0, coins: d.coins || 0, rec: d.rec ? 1 : 0, tm: d.tm === 0 ? 0 : 1, n: d.n || 0 });
     } else if (e.k === "bonus") {   // Zeit- und Wochen-Münzen: nur zur Aufteilung, die Münzen stecken schon in den Runden (ss)
-      const x = day(e.ts), c = Math.max(0, Math.min(500, +d.c || 0));
+      const x = day(e.ts), c = Math.max(0, Math.min(5000, +d.c || 0));
       if (d.k === "zeit") { x.timeCoins = (x.timeCoins || 0) + c; bonus.timeCoins += c; } else if (d.k === "woche") { x.weekCoins = (x.weekCoins || 0) + c; bonus.weekCoins += c; bonus.weekN++; } else if (d.k === "rang") { x.rankCoins = (x.rankCoins || 0) + c; bonus.rankCoins += c; bonus.rankN++; }
     } else if (e.k === "buy") buys.push({ ts: e.ts, name: d.name || d.id, cost: d.cost || 0 });
   }
