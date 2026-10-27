@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.154.8 – 2026-10-27
+- Neue Übung **„Stimmt's?“** für Wörter der Stufe 0 und 1 (ersetzt „Was passt nicht?“): englisches Wort mit einer deutschen Bedeutung, in der Hälfte der Fälle die falsche (ähnliches Wort derselben Einheit). Antwort ✔ Stimmt / ✘ Stimmt nicht (Tasten 1 und 2). Richtig zählt als „ordentlich“ statt „sicher“ (Raten ist möglich: 6 statt 10 XP, schwächerer Lernfaktor); bei einem Fehler kommt das Wort später als normale Übersetzungs-Aufgabe wieder.
+
 ## 2.154.7 – 2026-10-27
 - Übung „Was passt nicht?“ entfernt (die vier Wörter waren nicht immer eindeutig trennbar und warfen mehr Fragen auf, als sie brachten). Sie kommt in keiner Runde mehr vor; gemerkte alte Aufgaben dieser Art werden als normale Wort-Aufgabe gezeigt.
 

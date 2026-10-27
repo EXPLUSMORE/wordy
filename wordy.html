@@ -1544,7 +1544,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.154.7";window.WORDY_BUILD="aac97d7250";</script>
+<script>window.WORDY_VERSION="2.154.8";window.WORDY_BUILD="086cc8717c";</script>
 </head>
 <body>
 <div id="app">
@@ -13170,7 +13170,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       if (focus === "gap" && w.gap) return "gap";
       if (focus === "match") return "match";
     }
-    if (lv <= 1) c = ["mc_en_de", "mc_de_en", "listen"];
+    if (lv <= 1) c = ["mc_en_de", "mc_de_en", "listen", "stimmts"];
     else if (lv === 2) c = ["mc_de_en", "gap", "match", "listen", "spell"];
     else c = ["type", "spell", "gap", "match", "type"];
     c = c.filter(function (t) { return t !== "gap" || w.gap; });
@@ -13576,6 +13576,19 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       foot.innerHTML = footCheck();
       if (audioAvailable()) setTimeout(function () { speak(spoken, 0.9); }, 300);
     },
+    /* „Stimmt's?“ (v2.154.8, Stufe 0 und 1): englisches Wort mit einer deutschen Bedeutung; in der Hälfte der Fälle die falsche (ähnliches Wort derselben Einheit) */
+    stimmts: function (t, body, foot) {
+      var w = t.w, fake = distractors(w, "de", 1)[0];
+      if (t.truth == null) t.truth = !fake || Math.random() < 0.5;
+      var shown = t.truth ? w.de : fake.de;
+      t.opts = [{ label: "✔ Stimmt", ok: t.truth }, { label: "✘ Stimmt nicht", ok: !t.truth }];
+      body.innerHTML = '<div class="stack" style="padding-top:8px"><div class="eyebrow">Stimmt das?</div>' +
+        '<div class="row" style="gap:12px">' + (audioAvailable() ? speakBtn(w.en) : "") + '<div class="prompt">' + esc(w.en) + '</div></div>' +
+        '<div class="card" style="background:var(--card-2);box-shadow:none;text-align:center"><div class="small muted">bedeutet</div><div class="prompt de" style="margin-top:2px">„' + esc(shown) + '“</div></div>' +
+        optionList(t.opts) + '</div>';
+      foot.innerHTML = footCheck();
+      if (audioAvailable()) setTimeout(function () { speak(w.en); }, 300);
+    },
     odd: function (t, body, foot) { return RENDER.mc_en_de(t, body, foot); },   // „Was passt nicht?“ ist seit v2.154.7 entfernt; Sicherheitsnetz für alte, gemerkte Aufgaben
     verbintro: function (t, body, foot) {
       var v = t.v, w = verbWord(v);
@@ -13891,8 +13904,8 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       if (t.opts[i].ok) b.classList.add("right");
       else if (i === SS.pick) b.classList.add("wrong");
     });
-    var res2 = applyGrade(w, ok ? 2 : 0);
-    if (!ok) SS.retry.push({ type: t.type, w: w });
+    var res2 = applyGrade(w, ok ? (t.type === "stimmts" ? 1 : 2) : 0);   // Ja/Nein ist leichter zu raten: nur „ordentlich“ (1) statt „sicher“ (2)
+    if (!ok) SS.retry.push({ type: t.type === "stimmts" ? "mc_en_de" : t.type, w: w });
     if (t.type === "gap") {   // der ganze Satz mit dem richtigen Wort wird gezeigt und noch einmal vorgelesen
       var gu = $(".gapline u"); if (gu) { gu.innerHTML = esc(w.gap); gu.className = ok ? "gfill ok" : "gfill bad"; }
       if (audioAvailable()) setTimeout(function () { speak(w.ex, 0.9); }, 250);
