@@ -3,7 +3,7 @@
   "use strict";
   var S = global.VT, view = document.getElementById("view"), tabs = document.getElementById("tabs"),
       sessionEl = document.getElementById("session"), tab = "home", detailUnit = null,
-      uebenSeg = "modi", statsSeg = "ueb", shopSeg = "shop", startMin = null, lastRec = null, openGroups = {}, openFolds = {}, wFilter = "alle", wQuery = "", wMax = 40;
+      uebenSeg = "modi", statsSeg = "ueb", shopSeg = "shop", earnOpen = false, startMin = null, lastRec = null, openGroups = {}, openFolds = {}, wFilter = "alle", wQuery = "", wMax = 40;
 
   /* ---------- Werkzeug ---------- */
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]; }); }
@@ -1072,7 +1072,8 @@
   }
   /* Neuheiten-Wolke auf der Startseite: kündigt ein neues Spiel an. Neues Spiel = Eintrag in NEWS (id = Spiel-ID aus VTG.GAMES, date = Datum der Veröffentlichung).
      Sie verschwindet nach dem ersten Spielen, nach ✕, nach dem Antippen oder nach 14 Tagen (pro Profil in profile.cloudSeen). */
-  var NEWS = [{ id: "einmaleins", icon: "✖️", title: "Neu: 1 × 1 üben!", sub: "Blitz, Stimmt's? und Match – mit und ohne Zeit", date: "2026-10-25", go: "mal" },
+  var NEWS = [{ id: "muenzen", icon: "🪙", title: "Mehr Münzen!", sub: "Zeit- & Wochen-Bonus, Unreal halbiert", date: "2026-10-27", go: "verdienst" },
+    { id: "einmaleins", icon: "✖️", title: "Neu: 1 × 1 üben!", sub: "Blitz, Stimmt's? und Match – mit und ohne Zeit", date: "2026-10-25", go: "mal" },
     { id: "zubehoer", icon: "🎩", title: "Zubehör ist da!", sub: "Für Figuren & Sticker, mit Anprobe", date: "2026-10-24", shop: "acc" },
     { id: "dropzauber", icon: "🔮", title: "Zauber-Drop!", sub: "Zauber-Eule, Sternenstaub & mehr", date: "2026-10-19", shop: "avatar" },
     { id: "verkleidung", icon: "🎭", title: "Neue Outfits!", sub: "Ritter, Ninja, Zauberer … ab in den Shop", date: "2026-10-19", shop: "outfit" },
@@ -1917,20 +1918,29 @@
       '<div style="font-family:Newsreader,serif;font-size:30px;font-weight:600;margin:6px 0 4px" class="tnum">+' + total + ' <span class="small muted" style="font-family:Karla,sans-serif;font-weight:400">heute verdient</span></div>' +
       row("Lernfortschritt", "neue Wörter, höhere Stufen, Fehlerkartei, Einheiten", "+" + c.fortschritt) +
       row("Missionen", c.missionenDone + " von " + c.missionenAll + " erfüllt", "+" + c.missionen, c.missionenDone === c.missionenAll && c.missionenAll > 0) +
-      row("Tagesziel", c.zielDone ? "geschafft" : "noch offen: " + S.goalMin() + " Minuten üben", c.zielDone ? "+" + c.ziel : "+30 möglich", c.zielDone) +
+      row("Tagesziel & Boni", c.zielDone ? "Tagesziel, Challenge, Zeit- und Wochen-Bonus" : "noch offen: " + S.goalMin() + " Minuten üben", c.zielDone ? "+" + c.ziel : "+30 möglich", c.zielDone) +
       row("Arena", "Tageslimit 30", c.arena + " / 30", c.arena >= 30) +
       (c.eltern ? row("Ziele der Eltern", "Wochenziel oder Lernplan geschafft", "+" + c.eltern, true) : "") +
       (c.streakNext ? row("Serien-Bonus", "noch " + c.streakDays + " " + plural(c.streakDays, "Tag", "Tage") + " bis zum " + c.streakNext + ". Tag", "+" + c.streakBonus + " möglich") : "") +
-      '<details style="margin-top:10px"><summary class="small" style="cursor:pointer;font-weight:700">So verdienst du Münzen</summary>' +
+      '<details id="earnHow" style="margin-top:10px"' + (earnOpen ? " open" : "") + '><summary class="small" style="cursor:pointer;font-weight:700">So verdienst du Münzen</summary>' +
       '<div class="small" style="margin-top:8px;line-height:1.7">' +
-      '• <b>Neues Wort</b> +1, <b>höhere Stufe</b> +1 (Gemeistert +4), <b>Wort aus der Fehlerkartei</b> +2<br>' +
-      '• <b>Neue Einheit entdeckt</b> +8 (fünf Wörter angefangen), <b>Einheit geschafft</b> +30 (Verben +60)<br>' +
-      '• <b>Missionen</b> 15 bis 27, <b>Tagesziel</b> +30, <b>Challenge</b> +15 (Bonus-Runden +8), <b>Serien</b> bei 3, 7, 14, 30, 60, 100 Tagen<br>' +
-      '• <b>Zeit-Bonus</b> pro Tag: 10 Min. +5, 20 Min. +10, 30 Min. +15, 45 Min. +20, 60 Min. +25 (zusammen 75), danach +5 je weitere 30 Min.<br>' +
-      '• <b>Wochen-Bonus</b> für Tage mit geschafftem Tagesziel: 3 Tage +20, 5 Tage +40, 7 Tage +60<br>' +
-      '• <b>Arena</b> bis 30 pro Tag, +10 bei Rekord<br>' +
-      '• <b>Boss-Truhen</b> 10 bis 25, manchmal mit Überraschung · <b>Rangaufstieg</b> 50 plus 10 je Rang und ein Geschenk<br>' +
-      '• <b>Erste Woche</b> ×1,5 Münzen · jeden Tag ein <b>Tagesangebot</b> mit 20 % Rabatt<br>' +
+      '<b>Beim Üben</b><br>' +
+      '• Wort wiedererkannt (Stufe 2) <b>+2</b>, Stufe 3 <b>+1</b>, Gemeistert <b>+4</b>, Wort aus der Fehlerkartei <b>+2</b><br>' +
+      '• Neue Einheit entdeckt <b>+8</b> (fünf Wörter angefangen), Einheit geschafft <b>+30</b> (Verben +60)<br>' +
+      '<b style="display:block;margin-top:6px">Jeden Tag</b>' +
+      '• Tagesziel geschafft <b>+30</b> · Daily Challenge <b>+15</b> · Bonus-Runden <b>+8</b> je Runde (bis 3)<br>' +
+      '• Missionen <b>15 bis 27</b> je Mission<br>' +
+      '• <b>Zeit-Bonus</b> (neu): 10 Min. üben <b>+5</b>, 20 Min. <b>+10</b>, 30 Min. <b>+15</b>, 45 Min. <b>+20</b>, 60 Min. <b>+25</b> (zusammen 75), danach +5 bei 90 und 120 Min.<br>' +
+      '<b style="display:block;margin-top:6px">Jede Woche (Mo bis So)</b>' +
+      '• <b>Wochen-Bonus</b> (neu) für Tage mit geschafftem Tagesziel: 3 Tage <b>+20</b>, 5 Tage <b>+40</b>, 7 Tage <b>+60</b><br>' +
+      '• Lern-Serie: 3 Tage <b>+15</b>, 7 <b>+40</b>, 14 <b>+80</b>, 30 <b>+200</b>, 60 <b>+300</b>, 100 <b>+500</b> · Challenge-Serie: 3 Tage +10, 7 +30, 14 +60, 30 +150<br>' +
+      '<b style="display:block;margin-top:6px">Spielen</b>' +
+      '• Arena bis <b>30</b> pro Tag, <b>+10</b> bei Rekord · Duell-Sieg <b>+5</b> (bis 3 am Tag)<br>' +
+      '• Einmaleins bis <b>10</b> je Runde, höchstens <b>150</b> am Tag<br>' +
+      '<b style="display:block;margin-top:6px">Extras</b>' +
+      '• Boss-Truhen <b>10 bis 25</b>, manchmal mit Überraschung · Pass-Geschenke<br>' +
+      '• Ein Rangaufstieg gibt keine Münzen, dafür neue Shop-Artikel und manchmal eine Figur zur Wahl<br>' +
+      '• Erste Woche <b>×1,5</b> Münzen · jeden Tag ein <b>Tagesangebot</b> mit 20 % Rabatt · Unreal-Sachen kosten nur noch die Hälfte<br>' +
       '<span class="muted">Jedes Wort zahlt höchstens einmal pro Tag und nur, wenn es zur Wiederholung dran war. Immer dieselben Wörter zu üben bringt nichts – neue Einheiten und fällige Wörter schon. Missionen, Tagesziel und Serien werden am Ende der Runde gutgeschrieben.</span></div></details></section>';
   }
   /* ---------- Ränge und XP: Übersicht ---------- */
@@ -1953,10 +1963,14 @@
       '<p class="small muted" style="margin:6px 0 8px">Dein Stand: <b>' + st.xp.toLocaleString("de-DE") + ' XP</b> · ' + esc(cur.rank.n) + '. Bis Platin III darfst du dir bei manchen Rängen <b>eine Figur aussuchen</b>. Den passenden Sticker gibt es immer nur im Shop zu kaufen. Ab Diamant I wird nichts mehr geschenkt: Die legendären Figuren schaltet der Rang nur im Shop frei, du musst sie kaufen. Pass-Figuren gibt es nur im Wochenpass.</p>' + rows +
       '<div class="eyebrow" style="margin-top:14px">So bekommst du XP</div>' +
       '<div class="small" style="margin-top:6px;line-height:1.7">' +
-      '• Richtige Antwort: <b>+10</b> (sicher) oder <b>+6</b> (mit kleinem Tippfehler)<br>' +
+      '• Richtige Antwort: <b>+10</b> (sicher) oder <b>+6</b> (mit kleinem Tippfehler oder Hinweis) · ein neues Wort zum ersten Mal ansehen: <b>+2</b><br>' +
       '• Falsche Antwort: <b>+2</b> (Dranbleiben zählt)<br>' +
       '• Satz richtig gebaut: <b>+14</b>, falsch <b>+3</b><br>' +
-      '• Arena: <b>+2</b> pro Treffer, dazu am Ende bis zu <b>+60</b> nach Punkten</div>' +
+      '• Arena und Wortspiele: <b>+2</b> pro Treffer, dazu am Ende bis zu <b>+60</b> nach Punkten<br>' +
+      '• Grammatik: bis zu <b>+40</b> je Lektion<br>' +
+      '• Einmaleins: bis zu <b>+30</b> je Runde (Match 15 oder 25), höchstens <b>150</b> XP am Tag<br>' +
+      '• Mit einem <b>Booster</b> gibt es doppelte XP<br>' +
+      '<span class="muted">Ab Elite I wächst der Abstand von Rang zu Rang um 500 XP (5.000, 5.500, 6.000 …). „The real Unreal“ erreichst du ab ' + S.RANKS[S.RANKS.length - 1].xp.toLocaleString("de-DE") + ' XP.</span></div>' +
       '<div class="eyebrow" style="margin-top:14px">Stufen eines Worts</div>' +
       '<div class="small" style="margin-top:6px;line-height:1.7">' + S.LEVELS.map(function (l) { return '• <b>' + esc(l.n) + '</b>: ' + esc(l.hint); }).join("<br>") +
       '<br><span class="muted">Mit jeder richtigen Wiederholung wächst der Abstand zur nächsten. „Gemeistert“ heißt: mindestens drei Wochen Abstand.</span></div></section>';
@@ -2400,7 +2414,7 @@
       });
     }
     else if (shopSeg === "raenge") html += ranksCard();
-    else html += wishCard() + coinsCard() + shopCard();
+    else { html += wishCard() + coinsCard() + shopCard(); earnOpen = false; }
     view.innerHTML = html + '</div>';
   }
 
@@ -3756,7 +3770,8 @@
       var nid = act.getAttribute("data-id"), pfc = S.state.profile; (pfc.cloudSeen || (pfc.cloudSeen = {}))[nid] = 1; if (pfc.cloudForce) delete pfc.cloudForce[nid]; S.save(true);
       var cl = act.closest(".newscloud"); if (cl) cl.remove();
       var nn = NEWS.filter(function (x) { return x.id === nid; })[0];
-      if (a === "newscloud" && nn && nn.go === "mal") { tab = "lernen"; lernSeg = "mal"; uebenSeg = "modi"; detailUnit = null; render(); view.scrollTop = 0; }
+      if (a === "newscloud" && nn && nn.go === "verdienst") { tab = "shop"; shopSeg = "shop"; earnOpen = true; render(); var eh = document.getElementById("earnHow"); if (eh) eh.scrollIntoView({ block: "start" }); }
+      else if (a === "newscloud" && nn && nn.go === "mal") { tab = "lernen"; lernSeg = "mal"; uebenSeg = "modi"; detailUnit = null; render(); view.scrollTop = 0; }
       else if (a === "newscloud" && nn && nn.shop) { tab = "beute"; beuteSeg = "shop"; shopTab = nn.shop; render(); view.scrollTop = 0; }
       else if (a === "newscloud" && global.VTG) global.VTG.start(nid);
     }

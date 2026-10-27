@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.154.3 – 2026-10-27
+- Neuheiten-Wolke „🪙 Mehr Münzen!“ auf der Startseite (14 Tage). Tippen springt nach Beute › Shop und klappt „So verdienst du Münzen“ auf.
+- Erklärtexte überarbeitet: „So verdienst du Münzen“ jetzt nach Üben, Tag, Woche, Spielen und Extras gegliedert, mit Zeit-Bonus, Wochen-Bonus, den neuen Tagesaufgaben-Werten und korrekten Wort-Münzen (Stufe 2 +2, Stufe 3 +1, Gemeistert +4); veraltete Angabe zum Rangaufstieg entfernt. „So bekommst du XP“ ergänzt um erstes Ansehen, Wortspiele, Grammatik, Einmaleins, Booster und die flachere Rangleiter. Karte „Münzen heute“: Zeile „Tagesziel & Boni“.
+
 ## 2.154.2 – 2026-10-27
 - Dashboard: Der **Münzfaktor** steht jetzt unter Einstellungen › **Belohnungen** (über „Extramünzen schenken“) und nicht mehr versteckt bei den Boss-Runden im Lernpfad. Feinere Stufen: 0,5 · 0,75 · 1 · 1,25 · 1,4 · 1,5 · 1,75 · 2 · 2,5 · 3. Wirkt auf alle Münzen des Kindes (auch Zeit- und Wochen-Münzen). **Server-Update nötig.**
 
