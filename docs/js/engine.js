@@ -765,14 +765,14 @@
     act.forEach(function (x) { var r = state.s[x.id]; if (r && r.reps) { seen++; if (r.iv >= 21) mastered++; } });
     return { total: act.length, seen: seen, mastered: mastered, ok: state.totals.sentOk };
   }
-  /* Duell abgerechnet (einmal je Duell): zählt Spiele und Siege, ein Sieg gibt 5 Münzen (höchstens 3 am Tag) */
+  /* Duell abgerechnet (einmal je Duell): zählt Spiele und Siege, ein Sieg gibt 20 Münzen (v2.154.5, höchstens 3 am Tag) */
   function duelDone(id, win) {
     var d = state.duels || (state.duels = { p: 0, w: 0, seen: {} });
     if (!d.seen) d.seen = {};
     if (d.seen[id]) return { coins: 0, fresh: false };
     d.seen[id] = 1; Object.keys(d.seen).slice(0, -80).forEach(function (k) { delete d.seen[k]; });
     d.p++; var c = 0;
-    if (win) { d.w++; var day = state.daily; day.duelWins = (day.duelWins || 0) + 1; if (day.duelWins <= 3) { c = boost(5); addCoins(c); addCl("ziel", c); } }
+    if (win) { d.w++; var day = state.daily; day.duelWins = (day.duelWins || 0) + 1; if (day.duelWins <= 3) { c = boost(20); addCoins(c); addCl("ziel", c); } }
     save(true); return { coins: c, fresh: true, win: !!win };
   }
   /* Crew-Belohnung abgeholt (der Server hat Ziel und Beitrag geprüft): Münzen mit Booster, Zähler für Medaillen */
@@ -1609,7 +1609,7 @@
     if (adv) {
       if (st.last && !p.chests[st.section]) {
         p.chests[st.section] = 1;
-        chest = { section: st.section, title: st.sectionTitle, coins: Math.min(25, boost(10 + Math.floor(Math.random() * 16))), boost: Math.random() < 0.1 };   // höchstens 25 Münzen je Boss (auch mit Booster/Münzfaktor)
+        chest = { section: st.section, title: st.sectionTitle, coins: Math.min(50, boost(25 + Math.floor(Math.random() * 26))), boost: Math.random() < 0.1 };   // 25 bis 50 Münzen je Boss, höchstens 50 (auch mit Booster/Münzfaktor)
         p.pending.push(chest);
       }
     }

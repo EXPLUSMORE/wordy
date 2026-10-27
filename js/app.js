@@ -1936,10 +1936,10 @@
       '• <b>Wochen-Bonus</b> (neu) für Tage mit geschafftem Tagesziel: 3 Tage <b>+20</b>, 5 Tage <b>+40</b>, 7 Tage <b>+60</b><br>' +
       '• Lern-Serie: 3 Tage <b>+15</b>, 7 <b>+40</b>, 14 <b>+80</b>, 30 <b>+200</b>, 60 <b>+300</b>, 100 <b>+500</b> · Challenge-Serie: 3 Tage +10, 7 +30, 14 +60, 30 +150<br>' +
       '<b style="display:block;margin-top:6px">Spielen</b>' +
-      '• Arena bis <b>30</b> pro Tag, <b>+10</b> bei Rekord · Duell-Sieg <b>+5</b> (bis 3 am Tag)<br>' +
+      '• Arena bis <b>30</b> pro Tag, <b>+10</b> bei Rekord · Duell-Sieg <b>+20</b> (bis 3 am Tag)<br>' +
       '• Einmaleins bis <b>10</b> je Runde, höchstens <b>150</b> am Tag<br>' +
       '<b style="display:block;margin-top:6px">Extras</b>' +
-      '• Boss-Truhen <b>10 bis 25</b>, manchmal mit Überraschung · Pass-Geschenke<br>' +
+      '• Boss-Truhen <b>25 bis 50</b>, manchmal mit Überraschung · Pass-Geschenke<br>' +
       '• <b>Jeder Rangaufstieg +1.000</b> 🪙 (gibt es unabhängig vom Münzfaktor) · dazu neue Shop-Artikel und manchmal eine Figur zur Wahl<br>' +
       '• Erste Woche <b>×1,5</b> Münzen · jeden Tag ein <b>Tagesangebot</b> mit 20 % Rabatt · Unreal-Sachen kosten nur noch die Hälfte<br>' +
       '<span class="muted">Jedes Wort zahlt höchstens einmal pro Tag und nur, wenn es zur Wiederholung dran war. Immer dieselben Wörter zu üben bringt nichts – neue Einheiten und fällige Wörter schon. Missionen, Tagesziel und Serien werden am Ende der Runde gutgeschrieben.</span></div></details></section>';

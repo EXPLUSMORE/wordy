@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.154.5 – 2026-10-27
+- Duell-Sieg gibt 20 statt 5 Münzen (weiterhin höchstens 3 Siege am Tag). Boss-Truhen geben 25 bis 50 statt 10 bis 25 Münzen (Obergrenze 50, auch mit Münzfaktor). Erklärtext „So verdienst du Münzen“ angepasst.
+
 ## 2.154.4 – 2026-10-27
 - **Jeder Rangaufstieg gibt 1.000 Münzen** (`RANK_COINS`, ohne Münzfaktor, auch bei mehreren Rängen auf einmal). Anzeige im Rang-Fenster („+1.000 🪙“), in „Münzen heute“ (Zeile Rangaufstieg) und in „So verdienst du Münzen“. Dashboard und `tools/xp_analyse.js` weisen die Rang-Münzen getrennt aus (Ereignis `bonus` mit `k: "rang"`). Wolke aktualisiert („1.000 pro Rang“). **Server-Update nötig** für die Aufteilung im Dashboard.
 
