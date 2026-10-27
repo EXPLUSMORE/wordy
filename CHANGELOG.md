@@ -9,6 +9,14 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.154.0 – 2026-10-27
+- Münzkonzept (Grundlage: Auswertung von Magnus, Chrissi, Ani): Wer täglich 30 Minuten übt, kann sich jede Woche etwas Ordentliches kaufen.
+  - Tagesaufgaben +50 %: Tagesziel 20 → 30, Daily Challenge 10 → 15, Bonus-Runden 5 → 8, Missionen × 1,5 (15 bis 27).
+  - Neu: **Zeit-Münzen** je Tag und Schwelle: 10 Min. +5, 20 Min. +10, 30 Min. +15, 45 Min. +20, 60 Min. +25 (zusammen 75), danach +5 bei 90 und 120 Min. Zählt die Übungszeit des Tages (nicht das Einmaleins).
+  - Neu: **Wochen-Münzen** für Tage mit geschafftem Tagesziel (Mo–So): 3 Tage +20, 5 Tage +40, 7 Tage +60.
+  - Anzeige im Ergebnisfenster („Zeit-Bonus“, „Wochen-Bonus“) und in „So verdienst du Münzen“. Münzfaktor und erste Woche ×1,5 wirken wie bisher.
+- Alle **Unreal-Preise halbiert** (Figuren, Sticker, Titel; 33 Artikel, Summe 146.400 → 73.200). Wer schon etwas davon gekauft hat, bekommt die Differenz einmalig als Münzen zurück (`priceVer` 4; geschenkte Rang-Figuren ausgenommen). Der ganze Shop kostet jetzt 184.755 statt 257.955 Münzen.
+
 ## 2.153.0 – 2026-10-27
 - XP-Rangleiter flacher: Elite I bleibt bei 35.000 XP, die Abstände wachsen ab dort um +500 statt +1.000 je Rang (5.000, 5.500, 6.000 …). „The real Unreal“ ab 201.500 XP statt 278.000. Rang folgt weiter aus den XP; wer jetzt über einer neuen Schwelle liegt, steigt auf (z. B. Ani: Champion II). Grundlage: Auswertung `tools/xp_analyse.js` von Magnus, Chrissi und Ani.
 

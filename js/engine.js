@@ -275,6 +275,8 @@
     ["kopf", "ears", "Kopfhörer", 80], ["waerme", "ears", "Ohrenwärmer", 45], ["ohrring", "ears", "Ohrringe", 35],
     ["schal", "neck", "Schal", 50], ["fliege", "neck", "Fliege", 35], ["kette", "neck", "Goldkette", 90], ["tuch", "neck", "Halstuch", 35], ["medaille", "neck", "Medaille", 60]];
   SHOP = SHOP.concat(ACC.map(function (a) { return { id: "ac:" + a[0], kind: "acc", slot: a[1], label: a[2], cost: a[3], val: a[0], rar: a[3] <= 40 ? "common" : a[3] <= 70 ? "rare" : a[3] <= 100 ? "epic" : "legend" }; }));
+  /* v2.154: Unreal-Preise halbiert (alter Preis in `was`, für die einmalige Gutschrift in priceMigrate) */
+  SHOP.forEach(function (x) { if (x.rar === "unreal" && x.cost > 0 && !x.reward && !x.pass) { x.was = x.cost; x.cost = Math.max(5, Math.round(x.cost / 2 / 5) * 5); } });
   /* Englische Namen aller Gegenstände (Gadget: nebenbei Vokabeln lernen). Sticker = Name der Figur + " sticker". */
   var EN = {
     "av:🦊": "Fox", "av:🐼": "Panda", "av:🐢": "Turtle", "av:🦉": "Owl", "av:🐙": "Octopus", "av:🦕": "Dino", "av:🦈": "Shark", "av:🦄": "Unicorn", "av:eisbaer": "Polar bear", "av:eispingu": "Ice penguin", "av:eisrobbe": "Ice seal", "av:eiskoenig": "Ice king",
@@ -512,15 +514,15 @@
     fixMissions();
   }
   var MISSION_POOL = [
-    { id: "m20", n: "15 verschiedene Wörter üben", goal: 15, type: "items", coins: 10 },
-    { id: "m30", n: "25 verschiedene Wörter üben", goal: 25, type: "items", coins: 14 },
-    { id: "mgoal", n: "Tagesziel erreichen", goal: 1, type: "goal", coins: 15 },
-    { id: "mbox", n: "5 Fehlerkartei-Wörter richtig beantworten", goal: 5, type: "box", coins: 12 },
-    { id: "mchain", n: "10 richtige in Folge", goal: 10, type: "chain", coins: 12 },
-    { id: "mnew", n: "6 Wörter von früher wiedererkennen", goal: 6, type: "new", coins: 10 },
-    { id: "mmaster", n: "2 Wörter meistern", goal: 2, type: "master", coins: 18 },
-    { id: "msent", n: "4 Sätze richtig bauen", goal: 4, type: "sent", coins: 14 },
-    { id: "marena", n: "Eine Arena-Runde spielen", goal: 1, type: "arena", coins: 10 }
+    { id: "m20", n: "15 verschiedene Wörter üben", goal: 15, type: "items", coins: 15 },
+    { id: "m30", n: "25 verschiedene Wörter üben", goal: 25, type: "items", coins: 20 },
+    { id: "mgoal", n: "Tagesziel erreichen", goal: 1, type: "goal", coins: 22 },
+    { id: "mbox", n: "5 Fehlerkartei-Wörter richtig beantworten", goal: 5, type: "box", coins: 18 },
+    { id: "mchain", n: "10 richtige in Folge", goal: 10, type: "chain", coins: 18 },
+    { id: "mnew", n: "6 Wörter von früher wiedererkennen", goal: 6, type: "new", coins: 15 },
+    { id: "mmaster", n: "2 Wörter meistern", goal: 2, type: "master", coins: 27 },
+    { id: "msent", n: "4 Sätze richtig bauen", goal: 4, type: "sent", coins: 20 },
+    { id: "marena", n: "Eine Arena-Runde spielen", goal: 1, type: "arena", coins: 15 }
   ];
   var ARENA_NAMES = { match: "Match-Rausch", blitz: "Blitzrunde", survival: "Letztes Herz", hunt: "Fehlerjagd" };
   /* Aus einer Vorlage wird die Tagesmission; die Arena-Mission bekommt einen Spielmodus */
@@ -782,7 +784,10 @@
   function crewJoined() { var cr = state.crew || (state.crew = { joined: 0, gold: 0 }); if (!cr.joined) { cr.joined = 1; save(true); } }
   var CHAL_BONUS = { 3: 10, 7: 30, 14: 60, 30: 150 };
   /* Challenge-Serie für die Anzeige: Streak (zählt nur, wenn gestern oder heute geschafft), letzte 7 Tage */
-  var XTRA_MAX = 3, XTRA_COINS = 5;
+  var XTRA_MAX = 3, XTRA_COINS = 8, CHAL_COINS = 15, GOAL_COINS = 30;   // v2.154: Tagesaufgaben +50 %
+  /* Zeit-Münzen (einmal je Schwelle und Tag, Minuten → Münzen) und Wochen-Münzen (Tage mit erreichtem Tagesziel) */
+  var TIME_STEPS = [[10, 5], [20, 10], [30, 15], [45, 20], [60, 25], [90, 5], [120, 5]], WEEK_STEPS = [[3, 20], [5, 40], [7, 60]];
+  function weekMon(ds) { var x = new Date(ds + "T12:00:00"); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return x.getFullYear() + "-" + ("0" + (x.getMonth() + 1)).slice(-2) + "-" + ("0" + x.getDate()).slice(-2); }
   function chalInfo() {
     var ch = state.chal || { last: "", streak: 0, best: 0, days: {} }, t = today(), days = [], i;
     for (i = 6; i >= 0; i--) { var dd = new Date(t + "T12:00:00"); dd.setDate(dd.getDate() - i); var k = dd.getFullYear() + "-" + ("0" + (dd.getMonth() + 1)).slice(-2) + "-" + ("0" + dd.getDate()).slice(-2); days.push({ date: k, ok: !!ch.days[k], today: i === 0, wd: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"][dd.getDay()] }); }
@@ -1224,16 +1229,20 @@
   function findCollItem(id) { var c = collection(false), r = null; c.shelves.forEach(function (s) { s.items.forEach(function (i) { if (i.id === id) r = i; }); }); return r; }
   /* Preisumstellung: Wurde etwas günstiger, gibt es die Differenz einmalig als Münzen zurück */
   function priceMigrate() {
-    var pf = state.profile; if (!pf || pf.priceVer >= 3) return;
-    var refund = 0;
+    var pf = state.profile; if (!pf || pf.priceVer >= 4) return;
+    var refund = 0, v3 = pf.priceVer >= 3, picked = {};
+    Object.keys(state.rankPick || {}).forEach(function (k) { picked[state.rankPick[k]] = 1; });   // geschenkte Rang-Figuren nicht erstatten
     (pf.owned || []).forEach(function (id) {
       var it = itemById(id); if (!it) return;
-      var o = OLD_PRICES[id];
-      if (o == null && id.indexOf("st:") === 0) { var oa = OLD_PRICES["av:" + id.slice(3)]; o = oa ? Math.max(20, Math.round(oa / 20) * 10) : null; }
-      if (o != null && o > it.cost) refund += o - it.cost;
+      if (!v3) {
+        var o = OLD_PRICES[id];
+        if (o == null && id.indexOf("st:") === 0) { var oa = OLD_PRICES["av:" + id.slice(3)]; o = oa ? Math.max(20, Math.round(oa / 20) * 10) : null; }
+        if (o != null && o > it.cost) refund += o - it.cost;
+      }
+      if (it.was && it.was > it.cost && !picked[id]) refund += it.was - it.cost;   // v2.154: Unreal-Preise halbiert
     });
     if (refund > 0) { state.coins += refund; state.priceNote = refund; }
-    pf.priceVer = 3;
+    pf.priceVer = 4;
   }
 
   function boostActive() { var b = state.path && state.path.boost; return !!(b && b.on && b.left > 0); }
@@ -1295,7 +1304,7 @@
       .concat(bumpMission("arena", res.arena ? 1 : 0));
     var goalSec = goalMin() * 60;
     if (d.sec >= goalSec && !d.done) {
-      d.done = true; rewards.goalReached = true; rewards.stamp = passStamp(); var zc = boost(20); addCoins(zc); addCl("ziel", zc); rewards.coins += zc;
+      d.done = true; rewards.goalReached = true; rewards.stamp = passStamp(); var zc = boost(GOAL_COINS); addCoins(zc); addCl("ziel", zc); rewards.coins += zc;
       rewards.missions = rewards.missions.concat(bumpMission("goal", 1));
       if (state.streak.last !== d.date) {
         state.streak.count += 1; state.streak.last = d.date;
@@ -1321,7 +1330,7 @@
     rewards.parts = foldParts();
     /* Daily Challenge: die erste gemischte Runde des Tages (mind. 8 Aufgaben) gibt einmalig einen Bonus */
     if (complete && res.daily && res.items >= 8 && !d.chal) {
-      d.chal = 1; var bc = boost(10); addCoins(bc); addCl("ziel", bc); rewards.coins += bc; rewards.challenge = bc;
+      d.chal = 1; var bc = boost(CHAL_COINS); addCoins(bc); addCl("ziel", bc); rewards.coins += bc; rewards.challenge = bc;
       rewards.parts.push({ c: bc, t: "Daily-Challenge-Bonus" });
       /* Challenge-Serie: Tage in Folge mit geschaffener Daily Challenge, Zusatzbonus bei 3, 7, 14 und 30 */
       var ch = state.chal || (state.chal = { last: "", streak: 0, best: 0, days: {} });
@@ -1337,6 +1346,19 @@
     else if (complete && res.daily && d.chal && res.items >= 8 && res.correct >= res.items * 0.6 && (d.xtra || 0) < XTRA_MAX) {
       d.xtra = (d.xtra || 0) + 1; var xc = boost(XTRA_COINS); addCoins(xc); addCl("ziel", xc); rewards.coins += xc; rewards.extra = { coins: xc, n: d.xtra, left: XTRA_MAX - d.xtra };
       rewards.parts.push({ c: xc, t: "Bonus-Runde" });
+    }
+    /* Zeit-Münzen: je Schwelle (10, 20, 30, 45, 60 Min. …) einmal am Tag */
+    var tsi = d.timeStep || 0, tcs = 0;
+    while (tsi < TIME_STEPS.length && d.sec >= TIME_STEPS[tsi][0] * 60) { tcs += TIME_STEPS[tsi][1]; tsi++; }
+    if (tcs > 0) { d.timeStep = tsi; var tb = boost(tcs); addCoins(tb); addCl("ziel", tb); rewards.coins += tb; rewards.timeBonus = { coins: tb, min: TIME_STEPS[tsi - 1][0] }; rewards.parts.push({ c: tb, t: "Zeit-Bonus: " + TIME_STEPS[tsi - 1][0] + " Min. geübt" }); }
+    /* Wochen-Münzen: 3, 5 und 7 Tage mit erreichtem Tagesziel in der Woche (Mo–So) */
+    if (rewards.goalReached) {
+      var wmon = weekMon(d.date), wk = state.wk;
+      if (!wk || wk.mon !== wmon) wk = state.wk = { mon: wmon, n: 0, paid: 0 };
+      wk.n += 1;
+      var wcs = 0, wdays = 0;
+      WEEK_STEPS.forEach(function (st) { if (wk.n >= st[0] && wk.paid < st[0]) { wcs += st[1]; wk.paid = st[0]; wdays = st[0]; } });
+      if (wcs > 0) { var wb = boost(wcs); addCoins(wb); addCl("ziel", wb); rewards.coins += wb; rewards.weekBonus = { coins: wb, days: wdays }; rewards.parts.push({ c: wb, t: "Wochen-Bonus: " + wdays + " Tage Tagesziel geschafft" }); }
     }
     progressLog = { neu: 0, stufe: 0, gemeistert: 0, kartei: 0, einheit: 0, serie: 0, parts: [], n: {} };
     save(true);

@@ -1536,7 +1536,7 @@
     var dots = ci.days.map(function (d) { return '<span class="ctad' + (d.ok ? " ok" : "") + (d.today ? " now" : "") + '"><i>' + (d.ok ? "🔥" : d.today ? "⭐" : "·") + '</i>' + d.wd + '</span>'; }).join("");
     var left = ci.next ? ci.next - ci.streak : 0, xl = ci.extraLeft, mins = Math.max(5, S.goalMin());
     var nx = ci.next ? 'Noch ' + left + (left === 1 ? ' Tag' : ' Tage') + ' bis Serienbonus +' + ci.nextCoins + ' 🪙' : 'Alle Serienboni erreicht. Stark!';
-    var rew = !done ? '<em>🪙</em><div><b>+10 Münzen für Runde 1</b><small>' + nx + '</small></div>'
+    var rew = !done ? '<em>🪙</em><div><b>+15 Münzen für Runde 1</b><small>' + nx + '</small></div>'
       : xl ? '<em>🎁</em><div><b>Bonus-Runden: +' + ci.extraCoins + ' 🪙 je Runde</b><small>Tagesbonus ist geholt. Noch ' + xl + (xl === 1 ? ' Bonus-Runde' : ' Bonus-Runden') + ' heute. ' + nx + '</small></div>'
       : '<em>✅</em><div><b>Heute alles geholt!</b><small>' + nx + '</small></div>';
     var label = !done ? "Challenge starten ▶" : xl ? "Bonus-Runde ▶ +" + ci.extraCoins + " 🪙" : "Noch eine Runde ▶";
@@ -1917,7 +1917,7 @@
       '<div style="font-family:Newsreader,serif;font-size:30px;font-weight:600;margin:6px 0 4px" class="tnum">+' + total + ' <span class="small muted" style="font-family:Karla,sans-serif;font-weight:400">heute verdient</span></div>' +
       row("Lernfortschritt", "neue Wörter, höhere Stufen, Fehlerkartei, Einheiten", "+" + c.fortschritt) +
       row("Missionen", c.missionenDone + " von " + c.missionenAll + " erfüllt", "+" + c.missionen, c.missionenDone === c.missionenAll && c.missionenAll > 0) +
-      row("Tagesziel", c.zielDone ? "geschafft" : "noch offen: " + S.goalMin() + " Minuten üben", c.zielDone ? "+" + c.ziel : "+20 möglich", c.zielDone) +
+      row("Tagesziel", c.zielDone ? "geschafft" : "noch offen: " + S.goalMin() + " Minuten üben", c.zielDone ? "+" + c.ziel : "+30 möglich", c.zielDone) +
       row("Arena", "Tageslimit 30", c.arena + " / 30", c.arena >= 30) +
       (c.eltern ? row("Ziele der Eltern", "Wochenziel oder Lernplan geschafft", "+" + c.eltern, true) : "") +
       (c.streakNext ? row("Serien-Bonus", "noch " + c.streakDays + " " + plural(c.streakDays, "Tag", "Tage") + " bis zum " + c.streakNext + ". Tag", "+" + c.streakBonus + " möglich") : "") +
@@ -1925,7 +1925,9 @@
       '<div class="small" style="margin-top:8px;line-height:1.7">' +
       '• <b>Neues Wort</b> +1, <b>höhere Stufe</b> +1 (Gemeistert +4), <b>Wort aus der Fehlerkartei</b> +2<br>' +
       '• <b>Neue Einheit entdeckt</b> +8 (fünf Wörter angefangen), <b>Einheit geschafft</b> +30 (Verben +60)<br>' +
-      '• <b>Missionen</b> 10 bis 18, <b>Tagesziel</b> +20, <b>Serien</b> bei 3, 7, 14, 30, 60, 100 Tagen<br>' +
+      '• <b>Missionen</b> 15 bis 27, <b>Tagesziel</b> +30, <b>Challenge</b> +15 (Bonus-Runden +8), <b>Serien</b> bei 3, 7, 14, 30, 60, 100 Tagen<br>' +
+      '• <b>Zeit-Bonus</b> pro Tag: 10 Min. +5, 20 Min. +10, 30 Min. +15, 45 Min. +20, 60 Min. +25 (zusammen 75), danach +5 je weitere 30 Min.<br>' +
+      '• <b>Wochen-Bonus</b> für Tage mit geschafftem Tagesziel: 3 Tage +20, 5 Tage +40, 7 Tage +60<br>' +
       '• <b>Arena</b> bis 30 pro Tag, +10 bei Rekord<br>' +
       '• <b>Boss-Truhen</b> 10 bis 25, manchmal mit Überraschung · <b>Rangaufstieg</b> 50 plus 10 je Rang und ein Geschenk<br>' +
       '• <b>Erste Woche</b> ×1,5 Münzen · jeden Tag ein <b>Tagesangebot</b> mit 20 % Rabatt<br>' +
