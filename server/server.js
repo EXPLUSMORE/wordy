@@ -808,9 +808,10 @@ function setSeason(pid, body) {
 /* Belohnungsbereich für Eltern (vorübergehend): Extramünzen, Münzfaktor, Bonusmünzen/Geschenke bei Zielen und Plänen, Wochenpass.
    Der Betreiber schaltet ihn im Dashboard unter „Familien“ ein und aus (kv feature:famrewards, Standard: an). */
 function famRewardsOn() { const r = q.kvGet.get("feature:famrewards"); return !r || r.val !== "0"; }
-function coinFactorOf(pid) { const r = q.kvGet.get("coinfactor:" + pid); const v = r ? parseFloat(r.val) : 1; return [0.5, 1, 1.5, 2].includes(v) ? v : 1; }
+const COIN_FACTORS = [0.5, 0.75, 1, 1.25, 1.4, 1.5, 1.75, 2, 2.5, 3];
+function coinFactorOf(pid) { const r = q.kvGet.get("coinfactor:" + pid); const v = r ? parseFloat(r.val) : 1; return COIN_FACTORS.includes(v) ? v : 1; }
 function setCoinFactor(pid, body) {
-  const v = [0.5, 1, 1.5, 2].includes(+body.factor) ? +body.factor : 1;
+  const v = COIN_FACTORS.includes(+body.factor) ? +body.factor : 1;
   q.kvSet.run("coinfactor:" + pid, String(v));
   return [200, { ok: true, factor: v }];
 }

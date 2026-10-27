@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.154.2 – 2026-10-27
+- Dashboard: Der **Münzfaktor** steht jetzt unter Einstellungen › **Belohnungen** (über „Extramünzen schenken“) und nicht mehr versteckt bei den Boss-Runden im Lernpfad. Feinere Stufen: 0,5 · 0,75 · 1 · 1,25 · 1,4 · 1,5 · 1,75 · 2 · 2,5 · 3. Wirkt auf alle Münzen des Kindes (auch Zeit- und Wochen-Münzen). **Server-Update nötig.**
+
 ## 2.154.1 – 2026-10-27
 - Auswertung: Zeit- und Wochen-Münzen werden getrennt erfasst. Die App meldet sie als Ereignis „bonus“ (`zeit`/`woche`), der Server zählt sie je Tag (`days[].timeCoins/weekCoins`) und gesamt (`bonus`), ohne die Münzen doppelt zu zählen. Dashboard › Wörter: Zeile „Bonus-Münzen“ in der Karte „Verdient mit Wörtern“. `tools/xp_analyse.js`: neue Zeilen Zeit-Münzen, Wochen-Münzen, Anteil an allen Münzen, Münzen je Woche, aktive Tage je Woche. **Server-Update nötig** (nur dann zählt das Dashboard; die App sendet die Ereignisse schon vorher mit).
 

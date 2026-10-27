@@ -167,6 +167,8 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     assert.equal((await J("/api/admin/players/" + mk.j.id + "/coinfactor", { headers: H })).j.factor, 1, "Münzfaktor: Standard 1");
     await J("/api/admin/players/" + mk.j.id + "/coinfactor", { method: "POST", headers: H, body: JSON.stringify({ factor: 1.5 }) });
     assert.equal((await J("/api/sync", { headers: T })).j.coinFactor, 1.5, "Münzfaktor kommt in der App an");
+    await J("/api/admin/players/" + mk.j.id + "/coinfactor", { method: "POST", headers: H, body: JSON.stringify({ factor: 1.4 }) });
+    assert.equal((await J("/api/admin/players/" + mk.j.id + "/coinfactor", { headers: H })).j.factor, 1.4, "Münzfaktor 1,4 möglich");
     await J("/api/admin/players/" + mk.j.id + "/coinfactor", { method: "POST", headers: H, body: JSON.stringify({ factor: 7 }) });
     assert.equal((await J("/api/sync", { headers: T })).j.coinFactor, 1, "Münzfaktor: ungültig wird 1");
     assert.equal((await J("/api/admin/players/" + mk.j.id + "/weekplan", { headers: H })).j, null, "Wochenplan: Standard leer");
