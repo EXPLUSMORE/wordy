@@ -1291,12 +1291,12 @@ function frLook(id, state) {
   if (state !== "ok") return { avatar: "", frame: "none", acc: {}, stk: [], stkAcc: {} };
   const m = snap(id, "meta"), d = (m && m.d) || {}, av = typeof d.avatar === "string" && AVATAR_RE.test(d.avatar) ? d.avatar : "", fr = typeof d.frame === "string" && /^[a-z0-9_-]{1,20}$/.test(d.frame) ? d.frame : "none";
   const acc = {};   // Zubehör der gewählten Figur: nur bekannte Plätze, geprüfte Werte
-  if (d.acc && typeof d.acc === "object") for (const k of ["head", "face", "ears", "neck"]) if (typeof d.acc[k] === "string" && /^[a-z0-9]{1,12}$/.test(d.acc[k])) acc[k] = d.acc[k];
+  if (d.acc && typeof d.acc === "object") for (const k of ["head", "face", "ears", "neck", "gear"]) if (typeof d.acc[k] === "string" && /^[a-z0-9]{1,12}$/.test(d.acc[k])) acc[k] = d.acc[k];
   const stk = Array.isArray(d.stk) ? d.stk.filter(x => typeof x === "string" && /^st:[a-z0-9_-]{1,30}$/i.test(x)).slice(0, 10) : [];   // aufgeklebte Sticker (IDs)
   const stkAcc = {};   // Zubehör je Sticker-Figur (Sticker-ID → Plätze)
   if (d.stkAcc && typeof d.stkAcc === "object") for (const [fv, a] of Object.entries(d.stkAcc).slice(0, 10)) {
     if (!AVATAR_RE.test(fv) || !a || typeof a !== "object") continue;
-    const o = {}; for (const k of ["head", "face", "ears", "neck"]) if (typeof a[k] === "string" && /^[a-z0-9]{1,12}$/.test(a[k])) o[k] = a[k];
+    const o = {}; for (const k of ["head", "face", "ears", "neck", "gear"]) if (typeof a[k] === "string" && /^[a-z0-9]{1,12}$/.test(a[k])) o[k] = a[k];
     if (Object.keys(o).length) stkAcc[fv] = o;
   }
   return { avatar: av, frame: fr, acc, stk, stkAcc };

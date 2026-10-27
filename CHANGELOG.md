@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.156.0 – 2026-10-27
+- Neuer Zubehör-Platz **„Dabei“** (steht hinter der Figur, ein Teil gleichzeitig) mit drei Teilen: **Skateboard** (70 🪙, selten), **Surfbrett** (100 🪙, episch) und **Gitarre** (150 🪙, legendär). Sie stehen am Rand der Figur; in der ganzen Figur sieht man sie voll, in Kopf-Ansichten (Sticker, Kopfzeile) nur den Teil am Rand (Surfbrett oben rechts am deutlichsten). Anprobe, Showroom, Freunde und Dashboard-Bild (Platz `gear`) funktionieren wie bei den anderen Teilen. Englisch: Skateboard, Surfboard, Guitar.
+
 ## 2.155.0 – 2026-10-27
 - Zwei neue Hals-Teile im Zubehör (legendär, je 150 Münzen): **Boss-Kette ($)** mit fettem goldenem Dollarzeichen und **Fette Goldkette mit M** mit goldenem M. Dicke Goldkette mit Gliedern, Anhänger mit dunkler Kontur und Glanz. In Shop › Zubehör, Anprobe, Showroom, bei Freunden und im Dashboard (Bild über `look.js`). Englische Namen: Boss chain ($), Fat gold chain with M. Hinweis: In reinen Kopf-Ansichten (Sticker, Kopfzeile) sieht man nur den oberen Teil der Kette, der Anhänger zeigt sich bei der ganzen Figur.
 

@@ -128,6 +128,7 @@ return '<svg class="afs" viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg
   function addAcc(svg, av, lo) {
     var a = ACCP && ACCP(av, lo); if (!a) return svg;
     var tail = svg.slice(-TAIL.length) === TAIL ? TAIL : svg.slice(-TAIL2.length) === TAIL2 ? TAIL2 : "";
+    if (a.gear) svg = svg.replace(/(<svg [^>]*>)/, '$1' + a.gear);   // Dabei: hinter der Figur
     if (a.neck) svg = svg.replace('<g class="headG">', a.neck + '<g class="headG">');
     if (a.head && tail) svg = svg.slice(0, svg.length - tail.length) + a.head + tail;
     return svg;

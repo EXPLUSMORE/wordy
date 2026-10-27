@@ -8,7 +8,7 @@ function load() {
   if (ctx !== null) return ctx;
   try {
     const eng = fs.readFileSync(path.join(ROOT, "js", "engine.js"), "utf8"), slot = {};
-    for (const m of eng.matchAll(/\["(\w+)",\s*"(head|face|ears|neck)",\s*"[^"]*"/g)) slot[m[1]] = m[2];   // Zubehör-Katalog ACC: Wert → Platz
+    for (const m of eng.matchAll(/\["(\w+)",\s*"(head|face|ears|neck|gear)",\s*"[^"]*"/g)) slot[m[1]] = m[2];   // Zubehör-Katalog ACC: Wert → Platz
     const noop = () => {}, el = () => ({ style: {}, setAttribute: noop, appendChild: noop, addEventListener: noop, classList: { add: noop, remove: noop } });
     const c = { console: { log() {}, error() {} }, document: { body: null, documentElement: el(), createElement: el, getElementById: () => null, addEventListener: noop, querySelector: () => null }, navigator: {}, matchMedia: () => ({ matches: false, addEventListener: noop }), setTimeout: noop, setInterval: noop }; c.window = c; c.global = c;
     c.VT = { itemById: id => { const v = String(id).replace(/^ac:/, ""); return slot[v] ? { slot: slot[v] } : null; }, accOf: () => ({}) };
@@ -19,7 +19,7 @@ function load() {
   } catch (e) { console.error("Dashboard-Bilder nicht verfügbar:", e.message); ctx = false; }
   return ctx;
 }
-const SLOTS = ["head", "face", "ears", "neck"];
+const SLOTS = ["head", "face", "ears", "neck", "gear"];
 function cleanAcc(s) {   // "head:beanie,face:sonne"
   const o = {};
   String(s || "").split(",").slice(0, 4).forEach(x => { const [k, v] = x.split(":"); if (SLOTS.includes(k) && /^[a-z0-9]{1,12}$/.test(v || "")) o[k] = v; });
