@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.154.4 – 2026-10-27
+- **Jeder Rangaufstieg gibt 1.000 Münzen** (`RANK_COINS`, ohne Münzfaktor, auch bei mehreren Rängen auf einmal). Anzeige im Rang-Fenster („+1.000 🪙“), in „Münzen heute“ (Zeile Rangaufstieg) und in „So verdienst du Münzen“. Dashboard und `tools/xp_analyse.js` weisen die Rang-Münzen getrennt aus (Ereignis `bonus` mit `k: "rang"`). Wolke aktualisiert („1.000 pro Rang“). **Server-Update nötig** für die Aufteilung im Dashboard.
+
 ## 2.154.3 – 2026-10-27
 - Neuheiten-Wolke „🪙 Mehr Münzen!“ auf der Startseite (14 Tage). Tippen springt nach Beute › Shop und klappt „So verdienst du Münzen“ auf.
 - Erklärtexte überarbeitet: „So verdienst du Münzen“ jetzt nach Üben, Tag, Woche, Spielen und Extras gegliedert, mit Zeit-Bonus, Wochen-Bonus, den neuen Tagesaufgaben-Werten und korrekten Wort-Münzen (Stufe 2 +2, Stufe 3 +1, Gemeistert +4); veraltete Angabe zum Rangaufstieg entfernt. „So bekommst du XP“ ergänzt um erstes Ansehen, Wortspiele, Grammatik, Einmaleins, Booster und die flachere Rangleiter. Karte „Münzen heute“: Zeile „Tagesziel & Boni“.

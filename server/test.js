@@ -659,11 +659,11 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
       const pre = (await J("/api/admin/players/" + mm.j.id + "/report?days=14", { headers: H })).j, now = Date.now();
       assert.equal((await J("/api/events", { method: "POST", headers: T, body: JSON.stringify({ events: [
         { i: "mal-1", t: now, k: "mal", d: { k: "blitz", lv: "klein", score: 14, err: 1, sec: 60, xp: 14, coins: 2, rec: 0 } },
-        { i: "bon-1", t: now + 2, k: "bonus", d: { k: "zeit", c: 38, min: 30 } }, { i: "bon-2", t: now + 3, k: "bonus", d: { k: "woche", c: 30, days: 3 } },
+        { i: "bon-1", t: now + 2, k: "bonus", d: { k: "zeit", c: 38, min: 30 } }, { i: "bon-2", t: now + 3, k: "bonus", d: { k: "woche", c: 30, days: 3 } }, { i: "bon-3", t: now + 4, k: "bonus", d: { k: "rang", c: 1000, rank: "Bronze II" } },
         { i: "mal-2", t: now + 1, k: "mal", d: { k: "match", lv: "gross25", score: 18, err: 0, sec: 40, ms: 41234, xp: 25, coins: 8, rec: 1 } }] }) })).s, 200);
       assert.equal((await J("/api/snapshot", { method: "POST", headers: T, body: JSON.stringify({ meta: { xp: 5, coins: 1, mal: { on: true, best: { "blitz-klein": 14, "match-gross25": 41234 }, weak: [{ k: "7x8", no: 3, ok: 1 }] } } }) })).s, 200);
       const rp = (await J("/api/admin/players/" + mm.j.id + "/report?days=14", { headers: H })).j;
-      assert.deepEqual([rp.bonus.timeCoins, rp.bonus.weekCoins, rp.bonus.timeDays, rp.bonus.weekN], [38, 30, 1, 1], "Zeit- und Wochen-Münzen im Bericht"); assert.equal(rp.totals.coins, pre.totals.coins + 10, "Bonus-Ereignisse zählen nicht doppelt");
+      assert.deepEqual([rp.bonus.timeCoins, rp.bonus.weekCoins, rp.bonus.timeDays, rp.bonus.weekN, rp.bonus.rankCoins, rp.bonus.rankN], [38, 30, 1, 1, 1000, 1], "Zeit-, Wochen- und Rang-Münzen im Bericht"); assert.equal(rp.totals.coins, pre.totals.coins + 10, "Bonus-Ereignisse zählen nicht doppelt");
       assert.equal(rp.mal.total.runs, 2, "zwei Einmaleins-Runden"); assert.equal(rp.mal.today.xp, 39, "XP heute"); assert.equal(rp.mal.today.coins, 10); assert.equal(rp.mal.last[0].k, "match", "letzte Runde zuerst");
       assert.equal(rp.totals.sec, pre.totals.sec, "Einmaleins zählt nicht als Übungszeit"); assert.equal(rp.totals.items, pre.totals.items, "und nicht als Aufgaben");
       assert.equal(rp.totals.xp, pre.totals.xp + 39, "aber die echten XP zählen mit"); assert.equal(rp.meta.mal.weak[0].k, "7x8", "Schwäche im Dashboard");

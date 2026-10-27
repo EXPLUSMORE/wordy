@@ -905,7 +905,11 @@
   }
   /* Rangaufstieg (ab v2.112): Ränge schenken nichts mehr, weder Münzen noch Stücke. Es gibt nur die Figurenwahl (rankPicks, nur die Figur, Sticker werden gekauft);
      alles andere muss gekauft oder erlernt werden. Rangstufen schalten Artikel im Shop frei (Mindestrang `rank`). */
-  function rankGift(i) { checkSets(); }
+  var RANK_COINS = 1000;   // v2.154.4: jeder Rangaufstieg gibt 1.000 Münzen (ohne Münzfaktor)
+  function rankGift(i) {
+    checkSets();
+    if (i > 0 && state.daily) { addCoins(RANK_COINS); addCl("rang", RANK_COINS); ev("bonus", { k: "rang", c: RANK_COINS, rank: RANKS[i] && RANKS[i].n }); }
+  }
   /* Rang-Figur zur Wahl: offen ist jede erreichte Stufe, die noch nicht abgeholt wurde (gilt rückwirkend). Wer alle Figuren der Stufe schon hat, bekommt Münzen. */
   /* Neue Figur in einer Stufe (v2.123): Wer die Stufe schon erreicht hatte, bekommt nachträglich keine Wahl angeboten (Platin II hatte vorher nur das Raketen-Lama) */
   function rankPickSkip() {
@@ -1637,7 +1641,7 @@
   function coinsToday() {
     var d = state.daily || {}, cl = d.cl || {}, next = 0, nextDays = 0;
     Object.keys(STREAK_BONUS).map(Number).sort(function (a, b) { return a - b; }).some(function (k) { if (k > state.streak.count) { next = k; nextDays = k - state.streak.count; return true; } });
-    return { fortschritt: cl.fortschritt || 0, missionen: cl.missionen || 0, ziel: cl.ziel || 0, serie: cl.serie || 0, eltern: cl.eltern || 0, arena: d.arenaCoins || 0,
+    return { fortschritt: cl.fortschritt || 0, missionen: cl.missionen || 0, ziel: cl.ziel || 0, serie: cl.serie || 0, rang: cl.rang || 0, eltern: cl.eltern || 0, arena: d.arenaCoins || 0,
       missionenDone: (d.missions || []).filter(function (m) { return m.done; }).length, missionenAll: (d.missions || []).length,
       zielDone: !!d.done, streakNext: next, streakDays: nextDays, streakBonus: STREAK_BONUS[next] || 0 };
   }
@@ -1761,7 +1765,7 @@
   function resumeHas(key) { return resumeList().some(function (x) { return x.key === key; }); }
 
   global.VT = {
-    LEVELS: LEVELS, enName: enName, ACC: ACC, ACC_SLOTS: ACC_SLOTS, accOf: accOf, stickerAcc: stickerAcc, lookInfo: lookInfo, accToggle: accToggle, accClear: accClear, medalGroups: medalGroups, RANKS: RANKS, AVATARS: AVATARS, SHOP: SHOP, BADGES: BADGES,
+    RANK_COINS: RANK_COINS, LEVELS: LEVELS, enName: enName, ACC: ACC, ACC_SLOTS: ACC_SLOTS, accOf: accOf, stickerAcc: stickerAcc, lookInfo: lookInfo, accToggle: accToggle, accClear: accClear, medalGroups: medalGroups, RANKS: RANKS, AVATARS: AVATARS, SHOP: SHOP, BADGES: BADGES,
     SEC_PER_ITEM: SEC_PER_ITEM, secPerItem: secPerItem, itemsFor: itemsFor, recordPace: recordPace,
     resumePack: resumePack, resumeUnpack: resumeUnpack, resumeList: resumeList, resumeSave: resumeSave, resumeTake: resumeTake, resumeHas: resumeHas,
     load: load, save: save, get state() { return state; },

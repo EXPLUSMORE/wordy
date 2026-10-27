@@ -45,7 +45,7 @@ function analyse(name, rep) {
     learnXp: learn.xp, learnCoins: learn.coins, otherXp: Math.max(0, xp - learn.xp), otherCoins: Math.max(0, coins - learn.coins),
     xpNow: meta.xp || 0, coinsNow: meta.coins || 0, spent20: buys.reduce((a, b) => a + (b.cost || 0), 0), buys20: buys.length, modeSec,
     perItem: (t.items || 0) ? xp / t.items : 0,
-    timeCoins: (rep.bonus || {}).timeCoins || 0, weekCoins: (rep.bonus || {}).weekCoins || 0, timeDays: (rep.bonus || {}).timeDays || 0, weekN: (rep.bonus || {}).weekN || 0,
+    timeCoins: (rep.bonus || {}).timeCoins || 0, weekCoins: (rep.bonus || {}).weekCoins || 0, timeDays: (rep.bonus || {}).timeDays || 0, weekN: (rep.bonus || {}).weekN || 0, rankCoins: (rep.bonus || {}).rankCoins || 0, rankN: (rep.bonus || {}).rankN || 0,
     weeklyCoinsReal: coins / (N / 7),
   };
 }
@@ -66,7 +66,8 @@ function report(list, scen) {
   row("Münzen jetzt (Kontostand)", a => fmt(a.coinsNow)); row("Käufe (letzte " + 20 + "): Anzahl / Münzen", a => a.buys20 + " / " + fmt(a.spent20));
   row("Zeit-Münzen (seit v2.154): Münzen / Tage", a => fmt(a.timeCoins) + " / " + a.timeDays);
   row("Wochen-Münzen (seit v2.154): Münzen / Mal erreicht", a => fmt(a.weekCoins) + " / " + a.weekN);
-  row("Anteil Zeit- und Wochen-Münzen an allen Münzen", a => a.coins ? f1((a.timeCoins + a.weekCoins) * 100 / a.coins) + " %" : "–");
+  row("Rang-Münzen (seit v2.154.4): Münzen / Aufstiege", a => fmt(a.rankCoins) + " / " + a.rankN);
+  row("Anteil Zeit-, Wochen- und Rang-Münzen an allen Münzen", a => a.coins ? f1((a.timeCoins + a.weekCoins + a.rankCoins) * 100 / a.coins) + " %" : "–");
   row("Münzen je Woche (Durchschnitt)", a => fmt(a.weeklyCoinsReal)); row("Aktive Tage je Woche", a => f1(a.activeDays / (a.days / 7)));
   L.push("\n## Rang-Prognose (bei gleichem Tempo wie im Zeitraum, je Kalendertag)\n");
   L.push("| Spieler | Rang jetzt | nächster Rang | Tage bis dorthin | Tage bis „The real Unreal“ |", "|---|---|---|---:|---:|");

@@ -353,7 +353,7 @@ function report(pid, days) {
   const evs = q.events.all(pid, now - Math.max(days, 15) * 86400000).map(r => ({ ts: r.ts, k: r.k, d: JSON.parse(r.d) }));
   const perDay = {};
   const day = ts => (perDay[dayOf(ts)] = perDay[dayOf(ts)] || { date: dayOf(ts), sec: 0, items: 0, correct: 0, neu: 0, coins: 0, xp: 0, sessions: 0 });
-  const bad = {}, sessions = [], buys = [], unitEarn = {}, wordEarn = { xp: 0, coins: 0, runs: 0 }, malRuns = [], bonus = { timeCoins: 0, weekCoins: 0, timeDays: 0, weekN: 0 };
+  const bad = {}, sessions = [], buys = [], unitEarn = {}, wordEarn = { xp: 0, coins: 0, runs: 0 }, malRuns = [], bonus = { timeCoins: 0, weekCoins: 0, timeDays: 0, weekN: 0, rankCoins: 0, rankN: 0 };
   for (const e of evs) {
     const d = e.d;
     if (e.ts < from) continue;       // die Zeitraum-Auswahl gilt für Tagesbalken, Problemwörter und Runden
@@ -375,7 +375,7 @@ function report(pid, days) {
       malRuns.push({ ts: e.ts, k: String(d.k || "").slice(0, 10), lv: String(d.lv || "").slice(0, 10), score: d.score || 0, err: d.err || 0, sec: d.sec || 0, ms: d.ms || 0, xp: d.xp || 0, coins: d.coins || 0, rec: d.rec ? 1 : 0, tm: d.tm === 0 ? 0 : 1, n: d.n || 0 });
     } else if (e.k === "bonus") {   // Zeit- und Wochen-Münzen: nur zur Aufteilung, die Münzen stecken schon in den Runden (ss)
       const x = day(e.ts), c = Math.max(0, Math.min(500, +d.c || 0));
-      if (d.k === "zeit") { x.timeCoins = (x.timeCoins || 0) + c; bonus.timeCoins += c; } else if (d.k === "woche") { x.weekCoins = (x.weekCoins || 0) + c; bonus.weekCoins += c; bonus.weekN++; }
+      if (d.k === "zeit") { x.timeCoins = (x.timeCoins || 0) + c; bonus.timeCoins += c; } else if (d.k === "woche") { x.weekCoins = (x.weekCoins || 0) + c; bonus.weekCoins += c; bonus.weekN++; } else if (d.k === "rang") { x.rankCoins = (x.rankCoins || 0) + c; bonus.rankCoins += c; bonus.rankN++; }
     } else if (e.k === "buy") buys.push({ ts: e.ts, name: d.name || d.id, cost: d.cost || 0 });
   }
   const runsBy = {}, badBy = {};

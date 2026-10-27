@@ -1072,7 +1072,7 @@
   }
   /* Neuheiten-Wolke auf der Startseite: kündigt ein neues Spiel an. Neues Spiel = Eintrag in NEWS (id = Spiel-ID aus VTG.GAMES, date = Datum der Veröffentlichung).
      Sie verschwindet nach dem ersten Spielen, nach ✕, nach dem Antippen oder nach 14 Tagen (pro Profil in profile.cloudSeen). */
-  var NEWS = [{ id: "muenzen", icon: "🪙", title: "Mehr Münzen!", sub: "Zeit- & Wochen-Bonus, Unreal halbiert", date: "2026-10-27", go: "verdienst" },
+  var NEWS = [{ id: "muenzen", icon: "🪙", title: "Mehr Münzen!", sub: "Zeit-/Wochen-Bonus, 1.000 pro Rang", date: "2026-10-27", go: "verdienst" },
     { id: "einmaleins", icon: "✖️", title: "Neu: 1 × 1 üben!", sub: "Blitz, Stimmt's? und Match – mit und ohne Zeit", date: "2026-10-25", go: "mal" },
     { id: "zubehoer", icon: "🎩", title: "Zubehör ist da!", sub: "Für Figuren & Sticker, mit Anprobe", date: "2026-10-24", shop: "acc" },
     { id: "dropzauber", icon: "🔮", title: "Zauber-Drop!", sub: "Zauber-Eule, Sternenstaub & mehr", date: "2026-10-19", shop: "avatar" },
@@ -1909,7 +1909,7 @@
 
   /* ---------- Münzen: Übersicht und Regeln ---------- */
   function coinsCard() {
-    var c = S.coinsToday(), st = S.state, total = c.fortschritt + c.missionen + c.ziel + c.serie + c.arena + c.eltern;
+    var c = S.coinsToday(), st = S.state, total = c.fortschritt + c.missionen + c.ziel + c.serie + c.arena + c.eltern + (c.rang || 0);
     function row(label, sub, val, done) {
       return '<div class="row" style="gap:10px;align-items:baseline;padding:6px 0;border-top:1px solid var(--line)"><div style="flex:1 1 auto"><b class="small">' + label + '</b>' +
         (sub ? '<div class="small muted">' + sub + '</div>' : "") + '</div><b class="tnum" style="' + (done ? "color:var(--good)" : "") + '">' + val + '</b></div>';
@@ -1920,6 +1920,7 @@
       row("Missionen", c.missionenDone + " von " + c.missionenAll + " erfüllt", "+" + c.missionen, c.missionenDone === c.missionenAll && c.missionenAll > 0) +
       row("Tagesziel & Boni", c.zielDone ? "Tagesziel, Challenge, Zeit- und Wochen-Bonus" : "noch offen: " + S.goalMin() + " Minuten üben", c.zielDone ? "+" + c.ziel : "+30 möglich", c.zielDone) +
       row("Arena", "Tageslimit 30", c.arena + " / 30", c.arena >= 30) +
+      (c.rang ? row("Rangaufstieg", "neuer Rang erreicht", "+" + c.rang, true) : "") +
       (c.eltern ? row("Ziele der Eltern", "Wochenziel oder Lernplan geschafft", "+" + c.eltern, true) : "") +
       (c.streakNext ? row("Serien-Bonus", "noch " + c.streakDays + " " + plural(c.streakDays, "Tag", "Tage") + " bis zum " + c.streakNext + ". Tag", "+" + c.streakBonus + " möglich") : "") +
       '<details id="earnHow" style="margin-top:10px"' + (earnOpen ? " open" : "") + '><summary class="small" style="cursor:pointer;font-weight:700">So verdienst du Münzen</summary>' +
@@ -1939,7 +1940,7 @@
       '• Einmaleins bis <b>10</b> je Runde, höchstens <b>150</b> am Tag<br>' +
       '<b style="display:block;margin-top:6px">Extras</b>' +
       '• Boss-Truhen <b>10 bis 25</b>, manchmal mit Überraschung · Pass-Geschenke<br>' +
-      '• Ein Rangaufstieg gibt keine Münzen, dafür neue Shop-Artikel und manchmal eine Figur zur Wahl<br>' +
+      '• <b>Jeder Rangaufstieg +1.000</b> 🪙 (gibt es unabhängig vom Münzfaktor) · dazu neue Shop-Artikel und manchmal eine Figur zur Wahl<br>' +
       '• Erste Woche <b>×1,5</b> Münzen · jeden Tag ein <b>Tagesangebot</b> mit 20 % Rabatt · Unreal-Sachen kosten nur noch die Hälfte<br>' +
       '<span class="muted">Jedes Wort zahlt höchstens einmal pro Tag und nur, wenn es zur Wiederholung dran war. Immer dieselben Wörter zu üben bringt nichts – neue Einheiten und fällige Wörter schon. Missionen, Tagesziel und Serien werden am Ende der Runde gutgeschrieben.</span></div></details></section>';
   }
@@ -2806,7 +2807,7 @@
       (coinGain ? '<span class="pill fin-coin" style="margin-left:10px">🪙 +<b data-count="' + coinGain + '">' + coinGain + '</b></span>' : "") + '</div>' +
       '<div class="row" style="margin-top:8px"><b>' + esc(r1.rank.n) + '</b><span class="spacer"></span><span class="small muted tnum">' + st.xp + (r1.next ? " / " + r1.next.xp : "") + ' XP</span></div>' +
       '<div class="bar fin-bar" style="margin-top:6px"><i style="width:' + pct(r1) + '%"></i></div>' +
-      (rankUp ? '<div class="fin-rankup"><span>⬆️ Neuer Rang</span><b>' + esc(r1.rank.n) + '</b></div>' : "") +
+      (rankUp ? '<div class="fin-rankup"><span>⬆️ Neuer Rang</span><b>' + esc(r1.rank.n) + '</b><span>+' + (Math.max(1, S.RANKS.indexOf(r1.rank) - S.RANKS.indexOf(r0.rank)) * S.RANK_COINS).toLocaleString("de-DE") + ' 🪙</span></div>' : "") +
       ((rw.parts || []).length ? '<div class="fin-parts"><div class="eyebrow" style="margin:12px 0 4px">Wofür es Münzen gab</div>' +
         rw.parts.map(function (x) { return '<div class="row small"><span style="flex:1 1 auto">' + esc(x.t) + '</span><b class="tnum">+' + x.c + ' 🪙</b></div>'; }).join("") + '</div>' : "") + '</section>';
     if (SS.sentOk) html += '<section class="card"><div class="eyebrow">Satzbau</div><p style="margin:6px 0 0">' + SS.sentOk + ' ' + plural(SS.sentOk, "Satz", "Sätze") + ' richtig zusammengesetzt.</p></section>';
