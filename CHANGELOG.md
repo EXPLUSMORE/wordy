@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.156.1 – 2026-10-27
+- Boss-Kette ($) und Goldkette mit M: Anhänger (Dollarzeichen und M) rund 30 % kleiner, hängen weiter mittig an der Kette.
+
 ## 2.156.0 – 2026-10-27
 - Neuer Zubehör-Platz **„Dabei“** (steht hinter der Figur, ein Teil gleichzeitig) mit drei Teilen: **Skateboard** (70 🪙, selten), **Surfbrett** (100 🪙, episch) und **Gitarre** (150 🪙, legendär). Sie stehen am Rand der Figur; in der ganzen Figur sieht man sie voll, in Kopf-Ansichten (Sticker, Kopfzeile) nur den Teil am Rand (Surfbrett oben rechts am deutlichsten). Anprobe, Showroom, Freunde und Dashboard-Bild (Platz `gear`) funktionieren wie bei den anderen Teilen. Englisch: Skateboard, Surfboard, Guitar.
 
