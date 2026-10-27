@@ -1544,7 +1544,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.152.2";window.WORDY_BUILD="c06a36676f";</script>
+<script>window.WORDY_VERSION="2.153.0";window.WORDY_BUILD="7d97078bad";</script>
 </head>
 <body>
 <div id="app">
@@ -5791,7 +5791,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
   (function () {
     var xp = 35000, step = 5000;
     [["Elite", "elite"], ["Champion", "champion"], ["Unreal", "unreal"], ["Unreal Gold", "unreal-gold"], ["Unreal Platin", "unreal-platin"], ["Unreal Diamant", "unreal-diamant"]].forEach(function (g) {
-      ["I", "II", "III"].forEach(function (rm) { RANKS.push({ xp: xp, n: g[0] + " " + rm, t: g[1] }); xp += step; step += 1000; });
+      ["I", "II", "III"].forEach(function (rm) { RANKS.push({ xp: xp, n: g[0] + " " + rm, t: g[1] }); xp += step; step += 500; });
     });
     RANKS.push({ xp: xp, n: "The real Unreal", t: "real-unreal" });
   })();

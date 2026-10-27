@@ -43,7 +43,7 @@
   (function () {
     var xp = 35000, step = 5000;
     [["Elite", "elite"], ["Champion", "champion"], ["Unreal", "unreal"], ["Unreal Gold", "unreal-gold"], ["Unreal Platin", "unreal-platin"], ["Unreal Diamant", "unreal-diamant"]].forEach(function (g) {
-      ["I", "II", "III"].forEach(function (rm) { RANKS.push({ xp: xp, n: g[0] + " " + rm, t: g[1] }); xp += step; step += 1000; });
+      ["I", "II", "III"].forEach(function (rm) { RANKS.push({ xp: xp, n: g[0] + " " + rm, t: g[1] }); xp += step; step += 500; });
     });
     RANKS.push({ xp: xp, n: "The real Unreal", t: "real-unreal" });
   })();

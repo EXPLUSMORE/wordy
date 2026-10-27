@@ -14,7 +14,7 @@ const RANKS = [[0, "Bronze I"], [150, "Bronze II"], [400, "Bronze III"], [800, "
   [9000, "Platin I"], [12000, "Platin II"], [15500, "Platin III"], [19500, "Diamant I"], [24000, "Diamant II"], [29000, "Diamant III"]];
 (function () {
   let xp = 35000, step = 5000;
-  ["Elite", "Champion", "Unreal", "Unreal Gold", "Unreal Platin", "Unreal Diamant"].forEach(n => ["I", "II", "III"].forEach(r => { RANKS.push([xp, n + " " + r]); xp += step; step += 1000; }));
+  ["Elite", "Champion", "Unreal", "Unreal Gold", "Unreal Platin", "Unreal Diamant"].forEach(n => ["I", "II", "III"].forEach(r => { RANKS.push([xp, n + " " + r]); xp += step; step += 500; }));
   RANKS.push([xp, "The real Unreal"]);
 })();
 const rankOf = xp => { let i = 0; RANKS.forEach((r, k) => { if (xp >= r[0]) i = k; }); return i; };

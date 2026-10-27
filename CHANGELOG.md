@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.153.0 – 2026-10-27
+- XP-Rangleiter flacher: Elite I bleibt bei 35.000 XP, die Abstände wachsen ab dort um +500 statt +1.000 je Rang (5.000, 5.500, 6.000 …). „The real Unreal“ ab 201.500 XP statt 278.000. Rang folgt weiter aus den XP; wer jetzt über einer neuen Schwelle liegt, steigt auf (z. B. Ani: Champion II). Grundlage: Auswertung `tools/xp_analyse.js` von Magnus, Chrissi und Ani.
+
 ## 2.152.2 – 2026-10-26
 - Schutz beim Verbinden: Liegt auf dem Server ein deutlich größerer Lernstand (mind. 20 Wörter und mehr als das 1,6-fache) als auf dem Gerät, sendet die App nichts (kein Schnappschuss, keine Ereignisse, keine Sicherung), bis entschieden ist. Dialog: Lernstand wiederherstellen (empfohlen), trotzdem verbinden oder wieder trennen. Setup zeigt bei offener Entscheidung einen Hinweis mit „Diesen Stand trotzdem senden“.
 
