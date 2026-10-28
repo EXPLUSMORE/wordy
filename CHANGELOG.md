@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.159.0
+- Beute neu geordnet (Vorschlag A): drei Reiter statt Pass/Shop/Showroom + vier Shop-Unterreiter. **🎯 Heute** (Truhe, Tagesangebot, Wunsch, Monatspass, „So verdienst du Münzen“), **🛍️ Laden** (5 Gruppen Figuren/Looks/Moves/Szene/Sets mit Unterreitern, Seltenheits-Filter, Chip-Zeilen zum Wischen; der Rang-Pfad-Schalter entfällt) und **🧍 Spind** (Showroom, Album, Abzeichen, Ränge mit Rang-Pfad). Alte Verweise (Pass/Shop/Showroom) landen im passenden neuen Reiter. Keine Datenänderung.
+
 ## 2.158.0
 - Booster: Die Ergebnisseite zeigt jetzt die XP mit Booster und daneben „⚡ normal …“. Der Booster verdoppelt auch die Boss-Truhe (Münzen 25–50 → 50–100, Anzeige „normal … – Booster verdoppelt“). Fehler behoben: Truhen wurden beim Öffnen auf 25 Münzen gekappt, jetzt gelten 25–50. Zähler `state.xpRaw` (normale XP). Texte in „So bekommst du XP“ ergänzt.
 

@@ -1535,6 +1535,11 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 @keyframes sxChestI{0%,80%{transform:rotate(0)}86%,94%{transform:rotate(-24deg)}100%{transform:rotate(0)}}@keyframes sxChestG{0%,80%{opacity:0}86%,94%{opacity:.95}100%{opacity:0}}.sxch.act .ld2{animation:sxChestA 1.2s ease-out}.sxch.act .gl{animation:sxChestGA 1.2s ease-out}@keyframes sxChestA{0%{transform:rotate(0)}25%,75%{transform:rotate(-40deg)}100%{transform:rotate(0)}}@keyframes sxChestGA{0%{opacity:0}25%,75%{opacity:1}100%{opacity:0}}
 .sxf-aqua{width:64px;height:40px}.sxf-aqua .bd{width:100%;height:100%;transform-origin:25% 50%;animation:sxFishT .34s ease-in-out infinite alternate;filter:drop-shadow(0 0 6px rgba(100,220,255,.55))}@keyframes sxFishT{from{transform:skewX(0) scaleX(1)}to{transform:skewX(-7deg) scaleX(.93)}}
 /* SEASON-AQUA:END */
+/* LADEN: Chip-Zeilen zum seitlichen Wischen statt Umbruch (v2.159) */
+.hscroll{display:flex;gap:6px;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none;margin:0 -2px 6px;padding:2px}
+.hscroll::-webkit-scrollbar{display:none}
+.segs.s4 button{padding-left:8px;padding-right:8px;font-size:13px;white-space:nowrap}
+.hscroll .chip{flex:0 0 auto;white-space:nowrap}
 </style>
 
 <div id="app">

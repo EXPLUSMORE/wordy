@@ -1555,12 +1555,20 @@
     view.innerHTML = '<div class="stack">' + top + (spielSeg === "arena" ? modiHtml("spiel") : spielSeg === "freunde" ? friendsHtml() : spielSeg === "crew" ? crewHtml() : spielSeg === "rang" ? boardHtml() : challengeHtml()) + '</div>';
   }
   function viewBeute() {
-    var top = segBar("beute", beuteSeg, [["pass", "❄️ Monatspass"], ["shop", "🛍️ Shop"], ["showroom", "🏆 Showroom"]]);
-    if (beuteSeg === "shop") { viewShop(); topSegs(top); }
-    else if (beuteSeg === "showroom") { viewShowroom(); topSegs(top); }
+    var LEG = { pass: "heute", shop: "laden", showroom: "spind" };
+    if (LEG[beuteSeg]) beuteSeg = LEG[beuteSeg];   // alte Namen (Links, Wolken) leben weiter
+    var top = segBar("beute", beuteSeg, [["heute", "🎯 Heute"], ["laden", "🛍️ Laden"], ["spind", "🧍 Spind"]]);
+    if (beuteSeg === "laden") { viewShop(); topSegs(top); }
+    else if (beuteSeg === "spind") viewSpind(top);
     else {
-      view.innerHTML = '<div class="stack">' + top + passCard() +
-        '<section class="card"><div class="eyebrow">So funktioniert der Monatspass</div><p class="small muted" style="margin:6px 0 0">Der Pass läuft einen Monat in vier Wochen plus Finale. Jede Woche zählt, an wie vielen Tagen du dein Tagesziel schaffst, und jeder Tag gibt einen Stempel. Ein verpasster Tag pro Woche zählt als Joker mit. Sind genug Tage zusammen, öffnest du die Wochen-Beute mit Figur, Tanz und Münzen. Schon ab 3 Tagen gibt es Bronze, bei 5 Silber, bei 7 Gold, jeweils mit Münzen. Mit doppeltem Tagesziel holst du einen verpassten Tag nach, ein Crew-Wochenziel gibt Bonusmünzen, und nächste Woche wartet ein geheimes Geschenk. Alle vier Wochen geschafft? Dann wartet das Finale.</p></section></div>';
+      var pend = S.pathState().pending.length;
+      view.innerHTML = '<div class="stack">' + top +
+        '<div class="row" style="align-items:center"><h1 style="font-size:22px;flex:1 1 auto">Deine Beute</h1><span class="pill tnum nowrap">🪙 ' + S.state.coins + '</span></div>' +
+        (pend ? '<button class="btn wide lg" data-act="openchest" style="background:var(--gold,#f2b33d);color:#2b1d00">💰 Truhe öffnen' + (pend > 1 ? ' (' + pend + ')' : '') + '</button>' : "") +
+        dealHtml(true) + wishCard() + passCard() +
+        '<details class="card"><summary><b>So funktioniert der Monatspass</b></summary><p class="small muted" style="margin:8px 0 0">Der Pass läuft einen Monat in vier Wochen plus Finale. Jede Woche zählt, an wie vielen Tagen du dein Tagesziel schaffst, und jeder Tag gibt einen Stempel. Ein verpasster Tag pro Woche zählt als Joker mit. Sind genug Tage zusammen, öffnest du die Wochen-Beute mit Figur, Tanz und Münzen. Schon ab 3 Tagen gibt es Bronze, bei 5 Silber, bei 7 Gold, jeweils mit Münzen. Mit doppeltem Tagesziel holst du einen verpassten Tag nach, ein Crew-Wochenziel gibt Bonusmünzen, und nächste Woche wartet ein geheimes Geschenk. Alle vier Wochen geschafft? Dann wartet das Finale.</p></details>' +
+        coinsCard() + '</div>';
+      earnOpen = false;
     }
   }
   function seasonCard() {
@@ -1982,8 +1990,34 @@
     { k: "avatar", n: "Figuren" }, { k: "sticker", n: "Sticker" }, { k: "acc", n: "Zubehör 🎩" }, { k: "frame", n: "Rahmen" }, { k: "title", n: "Titel" },
     { k: "fn", n: "Fortnite" }, { k: "bg", n: "Hintergründe" }, { k: "fx", n: "Effekte" }, { k: "dance", n: "Tänze 💃" }, { k: "outfit", n: "Outfits 👕" }, { k: "kit", n: "Trikots ⚽" }, { k: "sets", n: "Sets ⭐" }, { k: "snd", n: "Töne" }, { k: "theme", n: "Farben" }
   ];
+  /* Laden (v2.159): 5 Gruppen statt 14 Reiter; die Unterreiter bleiben die alten SHOP_TABS-Schlüssel */
+  var SHOP_GROUPS = [
+    { n: "🦊 Figuren", tabs: ["avatar", "sticker", "acc"] }, { n: "👕 Looks", tabs: ["outfit", "kit", "fn", "frame"] },
+    { n: "💃 Moves", tabs: ["dance", "fx", "snd"] }, { n: "🌄 Szene", tabs: ["bg", "theme", "title"] }, { n: "⭐ Sets", tabs: ["sets"] }
+  ];
+  var shopRar = "all";
+  function subTabs() {
+    var g = SHOP_GROUPS.filter(function (x) { return x.tabs.indexOf(shopTab) >= 0; })[0];
+    if (!g || g.tabs.length < 2) return "";
+    return '<div class="hscroll">' + g.tabs.map(function (k) {
+      var t = SHOP_TABS.filter(function (x) { return x.k === k; })[0];
+      return '<button class="chip soft" data-act="shoptab" data-k="' + k + '" aria-pressed="' + (shopTab === k) + '">' + t.n + '</button>';
+    }).join("") + '</div>';
+  }
+  function rarChips() {
+    if (shopTab === "sets" || shopTab === "acc") return "";
+    return '<div class="hscroll">' + [["all", "Alle"], ["common", "⚪ gewöhnlich"], ["rare", "🔵 selten"], ["epic", "🟣 episch"], ["legend", "🟠 legendär"], ["unreal", "💎 Unreal"]].map(function (r) {
+      return '<button class="chip soft" data-act="shoprar" data-k="' + r[0] + '" aria-pressed="' + (shopRar === r[0]) + '">' + r[1] + '</button>';
+    }).join("") + '</div>';
+  }
+  function dealHtml(withSet) {
+    var st = S.state, deal = S.dealItem(), sd = S.activeSetDeal();
+    return (deal ? '<div class="shopitem card" style="background:var(--accent-soft);border-radius:12px;padding:8px 10px;margin-bottom:8px"><span class="si">🔥</span><span style="flex:1 1 auto"><b class="small">Tagesangebot: ' + esc(deal.label) + '</b><br><span class="small muted">20 % günstiger · noch ' + untilMidnight() + '</span></span>' +
+        (S.minXp(deal) > st.xp ? "" : '<button class="btn soft" data-act="buy" data-id="' + esc(deal.id) + '">🪙 <s style="opacity:.55;font-weight:500">' + deal.cost + '</s> ' + S.priceOf(deal) + '</button>') + '</div>' : "") +
+      (sd ? '<div class="shopitem card" style="background:linear-gradient(135deg,#dff3ff,#eaf6ff);border-radius:12px;padding:8px 10px;margin-bottom:8px"><span class="si">❄️</span><span style="flex:1 1 auto"><b class="small">Set-Angebot heute: ' + esc(sd.set.name) + '</b><br><span class="small muted">Jedes Teil nur ' + sd.price + ' 🪙 · noch ' + untilMidnight() + '</span></span><button class="btn soft" data-act="shoptab" data-k="sets">Ansehen</button></div>' : "");
+  }
   var KIND_NAME = { sticker: "Sticker", avatar: "Figur", frame: "Rahmen", title: "Titel", bg: "Hintergrund", fx: "Effekt", dance: "Tanz", outfit: "Outfit", kit: "Trikot", snd: "Ton", theme: "Farbwelt" };
-  var shopTab = "avatar", shopView = "stufe", lernSeg = "units", spielSeg = "challenge", beuteSeg = "pass";
+  var shopTab = "avatar", shopView = "stufe", lernSeg = "units", spielSeg = "challenge", beuteSeg = "heute";
   var TABMAP = { ueben: "lernen", stats: "lernen", shop: "beute", showroom: "beute" };
   var THEME_DOT = { paper: "#1E6273", mint: "#2E7357", plum: "#6A3D70", amber: "#8A5A1B" };
   function shopIcon(it) {
@@ -2177,13 +2211,11 @@
   function shopCard() {
     var st = S.state, wishId = (S.wish() || {}).id, deal = S.dealItem(), sd = S.activeSetDeal();
     var html = '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Shop</div><span class="pill">🪙 ' + st.coins + '</span></div>' +
-      '<p class="small muted" style="margin:6px 0 10px">Münzen gibt es nur für Aussehen – nie für Lernvorteile.</p>' +
-      (deal ? '<div class="shopitem" style="background:var(--accent-soft);border-radius:12px;padding:8px 10px;margin-bottom:8px"><span class="si">🔥</span><span style="flex:1 1 auto"><b class="small">Tagesangebot: ' + esc(deal.label) + '</b><br><span class="small muted">20 % günstiger · noch ' + untilMidnight() + '</span></span>' +
-        (S.minXp(deal) > st.xp ? "" : '<button class="btn soft" data-act="buy" data-id="' + esc(deal.id) + '">🪙 <s style="opacity:.55;font-weight:500">' + deal.cost + '</s> ' + S.priceOf(deal) + '</button>') + '</div>' : "") +
-      (sd ? '<div class="shopitem" style="background:linear-gradient(135deg,#dff3ff,#eaf6ff);border-radius:12px;padding:8px 10px;margin-bottom:8px"><span class="si">❄️</span><span style="flex:1 1 auto"><b class="small">Set-Angebot heute: ' + esc(sd.set.name) + '</b><br><span class="small muted">Jedes Teil nur ' + sd.price + ' 🪙 · noch ' + untilMidnight() + '</span></span><button class="btn soft" data-act="shoptab" data-k="sets">Ansehen</button></div>' : "") +
-      '<div class="row wrap" style="gap:6px;margin-bottom:6px">' + SHOP_TABS.map(function (t) {
-        return '<button class="chip" data-act="shoptab" data-k="' + t.k + '" aria-pressed="' + (shopTab === t.k) + '">' + t.n + '</button>';
-      }).join("") + '</div>';
+      '<p class="small muted" style="margin:6px 0 10px">Münzen gibt es nur für Aussehen – nie für Lernvorteile.</p>' + dealHtml() +
+      '<div class="hscroll">' + SHOP_GROUPS.map(function (g) {
+        return '<button class="chip" data-act="shoptab" data-k="' + g.tabs[0] + '" aria-pressed="' + (g.tabs.indexOf(shopTab) >= 0) + '">' + g.n + '</button>';
+      }).join("") + '</div>' + subTabs() + rarChips() +
+      '';
     if (shopTab === "acc") return html + accHtml() + '</section>';
     if (shopTab === "sticker") html += slotsHtml();
     if (shopTab === "sets") {
@@ -2198,16 +2230,13 @@
       return html + '</section>';
     }
     var RO = { common: 0, rare: 1, epic: 2, legend: 3, unreal: 4 };   // Sortierung immer: gewöhnlich, selten, episch, legendär, danach nach Preis
-    if (shopTab === "avatar") {
-      html += '<div class="eyebrow" style="margin:14px 0 4px">Ansicht</div><div class="seg2">' + [["stufe", "🧩 Nach Stufe"], ["pfad", "🗺️ Rang-Pfad"]].map(function (v) { return '<button data-act="shopview" data-k="' + v[0] + '" aria-pressed="' + (shopView === v[0]) + '">' + v[1] + '</button>'; }).join("") + '</div>';
-      if (shopView === "pfad") return html + rankPathHtml() + '</section>';
-    }
     var all = shopTab === "avatar" || shopTab === "sticker";   // Figuren und Sticker: alles zeigen (auch Fortnite-Reihe, Noch-nicht-Freigegebenes als gesperrte Silhouette)
     var list = S.SHOP.filter(function (it) { return all ? it.kind === shopTab : (shopTab === "fn" ? it.set === "fn" : it.kind === shopTab && !it.set) && S.shopVisible(it); })
       .map(function (it, i) { return { it: it, i: i }; }).sort(function (a, b) { return (RO[S.rarityOf(a.it)] - RO[S.rarityOf(b.it)]) || (S.minXp(a.it) - S.minXp(b.it)) || (a.it.cost - b.it.cost) || (a.i - b.i); }).map(function (x) { return x.it; });
     var tot = list.filter(function (it) { return it.cost > 0 || shopTab !== "avatar"; }), have = tot.filter(function (it) { return S.owns(it); }).length;
     html += teaserHtml() + '<div class="small muted" style="margin:2px 0 4px">Gesammelt: <b>' + have + ' / ' + tot.length + '</b></div>';
     ["common", "rare", "epic", "legend", "unreal"].forEach(function (r) {
+      if (shopRar !== "all" && shopRar !== r) return;
       var l = list.filter(function (it) { return S.rarityOf(it) === r; }); if (!l.length) return;
       var own = l.filter(function (it) { return S.owns(it); }).length, free = l.filter(function (it) { return !S.owns(it) && !it.pass && !it.reward && S.minXp(it) <= S.state.xp; }).length;
       var mins = l.filter(function (it) { return !S.owns(it) && S.minXp(it) > S.state.xp; }).map(function (it) { return S.minXp(it); }), first = mins.length && !free ? S.rankOf(Math.min.apply(null, mins)).rank.n : "";
@@ -2402,8 +2431,16 @@
   /* ================= SHOP & ABZEICHEN ================= */
   function viewShop() {
     var st = S.state, html = '<div class="stack">';
-    html += '<div class="row" style="align-items:center"><h1 style="font-size:22px;flex:1 1 auto">Shop &amp; Abzeichen</h1><span class="pill tnum nowrap">🪙 ' + st.coins + '</span></div>';
-    html += segBar("shop", shopSeg, [["shop", "Shop"], ["sammlung", "Sammlung"], ["abzeichen", "Abzeichen"], ["raenge", "Ränge"]]);
+    html += '<div class="row" style="align-items:center"><h1 style="font-size:22px;flex:1 1 auto">Laden</h1><span class="pill tnum nowrap">🪙 ' + st.coins + '</span></div>';
+    view.innerHTML = html + shopCard() + '</div>';
+  }
+  /* Spind: Showroom (anziehen, Favoriten), Sammlung, Abzeichen, Ränge mit Rang-Pfad */
+  function viewSpind(top) {
+    var SUB = [["showroom", "🏆 Showroom"], ["sammlung", "Album"], ["abzeichen", "Abzeichen"], ["raenge", "Ränge"]];
+    if (!SUB.some(function (x) { return x[0] === shopSeg; })) shopSeg = "showroom";
+    var sub = segBar("shop", shopSeg, SUB).replace('class="segs"', 'class="segs s4"');
+    if (shopSeg === "showroom") { viewShowroom(); topSegs(top + sub); return; }
+    var html = '<div class="stack">' + top + sub;
     if (shopSeg === "sammlung") html += albumCard() + albumCard("fn") + stickerBook() + stickerBook("fn");
     else if (shopSeg === "abzeichen") {
       var mg = S.medalGroups(), mo = 0, mt = 0; mg.forEach(function (g) { g.items.forEach(function (m) { mt++; if (m.owned) mo++; }); });
@@ -2415,8 +2452,7 @@
           (nx ? '<div class="small muted" style="margin-top:8px">Als Nächstes: <b>' + esc(nx.label) + '</b> – ' + esc(nx.how) + '</div>' + (nx.need ? '<div class="bar" style="margin-top:4px"><i style="width:' + Math.round(nx.prog * 100 / nx.need) + '%"></i></div>' : "") : '<div class="small" style="margin-top:8px">✓ Alles geschafft in dieser Kategorie!</div>') + '</section>';
       });
     }
-    else if (shopSeg === "raenge") html += ranksCard();
-    else { html += wishCard() + coinsCard() + shopCard(); earnOpen = false; }
+    else html += ranksCard() + '<section class="card"><div class="eyebrow">Rang-Pfad</div>' + rankPathHtml() + '</section>';
     view.innerHTML = html + '</div>';
   }
 
@@ -3772,7 +3808,7 @@
       var nid = act.getAttribute("data-id"), pfc = S.state.profile; (pfc.cloudSeen || (pfc.cloudSeen = {}))[nid] = 1; if (pfc.cloudForce) delete pfc.cloudForce[nid]; S.save(true);
       var cl = act.closest(".newscloud"); if (cl) cl.remove();
       var nn = NEWS.filter(function (x) { return x.id === nid; })[0];
-      if (a === "newscloud" && nn && nn.go === "verdienst") { tab = "shop"; shopSeg = "shop"; earnOpen = true; render(); var eh = document.getElementById("earnHow"); if (eh) eh.scrollIntoView({ block: "start" }); }
+      if (a === "newscloud" && nn && nn.go === "verdienst") { tab = "beute"; beuteSeg = "heute"; earnOpen = true; render(); var eh = document.getElementById("earnHow"); if (eh) eh.scrollIntoView({ block: "start" }); }
       else if (a === "newscloud" && nn && nn.go === "mal") { tab = "lernen"; lernSeg = "mal"; uebenSeg = "modi"; detailUnit = null; render(); view.scrollTop = 0; }
       else if (a === "newscloud" && nn && nn.shop) { tab = "beute"; beuteSeg = "shop"; shopTab = nn.shop; render(); view.scrollTop = 0; }
       else if (a === "newscloud" && global.VTG) global.VTG.start(nid);
@@ -3819,7 +3855,8 @@
     else if (a === "vforms") { S.state.settings.verbForms = act.getAttribute("data-k") === "past" ? "past" : "all"; S.save(true); render(); }
     else if (a === "shopview") { shopView = act.getAttribute("data-k"); render(); }
     else if (a === "lockinfo") { var li = S.itemById(act.getAttribute("data-id")); if (li) { var need = S.minXp(li) - S.state.xp, sw = S.shopSoon(li); toast("🔒 " + (sw ? "Geheimes Stück" : li.label) + (sw ? ": kommt in " + sw + (sw === 1 ? " Woche" : " Wochen") + " in den Shop" : "") + (li.rank ? ": ab Rang " + li.rank : "") + (need > 0 ? " · noch " + need.toLocaleString("de-DE") + " XP" : "") + (li.cost && !sw ? " · " + li.cost + " 🪙" : ""), 4200); } }
-    else if (a === "shoptab") { shopTab = act.getAttribute("data-k"); render(); }
+    else if (a === "shoptab") { shopTab = act.getAttribute("data-k"); beuteSeg = "laden"; render(); }
+    else if (a === "shoprar") { shopRar = act.getAttribute("data-k"); render(); }
     else if (a === "checkupdate") {
       if (!navigator.serviceWorker) return toast("Dieses Gerät kennt keine App-Updates. Seite einfach neu laden.");
       toast("Suche nach Updates …");

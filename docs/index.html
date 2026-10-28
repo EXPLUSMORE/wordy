@@ -1548,10 +1548,15 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 @keyframes sxChestI{0%,80%{transform:rotate(0)}86%,94%{transform:rotate(-24deg)}100%{transform:rotate(0)}}@keyframes sxChestG{0%,80%{opacity:0}86%,94%{opacity:.95}100%{opacity:0}}.sxch.act .ld2{animation:sxChestA 1.2s ease-out}.sxch.act .gl{animation:sxChestGA 1.2s ease-out}@keyframes sxChestA{0%{transform:rotate(0)}25%,75%{transform:rotate(-40deg)}100%{transform:rotate(0)}}@keyframes sxChestGA{0%{opacity:0}25%,75%{opacity:1}100%{opacity:0}}
 .sxf-aqua{width:64px;height:40px}.sxf-aqua .bd{width:100%;height:100%;transform-origin:25% 50%;animation:sxFishT .34s ease-in-out infinite alternate;filter:drop-shadow(0 0 6px rgba(100,220,255,.55))}@keyframes sxFishT{from{transform:skewX(0) scaleX(1)}to{transform:skewX(-7deg) scaleX(.93)}}
 /* SEASON-AQUA:END */
+/* LADEN: Chip-Zeilen zum seitlichen Wischen statt Umbruch (v2.159) */
+.hscroll{display:flex;gap:6px;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none;margin:0 -2px 6px;padding:2px}
+.hscroll::-webkit-scrollbar{display:none}
+.segs.s4 button{padding-left:8px;padding-right:8px;font-size:13px;white-space:nowrap}
+.hscroll .chip{flex:0 0 auto;white-space:nowrap}
 </style>
 
 
-<script>window.WORDY_VERSION="2.158.0";window.WORDY_BUILD="a9ce62b188";</script>
+<script>window.WORDY_VERSION="2.159.0";window.WORDY_BUILD="bba620b036";</script>
 </head>
 <body>
 <div id="app">
@@ -1580,42 +1585,42 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
   <div id="session" hidden></div>
 </div>
 <div id="arena" hidden></div>
-<script src="data/klasse6.js?v=a9ce62b188"></script>
-<script src="data/klasse7.js?v=a9ce62b188"></script>
-<script src="data/klasse8.js?v=a9ce62b188"></script>
-<script src="data/business.js?v=a9ce62b188"></script>
-<script src="data/business-basis2.js?v=a9ce62b188"></script>
-<script src="data/business-aufbau2.js?v=a9ce62b188"></script>
-<script src="data/business-profi2.js?v=a9ce62b188"></script>
-<script src="data/smalltalk.js?v=a9ce62b188"></script>
-<script src="data/idioms.js?v=a9ce62b188"></script>
-<script src="data/saetze.js?v=a9ce62b188"></script>
-<script src="data/grammatik.js?v=a9ce62b188"></script>
-<script src="data/alternativen.js?v=a9ce62b188"></script>
-<script src="data/saetze2.js?v=a9ce62b188"></script>
-<script src="data/lernbuch.js?v=a9ce62b188"></script>
-<script src="data/verben.js?v=a9ce62b188"></script>
-<script src="data/open/business-aufbau.js?v=a9ce62b188"></script>
-<script src="data/open/business-basis.js?v=a9ce62b188"></script>
-<script src="data/open/business-profi.js?v=a9ce62b188"></script>
-<script src="data/open/saetze-open.js?v=a9ce62b188"></script>
-<script src="js/engine.js?v=a9ce62b188"></script>
-<script src="js/cosmetics.js?v=a9ce62b188"></script>
-<script src="js/saison.js?v=a9ce62b188"></script>
-<script src="js/saison2.js?v=a9ce62b188"></script>
-<script src="js/fortnite.js?v=a9ce62b188"></script>
-<script src="js/figur.js?v=a9ce62b188"></script>
-<script src="js/stila.js?v=a9ce62b188"></script>
-<script src="js/stilb.js?v=a9ce62b188"></script>
-<script src="js/acc.js?v=a9ce62b188"></script>
-<script src="js/loot.js?v=a9ce62b188"></script>
-<script src="js/film.js?v=a9ce62b188"></script>
-<script src="js/einmaleins.js?v=a9ce62b188"></script>
-<script src="js/app.js?v=a9ce62b188"></script>
-<script src="js/arena.js?v=a9ce62b188"></script>
-<script src="js/spiele.js?v=a9ce62b188"></script>
-<script src="js/grammatik.js?v=a9ce62b188"></script>
-<script src="js/sync.js?v=a9ce62b188"></script>
+<script src="data/klasse6.js?v=bba620b036"></script>
+<script src="data/klasse7.js?v=bba620b036"></script>
+<script src="data/klasse8.js?v=bba620b036"></script>
+<script src="data/business.js?v=bba620b036"></script>
+<script src="data/business-basis2.js?v=bba620b036"></script>
+<script src="data/business-aufbau2.js?v=bba620b036"></script>
+<script src="data/business-profi2.js?v=bba620b036"></script>
+<script src="data/smalltalk.js?v=bba620b036"></script>
+<script src="data/idioms.js?v=bba620b036"></script>
+<script src="data/saetze.js?v=bba620b036"></script>
+<script src="data/grammatik.js?v=bba620b036"></script>
+<script src="data/alternativen.js?v=bba620b036"></script>
+<script src="data/saetze2.js?v=bba620b036"></script>
+<script src="data/lernbuch.js?v=bba620b036"></script>
+<script src="data/verben.js?v=bba620b036"></script>
+<script src="data/open/business-aufbau.js?v=bba620b036"></script>
+<script src="data/open/business-basis.js?v=bba620b036"></script>
+<script src="data/open/business-profi.js?v=bba620b036"></script>
+<script src="data/open/saetze-open.js?v=bba620b036"></script>
+<script src="js/engine.js?v=bba620b036"></script>
+<script src="js/cosmetics.js?v=bba620b036"></script>
+<script src="js/saison.js?v=bba620b036"></script>
+<script src="js/saison2.js?v=bba620b036"></script>
+<script src="js/fortnite.js?v=bba620b036"></script>
+<script src="js/figur.js?v=bba620b036"></script>
+<script src="js/stila.js?v=bba620b036"></script>
+<script src="js/stilb.js?v=bba620b036"></script>
+<script src="js/acc.js?v=bba620b036"></script>
+<script src="js/loot.js?v=bba620b036"></script>
+<script src="js/film.js?v=bba620b036"></script>
+<script src="js/einmaleins.js?v=bba620b036"></script>
+<script src="js/app.js?v=bba620b036"></script>
+<script src="js/arena.js?v=bba620b036"></script>
+<script src="js/spiele.js?v=bba620b036"></script>
+<script src="js/grammatik.js?v=bba620b036"></script>
+<script src="js/sync.js?v=bba620b036"></script>
 
 <script>
 if ('serviceWorker' in navigator) {
