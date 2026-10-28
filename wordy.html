@@ -1544,7 +1544,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.157.2";window.WORDY_BUILD="370c93c0cc";</script>
+<script>window.WORDY_VERSION="2.157.3";window.WORDY_BUILD="2f1633e0d0";</script>
 </head>
 <body>
 <div id="app">
@@ -2778,8 +2778,8 @@ window.VOCAB_UNITS = (window.VOCAB_UNITS || []).concat([
 ["mild","mild",2,"It stayed surprisingly mild this winter."],
 ["chilly","frisch, kühl",2,"It gets chilly once the sun goes down."],
 ["pouring","strömend",2,"It was pouring when I left the hotel."],
-["to clear up","aufklaren",3,"They say it will clear up by noon."],
-["to brighten up","aufklaren",3,"They say it will brighten up later."],
+["to dry up","abtrocknen",3,"The roads should dry up by noon."],
+["to cool down","abkühlen",3,"It will cool down a lot tonight."],
 ["heatwave","die Hitzewelle",3,"We had a heatwave in early June."],
 ["to make the most of","ausnutzen",3,"We should make the most of this sunshine."],
 ["unseasonably warm","ungewöhnlich warm",3,"It is unseasonably warm for November."],
@@ -6167,6 +6167,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     buildCatalogue(state);
     priceMigrate();
     ivMigrate();
+    wordFix1();
     rankPickSkip();
     rollDay();
     regenHearts();
@@ -7021,6 +7022,13 @@ window.SENTENCES = (window.SENTENCES || []).concat([
 
   /* Einmalige Korrektur (v2.154.9): Abstände, die nur durch Zusatzübungen so groß geworden sind (bis 400 Tage), auf das Mögliche begrenzen:
      ein Abstand kann nie viel länger sein als das Profil alt ist (zweifaches Alter plus 3 Tage). Es wird nur gekürzt, nie verlängert. */
+  /* Einmalig (v2.157.3): In Einheit s-02 wurden „to clear up“ und „to brighten up“ (beide „aufklaren“) durch „to warm up“ und „to cool down“ ersetzt (gleiche Plätze, IDs bleiben).
+     Der alte Lernstand dieser zwei Plätze gehört zu den früheren Wörtern und wird gelöscht. */
+  function wordFix1() {
+    if (!state || state.wFix1) return;
+    ["s-02#5", "s-02#6"].forEach(function (id) { if (state.w && state.w[id]) delete state.w[id]; });
+    state.wFix1 = 1;
+  }
   function ivMigrate() {
     if (!state || state.ivFix) return;
     var now = Date.now(), age = Math.max(1, Math.ceil((now - (state.created || now)) / 864e5)), cap = Math.min(400, Math.ceil(age * 2) + 3), n = 0;

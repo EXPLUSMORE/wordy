@@ -419,6 +419,7 @@
     buildCatalogue(state);
     priceMigrate();
     ivMigrate();
+    wordFix1();
     rankPickSkip();
     rollDay();
     regenHearts();
@@ -1273,6 +1274,13 @@
 
   /* Einmalige Korrektur (v2.154.9): Abstände, die nur durch Zusatzübungen so groß geworden sind (bis 400 Tage), auf das Mögliche begrenzen:
      ein Abstand kann nie viel länger sein als das Profil alt ist (zweifaches Alter plus 3 Tage). Es wird nur gekürzt, nie verlängert. */
+  /* Einmalig (v2.157.3): In Einheit s-02 wurden „to clear up“ und „to brighten up“ (beide „aufklaren“) durch „to warm up“ und „to cool down“ ersetzt (gleiche Plätze, IDs bleiben).
+     Der alte Lernstand dieser zwei Plätze gehört zu den früheren Wörtern und wird gelöscht. */
+  function wordFix1() {
+    if (!state || state.wFix1) return;
+    ["s-02#5", "s-02#6"].forEach(function (id) { if (state.w && state.w[id]) delete state.w[id]; });
+    state.wFix1 = 1;
+  }
   function ivMigrate() {
     if (!state || state.ivFix) return;
     var now = Date.now(), age = Math.max(1, Math.ceil((now - (state.created || now)) / 864e5)), cap = Math.min(400, Math.ceil(age * 2) + 3), n = 0;
