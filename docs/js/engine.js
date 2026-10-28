@@ -537,10 +537,18 @@
     return m;
   }
   /* Wörter, die dem Meistern am nächsten sind: erst Stufe „Sitzt“ (fällige zuerst), dann Stufe „Geübt“ */
+  /* Würde eine richtige Antwort das Wort jetzt „gemeistert“ machen (Stufe 4: Abstand ab 21 Tagen und mindestens 4 richtige in Folge)?
+     Seit v2.154.9 wächst der Abstand nur noch bei fälligen Wörtern, also zählen nur fällige Wörter. */
+  function canMasterNow(id) {
+    var r = state.w[id]; if (!r || levelOf(id) !== 3 || (r.due || 0) > Date.now()) return false;
+    var iv = r.reps === 0 ? 1 : r.reps === 1 ? 3 : Math.min(400, Math.round((r.iv || 1) * clamp((r.ef || 2.3) + 0.08, 1.3, 2.8)));
+    return iv >= 21 && (r.chain || 0) + 1 >= 4;
+  }
   function masterList(n) {
     var now = Date.now();
     var cand = pools().all.filter(function (w) { var l = levelOf(w.id); return l === 3 || l === 2; });
     cand.sort(function (a, b) {
+      var ma = canMasterNow(a.id) ? 0 : 1, mb = canMasterNow(b.id) ? 0 : 1; if (ma !== mb) return ma - mb;   // zuerst Wörter, die jetzt wirklich gemeistert werden können
       var la = levelOf(a.id), lb = levelOf(b.id); if (la !== lb) return lb - la;
       var ra = state.w[a.id], rb = state.w[b.id], da = ra.due <= now ? 0 : 1, db = rb.due <= now ? 0 : 1;
       return (da - db) || ((rb.iv || 0) - (ra.iv || 0));
@@ -554,7 +562,7 @@
       case "box": return p.box.length >= m.goal;
       case "new":
         return p.due.filter(function (w) { return levelOf(w.id) === 1; }).length >= m.goal;
-      case "master": return p.all.filter(function (w) { return levelOf(w.id) >= 3; }).length >= m.goal;
+      case "master": return p.all.filter(function (w) { return canMasterNow(w.id); }).length >= m.goal;   // nur wenn heute wirklich Wörter gemeistert werden können
       case "sent": return activeSentences().length >= m.goal;
       case "arena": return state.settings.arenaMissions !== false && p.all.length >= 8;
       default: return true;
