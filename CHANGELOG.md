@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.159.1
+- Tagesangebot (Heute und Laden): Die Kachel kauft nicht mehr beim Antippen, sondern zeigt „👀 Ansehen“ mit dem Preis und dem Hinweis „gekauft wird erst mit Kaufen“. Das Antippen öffnet ein Fenster mit dem Teil (Figuren: Anprobe), gekauft wird nur über „Kaufen“ dort (`dealSheet()`).
+
 ## 2.159.0
 - Beute neu geordnet (Vorschlag A): drei Reiter statt Pass/Shop/Showroom + vier Shop-Unterreiter. **🎯 Heute** (Truhe, Tagesangebot, Wunsch, Monatspass, „So verdienst du Münzen“), **🛍️ Laden** (5 Gruppen Figuren/Looks/Moves/Szene/Sets mit Unterreitern, Seltenheits-Filter, Chip-Zeilen zum Wischen; der Rang-Pfad-Schalter entfällt) und **🧍 Spind** (Showroom, Album, Abzeichen, Ränge mit Rang-Pfad). Alte Verweise (Pass/Shop/Showroom) landen im passenden neuen Reiter. Keine Datenänderung.
 

@@ -1549,7 +1549,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.159.0";window.WORDY_BUILD="bba620b036";</script>
+<script>window.WORDY_VERSION="2.159.1";window.WORDY_BUILD="a248729312";</script>
 </head>
 <body>
 <div id="app">
@@ -12625,8 +12625,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   }
   function dealHtml(withSet) {
     var st = S.state, deal = S.dealItem(), sd = S.activeSetDeal();
-    return (deal ? '<div class="shopitem card" style="background:var(--accent-soft);border-radius:12px;padding:8px 10px;margin-bottom:8px"><span class="si">🔥</span><span style="flex:1 1 auto"><b class="small">Tagesangebot: ' + esc(deal.label) + '</b><br><span class="small muted">20 % günstiger · noch ' + untilMidnight() + '</span></span>' +
-        (S.minXp(deal) > st.xp ? "" : '<button class="btn soft" data-act="buy" data-id="' + esc(deal.id) + '">🪙 <s style="opacity:.55;font-weight:500">' + deal.cost + '</s> ' + S.priceOf(deal) + '</button>') + '</div>' : "") +
+    return (deal ? '<button class="shopitem card dealcard" data-act="dealview" data-id="' + esc(deal.id) + '" style="background:var(--accent-soft);border-radius:12px;padding:8px 10px;margin-bottom:8px;width:100%;text-align:left;cursor:pointer"><span class="si">🔥</span><span style="flex:1 1 auto"><b class="small">Tagesangebot: ' + esc(deal.label) + '</b><br><span class="small muted">20 % günstiger · noch ' + untilMidnight() + '</span><br><span class="small tnum">🪙 <s style="opacity:.55">' + deal.cost + '</s> <b>' + S.priceOf(deal) + '</b></span></span><span class="btn soft nowrap" aria-hidden="true" style="white-space:nowrap">👀 Ansehen</span></button><div class="small muted" style="margin:-4px 2px 8px">Tippen zeigt dir das Teil zuerst – gekauft wird erst mit „Kaufen“.</div>' : "") +
       (sd ? '<div class="shopitem card" style="background:linear-gradient(135deg,#dff3ff,#eaf6ff);border-radius:12px;padding:8px 10px;margin-bottom:8px"><span class="si">❄️</span><span style="flex:1 1 auto"><b class="small">Set-Angebot heute: ' + esc(sd.set.name) + '</b><br><span class="small muted">Jedes Teil nur ' + sd.price + ' 🪙 · noch ' + untilMidnight() + '</span></span><button class="btn soft" data-act="shoptab" data-k="sets">Ansehen</button></div>' : "");
   }
   var KIND_NAME = { sticker: "Sticker", avatar: "Figur", frame: "Rahmen", title: "Titel", bg: "Hintergrund", fx: "Effekt", dance: "Tanz", outfit: "Outfit", kit: "Trikot", snd: "Ton", theme: "Farbwelt" };
@@ -12819,6 +12818,21 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       if (k === "say") { speak(S.enName(it)); return; }
       if (k === "use") { S.equip(it.id); ov.remove(); renderHeader(); render(); return; }
       if (k === "buy") { var r = S.buy(it.id); if (r.error) { toast(r.error); return; } try { if (S.state.settings.audio) global.VTC.sound(S.state.profile.snd, true); } catch (e2) {} toast(it.label + " gehört dir!"); ov.remove(); renderHeader(); render(); }
+    });
+  }
+  /* Tagesangebot: erst ansehen, Kauf nur über den Knopf im Fenster */
+  function dealSheet(id) {
+    var it = S.itemById(id); if (!it) return;
+    if (it.kind === "avatar") return openFigTry(id);
+    var own = S.owns(it), lock = !own && S.minXp(it) > S.state.xp, price = S.priceOf(it), rar = S.rarityOf(it), ov = document.createElement("div"); ov.className = "srmd";
+    ov.innerHTML = '<div class="dsh" style="text-align:center"><div class="dshg"></div><div class="eyebrow">🔥 Tagesangebot</div><h3 style="margin:2px 0">' + esc(it.label) + '</h3><div style="display:grid;place-items:center;margin:8px 0">' + srIcon({ kind: it.kind, val: it.val, rar: rar, it: it }) + '</div>' +
+      '<div class="small muted" style="margin-bottom:10px">' + RAR_NAME[rar] + ' · ' + KIND_NAME[it.kind] + ' · 🪙 <s>' + it.cost + '</s> <b>' + price + '</b></div><div class="row" style="gap:8px;justify-content:center;flex-wrap:wrap">' +
+      (own ? '<span class="rpill">✓ gehört dir</span>' : lock ? '<span class="rpill">🔒 ab ' + esc(it.rank) + '</span>' : '<button class="btn" data-d="buy">🪙 ' + price + ' kaufen</button>') + '<button class="btn soft" data-d="x">Schließen</button></div></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-d]"), k = b && b.getAttribute("data-d");
+      if (e.target === ov || k === "x") { ov.remove(); return; }
+      if (k === "buy") { var r = S.buy(id); if (r.error) { toast(r.error); return; } try { if (S.state.settings.audio) global.VTC.sound(S.state.profile.snd, true); } catch (e2) {} toast(it.label + " gehört dir!"); ov.remove(); renderHeader(); render(); }
     });
   }
   function shopCard() {
@@ -14469,6 +14483,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     else if (a === "shopview") { shopView = act.getAttribute("data-k"); render(); }
     else if (a === "lockinfo") { var li = S.itemById(act.getAttribute("data-id")); if (li) { var need = S.minXp(li) - S.state.xp, sw = S.shopSoon(li); toast("🔒 " + (sw ? "Geheimes Stück" : li.label) + (sw ? ": kommt in " + sw + (sw === 1 ? " Woche" : " Wochen") + " in den Shop" : "") + (li.rank ? ": ab Rang " + li.rank : "") + (need > 0 ? " · noch " + need.toLocaleString("de-DE") + " XP" : "") + (li.cost && !sw ? " · " + li.cost + " 🪙" : ""), 4200); } }
     else if (a === "shoptab") { shopTab = act.getAttribute("data-k"); beuteSeg = "laden"; render(); }
+    else if (a === "dealview") dealSheet(act.getAttribute("data-id"));
     else if (a === "shoprar") { shopRar = act.getAttribute("data-k"); render(); }
     else if (a === "checkupdate") {
       if (!navigator.serviceWorker) return toast("Dieses Gerät kennt keine App-Updates. Seite einfach neu laden.");
