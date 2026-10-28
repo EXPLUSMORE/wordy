@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.159.2
+- Laden: Auch die Shop-Kacheln kaufen nicht mehr beim Antippen. Sie zeigen den Preis und „👀 Ansehen“; gekauft wird erst mit „Kaufen“ im Fenster (Figuren: Anprobe), wie beim Tagesangebot.
+
 ## 2.159.1
 - Tagesangebot (Heute und Laden): Die Kachel kauft nicht mehr beim Antippen, sondern zeigt „👀 Ansehen“ mit dem Preis und dem Hinweis „gekauft wird erst mit Kaufen“. Das Antippen öffnet ein Fenster mit dem Teil (Figuren: Anprobe), gekauft wird nur über „Kaufen“ dort (`dealSheet()`).
 

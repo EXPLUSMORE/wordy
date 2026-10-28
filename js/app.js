@@ -2102,7 +2102,7 @@
       : it.pass ? '<span class="rpill">🎁 ' + esc(it.pass) + '-Pass</span>' : it.reward ? '<span class="rpill">🎁 ' + esc(setName) + '</span>'
       : soon ? '<span class="rpill">🕒 Kommt bald</span>'
       : locked ? '<span class="rpill">🔒 ab ' + esc(it.rank) + '</span>'
-      : '<button class="rbtn buy" data-act="buy" data-id="' + esc(it.id) + '">🪙 ' + (deal ? '<s>' + it.cost + '</s> ' : "") + price + '</button>';
+      : '<div class="small tnum" style="margin-bottom:4px">🪙 ' + (deal ? '<s style="opacity:.55">' + it.cost + '</s> ' : "") + '<b>' + price + '</b></div><button class="rbtn buy" data-act="dealview" data-id="' + esc(it.id) + '">👀 Ansehen</button>';
     var sub = KIND_NAME[it.kind] + (it.bundle ? " · ❄️ Eis-Set" : "") + (it.rank && !own && (!locked || soon) ? " · ab " + esc(it.rank) : "");
     var prev = (it.kind === "dance" || it.kind === "outfit" || it.kind === "kit") ? '<button class="rprev" data-act="dancetry" data-id="' + esc(it.id) + '" aria-label="Vorschau">▶︎</button>' : it.kind === "avatar" && !soon && global.VTA && global.VTA.has(it.val) ? '<button class="rprev" data-act="figtry" data-id="' + esc(it.id) + '" aria-label="Anprobe">👀</button>' : "";
     return '<div class="rtile ' + rar + (own ? " own" : "") + (locked ? " lock" : "") + '"' + (locked ? ' data-act="lockinfo" data-id="' + esc(it.id) + '"' : "") + ' style="--c1:' + c[0] + ';--c2:' + c[1] + ';--g:' + RAR_GLOW[rar] + '">' +
@@ -2212,8 +2212,8 @@
     var it = S.itemById(id); if (!it) return;
     if (it.kind === "avatar") return openFigTry(id);
     var own = S.owns(it), lock = !own && S.minXp(it) > S.state.xp, price = S.priceOf(it), rar = S.rarityOf(it), ov = document.createElement("div"); ov.className = "srmd";
-    ov.innerHTML = '<div class="dsh" style="text-align:center"><div class="dshg"></div><div class="eyebrow">🔥 Tagesangebot</div><h3 style="margin:2px 0">' + esc(it.label) + '</h3><div style="display:grid;place-items:center;margin:8px 0">' + srIcon({ kind: it.kind, val: it.val, rar: rar, it: it }) + '</div>' +
-      '<div class="small muted" style="margin-bottom:10px">' + RAR_NAME[rar] + ' · ' + KIND_NAME[it.kind] + ' · 🪙 <s>' + it.cost + '</s> <b>' + price + '</b></div><div class="row" style="gap:8px;justify-content:center;flex-wrap:wrap">' +
+    ov.innerHTML = '<div class="dsh" style="text-align:center"><div class="dshg"></div><div class="eyebrow">' + (price !== it.cost ? "🔥 Tagesangebot" : "🛍️ Laden") + '</div><h3 style="margin:2px 0">' + esc(it.label) + '</h3><div style="display:grid;place-items:center;margin:8px 0">' + srIcon({ kind: it.kind, val: it.val, rar: rar, it: it }) + '</div>' +
+      '<div class="small muted" style="margin-bottom:10px">' + RAR_NAME[rar] + ' · ' + KIND_NAME[it.kind] + ' · 🪙 ' + (price !== it.cost ? '<s>' + it.cost + '</s> ' : "") + '<b>' + price + '</b></div><div class="row" style="gap:8px;justify-content:center;flex-wrap:wrap">' +
       (own ? '<span class="rpill">✓ gehört dir</span>' : lock ? '<span class="rpill">🔒 ab ' + esc(it.rank) + '</span>' : '<button class="btn" data-d="buy">🪙 ' + price + ' kaufen</button>') + '<button class="btn soft" data-d="x">Schließen</button></div></div>';
     document.body.appendChild(ov);
     ov.addEventListener("click", function (e) {
