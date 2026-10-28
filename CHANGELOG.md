@@ -9,6 +9,9 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.157.2 – 2026-10-28
+- **Fehlerkartei:** Wörter blieben drin, auch wenn man alle mehrfach fehlerfrei durchgespielt hatte. Grund: Ein Wort verließ die Kartei nur über den Wiederholungsabstand (Stufe 3), und der wächst seit 2.154.9 bei Wiederholungen am selben Tag nicht mehr. Jetzt verlässt ein Wort die Fehlerkartei, sobald es **3 Mal in Folge richtig** beantwortet wurde (auch am selben Tag); ein Fehler oder ein Hinweis setzt die Serie zurück. Wörter, die schon mehr als 2 richtige in Folge haben (wie bei Checker), verlassen die Kartei beim ersten Öffnen mit dieser Version. Die Münzen fürs Verlassen der Kartei (+2) und die Mission „Fehlerkartei-Wörter richtig beantworten“ zählen jetzt auch bei diesen Wiederholungen.
+
 ## 2.157.1 – 2026-10-28
 - **Tagesmission „2 Wörter meistern“** ließ sich nicht mehr erfüllen: Seit 2.154.9 wächst der Abstand eines Worts nur noch, wenn es fällig war. Die Mastern-Runde nahm aber auch nicht fällige Wörter, die dadurch nie zu „Gemeistert“ wurden. Jetzt wählt die Runde zuerst Wörter, die jetzt wirklich gemeistert werden können (fällig, Abstand danach ab 21 Tagen, schon 3 richtige in Folge), und die Mission wird nur noch gezogen, wenn es genug solche Wörter gibt. Bereits gezogene, noch nicht begonnene Missionen, die nicht machbar sind, werden wie bisher ersetzt.
 

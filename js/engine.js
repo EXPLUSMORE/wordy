@@ -680,7 +680,7 @@
     if (!d.touched[id]) { d.touched[id] = 1; d.distinct = (d.distinct || 0) + 1; }
   }
   function awardProgress(id, before, after, wasDue, boxSolved) {
-    var d = state.daily; if (!d || !wasDue) return;
+    var d = state.daily; if (!d || (!wasDue && !boxSolved)) return;   // Zusatzübungen zahlen nichts, außer ein Wort verlässt die Fehlerkartei
     if (!d.paid) d.paid = {};
     if (d.paid[id]) return;
     var c = 0, kind = null;
@@ -711,7 +711,9 @@
     if (!r.d && ids.every(function (x) { return levelOf(x) >= 2; })) { r.d = 1; logCoins("einheit", uid === "verbs" ? 60 : 30, "Einheit geschafft: " + u.title); }
   }
   var STREAK_BONUS = { 3: 15, 7: 40, 14: 80, 30: 200, 60: 300, 100: 500 };
-  function inErrorBox(id) { var r = state.w[id]; return !!r && r.lapses > 0 && levelOf(id) < 3; }
+  /* Fehlerkartei: ein Wort, das schon einmal falsch war, bleibt drin, bis es Stufe 3 erreicht oder 3 Mal in Folge richtig beantwortet wurde (v2.157.2; vorher nur über den Abstand,
+     der seit 2.154.9 bei Wiederholungen am selben Tag nicht mehr wächst). Ein Fehler oder ein Hinweis setzt die Serie zurück. */
+  function inErrorBox(id) { var r = state.w[id]; return !!r && r.lapses > 0 && levelOf(id) < 3 && (r.chain || 0) < 3; }
 
   /* ---------- Auswahl & Sessionplanung ---------- */
   function groupsOf() {
