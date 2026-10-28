@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.159.3
+- Spielen › Freunde › Meine Freunde: Die Sticker der Freunde liegen nicht mehr übereinander, sondern nebeneinander (bei Platzmangel in einer zweiten Zeile), alle sichtbar.
+
 ## 2.159.2
 - Laden: Auch die Shop-Kacheln kaufen nicht mehr beim Antippen. Sie zeigen den Preis und „👀 Ansehen“; gekauft wird erst mit „Kaufen“ im Fenster (Figuren: Anprobe), wie beim Tagesangebot.
 
