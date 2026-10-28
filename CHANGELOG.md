@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.159.5
+- Meine Freunde: Die Sticker der Freunde stehen eng nebeneinander (1 px Abstand) in einer Zeile; ab 8 Stickern etwas kleiner (20 statt 24 px), damit alle zehn Platz haben.
+
 ## 2.159.4
 - Freunde: Fehlende Sticker bei „Meine Freunde“ behoben. Der Server ließ Sticker mit Emoji-ID (Fuchs, Panda, Schildkröte, Eule, Krake, Dino, Hai, Einhorn) nicht durch; die Prüfung erlaubt sie jetzt. **Server-Update nötig** (`deploy.sh`), die App selbst ändert sich nicht. Test in `server/test.js` ergänzt.
 
