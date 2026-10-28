@@ -12,6 +12,8 @@
   function cfg() { return lsGet("wordy.sync." + pid()); }
   function queue() { return lsGet("wordy.q." + pid()) || []; }
   function saveQ(a) { lsSet("wordy.q." + pid(), a.slice(-MAX_Q)); }
+  /* Kennung dieses Geräts/Browsers (nur zum Erkennen, ob ein anderes Gerät zuletzt gespeichert hat) */
+  function devId() { try { var d = g.localStorage.getItem("wordy.dev"); if (!d) { d = "d" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); g.localStorage.setItem("wordy.dev", d); } return d; } catch (e) { return "dx"; } }
   function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
 
   W.connected = function () { var c = cfg(); return !!(c && c.url && c.token); };
@@ -52,7 +54,7 @@
 
   /* Stand der Wörter, Einheiten und Münzen: damit sieht man auch, was schon vor der Verbindung gelernt war */
   W.snapshot = function () {
-    var c = cfg(); if (!c || !c.token || c.hold || !g.fetch) return Promise.resolve(false);   // hold = Verbindung wartet auf Entscheidung (Wiederherstellen oder bewusst überschreiben)
+    var c = cfg(); if (!c || !c.token || c.hold || c.stale || !g.fetch) return Promise.resolve(false);   // stale = anderes Gerät hat neueren Stand (Nutzer entscheidet), hold = Verbindung wartet auf Entscheidung (Wiederherstellen oder bewusst überschreiben)
     var st = VT.state, words = {}, units = {}, id;
     if (c.hidden) return Promise.resolve(false);
     var fresh = VT.isFresh();   // ein leerer Stand (neues Gerät) darf Wörter und Übersicht auf dem Server nicht überschreiben; die Einheitenliste ist unkritisch und geht immer mit
@@ -196,15 +198,39 @@
     return g.fetch(c.url + path, { method: method, headers: { "Content-Type": "application/json", Authorization: "Bearer " + c.token }, body: body ? JSON.stringify(body) : undefined });
   }
   W.pushState = function (force) {
-    var c = cfg(); if (!c || !c.token || c.hold || !g.fetch) return Promise.resolve(false);
+    var c = cfg(); if (!c || !c.token || c.hold || c.stale || !g.fetch) return Promise.resolve(false);
     if (VT.isFresh()) return Promise.resolve(false);
     if (!force && Date.now() - lastState < 10 * 60000) return Promise.resolve(false);
     lastState = Date.now();
-    return api(c, "PUT", "/api/state", { state: VT.state }).then(function (r) {
-      if (r.status === 409) { setCfg({ stateErr: "Der Server hat einen Lernstand mit Fortschritt. Bitte unter Setup zuerst wiederherstellen." }); return false; }
+    return api(c, "PUT", "/api/state", { state: VT.state, dev: devId(), base: c.headTs || 0 }).then(function (r) {
+      if (r.status === 409) {
+        return r.json().catch(function () { return {}; }).then(function (j) {
+          if (j && j.code === "stale") { setCfg({ stale: true, staleHead: j.head || null }); stale(j.head || null); return false; }
+          setCfg({ stateErr: "Der Server hat einen Lernstand mit Fortschritt. Bitte unter Setup zuerst wiederherstellen." }); return false;
+        });
+      }
       if (!r.ok) throw new Error(String(r.status));
-      setCfg({ stateAt: Date.now(), stateErr: "" }); return true;
+      return r.json().catch(function () { return {}; }).then(function (j) { setCfg({ stateAt: Date.now(), stateErr: "", headTs: j.ts || c.headTs || 0 }); return true; });
     }).catch(function () { lastState = 0; return false; });
+  };
+  /* Hat ein anderes Gerät zuletzt gespeichert und liegt dort mehr Fortschritt? Dann meldet onStale(head, lokal) – beim Öffnen und Zurückkehren in die App */
+  function stale(h) { try { if (g.WordyHooks && g.WordyHooks.onStale) g.WordyHooks.onStale(h); } catch (e) {} }
+  var lastHead = 0;
+  W.checkStale = function (force) {
+    var c = cfg(); if (!c || !c.token || c.hold || !g.fetch) return Promise.resolve(false);
+    if (c.stale && c.staleHead) { stale(c.staleHead); return Promise.resolve(true); }
+    if (!force && Date.now() - lastHead < 45000) return Promise.resolve(false);
+    lastHead = Date.now();
+    return api(c, "GET", "/api/state/head").then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
+      var h = j && j.head; if (!h || !h.dev || h.dev === devId() || !(h.ts > (c.headTs || 0))) return false;
+      if ((h.xp || 0) > (VT.state.xp || 0)) { setCfg({ stale: true, staleHead: h }); stale(h); return true; }
+      setCfg({ headTs: h.ts }); return false;   // dieses Gerät ist weiter: es übernimmt beim nächsten Speichern
+    }).catch(function () { return false; });
+  };
+  /* „Hier weitermachen“: Stand dieses Geräts behalten, der andere wird beim nächsten Speichern ersetzt */
+  W.takeOver = function () {
+    var c = cfg(); var h = c && c.staleHead; setCfg({ stale: false, staleHead: null, headTs: h ? h.ts : (c && c.headTs) || 0 });
+    return W.snapshot().then(function () { return W.pushState(true); });
   };
   W.stateList = function () {
     var c = cfg(); if (!c || !c.token) return Promise.resolve([]);
@@ -216,7 +242,7 @@
       .then(function (x) {
         if (!x.ok) return { error: x.j && x.j.error || "Wiederherstellen hat nicht geklappt." };
         var res = VT.restoreState(x.j.state); if (res.error) return res;
-        setCfg({ stateErr: "", hold: false }); lastState = 0;
+        setCfg({ stateErr: "", hold: false, stale: false, staleHead: null, headTs: x.j.ts || 0 }); lastState = 0;
         return W.snapshot().then(function () { return W.pull(true); }).then(function () { return { ok: true, ts: x.j.ts, coins: x.j.coins }; });
       }).catch(function () { return { error: "Der Server ist nicht erreichbar." }; });
   };
@@ -327,7 +353,7 @@
   document.addEventListener("visibilitychange", function () { if (document.hidden) lookWatch(); });
   W.maybeSnapshot = function () { if (W.connected() && Date.now() - lastSnap > 10 * 60000) W.snapshot(); };
 
-  g.addEventListener("visibilitychange", function () { if (g.document.visibilityState === "hidden") { flush(true); W.pushState(false); } else { W.syncMode().then(function () { flush(false); W.pull(false); }); } });
+  g.addEventListener("visibilitychange", function () { if (g.document.visibilityState === "hidden") { flush(true); W.pushState(false); } else { W.syncMode().then(function () { flush(false); W.pull(false); W.checkStale(false); }); } });
   g.addEventListener("online", function () { flush(false); });
-  setTimeout(function () { W.syncMode(true).then(function () { flush(false); W.maybeSnapshot(); W.pull(true); }); }, 4000);
+  setTimeout(function () { W.syncMode(true).then(function () { W.checkStale(true).then(function () { flush(false); W.maybeSnapshot(); W.pull(true); }); }); }, 4000);
 })(window);

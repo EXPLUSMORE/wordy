@@ -669,6 +669,16 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
       assert.equal(rp.totals.xp, pre.totals.xp + 39, "aber die echten XP zählen mit"); assert.equal(rp.meta.mal.weak[0].k, "7x8", "Schwäche im Dashboard");
       const dm = rp.days.reduce((a, d) => ({ r: a.r + (d.malRuns || 0), s: a.s + (d.malSec || 0) }), { r: 0, s: 0 }); assert.equal(dm.r, 2, "Einmaleins-Runden je Tag"); assert.equal(dm.s, 100, "Einmaleins-Sekunden je Tag");
       mailGot = ""; assert.equal((await J("/api/admin/mail/test", { method: "POST", headers: H })).j.ok, true); assert.ok(/Einmaleins: 2 Runden/.test(mailGot.split(/--wordy-[0-9a-f]+/).filter(x => /text\/plain/.test(x)).map(x => Buffer.from(x.split(/\r?\n\r?\n/)[1].replace(/\s/g, ""), "base64").toString()).join("")), "Wochenmail nennt Einmaleins"); }
+    { const mm = await J("/api/admin/players", { method: "POST", headers: H, body: JSON.stringify({ name: "Zwei-Geraete" }) }); assert.equal(mm.s, 200);
+      const pm = await J("/api/pair", { method: "POST", body: JSON.stringify({ code: mm.j.invite.code.toLowerCase(), device: "G1" }) }); assert.equal(pm.s, 200);
+      const T = { Authorization: "Bearer " + pm.j.token, "Content-Type": "application/json" }, w = { "H2-1a#0": { reps: 1, ok: 1 } };
+      const put = (dev, base, xp) => J("/api/state", { method: "PUT", headers: T, body: JSON.stringify({ state: { v: 2, w, settings: {}, xp, coins: 5 }, dev, base }) });
+      const p1 = await put("devA", 0, 100); assert.equal(p1.s, 200, "Gerät A speichert");
+      const hd = (await J("/api/state/head", { headers: T })).j.head; assert.equal(hd.dev, "devA"); assert.equal(hd.xp, 100, "Kopf des Standes");
+      const st = await put("devB", 0, 50); assert.equal(st.s, 409, "Gerät B kennt den neuen Stand nicht"); assert.equal(st.j.code, "stale"); assert.equal(st.j.head.xp, 100);
+      assert.equal((await put("devB", hd.ts, 150)).s, 200, "mit bekanntem Stand darf B speichern");
+      assert.equal((await put("devB", 0, 160)).s, 200, "dasselbe Gerät darf immer weiter speichern");
+      assert.equal((await put("devA", p1.j.ts, 170)).s, 409, "A ist jetzt veraltet"); }
     console.log("Alle Prüfungen bestanden.");
   } catch (e) { console.error("FEHLER:", e.message, e.stack.split("\n").slice(1,4).join("|")); process.exitCode = 1; }
   srv.kill(); fake.close(); fs.rmSync(dir, { recursive: true, force: true });

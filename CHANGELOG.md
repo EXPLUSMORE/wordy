@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+## 2.157.0 – 2026-10-28
+- **Mehrere Geräte:** Wird auf einem anderen Gerät weitergelernt, weist die App beim Öffnen und Zurückkehren darauf hin, bevor man auf einem veralteten Stand spielt. Fenster „Auf einem anderen Gerät wurde weiter gelernt“ mit beiden Ständen (XP, Münzen, Rang): **Stand vom anderen Gerät laden** (eine Kopie des eigenen Stands bleibt als „vor Wiederherstellung“) oder **Hier weitermachen** (ersetzt den anderen Stand beim nächsten Speichern) oder „Später“ (fragt beim nächsten Öffnen erneut). Das Fenster wartet, bis eine Runde oder ein anderes Fenster zu Ende ist.
+- **Schutz vor Überschreiben:** Der Server merkt sich, welches Gerät zuletzt gespeichert hat (`/api/state/head`). Ein Gerät, das den neueren Stand eines anderen nicht kennt, darf ihn nicht mehr überschreiben (409 „stale“): Lernstand-Sicherung und Dashboard-Schnappschuss ruhen, bis man entschieden hat. Lernereignisse (Dashboard-Verlauf) werden weiter gesendet. **Server-Update nötig**, sonst gibt es nur die Anzeige ohne den Schutz.
+
 ## 2.156.1 – 2026-10-27
 - Boss-Kette ($) und Goldkette mit M: Anhänger (Dollarzeichen und M) rund 30 % kleiner, hängen weiter mittig an der Kette.
 

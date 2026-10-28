@@ -929,15 +929,27 @@ setInterval(famTick, 60000).unref();
 
 
 /* ---------- Vollständige Sicherung des Lernstands ---------- */
+/* Zuletzt gespeicherter Lernstand eines Spielers: Zeit, Gerät, XP, Münzen, Wörter (für die Prüfung auf ein anderes Gerät) */
+function stateHead(pid) {
+  const r = q.kvGet.get("statehead:" + pid);
+  if (r) { try { return JSON.parse(r.val); } catch (e) { /* fällt auf die Sicherung zurück */ } }
+  const l = q.latestState.get(pid); if (!l) return null;
+  let xp = 0; try { xp = Math.round(+JSON.parse(l.d).xp || 0); } catch (e) { /* ohne XP */ }
+  return { ts: l.ts, dev: "", xp, coins: l.coins, words: l.words, day: l.day };
+}
 function apiStatePut(pid, body) {
   const st = body && body.state;
   if (!st || st.v !== 2 || typeof st.w !== "object" || !st.w || typeof st.settings !== "object") return [400, { error: "Kein gültiger Lernstand." }];
   const words = Object.keys(st.w).length, last = q.latestState.get(pid);
   // Ein leerer Stand (neues Gerät, gelöschte Daten) darf eine vorhandene Sicherung nie ersetzen
   if (words === 0 && last && last.words > 0) return [409, { error: "Auf dem Server liegt ein Lernstand mit Fortschritt. Bitte zuerst wiederherstellen." }];
+  // Mehrere Geräte: Hat ein anderes Gerät nach dem letzten bekannten Stand dieses Geräts gespeichert, wird nicht überschrieben (das Gerät fragt den Nutzer)
+  const dev = clean(body.dev, 24), base = +body.base || 0, head = stateHead(pid);
+  if (dev && head && head.dev && head.dev !== dev && head.ts > base) return [409, { code: "stale", error: "Auf einem anderen Gerät wurde schon weiter gelernt.", head }];
   const d = JSON.stringify(st), now = Date.now();
   q.putState.run(pid, dayOf(now), now, Buffer.byteLength(d), Math.round(+st.coins || 0), words, d);
   q.pruneStates.run(pid, pid, KEEP_STATES);
+  q.kvSet.run("statehead:" + pid, JSON.stringify({ ts: now, dev, xp: Math.round(+st.xp || 0), coins: Math.round(+st.coins || 0), words, day: dayOf(now) }));
   return [200, { ok: true, ts: now }];
 }
 const stateMeta = r => ({ day: r.day, ts: r.ts, bytes: r.bytes, coins: r.coins, words: r.words });
@@ -1622,6 +1634,10 @@ const server = http.createServer(async (req, res) => {
       const pid = playerOf(req); if (!pid) return send(res, 401, { error: "Nicht verbunden." });
       const day = url.searchParams.get("day"); if (day && !/^\d{4}-\d\d-\d\d$/.test(day)) return send(res, 400, { error: "Datum ungültig." });
       const [c, b] = apiStateGet(pid, day); return send(res, c, b);
+    }
+    if (p === "/api/state/head" && req.method === "GET") {
+      const pid = playerOf(req); if (!pid) return send(res, 401, { error: "Nicht verbunden." });
+      return send(res, 200, { head: stateHead(pid) });
     }
     if (p === "/api/state/list" && req.method === "GET") {
       const pid = playerOf(req); if (!pid) return send(res, 401, { error: "Nicht verbunden." });

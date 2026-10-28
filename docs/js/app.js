@@ -1788,6 +1788,7 @@
   {   // sync.js wird nach app.js geladen und ruft diese Hooks auf
     window.WordyHooks = {};
     window.WordyHooks.onSession = planOnSession;
+    window.WordyHooks.onStale = staleSheet;   // anderes Gerät hat weiter gelernt
     window.WordyHooks.onChange = function () { if ((tab === "home" || tab === "parent") && sessionEl.hidden) render(); };
     window.WordyHooks.onMode = function (hidden) {
       toast(hidden ? "Dein Fortschritt wird jetzt nur noch gesichert, nicht mehr angezeigt." : "Dein Fortschritt ist jetzt für die Eltern im Dashboard sichtbar.", 6000);
@@ -3938,6 +3939,31 @@
     openChest: openChest,
     arenaScore: function (mode, score) { if (socOn() && /^(match|blitz|survival)$/.test(mode)) global.WordySync.social("POST", "/score", { mode: mode, score: score }).catch(function () {}); }
   };
+
+  /* Anderes Gerät hat weiter gelernt (v2.157): Hinweis beim Öffnen, bevor man auf einem veralteten Stand spielt */
+  function staleSheet(head) {
+    if (!head || $("#staleAsk")) return;
+    if (typeof SS !== "undefined" && SS) { setTimeout(function () { staleSheet(head); }, 30000); return; }   // nicht mitten in einer Runde
+    if ($(".srmd")) { setTimeout(function () { staleSheet(head); }, 4000); return; }   // erst wenn kein anderes Fenster offen ist
+    var W = global.WordySync, st = S.state, me = { xp: st.xp || 0, coins: st.coins || 0, words: Object.keys(st.w || {}).length };
+    var nf = function (n) { return Math.round(n || 0).toLocaleString("de-DE"); }, rk = function (xp) { return esc(S.rankOf(xp).rank.n); };
+    var otherAhead = (head.xp || 0) > me.xp;
+    var row = function (lab, o) { return '<tr><td style="padding:4px 10px 4px 0;text-align:left"><b>' + lab + '</b></td><td style="padding:4px 8px" class="tnum">' + nf(o.xp) + ' XP</td><td style="padding:4px 8px" class="tnum">🪙 ' + nf(o.coins) + '</td><td style="padding:4px 0 4px 8px;text-align:right" class="small muted">' + rk(o.xp) + '</td></tr>'; };
+    var ov = document.createElement("div"); ov.className = "srmd"; ov.id = "staleAsk"; ov.style.zIndex = "99999";   // über allen anderen Fenstern
+    ov.innerHTML = '<div class="dsh" style="text-align:center"><div class="dshg"></div><div style="font-size:46px">🔄</div><h3>' + (otherAhead ? "Auf einem anderen Gerät wurde weiter gelernt" : "Auf einem anderen Gerät steht ein anderer Stand") + '</h3>' +
+      '<p class="small" style="margin:0 0 8px">' + (head.ts ? "Zuletzt gespeichert " + agoText(head.ts) + ". " : "") + 'Welchen Stand möchtest du nutzen?</p>' +
+      '<table style="width:100%;border-collapse:collapse;margin:0 0 12px;font-size:14px;white-space:nowrap">' + row("Anderes", head) + row("Dieses", me) + '</table>' +
+      (otherAhead ? '<button class="btn" data-load="1">Stand vom anderen Gerät laden</button><button class="btn ghost" data-keep="1" style="margin-top:8px">Hier weitermachen</button>'
+        : '<button class="btn" data-keep="1">Diesen Stand behalten</button><button class="btn ghost" data-load="1" style="margin-top:8px">Stand vom anderen Gerät laden</button>') +
+      '<p class="small muted" style="margin:10px 0 0">Der jeweils andere Stand wird dabei ersetzt. Eine Kopie von diesem Gerät bleibt als „vor Wiederherstellung“ erhalten.</p><button class="dshx" data-close="1">Später</button></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener("click", function (e) {
+      var ld = e.target.closest("[data-load]"), kp = e.target.closest("[data-keep]");
+      if (ld) { ld.disabled = true; W.restore().then(function (r) { ov.remove(); toast(r.error || "Stand vom anderen Gerät geladen."); render(); }); return; }
+      if (kp) { if (!confirm("Der Stand auf dem anderen Gerät wird beim nächsten Speichern ersetzt. Wirklich hier weitermachen?")) return; kp.disabled = true; W.takeOver().then(function () { ov.remove(); toast("Dieser Stand gilt jetzt."); render(); }); return; }
+      if (e.target === ov || e.target.closest("[data-close]")) ov.remove();   // später: beim nächsten Öffnen wieder
+    });
+  }
 
   S.load();
   /* früher frei eingetragener Name wird zum Spielernamen */
