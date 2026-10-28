@@ -890,7 +890,7 @@
     var p = S.pathSync(), all = S.pathStations(); if (!all.length) return "";
     var boost = p.boost, secIds = [], bySec = {};
     all.forEach(function (s) { if (!bySec[s.section]) { bySec[s.section] = []; secIds.push(s.section); } bySec[s.section].push(s); });
-    var bar = boost.on && boost.left > 0 ? '<div class="row small" style="margin-top:10px;gap:8px"><span>⚡</span><b>Booster läuft: doppelte XP</b><span class="muted tnum">' + Math.floor(boost.left / 60) + ':' + ("0" + (boost.left % 60)).slice(-2) + '</span></div>'
+    var bar = boost.on && boost.left > 0 ? '<div class="row small" style="margin-top:10px;gap:8px"><span>⚡</span><b>Booster läuft: doppelte XP</b><span class="small muted">(normal ×1 → ×2, auch Boss)</span><span class="muted tnum">' + Math.floor(boost.left / 60) + ':' + ("0" + (boost.left % 60)).slice(-2) + '</span></div>'
       : boost.stock > 0 ? '<div class="row" style="margin-top:10px;gap:8px"><span style="font-size:20px">⚡</span><span class="small" style="flex:1 1 auto"><b>' + boost.stock + ' XP-Booster</b> bereit<br><span class="muted">15 Minuten Üben mit doppelten XP</span></span><button class="chip" data-act="boostgo">Starten</button></div>' : "";
     if (p.pos >= all.length && !p.pending.length && false) return "";
     var cur = all[Math.min(p.pos, all.length - 1)], finished = p.pos >= all.length, curNo = secIds.indexOf(cur.section) + 1;
@@ -1971,7 +1971,7 @@
       '• Arena und Wortspiele: <b>+2</b> pro Treffer, dazu am Ende bis zu <b>+60</b> nach Punkten<br>' +
       '• Grammatik: bis zu <b>+40</b> je Lektion<br>' +
       '• Einmaleins: bis zu <b>+30</b> je Runde (Match 15 oder 25), höchstens <b>150</b> XP am Tag<br>' +
-      '• Mit einem <b>Booster</b> gibt es doppelte XP<br>' +
+      '• Mit einem <b>Booster</b> gibt es doppelte XP (in der Übersicht siehst du normal und mit Booster) und die Boss-Truhe doppelte Münzen<br>' +
       '<span class="muted">Ab Elite I wächst der Abstand von Rang zu Rang um 500 XP (5.000, 5.500, 6.000 …). „The real Unreal“ erreichst du ab ' + S.RANKS[S.RANKS.length - 1].xp.toLocaleString("de-DE") + ' XP.</span></div>' +
       '<div class="eyebrow" style="margin-top:14px">Stufen eines Worts</div>' +
       '<div class="small" style="margin-top:6px;line-height:1.7">' + S.LEVELS.map(function (l) { return '• <b>' + esc(l.n) + '</b>: ' + esc(l.hint); }).join("<br>") +
@@ -2765,7 +2765,7 @@
     snapStart(); sessionEl.hidden = false; document.body.style.overflow = "hidden"; renderTask();
   }
   /* Stand zu Rundenbeginn, damit das Finale zeigen kann, was die Runde gebracht hat */
-  function snapStart() { SS.xp0 = S.state.xp; SS.coins0 = S.state.coins; if (window.WordySync) window.WordySync.ctx = { mode: SS.mode || "mix" }; }
+  function snapStart() { SS.xp0 = S.state.xp; SS.raw0 = S.state.xpRaw || 0; SS.coins0 = S.state.coins; if (window.WordySync) window.WordySync.ctx = { mode: SS.mode || "mix" }; }
   function star(on, i) {
     return '<svg viewBox="0 0 24 24" class="fin-star' + (on ? " on" : "") + '" style="--i:' + i + '" aria-hidden="true"><path d="M12 2.2l2.9 6.2 6.8.8-5 4.7 1.3 6.7L12 17.2 6 20.6l1.3-6.7-5-4.7 6.8-.8z"/></svg>';
   }
@@ -2788,7 +2788,7 @@
     var perfect = good && SS.correct === SS.items && SS.items > 3;
     var stars = !good ? 0 : acc >= 90 ? 3 : acc >= 70 ? 2 : 1;
     var pr = SS.station && reason === "done" ? S.pathComplete(SS.station.id, stars) : null;
-    var xp0 = SS.xp0 == null ? st.xp : SS.xp0, gain = Math.max(0, st.xp - xp0), coinGain = Math.max(0, st.coins - (SS.coins0 == null ? st.coins : SS.coins0));
+    var xp0 = SS.xp0 == null ? st.xp : SS.xp0, gain = Math.max(0, st.xp - xp0), rawGain = Math.max(0, (st.xpRaw || 0) - (SS.raw0 == null ? (st.xpRaw || 0) : SS.raw0)), coinGain = Math.max(0, st.coins - (SS.coins0 == null ? st.coins : SS.coins0));
     if (window.WordySync) { window.WordySync.sessionEnd({ sec: sec, items: SS.items, correct: SS.correct, mode: SS.mode || "mix", unit: (SS.station && SS.station.unit) || (lastStartOpts && lastStartOpts.unit) || "", coins: coinGain, xp: gain, reason: reason }); window.WordySync.ctx = null; }
     var r0 = S.rankOf(xp0), r1 = S.rankOf(st.xp), rankUp = r0.rank.n !== r1.rank.n;
     var pct = function (r) { return r.span ? Math.round(r.into * 100 / r.span) : 100; };
@@ -2804,7 +2804,7 @@
       '<div class="kpi"><b class="tnum" data-count="' + SS.maxChain + '">' + SS.maxChain + '</b><span>beste Serie</span></div>' +
       '<div class="kpi"><b class="tnum">' + fmtMin(sec).replace(" Min", "") + '</b><span>Minuten</span></div></div></section>';
     if (gain || coinGain) html += '<section class="card fin-xp"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Erfahrung</div>' +
-      (gain ? '<b class="tnum" style="color:var(--accent)">+<span data-count="' + gain + '">' + gain + '</span> XP</b>' : "") +
+      (gain ? '<b class="tnum" style="color:var(--accent)">+<span data-count="' + gain + '">' + gain + '</span> XP</b>' + (rawGain && rawGain < gain ? '<span class="small muted tnum" style="margin-left:6px">⚡ normal ' + rawGain + '</span>' : "") : "") +
       (coinGain ? '<span class="pill fin-coin" style="margin-left:10px">🪙 +<b data-count="' + coinGain + '">' + coinGain + '</b></span>' : "") + '</div>' +
       '<div class="row" style="margin-top:8px"><b>' + esc(r1.rank.n) + '</b><span class="spacer"></span><span class="small muted tnum">' + st.xp + (r1.next ? " / " + r1.next.xp : "") + ' XP</span></div>' +
       '<div class="bar fin-bar" style="margin-top:6px"><i style="width:' + pct(r1) + '%"></i></div>' +

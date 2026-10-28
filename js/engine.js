@@ -915,6 +915,7 @@
   }
   function rankIdx(xp) { var k = 0; RANKS.forEach(function (r, i) { if (xp >= r.xp) k = i; }); return k; }
   function addXp(v) {
+    state.xpRaw = (state.xpRaw || 0) + v;   // normale XP (ohne Booster), für die Anzeige „normal / mit Booster“
     if (boostActive()) v *= 2;
     var r0 = rankIdx(state.xp); state.xp += v; state.daily.xp += v;
     for (var i = r0 + 1, r1 = rankIdx(state.xp); i <= r1; i++) rankGift(i);
@@ -1651,7 +1652,7 @@
     if (adv) {
       if (st.last && !p.chests[st.section]) {
         p.chests[st.section] = 1;
-        chest = { section: st.section, title: st.sectionTitle, coins: Math.min(50, boost(25 + Math.floor(Math.random() * 26))), boost: Math.random() < 0.1 };   // 25 bis 50 Münzen je Boss, höchstens 50 (auch mit Booster/Münzfaktor)
+        chest = { section: st.section, title: st.sectionTitle, coins: Math.min(50, boost(25 + Math.floor(Math.random() * 26))), boost: Math.random() < 0.1, x2: boostActive() };   // 25 bis 50 Münzen je Boss (Münzfaktor, höchstens 50); läuft beim Boss ein XP-Booster, verdoppelt er die Truhe
         p.pending.push(chest);
       }
     }
@@ -1662,7 +1663,8 @@
   function claimChest() {
     var p = pathState(), c = p.pending.shift();
     if (!c) return null;
-    c.coins = Math.min(25, c.coins);   // schon angelegte Truhen mit mehr Münzen gelten ebenfalls höchstens 25
+    c.base = Math.min(50, c.coins);   // normale Münzen (25 bis 50)
+    c.coins = c.x2 ? c.base * 2 : c.base;   // Booster beim Boss: doppelt
     addCoins(c.coins); addCl("fortschritt", c.coins);
     if (c.boost) p.boost.stock++;
     if (Math.random() < 0.12) {   // Überraschung: ein Stück, das er noch nicht hat

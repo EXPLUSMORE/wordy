@@ -9,6 +9,10 @@ Versionsnummer nach dem Schema **Hauptversion.Nebenversion.Fehlerkorrektur**:
 Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgelieferten Änderung hochgezählt (Funktion = Nebenversion, Korrektur = Fehlerkorrektur). `node build.js` übernimmt sie in die App,
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
+
+## 2.158.0
+- Booster: Die Ergebnisseite zeigt jetzt die XP mit Booster und daneben „⚡ normal …“. Der Booster verdoppelt auch die Boss-Truhe (Münzen 25–50 → 50–100, Anzeige „normal … – Booster verdoppelt“). Fehler behoben: Truhen wurden beim Öffnen auf 25 Münzen gekappt, jetzt gelten 25–50. Zähler `state.xpRaw` (normale XP). Texte in „So bekommst du XP“ ergänzt.
+
 ## 2.157.3 – 2026-10-28
 - Einheit „Wetter & Jahreszeiten“ (Smalltalk): „to clear up“ und „to brighten up“ (beide „aufklaren“) sind raus, weil beide Antworten bei Übungen gleich richtig waren. An ihren Plätzen stehen jetzt „to dry up“ (abtrocknen) und „to cool down“ (abkühlen). Die Plätze bleiben bewusst gleich, damit die Wort-IDs der anderen Wörter und damit der Lernstand erhalten bleiben. Der Lernstand der zwei alten Wörter wird einmalig gelöscht.
 
