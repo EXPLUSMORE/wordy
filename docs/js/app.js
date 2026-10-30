@@ -2806,6 +2806,7 @@
   function startPathStation(id) {
     S.rollDay(); S.regenHearts();
     var st = S.pathStations().filter(function (x) { return x.id === id; })[0]; if (!st) return;
+    S.pathLock(st.id);
     if (st.gram) { if (global.VTGR) global.VTGR.start(st.gram, { station: st.id }); return; }   // Grammatik-Station: Lektion aus „Lernen › Grammatik“
     if (st.last && startBoss(st)) return;   // Boss-Runde läuft in der Arena
     if (S.state.settings.hearts && S.state.hearts <= 0) { toast("Die Herzen sind alle. Sie füllen sich bald wieder auf."); return; }

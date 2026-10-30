@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.159.6
+- **Fehler behoben: Boss besiegt, aber keine Truhe.** Sassen die Wörter des Abschnitts nach der Boss-Runde schon alle (Stufe 3+), hat `pathSync()` den Boss mitten im Abschluss als „schon gekonnt“ übersprungen: kein „Truhe öffnen“, sondern „Weiter auf dem Pfad“, und die Truhe des Abschnitts war damit auch für später weg. Jetzt sperrt `pathLock()` beim Start einer Station das Überspringen bis zum Ende der Runde (`state.path.run`, höchstens 2 Std.). Im Test nachgestellt (ohne Sperre keine Truhe, mit Sperre Truhe). Schon verlorene Truhen lassen sich nicht automatisch zurückholen.
+
 ## 2.159.5
 - Meine Freunde: Die Sticker der Freunde stehen eng nebeneinander (1 px Abstand) in einer Zeile; ab 8 Stickern etwas kleiner (20 statt 24 px), damit alle zehn Platz haben.
 
