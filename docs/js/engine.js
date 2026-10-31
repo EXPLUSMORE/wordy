@@ -276,7 +276,7 @@
     ["kopf", "ears", "Kopfhörer", 80], ["waerme", "ears", "Ohrenwärmer", 45], ["ohrring", "ears", "Ohrringe", 35],
     ["schal", "neck", "Schal", 50], ["fliege", "neck", "Fliege", 35], ["kette", "neck", "Goldkette", 90], ["tuch", "neck", "Halstuch", 35], ["medaille", "neck", "Medaille", 60], ["bosskette", "neck", "Boss-Kette ($)", 150], ["mkette", "neck", "Fette Goldkette mit M", 150],
     ["skate", "gear", "Skateboard", 70], ["surf", "gear", "Surfbrett", 100], ["gitarre", "gear", "Gitarre", 150],
-    ["nikolaus", "head", "Nikolaus-Mütze", 70], ["xschal", "neck", "Weihnachts-Schal", 50], ["geweih", "ears", "Rentier-Geweih", 100], ["schlitten", "gear", "Schlitten", 150]];
+    ["nikolaus", "head", "Nikolaus-Mütze", 70], ["xschal", "neck", "Weihnachts-Schal", 50], ["geweih", "ears", "Rentier-Geweih", 100], ["schlitten", "gear", "Schlitten", 150], ["socken", "gear", "Weihnachtssocken", 60]];
   SHOP = SHOP.concat(ACC.map(function (a) { return { id: "ac:" + a[0], kind: "acc", slot: a[1], label: a[2], cost: a[3], val: a[0], rar: a[3] <= 40 ? "common" : a[3] <= 70 ? "rare" : a[3] <= 100 ? "epic" : "legend" }; }));
   SHOP.forEach(function (x) { if (x.id === "ac:nikolaus" || x.id === "ac:xschal" || x.id === "ac:geweih" || x.id === "ac:schlitten") x.pass = "Advent"; });   // nur im Wichtel-Kalender (v2.160)
   /* v2.154: Unreal-Preise halbiert (alter Preis in `was`, für die einmalige Gutschrift in priceMigrate) */
@@ -299,7 +299,7 @@
     "sn:none": "Mute", "sn:bell": "Little bell", "sn:arcade": "Arcade", "sn:harp": "Harp", "th:paper": "Paper", "th:mint": "Mint", "th:plum": "Plum", "th:amber": "Amber",
     "ac:beanie": "Winter hat", "ac:party": "Party hat", "ac:zylinder": "Top hat", "ac:prop": "Propeller cap", "ac:cap": "Baseball cap", "ac:stroh": "Straw hat", "ac:blumen": "Flower crown", "ac:heiligen": "Halo", "ac:hasen": "Bunny ears", "ac:teufel": "Devil horns", "ac:eishut": "Ice-cream hat", "ac:pizza": "Pizza hat", "ac:krone": "Gold crown",
     "ac:sonne": "Sunglasses", "ac:nerd": "Nerd glasses", "ac:mono": "Monocle", "ac:brille3d": "3D glasses", "ac:herz": "Heart glasses", "ac:schnurr": "Moustache", "ac:clown": "Clown nose", "ac:ski": "Ski goggles",
-    "ac:kopf": "Headphones", "ac:waerme": "Earmuffs", "ac:ohrring": "Earrings", "ac:schal": "Scarf", "ac:fliege": "Bow tie", "ac:kette": "Gold chain", "ac:tuch": "Neckerchief", "ac:medaille": "Medal", "ac:bosskette": "Boss chain ($)", "ac:mkette": "Fat gold chain with M", "ac:skate": "Skateboard", "ac:surf": "Surfboard", "ac:gitarre": "Guitar"
+    "ac:kopf": "Headphones", "ac:waerme": "Earmuffs", "ac:ohrring": "Earrings", "ac:schal": "Scarf", "ac:fliege": "Bow tie", "ac:kette": "Gold chain", "ac:tuch": "Neckerchief", "ac:medaille": "Medal", "ac:bosskette": "Boss chain ($)", "ac:mkette": "Fat gold chain with M", "ac:skate": "Skateboard", "ac:surf": "Surfboard", "ac:gitarre": "Guitar", "ac:socken": "Christmas socks"
   };
   function enName(it) { if (!it) return ""; if (it.kind === "sticker") { var b = EN["av:" + it.id.slice(3)]; return b ? b + " sticker" : ""; } return EN[it.id] || ""; }
   var MAX_STICKERS = 10;

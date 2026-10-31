@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.164.0
+- **Neues Zubehör: Weihnachtssocken** (Platz „Dabei“, 60 🪙, im Shop unter Figuren › Zubehör): zwei gezeichnete Socken in Rot/Weiß/Grün (rot mit weißen Streifen und grüner Ferse, grün mit weißen Streifen und roter Ferse, weiße Bündchen), englisch „Christmas socks“. Erscheint auch im Dashboard (Aussehen) und bei Freunden.
+
 ## 2.163.2
 - Wichtel-Kalender, Dashboard (Spieler › Einstellungen › Wichtel-Kalender): neues Häkchen **„Alle Türchen freischalten (Test)“**. Dann sind alle 24 Türchen sofort spielbar, ohne Datum und ohne Joker (blau leuchtend), im Türchen-Fenster steht zusätzlich **„Test: sofort öffnen“** (öffnet ohne Spiel, mit Geschenk). Ausschalten = wieder Datum und Joker. Server: Feld `all` in `advent:<pid>`. **Server-Update nötig.**
 
