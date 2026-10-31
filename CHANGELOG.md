@@ -10,6 +10,10 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.163.1
+- **Vorlesen im Wichtel-Kalender behoben:** Die Geschichte wurde mit einem falschen Tempo-Wert angesprochen (Sprache statt Zahl), auf dem iPhone viel zu schnell oder gar nicht. Jetzt gibt es zwei Lautsprecher-Knöpfe (Deutsch und Englisch) in Türchen-Fenster, Märchenbuch und Geschenk-Fenster, über denselben Weg wie die Vokabelkarten (Erzählerstimme, normales Tempo).
+- **Spielstart auf dem iPhone:** Das Türchen-Fenster ist kompakter, „Spiel starten“ und „Schließen“ stehen nebeneinander (kleine Bildschirme: vorher konnte der Knopf unter dem Rand liegen). Der Start fängt Fehler ab und meldet sie (z. B. „Spielstart fehlgeschlagen: …“ oder „Das Spiel ist nicht gestartet“), statt stumm nichts zu tun. Bedienelemente der Szene mit `touch-action: manipulation`.
+
 ## 2.163.0
 - **Winter-Märchen:** Die Adventsseite ist jetzt eine ganze Szene. Die Türchen hängen am großen Weihnachtsbaum (23 Türchen in Reihen, kunterbunt verteilt), der **große Stern an der Spitze ist Türchen 24** und leuchtet beim Öffnen golden. Drumherum: Nachthimmel mit funkelnden Sternen und Polarlicht, Vollmond, verschneite Berge und ein kleines Dorf mit beleuchteten Fenstern, Schneefall, ein Rentier-Schlitten, der über den Himmel fliegt, unten Schnee mit dem Adventskranz (die Kerzen brennen an den vier Adventssonntagen), Wichtel Wolle, Lebkuchenmännchen, Zuckerstange, Schneemann, Geschenk – und ein Paar Augen im Schnee, die ab Türchen 21 zu Husky Flocke werden. Die Geschichte steht als Märchenbuch-Seite mit Kapitelnummer darunter. Ersetzt Baum-Lichter und Türchen-Dorf (2.161/2.162); die Türchen-Regeln sind unverändert.
 

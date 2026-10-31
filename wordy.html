@@ -1642,10 +1642,14 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 .advbook h3{font-family:Georgia,"Times New Roman",serif;font-style:italic;margin:2px 0 6px;font-size:20px}
 .advbook p{font-family:Georgia,"Times New Roman",serif;font-size:15px;line-height:1.45;margin:0}
 @media (prefers-reduced-motion:reduce){.advaur,.advstars i,.advrd,.advsf,.advbulb.on,.advd.tree.st-today,.advstar.st-open,.advstar.st-today,.advray,.advflame,.advprop{animation:none}}
+.advsheet{text-align:center;max-height:calc(100% - 8px);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.advbtns{flex-wrap:nowrap!important}.advbtns .btn{flex:1 1 0;min-width:0;padding-left:8px;padding-right:8px;white-space:nowrap}.advsheet{padding:16px 14px!important}.advsheet .bub{font-size:13.5px;padding:8px 10px}
+.advsheet button,.advworld button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.advbub .speak,.advbook .speak{width:34px;height:34px;min-width:34px;font-size:16px;vertical-align:middle;margin-left:4px;display:inline-grid;place-items:center}
 </style>
 
 
-<script>window.WORDY_VERSION="2.163.0";window.WORDY_BUILD="d3fc2872aa";</script>
+<script>window.WORDY_VERSION="2.163.1";window.WORDY_BUILD="63ba9f81b5";</script>
 </head>
 <body>
 <div id="app">
@@ -12456,7 +12460,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (r.flake) t.push("❄️ +1 Joker"); if (r.item) { var it = S.itemById(r.item); t.push((ADV_ICON[r.item] || "🎁") + " " + (it ? it.label : "Überraschung")); }
     return t.join(" · ");
   }
-  function advStory(d) { var st = S.adventInfo().doors[d - 1].story; return '<div class="bub advbub">' + esc(st[0]) + '<div class="small muted" lang="en" style="margin-top:6px">' + esc(st[1]) + ' <button class="chip" data-act="advsay" data-d="' + d + '" aria-label="Vorlesen">🔊</button></div></div>'; }
+  function advStory(d) { var st = S.adventInfo().doors[d - 1].story; return '<div class="bub advbub"><div>' + esc(st[0]) + ' ' + speakBtn(st[0], false, "de") + '</div><div class="small muted" lang="en" style="margin-top:6px">' + esc(st[1]) + ' ' + speakBtn(st[1]) + '</div></div>'; }
   /* Winter-Märchen (v2.163): die Türchen hängen am Weihnachtsbaum, der große Stern an der Spitze ist Türchen 24 */
   var ADV_SVG = {
     gm: '<svg viewBox="0 0 60 76" aria-hidden="true"><g stroke="#6b3a17" stroke-width="3" stroke-linejoin="round" fill="#c97d3c"><circle cx="30" cy="14" r="11"/><path d="M20 25L8 29Q2 31 4 37Q6 41 12 39L22 37L16 62Q14 70 22 70Q28 70 30 63Q32 70 38 70Q46 70 44 62L38 37L48 39Q54 41 56 37Q58 31 52 29L40 25z"/></g><g fill="#fff"><path d="M6 38l6-2 1 5zM54 38l-6-2-1 5z"/><circle cx="26" cy="12" r="1.8" fill="#3b2418"/><circle cx="34" cy="12" r="1.8" fill="#3b2418"/><path d="M25 17q5 4 10 0" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/></g><g fill="#e8123c"><circle cx="30" cy="30" r="2.6"/><circle cx="30" cy="40" r="2.6"/><circle cx="30" cy="50" r="2.6"/></g><path d="M20 68l4 4M40 68l-4 4" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>',
@@ -12510,22 +12514,21 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     }
     h += advWorld(ai);
     var lastD = 0; ai.doors.forEach(function (x) { if (x.st === "open") lastD = x.d; });
-    h += '<section class="advbook"><div class="eyebrow">Das Märchen vom Wichtel Wolle</div><h3>Kapitel ' + (lastD || 1) + '</h3><p>' + esc(ai.doors[(lastD || 1) - 1].story[0]) + '</p><div class="small" lang="en" style="margin-top:8px;font-style:italic">' + esc(ai.doors[(lastD || 1) - 1].story[1]) + ' <button class="chip" data-act="advsay" data-d="' + (lastD || 1) + '" aria-label="Vorlesen">🔊</button></div></section>' +
+    h += '<section class="advbook"><div class="eyebrow">Das Märchen vom Wichtel Wolle</div><h3>Kapitel ' + (lastD || 1) + '</h3><p>' + esc(ai.doors[(lastD || 1) - 1].story[0]) + ' ' + speakBtn(ai.doors[(lastD || 1) - 1].story[0], false, "de") + '</p><div class="small" lang="en" style="margin-top:8px;font-style:italic">' + esc(ai.doors[(lastD || 1) - 1].story[1]) + ' ' + speakBtn(ai.doors[(lastD || 1) - 1].story[1]) + '</div></section>' +
       '<details class="card"><summary><b>So funktioniert der Kalender</b></summary><p class="small muted" style="margin:8px 0 0">Jedes Türchen öffnet sich nur an seinem Tag. Gewinne das Spiel des Tages (richtige Antworten in einer Runde mit Weihnachtswörtern), dann bekommst du das Geschenk. Klappt es nicht, darfst du es heute so oft probieren, wie du willst. Verpasst du einen Tag, holst du das Türchen mit einem <b>❄️ Joker</b> bis zum 24. Dezember nach (Münzen dann zur Hälfte, alles andere voll). Du startest mit 2 Jokern, alle 5 geöffneten Türchen gibt es einen neuen (höchstens 3).</p></details></div>';
     view.innerHTML = h;
   }
   function advSheet(d, mode) {
     var ai = S.adventInfo(), x = ai.doors[d - 1], pl = S.advPlan(d), ov = document.createElement("div"); ov.className = "srmd";
-    ov.innerHTML = '<div class="dsh" style="text-align:center;max-height:86vh;overflow:auto"><div class="dshg"></div><div class="eyebrow">🎄 Türchen ' + d + (d === 6 ? " · Nikolaus 🎅" : d === 24 ? " · Heiligabend" : "") + '</div>' + advStory(d) +
+    ov.innerHTML = '<div class="dsh advsheet"><div class="dshg"></div><div class="eyebrow">🎄 Türchen ' + d + (d === 6 ? " · Nikolaus 🎅" : d === 24 ? " · Heiligabend" : "") + '</div>' + advStory(d) +
       '<div class="small muted" style="margin:10px 0 2px">Geschenk</div><div><b>' + (mode === "open" ? "" : "") + esc(advRewText(x.rew, mode === "late")) + '</b></div>' +
       (mode === "open" ? '<p class="small muted" style="margin:10px 0">Dieses Türchen ist schon offen' + (x.late ? " (nachgeholt)" : "") + '. ✓</p>' :
         '<div class="small muted" style="margin:10px 0 2px">Spiel des Tages</div><div><b>' + ADV_GAME[pl.mode] + '</b> – schaffe <b>' + pl.need + '</b> richtige Antworten. Du darfst so oft probieren, wie du willst.</div>' +
         (mode === "late" ? '<div class="small" style="margin-top:6px">❄️ Du setzt einen Joker ein (du hast ' + ai.flakes + ').</div>' : "")) +
-      '<div class="row" style="gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap">' + (mode === "open" ? "" : '<button class="btn" data-d="go">' + (mode === "late" ? "❄️ Nachholen · Spiel starten" : "▶ Spiel starten") + '</button>') + '<button class="btn soft" data-d="x">Schließen</button></div></div>';
+      '<div class="row advbtns" style="gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap">' + (mode === "open" ? "" : '<button class="btn" data-d="go">' + (mode === "late" ? "❄️ Nachholen" : "▶ Spiel starten") + '</button>') + '<button class="btn soft" data-d="x">Schließen</button></div></div>';
     document.body.appendChild(ov);
     ov.addEventListener("click", function (e) {
-      var b = e.target.closest("[data-d]"), k = b && b.getAttribute("data-d"), sb = e.target.closest("[data-act=advsay]");
-      if (sb) { speak(S.adventInfo().doors[d - 1].story[1], "en"); return; }
+      var b = e.target.closest("[data-d]"), k = b && b.getAttribute("data-d");
       if (e.target === ov || k === "x") { ov.remove(); return; }
       if (k === "go") { ov.remove(); advStart(d); }
     });
@@ -12537,10 +12540,13 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     toast(c.why === "flake" ? "Verpasst – du hast keinen ❄️ Joker mehr zum Nachholen." : c.why === "over" ? "Der Kalender ist vorbei." : "Noch zu – dieses Türchen öffnet sich am " + d + ". Dezember. 🎄", 3600);
   }
   function advStart(d) {
-    var c = S.advCan(d); if (!c.ok) return;
-    var pl = S.advPlan(d), ws = pl.words.map(function (id) { return S.byId(id); }).filter(Boolean);
-    if (!global.ARENA || ws.length < 8) { toast("Das Spiel ist gerade nicht verfügbar."); return; }
-    global.ARENA.start(pl.mode, { words: ws, boss: { id: "adv" + d, title: "Türchen " + d, mode: pl.mode, need: pl.need, base: pl.need, help: 0, advent: d } });
+    var c = S.advCan(d); if (!c.ok) { toast("Dieses Türchen lässt sich gerade nicht öffnen."); return; }
+    try {
+      var pl = S.advPlan(d), ws = pl.words.map(function (id) { return S.byId(id); }).filter(Boolean);
+      if (!global.ARENA || ws.length < 8) { toast("Das Spiel ist gerade nicht verfügbar (" + ws.length + " Wörter). App neu laden?", 4200); return; }
+      global.ARENA.start(pl.mode, { words: ws, boss: { id: "adv" + d, title: "Türchen " + d, mode: pl.mode, need: pl.need, base: pl.need, help: 0, advent: d } });
+      setTimeout(function () { var ar = document.getElementById("arena"); if (ar && ar.hidden) toast("Das Spiel ist nicht gestartet. Bitte App neu laden und noch einmal tippen.", 4200); }, 900);
+    } catch (e) { toast("Spielstart fehlgeschlagen: " + (e && e.message ? e.message : e), 6000); try { console.error("advStart", e); } catch (x) {} }
   }
   var advLast = null;
   function advReveal() {
@@ -12550,7 +12556,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (o.flake) lines.push("❄️ +" + o.flake + " Joker"); if (it) lines.push((ADV_ICON[it.id] || "🎁") + " " + it.label + " – gehört dir jetzt!"); if (o.master) lines.push("🏅 Abzeichen „Wichtel-Meister“");
     ov.innerHTML = '<div class="dsh" style="text-align:center;max-height:88vh;overflow:auto"><div class="dshg"></div><div class="eyebrow">🎄 Türchen ' + o.day + ' geöffnet!</div><div style="font-size:64px;line-height:1.1;margin:6px 0">' + (it ? ADV_ICON[it.id] || "🎁" : o.boost ? "⚡" : o.xp ? "⭐" : "🪙") + '</div>' +
       '<div style="margin:4px 0 8px">' + lines.map(function (l) { return '<div><b>' + esc(l) + '</b></div>'; }).join("") + '</div>' +
-      '<div class="bub advbub" style="text-align:left">' + esc(o.story[0]) + '<div class="small muted" lang="en" style="margin-top:6px">' + esc(o.story[1]) + '</div></div>' +
+      '<div class="bub advbub" style="text-align:left">' + esc(o.story[0]) + ' ' + speakBtn(o.story[0], false, "de") + '<div class="small muted" lang="en" style="margin-top:6px">' + esc(o.story[1]) + ' ' + speakBtn(o.story[1]) + '</div></div>' +
       '<div class="row" style="gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap">' + (it && it.kind === "acc" ? '<button class="btn" data-d="wear">Gleich anziehen</button>' : "") + '<button class="btn soft" data-d="ok">Weiter ▶</button></div></div>';
     document.body.appendChild(ov);
     try { if (S.state.settings.audio) global.VTC.sound(S.state.profile.snd, true); } catch (e) {}
@@ -14891,7 +14897,6 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     else if (a === "dealview") dealSheet(act.getAttribute("data-id"));
     else if (a === "advdoor") advDoor(+act.getAttribute("data-d"));
     else if (a === "advgo") { tab = "beute"; beuteSeg = "advent"; render(); view.scrollTop = 0; }
-    else if (a === "advsay") speak(S.adventInfo().doors[+act.getAttribute("data-d") - 1].story[1], "en");
     else if (a === "shoprar") { shopRar = act.getAttribute("data-k"); render(); }
     else if (a === "checkupdate") {
       if (!navigator.serviceWorker) return toast("Dieses Gerät kennt keine App-Updates. Seite einfach neu laden.");
