@@ -719,6 +719,7 @@ function apiSync(pid) {
     shop: shopPlan(),
     seasonPlan: seasonPlan(),
     lookForce: lookForceOf(pid),
+    advent: adventOf(pid),
     coinFactor: coinFactorOf(pid),
     gifts: giftsOf(pid).slice(-20),
     season: seasonOf(pid),
@@ -775,6 +776,19 @@ function lookForceOf(pid) { const r = q.kvGet.get("look:" + pid); return r && (S
 function setLookForce(pid, body) {
   const v = body && (SEASON_IDS.includes(body.look) || body.look === "off") ? body.look : "";
   q.kvSet.run("look:" + pid, v); return [200, { ok: true, look: v }];
+}
+/* Wichtel-Kalender je Spieler (v2.161, zum Testen): on = auto (Dezember) | on (Test, mit Testdatum) | off; date = Testdatum (JJJJ-MM-TT), reset = Zeitstempel „Kalender zurücksetzen“ */
+function adventOf(pid) {
+  const r = q.kvGet.get("advent:" + pid); let o = {};
+  try { o = r && r.val ? JSON.parse(r.val) : {}; } catch (e) { o = {}; }
+  return { on: ["auto", "on", "off"].includes(o.on) ? o.on : "auto", date: /^\d{4}-\d{2}-\d{2}$/.test(o.date || "") ? o.date : "", reset: Number.isFinite(o.reset) ? o.reset : 0 };
+}
+function setAdvent(pid, body) {
+  const o = adventOf(pid), b = body || {};
+  if (["auto", "on", "off"].includes(b.on)) o.on = b.on;
+  if (typeof b.date === "string") o.date = /^\d{4}-\d{2}-\d{2}$/.test(b.date) && !isNaN(Date.parse(b.date + "T00:00:00Z")) ? b.date : "";
+  if (b.reset === true) o.reset = Date.now();
+  q.kvSet.run("advent:" + pid, JSON.stringify(o)); return [200, Object.assign({ ok: true }, o)];
 }
 function bossDiffOf(pid) { const r = q.kvGet.get("bossdiff:" + pid); return r && (r.val === "leicht" || r.val === "schwer") ? r.val : "normal"; }
 function setBossDiff(pid, body) {
@@ -2001,6 +2015,8 @@ const server = http.createServer(async (req, res) => {
         if (m[2] === "coinfactor" && req.method === "POST") { const [c, b] = setCoinFactor(pid, await readJson(req)); return send(res, c, b); }
         if (m[2] === "selfchoose" && req.method === "GET") return send(res, 200, { on: selfChooseOf(pid) });
         if (m[2] === "selfchoose" && req.method === "POST") { const [c, b] = setSelfChoose(pid, await readJson(req)); return send(res, c, b); }
+        if (m[2] === "advent" && req.method === "GET") return send(res, 200, adventOf(pid));
+        if (m[2] === "advent" && req.method === "POST") { const [c, b] = setAdvent(pid, await readJson(req)); return send(res, c, b); }
         if (m[2] === "look" && scope) return send(res, 403, { error: "Die Look-Vorgabe ist dem Betreiber vorbehalten." });
         if (m[2] === "look" && req.method === "GET") return send(res, 200, { look: lookForceOf(pid) });
         if (m[2] === "look" && req.method === "POST") { const [c, b] = setLookForce(pid, await readJson(req)); return send(res, c, b); }

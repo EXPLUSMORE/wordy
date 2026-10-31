@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.161.0
+- **Wichtel-Kalender im Dashboard** (Spieler › Einstellungen › „🎄 Wichtel-Kalender“, auch im Elternkonto): Automatisch (nur Dezember), **Test** mit Testdatum (Datumsfeld, −1/+1 Tag, „Echtes Datum“) oder Aus; „Kalender zurücksetzen“ (nur Türchen und Joker, Münzen/XP/Zubehör bleiben). Im Test gelten dieselben Regeln: nur das Türchen des Testtags öffnet sich, verpasste mit ❄️ Joker. Server: kv `advent:<pid>`, Endpunkt `GET/POST /api/admin|fam/players/:id/advent`, kommt als `advent` in `/api/sync`; Test in `server/test.js`. **Server-Update nötig** (`deploy.sh`).
+
 ## 2.160.0
 - **Wichtel-Kalender (Advent):** Neuer Reiter 🎄 Advent unter Beute (sichtbar ab 25.11., Türchen vom 1. bis 24.12.). Jedes Türchen öffnet sich nur am Tag selbst und nur, wenn das Spiel des Tages gewonnen wird (Arena-Runde Wörter-Blitz, Match oder Wichtel-Marathon mit 12 Weihnachtswörtern, Ziel 6/7/8 richtige; beliebig oft probieren). Kleine Geschichte um Wichtel Wolle und den Schneewirbel, zweisprachig (Deutsch/Englisch, mit Vorlesen). Geschenke: Münzen (zusammen etwa 500), XP, XP-Booster (7., 16.), am 6.12. Nikolaus-Mütze, 11. Weihnachts-Schal, 18. Rentier-Geweih, 23. Schlitten (alles Zubehör) und am 24. der Lichterketten-Rahmen plus Abzeichen „Wichtel-Meister“ bei allen 24 Türchen. Adventskerzen (4 Sonntage), Wichtel-Sterne-Balken, Wolke auf der Startseite („Noch n Tage“ / „Türchen n wartet“).
 - **Streak-Schutz ❄️:** 2 Schneeflocken-Joker zum Start, +1 je 5 geöffnete Türchen (höchstens 3). Ein verpasstes Türchen lässt sich bis zum 24.12. mit einer Flocke nachholen (Münzen halb, alles andere voll); Türchen 4 schenkt eine Flocke. Die normale 🔥-Serie hat weiter ihren eigenen Schutz.

@@ -1704,22 +1704,26 @@
   };
   var ADV_MODES = ["blitz", "match", "survival"];
   function advNeed(d) { return 6 + Math.floor((d - 1) / 8); }   // 6, 7, 8 richtige Antworten
+  function advCfg() { var r = global.WordySync && global.WordySync.remote ? global.WordySync.remote() : null; return (r && r.advent) || null; }   // Dashboard: auto | on (Test) | off, Testdatum, Zurücksetzen
   function advNow() {   // wo wir im Kalender stehen: phase off | pre | run | over, day 1..24
-    var pv = state && state.settings && state.settings.adventPreview, t = pv ? pv : today();   // adventPreview = Testhilfe, ein Datum wie "2026-12-06"
+    var cfg = advCfg(), t = state && state.settings && state.settings.adventPreview || "";   // adventPreview = lokale Testhilfe
+    if (cfg && cfg.on === "off") return { phase: "off", day: 0, y: +today().slice(0, 4), t: today() };
+    if (cfg && cfg.on === "on") t = cfg.date || (today().slice(0, 4) + "-12-01");   // Test: Datum aus dem Dashboard, sonst 1. Dezember
+    else if (cfg && cfg.date && !t) t = cfg.date;
+    if (!t) t = today();
     var y = +t.slice(0, 4), m = +t.slice(5, 7), dd = +t.slice(8, 10);
-    if (m === 12 && dd <= 24) return { phase: "run", day: dd, y: y };
-    if (m === 12) return { phase: "over", day: 24, y: y };
-    if (m === 11 && dd >= 25) return { phase: "pre", day: 0, y: y, left: 31 - dd };   // 25.11. = 6 Tage, 30.11. = 1 Tag
-    return { phase: "off", day: 0, y: y };
+    if (m === 12 && dd <= 24) return { phase: "run", day: dd, y: y, t: t };
+    if (m === 12) return { phase: "over", day: 24, y: y, t: t };
+    if (m === 11 && dd >= 25) return { phase: "pre", day: 0, y: y, left: 31 - dd, t: t };   // 25.11. = 6 Tage, 30.11. = 1 Tag
+    return { phase: "off", day: 0, y: y, t: t };
   }
   function advState() {
-    var now = advNow(), a = state.advent;
-    if (!a || a.y !== now.y) a = state.advent = { y: now.y, open: {}, flakes: 2 };
+    var now = advNow(), a = state.advent, cfg = advCfg(), rs = cfg && cfg.reset || 0;
+    if (!a || a.y !== now.y || (rs && (a.resetAt || 0) < rs)) a = state.advent = { y: now.y, open: {}, flakes: 2, resetAt: rs };
     return a;
   }
-  function advCandles(now) {   // Adventssonntage 2026: 29.11., 6.12., 13.12., 20.12.; allgemein: die vier Sonntage vor dem 25.12.
-    var y = now.y, c = new Date(Date.UTC(y, 11, 25)), dow = c.getUTCDay() || 7, a4 = new Date(Date.UTC(y, 11, 25 - dow)), n = 0, t = today();
-    if (state.settings.adventPreview) t = state.settings.adventPreview;
+  function advCandles(now) {   // Adventssonntage: die vier Sonntage vor dem 25.12. (2026: 29.11., 6.12., 13.12., 20.12.)
+    var y = now.y, c = new Date(Date.UTC(y, 11, 25)), dow = c.getUTCDay() || 7, a4 = new Date(Date.UTC(y, 11, 25 - dow)), n = 0, t = now.t;
     for (var i = 0; i < 4; i++) { var ds = new Date(a4.getTime() - (3 - i) * 7 * 86400000).toISOString().slice(0, 10); if (t >= ds) n++; }
     return n;
   }

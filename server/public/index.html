@@ -667,6 +667,7 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
       sg("stoff", "🧭", "Lernstoff steuern", "Pfad-Einheiten · „Kind wählt selbst“ · Lernplan · Wochenziele · Boss", '<div class="card" id="pathCard"></div><div class="card" id="plansCard"></div><div class="card" id="goalsCard"></div>', true) +
       sg("ziel", "⏱️", "Tagesziel &amp; Wochenzeitplan", "Minuten je Tag · freie Tage", '<div class="card" id="wpCard"></div>', false) +
       sg("push", "🔔", "Erinnerung", "Zeitfenster · Abstand · An / Aus · Geräte", '<div class="card" id="pushCard"></div>', false) +
+      sg("advent", "🎄", "Wichtel-Kalender", "Ein-/Ausblenden · Testdatum · zurücksetzen", '<div class="card" id="advCard"></div>', false) +
       sg("look", "✨", "Saison-Look", "Look erzwingen (zum Testen) · Zeitfenster der Looks", '<div class="card" id="lookCard"></div><div class="card" id="seasonPlanCard"></div>', false) +
       sg("belohn", "🎁", "Belohnungen", (window.WF ? "Extramünzen · Pass · vorübergehend für Eltern freigeschaltet" : "Extramünzen · Pass · für Eltern freischaltbar"), '<div class="card" id="giftCard"></div><div class="card" id="passCard"></div>', false) +
       sg("sozial", "👥", "Freunde, Klasse, Crew", "Freigaben der Eltern", '<div class="card" id="friendCard"></div><div class="card" id="classCard"></div>', false) +
@@ -688,7 +689,7 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
     document.getElementById("rev").onclick = function () { if (confirm("Alle verbundenen Geräte von " + p.name + " trennen? Neu verbinden geht mit einem neuen Code.")) post("/api/admin/players/" + p.id + "/revoke").then(function () { loadPlayers(p.id); }); };
     document.getElementById("del").onclick = function () { if (confirm(p.name + " und alle gespeicherten Lerndaten endgültig löschen?")) api("/api/admin/players/" + p.id, { method: "DELETE" }).then(function () { cur = null; loadPlayers(); }); };
     wirePair("pairKid", p.id, "");
-    drawLook(p); drawSeasonPlan(); drawPush(p); drawFriends(p); drawClass(p); drawGifts(p, r); drawPass(p, r); drawWeekPlan(p, r); drawPath(p, r); drawGoals(p, r); drawPlans(p, r); drawBackups(p, r);
+    drawLook(p); drawAdvent(p); drawSeasonPlan(); drawPush(p); drawFriends(p); drawClass(p); drawGifts(p, r); drawPass(p, r); drawWeekPlan(p, r); drawPath(p, r); drawGoals(p, r); drawPlans(p, r); drawBackups(p, r);
     function pane() { if (mainTab === "dash" && subTab === "plan" && document.getElementById("planGen") && !document.getElementById("planGen").firstChild) drawPlanGen(p, r); if (mainTab === "dash" && subTab === "ana" && document.getElementById("anaBox") && !document.getElementById("anaBox").firstChild) drawAna(p); document.getElementById("paneDash").hidden = mainTab !== "dash"; document.getElementById("paneSet").hidden = mainTab !== "set"; document.getElementById("paneFb").hidden = mainTab !== "fb"; if (mainTab === "fb") drawFeedback(document.getElementById("paneFb")); Array.prototype.forEach.call(view.querySelectorAll("#mainTabs button"), function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-mt") === mainTab)); }); Array.prototype.forEach.call(view.querySelectorAll("#subTabs button"), function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-st") === subTab)); }); Array.prototype.forEach.call(view.querySelectorAll("[data-sp]"), function (e) { e.hidden = e.getAttribute("data-sp") !== subTab; }); }
     Array.prototype.forEach.call(view.querySelectorAll("#mainTabs button"), function (b) { b.onclick = function () { mainTab = b.getAttribute("data-mt"); pane(); }; });
     Array.prototype.forEach.call(view.querySelectorAll("#subTabs button"), function (b) { b.onclick = function () { subTab = b.getAttribute("data-st"); pane(); }; });
@@ -1106,6 +1107,29 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
         '<label class="row" style="gap:8px;align-items:center"><input type="checkbox" id="frOn"' + (f.famrewards ? " checked" : "") + '> <span><b>Für Eltern freigeschaltet</b></span></label><p class="small" id="frMsg" style="margin:6px 0 0"></p>';
       el.querySelector("#frOn").onchange = function () { var on = this.checked; post("/api/admin/features", { famrewards: on }).then(function (x) { var m = el.querySelector("#frMsg"); m.className = "small"; m.textContent = x.famrewards ? "Eltern sehen den Belohnungsbereich jetzt." : "Der Belohnungsbereich ist für Eltern wieder aus."; }).catch(function (e) { var m = el.querySelector("#frMsg"); m.className = "small err"; m.textContent = e.message; }); };
     }).catch(function (e) { el.innerHTML = "<p class='small err'>" + esc(e.message) + "</p>"; });
+  }
+  /* Wichtel-Kalender je Spieler: automatisch (Dezember), Test (mit Testdatum) oder aus; Kalender zurücksetzen */
+  function drawAdvent(p) {
+    var el = document.getElementById("advCard"); if (!el) return;
+    api("/api/admin/players/" + p.id + "/advent").then(function (x) {
+      function save(body, msg) { post("/api/admin/players/" + p.id + "/advent", body).then(function (y) { x = y; paint(msg || "Gespeichert. Die App übernimmt es beim nächsten Abgleich (App neu öffnen)."); }).catch(function (e) { paint(e.message, true); }); }
+      function addDay(n) { var b = x.date || (new Date().getFullYear() + "-12-01"), d = new Date(b + "T00:00:00Z"); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); }
+      function paint(msg, err) {
+        el.innerHTML = '<h2>Wichtel-Kalender für ' + esc(p.name) + '</h2><p class="small muted" style="margin:0 0 8px">Der Kalender gilt vom 1. bis 24. Dezember (ab 25.11. mit Countdown). <b>Automatisch</b>: nur in dieser Zeit. <b>Test</b>: die App rechnet mit dem Testdatum, so lassen sich alle Tage durchspielen (es öffnet sich nur das Türchen des Testtags, verpasste mit ❄️ Joker). <b>Aus</b>: kein Kalender.</p>' +
+          '<div class="row" style="gap:8px;align-items:center;flex-wrap:wrap"><select id="advOn"><option value="auto">Automatisch (nur Dezember)</option><option value="on">Test: mit Testdatum</option><option value="off">Aus (ausgeblendet)</option></select>' +
+          '<input type="date" id="advDate" value="' + esc(x.date || "") + '" style="width:auto"><button class="ghost" id="advPrev">−1 Tag</button><button class="ghost" id="advNext">+1 Tag</button><button class="ghost" id="advReal">Echtes Datum</button></div>' +
+          '<div class="row" style="gap:8px;margin-top:8px;flex-wrap:wrap"><button class="ghost" id="advReset">Kalender zurücksetzen</button><span class="small muted">Setzt nur die Türchen und Joker zurück. Münzen, XP und schon erhaltenes Zubehör bleiben.</span></div>' +
+          '<p class="small' + (err ? ' err' : '') + '" id="advMsg" style="margin:6px 0 0">' + esc(msg || "") + '</p>';
+        el.querySelector("#advOn").value = x.on;
+        el.querySelector("#advOn").onchange = function () { save({ on: this.value }); };
+        el.querySelector("#advDate").onchange = function () { save({ date: this.value, on: "on" }); };
+        el.querySelector("#advPrev").onclick = function () { save({ date: addDay(-1), on: "on" }); };
+        el.querySelector("#advNext").onclick = function () { save({ date: addDay(1), on: "on" }); };
+        el.querySelector("#advReal").onclick = function () { save({ date: "", on: "auto" }); };
+        el.querySelector("#advReset").onclick = function () { if (confirm("Wichtel-Kalender von " + p.name + " zurücksetzen? Alle Türchen sind danach wieder zu.")) save({ reset: true }, "Zurückgesetzt. Die App übernimmt es beim nächsten Abgleich."); };
+      }
+      paint("");
+    }).catch(function () { el.remove(); });
   }
   /* Saison-Look je Spieler erzwingen (nur Betreiber, zum Testen) */
   function drawLook(p) {

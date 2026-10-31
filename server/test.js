@@ -151,6 +151,12 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     assert.equal((await J("/api/sync", { headers: T })).j.bossDiff, "leicht", "Boss-Schwierigkeit kommt in der App an");
     await J("/api/admin/players/" + mk.j.id + "/bossdiff", { method: "POST", headers: H, body: JSON.stringify({ diff: "quatsch" }) });
     assert.equal((await J("/api/sync", { headers: T })).j.bossDiff, "normal", "Boss: ungültiger Wert wird normal");
+    assert.deepEqual((await J("/api/sync", { headers: T })).j.advent, { on: "auto", date: "", reset: 0 }, "Wichtel-Kalender: Standard automatisch");
+    await J("/api/admin/players/" + mk.j.id + "/advent", { method: "POST", headers: H, body: JSON.stringify({ on: "on", date: "2026-12-06" }) });
+    assert.deepEqual((await J("/api/sync", { headers: T })).j.advent.on + (await J("/api/sync", { headers: T })).j.advent.date, "on2026-12-06", "Wichtel-Kalender: Test mit Datum kommt in der App an");
+    await J("/api/admin/players/" + mk.j.id + "/advent", { method: "POST", headers: H, body: JSON.stringify({ on: "quatsch", date: "kein-datum", reset: true }) });
+    const adv2 = (await J("/api/sync", { headers: T })).j.advent; assert.equal(adv2.on, "on", "Wichtel-Kalender: ungültiger Modus bleibt"); assert.equal(adv2.date, "", "Wichtel-Kalender: ungültiges Datum wird leer"); assert.ok(adv2.reset > 0, "Wichtel-Kalender: Zurücksetzen setzt einen Zeitstempel");
+    await J("/api/admin/players/" + mk.j.id + "/advent", { method: "POST", headers: H, body: JSON.stringify({ on: "auto", date: "" }) });
     assert.equal((await J("/api/admin/players/" + mk.j.id + "/season", { headers: H })).j, null, "Pass: Standard leer");
     assert.equal((await J("/api/admin/players/" + mk.j.id + "/season", { method: "POST", headers: H, body: JSON.stringify({ weeks: [] }) })).s, 400, "Pass braucht Wochen");
     const se = await J("/api/admin/players/" + mk.j.id + "/season", { method: "POST", headers: H, body: JSON.stringify({ title: "Test", weeks: [{ title: "W1", need: 9, items: ["av:eisbaer", "böse id", "dn:eislauf"], slot: 1, coins: 999 }], finale: { title: "F", items: ["fr:eis"], coins: 10 } }) });
