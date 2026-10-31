@@ -1571,6 +1571,30 @@
     return t.join(" · ");
   }
   function advStory(d) { var st = S.adventInfo().doors[d - 1].story; return '<div class="bub advbub">' + esc(st[0]) + '<div class="small muted" lang="en" style="margin-top:6px">' + esc(st[1]) + ' <button class="chip" data-act="advsay" data-d="' + d + '" aria-label="Vorlesen">🔊</button></div></div>'; }
+  /* Weihnachtsbaum: jedes geöffnete Türchen zündet ein Licht, am 24. geht der große Stern an */
+  var ADV_LC = ["#ff4d4d", "#ffd34d", "#59c8ff", "#7dff9e", "#ff9ef0", "#ffa94d"];
+  function advTree(ai) {
+    var rows = [[95, 2], [125, 3], [155, 4], [185, 5], [215, 5], [245, 5]], pts = [], r, k;
+    rows.forEach(function (row) {
+      var y = row[0], hw = (y - 40) * 0.46 - 12, n = row[1];
+      for (k = 0; k < n; k++) pts.push([Math.round(120 + (n === 1 ? 0 : (k / (n - 1) - 0.5) * 2 * hw * (n < 3 ? 0.55 : 1)) + ((y / 30 + k) % 2 ? 3 : -3)), y + (k % 2 ? 7 : -3)]);
+    });
+    var lit = 0, lights = "", star = ai.doors[23].st === "open";
+    for (var d = 1; d <= 24; d++) {
+      var on = ai.doors[d - 1].st === "open", pt = pts[(d * 7) % 24], col = ADV_LC[d % ADV_LC.length]; if (on) lit++;
+      lights += '<circle class="advl' + (on ? " on" : "") + '" cx="' + pt[0] + '" cy="' + pt[1] + '" r="' + (on ? 6.5 : 5) + '" fill="' + (on ? col : "#2b3f66") + '" style="--c:' + col + ';animation-delay:' + ((d * 0.37) % 2).toFixed(2) + 's"/>';
+    }
+    var st = S.state.advent || {}, ignite = star && !st.starSeen; if (ignite) { st.starSeen = 1; S.save(true); }
+    return '<section class="card advtree"><svg viewBox="0 0 240 300" role="img" aria-label="Weihnachtsbaum mit ' + lit + ' von 24 Lichtern">' +
+      '<defs><radialGradient id="advGlow"><stop offset="0" stop-color="#fff6b0" stop-opacity=".95"/><stop offset="1" stop-color="#ffd34d" stop-opacity="0"/></radialGradient></defs>' +
+      (star ? '<circle class="advray' + (ignite ? " ignite" : "") + '" cx="120" cy="40" r="58" fill="url(#advGlow)"/>' : "") +
+      '<path d="M120 36L52 124H92L34 202H86L22 268H218L154 202H206L148 124H188z" fill="#1f7a3c" stroke="#0d3b1e" stroke-width="5" stroke-linejoin="round"/>' +
+      '<path d="M120 52L74 120M120 120L58 196M120 196L46 262" stroke="#2fa55a" stroke-width="5" stroke-linecap="round" opacity=".5" fill="none"/>' +
+      '<rect x="104" y="266" width="32" height="24" rx="4" fill="#7a4a24" stroke="#3e2410" stroke-width="4"/><path d="M70 292H170" stroke="#e9f2ff" stroke-width="6" stroke-linecap="round"/>' +
+      lights +
+      '<path class="advstar' + (star ? " on" + (ignite ? " ignite" : "") : "") + '" d="M120 6l9.4 19.3 21.1 3-15.3 14.9 3.6 21-18.8-10-18.8 10 3.6-21-15.3-14.9 21.1-3z" fill="' + (star ? "#ffd34d" : "#2b3f66") + '" stroke="' + (star ? "#fff3a0" : "#41588a") + '" stroke-width="3" stroke-linejoin="round"/></svg>' +
+      '<div class="small muted" style="text-align:center;margin-top:2px">' + (star ? "🌟 Frohe Weihnachten! Der Stern leuchtet." : lit + " von 24 Lichtern · am 24. geht der große Stern an") + '</div></section>';
+  }
   function viewAdvent(ai, top) {
     var h = '<div class="stack">' + top;
     if (ai.phase === "pre") {
@@ -1579,12 +1603,12 @@
     }
     var cand = ""; for (var k = 0; k < 4; k++) cand += '<span class="' + (k < ai.candles ? "" : "off") + '">🕯️</span>';
     h += '<div class="row" style="align-items:center"><h1 style="font-size:22px;flex:1 1 auto">🎄 Wichtel-Kalender</h1><span class="pill tnum nowrap" title="Joker zum Nachholen">❄️ ' + ai.flakes + '</span></div>' +
-      '<div class="advcan">' + cand + '<small class="muted">Adventskerzen</small></div><div class="advgrid">' +
+      advTree(ai) + '<div class="advcan">' + cand + '<small class="muted">Adventskerzen</small></div><div class="advgrid">' +
       ai.doors.map(function (x) {
         var ic = x.st === "open" ? advDoorIcon(x.rew) : x.st === "today" ? "🎮" : x.st === "late" ? "❄️" : x.d === 6 ? "🎅?" : "";
         return '<button class="advd st-' + x.st + (x.d === 24 ? " fin" : "") + '" data-act="advdoor" data-d="' + x.d + '" aria-label="Türchen ' + x.d + '"><b>' + x.d + '</b><i>' + ic + '</i></button>';
       }).join("") + '</div>' +
-      '<section class="card"><div class="small muted">Wichtel-Sterne</div><div class="bar" style="margin-top:6px"><i style="width:' + Math.round(ai.open * 100 / 24) + '%"></i></div><div class="small muted" style="margin-top:4px">' + ai.open + ' von 24 · am 24. leuchtet der ganze Baum</div></section>';
+      '';
     var lastD = 0; ai.doors.forEach(function (x) { if (x.st === "open") lastD = x.d; });
     h += '<section class="card"><div class="eyebrow">Die Geschichte</div>' + advStory(lastD || 1) + '</section>' +
       '<details class="card"><summary><b>So funktioniert der Kalender</b></summary><p class="small muted" style="margin:8px 0 0">Jedes Türchen öffnet sich nur an seinem Tag. Gewinne das Spiel des Tages (richtige Antworten in einer Runde mit Weihnachtswörtern), dann bekommst du das Geschenk. Klappt es nicht, darfst du es heute so oft probieren, wie du willst. Verpasst du einen Tag, holst du das Türchen mit einem <b>❄️ Joker</b> bis zum 24. Dezember nach (Münzen dann zur Hälfte, alles andere voll). Du startest mit 2 Jokern, alle 5 geöffneten Türchen gibt es einen neuen (höchstens 3).</p></details></div>';

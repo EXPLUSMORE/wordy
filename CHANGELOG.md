@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.161.1
+- Wichtel-Kalender: **Weihnachtsbaum** oben im Kalender. Jedes geöffnete Türchen zündet ein buntes Licht am Baum (24 Lichter, sie flackern leicht); wenn das Türchen 24 offen ist, geht der **große Stern** an der Spitze an (Strahlen und Leuchten, beim ersten Mal mit kleiner Anzündeanimation). Ersetzt den Sterne-Balken. Mit „Bewegung reduzieren“ ohne Animation.
+
 ## 2.161.0
 - **Wichtel-Kalender im Dashboard** (Spieler › Einstellungen › „🎄 Wichtel-Kalender“, auch im Elternkonto): Automatisch (nur Dezember), **Test** mit Testdatum (Datumsfeld, −1/+1 Tag, „Echtes Datum“) oder Aus; „Kalender zurücksetzen“ (nur Türchen und Joker, Münzen/XP/Zubehör bleiben). Im Test gelten dieselben Regeln: nur das Türchen des Testtags öffnet sich, verpasste mit ❄️ Joker. Server: kv `advent:<pid>`, Endpunkt `GET/POST /api/admin|fam/players/:id/advent`, kommt als `advent` in `/api/sync`; Test in `server/test.js`. **Server-Update nötig** (`deploy.sh`).
 

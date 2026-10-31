@@ -1552,6 +1552,16 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 @keyframes advpulse{50%{transform:scale(1.04)}}
 .bub{background:#fff;color:#1b2440;border-radius:16px;padding:10px 12px;font-size:14px;line-height:1.4;text-align:left}.bub .muted{color:#5a6b99}
 .avatar.fr-lichter{box-shadow:0 0 0 2px #2f8f4e,0 0 0 4.5px #ffd34d,0 0 12px 3px rgba(255,90,90,.75),0 0 18px 6px rgba(120,255,160,.45)}
+.advtree svg{display:block;width:min(100%,215px);margin:0 auto;overflow:visible}
+.advl{transition:fill .4s}.advl.on{filter:drop-shadow(0 0 5px var(--c));animation:advtw 2.2s ease-in-out infinite}
+@keyframes advtw{0%,100%{opacity:1}50%{opacity:.55}}
+.advstar.on{filter:drop-shadow(0 0 10px #ffd34d);animation:advstar 1.8s ease-in-out infinite;transform-origin:120px 36px}
+.advstar.ignite,.advray.ignite{animation:advignite 1.6s ease-out 1,advstar 1.8s ease-in-out 1.6s infinite}
+.advray{animation:advpulse2 2.4s ease-in-out infinite;transform-origin:120px 40px}
+@keyframes advstar{50%{transform:scale(1.12)}}
+@keyframes advignite{0%{transform:scale(.2);opacity:0}60%{transform:scale(1.5);opacity:1}100%{transform:scale(1)}}
+@keyframes advpulse2{50%{opacity:.7;transform:scale(1.12)}}
+@media (prefers-reduced-motion:reduce){.advl.on,.advstar.on,.advray,.advstar.ignite,.advray.ignite{animation:none}}
 </style>
 
 <div id="app">
