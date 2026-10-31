@@ -920,7 +920,7 @@
   function rankIdx(xp) { var k = 0; RANKS.forEach(function (r, i) { if (xp >= r.xp) k = i; }); return k; }
   function addXp(v) {
     state.xpRaw = (state.xpRaw || 0) + v;   // normale XP (ohne Booster), für die Anzeige „normal / mit Booster“
-    if (boostActive()) v *= 2;
+    if (boostActive()) { var bb = state.path.boost; bb.extra = (bb.extra || 0) + v; state.xpBoostExtra = (state.xpBoostExtra || 0) + v; v *= 2; }   // Booster-Mehr-XP mitzählen (Dashboard)
     var r0 = rankIdx(state.xp); state.xp += v; state.daily.xp += v;
     for (var i = r0 + 1, r1 = rankIdx(state.xp); i <= r1; i++) rankGift(i);
     return v;   // tatsächlich gutgeschriebene XP (mit Booster), damit Runden sie melden können
@@ -1339,7 +1339,7 @@
   }
   function finishSession(res) {
     var bst = state.path && state.path.boost;
-    if (bst && bst.on) { bst.left = Math.max(0, bst.left - (res.sec || 0)); if (bst.left <= 0) bst.on = false; }   // Booster zählt echte Übungszeit
+    if (bst && bst.on) { bst.left = Math.max(0, bst.left - (res.sec || 0)); if (bst.left <= 0) { bst.on = false; ev("boost", { k: "end", extra: bst.extra || 0, left: bst.stock }); } }   // Booster zählt echte Übungszeit
     // res: {items, correct, sec, maxChain, newSeen, boxSolved}
     var d = state.daily;
     d.items += res.items; d.correct += res.correct; d.sec += res.sec; d.newSeen += res.newSeen || 0; d.deep = (d.deep || 0) + (res.deep || 0);
@@ -1793,7 +1793,13 @@
     var b = pathState().boost;
     if (b.on) return { error: "Ein Booster läuft schon." };
     if (b.stock < 1) return { error: "Kein Booster im Vorrat." };
-    b.stock--; b.on = true; b.left = 900; save(true); return { ok: true, left: b.left };
+    b.stock--; b.on = true; b.left = 900; b.extra = 0; b.used = (b.used || 0) + 1; b.lastAt = Date.now(); ev("boost", { k: "start", left: b.stock, n: b.used });
+    save(true); return { ok: true, left: b.left };
+  }
+  /* Stand für das Dashboard: Vorrat, läuft gerade, wie oft benutzt, Mehr-XP durch Booster insgesamt */
+  function boostInfo() {
+    var b = (state.path && state.path.boost) || {};
+    return { stock: b.stock || 0, on: !!(b.on && b.left > 0), left: b.on ? Math.max(0, b.left || 0) : 0, used: b.used || 0, last: b.lastAt || 0, extra: Math.round(state.xpBoostExtra || 0) };
   }
 
   /* Wunsch: ein Shop-Eintrag, auf den gespart wird; die Startseite zeigt den Fortschritt dorthin */
@@ -1942,6 +1948,6 @@
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
-    grantItem: function (id) { return passGrant({ items: [id] }); }, resetProgress: resetProgress, stampNew: stampNew, passStamp: passStamp, shopVisible: shopVisible, shopWeeks: shopWeeks, shopCatalog: shopCatalog, shopTeasers: shopTeasers, shopNow: shopNow, shopRel: shopRel, WELCOME: WELCOME, welcomeGrant: welcomeGrant, welcomeNeeded: welcomeNeeded, steered: steered, pathUnitList: pathUnitList, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathLock: pathLock, adventInfo: adventInfo, advPlan: advPlan, advCan: advCan, advWin: advWin, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, boost: boost, coinFactor: coinFactor, avgCoins: avgCoins, dealItem: dealItem, priceOf: priceOf, passInfo: passInfo, favs: favs, toggleFav: toggleFav, collection: collection, findCollItem: findCollItem, CUP_TIERS: CUP_TIERS, claimPassWeek: claimPassWeek, claimPassTier: claimPassTier, claimPassCrew: claimPassCrew, claimPassFinale: claimPassFinale, passMeta: passMeta, rarityOf: rarityOf, shopList: shopList, activeSetDeal: activeSetDeal, buySet: buySet, takeNews: takeNews, SETS: SETS, itemById: itemById, minXp: minXp, defaultOf: defaultOf
+    grantItem: function (id) { return passGrant({ items: [id] }); }, resetProgress: resetProgress, stampNew: stampNew, passStamp: passStamp, shopVisible: shopVisible, shopWeeks: shopWeeks, shopCatalog: shopCatalog, shopTeasers: shopTeasers, shopNow: shopNow, shopRel: shopRel, WELCOME: WELCOME, welcomeGrant: welcomeGrant, welcomeNeeded: welcomeNeeded, steered: steered, pathUnitList: pathUnitList, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathLock: pathLock, adventInfo: adventInfo, advPlan: advPlan, advCan: advCan, advWin: advWin, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostInfo: boostInfo, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, boost: boost, coinFactor: coinFactor, avgCoins: avgCoins, dealItem: dealItem, priceOf: priceOf, passInfo: passInfo, favs: favs, toggleFav: toggleFav, collection: collection, findCollItem: findCollItem, CUP_TIERS: CUP_TIERS, claimPassWeek: claimPassWeek, claimPassTier: claimPassTier, claimPassCrew: claimPassCrew, claimPassFinale: claimPassFinale, passMeta: passMeta, rarityOf: rarityOf, shopList: shopList, activeSetDeal: activeSetDeal, buySet: buySet, takeNews: takeNews, SETS: SETS, itemById: itemById, minXp: minXp, defaultOf: defaultOf
   };
 })(window);

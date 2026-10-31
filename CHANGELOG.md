@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.168.0
+- **XP-Booster im Dashboard:** Neue Karte „⚡ XP-Booster“ im Spieler-Überblick (unter Einmaleins): läuft gerade (Restzeit), Vorrat, wie oft benutzt (zuletzt wann), Mehr-XP durch Booster insgesamt und die letzten Booster mit Start (Vorrat danach) und Ende (+ Mehr-XP dieses Boosters). Die App meldet dafür ein Ereignis `boost` beim Start und beim Ablaufen und liefert den Stand in der Übersicht (`meta.booster`); Server `report().boost`, Tageswerte `days[].boosts/boostXp`. Zählung beginnt mit dieser Version (frühere Booster sind nicht erfasst). **Server-Update nötig.**
+
 ## 2.167.0
 - **Weihnachtsbaum mit mehr Weihnacht** (Wunsch von Checker): Schnee liegt in Häufchen auf den Ästen entlang der Baumkanten, an jeder Astunterkante hängt goldenes **Lametta** mit funkelnden Silberpunkten (die Funken laufen), an den Astspitzen hängen rote, blaue und goldene **Christbaumkugeln**, und kleine gelbe Glitzersterne blinken auf dem Baum. Alles liegt hinter den Türchen, die Zahlen bleiben gut lesbar. Bei „Bewegung reduzieren“ ohne Animation.
 

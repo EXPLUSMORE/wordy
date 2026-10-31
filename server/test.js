@@ -151,6 +151,8 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     assert.equal((await J("/api/sync", { headers: T })).j.bossDiff, "leicht", "Boss-Schwierigkeit kommt in der App an");
     await J("/api/admin/players/" + mk.j.id + "/bossdiff", { method: "POST", headers: H, body: JSON.stringify({ diff: "quatsch" }) });
     assert.equal((await J("/api/sync", { headers: T })).j.bossDiff, "normal", "Boss: ungültiger Wert wird normal");
+    await J("/api/events", { method: "POST", headers: T, body: JSON.stringify({ events: [{ i: "bo1", t: Date.now() - 2000, k: "boost", d: { k: "start", left: 2, n: 3 } }, { i: "bo2", t: Date.now() - 1000, k: "boost", d: { k: "end", extra: 140 } }] }) });
+    const bst = (await J("/api/admin/players/" + mk.j.id + "/report?days=14", { headers: H })).j.boost; assert.equal(bst.uses, 1, "Booster: Start gezählt"); assert.equal(bst.extra, 140, "Booster: Mehr-XP gezählt"); assert.equal(bst.last.length, 2, "Booster: Liste");
     assert.deepEqual((await J("/api/sync", { headers: T })).j.advent, { on: "auto", date: "", reset: 0, all: false }, "Wichtel-Kalender: Standard automatisch");
     await J("/api/admin/players/" + mk.j.id + "/advent", { method: "POST", headers: H, body: JSON.stringify({ on: "on", date: "2026-12-06" }) });
     assert.deepEqual((await J("/api/sync", { headers: T })).j.advent.on + (await J("/api/sync", { headers: T })).j.advent.date, "on2026-12-06", "Wichtel-Kalender: Test mit Datum kommt in der App an");
