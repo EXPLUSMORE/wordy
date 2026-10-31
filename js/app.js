@@ -805,7 +805,7 @@
       else if (mm === "eq") { var r = S.equip(it.it.id); if (r.error) return toast(r.error); ov.remove(); toast(it.kind === "sticker" ? (r.on ? "Aufgeklebt" : "Abgelöst") : "Getragen: " + it.label); render(); }
       else if (mm === "try") { global.VTC.dance({ av: S.state.profile.avatar, avatar: avatarHtml(S.state.profile.avatar, true), outfit: it.kind === "dance" ? S.state.profile.outfit : it.it.val, dance: it.kind === "dance" ? it.it.val : (S.state.profile.dance || "wackler"), title: it.label }); }
       else if (mm === "shop") { ov.remove(); shopTab = it.kind === "kit" ? "kit" : it.it.set === "fn" ? "fn" : it.kind; tab = "shop"; shopSeg = "shop"; render(); view.scrollTop = 0; }
-      else if (mm === "advent") { ov.remove(); tab = "beute"; beuteSeg = "advent"; render(); view.scrollTop = 0; }
+      else if (mm === "advent") { ov.remove(); tab = "spielen"; spielSeg = "advent"; render(); view.scrollTop = 0; }
       else if (mm === "pass") { ov.remove(); tab = "beute"; beuteSeg = "pass"; render(); view.scrollTop = 0; }
     });
   }
@@ -1143,6 +1143,21 @@
     while (h.scrollWidth > h.clientWidth && fs > 12) { fs -= 1; h.style.fontSize = fs + "px"; }
   }
   global.addEventListener("resize", function () { if (tab === "home") fitGreet(); });
+  var ADV_BULB = ["#ff4d4d", "#ffd34d", "#59c8ff", "#7dff9e", "#ff9ef0", "#ffa94d"];
+  /* Adventskachel auf der Startseite (zweite Kachel, 25.11.–31.12.) */
+  function adventTile() {
+    var ai = S.adventInfo(); if (ai.phase === "off") return "";
+    var td = ai.phase === "run" ? ai.doors[ai.day - 1] : null, done = td && td.st === "open", over = ai.phase === "over", pre = ai.phase === "pre";
+    var star = ai.doors[23].st === "open", lit = Math.round(ai.open * 10 / 24), bulbs = "", pts = [[44, 40], [58, 52], [30, 52], [66, 70], [38, 70], [24, 70], [52, 86], [34, 88], [70, 92], [18, 92]];
+    pts.forEach(function (q, i) { bulbs += '<circle cx="' + q[0] + '" cy="' + q[1] + '" r="' + (i < lit ? 3.6 : 2.6) + '" fill="' + (i < lit ? ADV_BULB[i % ADV_BULB.length] : "#2c4373") + '"' + (i < lit ? ' class="advbulb on" style="--c:' + ADV_BULB[i % ADV_BULB.length] + '"' : "") + '/>'; });
+    var title = pre ? "Wichtel-Kalender" : over ? "Frohe Weihnachten!" : done ? "Heute geschafft ✓" : "Türchen " + ai.day + " wartet!";
+    var sub = pre ? "Noch " + ai.left + (ai.left === 1 ? " Tag" : " Tage") + " bis zum 1. Dezember" : over ? ai.open + " von 24 Türchen geöffnet" : done ? "Morgen wartet das nächste Türchen. " + ai.open + " von 24 offen" : "Gewinne das Spiel des Tages und öffne es · " + ai.open + " von 24 offen";
+    return '<button class="advtile" data-act="advgo" aria-label="Zum Wichtel-Kalender"><span class="advtsky" aria-hidden="true"><i class="s1"></i><i class="s2"></i><i class="s3"></i><i class="s4"></i><i class="f1">❄</i><i class="f2">❄</i><i class="f3">❄</i></span>' +
+      '<span class="advttxt"><small>🎄 Wichtel-Märchen · Advent</small><b>' + esc(title) + '</b><span>' + esc(sub) + '</span><em>' + (pre ? "Gleich geht’s los" : done || over ? "Kalender ansehen ▶" : "Türchen öffnen ▶") + '</em></span>' +
+      '<svg class="advtmini" viewBox="0 0 90 118" aria-hidden="true"><path d="M45 14L22 52H34L12 88H30L6 112H84L60 88H78L56 52H68z" fill="#1f7a3c" stroke="#0b2a15" stroke-width="3" stroke-linejoin="round"/>' + bulbs + '<rect x="38" y="108" width="14" height="8" rx="2" fill="#7a4a24"/>' +
+      '<path class="' + (star ? "advtstar on" : "advtstar") + '" d="M45 0l4 9 10 1-7 7 2 10-9-5-9 5 2-10-7-7 10-1z" fill="' + (star ? "#ffd34d" : "#2d4f8c") + '" stroke="' + (star ? "#fff3a0" : "#7fa6e6") + '" stroke-width="1.5"/></svg>' +
+      '<span class="advtflakes">❄️ ' + ai.flakes + '</span><span class="advtground" aria-hidden="true"></span></button>';
+  }
   function viewHome() {
     var st = S.state, r = S.rankOf(st.xp);
     var goalSec = S.goalMin() * 60, pct = Math.min(100, Math.round(st.daily.sec * 100 / goalSec));
@@ -1170,7 +1185,7 @@
       '<div class="hhchips"><span class="hhc">🔥 <b class="tnum">' + st.streak.count + '</b></span><span class="hhc">🪙 <b class="tnum">' + st.coins + '</b></span></div></div>' +
       '</section>';
 
-    html += resumeCard() + planCard() + dayCard(pct);
+    html += adventTile() + resumeCard() + planCard() + dayCard(pct);
 
     var wish = S.wish();
     html += '<section class="card"><div class="eyebrow">Tagesmissionen</div><div style="margin-top:6px">' +
@@ -1557,7 +1572,11 @@
       '<p class="small ctap" style="margin:12px 0 0;opacity:.8">Serienboni gibt es bei 3, 7, 14 und 30 Tagen in Folge' + (ci.best > 1 ? '. Bestserie: ' + ci.best + ' Tage' : '') + '.</p></section>' + kl.bottom;
   }
   function viewSpielen() {
-    var top = segBar("spielen", spielSeg, [["challenge", "🏆 Challenge"], ["arena", "🕹️ Arena"], ["freunde", "👥 Freunde"], ["crew", "🛡️ Crew"], ["rang", "🥇 Liga"]]);
+    var ai = S.adventInfo(), sg = [["challenge", "🏆 Challenge"]];
+    if (ai.phase !== "off") sg.push(["advent", "🎄 Advent"]); else if (spielSeg === "advent") spielSeg = "challenge";
+    sg = sg.concat([["arena", "🕹️ Arena"], ["freunde", "👥 Freunde"], ["crew", "🛡️ Crew"], ["rang", "🥇 Liga"]]);
+    var top = segBar("spielen", spielSeg, sg);
+    if (spielSeg === "advent") { viewAdvent(ai, top); return; }
     view.innerHTML = '<div class="stack">' + top + (spielSeg === "arena" ? modiHtml("spiel") : spielSeg === "freunde" ? friendsHtml() : spielSeg === "crew" ? crewHtml() : spielSeg === "rang" ? boardHtml() : challengeHtml()) + '</div>';
   }
   /* ---------- Wichtel-Kalender (Advent, v2.160): Logik in engine.js (adventInfo/advPlan/advWin) ---------- */
@@ -1661,7 +1680,7 @@
   }
   var advLast = null;
   function advReveal() {
-    var o = advLast || (S.state.advent && S.state.advent.last); if (!o) { tab = "beute"; beuteSeg = "advent"; render(); return; }
+    var o = advLast || (S.state.advent && S.state.advent.last); if (!o) { tab = "spielen"; spielSeg = "advent"; render(); return; }
     var ov = document.createElement("div"), it = o.item; ov.className = "srmd";
     var lines = []; if (o.coins) lines.push("🪙 +" + o.coins + " Münzen" + (o.late ? " (nachgeholt: halb)" : "")); if (o.xp) lines.push("⭐ +" + o.xp + " XP"); if (o.boost) lines.push("⚡ XP-Booster im Vorrat");
     if (o.flake) lines.push("❄️ +" + o.flake + " Joker"); if (it) lines.push((ADV_ICON[it.id] || "🎁") + " " + it.label + " – gehört dir jetzt!"); if (o.master) lines.push("🏅 Abzeichen „Wichtel-Meister“");
@@ -1674,7 +1693,7 @@
     ov.addEventListener("click", function (e) {
       var b = e.target.closest("[data-d]"), k = b && b.getAttribute("data-d");
       if (k === "wear") { var r = S.accToggle(S.state.profile.avatar, it.id); toast(r.error || (r.on ? it.label + " sitzt!" : "Abgenommen")); renderHeader(); return; }
-      if (k === "ok" || e.target === ov) { ov.remove(); tab = "beute"; beuteSeg = "advent"; renderHeader(); render(); view.scrollTop = 0; }
+      if (k === "ok" || e.target === ov) { ov.remove(); tab = "spielen"; spielSeg = "advent"; renderHeader(); render(); view.scrollTop = 0; }
     });
   }
   function adventCloud() {
@@ -1687,12 +1706,9 @@
   function viewBeute() {
     var LEG = { pass: "heute", shop: "laden", showroom: "spind" };
     if (LEG[beuteSeg]) beuteSeg = LEG[beuteSeg];   // alte Namen (Links, Wolken) leben weiter
-    var ai = S.adventInfo(), segs = [["heute", "🎯 Heute"], ["laden", "🛍️ Laden"], ["spind", "🧍 Spind"]];
-    if (ai.phase !== "off") segs.push(["advent", "🎄 Advent"]); else if (beuteSeg === "advent") beuteSeg = "heute";
-    var top = segBar("beute", beuteSeg, segs);
-    if (ai.phase !== "off") top = top.replace('class="segs"', 'class="segs s4"');
-    if (beuteSeg === "advent") viewAdvent(ai, top);
-    else if (beuteSeg === "laden") { viewShop(); topSegs(top); }
+    if (beuteSeg === "advent") beuteSeg = "heute";   // der Advent wohnt seit 2.164 unter Spielen
+    var top = segBar("beute", beuteSeg, [["heute", "🎯 Heute"], ["laden", "🛍️ Laden"], ["spind", "🧍 Spind"]]);
+    if (beuteSeg === "laden") { viewShop(); topSegs(top); }
     else if (beuteSeg === "spind") viewSpind(top);
     else {
       var pend = S.pathState().pending.length;
@@ -4007,7 +4023,7 @@
     else if (a === "shoptab") { shopTab = act.getAttribute("data-k"); beuteSeg = "laden"; render(); }
     else if (a === "dealview") dealSheet(act.getAttribute("data-id"));
     else if (a === "advdoor") advDoor(+act.getAttribute("data-d"));
-    else if (a === "advgo") { tab = "beute"; beuteSeg = "advent"; render(); view.scrollTop = 0; }
+    else if (a === "advgo") { tab = "spielen"; spielSeg = "advent"; render(); view.scrollTop = 0; }
     else if (a === "shoprar") { shopRar = act.getAttribute("data-k"); render(); }
     else if (a === "checkupdate") {
       if (!navigator.serviceWorker) return toast("Dieses Gerät kennt keine App-Updates. Seite einfach neu laden.");

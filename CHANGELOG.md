@@ -10,6 +10,10 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.165.0
+- **Adventskachel auf der Startseite** als zweite Kachel (direkt unter der Hero-Bühne, 25.11.–31.12.): Nachthimmel mit Polarlicht, fallenden Flocken und Schneeboden, kleiner Weihnachtsbaum mit so vielen leuchtenden Lichtern, wie Türchen offen sind (Stern an, wenn Türchen 24 offen), Text je nach Stand („Türchen 10 wartet!“, „Heute geschafft ✓“, Countdown vor dem 1.12., „Frohe Weihnachten!“), Knopf „Türchen öffnen ▶“ und Joker-Zähler. Tippen springt in den Kalender.
+- **Der Advent ist von Beute nach Spielen umgezogen**, direkt neben Challenge (Spielen › 🎄 Advent). Beute hat wieder nur Heute · Laden · Spind. Alle Sprünge (Wolke, Kachel, Geschenk-Fenster, Showroom „Zum Wichtel-Kalender“) führen dorthin.
+
 ## 2.164.0
 - **Neues Zubehör: Weihnachtssocken** (Platz „Dabei“, 60 🪙, im Shop unter Figuren › Zubehör): zwei gezeichnete Socken in Rot/Weiß/Grün (rot mit weißen Streifen und grüner Ferse, grün mit weißen Streifen und roter Ferse, weiße Bündchen), englisch „Christmas socks“. Erscheint auch im Dashboard (Aussehen) und bei Freunden.
 
