@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.163.0
+- **Winter-Märchen:** Die Adventsseite ist jetzt eine ganze Szene. Die Türchen hängen am großen Weihnachtsbaum (23 Türchen in Reihen, kunterbunt verteilt), der **große Stern an der Spitze ist Türchen 24** und leuchtet beim Öffnen golden. Drumherum: Nachthimmel mit funkelnden Sternen und Polarlicht, Vollmond, verschneite Berge und ein kleines Dorf mit beleuchteten Fenstern, Schneefall, ein Rentier-Schlitten, der über den Himmel fliegt, unten Schnee mit dem Adventskranz (die Kerzen brennen an den vier Adventssonntagen), Wichtel Wolle, Lebkuchenmännchen, Zuckerstange, Schneemann, Geschenk – und ein Paar Augen im Schnee, die ab Türchen 21 zu Husky Flocke werden. Die Geschichte steht als Märchenbuch-Seite mit Kapitelnummer darunter. Ersetzt Baum-Lichter und Türchen-Dorf (2.161/2.162); die Türchen-Regeln sind unverändert.
+
 ## 2.162.0
 - **Wichtel-Dorf:** Die 24 Türchen sind kein Raster mehr, sondern eine verspielte Winterlandschaft: Türchen in verschiedenen Größen und Look (rote Tür, Geschenk mit goldener Schleife, Zuckerstangen-Streifen, Lebkuchen mit Zuckerguss, nachtblaue Rundbogentür), leicht schief, mit Schnee auf dem Türchen und goldener Nummernplakette. Dazwischen wippen Rentiere, Schlitten, Schneemänner, Elfen, Zuckerstangen, Lebkuchenmännchen, Sterne und Geschenke; Schneeflocken fallen, am Boden liegt Schnee. Heutiges Türchen pulsiert mit „HEUTE!“, verpasste mit Joker zeigen „❄️ nachholen“, offene Türchen stehen mit Licht im Türchen und aufgeschwungener Tür da. Türchen 6 ist rot mit Nikolaus, Türchen 24 groß und golden mit Rentier-Schlitten davor. Mit „Bewegung reduzieren“ ohne Animationen.
 

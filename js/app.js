@@ -1571,55 +1571,50 @@
     return t.join(" · ");
   }
   function advStory(d) { var st = S.adventInfo().doors[d - 1].story; return '<div class="bub advbub">' + esc(st[0]) + '<div class="small muted" lang="en" style="margin-top:6px">' + esc(st[1]) + ' <button class="chip" data-act="advsay" data-d="' + d + '" aria-label="Vorlesen">🔊</button></div></div>'; }
-  /* Weihnachtsbaum: jedes geöffnete Türchen zündet ein Licht, am 24. geht der große Stern an */
-  var ADV_LC = ["#ff4d4d", "#ffd34d", "#59c8ff", "#7dff9e", "#ff9ef0", "#ffa94d"];
-  function advTree(ai) {
-    var rows = [[95, 2], [125, 3], [155, 4], [185, 5], [215, 5], [245, 5]], pts = [], r, k;
-    rows.forEach(function (row) {
-      var y = row[0], hw = (y - 40) * 0.46 - 12, n = row[1];
-      for (k = 0; k < n; k++) pts.push([Math.round(120 + (n === 1 ? 0 : (k / (n - 1) - 0.5) * 2 * hw * (n < 3 ? 0.55 : 1)) + ((y / 30 + k) % 2 ? 3 : -3)), y + (k % 2 ? 7 : -3)]);
-    });
-    var lit = 0, lights = "", star = ai.doors[23].st === "open";
-    for (var d = 1; d <= 24; d++) {
-      var on = ai.doors[d - 1].st === "open", pt = pts[(d * 7) % 24], col = ADV_LC[d % ADV_LC.length]; if (on) lit++;
-      lights += '<circle class="advl' + (on ? " on" : "") + '" cx="' + pt[0] + '" cy="' + pt[1] + '" r="' + (on ? 6.5 : 5) + '" fill="' + (on ? col : "#2b3f66") + '" style="--c:' + col + ';animation-delay:' + ((d * 0.37) % 2).toFixed(2) + 's"/>';
-    }
-    var st = S.state.advent || {}, ignite = star && !st.starSeen; if (ignite) { st.starSeen = 1; S.save(true); }
-    return '<section class="card advtree"><svg viewBox="0 0 240 300" role="img" aria-label="Weihnachtsbaum mit ' + lit + ' von 24 Lichtern">' +
-      '<defs><radialGradient id="advGlow"><stop offset="0" stop-color="#fff6b0" stop-opacity=".95"/><stop offset="1" stop-color="#ffd34d" stop-opacity="0"/></radialGradient></defs>' +
-      (star ? '<circle class="advray' + (ignite ? " ignite" : "") + '" cx="120" cy="40" r="58" fill="url(#advGlow)"/>' : "") +
-      '<path d="M120 36L52 124H92L34 202H86L22 268H218L154 202H206L148 124H188z" fill="#1f7a3c" stroke="#0d3b1e" stroke-width="5" stroke-linejoin="round"/>' +
-      '<path d="M120 52L74 120M120 120L58 196M120 196L46 262" stroke="#2fa55a" stroke-width="5" stroke-linecap="round" opacity=".5" fill="none"/>' +
-      '<rect x="104" y="266" width="32" height="24" rx="4" fill="#7a4a24" stroke="#3e2410" stroke-width="4"/><path d="M70 292H170" stroke="#e9f2ff" stroke-width="6" stroke-linecap="round"/>' +
-      lights +
-      '<path class="advstar' + (star ? " on" + (ignite ? " ignite" : "") : "") + '" d="M120 6l9.4 19.3 21.1 3-15.3 14.9 3.6 21-18.8-10-18.8 10 3.6-21-15.3-14.9 21.1-3z" fill="' + (star ? "#ffd34d" : "#2b3f66") + '" stroke="' + (star ? "#fff3a0" : "#41588a") + '" stroke-width="3" stroke-linejoin="round"/></svg>' +
-      '<div class="small muted" style="text-align:center;margin-top:2px">' + (star ? "🌟 Frohe Weihnachten! Der Stern leuchtet." : lit + " von 24 Lichtern · am 24. geht der große Stern an") + '</div></section>';
-  }
-  /* Wichtel-Dorf: 24 unterschiedlich große Türchen (rote Tür, Geschenk, Zuckerstange, Lebkuchen, Nachtblau), dazwischen Rentiere, Schneemänner, Elfen, Zuckerstangen, Lebkuchenmännchen */
-  var ADV_ROWS = [
-    [["p", "🦌"], [1, "M"], ["p", "cc"]], [[2, "S"], ["p", "⛄"], [3, "M"]], [["p", "🧝"], [4, "L"], ["p", "✨"]],
-    [[5, "S"], ["p", "gm"], [6, "L"]], [["p", "🛷"], [7, "M"], [8, "S"]], [[9, "S"], [10, "S"], [11, "S"]],
-    [["p", "cc"], [12, "L"], ["p", "🎅"]], [[13, "M"], ["p", "🦌"], [14, "S"]], [[15, "S"], [16, "M"], ["p", "⭐"]],
-    [["p", "⛄"], [17, "M"], [18, "S"]], [[19, "S"], ["p", "🧝"], [20, "L"]], [[21, "M"], ["p", "gm"], [22, "S"]],
-    [["p", "cc"], [23, "M"], ["p", "🎁"]], [["p", "🦌"], ["p", "🦌"], ["p", "🛷"]], [[24, "XL"]]
-  ];
+  /* Winter-Märchen (v2.163): die Türchen hängen am Weihnachtsbaum, der große Stern an der Spitze ist Türchen 24 */
   var ADV_SVG = {
     gm: '<svg viewBox="0 0 60 76" aria-hidden="true"><g stroke="#6b3a17" stroke-width="3" stroke-linejoin="round" fill="#c97d3c"><circle cx="30" cy="14" r="11"/><path d="M20 25L8 29Q2 31 4 37Q6 41 12 39L22 37L16 62Q14 70 22 70Q28 70 30 63Q32 70 38 70Q46 70 44 62L38 37L48 39Q54 41 56 37Q58 31 52 29L40 25z"/></g><g fill="#fff"><path d="M6 38l6-2 1 5zM54 38l-6-2-1 5z"/><circle cx="26" cy="12" r="1.8" fill="#3b2418"/><circle cx="34" cy="12" r="1.8" fill="#3b2418"/><path d="M25 17q5 4 10 0" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/></g><g fill="#e8123c"><circle cx="30" cy="30" r="2.6"/><circle cx="30" cy="40" r="2.6"/><circle cx="30" cy="50" r="2.6"/></g><path d="M20 68l4 4M40 68l-4 4" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>',
     cc: '<svg viewBox="0 0 50 80" aria-hidden="true"><path d="M36 76V24Q36 8 23 8Q10 8 10 24" fill="none" stroke="#14213d" stroke-width="16" stroke-linecap="round"/><path d="M36 76V24Q36 8 23 8Q10 8 10 24" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round"/><path d="M36 76V24Q36 8 23 8Q10 8 10 24" fill="none" stroke="#e8123c" stroke-width="10" stroke-dasharray="6 7" stroke-linecap="butt"/><path d="M36 46l-9 -6v12zM36 46l9 -6v12z" fill="#2fa55a" stroke="#14213d" stroke-width="2.5" stroke-linejoin="round"/><circle cx="36" cy="46" r="3.5" fill="#ffd34d" stroke="#14213d" stroke-width="2"/></svg>'
   };
-  function advProp(t, i) { var sv = ADV_SVG[t]; return '<span class="advp' + (sv ? " svg" : "") + '" style="animation-delay:' + ((i * 0.43) % 2.4).toFixed(2) + 's" aria-hidden="true">' + (sv || t) + '</span>'; }
-  function advScene(ai) {
-    var di = 0, snow = ""; for (var f = 0; f < 14; f++) snow += '<i class="advsf" style="left:' + ((f * 37 + 7) % 100) + '%;animation-delay:-' + ((f * 1.7) % 11).toFixed(1) + 's;animation-duration:' + (9 + (f * 3) % 7) + 's;font-size:' + (8 + (f * 5) % 9) + 'px">❄</i>';
-    var rows = ADV_ROWS.map(function (row, ri) {
-      return '<div class="advrow r' + (ri % 3) + '">' + row.map(function (c) {
-        if (c[0] === "p") return advProp(c[1], ++di);
-        var x = ai.doors[c[0] - 1], d = x.d, ic = x.st === "open" ? advDoorIcon(x.rew) : x.st === "today" ? "🎮" : x.st === "late" ? "❄️" : d === 6 ? "🎅" : "";
-        var tag = x.st === "today" ? "HEUTE!" : x.st === "late" ? "❄️ nachholen" : "";
-        return '<button class="advd v' + (d === 24 ? "g" : d === 6 ? "s" : d % 5) + ' sz-' + c[1] + ' st-' + x.st + '" style="--r:' + (((d * 7) % 7) - 3) + 'deg;--o:' + (((d * 5) % 9) - 4) + 'px" data-act="advdoor" data-d="' + d + '" aria-label="Türchen ' + d + '">' +
-          '<i class="advcap"></i><span class="advleaf"></span><span class="advplate"><b>' + d + '</b></span><span class="advic">' + ic + '</span>' + (tag ? '<span class="advtag">' + tag + '</span>' : "") + '</button>';
-      }).join("") + '</div>';
-    }).join("");
-    return '<div class="advscene"><div class="advfall" aria-hidden="true">' + snow + '</div>' + rows + '<div class="advground" aria-hidden="true"></div></div>';
+  var ADV_ROWS = [[150, 2], [218, 3], [288, 3], [358, 4], [432, 5], [508, 6]];   // y in 400x620, Zahl der Türchen je Reihe (zusammen 23, dazu der Stern = 24)
+  function advPos() {
+    var pts = [];
+    ADV_ROWS.forEach(function (r) { for (var k = 0; k < r[1]; k++) pts.push([200 + (k - (r[1] - 1) / 2) * 54, r[0] + (k % 2 ? 5 : -3)]); });
+    return pts;
+  }
+  function advStars() {
+    var h = ""; for (var i = 0; i < 46; i++) { var x = (i * 53 + 11) % 100, y = (i * 37 + 5) % 46, sz = 1 + (i % 3); h += '<i style="left:' + x + '%;top:' + y + '%;width:' + sz + 'px;height:' + sz + 'px;animation-delay:' + ((i * 0.31) % 3).toFixed(2) + 's"></i>'; }
+    return h;
+  }
+  function advWorld(ai) {
+    var pts = advPos(), open = ai.open, lit = 0, doors = "", flakes = "", i, d;
+    var perm = []; for (i = 0; i < 23; i++) perm.push(((i * 11) % 23) + 1);   // Türchen 1–23 über den Baum verteilt
+    perm.forEach(function (dn, idx) {
+      var x = ai.doors[dn - 1], pt = pts[idx], ic = x.st === "open" ? advDoorIcon(x.rew) : x.st === "today" ? "🎮" : x.st === "late" ? "❄️" : dn === 6 ? "🎅" : "";
+      if (x.st === "open") lit++;
+      doors += '<button class="advd tree v' + (dn === 6 ? "s" : dn % 5) + ' st-' + x.st + '" style="left:' + (pt[0] / 4) + '%;top:' + (pt[1] / 6.2) + '%;--r:' + (((dn * 7) % 7) - 3) + 'deg" data-act="advdoor" data-d="' + dn + '" aria-label="Türchen ' + dn + '"><i class="advcap"></i><span class="advleaf"></span><span class="advplate"><b>' + dn + '</b></span><span class="advic">' + ic + '</span>' + (x.st === "today" ? '<span class="advtag">HEUTE</span>' : "") + '</button>';
+    });
+    var star = ai.doors[23], starOn = star.st === "open";
+    for (i = 0; i < 26; i++) flakes += '<i class="advsf" style="left:' + ((i * 37 + 7) % 100) + '%;animation-delay:-' + ((i * 1.9) % 13).toFixed(1) + 's;animation-duration:' + (8 + (i * 3) % 9) + 's;font-size:' + (7 + (i * 5) % 10) + 'px;opacity:' + (0.45 + (i % 4) * 0.15) + '">❄</i>';
+    var cand = ""; for (i = 0; i < 4; i++) cand += '<g transform="translate(' + (28 + i * 34) + ' 0)"><rect x="-6" y="14" width="12" height="30" rx="2" fill="#f4f1e8" stroke="#8c8a80" stroke-width="1.5"/>' + (i < ai.candles ? '<path class="advflame" d="M0 14Q-6 6 0 -4Q6 6 0 14z" fill="#ffb02e"/><circle cx="0" cy="6" r="10" fill="#ffd34d" opacity=".25"/>' : '<path d="M0 14v-5" stroke="#555" stroke-width="2"/>') + '</g>';
+    var husky = ai.doors[20].st === "open";
+    return '<div class="advworld">' +
+      '<div class="advsky" aria-hidden="true"><div class="advaur a1"></div><div class="advaur a2"></div><div class="advstars">' + advStars() + '</div><div class="advmoon"></div>' +
+      '<div class="advfly"><span class="advrd">🦌🦌🛷</span></div>' +
+      '<svg class="advmtn" viewBox="0 0 400 140" preserveAspectRatio="none"><path d="M0 140V70L40 30L78 66L120 18L170 70L214 38L262 78L310 26L356 64L400 40V140z" fill="#2a3b72" opacity=".75"/><path d="M0 140V96L50 62L98 92L150 56L206 98L258 70L312 100L362 66L400 90V140z" fill="#1c2a5a"/><g fill="#fff" opacity=".85"><path d="M120 18l-12 16 8-3 4 5 4-5 8 3z"/><path d="M310 26l-12 16 8-3 4 5 4-5 8 3z"/><path d="M40 30l-10 14 7-3 3 4 4-4 7 3z"/></g></svg>' +
+      '<svg class="advvil" viewBox="0 0 400 60" preserveAspectRatio="none"><g fill="#121c42"><path d="M20 60V40l14-12 14 12v20zM60 60V44l10-9 10 9v16zM316 60V38l16-14 16 14v22zM356 60V46l10-8 10 8v14z"/></g><g fill="#ffd34d"><rect x="30" y="44" width="5" height="6"/><rect x="66" y="48" width="4" height="5"/><rect x="326" y="42" width="5" height="6"/><rect x="340" y="42" width="5" height="6"/><rect x="362" y="49" width="4" height="5"/></g></svg>' +
+      '<div class="advfall">' + flakes + '</div></div>' +
+      '<div class="advhead"><div><div class="advtitle">Wichtel-Märchen</div><div class="advsub">Kapitel ' + (ai.day || 1) + ' · Dezember</div></div><span class="pill tnum nowrap" title="Joker zum Nachholen">❄️ ' + ai.flakes + '</span></div>' +
+      '<div class="advtreewrap"><svg viewBox="0 0 400 620" class="advtree2" role="img" aria-label="Weihnachtsbaum mit Türchen"><defs><linearGradient id="advG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f9e5a"/><stop offset="1" stop-color="#124d2a"/></linearGradient></defs>' +
+      '<g stroke="#0b2a15" stroke-width="5" stroke-linejoin="round" fill="url(#advG)"><path d="M200 60L90 235H125L40 385H88L10 545H390L312 385H360L275 235H310z"/></g>' +
+      '<path d="M200 78L112 220M200 160L74 372M200 250L40 530" stroke="#52c27c" stroke-width="5" stroke-linecap="round" opacity=".35" fill="none"/>' +
+      '<g fill="#fff" opacity=".95"><path d="M90 235Q110 250 125 235Q112 240 100 238zM40 385Q64 400 88 385Q66 390 52 388zM10 545Q50 562 90 545Q50 552 24 550zM390 545Q350 562 310 545Q350 552 376 550zM360 385Q336 400 312 385Q334 390 348 388zM310 235Q290 250 275 235Q288 240 300 238z"/></g>' +
+      '<rect x="174" y="543" width="52" height="46" rx="6" fill="#7a4a24" stroke="#3e2410" stroke-width="5"/></svg>' + doors +
+      '<button class="advstar st-' + star.st + '" data-act="advdoor" data-d="24" aria-label="Türchen 24: der große Stern"><svg viewBox="-60 -60 120 120"><defs><radialGradient id="advSg"><stop offset="0" stop-color="#fff6b0"/><stop offset="1" stop-color="#ffd34d" stop-opacity="0"/></radialGradient></defs>' + (starOn ? '<circle r="58" fill="url(#advSg)" class="advray"/>' : "") +
+      '<path d="M0-46l12 28 30 3-23 20 7 30-26-16-26 16 7-30-23-20 30-3z" fill="' + (starOn ? "#ffd34d" : "#2d4f8c") + '" stroke="' + (starOn ? "#fff3a0" : "#7fa6e6") + '" stroke-width="4" stroke-linejoin="round"/></svg><b>24</b>' + (star.st === "today" ? '<span class="advtag">HEUTE</span>' : "") + '</button></div>' +
+      '<div class="advfg"><div class="advwreath"><svg viewBox="0 0 150 90" role="img" aria-label="Adventskranz mit ' + ai.candles + ' Kerzen"><ellipse cx="75" cy="62" rx="68" ry="22" fill="#1d6c3c" stroke="#0b2a15" stroke-width="4"/><g fill="#e8123c"><circle cx="30" cy="58" r="4"/><circle cx="56" cy="76" r="4"/><circle cx="96" cy="76" r="4"/><circle cx="122" cy="58" r="4"/></g><g transform="translate(0 6)">' + cand.replace(/translate\((\d+) 0\)/g, function (m, x) { return "translate(" + (+x - 2) + " 0)"; }) + '</g></svg></div>' +
+      '<span class="advprop wolle" aria-hidden="true">🧝</span><span class="advprop gm" aria-hidden="true">' + ADV_SVG.gm + '</span><span class="advprop cc" aria-hidden="true">' + ADV_SVG.cc + '</span><span class="advprop sm" aria-hidden="true">⛄</span><span class="advprop hk" aria-hidden="true">' + (husky ? "🐕" : "👀") + '</span><span class="advprop gift" aria-hidden="true">🎁</span></div>' +
+      '<svg class="advhills" viewBox="0 0 400 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 60V30Q60 6 130 28T270 24T400 26V60z" fill="#eef4ff"/><path d="M0 60V44Q80 26 160 42T320 40T400 44V60z" fill="#fff"/></svg></div>';
   }
   function viewAdvent(ai, top) {
     var h = '<div class="stack">' + top;
@@ -1627,12 +1622,9 @@
       h += '<section class="card advhero"><div class="eyebrow">🎄 Wichtel-Kalender</div><h2 style="margin:4px 0">Noch ' + ai.left + (ai.left === 1 ? " Tag" : " Tage") + ' bis zum 1. Dezember</h2><p class="small muted" style="margin:0 0 10px">Wichtel Wolle braucht deine Hilfe: Ein Schneewirbel hat 24 Wörter-Sterne verstreut. Jeden Tag öffnet sich ein Türchen, wenn du das Spiel des Tages gewinnst. Es warten Münzen, XP, Booster und besondere Sachen zum Anziehen.</p>' + advStory(1) + '</section></div>';
       view.innerHTML = h; return;
     }
-    var cand = ""; for (var k = 0; k < 4; k++) cand += '<span class="' + (k < ai.candles ? "" : "off") + '">🕯️</span>';
-    h += '<div class="row" style="align-items:center"><h1 style="font-size:22px;flex:1 1 auto">🎄 Wichtel-Kalender</h1><span class="pill tnum nowrap" title="Joker zum Nachholen">❄️ ' + ai.flakes + '</span></div>' +
-      advTree(ai) + '<div class="advcan">' + cand + '<small class="muted">Adventskerzen</small></div>' + advScene(ai) +
-      '';
+    h += advWorld(ai);
     var lastD = 0; ai.doors.forEach(function (x) { if (x.st === "open") lastD = x.d; });
-    h += '<section class="card"><div class="eyebrow">Die Geschichte</div>' + advStory(lastD || 1) + '</section>' +
+    h += '<section class="advbook"><div class="eyebrow">Das Märchen vom Wichtel Wolle</div><h3>Kapitel ' + (lastD || 1) + '</h3><p>' + esc(ai.doors[(lastD || 1) - 1].story[0]) + '</p><div class="small" lang="en" style="margin-top:8px;font-style:italic">' + esc(ai.doors[(lastD || 1) - 1].story[1]) + ' <button class="chip" data-act="advsay" data-d="' + (lastD || 1) + '" aria-label="Vorlesen">🔊</button></div></section>' +
       '<details class="card"><summary><b>So funktioniert der Kalender</b></summary><p class="small muted" style="margin:8px 0 0">Jedes Türchen öffnet sich nur an seinem Tag. Gewinne das Spiel des Tages (richtige Antworten in einer Runde mit Weihnachtswörtern), dann bekommst du das Geschenk. Klappt es nicht, darfst du es heute so oft probieren, wie du willst. Verpasst du einen Tag, holst du das Türchen mit einem <b>❄️ Joker</b> bis zum 24. Dezember nach (Münzen dann zur Hälfte, alles andere voll). Du startest mit 2 Jokern, alle 5 geöffneten Türchen gibt es einen neuen (höchstens 3).</p></details></div>';
     view.innerHTML = h;
   }
