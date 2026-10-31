@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.163.2
+- Wichtel-Kalender, Dashboard (Spieler › Einstellungen › Wichtel-Kalender): neues Häkchen **„Alle Türchen freischalten (Test)“**. Dann sind alle 24 Türchen sofort spielbar, ohne Datum und ohne Joker (blau leuchtend), im Türchen-Fenster steht zusätzlich **„Test: sofort öffnen“** (öffnet ohne Spiel, mit Geschenk). Ausschalten = wieder Datum und Joker. Server: Feld `all` in `advent:<pid>`. **Server-Update nötig.**
+
 ## 2.163.1
 - **Vorlesen im Wichtel-Kalender behoben:** Die Geschichte wurde mit einem falschen Tempo-Wert angesprochen (Sprache statt Zahl), auf dem iPhone viel zu schnell oder gar nicht. Jetzt gibt es zwei Lautsprecher-Knöpfe (Deutsch und Englisch) in Türchen-Fenster, Märchenbuch und Geschenk-Fenster, über denselben Weg wie die Vokabelkarten (Erzählerstimme, normales Tempo).
 - **Spielstart auf dem iPhone:** Das Türchen-Fenster ist kompakter, „Spiel starten“ und „Schließen“ stehen nebeneinander (kleine Bildschirme: vorher konnte der Knopf unter dem Rand liegen). Der Start fängt Fehler ab und meldet sie (z. B. „Spielstart fehlgeschlagen: …“ oder „Das Spiel ist nicht gestartet“), statt stumm nichts zu tun. Bedienelemente der Szene mit `touch-action: manipulation`.

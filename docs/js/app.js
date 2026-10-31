@@ -1590,7 +1590,7 @@
     var pts = advPos(), open = ai.open, lit = 0, doors = "", flakes = "", i, d;
     var perm = []; for (i = 0; i < 23; i++) perm.push(((i * 11) % 23) + 1);   // Türchen 1–23 über den Baum verteilt
     perm.forEach(function (dn, idx) {
-      var x = ai.doors[dn - 1], pt = pts[idx], ic = x.st === "open" ? advDoorIcon(x.rew) : x.st === "today" ? "🎮" : x.st === "late" ? "❄️" : dn === 6 ? "🎅" : "";
+      var x = ai.doors[dn - 1], pt = pts[idx], ic = x.st === "open" ? advDoorIcon(x.rew) : x.st === "today" || x.st === "free" ? "🎮" : x.st === "late" ? "❄️" : dn === 6 ? "🎅" : "";
       if (x.st === "open") lit++;
       doors += '<button class="advd tree v' + (dn === 6 ? "s" : dn % 5) + ' st-' + x.st + '" style="left:' + (pt[0] / 4) + '%;top:' + (pt[1] / 6.2) + '%;--r:' + (((dn * 7) % 7) - 3) + 'deg" data-act="advdoor" data-d="' + dn + '" aria-label="Türchen ' + dn + '"><i class="advcap"></i><span class="advleaf"></span><span class="advplate"><b>' + dn + '</b></span><span class="advic">' + ic + '</span>' + (x.st === "today" ? '<span class="advtag">HEUTE</span>' : "") + '</button>';
     });
@@ -1635,12 +1635,13 @@
       (mode === "open" ? '<p class="small muted" style="margin:10px 0">Dieses Türchen ist schon offen' + (x.late ? " (nachgeholt)" : "") + '. ✓</p>' :
         '<div class="small muted" style="margin:10px 0 2px">Spiel des Tages</div><div><b>' + ADV_GAME[pl.mode] + '</b> – schaffe <b>' + pl.need + '</b> richtige Antworten. Du darfst so oft probieren, wie du willst.</div>' +
         (mode === "late" ? '<div class="small" style="margin-top:6px">❄️ Du setzt einen Joker ein (du hast ' + ai.flakes + ').</div>' : "")) +
-      '<div class="row advbtns" style="gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap">' + (mode === "open" ? "" : '<button class="btn" data-d="go">' + (mode === "late" ? "❄️ Nachholen" : "▶ Spiel starten") + '</button>') + '<button class="btn soft" data-d="x">Schließen</button></div></div>';
+      '<div class="row advbtns" style="gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap">' + (mode === "open" ? "" : '<button class="btn" data-d="go">' + (mode === "late" ? "❄️ Nachholen" : "▶ Spiel starten") + '</button>') + '' + (ai.test && mode !== "open" ? '<button class="btn soft" data-d="skip">Test: sofort öffnen</button>' : "") + '<button class="btn soft" data-d="x">Schließen</button></div></div>';
     document.body.appendChild(ov);
     ov.addEventListener("click", function (e) {
       var b = e.target.closest("[data-d]"), k = b && b.getAttribute("data-d");
       if (e.target === ov || k === "x") { ov.remove(); return; }
       if (k === "go") { ov.remove(); advStart(d); }
+      if (k === "skip") { ov.remove(); var rs = S.advWin(d); if (rs && !rs.error) { advLast = rs; advReveal(); } else toast("Ging nicht: " + (rs && rs.error)); }
     });
   }
   function advDoor(d) {

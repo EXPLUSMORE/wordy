@@ -1118,9 +1118,11 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
         el.innerHTML = '<h2>Wichtel-Kalender für ' + esc(p.name) + '</h2><p class="small muted" style="margin:0 0 8px">Der Kalender gilt vom 1. bis 24. Dezember (ab 25.11. mit Countdown). <b>Automatisch</b>: nur in dieser Zeit. <b>Test</b>: die App rechnet mit dem Testdatum, so lassen sich alle Tage durchspielen (es öffnet sich nur das Türchen des Testtags, verpasste mit ❄️ Joker). <b>Aus</b>: kein Kalender.</p>' +
           '<div class="row" style="gap:8px;align-items:center;flex-wrap:wrap"><select id="advOn"><option value="auto">Automatisch (nur Dezember)</option><option value="on">Test: mit Testdatum</option><option value="off">Aus (ausgeblendet)</option></select>' +
           '<input type="date" id="advDate" value="' + esc(x.date || "") + '" style="width:auto"><button class="ghost" id="advPrev">−1 Tag</button><button class="ghost" id="advNext">+1 Tag</button><button class="ghost" id="advReal">Echtes Datum</button></div>' +
+          '<label class="row" style="gap:8px;align-items:center;margin-top:8px"><input type="checkbox" id="advAll"' + (x.all ? " checked" : "") + '> <span><b>Alle Türchen freischalten (Test)</b> – jedes Türchen ist sofort spielbar, ohne Datum und Joker; im Türchen-Fenster gibt es zusätzlich „Test: sofort öffnen“.</span></label>' +
           '<div class="row" style="gap:8px;margin-top:8px;flex-wrap:wrap"><button class="ghost" id="advReset">Kalender zurücksetzen</button><span class="small muted">Setzt nur die Türchen und Joker zurück. Münzen, XP und schon erhaltenes Zubehör bleiben.</span></div>' +
           '<p class="small' + (err ? ' err' : '') + '" id="advMsg" style="margin:6px 0 0">' + esc(msg || "") + '</p>';
         el.querySelector("#advOn").value = x.on;
+        el.querySelector("#advAll").onchange = function () { save({ all: this.checked, on: this.checked ? "on" : x.on }); };
         el.querySelector("#advOn").onchange = function () { save({ on: this.value }); };
         el.querySelector("#advDate").onchange = function () { save({ date: this.value, on: "on" }); };
         el.querySelector("#advPrev").onclick = function () { save({ date: addDay(-1), on: "on" }); };

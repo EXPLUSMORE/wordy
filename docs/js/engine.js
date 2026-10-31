@@ -1706,7 +1706,8 @@
   function advNeed(d) { return 6 + Math.floor((d - 1) / 8); }   // 6, 7, 8 richtige Antworten
   function advCfg() { var r = global.WordySync && global.WordySync.remote ? global.WordySync.remote() : null; return (r && r.advent) || null; }   // Dashboard: auto | on (Test) | off, Testdatum, Zurücksetzen
   function advNow() {   // wo wir im Kalender stehen: phase off | pre | run | over, day 1..24
-    var cfg = advCfg(), t = state && state.settings && state.settings.adventPreview || "";   // adventPreview = lokale Testhilfe
+    var cfg = advCfg(), t = state && state.settings && state.settings.adventPreview || "";
+    if (cfg && cfg.all) { var ty = today().slice(0, 4); return { phase: "run", day: 24, y: +ty, t: ty + "-12-24" }; }   // Test: alle Türchen frei (Dashboard)   // adventPreview = lokale Testhilfe
     if (cfg && cfg.on === "off") return { phase: "off", day: 0, y: +today().slice(0, 4), t: today() };
     if (cfg && cfg.on === "on") t = cfg.date || (today().slice(0, 4) + "-12-01");   // Test: Datum aus dem Dashboard, sonst 1. Dezember
     else if (cfg && cfg.date && !t) t = cfg.date;
@@ -1730,11 +1731,11 @@
   function adventInfo() {
     var now = advNow(), a = advState(), doors = [], openN = 0, d;
     for (d = 1; d <= 24; d++) {
-      var o = a.open[d], st = o ? "open" : now.phase === "run" && d === now.day ? "today" : now.phase === "run" && d < now.day ? "late" : now.phase === "over" ? "over" : "lock";
+      var o = a.open[d], free = !!(advCfg() && advCfg().all), st = o ? "open" : free ? "free" : now.phase === "run" && d === now.day ? "today" : now.phase === "run" && d < now.day ? "late" : now.phase === "over" ? "over" : "lock";
       if (o) openN++;
       doors.push({ d: d, st: st, late: !!(o && o.late), rew: ADV_REW[d], story: ADV_STORY[d] });
     }
-    return { phase: now.phase, day: now.day, left: now.left || 0, flakes: a.flakes, open: openN, doors: doors, candles: advCandles(now), need: now.day ? advNeed(now.day) : 6 };
+    return { test: !!(advCfg() && advCfg().all), phase: now.phase, day: now.day, left: now.left || 0, flakes: a.flakes, open: openN, doors: doors, candles: advCandles(now), need: now.day ? advNeed(now.day) : 6 };
   }
   function advPlan(d) {   // Spiel des Tages: Modus, Ziel, 12 Weihnachtswörter (fest je Tag)
     var ids = [], n = 56, i;
@@ -1747,6 +1748,7 @@
   function advCan(d) {
     var now = advNow(), a = advState();
     if (a.open[d] || d < 1 || d > 24) return { ok: false, why: "open" };
+    if (advCfg() && advCfg().all) return { ok: true, late: false };   // Test: alle Türchen frei, ohne Datum und ohne Joker
     if (now.phase === "run" && d === now.day) return { ok: true, late: false };
     if (now.phase === "run" && d < now.day) return a.flakes > 0 ? { ok: true, late: true } : { ok: false, why: "flake" };
     if (now.phase === "over") return { ok: false, why: "over" };

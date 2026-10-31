@@ -781,12 +781,13 @@ function setLookForce(pid, body) {
 function adventOf(pid) {
   const r = q.kvGet.get("advent:" + pid); let o = {};
   try { o = r && r.val ? JSON.parse(r.val) : {}; } catch (e) { o = {}; }
-  return { on: ["auto", "on", "off"].includes(o.on) ? o.on : "auto", date: /^\d{4}-\d{2}-\d{2}$/.test(o.date || "") ? o.date : "", reset: Number.isFinite(o.reset) ? o.reset : 0 };
+  return { on: ["auto", "on", "off"].includes(o.on) ? o.on : "auto", date: /^\d{4}-\d{2}-\d{2}$/.test(o.date || "") ? o.date : "", reset: Number.isFinite(o.reset) ? o.reset : 0, all: o.all === true };
 }
 function setAdvent(pid, body) {
   const o = adventOf(pid), b = body || {};
   if (["auto", "on", "off"].includes(b.on)) o.on = b.on;
   if (typeof b.date === "string") o.date = /^\d{4}-\d{2}-\d{2}$/.test(b.date) && !isNaN(Date.parse(b.date + "T00:00:00Z")) ? b.date : "";
+  if (typeof b.all === "boolean") o.all = b.all;
   if (b.reset === true) o.reset = Date.now();
   q.kvSet.run("advent:" + pid, JSON.stringify(o)); return [200, Object.assign({ ok: true }, o)];
 }

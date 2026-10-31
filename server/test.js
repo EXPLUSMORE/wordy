@@ -156,6 +156,9 @@ const J = (p, o) => fetch(base + p, o).then(async r => ({ s: r.status, j: await 
     assert.deepEqual((await J("/api/sync", { headers: T })).j.advent.on + (await J("/api/sync", { headers: T })).j.advent.date, "on2026-12-06", "Wichtel-Kalender: Test mit Datum kommt in der App an");
     await J("/api/admin/players/" + mk.j.id + "/advent", { method: "POST", headers: H, body: JSON.stringify({ on: "quatsch", date: "kein-datum", reset: true }) });
     const adv2 = (await J("/api/sync", { headers: T })).j.advent; assert.equal(adv2.on, "on", "Wichtel-Kalender: ungültiger Modus bleibt"); assert.equal(adv2.date, "", "Wichtel-Kalender: ungültiges Datum wird leer"); assert.ok(adv2.reset > 0, "Wichtel-Kalender: Zurücksetzen setzt einen Zeitstempel");
+    await J("/api/admin/players/" + mk.j.id + "/advent", { method: "POST", headers: H, body: JSON.stringify({ all: true }) });
+    assert.equal((await J("/api/sync", { headers: T })).j.advent.all, true, "Wichtel-Kalender: alle Türchen frei (Test)");
+    await J("/api/admin/players/" + mk.j.id + "/advent", { method: "POST", headers: H, body: JSON.stringify({ all: false }) });
     await J("/api/admin/players/" + mk.j.id + "/advent", { method: "POST", headers: H, body: JSON.stringify({ on: "auto", date: "" }) });
     assert.equal((await J("/api/admin/players/" + mk.j.id + "/season", { headers: H })).j, null, "Pass: Standard leer");
     assert.equal((await J("/api/admin/players/" + mk.j.id + "/season", { method: "POST", headers: H, body: JSON.stringify({ weeks: [] }) })).s, 400, "Pass braucht Wochen");

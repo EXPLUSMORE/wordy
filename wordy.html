@@ -1612,13 +1612,13 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 .advd.tree.st-open .advplate{top:5%;width:36%}.advd.tree.st-open .advplate b{font-size:clamp(8px,2.8vw,12px)}.advd.tree.st-open .advic{font-size:clamp(13px,4.6vw,20px);margin-bottom:2%}
 .advd.tree::after{width:5px;height:5px;box-shadow:0 0 0 1px #7a5200}
 .advd.tree .advtag{bottom:-7px;font-size:8px;padding:1px 5px}
-.advd.tree.st-today{animation:advtoday2 1.6s ease-in-out infinite;z-index:5}
+.advd.tree.st-today,.advd.tree.st-free{animation:advtoday2 1.6s ease-in-out infinite;z-index:5}.advd.tree.st-free{box-shadow:0 0 0 2px #9fd0ff,0 0 14px 3px rgba(159,208,255,.7),0 3px 0 rgba(0,0,0,.3)}
 @keyframes advtoday2{50%{transform:translate(-50%,-50%) rotate(var(--r)) scale(1.1)}}
 .advstar{position:absolute;left:50%;top:1.2%;width:23%;aspect-ratio:1;transform:translateX(-50%);background:none;border:0;padding:0;cursor:pointer;display:grid;place-items:center;font:inherit;color:#fff;z-index:3}
 .advstar svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
 .advstar b{position:relative;font-size:clamp(12px,4.4vw,19px);margin-top:6%;text-shadow:0 1px 3px rgba(0,0,0,.6)}
 .advstar.st-open{filter:drop-shadow(0 0 14px #ffd34d);animation:advstar 2s ease-in-out infinite}.advstar.st-open b{color:#5a3a00;text-shadow:none}
-.advstar.st-today{animation:advstar 1.3s ease-in-out infinite;filter:drop-shadow(0 0 12px #ffd166)}
+.advstar.st-today,.advstar.st-free{animation:advstar 1.3s ease-in-out infinite;filter:drop-shadow(0 0 12px #ffd166)}
 .advstar .advtag{position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);white-space:nowrap;background:#fff;color:#c0182a;font-size:9px;font-weight:800;padding:1px 6px;border-radius:9px}
 .advray{animation:advpulse2 2.4s ease-in-out infinite;transform-origin:center}
 @keyframes advstar{50%{transform:translateX(-50%) scale(1.1)}}
@@ -1649,7 +1649,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.163.1";window.WORDY_BUILD="63ba9f81b5";</script>
+<script>window.WORDY_VERSION="2.163.2";window.WORDY_BUILD="e9d42f2d9b";</script>
 </head>
 <body>
 <div id="app">
@@ -7622,7 +7622,8 @@ window.SENTENCES = (window.SENTENCES || []).concat([
   function advNeed(d) { return 6 + Math.floor((d - 1) / 8); }   // 6, 7, 8 richtige Antworten
   function advCfg() { var r = global.WordySync && global.WordySync.remote ? global.WordySync.remote() : null; return (r && r.advent) || null; }   // Dashboard: auto | on (Test) | off, Testdatum, Zurücksetzen
   function advNow() {   // wo wir im Kalender stehen: phase off | pre | run | over, day 1..24
-    var cfg = advCfg(), t = state && state.settings && state.settings.adventPreview || "";   // adventPreview = lokale Testhilfe
+    var cfg = advCfg(), t = state && state.settings && state.settings.adventPreview || "";
+    if (cfg && cfg.all) { var ty = today().slice(0, 4); return { phase: "run", day: 24, y: +ty, t: ty + "-12-24" }; }   // Test: alle Türchen frei (Dashboard)   // adventPreview = lokale Testhilfe
     if (cfg && cfg.on === "off") return { phase: "off", day: 0, y: +today().slice(0, 4), t: today() };
     if (cfg && cfg.on === "on") t = cfg.date || (today().slice(0, 4) + "-12-01");   // Test: Datum aus dem Dashboard, sonst 1. Dezember
     else if (cfg && cfg.date && !t) t = cfg.date;
@@ -7646,11 +7647,11 @@ window.SENTENCES = (window.SENTENCES || []).concat([
   function adventInfo() {
     var now = advNow(), a = advState(), doors = [], openN = 0, d;
     for (d = 1; d <= 24; d++) {
-      var o = a.open[d], st = o ? "open" : now.phase === "run" && d === now.day ? "today" : now.phase === "run" && d < now.day ? "late" : now.phase === "over" ? "over" : "lock";
+      var o = a.open[d], free = !!(advCfg() && advCfg().all), st = o ? "open" : free ? "free" : now.phase === "run" && d === now.day ? "today" : now.phase === "run" && d < now.day ? "late" : now.phase === "over" ? "over" : "lock";
       if (o) openN++;
       doors.push({ d: d, st: st, late: !!(o && o.late), rew: ADV_REW[d], story: ADV_STORY[d] });
     }
-    return { phase: now.phase, day: now.day, left: now.left || 0, flakes: a.flakes, open: openN, doors: doors, candles: advCandles(now), need: now.day ? advNeed(now.day) : 6 };
+    return { test: !!(advCfg() && advCfg().all), phase: now.phase, day: now.day, left: now.left || 0, flakes: a.flakes, open: openN, doors: doors, candles: advCandles(now), need: now.day ? advNeed(now.day) : 6 };
   }
   function advPlan(d) {   // Spiel des Tages: Modus, Ziel, 12 Weihnachtswörter (fest je Tag)
     var ids = [], n = 56, i;
@@ -7663,6 +7664,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
   function advCan(d) {
     var now = advNow(), a = advState();
     if (a.open[d] || d < 1 || d > 24) return { ok: false, why: "open" };
+    if (advCfg() && advCfg().all) return { ok: true, late: false };   // Test: alle Türchen frei, ohne Datum und ohne Joker
     if (now.phase === "run" && d === now.day) return { ok: true, late: false };
     if (now.phase === "run" && d < now.day) return a.flakes > 0 ? { ok: true, late: true } : { ok: false, why: "flake" };
     if (now.phase === "over") return { ok: false, why: "over" };
@@ -12480,7 +12482,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var pts = advPos(), open = ai.open, lit = 0, doors = "", flakes = "", i, d;
     var perm = []; for (i = 0; i < 23; i++) perm.push(((i * 11) % 23) + 1);   // Türchen 1–23 über den Baum verteilt
     perm.forEach(function (dn, idx) {
-      var x = ai.doors[dn - 1], pt = pts[idx], ic = x.st === "open" ? advDoorIcon(x.rew) : x.st === "today" ? "🎮" : x.st === "late" ? "❄️" : dn === 6 ? "🎅" : "";
+      var x = ai.doors[dn - 1], pt = pts[idx], ic = x.st === "open" ? advDoorIcon(x.rew) : x.st === "today" || x.st === "free" ? "🎮" : x.st === "late" ? "❄️" : dn === 6 ? "🎅" : "";
       if (x.st === "open") lit++;
       doors += '<button class="advd tree v' + (dn === 6 ? "s" : dn % 5) + ' st-' + x.st + '" style="left:' + (pt[0] / 4) + '%;top:' + (pt[1] / 6.2) + '%;--r:' + (((dn * 7) % 7) - 3) + 'deg" data-act="advdoor" data-d="' + dn + '" aria-label="Türchen ' + dn + '"><i class="advcap"></i><span class="advleaf"></span><span class="advplate"><b>' + dn + '</b></span><span class="advic">' + ic + '</span>' + (x.st === "today" ? '<span class="advtag">HEUTE</span>' : "") + '</button>';
     });
@@ -12525,12 +12527,13 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       (mode === "open" ? '<p class="small muted" style="margin:10px 0">Dieses Türchen ist schon offen' + (x.late ? " (nachgeholt)" : "") + '. ✓</p>' :
         '<div class="small muted" style="margin:10px 0 2px">Spiel des Tages</div><div><b>' + ADV_GAME[pl.mode] + '</b> – schaffe <b>' + pl.need + '</b> richtige Antworten. Du darfst so oft probieren, wie du willst.</div>' +
         (mode === "late" ? '<div class="small" style="margin-top:6px">❄️ Du setzt einen Joker ein (du hast ' + ai.flakes + ').</div>' : "")) +
-      '<div class="row advbtns" style="gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap">' + (mode === "open" ? "" : '<button class="btn" data-d="go">' + (mode === "late" ? "❄️ Nachholen" : "▶ Spiel starten") + '</button>') + '<button class="btn soft" data-d="x">Schließen</button></div></div>';
+      '<div class="row advbtns" style="gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap">' + (mode === "open" ? "" : '<button class="btn" data-d="go">' + (mode === "late" ? "❄️ Nachholen" : "▶ Spiel starten") + '</button>') + '' + (ai.test && mode !== "open" ? '<button class="btn soft" data-d="skip">Test: sofort öffnen</button>' : "") + '<button class="btn soft" data-d="x">Schließen</button></div></div>';
     document.body.appendChild(ov);
     ov.addEventListener("click", function (e) {
       var b = e.target.closest("[data-d]"), k = b && b.getAttribute("data-d");
       if (e.target === ov || k === "x") { ov.remove(); return; }
       if (k === "go") { ov.remove(); advStart(d); }
+      if (k === "skip") { ov.remove(); var rs = S.advWin(d); if (rs && !rs.error) { advLast = rs; advReveal(); } else toast("Ging nicht: " + (rs && rs.error)); }
     });
   }
   function advDoor(d) {
