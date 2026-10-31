@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.166.3
+- Wichtel-Kalender, Baum: Die Nummern der Türchen sind wieder zu sehen. Das Symbol (🎮 heute/frei, ❄️ nachholen, Geschenk) lag über der Nummernplakette und verdeckte die Zahl. Jetzt sitzt die Nummer oben in der Plakette und das Symbol darunter am Türchen-Rand; bei offenen Türchen ist die Plakette etwas größer.
+
 ## 2.166.2
 - Wichtel-Kalender: Der Test-Knopf „sofort öffnen“ ist für alle entfernt. Ein Türchen geht nur über das gewonnene Spiel auf (auch mit „Alle Türchen freischalten (Test)“ im Dashboard, das nur noch Datum und Joker aufhebt).
 
