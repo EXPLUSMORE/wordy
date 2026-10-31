@@ -103,7 +103,7 @@
   }
 
   /* ---------- Rahmen ---------- */
-  function noteText() { return (run.boss ? "⚔️ Boss " + run.correct + " / " + run.boss.need + (run.boss.help ? " (erleichtert)" : "") + " · " : "") + (run.note || ""); }
+  function noteText() { return (run.boss ? (run.boss.advent ? "🎄 Türchen " : "⚔️ Boss ") + run.correct + " / " + run.boss.need + (run.boss.help ? " (erleichtert)" : "") + " · " : "") + (run.note || ""); }
   function chrome(inner) {
     var t = run.mode === "survival" ? "" :
       '<div class="ar-time"><i id="arBar" style="width:100%"></i></div>';
@@ -365,7 +365,7 @@
     if (run.maxCombo >= 15) give("combo15");
     var acc = run.items ? Math.round(run.correct * 100 / run.items) : 0;
     var head = !complete ? "Runde beendet"
-      : boss ? (boss.pass ? "Boss besiegt!" : "Knapp daneben – noch ein Versuch")
+      : boss ? (boss.pass ? (boss.advent ? "Türchen-Spiel geschafft!" : "Boss besiegt!") : "Knapp daneben – noch ein Versuch")
       : reason === "cleared" ? "Kartei leer geräumt!"
       : isRecord ? "Neuer Bestwert!"
       : reason === "dead" ? "Erwischt."
@@ -374,7 +374,7 @@
     var line = run.mode === "survival"
       ? run.correct + " " + (run.correct === 1 ? "Wort" : "Wörter") + " am Stück"
       : score + " Punkte";
-    if (boss && boss.pass && global.VTUI && global.VTUI.danceWin) global.setTimeout(function () { global.VTUI.danceWin(true, "Boss besiegt!"); }, 700);
+    if (boss && boss.pass && !boss.advent && global.VTUI && global.VTUI.danceWin) global.setTimeout(function () { global.VTUI.danceWin(true, "Boss besiegt!"); }, 700);
     el.innerHTML = '<div class="ar-end">' +
       '<div class="ar-endicon">' + (isRecord ? "🏆" : reason === "cleared" ? "🎯" : esc(m.icon)) + '</div>' +
       '<h1>' + esc(head) + '</h1>' +
@@ -386,13 +386,13 @@
       '<div><b class="tnum">' + Math.max(rec.best, score) + '</b><span>Bestwert</span></div>' +
       '</div>' +
       (run.cfg && run.cfg.duel ? '<div id="arDuel" class="ar-duel">' + esc(run.cfg.duel.wait || "Ergebnis wird übertragen …") + '</div>' : '') +
-      '<p class="ar-note">' + (run.boss ? (boss && boss.pass ? "Die Münzen gibt es in der Truhe" : "Schaffst du das Ziel, wartet eine Truhe") : coins ? "🪙 " + coins + " Münzen" + (capped ? " (Tageslimit der Arena erreicht)" : "") : (capped ? "Arena-Münzen für heute sind voll – lerne neue Wörter für mehr" : (complete ? "Keine Münzen diesmal" : "Abgebrochen: keine Münzen, die XP für deine Antworten bleiben"))) +
+      '<p class="ar-note">' + (run.boss ? (run.boss.advent ? (boss && boss.pass ? "Das Türchen geht auf!" : "Schaffe das Ziel, dann geht das Türchen auf") : boss && boss.pass ? "Die Münzen gibt es in der Truhe" : "Schaffst du das Ziel, wartet eine Truhe") : coins ? "🪙 " + coins + " Münzen" + (capped ? " (Tageslimit der Arena erreicht)" : "") : (capped ? "Arena-Münzen für heute sind voll – lerne neue Wörter für mehr" : (complete ? "Keine Münzen diesmal" : "Abgebrochen: keine Münzen, die XP für deine Antworten bleiben"))) +
       (boss ? " · Boss: " + run.correct + " von " + run.boss.need + " richtig nötig" + (boss.pass ? " " + "★".repeat(boss.stars) : "") : "") +
       (rw.goalReached ? " · Tagesziel erreicht" : "") +
       rw.missions.filter(function (x) { return x.type === "arena"; }).map(function (x) { return " · Mission geschafft: +" + x.coins + " 🪙"; }).join("") +
       (run.cleared ? " · " + run.cleared + " aus der Fehlerkartei befreit" : "") + '</p>' +
       (fresh.length ? '<p class="ar-note" style="color:var(--ar-gold)">🏅 Neu: ' + fresh.map(function (b) { return esc(b.n); }).join(", ") + '</p>' : "") +
-      '<div class="ar-endbtns">' + (boss && boss.pass ? (boss.chest ? '<button class="ar-btn" data-a="chest">🎁 Truhe öffnen</button>' : '<button class="ar-btn" data-a="quit">Weiter auf dem Pfad</button>')
+      '<div class="ar-endbtns">' + (boss && boss.pass ? (boss.advent ? '<button class="ar-btn" data-a="advent">🎄 Türchen öffnen</button>' : boss.chest ? '<button class="ar-btn" data-a="chest">🎁 Truhe öffnen</button>' : '<button class="ar-btn" data-a="quit">Weiter auf dem Pfad</button>')
         : run.cfg && run.cfg.duel ? '<button class="ar-btn" data-a="duelnext" id="arNext" hidden>' + esc(run.cfg.duel.nextLabel || "🔁 Revanche") + '</button><button class="ar-btn ghost" data-a="quit">Zurück</button>'
         : '<button class="ar-btn" data-a="again">' + (boss ? "Nochmal versuchen" : "Noch mal") + '</button><button class="ar-btn ghost" data-a="quit">Zurück</button>') + '</div></div>';
     S.save(true);
@@ -469,6 +469,7 @@
       if (a === "again") { var m = run.mode, o = run.cfg; close(); return start(m, o); }
       if (a === "duelnext") { var nx = run.cfg && run.cfg.duel && run.cfg.duel.next; close(); if (nx) nx(); return; }
       if (a === "chest") { close(); return global.VTUI.openChest(); }
+      if (a === "advent") { close(); return global.VTUI.adventReveal(); }
     }
     if (run.done) return;
     var l = e.target.closest("[data-l]"), r = e.target.closest("[data-r]");

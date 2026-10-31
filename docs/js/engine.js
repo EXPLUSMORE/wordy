@@ -121,6 +121,7 @@
 
     { id: "fr:eis",     kind: "frame", label: "Eiskristall-Rahmen", cost: 1500, val: "eis", reward: "eis" },
     { id: "fr:none",    kind: "frame", label: "Kein Rahmen", cost: 0,   val: "none" },
+    { id: "fr:lichter",  kind: "frame", label: "Lichterketten-Rahmen", cost: 400, val: "lichter", pass: "Advent", rar: "legend" },
     { id: "fr:gold",    kind: "frame", label: "Goldrahmen",  cost: 120, val: "gold" },
     { id: "fr:rainbow", kind: "frame", label: "Regenbogenrahmen", cost: 200, val: "rainbow" },
     { id: "fr:fire",    kind: "frame", label: "Flammenrahmen", cost: 350, val: "fire" },
@@ -274,8 +275,10 @@
     ["sonne", "face", "Sonnenbrille", 40], ["nerd", "face", "Nerd-Brille", 40], ["mono", "face", "Monokel", 70], ["brille3d", "face", "3D-Brille", 50], ["herz", "face", "Herzbrille", 60], ["schnurr", "face", "Schnurrbart", 30], ["clown", "face", "Clown-Nase", 25], ["ski", "face", "Skibrille", 70],
     ["kopf", "ears", "Kopfhörer", 80], ["waerme", "ears", "Ohrenwärmer", 45], ["ohrring", "ears", "Ohrringe", 35],
     ["schal", "neck", "Schal", 50], ["fliege", "neck", "Fliege", 35], ["kette", "neck", "Goldkette", 90], ["tuch", "neck", "Halstuch", 35], ["medaille", "neck", "Medaille", 60], ["bosskette", "neck", "Boss-Kette ($)", 150], ["mkette", "neck", "Fette Goldkette mit M", 150],
-    ["skate", "gear", "Skateboard", 70], ["surf", "gear", "Surfbrett", 100], ["gitarre", "gear", "Gitarre", 150]];
+    ["skate", "gear", "Skateboard", 70], ["surf", "gear", "Surfbrett", 100], ["gitarre", "gear", "Gitarre", 150],
+    ["nikolaus", "head", "Nikolaus-Mütze", 70], ["xschal", "neck", "Weihnachts-Schal", 50], ["geweih", "ears", "Rentier-Geweih", 100], ["schlitten", "gear", "Schlitten", 150]];
   SHOP = SHOP.concat(ACC.map(function (a) { return { id: "ac:" + a[0], kind: "acc", slot: a[1], label: a[2], cost: a[3], val: a[0], rar: a[3] <= 40 ? "common" : a[3] <= 70 ? "rare" : a[3] <= 100 ? "epic" : "legend" }; }));
+  SHOP.forEach(function (x) { if (x.id === "ac:nikolaus" || x.id === "ac:xschal" || x.id === "ac:geweih" || x.id === "ac:schlitten") x.pass = "Advent"; });   // nur im Wichtel-Kalender (v2.160)
   /* v2.154: Unreal-Preise halbiert (alter Preis in `was`, für die einmalige Gutschrift in priceMigrate) */
   SHOP.forEach(function (x) { if (x.rar === "unreal" && x.cost > 0 && !x.reward && !x.pass) { x.was = x.cost; x.cost = Math.max(5, Math.round(x.cost / 2 / 5) * 5); } });
   /* Englische Namen aller Gegenstände (Gadget: nebenbei Vokabeln lernen). Sticker = Name der Figur + " sticker". */
@@ -320,7 +323,8 @@
     { id: "sent20",  n: "Satzbauer",       d: "20 Sätze richtig zusammengesetzt." },
     { id: "sent75",  n: "Satzprofi",       d: "75 Sätze richtig zusammengesetzt." },
     { id: "arena1",  n: "Arena betreten",  d: "Eine Runde in der Arena gespielt." },
-    { id: "combo15", n: "Serientäter",     d: "15 Treffer am Stück in der Arena." }
+    { id: "combo15", n: "Serientäter",     d: "15 Treffer am Stück in der Arena." },
+    { id: "wichtel", n: "Wichtel-Meister", d: "Alle 24 Türchen im Wichtel-Kalender geöffnet." }
   ];
 
   /* ---------- Hilfsfunktionen ---------- */
@@ -1663,6 +1667,105 @@
     pathSync(); save(true);
     return { advanced: adv, chest: chest, finished: p.pos >= pathStations().length };
   }
+  /* ---------- Wichtel-Kalender (Advent, v2.160) ----------
+     24 Türchen vom 1. bis 24. Dezember. Jedes Türchen öffnet sich nur am Tag selbst und nur, wenn das Spiel des Tages gewonnen wird
+     (Arena-Runde mit Weihnachtswörtern, Ziel in ADV_NEED). Verpasst: ❄️-Joker (2 am Start, +1 je 5 geöffnete, höchstens 3) holt ein Türchen bis zum 24.12. nach
+     (halbe Münzen, alles andere voll). Zustand state.advent = {y, open:{"6":{late}}, flakes}. */
+  var ADV_REW = {
+    1: { c: 20 }, 2: { xp: 150 }, 3: { c: 25 }, 4: { flake: 1, c: 10 }, 5: { c: 25 }, 6: { item: "ac:nikolaus" }, 7: { boost: 1 }, 8: { c: 30 },
+    9: { xp: 200 }, 10: { c: 30 }, 11: { item: "ac:xschal" }, 12: { c: 35 }, 13: { c: 40, candle: 1 }, 14: { xp: 250 }, 15: { c: 35 }, 16: { boost: 1 },
+    17: { c: 40 }, 18: { item: "ac:geweih" }, 19: { c: 40 }, 20: { c: 40, candle: 1 }, 21: { xp: 300 }, 22: { c: 45 }, 23: { item: "ac:schlitten" }, 24: { c: 100, item: "fr:lichter" }
+  };
+  var ADV_STORY = {
+    1: ["Wichtel Wolle packt im Nordpol die Weihnachtswörter ein. Plötzlich fegt ein Schneewirbel durch die Werkstatt!", "Wolle packs the Christmas words at the North Pole. Suddenly a snow whirl sweeps through the workshop!"],
+    2: ["Der Wirbel hat die 24 Wörter-Sterne in alle Winde verstreut. Du hilfst Wolle beim Suchen!", "The whirl has scattered the 24 word stars. You help Wolle look for them!"],
+    3: ["Ein Stern liegt unter dem Schlitten. Aber wer hat hier Pfotenspuren im Schnee hinterlassen?", "A star lies under the sleigh. But who left paw prints in the snow?"],
+    4: ["Wolle findet eine Schneeflocke, die glitzert wie ein Joker. Hebe sie gut auf!", "Wolle finds a snowflake that sparkles like a joker. Keep it safe!"],
+    5: ["Im Keks-Ofen versteckt sich ein Stern. Es riecht nach Lebkuchen!", "A star is hiding in the cookie oven. It smells like gingerbread!"],
+    6: ["Heute ist Nikolaus! Wolle sucht seine rote Mütze, damit er die Stiefel füllen kann.", "Today is St Nicholas Day! Wolle is looking for his red hat to fill the boots."],
+    7: ["Im Schornstein liegt ein Zettel: \"Morgen suche ich meinen Schlitten-Hund!\" Wer hat das geschrieben?", "There is a note in the chimney: \"Tomorrow I'll look for my sled dog!\" Who wrote it?"],
+    8: ["Die Rentiere sind aufgeregt: Sie haben noch einen Stern gewittert.", "The reindeer are excited: they smelled another star."],
+    9: ["Im Wunschzettel-Stapel glänzt es golden. Wolle liest ganz leise mit.", "Something shines golden in the wish-list pile. Wolle reads very quietly."],
+    10: ["Hinter der Weihnachtsglocke hängt ein Stern. Bimmel, bimmel!", "A star hangs behind the Christmas bell. Ding-a-ling!"],
+    11: ["Es wird kalt im Nordpol. Wolle braucht einen warmen Schal für die Suche.", "It is getting cold at the North Pole. Wolle needs a warm scarf for the search."],
+    12: ["Ein Stern steckt im Lichterketten-Knäuel. Wolle entwirrt es ganz vorsichtig.", "A star is stuck in the tangle of fairy lights. Wolle carefully untangles it."],
+    13: ["Die dritte Kerze brennt bald! Die Werkstatt riecht nach Zimt und Orangen.", "The third candle will soon burn! The workshop smells of cinnamon and oranges."],
+    14: ["Die Pfotenspuren führen zum Schneemann. Er trägt plötzlich einen Stern als Nase!", "The paw prints lead to the snowman. He suddenly wears a star as a nose!"],
+    15: ["Wolle hört Glöckchen im Schneegestöber. Wer klingelt da?", "Wolle hears little bells in the snowstorm. Who is ringing?"],
+    16: ["Ein kleiner Schlitten ohne Hund steht im Hof. Der Zettel aus dem Schornstein passt dazu!", "A small sleigh without a dog stands in the yard. The note from the chimney fits!"],
+    17: ["Im Geschenkpapier-Berg raschelt es. Zwei Augen blinzeln heraus.", "Something rustles in the pile of wrapping paper. Two eyes blink out."],
+    18: ["Die Rentiere zeigen auf einen Hügel. Dort glitzert ein Geweih im Mondlicht.", "The reindeer point to a hill. An antler glitters in the moonlight."],
+    19: ["Das Geheimnis wird größer: Wer hat den Schneewirbel gemacht? Wolle ahnt etwas.", "The mystery grows: who made the snow whirl? Wolle has an idea."],
+    20: ["Die vierte Kerze brennt! Im Kerzenschein sieht Wolle einen Schatten mit Schwanz.", "The fourth candle is burning! In the candlelight Wolle sees a shadow with a tail."],
+    21: ["Der Schatten ist ein kleiner Husky. Er heißt Flocke und hat den Wirbel aus Versehen gemacht!", "The shadow is a little husky. His name is Flocke and he made the whirl by accident!"],
+    22: ["Flocke entschuldigt sich mit einem Stern. Wolle lacht und krault ihn.", "Flocke says sorry with a star. Wolle laughs and pets him."],
+    23: ["Flocke darf den Schlitten ziehen! Nur noch ein Stern fehlt.", "Flocke may pull the sleigh! Only one star is missing."],
+    24: ["Heiligabend! Alle Sterne leuchten am Baum. Frohe Weihnachten von Wolle, Flocke und dir!", "Christmas Eve! All the stars shine on the tree. Merry Christmas from Wolle, Flocke and you!"]
+  };
+  var ADV_MODES = ["blitz", "match", "survival"];
+  function advNeed(d) { return 6 + Math.floor((d - 1) / 8); }   // 6, 7, 8 richtige Antworten
+  function advNow() {   // wo wir im Kalender stehen: phase off | pre | run | over, day 1..24
+    var pv = state && state.settings && state.settings.adventPreview, t = pv ? pv : today();   // adventPreview = Testhilfe, ein Datum wie "2026-12-06"
+    var y = +t.slice(0, 4), m = +t.slice(5, 7), dd = +t.slice(8, 10);
+    if (m === 12 && dd <= 24) return { phase: "run", day: dd, y: y };
+    if (m === 12) return { phase: "over", day: 24, y: y };
+    if (m === 11 && dd >= 25) return { phase: "pre", day: 0, y: y, left: 31 - dd };   // 25.11. = 6 Tage, 30.11. = 1 Tag
+    return { phase: "off", day: 0, y: y };
+  }
+  function advState() {
+    var now = advNow(), a = state.advent;
+    if (!a || a.y !== now.y) a = state.advent = { y: now.y, open: {}, flakes: 2 };
+    return a;
+  }
+  function advCandles(now) {   // Adventssonntage 2026: 29.11., 6.12., 13.12., 20.12.; allgemein: die vier Sonntage vor dem 25.12.
+    var y = now.y, c = new Date(Date.UTC(y, 11, 25)), dow = c.getUTCDay() || 7, a4 = new Date(Date.UTC(y, 11, 25 - dow)), n = 0, t = today();
+    if (state.settings.adventPreview) t = state.settings.adventPreview;
+    for (var i = 0; i < 4; i++) { var ds = new Date(a4.getTime() - (3 - i) * 7 * 86400000).toISOString().slice(0, 10); if (t >= ds) n++; }
+    return n;
+  }
+  function adventInfo() {
+    var now = advNow(), a = advState(), doors = [], openN = 0, d;
+    for (d = 1; d <= 24; d++) {
+      var o = a.open[d], st = o ? "open" : now.phase === "run" && d === now.day ? "today" : now.phase === "run" && d < now.day ? "late" : now.phase === "over" ? "over" : "lock";
+      if (o) openN++;
+      doors.push({ d: d, st: st, late: !!(o && o.late), rew: ADV_REW[d], story: ADV_STORY[d] });
+    }
+    return { phase: now.phase, day: now.day, left: now.left || 0, flakes: a.flakes, open: openN, doors: doors, candles: advCandles(now), need: now.day ? advNeed(now.day) : 6 };
+  }
+  function advPlan(d) {   // Spiel des Tages: Modus, Ziel, 12 Weihnachtswörter (fest je Tag)
+    var ids = [], n = 56, i;
+    for (i = 0; i < 12; i++) ids.push("adv#" + ((d * 7 + i * 3 + i) % n));
+    var seen = {}; ids = ids.filter(function (x) { if (seen[x]) return false; seen[x] = 1; return true; });
+    for (i = 0; ids.length < 12; i++) { var x = "adv#" + ((d * 5 + i) % n); if (!seen[x]) { seen[x] = 1; ids.push(x); } }
+    return { day: d, mode: ADV_MODES[d % ADV_MODES.length], need: advNeed(d), words: ids };
+  }
+  /* kann dieses Türchen jetzt gespielt werden? (heute, oder nachholen mit ❄️) */
+  function advCan(d) {
+    var now = advNow(), a = advState();
+    if (a.open[d] || d < 1 || d > 24) return { ok: false, why: "open" };
+    if (now.phase === "run" && d === now.day) return { ok: true, late: false };
+    if (now.phase === "run" && d < now.day) return a.flakes > 0 ? { ok: true, late: true } : { ok: false, why: "flake" };
+    if (now.phase === "over") return { ok: false, why: "over" };
+    return { ok: false, why: "lock" };
+  }
+  /* Spiel gewonnen: Türchen öffnen und das Geschenk gutschreiben */
+  function advWin(d) {
+    var c = advCan(d); if (!c.ok) return { error: c.why };
+    var a = advState(), r = ADV_REW[d] || {}, out = { day: d, late: c.late, coins: 0, xp: 0, boost: 0, flake: 0, item: null, story: ADV_STORY[d], candle: !!r.candle };
+    if (c.late) a.flakes = Math.max(0, a.flakes - 1);
+    a.open[d] = { late: c.late ? 1 : 0, t: Date.now() };
+    var coins = r.c || 0; if (c.late) coins = Math.floor(coins / 2);
+    if (coins) { addCoins(coins); addCl("fortschritt", coins); out.coins = coins; }
+    if (r.xp) out.xp = addXp(r.xp);
+    if (r.boost) { pathState().boost.stock += r.boost; out.boost = r.boost; }
+    if (r.flake) { a.flakes = Math.min(3, a.flakes + r.flake); out.flake = r.flake; }
+    if (r.item) { var it = itemById(r.item); if (it && !owns(it)) { state.profile.owned.push(it.id); out.item = { id: it.id, label: it.label, kind: it.kind, val: it.val, slot: it.slot }; checkSets(); } }
+    var n = Object.keys(a.open).length;
+    if (n % 5 === 0 && n < 24 && a.flakes < 3) { a.flakes++; out.flake += 1; }   // alle 5 geöffneten Türchen eine ❄️ (höchstens 3)
+    if (n === 24 && state.badges.indexOf("wichtel") < 0) { state.badges.push("wichtel"); out.master = true; }
+    a.last = out; save(true);
+    return out;
+  }
   function claimChest() {
     var p = pathState(), c = p.pending.shift();
     if (!c) return null;
@@ -1829,6 +1932,6 @@
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
-    grantItem: function (id) { return passGrant({ items: [id] }); }, resetProgress: resetProgress, stampNew: stampNew, passStamp: passStamp, shopVisible: shopVisible, shopWeeks: shopWeeks, shopCatalog: shopCatalog, shopTeasers: shopTeasers, shopNow: shopNow, shopRel: shopRel, WELCOME: WELCOME, welcomeGrant: welcomeGrant, welcomeNeeded: welcomeNeeded, steered: steered, pathUnitList: pathUnitList, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathLock: pathLock, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, boost: boost, coinFactor: coinFactor, avgCoins: avgCoins, dealItem: dealItem, priceOf: priceOf, passInfo: passInfo, favs: favs, toggleFav: toggleFav, collection: collection, findCollItem: findCollItem, CUP_TIERS: CUP_TIERS, claimPassWeek: claimPassWeek, claimPassTier: claimPassTier, claimPassCrew: claimPassCrew, claimPassFinale: claimPassFinale, passMeta: passMeta, rarityOf: rarityOf, shopList: shopList, activeSetDeal: activeSetDeal, buySet: buySet, takeNews: takeNews, SETS: SETS, itemById: itemById, minXp: minXp, defaultOf: defaultOf
+    grantItem: function (id) { return passGrant({ items: [id] }); }, resetProgress: resetProgress, stampNew: stampNew, passStamp: passStamp, shopVisible: shopVisible, shopWeeks: shopWeeks, shopCatalog: shopCatalog, shopTeasers: shopTeasers, shopNow: shopNow, shopRel: shopRel, WELCOME: WELCOME, welcomeGrant: welcomeGrant, welcomeNeeded: welcomeNeeded, steered: steered, pathUnitList: pathUnitList, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathLock: pathLock, adventInfo: adventInfo, advPlan: advPlan, advCan: advCan, advWin: advWin, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, boost: boost, coinFactor: coinFactor, avgCoins: avgCoins, dealItem: dealItem, priceOf: priceOf, passInfo: passInfo, favs: favs, toggleFav: toggleFav, collection: collection, findCollItem: findCollItem, CUP_TIERS: CUP_TIERS, claimPassWeek: claimPassWeek, claimPassTier: claimPassTier, claimPassCrew: claimPassCrew, claimPassFinale: claimPassFinale, passMeta: passMeta, rarityOf: rarityOf, shopList: shopList, activeSetDeal: activeSetDeal, buySet: buySet, takeNews: takeNews, SETS: SETS, itemById: itemById, minXp: minXp, defaultOf: defaultOf
   };
 })(window);

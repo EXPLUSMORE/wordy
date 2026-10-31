@@ -1548,10 +1548,20 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 .hscroll::-webkit-scrollbar{display:none}
 .segs.s4 button{padding-left:8px;padding-right:8px;font-size:13px;white-space:nowrap}
 .hscroll .chip{flex:0 0 auto;white-space:nowrap}
+/* WICHTEL-KALENDER (Advent, v2.160) */
+.advcan{display:flex;gap:10px;align-items:center;margin:2px 0}.advcan span{font-size:26px}.advcan span.off{filter:grayscale(1) opacity(.35)}
+.advgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.advd{aspect-ratio:1/1.08;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font:inherit;color:#fff;border:2px solid rgba(0,0,0,.25);cursor:pointer;position:relative}
+.advd b{font-size:22px;line-height:1}.advd i{font-style:normal;font-size:18px;min-height:22px}
+.advd.st-lock,.advd.st-over{background:#7a1f2b;opacity:.85}.advd.st-open{background:#2b5a3a;border-color:#6fdc8c}.advd.st-today{background:#d4372c;border-color:#ffd166;box-shadow:0 0 16px rgba(255,209,102,.6);animation:advpulse 1.8s ease-in-out infinite}
+.advd.st-late{background:#35507f;border-color:#9fd0ff}.advd.fin{background:linear-gradient(135deg,#d4a017,#ffdf6b);color:#3a2600}
+@keyframes advpulse{50%{transform:scale(1.04)}}
+.bub{background:#fff;color:#1b2440;border-radius:16px;padding:10px 12px;font-size:14px;line-height:1.4;text-align:left}.bub .muted{color:#5a6b99}
+.avatar.fr-lichter{box-shadow:0 0 0 2px #2f8f4e,0 0 0 4.5px #ffd34d,0 0 12px 3px rgba(255,90,90,.75),0 0 18px 6px rgba(120,255,160,.45)}
 </style>
 
 
-<script>window.WORDY_VERSION="2.159.6";window.WORDY_BUILD="f068582a2e";</script>
+<script>window.WORDY_VERSION="2.160.0";window.WORDY_BUILD="9fa94babe8";</script>
 </head>
 <body>
 <div id="app">
@@ -2955,6 +2965,69 @@ window.VOCAB_UNITS = (window.VOCAB_UNITS || []).concat([
 ["have a good one","noch einen schönen Tag",2,"Have a good one, see you Thursday."],
 ["take care","machen Sie es gut",1,"Take care, and thanks again."],
 ["we must do this again","das müssen wir wiederholen",2,"We must do this again before Christmas."]]}
+]);
+</script>
+<script>/* Wichtel-Kalender (Advent): Weihnachtswörter für die 24 Türchen. Eigene Spur "advent": erscheint nicht in den normalen Lernlisten.
+   Eigene Texte (src own). IDs: adv#<Position>, nur anhängen. */
+window.VOCAB_UNITS = (window.VOCAB_UNITS || []).concat([
+{track:"advent",k:"Wichtel",id:"adv",title:"Weihnachten & Advent",icon:"🎄",words:[
+["Christmas tree","der Weihnachtsbaum",1,"We decorate the Christmas tree on Sunday."],
+["present","das Geschenk",1,"I got a present from my grandma."],
+["Santa Claus","der Weihnachtsmann",1,"Santa Claus comes on Christmas Eve."],
+["reindeer","das Rentier",1,"The reindeer pull the sleigh."],
+["sleigh","der Schlitten",2,"The sleigh is full of presents."],
+["snowman","der Schneemann",1,"We built a big snowman."],
+["snowflake","die Schneeflocke",2,"Every snowflake looks different."],
+["candle","die Kerze",1,"She lit a candle on the table."],
+["star","der Stern",1,"A bright star sits on top of the tree."],
+["angel","der Engel",2,"The angel is made of paper."],
+["bell","die Glocke",1,"I can hear the bells ring."],
+["stocking","der Strumpf",2,"Hang your stocking by the fireplace."],
+["chimney","der Schornstein",2,"Santa comes down the chimney."],
+["fireplace","der Kamin",2,"The fireplace keeps us warm."],
+["gingerbread","der Lebkuchen",2,"We bake gingerbread every year."],
+["cookie","der Keks",1,"Leave a cookie for Santa."],
+["candy cane","die Zuckerstange",2,"A red and white candy cane."],
+["wreath","der Kranz",3,"There is a wreath on the door."],
+["advent calendar","der Adventskalender",2,"I open a door every morning."],
+["to wrap","einpacken",2,"Can you help me wrap this present?"],
+["wrapping paper","das Geschenkpapier",3,"The wrapping paper is red and gold."],
+["ribbon","das Band",2,"Tie a ribbon around the box."],
+["to decorate","schmücken",2,"Let's decorate the room."],
+["decoration","die Dekoration",2,"The decorations are beautiful."],
+["fairy lights","die Lichterkette",3,"The fairy lights shine at night."],
+["Christmas Eve","der Heiligabend",2,"On Christmas Eve we have dinner together."],
+["Christmas Day","der erste Weihnachtstag",2,"On Christmas Day we visit my aunt."],
+["New Year's Eve","der Silvesterabend",3,"We stay up late on New Year's Eve."],
+["to wish","wünschen",2,"I wish you a merry Christmas."],
+["wish list","der Wunschzettel",2,"My wish list is very long."],
+["elf","der Wichtel",2,"The elf packs the toys."],
+["workshop","die Werkstatt",2,"Toys are made in Santa's workshop."],
+["North Pole","der Nordpol",2,"Santa lives at the North Pole."],
+["snow","der Schnee",1,"There is a lot of snow today."],
+["ice","das Eis",1,"The lake is covered with ice."],
+["cold","kalt",1,"It is very cold in December."],
+["to freeze","frieren, gefrieren",2,"The water began to freeze."],
+["scarf","der Schal",1,"Wear a warm scarf."],
+["mittens","die Fäustlinge",3,"My mittens are red."],
+["hot chocolate","die heiße Schokolade",2,"I love hot chocolate with cream."],
+["carol","das Weihnachtslied",3,"We sing a carol together."],
+["to sing","singen",1,"They sing a song in the church."],
+["family","die Familie",1,"My family comes to visit."],
+["guest","der Gast",2,"We have guests for dinner."],
+["dinner","das Abendessen",1,"Dinner is ready at six."],
+["roast goose","die Gans",3,"We eat roast goose with red cabbage."],
+["to bake","backen",2,"Mum likes to bake in winter."],
+["magic","die Magie",2,"There is magic in the air."],
+["surprise","die Überraschung",2,"What a nice surprise!"],
+["to hide","verstecken",2,"Where did you hide my present?"],
+["secret","das Geheimnis",2,"It's a secret until Christmas."],
+["gift tag","der Geschenkanhänger",3,"Write a name on the gift tag."],
+["merry","fröhlich",2,"Merry Christmas and a happy New Year!"],
+["cosy","gemütlich",2,"The room is warm and cosy."],
+["to celebrate","feiern",2,"We celebrate together."],
+["holiday","der Feiertag, die Ferien",1,"The winter holidays start soon."]
+]}
 ]);
 </script>
 <script>/* Business English – Redewendungen: 12 Einheiten, 180 Idiome */
@@ -5876,6 +5949,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
 
     { id: "fr:eis",     kind: "frame", label: "Eiskristall-Rahmen", cost: 1500, val: "eis", reward: "eis" },
     { id: "fr:none",    kind: "frame", label: "Kein Rahmen", cost: 0,   val: "none" },
+    { id: "fr:lichter",  kind: "frame", label: "Lichterketten-Rahmen", cost: 400, val: "lichter", pass: "Advent", rar: "legend" },
     { id: "fr:gold",    kind: "frame", label: "Goldrahmen",  cost: 120, val: "gold" },
     { id: "fr:rainbow", kind: "frame", label: "Regenbogenrahmen", cost: 200, val: "rainbow" },
     { id: "fr:fire",    kind: "frame", label: "Flammenrahmen", cost: 350, val: "fire" },
@@ -6029,8 +6103,10 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     ["sonne", "face", "Sonnenbrille", 40], ["nerd", "face", "Nerd-Brille", 40], ["mono", "face", "Monokel", 70], ["brille3d", "face", "3D-Brille", 50], ["herz", "face", "Herzbrille", 60], ["schnurr", "face", "Schnurrbart", 30], ["clown", "face", "Clown-Nase", 25], ["ski", "face", "Skibrille", 70],
     ["kopf", "ears", "Kopfhörer", 80], ["waerme", "ears", "Ohrenwärmer", 45], ["ohrring", "ears", "Ohrringe", 35],
     ["schal", "neck", "Schal", 50], ["fliege", "neck", "Fliege", 35], ["kette", "neck", "Goldkette", 90], ["tuch", "neck", "Halstuch", 35], ["medaille", "neck", "Medaille", 60], ["bosskette", "neck", "Boss-Kette ($)", 150], ["mkette", "neck", "Fette Goldkette mit M", 150],
-    ["skate", "gear", "Skateboard", 70], ["surf", "gear", "Surfbrett", 100], ["gitarre", "gear", "Gitarre", 150]];
+    ["skate", "gear", "Skateboard", 70], ["surf", "gear", "Surfbrett", 100], ["gitarre", "gear", "Gitarre", 150],
+    ["nikolaus", "head", "Nikolaus-Mütze", 70], ["xschal", "neck", "Weihnachts-Schal", 50], ["geweih", "ears", "Rentier-Geweih", 100], ["schlitten", "gear", "Schlitten", 150]];
   SHOP = SHOP.concat(ACC.map(function (a) { return { id: "ac:" + a[0], kind: "acc", slot: a[1], label: a[2], cost: a[3], val: a[0], rar: a[3] <= 40 ? "common" : a[3] <= 70 ? "rare" : a[3] <= 100 ? "epic" : "legend" }; }));
+  SHOP.forEach(function (x) { if (x.id === "ac:nikolaus" || x.id === "ac:xschal" || x.id === "ac:geweih" || x.id === "ac:schlitten") x.pass = "Advent"; });   // nur im Wichtel-Kalender (v2.160)
   /* v2.154: Unreal-Preise halbiert (alter Preis in `was`, für die einmalige Gutschrift in priceMigrate) */
   SHOP.forEach(function (x) { if (x.rar === "unreal" && x.cost > 0 && !x.reward && !x.pass) { x.was = x.cost; x.cost = Math.max(5, Math.round(x.cost / 2 / 5) * 5); } });
   /* Englische Namen aller Gegenstände (Gadget: nebenbei Vokabeln lernen). Sticker = Name der Figur + " sticker". */
@@ -6075,7 +6151,8 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     { id: "sent20",  n: "Satzbauer",       d: "20 Sätze richtig zusammengesetzt." },
     { id: "sent75",  n: "Satzprofi",       d: "75 Sätze richtig zusammengesetzt." },
     { id: "arena1",  n: "Arena betreten",  d: "Eine Runde in der Arena gespielt." },
-    { id: "combo15", n: "Serientäter",     d: "15 Treffer am Stück in der Arena." }
+    { id: "combo15", n: "Serientäter",     d: "15 Treffer am Stück in der Arena." },
+    { id: "wichtel", n: "Wichtel-Meister", d: "Alle 24 Türchen im Wichtel-Kalender geöffnet." }
   ];
 
   /* ---------- Hilfsfunktionen ---------- */
@@ -7418,6 +7495,105 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     pathSync(); save(true);
     return { advanced: adv, chest: chest, finished: p.pos >= pathStations().length };
   }
+  /* ---------- Wichtel-Kalender (Advent, v2.160) ----------
+     24 Türchen vom 1. bis 24. Dezember. Jedes Türchen öffnet sich nur am Tag selbst und nur, wenn das Spiel des Tages gewonnen wird
+     (Arena-Runde mit Weihnachtswörtern, Ziel in ADV_NEED). Verpasst: ❄️-Joker (2 am Start, +1 je 5 geöffnete, höchstens 3) holt ein Türchen bis zum 24.12. nach
+     (halbe Münzen, alles andere voll). Zustand state.advent = {y, open:{"6":{late}}, flakes}. */
+  var ADV_REW = {
+    1: { c: 20 }, 2: { xp: 150 }, 3: { c: 25 }, 4: { flake: 1, c: 10 }, 5: { c: 25 }, 6: { item: "ac:nikolaus" }, 7: { boost: 1 }, 8: { c: 30 },
+    9: { xp: 200 }, 10: { c: 30 }, 11: { item: "ac:xschal" }, 12: { c: 35 }, 13: { c: 40, candle: 1 }, 14: { xp: 250 }, 15: { c: 35 }, 16: { boost: 1 },
+    17: { c: 40 }, 18: { item: "ac:geweih" }, 19: { c: 40 }, 20: { c: 40, candle: 1 }, 21: { xp: 300 }, 22: { c: 45 }, 23: { item: "ac:schlitten" }, 24: { c: 100, item: "fr:lichter" }
+  };
+  var ADV_STORY = {
+    1: ["Wichtel Wolle packt im Nordpol die Weihnachtswörter ein. Plötzlich fegt ein Schneewirbel durch die Werkstatt!", "Wolle packs the Christmas words at the North Pole. Suddenly a snow whirl sweeps through the workshop!"],
+    2: ["Der Wirbel hat die 24 Wörter-Sterne in alle Winde verstreut. Du hilfst Wolle beim Suchen!", "The whirl has scattered the 24 word stars. You help Wolle look for them!"],
+    3: ["Ein Stern liegt unter dem Schlitten. Aber wer hat hier Pfotenspuren im Schnee hinterlassen?", "A star lies under the sleigh. But who left paw prints in the snow?"],
+    4: ["Wolle findet eine Schneeflocke, die glitzert wie ein Joker. Hebe sie gut auf!", "Wolle finds a snowflake that sparkles like a joker. Keep it safe!"],
+    5: ["Im Keks-Ofen versteckt sich ein Stern. Es riecht nach Lebkuchen!", "A star is hiding in the cookie oven. It smells like gingerbread!"],
+    6: ["Heute ist Nikolaus! Wolle sucht seine rote Mütze, damit er die Stiefel füllen kann.", "Today is St Nicholas Day! Wolle is looking for his red hat to fill the boots."],
+    7: ["Im Schornstein liegt ein Zettel: \"Morgen suche ich meinen Schlitten-Hund!\" Wer hat das geschrieben?", "There is a note in the chimney: \"Tomorrow I'll look for my sled dog!\" Who wrote it?"],
+    8: ["Die Rentiere sind aufgeregt: Sie haben noch einen Stern gewittert.", "The reindeer are excited: they smelled another star."],
+    9: ["Im Wunschzettel-Stapel glänzt es golden. Wolle liest ganz leise mit.", "Something shines golden in the wish-list pile. Wolle reads very quietly."],
+    10: ["Hinter der Weihnachtsglocke hängt ein Stern. Bimmel, bimmel!", "A star hangs behind the Christmas bell. Ding-a-ling!"],
+    11: ["Es wird kalt im Nordpol. Wolle braucht einen warmen Schal für die Suche.", "It is getting cold at the North Pole. Wolle needs a warm scarf for the search."],
+    12: ["Ein Stern steckt im Lichterketten-Knäuel. Wolle entwirrt es ganz vorsichtig.", "A star is stuck in the tangle of fairy lights. Wolle carefully untangles it."],
+    13: ["Die dritte Kerze brennt bald! Die Werkstatt riecht nach Zimt und Orangen.", "The third candle will soon burn! The workshop smells of cinnamon and oranges."],
+    14: ["Die Pfotenspuren führen zum Schneemann. Er trägt plötzlich einen Stern als Nase!", "The paw prints lead to the snowman. He suddenly wears a star as a nose!"],
+    15: ["Wolle hört Glöckchen im Schneegestöber. Wer klingelt da?", "Wolle hears little bells in the snowstorm. Who is ringing?"],
+    16: ["Ein kleiner Schlitten ohne Hund steht im Hof. Der Zettel aus dem Schornstein passt dazu!", "A small sleigh without a dog stands in the yard. The note from the chimney fits!"],
+    17: ["Im Geschenkpapier-Berg raschelt es. Zwei Augen blinzeln heraus.", "Something rustles in the pile of wrapping paper. Two eyes blink out."],
+    18: ["Die Rentiere zeigen auf einen Hügel. Dort glitzert ein Geweih im Mondlicht.", "The reindeer point to a hill. An antler glitters in the moonlight."],
+    19: ["Das Geheimnis wird größer: Wer hat den Schneewirbel gemacht? Wolle ahnt etwas.", "The mystery grows: who made the snow whirl? Wolle has an idea."],
+    20: ["Die vierte Kerze brennt! Im Kerzenschein sieht Wolle einen Schatten mit Schwanz.", "The fourth candle is burning! In the candlelight Wolle sees a shadow with a tail."],
+    21: ["Der Schatten ist ein kleiner Husky. Er heißt Flocke und hat den Wirbel aus Versehen gemacht!", "The shadow is a little husky. His name is Flocke and he made the whirl by accident!"],
+    22: ["Flocke entschuldigt sich mit einem Stern. Wolle lacht und krault ihn.", "Flocke says sorry with a star. Wolle laughs and pets him."],
+    23: ["Flocke darf den Schlitten ziehen! Nur noch ein Stern fehlt.", "Flocke may pull the sleigh! Only one star is missing."],
+    24: ["Heiligabend! Alle Sterne leuchten am Baum. Frohe Weihnachten von Wolle, Flocke und dir!", "Christmas Eve! All the stars shine on the tree. Merry Christmas from Wolle, Flocke and you!"]
+  };
+  var ADV_MODES = ["blitz", "match", "survival"];
+  function advNeed(d) { return 6 + Math.floor((d - 1) / 8); }   // 6, 7, 8 richtige Antworten
+  function advNow() {   // wo wir im Kalender stehen: phase off | pre | run | over, day 1..24
+    var pv = state && state.settings && state.settings.adventPreview, t = pv ? pv : today();   // adventPreview = Testhilfe, ein Datum wie "2026-12-06"
+    var y = +t.slice(0, 4), m = +t.slice(5, 7), dd = +t.slice(8, 10);
+    if (m === 12 && dd <= 24) return { phase: "run", day: dd, y: y };
+    if (m === 12) return { phase: "over", day: 24, y: y };
+    if (m === 11 && dd >= 25) return { phase: "pre", day: 0, y: y, left: 31 - dd };   // 25.11. = 6 Tage, 30.11. = 1 Tag
+    return { phase: "off", day: 0, y: y };
+  }
+  function advState() {
+    var now = advNow(), a = state.advent;
+    if (!a || a.y !== now.y) a = state.advent = { y: now.y, open: {}, flakes: 2 };
+    return a;
+  }
+  function advCandles(now) {   // Adventssonntage 2026: 29.11., 6.12., 13.12., 20.12.; allgemein: die vier Sonntage vor dem 25.12.
+    var y = now.y, c = new Date(Date.UTC(y, 11, 25)), dow = c.getUTCDay() || 7, a4 = new Date(Date.UTC(y, 11, 25 - dow)), n = 0, t = today();
+    if (state.settings.adventPreview) t = state.settings.adventPreview;
+    for (var i = 0; i < 4; i++) { var ds = new Date(a4.getTime() - (3 - i) * 7 * 86400000).toISOString().slice(0, 10); if (t >= ds) n++; }
+    return n;
+  }
+  function adventInfo() {
+    var now = advNow(), a = advState(), doors = [], openN = 0, d;
+    for (d = 1; d <= 24; d++) {
+      var o = a.open[d], st = o ? "open" : now.phase === "run" && d === now.day ? "today" : now.phase === "run" && d < now.day ? "late" : now.phase === "over" ? "over" : "lock";
+      if (o) openN++;
+      doors.push({ d: d, st: st, late: !!(o && o.late), rew: ADV_REW[d], story: ADV_STORY[d] });
+    }
+    return { phase: now.phase, day: now.day, left: now.left || 0, flakes: a.flakes, open: openN, doors: doors, candles: advCandles(now), need: now.day ? advNeed(now.day) : 6 };
+  }
+  function advPlan(d) {   // Spiel des Tages: Modus, Ziel, 12 Weihnachtswörter (fest je Tag)
+    var ids = [], n = 56, i;
+    for (i = 0; i < 12; i++) ids.push("adv#" + ((d * 7 + i * 3 + i) % n));
+    var seen = {}; ids = ids.filter(function (x) { if (seen[x]) return false; seen[x] = 1; return true; });
+    for (i = 0; ids.length < 12; i++) { var x = "adv#" + ((d * 5 + i) % n); if (!seen[x]) { seen[x] = 1; ids.push(x); } }
+    return { day: d, mode: ADV_MODES[d % ADV_MODES.length], need: advNeed(d), words: ids };
+  }
+  /* kann dieses Türchen jetzt gespielt werden? (heute, oder nachholen mit ❄️) */
+  function advCan(d) {
+    var now = advNow(), a = advState();
+    if (a.open[d] || d < 1 || d > 24) return { ok: false, why: "open" };
+    if (now.phase === "run" && d === now.day) return { ok: true, late: false };
+    if (now.phase === "run" && d < now.day) return a.flakes > 0 ? { ok: true, late: true } : { ok: false, why: "flake" };
+    if (now.phase === "over") return { ok: false, why: "over" };
+    return { ok: false, why: "lock" };
+  }
+  /* Spiel gewonnen: Türchen öffnen und das Geschenk gutschreiben */
+  function advWin(d) {
+    var c = advCan(d); if (!c.ok) return { error: c.why };
+    var a = advState(), r = ADV_REW[d] || {}, out = { day: d, late: c.late, coins: 0, xp: 0, boost: 0, flake: 0, item: null, story: ADV_STORY[d], candle: !!r.candle };
+    if (c.late) a.flakes = Math.max(0, a.flakes - 1);
+    a.open[d] = { late: c.late ? 1 : 0, t: Date.now() };
+    var coins = r.c || 0; if (c.late) coins = Math.floor(coins / 2);
+    if (coins) { addCoins(coins); addCl("fortschritt", coins); out.coins = coins; }
+    if (r.xp) out.xp = addXp(r.xp);
+    if (r.boost) { pathState().boost.stock += r.boost; out.boost = r.boost; }
+    if (r.flake) { a.flakes = Math.min(3, a.flakes + r.flake); out.flake = r.flake; }
+    if (r.item) { var it = itemById(r.item); if (it && !owns(it)) { state.profile.owned.push(it.id); out.item = { id: it.id, label: it.label, kind: it.kind, val: it.val, slot: it.slot }; checkSets(); } }
+    var n = Object.keys(a.open).length;
+    if (n % 5 === 0 && n < 24 && a.flakes < 3) { a.flakes++; out.flake += 1; }   // alle 5 geöffneten Türchen eine ❄️ (höchstens 3)
+    if (n === 24 && state.badges.indexOf("wichtel") < 0) { state.badges.push("wichtel"); out.master = true; }
+    a.last = out; save(true);
+    return out;
+  }
   function claimChest() {
     var p = pathState(), c = p.pending.shift();
     if (!c) return null;
@@ -7584,7 +7760,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
-    grantItem: function (id) { return passGrant({ items: [id] }); }, resetProgress: resetProgress, stampNew: stampNew, passStamp: passStamp, shopVisible: shopVisible, shopWeeks: shopWeeks, shopCatalog: shopCatalog, shopTeasers: shopTeasers, shopNow: shopNow, shopRel: shopRel, WELCOME: WELCOME, welcomeGrant: welcomeGrant, welcomeNeeded: welcomeNeeded, steered: steered, pathUnitList: pathUnitList, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathLock: pathLock, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, boost: boost, coinFactor: coinFactor, avgCoins: avgCoins, dealItem: dealItem, priceOf: priceOf, passInfo: passInfo, favs: favs, toggleFav: toggleFav, collection: collection, findCollItem: findCollItem, CUP_TIERS: CUP_TIERS, claimPassWeek: claimPassWeek, claimPassTier: claimPassTier, claimPassCrew: claimPassCrew, claimPassFinale: claimPassFinale, passMeta: passMeta, rarityOf: rarityOf, shopList: shopList, activeSetDeal: activeSetDeal, buySet: buySet, takeNews: takeNews, SETS: SETS, itemById: itemById, minXp: minXp, defaultOf: defaultOf
+    grantItem: function (id) { return passGrant({ items: [id] }); }, resetProgress: resetProgress, stampNew: stampNew, passStamp: passStamp, shopVisible: shopVisible, shopWeeks: shopWeeks, shopCatalog: shopCatalog, shopTeasers: shopTeasers, shopNow: shopNow, shopRel: shopRel, WELCOME: WELCOME, welcomeGrant: welcomeGrant, welcomeNeeded: welcomeNeeded, steered: steered, pathUnitList: pathUnitList, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathLock: pathLock, adventInfo: adventInfo, advPlan: advPlan, advCan: advCan, advWin: advWin, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, boost: boost, coinFactor: coinFactor, avgCoins: avgCoins, dealItem: dealItem, priceOf: priceOf, passInfo: passInfo, favs: favs, toggleFav: toggleFav, collection: collection, findCollItem: findCollItem, CUP_TIERS: CUP_TIERS, claimPassWeek: claimPassWeek, claimPassTier: claimPassTier, claimPassCrew: claimPassCrew, claimPassFinale: claimPassFinale, passMeta: passMeta, rarityOf: rarityOf, shopList: shopList, activeSetDeal: activeSetDeal, buySet: buySet, takeNews: takeNews, SETS: SETS, itemById: itemById, minXp: minXp, defaultOf: defaultOf
   };
 })(window);
 </script>
@@ -9947,6 +10123,7 @@ return '<svg class="afs" viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg
     eishut: ['<path d="M76 58L110 138L144 58z" fill="none"/><circle cx="92" cy="40" r="26" fill="#ff9ec9"' + O + '/><circle cx="128" cy="38" r="26" fill="#7de8c8"' + O + '/><circle cx="110" cy="14" r="24" fill="#fff3a0"' + O + '/><path d="M96 54q14 10 28 0" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".7" fill="none"/><circle cx="110" cy="-12" r="9" fill="#e8123c"' + O + '/><path d="M110-20q8-14 20-12" stroke="#2e8a35" stroke-width="4" fill="none" stroke-linecap="round"/>'],
     pizza: ['<path d="M56 62Q110 18 164 62L110 -16z" fill="#ffd34d"' + O + '/><path d="M56 62Q110 18 164 62" stroke="#d9822b" stroke-width="12" fill="none" stroke-linecap="round"/><g fill="#e8123c" stroke="' + L + '" stroke-width="3"><circle cx="110" cy="14" r="9"/><circle cx="92" cy="40" r="8"/><circle cx="130" cy="38" r="8"/></g><path d="M104 -2l4 6M96 28l5 4M134 26l-5 4" stroke="#fff" stroke-width="2.6" stroke-linecap="round" opacity=".8"/>'],
     krone: ['<path d="M56 62l-8-46l34 26l28-46l28 46l34-26l-8 46q-54 14-108 0z" fill="#ffd34d"' + O + '/><circle cx="110" cy="6" r="7" fill="#e8123c" stroke="' + L + '" stroke-width="3.5"/><circle cx="62" cy="22" r="5" fill="#59c8ff" stroke="' + L + '" stroke-width="3"/><circle cx="158" cy="22" r="5" fill="#59c8ff" stroke="' + L + '" stroke-width="3"/><path d="M74 52q36 8 72 0" stroke="#fff3a0" stroke-width="4" stroke-linecap="round" opacity=".8" fill="none"/>'],
+    nikolaus: ['<path d="M54 66Q52 10 108 -10Q150 -22 168 18Q174 40 164 52Q112 40 54 66z" fill="#e8123c"' + O + '/><path d="M60 50Q76 14 108 4" fill="none" stroke="#ff8a8a" stroke-width="4" stroke-linecap="round" opacity=".7"/><circle cx="170" cy="26" r="15" fill="#fff"' + O + '/><path d="M42 62Q110 86 178 58L182 80Q110 104 38 82z" fill="#fff"' + O + '/><path d="M64 76q10 6 20 6M104 84q8 2 16 0M140 80q8-2 16-8" stroke="#dfe6f2" stroke-width="3.5" stroke-linecap="round" fill="none"/>'],
     /* ---- Gesicht ---- */
     sonne: ['<g stroke="' + L + '" stroke-width="5" stroke-linejoin="round"><rect x="54" y="68" width="48" height="34" rx="13" fill="#14213d"/><rect x="118" y="68" width="48" height="34" rx="13" fill="#14213d"/><path d="M102 80h16" fill="none"/></g><path d="M62 76l14-4M126 76l14-4" stroke="#7be9ff" stroke-width="4" stroke-linecap="round"/><path d="M54 82L38 76M166 82l16-6" stroke="' + L + '" stroke-width="5" stroke-linecap="round"/>'],
     nerd: ['<g stroke="#2b2f45" stroke-width="6"><circle cx="78" cy="88" r="23" fill="#bfe9ff" fill-opacity=".35"/><circle cx="142" cy="88" r="23" fill="#bfe9ff" fill-opacity=".35"/><path d="M101 86q9-6 18 0" fill="none"/></g><path d="M66 76q6-6 14-6" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".8"/>'],
@@ -9965,17 +10142,20 @@ return '<svg class="afs" viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg
     fliege: ['<g' + O + '><path d="M110 176L72 158Q64 176 72 194z" fill="#e8123c"/><path d="M110 176L148 158Q156 176 148 194z" fill="#e8123c"/></g><circle cx="110" cy="176" r="9" fill="#b01030" stroke="' + L + '" stroke-width="4"/><path d="M82 166l14 6M138 166l-14 6" stroke="#ff8a8a" stroke-width="3" stroke-linecap="round" opacity=".8"/>'],
     kette: ['<path d="M62 160Q110 206 158 160" fill="none" stroke="' + L + '" stroke-width="9" stroke-linecap="round"/><path d="M62 160Q110 206 158 160" fill="none" stroke="#ffd34d" stroke-width="4.5" stroke-linecap="round" stroke-dasharray="7 3"/><circle cx="110" cy="198" r="15" fill="#ffd34d"' + O + '/><path d="M110 189l3 7 7 1-5 5 1 7-6-4-6 4 1-7-5-5 7-1z" fill="#fff3a0"/>'],
     tuch: ['<path d="M58 158Q110 188 162 158L110 220z" fill="#e8123c"' + O + '/><g fill="#fff"><circle cx="90" cy="172" r="4"/><circle cx="130" cy="172" r="4"/><circle cx="110" cy="188" r="4"/><circle cx="110" cy="206" r="3.4"/></g>'],
+    geweih: ['<g fill="none" stroke-linecap="round"><g stroke="' + L + '" stroke-width="15"><path d="M74 62Q56 34 68 4M66 30Q48 26 40 8M68 16Q82 8 86 -6M146 62Q164 34 152 4M154 30Q172 26 180 8M152 16Q138 8 134 -6"/></g><g stroke="#8a5a34" stroke-width="8"><path d="M74 62Q56 34 68 4M66 30Q48 26 40 8M68 16Q82 8 86 -6M146 62Q164 34 152 4M154 30Q172 26 180 8M152 16Q138 8 134 -6"/></g></g><circle cx="86" cy="-6" r="5" fill="#ffd34d" stroke="' + L + '" stroke-width="2.5"/><circle cx="134" cy="-6" r="5" fill="#ffd34d" stroke="' + L + '" stroke-width="2.5"/>'],
     /* ---- Dabei (steht hinter der Figur) ---- */
     skate: ['<g transform="translate(40 218) rotate(-76)"><g stroke="' + L + '" stroke-width="4" stroke-linejoin="round"><rect x="-30" y="-19" width="9" height="10" fill="#9aa3b5"/><rect x="21" y="-19" width="9" height="10" fill="#9aa3b5"/><circle cx="-26" cy="-24" r="9" fill="#ffe27a"/><circle cx="26" cy="-24" r="9" fill="#ffe27a"/><rect x="-54" y="-10" width="108" height="22" rx="11" fill="#ff5a3c"/></g><rect x="-44" y="2" width="88" height="5" rx="2.5" fill="#ffb199" opacity=".8"/><path d="M-26 -24h.1M26 -24h.1" stroke="#c28a00" stroke-width="6" stroke-linecap="round"/></g>'],
+    schlitten: ['<g transform="translate(40 218) rotate(-76)"><g stroke="' + L + '" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"><path d="M-50 22Q-58 22-58 12Q-58 6-50 6H44Q58 6 58 -6" fill="none" stroke-width="9"/><path d="M-50 22Q-58 22-58 12Q-58 6-50 6H44Q58 6 58 -6" fill="none" stroke="#c9d3e8" stroke-width="3.5"/><path d="M-36 6v-12M30 6v-12" stroke-width="5"/><path d="M-44 -6H42Q48 -6 48 -12V-26Q48 -32 42 -32H-44Q-50 -32-50 -26V-12Q-50 -6-44 -6z" fill="#d8202f"/></g><path d="M-40 -14H40" stroke="#ffd34d" stroke-width="5" stroke-linecap="round"/><path d="M-30 -26H30" stroke="#ff8a8a" stroke-width="3" stroke-linecap="round" opacity=".8"/></g>'],
     surf: ['<g transform="translate(-8 0) rotate(9 190 150)"><path d="M190 -22C222 36 224 232 190 300C156 232 158 36 190 -22z" fill="#27c3e6" stroke="' + L + '" stroke-width="5" stroke-linejoin="round"/><path d="M190 -2C208 56 210 214 190 270" fill="none" stroke="#ffffff" stroke-width="5" opacity=".75"/><path d="M190 -10V288" stroke="#0d7f9e" stroke-width="3" opacity=".6"/><path d="M168 96q22 22 44 0M165 150q25 24 50 0" fill="none" stroke="#ffd34d" stroke-width="5" stroke-linecap="round"/><path d="M190 300l-9 16h18z" fill="#0d7f9e" stroke="' + L + '" stroke-width="3.5" stroke-linejoin="round"/></g>'],
     gitarre: ['<g transform="translate(4 36) scale(.82) translate(16 0) rotate(-12 34 236)"><g stroke="' + L + '" stroke-width="4.5" stroke-linejoin="round"><rect x="27" y="34" width="14" height="140" rx="3" fill="#5a3b24"/><path d="M22 14h24l-3 28H25z" fill="#3a2414"/><path d="M34 182C6 176 0 208 22 220C4 238 8 276 36 278C66 280 74 248 52 222C74 206 64 178 34 182z" fill="#e08a2c"/></g><circle cx="35" cy="228" r="10" fill="#2a1a0f"/><circle cx="35" cy="228" r="10" fill="none" stroke="#ffd34d" stroke-width="3"/><rect x="24" y="258" width="22" height="6" rx="3" fill="#2a1a0f"/><path d="M31 40V250M37 40V250" stroke="#f3f3f3" stroke-width="1.4" opacity=".85"/><g fill="#d9d9d9" stroke="' + L + '" stroke-width="2"><circle cx="24" cy="22" r="3"/><circle cx="24" cy="32" r="3"/><circle cx="46" cy="22" r="3"/><circle cx="46" cy="32" r="3"/></g></g>'],
     bosskette: ['<path d="M56 154Q110 216 164 154" fill="none" stroke="' + L + '" stroke-width="19" stroke-linecap="round"/><path d="M56 154Q110 216 164 154" fill="none" stroke="#ffc21f" stroke-width="12.5" stroke-linecap="round"/><path d="M56 154Q110 216 164 154" fill="none" stroke="#b8730a" stroke-width="12.5" stroke-dasharray="2.4 11" stroke-linecap="butt"/><path d="M60 151Q110 208 160 151" fill="none" stroke="#fff3a0" stroke-width="3" stroke-dasharray="7 13" stroke-linecap="round" opacity=".9"/><circle cx="110" cy="187" r="7.5" fill="#ffd34d" stroke="' + L + '" stroke-width="4"/><g transform="translate(110 189) scale(.7) translate(-110 -189)"><g fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M130 205C130 192 91 191 91 207C91 222 130 216 130 233C130 250 90 249 90 235M110 190V252" stroke="' + L + '" stroke-width="21"/><path d="M130 205C130 192 91 191 91 207C91 222 130 216 130 233C130 250 90 249 90 235M110 190V252" stroke="#ffcf2e" stroke-width="12"/><path d="M121 199C112 194 97 195 97 205M104 196V244" stroke="#fff6b0" stroke-width="3.4" opacity=".9"/></g></g>'],
     mkette: ['<path d="M56 154Q110 216 164 154" fill="none" stroke="' + L + '" stroke-width="19" stroke-linecap="round"/><path d="M56 154Q110 216 164 154" fill="none" stroke="#ffc21f" stroke-width="12.5" stroke-linecap="round"/><path d="M56 154Q110 216 164 154" fill="none" stroke="#b8730a" stroke-width="12.5" stroke-dasharray="2.4 11" stroke-linecap="butt"/><path d="M60 151Q110 208 160 151" fill="none" stroke="#fff3a0" stroke-width="3" stroke-dasharray="7 13" stroke-linecap="round" opacity=".9"/><circle cx="110" cy="187" r="7.5" fill="#ffd34d" stroke="' + L + '" stroke-width="4"/><g transform="translate(110 189) scale(.7) translate(-110 -189)"><g fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M86 250V196L110 226L134 196V250" stroke="' + L + '" stroke-width="22"/><path d="M86 250V196L110 226L134 196V250" stroke="#ffcf2e" stroke-width="13"/><path d="M92 244V205L110 228" stroke="#fff6b0" stroke-width="3.4" opacity=".9"/></g></g>'],
     medaille: ['<path d="M80 158l16 38M140 158l-16 38" stroke="' + L + '" stroke-width="12" stroke-linecap="round"/><path d="M80 158l16 38M140 158l-16 38" stroke="#2f7be8" stroke-width="6" stroke-linecap="round"/><circle cx="110" cy="206" r="19" fill="#ffd34d"' + O + '/><path d="M110 192l4 9 10 1-7 7 2 10-9-5-9 5 2-10-7-7 10-1z" fill="#fff3a0" stroke="' + L + '" stroke-width="2.4" stroke-linejoin="round"/>']
   };
+  ACCS.xschal = [ACCS.schal[0].replace(/#2f7be8/g, "#d8202f").replace(/#ffd34d/g, "#ffffff")];   // Weihnachts-Schal = roter Schal mit weißen Streifen
   var over = null;   // { av, lo } nur während die Anprobe gezeichnet wird
   var VB = { head: "30 -50 160 130", face: "40 56 140 64", ears: "20 -6 180 150", neck: "40 148 140 110", gear: "0 -20 220 320" },
-      VBV = { skate: "-4 152 96 138", surf: "128 -34 112 360", gitarre: "-2 54 84 215" };   // Ausschnitt je Teil (Dabei-Teile sitzen am Rand der Figur)
+      VBV = { skate: "-4 152 96 138", schlitten: "-4 152 96 138", surf: "128 -34 112 360", gitarre: "-2 54 84 215" };   // Ausschnitt je Teil (Dabei-Teile sitzen am Rand der Figur)
   function slotOf(val) { var it = global.VT && global.VT.itemById("ac:" + val); return it ? it.slot : "head"; }
   /* Zubehör einer Figur als Markup: { head, neck } */
   function build(loadout) {
@@ -11413,7 +11593,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       (canEq ? '<button class="sbtn b2" data-m="eq">' + (it.kind === "sticker" ? (eq ? "Ablösen" : "Aufkleben") : eq ? "✓ Aktiv" : "Tragen") + '</button>' : "") +
       (it.owned && (it.kind === "dance" || it.kind === "outfit" || it.kind === "kit") ? '<button class="sbtn b3" data-m="try">▶ Ansehen</button>' : "") +
       (!it.owned && it.it && !it.it.pass && !it.it.reward ? '<button class="sbtn b2" data-m="shop">Zum Shop</button>' : "") +
-      (!it.owned && it.it && it.it.pass ? '<button class="sbtn b2" data-m="pass">Zum Pass</button>' : "") + '<button class="sbtn b4" data-m="x">Schließen</button></div></div>';
+      (!it.owned && it.it && it.it.pass === "Advent" ? '<button class="sbtn b2" data-m="advent">Zum Wichtel-Kalender</button>' : !it.owned && it.it && it.it.pass ? '<button class="sbtn b2" data-m="pass">Zum Pass</button>' : "") + '<button class="sbtn b4" data-m="x">Schließen</button></div></div>';
     document.body.appendChild(ov);
     if (it.owned) srMark(id);
     ov.addEventListener("click", function (e) {
@@ -11423,6 +11603,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       else if (mm === "eq") { var r = S.equip(it.it.id); if (r.error) return toast(r.error); ov.remove(); toast(it.kind === "sticker" ? (r.on ? "Aufgeklebt" : "Abgelöst") : "Getragen: " + it.label); render(); }
       else if (mm === "try") { global.VTC.dance({ av: S.state.profile.avatar, avatar: avatarHtml(S.state.profile.avatar, true), outfit: it.kind === "dance" ? S.state.profile.outfit : it.it.val, dance: it.kind === "dance" ? it.it.val : (S.state.profile.dance || "wackler"), title: it.label }); }
       else if (mm === "shop") { ov.remove(); shopTab = it.kind === "kit" ? "kit" : it.it.set === "fn" ? "fn" : it.kind; tab = "shop"; shopSeg = "shop"; render(); view.scrollTop = 0; }
+      else if (mm === "advent") { ov.remove(); tab = "beute"; beuteSeg = "advent"; render(); view.scrollTop = 0; }
       else if (mm === "pass") { ov.remove(); tab = "beute"; beuteSeg = "pass"; render(); view.scrollTop = 0; }
     });
   }
@@ -11569,6 +11750,11 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     return true;
   }
   function bossFinish(boss, correct) {
+    if (boss.advent) {   // Türchen-Spiel des Wichtel-Kalenders
+      var okA = correct >= boss.need, rA = okA ? S.advWin(boss.advent) : null;
+      if (rA && !rA.error) advLast = rA;
+      return { pass: okA, stars: okA ? 1 : 0, advent: boss.advent, chest: false };
+    }
     var pass = correct >= boss.need;
     S.bossRecord(boss, correct, pass);
     var stars = correct >= boss.need * 2 ? 3 : correct >= boss.need * 1.5 ? 2 : 1, res = pass ? S.pathComplete(boss.id, stars) : null;
@@ -11776,7 +11962,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       '<div class="hhtop"><div class="hhdate">' + esc(S.today().split("-").reverse().join(".")) + ' · ' + (biz ? "Business English" : "Schule") + '</div>' +
       '<h1>' + greet + '</h1><p class="hhtip">' + esc(tip) + '</p></div>' +
       '<div class="hhgoal"><div class="hhring" style="--p:' + pct + '"><b class="tnum">' + pct + '%</b></div><small>Tagesziel</small></div>' +
-      (seasonCloud() || newsCloud()) + duelCloud() + '<div class="hhbubble" id="hhBub">' + esc(cheer) + '</div>' +
+      (seasonCloud() || adventCloud() || newsCloud()) + duelCloud() + '<div class="hhbubble" id="hhBub">' + esc(cheer) + '</div>' +
       '<div class="hhpod"><i></i></div><button class="hhfig" id="hhFig" data-act="hhdance" aria-label="Figur antippen">' + heroHtml(pf.avatar, 0) + '</button>' +
       '<div class="hhbar"><div class="hhrank"><b>' + esc(rn) + '</b><div class="hhxp"><i style="width:' + xpPct + '%"></i></div><small class="tnum">' + (r.next ? toNext + ' XP bis ' + esc(r.next.n) : "Höchster Rang") + '</small></div>' +
       '<div class="hhchips"><span class="hhc">🔥 <b class="tnum">' + st.streak.count + '</b></span><span class="hhc">🪙 <b class="tnum">' + st.coins + '</b></span></div></div>' +
@@ -12172,11 +12358,98 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var top = segBar("spielen", spielSeg, [["challenge", "🏆 Challenge"], ["arena", "🕹️ Arena"], ["freunde", "👥 Freunde"], ["crew", "🛡️ Crew"], ["rang", "🥇 Liga"]]);
     view.innerHTML = '<div class="stack">' + top + (spielSeg === "arena" ? modiHtml("spiel") : spielSeg === "freunde" ? friendsHtml() : spielSeg === "crew" ? crewHtml() : spielSeg === "rang" ? boardHtml() : challengeHtml()) + '</div>';
   }
+  /* ---------- Wichtel-Kalender (Advent, v2.160): Logik in engine.js (adventInfo/advPlan/advWin) ---------- */
+  var ADV_ICON = { "ac:nikolaus": "🎅", "ac:xschal": "🧣", "ac:geweih": "🦌", "ac:schlitten": "🛷", "fr:lichter": "🎁" };
+  var ADV_GAME = { blitz: "Wörter-Blitz", match: "Match", survival: "Wichtel-Marathon" };
+  function advDoorIcon(r) { return r.item ? ADV_ICON[r.item] || "🎁" : r.boost ? "⚡" : r.xp ? "⭐" : r.flake && !r.c ? "❄️" : "🪙"; }
+  function advRewText(r, late) {
+    var t = [], c = r.c || 0; if (late) c = Math.floor(c / 2);
+    if (c) t.push("🪙 " + c + " Münzen" + (late ? " (halb)" : "")); if (r.xp) t.push("⭐ " + r.xp + " XP"); if (r.boost) t.push("⚡ XP-Booster");
+    if (r.flake) t.push("❄️ +1 Joker"); if (r.item) { var it = S.itemById(r.item); t.push((ADV_ICON[r.item] || "🎁") + " " + (it ? it.label : "Überraschung")); }
+    return t.join(" · ");
+  }
+  function advStory(d) { var st = S.adventInfo().doors[d - 1].story; return '<div class="bub advbub">' + esc(st[0]) + '<div class="small muted" lang="en" style="margin-top:6px">' + esc(st[1]) + ' <button class="chip" data-act="advsay" data-d="' + d + '" aria-label="Vorlesen">🔊</button></div></div>'; }
+  function viewAdvent(ai, top) {
+    var h = '<div class="stack">' + top;
+    if (ai.phase === "pre") {
+      h += '<section class="card advhero"><div class="eyebrow">🎄 Wichtel-Kalender</div><h2 style="margin:4px 0">Noch ' + ai.left + (ai.left === 1 ? " Tag" : " Tage") + ' bis zum 1. Dezember</h2><p class="small muted" style="margin:0 0 10px">Wichtel Wolle braucht deine Hilfe: Ein Schneewirbel hat 24 Wörter-Sterne verstreut. Jeden Tag öffnet sich ein Türchen, wenn du das Spiel des Tages gewinnst. Es warten Münzen, XP, Booster und besondere Sachen zum Anziehen.</p>' + advStory(1) + '</section></div>';
+      view.innerHTML = h; return;
+    }
+    var cand = ""; for (var k = 0; k < 4; k++) cand += '<span class="' + (k < ai.candles ? "" : "off") + '">🕯️</span>';
+    h += '<div class="row" style="align-items:center"><h1 style="font-size:22px;flex:1 1 auto">🎄 Wichtel-Kalender</h1><span class="pill tnum nowrap" title="Joker zum Nachholen">❄️ ' + ai.flakes + '</span></div>' +
+      '<div class="advcan">' + cand + '<small class="muted">Adventskerzen</small></div><div class="advgrid">' +
+      ai.doors.map(function (x) {
+        var ic = x.st === "open" ? advDoorIcon(x.rew) : x.st === "today" ? "🎮" : x.st === "late" ? "❄️" : x.d === 6 ? "🎅?" : "";
+        return '<button class="advd st-' + x.st + (x.d === 24 ? " fin" : "") + '" data-act="advdoor" data-d="' + x.d + '" aria-label="Türchen ' + x.d + '"><b>' + x.d + '</b><i>' + ic + '</i></button>';
+      }).join("") + '</div>' +
+      '<section class="card"><div class="small muted">Wichtel-Sterne</div><div class="bar" style="margin-top:6px"><i style="width:' + Math.round(ai.open * 100 / 24) + '%"></i></div><div class="small muted" style="margin-top:4px">' + ai.open + ' von 24 · am 24. leuchtet der ganze Baum</div></section>';
+    var lastD = 0; ai.doors.forEach(function (x) { if (x.st === "open") lastD = x.d; });
+    h += '<section class="card"><div class="eyebrow">Die Geschichte</div>' + advStory(lastD || 1) + '</section>' +
+      '<details class="card"><summary><b>So funktioniert der Kalender</b></summary><p class="small muted" style="margin:8px 0 0">Jedes Türchen öffnet sich nur an seinem Tag. Gewinne das Spiel des Tages (richtige Antworten in einer Runde mit Weihnachtswörtern), dann bekommst du das Geschenk. Klappt es nicht, darfst du es heute so oft probieren, wie du willst. Verpasst du einen Tag, holst du das Türchen mit einem <b>❄️ Joker</b> bis zum 24. Dezember nach (Münzen dann zur Hälfte, alles andere voll). Du startest mit 2 Jokern, alle 5 geöffneten Türchen gibt es einen neuen (höchstens 3).</p></details></div>';
+    view.innerHTML = h;
+  }
+  function advSheet(d, mode) {
+    var ai = S.adventInfo(), x = ai.doors[d - 1], pl = S.advPlan(d), ov = document.createElement("div"); ov.className = "srmd";
+    ov.innerHTML = '<div class="dsh" style="text-align:center;max-height:86vh;overflow:auto"><div class="dshg"></div><div class="eyebrow">🎄 Türchen ' + d + (d === 6 ? " · Nikolaus 🎅" : d === 24 ? " · Heiligabend" : "") + '</div>' + advStory(d) +
+      '<div class="small muted" style="margin:10px 0 2px">Geschenk</div><div><b>' + (mode === "open" ? "" : "") + esc(advRewText(x.rew, mode === "late")) + '</b></div>' +
+      (mode === "open" ? '<p class="small muted" style="margin:10px 0">Dieses Türchen ist schon offen' + (x.late ? " (nachgeholt)" : "") + '. ✓</p>' :
+        '<div class="small muted" style="margin:10px 0 2px">Spiel des Tages</div><div><b>' + ADV_GAME[pl.mode] + '</b> – schaffe <b>' + pl.need + '</b> richtige Antworten. Du darfst so oft probieren, wie du willst.</div>' +
+        (mode === "late" ? '<div class="small" style="margin-top:6px">❄️ Du setzt einen Joker ein (du hast ' + ai.flakes + ').</div>' : "")) +
+      '<div class="row" style="gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap">' + (mode === "open" ? "" : '<button class="btn" data-d="go">' + (mode === "late" ? "❄️ Nachholen · Spiel starten" : "▶ Spiel starten") + '</button>') + '<button class="btn soft" data-d="x">Schließen</button></div></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-d]"), k = b && b.getAttribute("data-d"), sb = e.target.closest("[data-act=advsay]");
+      if (sb) { speak(S.adventInfo().doors[d - 1].story[1], "en"); return; }
+      if (e.target === ov || k === "x") { ov.remove(); return; }
+      if (k === "go") { ov.remove(); advStart(d); }
+    });
+  }
+  function advDoor(d) {
+    var ai = S.adventInfo(), x = ai.doors[d - 1], c = S.advCan(d);
+    if (x.st === "open") return advSheet(d, "open");
+    if (c.ok) return advSheet(d, c.late ? "late" : "play");
+    toast(c.why === "flake" ? "Verpasst – du hast keinen ❄️ Joker mehr zum Nachholen." : c.why === "over" ? "Der Kalender ist vorbei." : "Noch zu – dieses Türchen öffnet sich am " + d + ". Dezember. 🎄", 3600);
+  }
+  function advStart(d) {
+    var c = S.advCan(d); if (!c.ok) return;
+    var pl = S.advPlan(d), ws = pl.words.map(function (id) { return S.byId(id); }).filter(Boolean);
+    if (!global.ARENA || ws.length < 8) { toast("Das Spiel ist gerade nicht verfügbar."); return; }
+    global.ARENA.start(pl.mode, { words: ws, boss: { id: "adv" + d, title: "Türchen " + d, mode: pl.mode, need: pl.need, base: pl.need, help: 0, advent: d } });
+  }
+  var advLast = null;
+  function advReveal() {
+    var o = advLast || (S.state.advent && S.state.advent.last); if (!o) { tab = "beute"; beuteSeg = "advent"; render(); return; }
+    var ov = document.createElement("div"), it = o.item; ov.className = "srmd";
+    var lines = []; if (o.coins) lines.push("🪙 +" + o.coins + " Münzen" + (o.late ? " (nachgeholt: halb)" : "")); if (o.xp) lines.push("⭐ +" + o.xp + " XP"); if (o.boost) lines.push("⚡ XP-Booster im Vorrat");
+    if (o.flake) lines.push("❄️ +" + o.flake + " Joker"); if (it) lines.push((ADV_ICON[it.id] || "🎁") + " " + it.label + " – gehört dir jetzt!"); if (o.master) lines.push("🏅 Abzeichen „Wichtel-Meister“");
+    ov.innerHTML = '<div class="dsh" style="text-align:center;max-height:88vh;overflow:auto"><div class="dshg"></div><div class="eyebrow">🎄 Türchen ' + o.day + ' geöffnet!</div><div style="font-size:64px;line-height:1.1;margin:6px 0">' + (it ? ADV_ICON[it.id] || "🎁" : o.boost ? "⚡" : o.xp ? "⭐" : "🪙") + '</div>' +
+      '<div style="margin:4px 0 8px">' + lines.map(function (l) { return '<div><b>' + esc(l) + '</b></div>'; }).join("") + '</div>' +
+      '<div class="bub advbub" style="text-align:left">' + esc(o.story[0]) + '<div class="small muted" lang="en" style="margin-top:6px">' + esc(o.story[1]) + '</div></div>' +
+      '<div class="row" style="gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap">' + (it && it.kind === "acc" ? '<button class="btn" data-d="wear">Gleich anziehen</button>' : "") + '<button class="btn soft" data-d="ok">Weiter ▶</button></div></div>';
+    document.body.appendChild(ov);
+    try { if (S.state.settings.audio) global.VTC.sound(S.state.profile.snd, true); } catch (e) {}
+    ov.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-d]"), k = b && b.getAttribute("data-d");
+      if (k === "wear") { var r = S.accToggle(S.state.profile.avatar, it.id); toast(r.error || (r.on ? it.label + " sitzt!" : "Abgenommen")); renderHeader(); return; }
+      if (k === "ok" || e.target === ov) { ov.remove(); tab = "beute"; beuteSeg = "advent"; renderHeader(); render(); view.scrollTop = 0; }
+    });
+  }
+  function adventCloud() {
+    var ai = S.adventInfo(); if (ai.phase === "off" || ai.phase === "over") return "";
+    var today = ai.phase === "run" ? ai.doors[ai.day - 1] : null;
+    if (today && today.st === "open") return "";
+    var t = ai.phase === "pre" ? ["Wichtel-Kalender", "Noch " + ai.left + (ai.left === 1 ? " Tag" : " Tage") + " bis zum 1. Dezember"] : ["Türchen " + ai.day + " wartet!", "Gewinne das Spiel des Tages ✨"];
+    return '<div class="newscloud"><i class="ncs s1">✨</i><i class="ncs s2">⭐</i><i class="ncs s3">✨</i><span class="ncnew">' + (ai.phase === "pre" ? "BALD" : "🎄") + '</span><button class="ncbody" data-act="advgo"><span class="nci">🎄</span><span class="nct"><b>' + esc(t[0]) + '</b><small>' + esc(t[1]) + '</small></span></button></div>';
+  }
   function viewBeute() {
     var LEG = { pass: "heute", shop: "laden", showroom: "spind" };
     if (LEG[beuteSeg]) beuteSeg = LEG[beuteSeg];   // alte Namen (Links, Wolken) leben weiter
-    var top = segBar("beute", beuteSeg, [["heute", "🎯 Heute"], ["laden", "🛍️ Laden"], ["spind", "🧍 Spind"]]);
-    if (beuteSeg === "laden") { viewShop(); topSegs(top); }
+    var ai = S.adventInfo(), segs = [["heute", "🎯 Heute"], ["laden", "🛍️ Laden"], ["spind", "🧍 Spind"]];
+    if (ai.phase !== "off") segs.push(["advent", "🎄 Advent"]); else if (beuteSeg === "advent") beuteSeg = "heute";
+    var top = segBar("beute", beuteSeg, segs);
+    if (ai.phase !== "off") top = top.replace('class="segs"', 'class="segs s4"');
+    if (beuteSeg === "advent") viewAdvent(ai, top);
+    else if (beuteSeg === "laden") { viewShop(); topSegs(top); }
     else if (beuteSeg === "spind") viewSpind(top);
     else {
       var pend = S.pathState().pending.length;
@@ -12717,7 +12990,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var setName = it.reward ? (S.SETS.filter(function (s) { return s.reward === it.id; })[0] || {}).name : "";
     var star = '<button class="rwish" data-act="wish" data-id="' + esc(it.id) + '" aria-pressed="' + (wishId === it.id) + '" aria-label="Wunsch">⭐</button>';
     var action = own ? '<button class="rbtn' + (act ? " on" : "") + '" data-act="equip" data-id="' + esc(it.id) + '">' + (act ? "✓ aktiv" : "Auswählen") + '</button>'
-      : it.pass ? '<span class="rpill">🎁 ' + esc(it.pass) + '-Pass</span>' : it.reward ? '<span class="rpill">🎁 ' + esc(setName) + '</span>'
+      : it.pass === "Advent" ? '<span class="rpill">🎄 Wichtel-Kalender</span>' : it.pass ? '<span class="rpill">🎁 ' + esc(it.pass) + '-Pass</span>' : it.reward ? '<span class="rpill">🎁 ' + esc(setName) + '</span>'
       : soon ? '<span class="rpill">🕒 Kommt bald</span>'
       : locked ? '<span class="rpill">🔒 ab ' + esc(it.rank) + '</span>'
       : '<div class="small tnum" style="margin-bottom:4px">🪙 ' + (deal ? '<s style="opacity:.55">' + it.cost + '</s> ' : "") + '<b>' + price + '</b></div><button class="rbtn buy" data-act="dealview" data-id="' + esc(it.id) + '">👀 Ansehen</button>';
@@ -12731,7 +13004,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   function shopRow(it, wishId) {
     var own = S.owns(it), act = S.isActive(it), locked = !own && lockNote(it), price = S.priceOf(it), deal = price !== it.cost;
     var setName = it.reward ? (S.SETS.filter(function (s) { return s.reward === it.id; })[0] || {}).name : "";
-    var buyBtn = it.pass ? '<span class="pill" title="Gibt es nur im Pass">🎁 ' + esc(it.pass) + '-Pass</span>' : it.reward ? '<span class="pill" title="Gibt es nur für das komplette Set">🎁 ' + esc(setName) + '</span>'
+    var buyBtn = it.pass === "Advent" ? '<span class="pill" title="Gibt es nur im Wichtel-Kalender">🎄 Wichtel-Kalender</span>' : it.pass ? '<span class="pill" title="Gibt es nur im Pass">🎁 ' + esc(it.pass) + '-Pass</span>' : it.reward ? '<span class="pill" title="Gibt es nur für das komplette Set">🎁 ' + esc(setName) + '</span>'
       : '<button class="chip" data-act="wish" data-id="' + esc(it.id) + '" aria-pressed="' + (wishId === it.id) + '" aria-label="Wunsch" style="margin-right:6px">⭐</button><button class="btn soft" data-act="buy" data-id="' + esc(it.id) + '">🪙 ' + (deal ? '<s style="opacity:.55;font-weight:500">' + it.cost + '</s> ' : "") + price + '</button>';
     return '<div class="shopitem"><span class="si">' + shopIcon(it) + '</span>' +
       '<span style="flex:1 1 auto"><b class="small">' + esc(it.label) + '</b>' + enLine(it) + '<br><span class="small muted">' + KIND_NAME[it.kind] + (it.cost > 0 ? " · " + tierOf(it.cost) : "") +
@@ -14490,6 +14763,9 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     else if (a === "lockinfo") { var li = S.itemById(act.getAttribute("data-id")); if (li) { var need = S.minXp(li) - S.state.xp, sw = S.shopSoon(li); toast("🔒 " + (sw ? "Geheimes Stück" : li.label) + (sw ? ": kommt in " + sw + (sw === 1 ? " Woche" : " Wochen") + " in den Shop" : "") + (li.rank ? ": ab Rang " + li.rank : "") + (need > 0 ? " · noch " + need.toLocaleString("de-DE") + " XP" : "") + (li.cost && !sw ? " · " + li.cost + " 🪙" : ""), 4200); } }
     else if (a === "shoptab") { shopTab = act.getAttribute("data-k"); beuteSeg = "laden"; render(); }
     else if (a === "dealview") dealSheet(act.getAttribute("data-id"));
+    else if (a === "advdoor") advDoor(+act.getAttribute("data-d"));
+    else if (a === "advgo") { tab = "beute"; beuteSeg = "advent"; render(); view.scrollTop = 0; }
+    else if (a === "advsay") speak(S.adventInfo().doors[+act.getAttribute("data-d") - 1].story[1], "en");
     else if (a === "shoprar") { shopRar = act.getAttribute("data-k"); render(); }
     else if (a === "checkupdate") {
       if (!navigator.serviceWorker) return toast("Dieses Gerät kennt keine App-Updates. Seite einfach neu laden.");
@@ -14605,7 +14881,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     toast: toast,
     refreshHeader: renderHeader,
     afterArena: function () { render(); },
-    bossFinish: bossFinish,
+    bossFinish: bossFinish, adventReveal: advReveal,
     danceWin: danceWin,
     openChest: openChest,
     arenaScore: function (mode, score) { if (socOn() && /^(match|blitz|survival)$/.test(mode)) global.WordySync.social("POST", "/score", { mode: mode, score: score }).catch(function () {}); }
@@ -14779,7 +15055,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   }
 
   /* ---------- Rahmen ---------- */
-  function noteText() { return (run.boss ? "⚔️ Boss " + run.correct + " / " + run.boss.need + (run.boss.help ? " (erleichtert)" : "") + " · " : "") + (run.note || ""); }
+  function noteText() { return (run.boss ? (run.boss.advent ? "🎄 Türchen " : "⚔️ Boss ") + run.correct + " / " + run.boss.need + (run.boss.help ? " (erleichtert)" : "") + " · " : "") + (run.note || ""); }
   function chrome(inner) {
     var t = run.mode === "survival" ? "" :
       '<div class="ar-time"><i id="arBar" style="width:100%"></i></div>';
@@ -15041,7 +15317,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (run.maxCombo >= 15) give("combo15");
     var acc = run.items ? Math.round(run.correct * 100 / run.items) : 0;
     var head = !complete ? "Runde beendet"
-      : boss ? (boss.pass ? "Boss besiegt!" : "Knapp daneben – noch ein Versuch")
+      : boss ? (boss.pass ? (boss.advent ? "Türchen-Spiel geschafft!" : "Boss besiegt!") : "Knapp daneben – noch ein Versuch")
       : reason === "cleared" ? "Kartei leer geräumt!"
       : isRecord ? "Neuer Bestwert!"
       : reason === "dead" ? "Erwischt."
@@ -15050,7 +15326,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var line = run.mode === "survival"
       ? run.correct + " " + (run.correct === 1 ? "Wort" : "Wörter") + " am Stück"
       : score + " Punkte";
-    if (boss && boss.pass && global.VTUI && global.VTUI.danceWin) global.setTimeout(function () { global.VTUI.danceWin(true, "Boss besiegt!"); }, 700);
+    if (boss && boss.pass && !boss.advent && global.VTUI && global.VTUI.danceWin) global.setTimeout(function () { global.VTUI.danceWin(true, "Boss besiegt!"); }, 700);
     el.innerHTML = '<div class="ar-end">' +
       '<div class="ar-endicon">' + (isRecord ? "🏆" : reason === "cleared" ? "🎯" : esc(m.icon)) + '</div>' +
       '<h1>' + esc(head) + '</h1>' +
@@ -15062,13 +15338,13 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       '<div><b class="tnum">' + Math.max(rec.best, score) + '</b><span>Bestwert</span></div>' +
       '</div>' +
       (run.cfg && run.cfg.duel ? '<div id="arDuel" class="ar-duel">' + esc(run.cfg.duel.wait || "Ergebnis wird übertragen …") + '</div>' : '') +
-      '<p class="ar-note">' + (run.boss ? (boss && boss.pass ? "Die Münzen gibt es in der Truhe" : "Schaffst du das Ziel, wartet eine Truhe") : coins ? "🪙 " + coins + " Münzen" + (capped ? " (Tageslimit der Arena erreicht)" : "") : (capped ? "Arena-Münzen für heute sind voll – lerne neue Wörter für mehr" : (complete ? "Keine Münzen diesmal" : "Abgebrochen: keine Münzen, die XP für deine Antworten bleiben"))) +
+      '<p class="ar-note">' + (run.boss ? (run.boss.advent ? (boss && boss.pass ? "Das Türchen geht auf!" : "Schaffe das Ziel, dann geht das Türchen auf") : boss && boss.pass ? "Die Münzen gibt es in der Truhe" : "Schaffst du das Ziel, wartet eine Truhe") : coins ? "🪙 " + coins + " Münzen" + (capped ? " (Tageslimit der Arena erreicht)" : "") : (capped ? "Arena-Münzen für heute sind voll – lerne neue Wörter für mehr" : (complete ? "Keine Münzen diesmal" : "Abgebrochen: keine Münzen, die XP für deine Antworten bleiben"))) +
       (boss ? " · Boss: " + run.correct + " von " + run.boss.need + " richtig nötig" + (boss.pass ? " " + "★".repeat(boss.stars) : "") : "") +
       (rw.goalReached ? " · Tagesziel erreicht" : "") +
       rw.missions.filter(function (x) { return x.type === "arena"; }).map(function (x) { return " · Mission geschafft: +" + x.coins + " 🪙"; }).join("") +
       (run.cleared ? " · " + run.cleared + " aus der Fehlerkartei befreit" : "") + '</p>' +
       (fresh.length ? '<p class="ar-note" style="color:var(--ar-gold)">🏅 Neu: ' + fresh.map(function (b) { return esc(b.n); }).join(", ") + '</p>' : "") +
-      '<div class="ar-endbtns">' + (boss && boss.pass ? (boss.chest ? '<button class="ar-btn" data-a="chest">🎁 Truhe öffnen</button>' : '<button class="ar-btn" data-a="quit">Weiter auf dem Pfad</button>')
+      '<div class="ar-endbtns">' + (boss && boss.pass ? (boss.advent ? '<button class="ar-btn" data-a="advent">🎄 Türchen öffnen</button>' : boss.chest ? '<button class="ar-btn" data-a="chest">🎁 Truhe öffnen</button>' : '<button class="ar-btn" data-a="quit">Weiter auf dem Pfad</button>')
         : run.cfg && run.cfg.duel ? '<button class="ar-btn" data-a="duelnext" id="arNext" hidden>' + esc(run.cfg.duel.nextLabel || "🔁 Revanche") + '</button><button class="ar-btn ghost" data-a="quit">Zurück</button>'
         : '<button class="ar-btn" data-a="again">' + (boss ? "Nochmal versuchen" : "Noch mal") + '</button><button class="ar-btn ghost" data-a="quit">Zurück</button>') + '</div></div>';
     S.save(true);
@@ -15145,6 +15421,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       if (a === "again") { var m = run.mode, o = run.cfg; close(); return start(m, o); }
       if (a === "duelnext") { var nx = run.cfg && run.cfg.duel && run.cfg.duel.next; close(); if (nx) nx(); return; }
       if (a === "chest") { close(); return global.VTUI.openChest(); }
+      if (a === "advent") { close(); return global.VTUI.adventReveal(); }
     }
     if (run.done) return;
     var l = e.target.closest("[data-l]"), r = e.target.closest("[data-r]");

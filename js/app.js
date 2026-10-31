@@ -795,7 +795,7 @@
       (canEq ? '<button class="sbtn b2" data-m="eq">' + (it.kind === "sticker" ? (eq ? "Ablösen" : "Aufkleben") : eq ? "✓ Aktiv" : "Tragen") + '</button>' : "") +
       (it.owned && (it.kind === "dance" || it.kind === "outfit" || it.kind === "kit") ? '<button class="sbtn b3" data-m="try">▶ Ansehen</button>' : "") +
       (!it.owned && it.it && !it.it.pass && !it.it.reward ? '<button class="sbtn b2" data-m="shop">Zum Shop</button>' : "") +
-      (!it.owned && it.it && it.it.pass ? '<button class="sbtn b2" data-m="pass">Zum Pass</button>' : "") + '<button class="sbtn b4" data-m="x">Schließen</button></div></div>';
+      (!it.owned && it.it && it.it.pass === "Advent" ? '<button class="sbtn b2" data-m="advent">Zum Wichtel-Kalender</button>' : !it.owned && it.it && it.it.pass ? '<button class="sbtn b2" data-m="pass">Zum Pass</button>' : "") + '<button class="sbtn b4" data-m="x">Schließen</button></div></div>';
     document.body.appendChild(ov);
     if (it.owned) srMark(id);
     ov.addEventListener("click", function (e) {
@@ -805,6 +805,7 @@
       else if (mm === "eq") { var r = S.equip(it.it.id); if (r.error) return toast(r.error); ov.remove(); toast(it.kind === "sticker" ? (r.on ? "Aufgeklebt" : "Abgelöst") : "Getragen: " + it.label); render(); }
       else if (mm === "try") { global.VTC.dance({ av: S.state.profile.avatar, avatar: avatarHtml(S.state.profile.avatar, true), outfit: it.kind === "dance" ? S.state.profile.outfit : it.it.val, dance: it.kind === "dance" ? it.it.val : (S.state.profile.dance || "wackler"), title: it.label }); }
       else if (mm === "shop") { ov.remove(); shopTab = it.kind === "kit" ? "kit" : it.it.set === "fn" ? "fn" : it.kind; tab = "shop"; shopSeg = "shop"; render(); view.scrollTop = 0; }
+      else if (mm === "advent") { ov.remove(); tab = "beute"; beuteSeg = "advent"; render(); view.scrollTop = 0; }
       else if (mm === "pass") { ov.remove(); tab = "beute"; beuteSeg = "pass"; render(); view.scrollTop = 0; }
     });
   }
@@ -951,6 +952,11 @@
     return true;
   }
   function bossFinish(boss, correct) {
+    if (boss.advent) {   // Türchen-Spiel des Wichtel-Kalenders
+      var okA = correct >= boss.need, rA = okA ? S.advWin(boss.advent) : null;
+      if (rA && !rA.error) advLast = rA;
+      return { pass: okA, stars: okA ? 1 : 0, advent: boss.advent, chest: false };
+    }
     var pass = correct >= boss.need;
     S.bossRecord(boss, correct, pass);
     var stars = correct >= boss.need * 2 ? 3 : correct >= boss.need * 1.5 ? 2 : 1, res = pass ? S.pathComplete(boss.id, stars) : null;
@@ -1158,7 +1164,7 @@
       '<div class="hhtop"><div class="hhdate">' + esc(S.today().split("-").reverse().join(".")) + ' · ' + (biz ? "Business English" : "Schule") + '</div>' +
       '<h1>' + greet + '</h1><p class="hhtip">' + esc(tip) + '</p></div>' +
       '<div class="hhgoal"><div class="hhring" style="--p:' + pct + '"><b class="tnum">' + pct + '%</b></div><small>Tagesziel</small></div>' +
-      (seasonCloud() || newsCloud()) + duelCloud() + '<div class="hhbubble" id="hhBub">' + esc(cheer) + '</div>' +
+      (seasonCloud() || adventCloud() || newsCloud()) + duelCloud() + '<div class="hhbubble" id="hhBub">' + esc(cheer) + '</div>' +
       '<div class="hhpod"><i></i></div><button class="hhfig" id="hhFig" data-act="hhdance" aria-label="Figur antippen">' + heroHtml(pf.avatar, 0) + '</button>' +
       '<div class="hhbar"><div class="hhrank"><b>' + esc(rn) + '</b><div class="hhxp"><i style="width:' + xpPct + '%"></i></div><small class="tnum">' + (r.next ? toNext + ' XP bis ' + esc(r.next.n) : "Höchster Rang") + '</small></div>' +
       '<div class="hhchips"><span class="hhc">🔥 <b class="tnum">' + st.streak.count + '</b></span><span class="hhc">🪙 <b class="tnum">' + st.coins + '</b></span></div></div>' +
@@ -1554,11 +1560,98 @@
     var top = segBar("spielen", spielSeg, [["challenge", "🏆 Challenge"], ["arena", "🕹️ Arena"], ["freunde", "👥 Freunde"], ["crew", "🛡️ Crew"], ["rang", "🥇 Liga"]]);
     view.innerHTML = '<div class="stack">' + top + (spielSeg === "arena" ? modiHtml("spiel") : spielSeg === "freunde" ? friendsHtml() : spielSeg === "crew" ? crewHtml() : spielSeg === "rang" ? boardHtml() : challengeHtml()) + '</div>';
   }
+  /* ---------- Wichtel-Kalender (Advent, v2.160): Logik in engine.js (adventInfo/advPlan/advWin) ---------- */
+  var ADV_ICON = { "ac:nikolaus": "🎅", "ac:xschal": "🧣", "ac:geweih": "🦌", "ac:schlitten": "🛷", "fr:lichter": "🎁" };
+  var ADV_GAME = { blitz: "Wörter-Blitz", match: "Match", survival: "Wichtel-Marathon" };
+  function advDoorIcon(r) { return r.item ? ADV_ICON[r.item] || "🎁" : r.boost ? "⚡" : r.xp ? "⭐" : r.flake && !r.c ? "❄️" : "🪙"; }
+  function advRewText(r, late) {
+    var t = [], c = r.c || 0; if (late) c = Math.floor(c / 2);
+    if (c) t.push("🪙 " + c + " Münzen" + (late ? " (halb)" : "")); if (r.xp) t.push("⭐ " + r.xp + " XP"); if (r.boost) t.push("⚡ XP-Booster");
+    if (r.flake) t.push("❄️ +1 Joker"); if (r.item) { var it = S.itemById(r.item); t.push((ADV_ICON[r.item] || "🎁") + " " + (it ? it.label : "Überraschung")); }
+    return t.join(" · ");
+  }
+  function advStory(d) { var st = S.adventInfo().doors[d - 1].story; return '<div class="bub advbub">' + esc(st[0]) + '<div class="small muted" lang="en" style="margin-top:6px">' + esc(st[1]) + ' <button class="chip" data-act="advsay" data-d="' + d + '" aria-label="Vorlesen">🔊</button></div></div>'; }
+  function viewAdvent(ai, top) {
+    var h = '<div class="stack">' + top;
+    if (ai.phase === "pre") {
+      h += '<section class="card advhero"><div class="eyebrow">🎄 Wichtel-Kalender</div><h2 style="margin:4px 0">Noch ' + ai.left + (ai.left === 1 ? " Tag" : " Tage") + ' bis zum 1. Dezember</h2><p class="small muted" style="margin:0 0 10px">Wichtel Wolle braucht deine Hilfe: Ein Schneewirbel hat 24 Wörter-Sterne verstreut. Jeden Tag öffnet sich ein Türchen, wenn du das Spiel des Tages gewinnst. Es warten Münzen, XP, Booster und besondere Sachen zum Anziehen.</p>' + advStory(1) + '</section></div>';
+      view.innerHTML = h; return;
+    }
+    var cand = ""; for (var k = 0; k < 4; k++) cand += '<span class="' + (k < ai.candles ? "" : "off") + '">🕯️</span>';
+    h += '<div class="row" style="align-items:center"><h1 style="font-size:22px;flex:1 1 auto">🎄 Wichtel-Kalender</h1><span class="pill tnum nowrap" title="Joker zum Nachholen">❄️ ' + ai.flakes + '</span></div>' +
+      '<div class="advcan">' + cand + '<small class="muted">Adventskerzen</small></div><div class="advgrid">' +
+      ai.doors.map(function (x) {
+        var ic = x.st === "open" ? advDoorIcon(x.rew) : x.st === "today" ? "🎮" : x.st === "late" ? "❄️" : x.d === 6 ? "🎅?" : "";
+        return '<button class="advd st-' + x.st + (x.d === 24 ? " fin" : "") + '" data-act="advdoor" data-d="' + x.d + '" aria-label="Türchen ' + x.d + '"><b>' + x.d + '</b><i>' + ic + '</i></button>';
+      }).join("") + '</div>' +
+      '<section class="card"><div class="small muted">Wichtel-Sterne</div><div class="bar" style="margin-top:6px"><i style="width:' + Math.round(ai.open * 100 / 24) + '%"></i></div><div class="small muted" style="margin-top:4px">' + ai.open + ' von 24 · am 24. leuchtet der ganze Baum</div></section>';
+    var lastD = 0; ai.doors.forEach(function (x) { if (x.st === "open") lastD = x.d; });
+    h += '<section class="card"><div class="eyebrow">Die Geschichte</div>' + advStory(lastD || 1) + '</section>' +
+      '<details class="card"><summary><b>So funktioniert der Kalender</b></summary><p class="small muted" style="margin:8px 0 0">Jedes Türchen öffnet sich nur an seinem Tag. Gewinne das Spiel des Tages (richtige Antworten in einer Runde mit Weihnachtswörtern), dann bekommst du das Geschenk. Klappt es nicht, darfst du es heute so oft probieren, wie du willst. Verpasst du einen Tag, holst du das Türchen mit einem <b>❄️ Joker</b> bis zum 24. Dezember nach (Münzen dann zur Hälfte, alles andere voll). Du startest mit 2 Jokern, alle 5 geöffneten Türchen gibt es einen neuen (höchstens 3).</p></details></div>';
+    view.innerHTML = h;
+  }
+  function advSheet(d, mode) {
+    var ai = S.adventInfo(), x = ai.doors[d - 1], pl = S.advPlan(d), ov = document.createElement("div"); ov.className = "srmd";
+    ov.innerHTML = '<div class="dsh" style="text-align:center;max-height:86vh;overflow:auto"><div class="dshg"></div><div class="eyebrow">🎄 Türchen ' + d + (d === 6 ? " · Nikolaus 🎅" : d === 24 ? " · Heiligabend" : "") + '</div>' + advStory(d) +
+      '<div class="small muted" style="margin:10px 0 2px">Geschenk</div><div><b>' + (mode === "open" ? "" : "") + esc(advRewText(x.rew, mode === "late")) + '</b></div>' +
+      (mode === "open" ? '<p class="small muted" style="margin:10px 0">Dieses Türchen ist schon offen' + (x.late ? " (nachgeholt)" : "") + '. ✓</p>' :
+        '<div class="small muted" style="margin:10px 0 2px">Spiel des Tages</div><div><b>' + ADV_GAME[pl.mode] + '</b> – schaffe <b>' + pl.need + '</b> richtige Antworten. Du darfst so oft probieren, wie du willst.</div>' +
+        (mode === "late" ? '<div class="small" style="margin-top:6px">❄️ Du setzt einen Joker ein (du hast ' + ai.flakes + ').</div>' : "")) +
+      '<div class="row" style="gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap">' + (mode === "open" ? "" : '<button class="btn" data-d="go">' + (mode === "late" ? "❄️ Nachholen · Spiel starten" : "▶ Spiel starten") + '</button>') + '<button class="btn soft" data-d="x">Schließen</button></div></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-d]"), k = b && b.getAttribute("data-d"), sb = e.target.closest("[data-act=advsay]");
+      if (sb) { speak(S.adventInfo().doors[d - 1].story[1], "en"); return; }
+      if (e.target === ov || k === "x") { ov.remove(); return; }
+      if (k === "go") { ov.remove(); advStart(d); }
+    });
+  }
+  function advDoor(d) {
+    var ai = S.adventInfo(), x = ai.doors[d - 1], c = S.advCan(d);
+    if (x.st === "open") return advSheet(d, "open");
+    if (c.ok) return advSheet(d, c.late ? "late" : "play");
+    toast(c.why === "flake" ? "Verpasst – du hast keinen ❄️ Joker mehr zum Nachholen." : c.why === "over" ? "Der Kalender ist vorbei." : "Noch zu – dieses Türchen öffnet sich am " + d + ". Dezember. 🎄", 3600);
+  }
+  function advStart(d) {
+    var c = S.advCan(d); if (!c.ok) return;
+    var pl = S.advPlan(d), ws = pl.words.map(function (id) { return S.byId(id); }).filter(Boolean);
+    if (!global.ARENA || ws.length < 8) { toast("Das Spiel ist gerade nicht verfügbar."); return; }
+    global.ARENA.start(pl.mode, { words: ws, boss: { id: "adv" + d, title: "Türchen " + d, mode: pl.mode, need: pl.need, base: pl.need, help: 0, advent: d } });
+  }
+  var advLast = null;
+  function advReveal() {
+    var o = advLast || (S.state.advent && S.state.advent.last); if (!o) { tab = "beute"; beuteSeg = "advent"; render(); return; }
+    var ov = document.createElement("div"), it = o.item; ov.className = "srmd";
+    var lines = []; if (o.coins) lines.push("🪙 +" + o.coins + " Münzen" + (o.late ? " (nachgeholt: halb)" : "")); if (o.xp) lines.push("⭐ +" + o.xp + " XP"); if (o.boost) lines.push("⚡ XP-Booster im Vorrat");
+    if (o.flake) lines.push("❄️ +" + o.flake + " Joker"); if (it) lines.push((ADV_ICON[it.id] || "🎁") + " " + it.label + " – gehört dir jetzt!"); if (o.master) lines.push("🏅 Abzeichen „Wichtel-Meister“");
+    ov.innerHTML = '<div class="dsh" style="text-align:center;max-height:88vh;overflow:auto"><div class="dshg"></div><div class="eyebrow">🎄 Türchen ' + o.day + ' geöffnet!</div><div style="font-size:64px;line-height:1.1;margin:6px 0">' + (it ? ADV_ICON[it.id] || "🎁" : o.boost ? "⚡" : o.xp ? "⭐" : "🪙") + '</div>' +
+      '<div style="margin:4px 0 8px">' + lines.map(function (l) { return '<div><b>' + esc(l) + '</b></div>'; }).join("") + '</div>' +
+      '<div class="bub advbub" style="text-align:left">' + esc(o.story[0]) + '<div class="small muted" lang="en" style="margin-top:6px">' + esc(o.story[1]) + '</div></div>' +
+      '<div class="row" style="gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap">' + (it && it.kind === "acc" ? '<button class="btn" data-d="wear">Gleich anziehen</button>' : "") + '<button class="btn soft" data-d="ok">Weiter ▶</button></div></div>';
+    document.body.appendChild(ov);
+    try { if (S.state.settings.audio) global.VTC.sound(S.state.profile.snd, true); } catch (e) {}
+    ov.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-d]"), k = b && b.getAttribute("data-d");
+      if (k === "wear") { var r = S.accToggle(S.state.profile.avatar, it.id); toast(r.error || (r.on ? it.label + " sitzt!" : "Abgenommen")); renderHeader(); return; }
+      if (k === "ok" || e.target === ov) { ov.remove(); tab = "beute"; beuteSeg = "advent"; renderHeader(); render(); view.scrollTop = 0; }
+    });
+  }
+  function adventCloud() {
+    var ai = S.adventInfo(); if (ai.phase === "off" || ai.phase === "over") return "";
+    var today = ai.phase === "run" ? ai.doors[ai.day - 1] : null;
+    if (today && today.st === "open") return "";
+    var t = ai.phase === "pre" ? ["Wichtel-Kalender", "Noch " + ai.left + (ai.left === 1 ? " Tag" : " Tage") + " bis zum 1. Dezember"] : ["Türchen " + ai.day + " wartet!", "Gewinne das Spiel des Tages ✨"];
+    return '<div class="newscloud"><i class="ncs s1">✨</i><i class="ncs s2">⭐</i><i class="ncs s3">✨</i><span class="ncnew">' + (ai.phase === "pre" ? "BALD" : "🎄") + '</span><button class="ncbody" data-act="advgo"><span class="nci">🎄</span><span class="nct"><b>' + esc(t[0]) + '</b><small>' + esc(t[1]) + '</small></span></button></div>';
+  }
   function viewBeute() {
     var LEG = { pass: "heute", shop: "laden", showroom: "spind" };
     if (LEG[beuteSeg]) beuteSeg = LEG[beuteSeg];   // alte Namen (Links, Wolken) leben weiter
-    var top = segBar("beute", beuteSeg, [["heute", "🎯 Heute"], ["laden", "🛍️ Laden"], ["spind", "🧍 Spind"]]);
-    if (beuteSeg === "laden") { viewShop(); topSegs(top); }
+    var ai = S.adventInfo(), segs = [["heute", "🎯 Heute"], ["laden", "🛍️ Laden"], ["spind", "🧍 Spind"]];
+    if (ai.phase !== "off") segs.push(["advent", "🎄 Advent"]); else if (beuteSeg === "advent") beuteSeg = "heute";
+    var top = segBar("beute", beuteSeg, segs);
+    if (ai.phase !== "off") top = top.replace('class="segs"', 'class="segs s4"');
+    if (beuteSeg === "advent") viewAdvent(ai, top);
+    else if (beuteSeg === "laden") { viewShop(); topSegs(top); }
     else if (beuteSeg === "spind") viewSpind(top);
     else {
       var pend = S.pathState().pending.length;
@@ -2099,7 +2192,7 @@
     var setName = it.reward ? (S.SETS.filter(function (s) { return s.reward === it.id; })[0] || {}).name : "";
     var star = '<button class="rwish" data-act="wish" data-id="' + esc(it.id) + '" aria-pressed="' + (wishId === it.id) + '" aria-label="Wunsch">⭐</button>';
     var action = own ? '<button class="rbtn' + (act ? " on" : "") + '" data-act="equip" data-id="' + esc(it.id) + '">' + (act ? "✓ aktiv" : "Auswählen") + '</button>'
-      : it.pass ? '<span class="rpill">🎁 ' + esc(it.pass) + '-Pass</span>' : it.reward ? '<span class="rpill">🎁 ' + esc(setName) + '</span>'
+      : it.pass === "Advent" ? '<span class="rpill">🎄 Wichtel-Kalender</span>' : it.pass ? '<span class="rpill">🎁 ' + esc(it.pass) + '-Pass</span>' : it.reward ? '<span class="rpill">🎁 ' + esc(setName) + '</span>'
       : soon ? '<span class="rpill">🕒 Kommt bald</span>'
       : locked ? '<span class="rpill">🔒 ab ' + esc(it.rank) + '</span>'
       : '<div class="small tnum" style="margin-bottom:4px">🪙 ' + (deal ? '<s style="opacity:.55">' + it.cost + '</s> ' : "") + '<b>' + price + '</b></div><button class="rbtn buy" data-act="dealview" data-id="' + esc(it.id) + '">👀 Ansehen</button>';
@@ -2113,7 +2206,7 @@
   function shopRow(it, wishId) {
     var own = S.owns(it), act = S.isActive(it), locked = !own && lockNote(it), price = S.priceOf(it), deal = price !== it.cost;
     var setName = it.reward ? (S.SETS.filter(function (s) { return s.reward === it.id; })[0] || {}).name : "";
-    var buyBtn = it.pass ? '<span class="pill" title="Gibt es nur im Pass">🎁 ' + esc(it.pass) + '-Pass</span>' : it.reward ? '<span class="pill" title="Gibt es nur für das komplette Set">🎁 ' + esc(setName) + '</span>'
+    var buyBtn = it.pass === "Advent" ? '<span class="pill" title="Gibt es nur im Wichtel-Kalender">🎄 Wichtel-Kalender</span>' : it.pass ? '<span class="pill" title="Gibt es nur im Pass">🎁 ' + esc(it.pass) + '-Pass</span>' : it.reward ? '<span class="pill" title="Gibt es nur für das komplette Set">🎁 ' + esc(setName) + '</span>'
       : '<button class="chip" data-act="wish" data-id="' + esc(it.id) + '" aria-pressed="' + (wishId === it.id) + '" aria-label="Wunsch" style="margin-right:6px">⭐</button><button class="btn soft" data-act="buy" data-id="' + esc(it.id) + '">🪙 ' + (deal ? '<s style="opacity:.55;font-weight:500">' + it.cost + '</s> ' : "") + price + '</button>';
     return '<div class="shopitem"><span class="si">' + shopIcon(it) + '</span>' +
       '<span style="flex:1 1 auto"><b class="small">' + esc(it.label) + '</b>' + enLine(it) + '<br><span class="small muted">' + KIND_NAME[it.kind] + (it.cost > 0 ? " · " + tierOf(it.cost) : "") +
@@ -3872,6 +3965,9 @@
     else if (a === "lockinfo") { var li = S.itemById(act.getAttribute("data-id")); if (li) { var need = S.minXp(li) - S.state.xp, sw = S.shopSoon(li); toast("🔒 " + (sw ? "Geheimes Stück" : li.label) + (sw ? ": kommt in " + sw + (sw === 1 ? " Woche" : " Wochen") + " in den Shop" : "") + (li.rank ? ": ab Rang " + li.rank : "") + (need > 0 ? " · noch " + need.toLocaleString("de-DE") + " XP" : "") + (li.cost && !sw ? " · " + li.cost + " 🪙" : ""), 4200); } }
     else if (a === "shoptab") { shopTab = act.getAttribute("data-k"); beuteSeg = "laden"; render(); }
     else if (a === "dealview") dealSheet(act.getAttribute("data-id"));
+    else if (a === "advdoor") advDoor(+act.getAttribute("data-d"));
+    else if (a === "advgo") { tab = "beute"; beuteSeg = "advent"; render(); view.scrollTop = 0; }
+    else if (a === "advsay") speak(S.adventInfo().doors[+act.getAttribute("data-d") - 1].story[1], "en");
     else if (a === "shoprar") { shopRar = act.getAttribute("data-k"); render(); }
     else if (a === "checkupdate") {
       if (!navigator.serviceWorker) return toast("Dieses Gerät kennt keine App-Updates. Seite einfach neu laden.");
@@ -3987,7 +4083,7 @@
     toast: toast,
     refreshHeader: renderHeader,
     afterArena: function () { render(); },
-    bossFinish: bossFinish,
+    bossFinish: bossFinish, adventReveal: advReveal,
     danceWin: danceWin,
     openChest: openChest,
     arenaScore: function (mode, score) { if (socOn() && /^(match|blitz|survival)$/.test(mode)) global.WordySync.social("POST", "/score", { mode: mode, score: score }).catch(function () {}); }
