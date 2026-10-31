@@ -269,14 +269,14 @@
       var rn = at["av:" + x.id.slice(3)]; if (rn) x.rank = rn;
     });
   })();
-  /* Zubehör (acc.js): einmal kaufen, jeder Figur einzeln anziehen. [Wert, Platz, Name, Preis]; Platz: head | face | ears | neck | gear (steht hinter der Figur) */
-  var ACC_SLOTS = [["head", "Kopf"], ["face", "Gesicht"], ["ears", "Ohren"], ["neck", "Hals"], ["gear", "Dabei"]];
+  /* Zubehör (acc.js): einmal kaufen, jeder Figur einzeln anziehen. [Wert, Platz, Name, Preis]; Platz: head | face | ears | neck | legs (Beine, über Beinen und Schuhen der ganzen Figur) | gear (steht hinter der Figur) */
+  var ACC_SLOTS = [["head", "Kopf"], ["face", "Gesicht"], ["ears", "Ohren"], ["neck", "Hals"], ["legs", "Beine"], ["gear", "Dabei"]];
   var ACC = [["beanie", "head", "Wintermütze", 60], ["party", "head", "Partyhut", 50], ["zylinder", "head", "Zylinder", 120], ["prop", "head", "Propeller-Kappe", 90], ["cap", "head", "Basecap", 50], ["stroh", "head", "Strohhut", 45], ["blumen", "head", "Blumenkranz", 45], ["heiligen", "head", "Heiligenschein", 80], ["hasen", "head", "Hasenohren", 70], ["teufel", "head", "Teufelshörner", 60], ["eishut", "head", "Eis-Hut", 90], ["pizza", "head", "Pizza-Hut", 80], ["krone", "head", "Goldkrone", 150],
     ["sonne", "face", "Sonnenbrille", 40], ["nerd", "face", "Nerd-Brille", 40], ["mono", "face", "Monokel", 70], ["brille3d", "face", "3D-Brille", 50], ["herz", "face", "Herzbrille", 60], ["schnurr", "face", "Schnurrbart", 30], ["clown", "face", "Clown-Nase", 25], ["ski", "face", "Skibrille", 70],
     ["kopf", "ears", "Kopfhörer", 80], ["waerme", "ears", "Ohrenwärmer", 45], ["ohrring", "ears", "Ohrringe", 35],
     ["schal", "neck", "Schal", 50], ["fliege", "neck", "Fliege", 35], ["kette", "neck", "Goldkette", 90], ["tuch", "neck", "Halstuch", 35], ["medaille", "neck", "Medaille", 60], ["bosskette", "neck", "Boss-Kette ($)", 150], ["mkette", "neck", "Fette Goldkette mit M", 150],
     ["skate", "gear", "Skateboard", 70], ["surf", "gear", "Surfbrett", 100], ["gitarre", "gear", "Gitarre", 150],
-    ["nikolaus", "head", "Nikolaus-Mütze", 70], ["xschal", "neck", "Weihnachts-Schal", 50], ["geweih", "ears", "Rentier-Geweih", 100], ["schlitten", "gear", "Schlitten", 150], ["socken", "gear", "Weihnachtssocken", 60]];
+    ["nikolaus", "head", "Nikolaus-Mütze", 70], ["xschal", "neck", "Weihnachts-Schal", 50], ["geweih", "ears", "Rentier-Geweih", 100], ["schlitten", "gear", "Schlitten", 150], ["socken", "legs", "Weihnachtssocken", 60]];
   SHOP = SHOP.concat(ACC.map(function (a) { return { id: "ac:" + a[0], kind: "acc", slot: a[1], label: a[2], cost: a[3], val: a[0], rar: a[3] <= 40 ? "common" : a[3] <= 70 ? "rare" : a[3] <= 100 ? "epic" : "legend" }; }));
   SHOP.forEach(function (x) { if (x.id === "ac:nikolaus" || x.id === "ac:xschal" || x.id === "ac:geweih" || x.id === "ac:schlitten") x.pass = "Advent"; });   // nur im Wichtel-Kalender (v2.160)
   /* v2.154: Unreal-Preise halbiert (alter Preis in `was`, für die einmalige Gutschrift in priceMigrate) */
@@ -1509,7 +1509,11 @@
     save(true); return { ok: true, slots: n + 1, cost: cost };
   }
   function stickers() { var l = state.profile.stickers; if (!Array.isArray(l)) l = state.profile.stickers = []; return l; }
-  function accOf(av) { var a = (state.profile.acc || {})[av]; return a ? Object.assign({}, a) : {}; }
+  function accOf(av) {
+    var a = (state.profile.acc || {})[av];
+    if (a && a.gear === "socken") { a.legs = "socken"; delete a.gear; }   // Socken sind seit 2.166 „Beine“ statt „Dabei“
+    return a ? Object.assign({}, a) : {};
+  }
   function stickerAcc() {   // Eigener Zubehör-Look je aufgeklebtem Sticker (für Freunde)
     var o = {}; stickers().forEach(function (id) { var it = itemById(id); if (it && it.val) { var a = accOf(it.id); if (Object.keys(a).length) o[it.id] = a; } }); return o;
   }

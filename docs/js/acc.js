@@ -45,15 +45,15 @@
     skate: ['<g transform="translate(40 218) rotate(-76)"><g stroke="' + L + '" stroke-width="4" stroke-linejoin="round"><rect x="-30" y="-19" width="9" height="10" fill="#9aa3b5"/><rect x="21" y="-19" width="9" height="10" fill="#9aa3b5"/><circle cx="-26" cy="-24" r="9" fill="#ffe27a"/><circle cx="26" cy="-24" r="9" fill="#ffe27a"/><rect x="-54" y="-10" width="108" height="22" rx="11" fill="#ff5a3c"/></g><rect x="-44" y="2" width="88" height="5" rx="2.5" fill="#ffb199" opacity=".8"/><path d="M-26 -24h.1M26 -24h.1" stroke="#c28a00" stroke-width="6" stroke-linecap="round"/></g>'],
     schlitten: ['<g transform="translate(40 218) rotate(-76)"><g stroke="' + L + '" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"><path d="M-50 22Q-58 22-58 12Q-58 6-50 6H44Q58 6 58 -6" fill="none" stroke-width="9"/><path d="M-50 22Q-58 22-58 12Q-58 6-50 6H44Q58 6 58 -6" fill="none" stroke="#c9d3e8" stroke-width="3.5"/><path d="M-36 6v-12M30 6v-12" stroke-width="5"/><path d="M-44 -6H42Q48 -6 48 -12V-26Q48 -32 42 -32H-44Q-50 -32-50 -26V-12Q-50 -6-44 -6z" fill="#d8202f"/></g><path d="M-40 -14H40" stroke="#ffd34d" stroke-width="5" stroke-linecap="round"/><path d="M-30 -26H30" stroke="#ff8a8a" stroke-width="3" stroke-linecap="round" opacity=".8"/></g>'],
     socken: [(function () {
-      var leg = 'M0 0h26v42q0 12 12 12h14q10 0 10 9t-10 9H18Q0 72 0 54z';
-      function sock(c1, c2, c3, tr) {   // c1 Grundfarbe, c2 Streifen, c3 Ferse/Spitze
-        return '<g transform="' + tr + '"><path d="' + leg + '" fill="' + c1 + '" stroke="' + L + '" stroke-width="3.5" stroke-linejoin="round"/>' +
-          '<path d="M0 18h26M0 30h26" stroke="' + c2 + '" stroke-width="6"/><path d="M-1 54Q0 60 10 66" stroke="' + c3 + '" stroke-width="0" fill="none"/>' +
-          '<path d="M0 54Q0 72 18 72H24Q16 66 14 54z" fill="' + c3 + '" opacity=".95"/><circle cx="56" cy="64" r="8" fill="' + c3 + '"/>' +
-          '<path d="M0 0h26v42q0 12 12 12h14q10 0 10 9t-10 9H18Q0 72 0 54z" fill="none" stroke="' + L + '" stroke-width="3.5" stroke-linejoin="round"/>' +
-          '<rect x="-4" y="-7" width="34" height="14" rx="7" fill="#fff" stroke="' + L + '" stroke-width="3.5"/></g>';
+      function sock(cx, c1, c3) {   // Bein mit Streifen und Bündchen, Fuß in der zweiten Farbe (deckt die Schuhe ab)
+        return '<path d="M' + (cx - 11) + ' 234h22v22H' + (cx - 11) + 'z" fill="' + c1 + '"/>' +
+          '<path d="M' + (cx - 11) + ' 241h22M' + (cx - 11) + ' 249h22" stroke="#fff" stroke-width="4"/>' +
+          '<path d="M' + (cx - 11) + ' 234v22M' + (cx + 11) + ' 234v22" stroke="' + L + '" stroke-width="3.5" stroke-linecap="round"/>' +
+          '<path d="M' + (cx - 11) + ' 254q-11 3-12 13q0 12 12 12h22q12 0 12-12q-1-10-12-13z" fill="' + c3 + '" stroke="' + L + '" stroke-width="3.5" stroke-linejoin="round"/>' +
+          '<path d="M' + (cx - 11) + ' 262h22" stroke="' + c1 + '" stroke-width="4" stroke-linecap="round"/>' +
+          '<rect x="' + (cx - 15) + '" y="226" width="30" height="11" rx="5.5" fill="#fff" stroke="' + L + '" stroke-width="3.5"/>';
       }
-      return '<g transform="translate(-2 150) scale(.76)">' + sock("#d8202f", "#fff", "#2fa55a", "translate(8 14) rotate(-7)") + sock("#2fa55a", "#fff", "#d8202f", "translate(52 92) rotate(6)") + '</g><path d="M14 156l38-12M36 156l-4-18" stroke="#c9d3e8" stroke-width="0"/>';
+      return sock(91, "#d8202f", "#2fa55a") + sock(129, "#2fa55a", "#d8202f");
     })()],
     surf: ['<g transform="translate(-8 0) rotate(9 190 150)"><path d="M190 -22C222 36 224 232 190 300C156 232 158 36 190 -22z" fill="#27c3e6" stroke="' + L + '" stroke-width="5" stroke-linejoin="round"/><path d="M190 -2C208 56 210 214 190 270" fill="none" stroke="#ffffff" stroke-width="5" opacity=".75"/><path d="M190 -10V288" stroke="#0d7f9e" stroke-width="3" opacity=".6"/><path d="M168 96q22 22 44 0M165 150q25 24 50 0" fill="none" stroke="#ffd34d" stroke-width="5" stroke-linecap="round"/><path d="M190 300l-9 16h18z" fill="#0d7f9e" stroke="' + L + '" stroke-width="3.5" stroke-linejoin="round"/></g>'],
     gitarre: ['<g transform="translate(4 36) scale(.82) translate(16 0) rotate(-12 34 236)"><g stroke="' + L + '" stroke-width="4.5" stroke-linejoin="round"><rect x="27" y="34" width="14" height="140" rx="3" fill="#5a3b24"/><path d="M22 14h24l-3 28H25z" fill="#3a2414"/><path d="M34 182C6 176 0 208 22 220C4 238 8 276 36 278C66 280 74 248 52 222C74 206 64 178 34 182z" fill="#e08a2c"/></g><circle cx="35" cy="228" r="10" fill="#2a1a0f"/><circle cx="35" cy="228" r="10" fill="none" stroke="#ffd34d" stroke-width="3"/><rect x="24" y="258" width="22" height="6" rx="3" fill="#2a1a0f"/><path d="M31 40V250M37 40V250" stroke="#f3f3f3" stroke-width="1.4" opacity=".85"/><g fill="#d9d9d9" stroke="' + L + '" stroke-width="2"><circle cx="24" cy="22" r="3"/><circle cx="24" cy="32" r="3"/><circle cx="46" cy="22" r="3"/><circle cx="46" cy="32" r="3"/></g></g>'],
@@ -63,14 +63,15 @@
   };
   ACCS.xschal = [ACCS.schal[0].replace(/#2f7be8/g, "#d8202f").replace(/#ffd34d/g, "#ffffff")];   // Weihnachts-Schal = roter Schal mit weißen Streifen
   var over = null;   // { av, lo } nur während die Anprobe gezeichnet wird
-  var VB = { head: "30 -50 160 130", face: "40 56 140 64", ears: "20 -6 180 150", neck: "40 148 140 110", gear: "0 -20 220 320" },
-      VBV = { skate: "-4 152 96 138", schlitten: "-4 152 96 138", socken: "-4 140 104 150", surf: "128 -34 112 360", gitarre: "-2 54 84 215" };   // Ausschnitt je Teil (Dabei-Teile sitzen am Rand der Figur)
+  var VB = { head: "30 -50 160 130", face: "40 56 140 64", ears: "20 -6 180 150", neck: "40 148 140 110", legs: "56 216 108 70", gear: "0 -20 220 320" },
+      VBV = { skate: "-4 152 96 138", schlitten: "-4 152 96 138", surf: "128 -34 112 360", gitarre: "-2 54 84 215" };   // Ausschnitt je Teil (Dabei-Teile sitzen am Rand der Figur)
   function slotOf(val) { var it = global.VT && global.VT.itemById("ac:" + val); return it ? it.slot : "head"; }
   /* Zubehör einer Figur als Markup: { head, neck } */
   function build(loadout) {
-    var out = { head: "", neck: "", gear: "" }, any = false;
+    var out = { head: "", neck: "", legs: "", gear: "" }, any = false;
     ["ears", "face", "head"].forEach(function (sl) { var v = loadout[sl]; if (v && ACCS[v]) { out.head += ACCS[v][0]; any = true; } });
     if (loadout.neck && ACCS[loadout.neck]) { out.neck = ACCS[loadout.neck][0]; any = true; }
+    if (loadout.legs && ACCS[loadout.legs]) { out.legs = ACCS[loadout.legs][0]; any = true; }
     if (loadout.gear && ACCS[loadout.gear]) { out.gear = ACCS[loadout.gear][0]; any = true; }
     return any ? out : null;
   }

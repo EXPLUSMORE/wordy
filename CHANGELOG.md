@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.166.0
+- **Weihnachtssocken werden jetzt als Beine getragen** statt als „Dabei“-Teil neben der Figur: neuer Zubehör-Platz **„Beine“** (zwischen Körper und Kopf gezeichnet, über den Beinen und Schuhen der ganzen Figur). Das linke Bein ist rot mit weißen Streifen und grünem Fuß, das rechte grün mit weißen Streifen und rotem Fuß, dazu weiße Bündchen. Sieht bei allen Figuren passend aus. Schon angezogene Socken wandern automatisch von „Dabei“ nach „Beine“. Auf Köpfen, Stickern und im Dashboard-Bild (nur Kopf und Oberkörper) sind die Beine nicht zu sehen. Neue Teile für „Beine“: Eintrag in `ACC` mit Platz `legs` + Zeichnung in `ACCS` (acc.js).
+
 ## 2.165.0
 - **Adventskachel auf der Startseite** als zweite Kachel (direkt unter der Hero-Bühne, 25.11.–31.12.): Nachthimmel mit Polarlicht, fallenden Flocken und Schneeboden, kleiner Weihnachtsbaum mit so vielen leuchtenden Lichtern, wie Türchen offen sind (Stern an, wenn Türchen 24 offen), Text je nach Stand („Türchen 10 wartet!“, „Heute geschafft ✓“, Countdown vor dem 1.12., „Frohe Weihnachten!“), Knopf „Türchen öffnen ▶“ und Joker-Zähler. Tippen springt in den Kalender.
 - **Der Advent ist von Beute nach Spielen umgezogen**, direkt neben Challenge (Spielen › 🎄 Advent). Beute hat wieder nur Heute · Laden · Spind. Alle Sprünge (Wolke, Kachel, Geschenk-Fenster, Showroom „Zum Wichtel-Kalender“) führen dorthin.
