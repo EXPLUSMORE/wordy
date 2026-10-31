@@ -1659,6 +1659,12 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 .advtflakes{position:absolute;right:12px;bottom:10px;z-index:2;font-size:12px;background:rgba(0,0,0,.35);padding:2px 8px;border-radius:10px}
 .advtground{position:absolute;left:0;right:0;bottom:0;height:16px;background:radial-gradient(40px 14px at 12% 100%,#fff 98%,transparent),radial-gradient(52px 16px at 50% 100%,#eaf3ff 98%,transparent),radial-gradient(44px 14px at 88% 100%,#fff 98%,transparent);opacity:.9;z-index:1}
 @media (prefers-reduced-motion:reduce){.advtsky i,.advtstar.on{animation:none}}
+.advtin{animation:advtinsel 1.6s linear infinite}
+@keyframes advtinsel{to{stroke-dashoffset:-16}}
+@media (prefers-reduced-motion:reduce){.advtin{animation:none}}
+.advglit{animation:advglit 2.2s ease-in-out infinite}
+@keyframes advglit{0%,100%{opacity:.2;transform:scale(.5)}50%{opacity:1;transform:scale(1.2)}}
+@media (prefers-reduced-motion:reduce){.advglit{animation:none}}
 </style>
 
 <div id="app">

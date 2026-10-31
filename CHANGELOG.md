@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.167.0
+- **Weihnachtsbaum mit mehr Weihnacht** (Wunsch von Checker): Schnee liegt in Häufchen auf den Ästen entlang der Baumkanten, an jeder Astunterkante hängt goldenes **Lametta** mit funkelnden Silberpunkten (die Funken laufen), an den Astspitzen hängen rote, blaue und goldene **Christbaumkugeln**, und kleine gelbe Glitzersterne blinken auf dem Baum. Alles liegt hinter den Türchen, die Zahlen bleiben gut lesbar. Bei „Bewegung reduzieren“ ohne Animation.
+
 ## 2.166.3
 - Wichtel-Kalender, Baum: Die Nummern der Türchen sind wieder zu sehen. Das Symbol (🎮 heute/frei, ❄️ nachholen, Geschenk) lag über der Nummernplakette und verdeckte die Zahl. Jetzt sitzt die Nummer oben in der Plakette und das Symbol darunter am Türchen-Rand; bei offenen Türchen ist die Plakette etwas größer.
 

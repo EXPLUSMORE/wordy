@@ -1605,6 +1605,27 @@
     var h = ""; for (var i = 0; i < 46; i++) { var x = (i * 53 + 11) % 100, y = (i * 37 + 5) % 46, sz = 1 + (i % 3); h += '<i style="left:' + x + '%;top:' + y + '%;width:' + sz + 'px;height:' + sz + 'px;animation-delay:' + ((i * 0.31) % 3).toFixed(2) + 's"></i>'; }
     return h;
   }
+  /* Baumschmuck (v2.167): Schnee auf den Ästen, Lametta und Kugeln an den Astspitzen; liegt hinter den Türchen */
+  function advDecor() {
+    var tiers = [[200, 60, 90, 235, 310], [200, 130, 40, 385, 360], [200, 215, 10, 545, 390]], snow = "", tin = "", ball = "", i, k, t;
+    tiers.forEach(function (T, ti) {
+      [[T[2], -1], [T[4], 1]].forEach(function (E) {   // linke und rechte Kante: Schneehäufchen entlang des Astes
+        for (k = 1; k <= 7 + ti; k++) {
+          t = k / (8 + ti); var x = T[0] + (E[0] - T[0]) * t, y = T[1] + (T[3] - T[1]) * t, r = 3.2 + ((k * 7 + ti * 3) % 6) * 0.9 + t * 3;
+          snow += '<circle cx="' + (x - E[1] * (2 + (k % 3) * 3)).toFixed(1) + '" cy="' + (y + 2).toFixed(1) + '" r="' + r.toFixed(1) + '"/><circle cx="' + (x - E[1] * (9 + (k % 2) * 4)).toFixed(1) + '" cy="' + (y + 6).toFixed(1) + '" r="' + (r * 0.6).toFixed(1) + '"/>';
+        }
+      });
+      // Lametta: goldene Girlande mit silbernen Funken über der Astunterkante
+      var x0 = T[2] + 6, x1 = T[4] - 6, yb = T[3] - 4, sag = 26 + ti * 6, d = 'M' + x0 + ' ' + yb + 'Q200 ' + (yb + sag) + ' ' + x1 + ' ' + yb;
+      tin += '<path d="' + d + '" fill="none" stroke="#b8860b" stroke-width="7" stroke-linecap="round"/><path d="' + d + '" fill="none" stroke="#ffd34d" stroke-width="4.5" stroke-linecap="round"/><path class="advtin" d="' + d + '" fill="none" stroke="#fff" stroke-width="2.5" stroke-dasharray="2 6" stroke-linecap="round"/>';
+      [[T[2], yb + 4], [T[4], yb + 4]].forEach(function (B, bi) {   // Christbaumkugel an der Spitze
+        var col = ["#e8123c", "#2f7be8", "#ffd34d"][(ti + bi) % 3];
+        ball += '<path d="M' + B[0] + ' ' + (B[1] - 6) + 'v7" stroke="#d9d9d9" stroke-width="1.6"/><circle cx="' + B[0] + '" cy="' + (B[1] + 11) + '" r="10" fill="' + col + '" stroke="#14213d" stroke-width="2.4"/><rect x="' + (B[0] - 3) + '" y="' + (B[1] - 1) + '" width="6" height="4" rx="1" fill="#ffd34d" stroke="#14213d" stroke-width="1.2"/><path d="M' + (B[0] - 5) + ' ' + (B[1] + 8) + 'q1-4 5-5" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".85"/>';
+      });
+    });
+    var gl = ""; [[150, 190], [250, 170], [120, 300], [282, 318], [86, 430], [316, 440], [200, 100], [60, 520], [340, 520]].forEach(function (q, gi) { gl += '<path class="advglit" style="animation-delay:' + (gi * 0.35).toFixed(2) + 's;transform-origin:' + q[0] + 'px ' + q[1] + 'px" d="M' + q[0] + ' ' + (q[1] - 7) + 'q1.5 5.5 7 7q-5.5 1.5-7 7q-1.5-5.5-7-7q5.5-1.5 7-7z" fill="#fff6b0"/>'; });
+    return '<g fill="#fff" stroke="#c9d8f0" stroke-width="1.4" opacity=".97">' + snow + '</g>' + tin + ball + gl;
+  }
   function advWorld(ai) {
     var pts = advPos(), open = ai.open, lit = 0, doors = "", flakes = "", i, d;
     var perm = []; for (i = 0; i < 23; i++) perm.push(((i * 11) % 23) + 1);   // Türchen 1–23 über den Baum verteilt
@@ -1628,7 +1649,7 @@
       '<g stroke="#0b2a15" stroke-width="5" stroke-linejoin="round" fill="url(#advG)"><path d="M200 60L90 235H125L40 385H88L10 545H390L312 385H360L275 235H310z"/></g>' +
       '<path d="M200 78L112 220M200 160L74 372M200 250L40 530" stroke="#52c27c" stroke-width="5" stroke-linecap="round" opacity=".35" fill="none"/>' +
       '<g fill="#fff" opacity=".95"><path d="M90 235Q110 250 125 235Q112 240 100 238zM40 385Q64 400 88 385Q66 390 52 388zM10 545Q50 562 90 545Q50 552 24 550zM390 545Q350 562 310 545Q350 552 376 550zM360 385Q336 400 312 385Q334 390 348 388zM310 235Q290 250 275 235Q288 240 300 238z"/></g>' +
-      '<rect x="174" y="543" width="52" height="46" rx="6" fill="#7a4a24" stroke="#3e2410" stroke-width="5"/></svg>' + doors +
+      advDecor() + '<rect x="174" y="543" width="52" height="46" rx="6" fill="#7a4a24" stroke="#3e2410" stroke-width="5"/></svg>' + doors +
       '<button class="advstar st-' + star.st + '" data-act="advdoor" data-d="24" aria-label="Türchen 24: der große Stern"><svg viewBox="-60 -60 120 120"><defs><radialGradient id="advSg"><stop offset="0" stop-color="#fff6b0"/><stop offset="1" stop-color="#ffd34d" stop-opacity="0"/></radialGradient></defs>' + (starOn ? '<circle r="58" fill="url(#advSg)" class="advray"/>' : "") +
       '<path d="M0-46l12 28 30 3-23 20 7 30-26-16-26 16 7-30-23-20 30-3z" fill="' + (starOn ? "#ffd34d" : "#2d4f8c") + '" stroke="' + (starOn ? "#fff3a0" : "#7fa6e6") + '" stroke-width="4" stroke-linejoin="round"/></svg><b>24</b>' + (star.st === "today" ? '<span class="advtag">HEUTE</span>' : "") + '</button></div>' +
       '<div class="advfg"><div class="advwreath"><svg viewBox="0 0 150 90" role="img" aria-label="Adventskranz mit ' + ai.candles + ' Kerzen"><ellipse cx="75" cy="62" rx="68" ry="22" fill="#1d6c3c" stroke="#0b2a15" stroke-width="4"/><g fill="#e8123c"><circle cx="30" cy="58" r="4"/><circle cx="56" cy="76" r="4"/><circle cx="96" cy="76" r="4"/><circle cx="122" cy="58" r="4"/></g><g transform="translate(0 6)">' + cand.replace(/translate\((\d+) 0\)/g, function (m, x) { return "translate(" + (+x - 2) + " 0)"; }) + '</g></svg></div>' +
