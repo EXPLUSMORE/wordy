@@ -1671,10 +1671,14 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 .advglit{animation:advglit 2.2s ease-in-out infinite}
 @keyframes advglit{0%,100%{opacity:.2;transform:scale(.5)}50%{opacity:1;transform:scale(1.2)}}
 @media (prefers-reduced-motion:reduce){.advglit{animation:none}}
+.advgarland{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:4;overflow:visible;filter:drop-shadow(0 2px 2px rgba(0,0,0,.35))}
+.advtin2{animation:advtinsel2 2.1s linear infinite}
+@keyframes advtinsel2{to{stroke-dashoffset:-20}}
+@media (prefers-reduced-motion:reduce){.advtin2{animation:none}}
 </style>
 
 
-<script>window.WORDY_VERSION="2.168.0";window.WORDY_BUILD="df21c8c9ad";</script>
+<script>window.WORDY_VERSION="2.169.0";window.WORDY_BUILD="050be754aa";</script>
 </head>
 <body>
 <div id="app">
@@ -12544,26 +12548,42 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var h = ""; for (var i = 0; i < 46; i++) { var x = (i * 53 + 11) % 100, y = (i * 37 + 5) % 46, sz = 1 + (i % 3); h += '<i style="left:' + x + '%;top:' + y + '%;width:' + sz + 'px;height:' + sz + 'px;animation-delay:' + ((i * 0.31) % 3).toFixed(2) + 's"></i>'; }
     return h;
   }
-  /* Baumschmuck (v2.167): Schnee auf den Ästen, Lametta und Kugeln an den Astspitzen; liegt hinter den Türchen */
-  function advDecor() {
-    var tiers = [[200, 60, 90, 235, 310], [200, 130, 40, 385, 360], [200, 215, 10, 545, 390]], snow = "", tin = "", ball = "", i, k, t;
-    tiers.forEach(function (T, ti) {
-      [[T[2], -1], [T[4], 1]].forEach(function (E) {   // linke und rechte Kante: Schneehäufchen entlang des Astes
-        for (k = 1; k <= 7 + ti; k++) {
-          t = k / (8 + ti); var x = T[0] + (E[0] - T[0]) * t, y = T[1] + (T[3] - T[1]) * t, r = 3.2 + ((k * 7 + ti * 3) % 6) * 0.9 + t * 3;
-          snow += '<circle cx="' + (x - E[1] * (2 + (k % 3) * 3)).toFixed(1) + '" cy="' + (y + 2).toFixed(1) + '" r="' + r.toFixed(1) + '"/><circle cx="' + (x - E[1] * (9 + (k % 2) * 4)).toFixed(1) + '" cy="' + (y + 6).toFixed(1) + '" r="' + (r * 0.6).toFixed(1) + '"/>';
-        }
+  /* Verschneite Fichte (v2.169): unregelmäßig lange, hängende Äste mit durchgehender Schneedecke und Eiszapfen, dazu Lametta-Girlanden quer über den Baum */
+  function advRng(sd) { return function () { sd |= 0; sd = sd + 0x6D2B79F5 | 0; var t = Math.imul(sd ^ sd >>> 15, 1 | sd); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  var ADV_BOUGHS = [[104, 80], [170, 108], [240, 134], [312, 154], [388, 174], [470, 192]];   // [Höhe, halbe Breite] je Astreihe
+  function advBough(yc, hw, seed) {
+    var R = advRng(seed), irr = 22, droop = 16, L = hw + (R() * 2 - 1) * irr, Rr = hw + (R() * 2 - 1) * irr;
+    var lx = 200 - L, rx = 200 + Rr, ly = yc + 22 + droop + R() * 13, ry = yc + 22 + droop + R() * 13, f1 = function (n) { return n.toFixed(1); };
+    function zig(x0, y0, x1, y1, sd) { var Z = advRng(sd), n = 10, o = ""; for (var i = 1; i <= n; i++) { var t = i / n; o += " L" + f1(x0 + (x1 - x0) * t) + " " + f1(y0 + (y1 - y0) * t + (i < n ? (i % 2 ? 10 + Z() * 8 : -2 + Z() * 5) : 0)); } return o; }
+    var top = "M200 " + (yc - 46) + " C " + f1(200 - L * 0.35) + " " + (yc - 40) + " " + f1(lx + L * 0.25) + " " + f1(ly - 26) + " " + f1(lx) + " " + f1(ly);
+    var topR = "M200 " + (yc - 46) + " C " + f1(200 + Rr * 0.35) + " " + (yc - 40) + " " + f1(rx - Rr * 0.25) + " " + f1(ry - 26) + " " + f1(rx) + " " + f1(ry);
+    var body = top + zig(lx, ly, 200, yc + 44, seed + 1) + zig(200, yc + 44, rx, ry, seed + 2) + " C " + f1(rx - Rr * 0.25) + " " + f1(ry - 26) + " " + f1(200 + Rr * 0.35) + " " + (yc - 40) + " 200 " + (yc - 46) + "z";
+    return { body: body, top: top, topR: topR, lx: lx, rx: rx, ly: ly, ry: ry };
+  }
+  function advTreeSvg() {
+    var o = "", balls = "", i, b, w = 17;
+    for (i = ADV_BOUGHS.length - 1; i >= 0; i--) {   // untere Äste zuerst, obere liegen darüber
+      b = advBough(ADV_BOUGHS[i][0] + 18, ADV_BOUGHS[i][1], 12 + i * 13);
+      o += '<path d="' + b.body + '" fill="url(#advG' + (i % 2) + ')" stroke="#0b2a15" stroke-width="4" stroke-linejoin="round"/>' +
+        '<path d="M200 ' + (ADV_BOUGHS[i][0] - 20) + ' L' + (b.lx + 14).toFixed(1) + ' ' + (b.ly - 4).toFixed(1) + ' M200 ' + (ADV_BOUGHS[i][0] - 20) + ' L' + (b.rx - 14).toFixed(1) + ' ' + (b.ry - 4).toFixed(1) + '" stroke="#52c27c" stroke-width="3" opacity=".3" fill="none" stroke-linecap="round"/>';
+      [b.top, b.topR].forEach(function (t) { o += '<path d="' + t + '" fill="none" stroke="#fff" stroke-width="' + w + '" stroke-linecap="round" transform="translate(0 ' + (w * 0.35).toFixed(1) + ')"/><path d="' + t + '" fill="none" stroke="#fff" stroke-width="' + (w * 1.35).toFixed(1) + '" stroke-dasharray="0 ' + (w * 1.5).toFixed(1) + '" stroke-linecap="round" transform="translate(0 ' + (w * 0.9).toFixed(1) + ')"/>'; });
+      [[b.lx, b.ly], [b.rx, b.ry]].forEach(function (q, k) {   // Eiszapfen an den Astspitzen
+        o += '<path d="M' + (q[0] - 6).toFixed(1) + ' ' + (q[1] + 6).toFixed(1) + 'l6 16 6-16z" fill="#bfe7ff" stroke="#6fb3e0" stroke-width="1.5"/>';
+        if (i % 2 === 1) balls += '<path d="M' + (q[0] + (k ? -10 : 10)).toFixed(1) + ' ' + (q[1] + 4).toFixed(1) + 'v8" stroke="#d9d9d9" stroke-width="1.6"/><circle cx="' + (q[0] + (k ? -10 : 10)).toFixed(1) + '" cy="' + (q[1] + 23).toFixed(1) + '" r="10" fill="' + ["#e8123c", "#2f7be8", "#ffd34d"][(i + k) % 3] + '" stroke="#14213d" stroke-width="2.4"/><path d="M' + (q[0] + (k ? -15 : 5)).toFixed(1) + ' ' + (q[1] + 20).toFixed(1) + 'q1-4 5-5" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".85"/>';
       });
-      // Lametta: goldene Girlande mit silbernen Funken über der Astunterkante
-      var x0 = T[2] + 6, x1 = T[4] - 6, yb = T[3] - 4, sag = 26 + ti * 6, d = 'M' + x0 + ' ' + yb + 'Q200 ' + (yb + sag) + ' ' + x1 + ' ' + yb;
-      tin += '<path d="' + d + '" fill="none" stroke="#b8860b" stroke-width="7" stroke-linecap="round"/><path d="' + d + '" fill="none" stroke="#ffd34d" stroke-width="4.5" stroke-linecap="round"/><path class="advtin" d="' + d + '" fill="none" stroke="#fff" stroke-width="2.5" stroke-dasharray="2 6" stroke-linecap="round"/>';
-      [[T[2], yb + 4], [T[4], yb + 4]].forEach(function (B, bi) {   // Christbaumkugel an der Spitze
-        var col = ["#e8123c", "#2f7be8", "#ffd34d"][(ti + bi) % 3];
-        ball += '<path d="M' + B[0] + ' ' + (B[1] - 6) + 'v7" stroke="#d9d9d9" stroke-width="1.6"/><circle cx="' + B[0] + '" cy="' + (B[1] + 11) + '" r="10" fill="' + col + '" stroke="#14213d" stroke-width="2.4"/><rect x="' + (B[0] - 3) + '" y="' + (B[1] - 1) + '" width="6" height="4" rx="1" fill="#ffd34d" stroke="#14213d" stroke-width="1.2"/><path d="M' + (B[0] - 5) + ' ' + (B[1] + 8) + 'q1-4 5-5" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".85"/>';
-      });
+    }
+    var gl = ""; [[150, 190], [250, 170], [120, 300], [282, 318], [86, 430], [316, 440], [60, 520], [340, 520]].forEach(function (q, gi) { gl += '<path class="advglit" style="animation-delay:' + (gi * 0.35).toFixed(2) + 's;transform-origin:' + q[0] + 'px ' + q[1] + 'px" d="M' + q[0] + ' ' + (q[1] - 7) + 'q1.5 5.5 7 7q-5.5 1.5-7 7q-1.5-5.5-7-7q5.5-1.5 7-7z" fill="#fff6b0"/>'; });
+    return '<defs><linearGradient id="advG0" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f9e5a"/><stop offset="1" stop-color="#14562f"/></linearGradient><linearGradient id="advG1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#278a4d"/><stop offset="1" stop-color="#0f4a28"/></linearGradient></defs>' +
+      o + '<rect x="176" y="546" width="48" height="44" rx="6" fill="#7a4a24" stroke="#3e2410" stroke-width="4"/>' + balls + gl;
+  }
+  /* Lametta-Girlanden quer über den Baum, über den Türchen (zwischen den Reihen), Klicks gehen durch */
+  function advGarland() {
+    var o = "", ys = [186, 255, 325, 396, 470], hws = [74, 106, 138, 166, 186];
+    ys.forEach(function (y, i) {
+      var d = "M" + (200 - hws[i]) + " " + (y - 3) + "Q200 " + (y + 7 + (i % 2) * 2) + " " + (200 + hws[i]) + " " + (y - 3 + (i % 2 ? 3 : -1));   // flach, damit sie in der Lücke zwischen den Türchen-Reihen liegt
+      o += '<path d="' + d + '" fill="none" stroke="#9a6b00" stroke-width="6" stroke-linecap="round"/><path d="' + d + '" fill="none" stroke="#ffd34d" stroke-width="3.8" stroke-linecap="round"/><path class="advtin" d="' + d + '" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="2 6" stroke-linecap="round"/><path class="advtin2" d="' + d + '" fill="none" stroke="#ff9ef0" stroke-width="1.6" stroke-dasharray="1 9" stroke-linecap="round"/>';
     });
-    var gl = ""; [[150, 190], [250, 170], [120, 300], [282, 318], [86, 430], [316, 440], [200, 100], [60, 520], [340, 520]].forEach(function (q, gi) { gl += '<path class="advglit" style="animation-delay:' + (gi * 0.35).toFixed(2) + 's;transform-origin:' + q[0] + 'px ' + q[1] + 'px" d="M' + q[0] + ' ' + (q[1] - 7) + 'q1.5 5.5 7 7q-5.5 1.5-7 7q-1.5-5.5-7-7q5.5-1.5 7-7z" fill="#fff6b0"/>'; });
-    return '<g fill="#fff" stroke="#c9d8f0" stroke-width="1.4" opacity=".97">' + snow + '</g>' + tin + ball + gl;
+    return '<svg class="advgarland" viewBox="0 0 400 620" aria-hidden="true">' + o + '</svg>';
   }
   function advWorld(ai) {
     var pts = advPos(), open = ai.open, lit = 0, doors = "", flakes = "", i, d;
@@ -12584,13 +12604,9 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       '<svg class="advvil" viewBox="0 0 400 60" preserveAspectRatio="none"><g fill="#121c42"><path d="M20 60V40l14-12 14 12v20zM60 60V44l10-9 10 9v16zM316 60V38l16-14 16 14v22zM356 60V46l10-8 10 8v14z"/></g><g fill="#ffd34d"><rect x="30" y="44" width="5" height="6"/><rect x="66" y="48" width="4" height="5"/><rect x="326" y="42" width="5" height="6"/><rect x="340" y="42" width="5" height="6"/><rect x="362" y="49" width="4" height="5"/></g></svg>' +
       '<div class="advfall">' + flakes + '</div></div>' +
       '<div class="advhead"><div><div class="advtitle">Wichtel-Märchen</div><div class="advsub">Kapitel ' + (ai.day || 1) + ' · Dezember</div></div><span class="pill tnum nowrap" title="Joker zum Nachholen">❄️ ' + ai.flakes + '</span></div>' +
-      '<div class="advtreewrap"><svg viewBox="0 0 400 620" class="advtree2" role="img" aria-label="Weihnachtsbaum mit Türchen"><defs><linearGradient id="advG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f9e5a"/><stop offset="1" stop-color="#124d2a"/></linearGradient></defs>' +
-      '<g stroke="#0b2a15" stroke-width="5" stroke-linejoin="round" fill="url(#advG)"><path d="M200 60L90 235H125L40 385H88L10 545H390L312 385H360L275 235H310z"/></g>' +
-      '<path d="M200 78L112 220M200 160L74 372M200 250L40 530" stroke="#52c27c" stroke-width="5" stroke-linecap="round" opacity=".35" fill="none"/>' +
-      '<g fill="#fff" opacity=".95"><path d="M90 235Q110 250 125 235Q112 240 100 238zM40 385Q64 400 88 385Q66 390 52 388zM10 545Q50 562 90 545Q50 552 24 550zM390 545Q350 562 310 545Q350 552 376 550zM360 385Q336 400 312 385Q334 390 348 388zM310 235Q290 250 275 235Q288 240 300 238z"/></g>' +
-      advDecor() + '<rect x="174" y="543" width="52" height="46" rx="6" fill="#7a4a24" stroke="#3e2410" stroke-width="5"/></svg>' + doors +
+      '<div class="advtreewrap"><svg viewBox="0 0 400 620" class="advtree2" role="img" aria-label="Weihnachtsbaum mit Türchen">' + advTreeSvg() + '</svg>' + doors +
       '<button class="advstar st-' + star.st + '" data-act="advdoor" data-d="24" aria-label="Türchen 24: der große Stern"><svg viewBox="-60 -60 120 120"><defs><radialGradient id="advSg"><stop offset="0" stop-color="#fff6b0"/><stop offset="1" stop-color="#ffd34d" stop-opacity="0"/></radialGradient></defs>' + (starOn ? '<circle r="58" fill="url(#advSg)" class="advray"/>' : "") +
-      '<path d="M0-46l12 28 30 3-23 20 7 30-26-16-26 16 7-30-23-20 30-3z" fill="' + (starOn ? "#ffd34d" : "#2d4f8c") + '" stroke="' + (starOn ? "#fff3a0" : "#7fa6e6") + '" stroke-width="4" stroke-linejoin="round"/></svg><b>24</b>' + (star.st === "today" ? '<span class="advtag">HEUTE</span>' : "") + '</button></div>' +
+      '<path d="M0-46l12 28 30 3-23 20 7 30-26-16-26 16 7-30-23-20 30-3z" fill="' + (starOn ? "#ffd34d" : "#2d4f8c") + '" stroke="' + (starOn ? "#fff3a0" : "#7fa6e6") + '" stroke-width="4" stroke-linejoin="round"/></svg><b>24</b>' + (star.st === "today" ? '<span class="advtag">HEUTE</span>' : "") + '</button>' + advGarland() + '</div>' +
       '<div class="advfg"><div class="advwreath"><svg viewBox="0 0 150 90" role="img" aria-label="Adventskranz mit ' + ai.candles + ' Kerzen"><ellipse cx="75" cy="62" rx="68" ry="22" fill="#1d6c3c" stroke="#0b2a15" stroke-width="4"/><g fill="#e8123c"><circle cx="30" cy="58" r="4"/><circle cx="56" cy="76" r="4"/><circle cx="96" cy="76" r="4"/><circle cx="122" cy="58" r="4"/></g><g transform="translate(0 6)">' + cand.replace(/translate\((\d+) 0\)/g, function (m, x) { return "translate(" + (+x - 2) + " 0)"; }) + '</g></svg></div>' +
       '<span class="advprop wolle" aria-hidden="true">🧝</span><span class="advprop gm" aria-hidden="true">' + ADV_SVG.gm + '</span><span class="advprop cc" aria-hidden="true">' + ADV_SVG.cc + '</span><span class="advprop sm" aria-hidden="true">⛄</span><span class="advprop hk" aria-hidden="true">' + (husky ? "🐕" : "👀") + '</span><span class="advprop gift" aria-hidden="true">🎁</span></div>' +
       '<svg class="advhills" viewBox="0 0 400 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 60V30Q60 6 130 28T270 24T400 26V60z" fill="#eef4ff"/><path d="M0 60V44Q80 26 160 42T320 40T400 44V60z" fill="#fff"/></svg></div>';
