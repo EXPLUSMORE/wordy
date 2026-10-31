@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.166.2
+- Wichtel-Kalender: Der Test-Knopf „sofort öffnen“ ist für alle entfernt. Ein Türchen geht nur über das gewonnene Spiel auf (auch mit „Alle Türchen freischalten (Test)“ im Dashboard, das nur noch Datum und Joker aufhebt).
+
 ## 2.166.1
 - **Vorlesen im Türchen-Fenster und im Geschenk-Fenster behoben:** Die Lautsprecher-Knöpfe in diesen Fenstern taten nichts (die Fenster hängen am Seitenrand, der Klick-Handler der Seite erreichte sie nicht). Jetzt bedienen die Fenster ihre Knöpfe selbst (`ovSay()`); getestet bei einem schon geöffneten Türchen (Deutsch wird mit der Erzählerstimme gelesen). Auf der Märchenbuch-Seite unter dem Baum ging es schon.
 

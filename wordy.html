@@ -1668,7 +1668,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.166.1";window.WORDY_BUILD="62f6135bd1";</script>
+<script>window.WORDY_VERSION="2.166.2";window.WORDY_BUILD="5638da0798";</script>
 </head>
 <body>
 <div id="app">
@@ -12587,14 +12587,13 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       (mode === "open" ? '<p class="small muted" style="margin:10px 0">Dieses Türchen ist schon offen' + (x.late ? " (nachgeholt)" : "") + '. ✓</p>' :
         '<div class="small muted" style="margin:10px 0 2px">Spiel des Tages</div><div><b>' + ADV_GAME[pl.mode] + '</b> – schaffe <b>' + pl.need + '</b> richtige Antworten. Du darfst so oft probieren, wie du willst.</div>' +
         (mode === "late" ? '<div class="small" style="margin-top:6px">❄️ Du setzt einen Joker ein (du hast ' + ai.flakes + ').</div>' : "")) +
-      '<div class="row advbtns" style="gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap">' + (mode === "open" ? "" : '<button class="btn" data-d="go">' + (mode === "late" ? "❄️ Nachholen" : "▶ Spiel starten") + '</button>') + '' + (ai.test && mode !== "open" ? '<button class="btn soft" data-d="skip">Test: sofort öffnen</button>' : "") + '<button class="btn soft" data-d="x">Schließen</button></div></div>';
+      '<div class="row advbtns" style="gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap">' + (mode === "open" ? "" : '<button class="btn" data-d="go">' + (mode === "late" ? "❄️ Nachholen" : "▶ Spiel starten") + '</button>') + '' + '<button class="btn soft" data-d="x">Schließen</button></div></div>';
     document.body.appendChild(ov);
     ov.addEventListener("click", function (e) {
       if (ovSay(e)) return;
       var b = e.target.closest("[data-d]"), k = b && b.getAttribute("data-d");
       if (e.target === ov || k === "x") { ov.remove(); return; }
       if (k === "go") { ov.remove(); advStart(d); }
-      if (k === "skip") { ov.remove(); var rs = S.advWin(d); if (rs && !rs.error) { advLast = rs; advReveal(); } else toast("Ging nicht: " + (rs && rs.error)); }
     });
   }
   function advDoor(d) {
