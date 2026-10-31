@@ -1595,6 +1595,32 @@
       '<path class="advstar' + (star ? " on" + (ignite ? " ignite" : "") : "") + '" d="M120 6l9.4 19.3 21.1 3-15.3 14.9 3.6 21-18.8-10-18.8 10 3.6-21-15.3-14.9 21.1-3z" fill="' + (star ? "#ffd34d" : "#2b3f66") + '" stroke="' + (star ? "#fff3a0" : "#41588a") + '" stroke-width="3" stroke-linejoin="round"/></svg>' +
       '<div class="small muted" style="text-align:center;margin-top:2px">' + (star ? "🌟 Frohe Weihnachten! Der Stern leuchtet." : lit + " von 24 Lichtern · am 24. geht der große Stern an") + '</div></section>';
   }
+  /* Wichtel-Dorf: 24 unterschiedlich große Türchen (rote Tür, Geschenk, Zuckerstange, Lebkuchen, Nachtblau), dazwischen Rentiere, Schneemänner, Elfen, Zuckerstangen, Lebkuchenmännchen */
+  var ADV_ROWS = [
+    [["p", "🦌"], [1, "M"], ["p", "cc"]], [[2, "S"], ["p", "⛄"], [3, "M"]], [["p", "🧝"], [4, "L"], ["p", "✨"]],
+    [[5, "S"], ["p", "gm"], [6, "L"]], [["p", "🛷"], [7, "M"], [8, "S"]], [[9, "S"], [10, "S"], [11, "S"]],
+    [["p", "cc"], [12, "L"], ["p", "🎅"]], [[13, "M"], ["p", "🦌"], [14, "S"]], [[15, "S"], [16, "M"], ["p", "⭐"]],
+    [["p", "⛄"], [17, "M"], [18, "S"]], [[19, "S"], ["p", "🧝"], [20, "L"]], [[21, "M"], ["p", "gm"], [22, "S"]],
+    [["p", "cc"], [23, "M"], ["p", "🎁"]], [["p", "🦌"], ["p", "🦌"], ["p", "🛷"]], [[24, "XL"]]
+  ];
+  var ADV_SVG = {
+    gm: '<svg viewBox="0 0 60 76" aria-hidden="true"><g stroke="#6b3a17" stroke-width="3" stroke-linejoin="round" fill="#c97d3c"><circle cx="30" cy="14" r="11"/><path d="M20 25L8 29Q2 31 4 37Q6 41 12 39L22 37L16 62Q14 70 22 70Q28 70 30 63Q32 70 38 70Q46 70 44 62L38 37L48 39Q54 41 56 37Q58 31 52 29L40 25z"/></g><g fill="#fff"><path d="M6 38l6-2 1 5zM54 38l-6-2-1 5z"/><circle cx="26" cy="12" r="1.8" fill="#3b2418"/><circle cx="34" cy="12" r="1.8" fill="#3b2418"/><path d="M25 17q5 4 10 0" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/></g><g fill="#e8123c"><circle cx="30" cy="30" r="2.6"/><circle cx="30" cy="40" r="2.6"/><circle cx="30" cy="50" r="2.6"/></g><path d="M20 68l4 4M40 68l-4 4" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>',
+    cc: '<svg viewBox="0 0 50 80" aria-hidden="true"><path d="M36 76V24Q36 8 23 8Q10 8 10 24" fill="none" stroke="#14213d" stroke-width="16" stroke-linecap="round"/><path d="M36 76V24Q36 8 23 8Q10 8 10 24" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round"/><path d="M36 76V24Q36 8 23 8Q10 8 10 24" fill="none" stroke="#e8123c" stroke-width="10" stroke-dasharray="6 7" stroke-linecap="butt"/><path d="M36 46l-9 -6v12zM36 46l9 -6v12z" fill="#2fa55a" stroke="#14213d" stroke-width="2.5" stroke-linejoin="round"/><circle cx="36" cy="46" r="3.5" fill="#ffd34d" stroke="#14213d" stroke-width="2"/></svg>'
+  };
+  function advProp(t, i) { var sv = ADV_SVG[t]; return '<span class="advp' + (sv ? " svg" : "") + '" style="animation-delay:' + ((i * 0.43) % 2.4).toFixed(2) + 's" aria-hidden="true">' + (sv || t) + '</span>'; }
+  function advScene(ai) {
+    var di = 0, snow = ""; for (var f = 0; f < 14; f++) snow += '<i class="advsf" style="left:' + ((f * 37 + 7) % 100) + '%;animation-delay:-' + ((f * 1.7) % 11).toFixed(1) + 's;animation-duration:' + (9 + (f * 3) % 7) + 's;font-size:' + (8 + (f * 5) % 9) + 'px">❄</i>';
+    var rows = ADV_ROWS.map(function (row, ri) {
+      return '<div class="advrow r' + (ri % 3) + '">' + row.map(function (c) {
+        if (c[0] === "p") return advProp(c[1], ++di);
+        var x = ai.doors[c[0] - 1], d = x.d, ic = x.st === "open" ? advDoorIcon(x.rew) : x.st === "today" ? "🎮" : x.st === "late" ? "❄️" : d === 6 ? "🎅" : "";
+        var tag = x.st === "today" ? "HEUTE!" : x.st === "late" ? "❄️ nachholen" : "";
+        return '<button class="advd v' + (d === 24 ? "g" : d === 6 ? "s" : d % 5) + ' sz-' + c[1] + ' st-' + x.st + '" style="--r:' + (((d * 7) % 7) - 3) + 'deg;--o:' + (((d * 5) % 9) - 4) + 'px" data-act="advdoor" data-d="' + d + '" aria-label="Türchen ' + d + '">' +
+          '<i class="advcap"></i><span class="advleaf"></span><span class="advplate"><b>' + d + '</b></span><span class="advic">' + ic + '</span>' + (tag ? '<span class="advtag">' + tag + '</span>' : "") + '</button>';
+      }).join("") + '</div>';
+    }).join("");
+    return '<div class="advscene"><div class="advfall" aria-hidden="true">' + snow + '</div>' + rows + '<div class="advground" aria-hidden="true"></div></div>';
+  }
   function viewAdvent(ai, top) {
     var h = '<div class="stack">' + top;
     if (ai.phase === "pre") {
@@ -1603,11 +1629,7 @@
     }
     var cand = ""; for (var k = 0; k < 4; k++) cand += '<span class="' + (k < ai.candles ? "" : "off") + '">🕯️</span>';
     h += '<div class="row" style="align-items:center"><h1 style="font-size:22px;flex:1 1 auto">🎄 Wichtel-Kalender</h1><span class="pill tnum nowrap" title="Joker zum Nachholen">❄️ ' + ai.flakes + '</span></div>' +
-      advTree(ai) + '<div class="advcan">' + cand + '<small class="muted">Adventskerzen</small></div><div class="advgrid">' +
-      ai.doors.map(function (x) {
-        var ic = x.st === "open" ? advDoorIcon(x.rew) : x.st === "today" ? "🎮" : x.st === "late" ? "❄️" : x.d === 6 ? "🎅?" : "";
-        return '<button class="advd st-' + x.st + (x.d === 24 ? " fin" : "") + '" data-act="advdoor" data-d="' + x.d + '" aria-label="Türchen ' + x.d + '"><b>' + x.d + '</b><i>' + ic + '</i></button>';
-      }).join("") + '</div>' +
+      advTree(ai) + '<div class="advcan">' + cand + '<small class="muted">Adventskerzen</small></div>' + advScene(ai) +
       '';
     var lastD = 0; ai.doors.forEach(function (x) { if (x.st === "open") lastD = x.d; });
     h += '<section class="card"><div class="eyebrow">Die Geschichte</div>' + advStory(lastD || 1) + '</section>' +

@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.162.0
+- **Wichtel-Dorf:** Die 24 Türchen sind kein Raster mehr, sondern eine verspielte Winterlandschaft: Türchen in verschiedenen Größen und Look (rote Tür, Geschenk mit goldener Schleife, Zuckerstangen-Streifen, Lebkuchen mit Zuckerguss, nachtblaue Rundbogentür), leicht schief, mit Schnee auf dem Türchen und goldener Nummernplakette. Dazwischen wippen Rentiere, Schlitten, Schneemänner, Elfen, Zuckerstangen, Lebkuchenmännchen, Sterne und Geschenke; Schneeflocken fallen, am Boden liegt Schnee. Heutiges Türchen pulsiert mit „HEUTE!“, verpasste mit Joker zeigen „❄️ nachholen“, offene Türchen stehen mit Licht im Türchen und aufgeschwungener Tür da. Türchen 6 ist rot mit Nikolaus, Türchen 24 groß und golden mit Rentier-Schlitten davor. Mit „Bewegung reduzieren“ ohne Animationen.
+
 ## 2.161.1
 - Wichtel-Kalender: **Weihnachtsbaum** oben im Kalender. Jedes geöffnete Türchen zündet ein buntes Licht am Baum (24 Lichter, sie flackern leicht); wenn das Türchen 24 offen ist, geht der **große Stern** an der Spitze an (Strahlen und Leuchten, beim ersten Mal mit kleiner Anzündeanimation). Ersetzt den Sterne-Balken. Mit „Bewegung reduzieren“ ohne Animation.
 

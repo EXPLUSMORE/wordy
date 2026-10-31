@@ -1557,12 +1557,6 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 .hscroll .chip{flex:0 0 auto;white-space:nowrap}
 /* WICHTEL-KALENDER (Advent, v2.160) */
 .advcan{display:flex;gap:10px;align-items:center;margin:2px 0}.advcan span{font-size:26px}.advcan span.off{filter:grayscale(1) opacity(.35)}
-.advgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
-.advd{aspect-ratio:1/1.08;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font:inherit;color:#fff;border:2px solid rgba(0,0,0,.25);cursor:pointer;position:relative}
-.advd b{font-size:22px;line-height:1}.advd i{font-style:normal;font-size:18px;min-height:22px}
-.advd.st-lock,.advd.st-over{background:#7a1f2b;opacity:.85}.advd.st-open{background:#2b5a3a;border-color:#6fdc8c}.advd.st-today{background:#d4372c;border-color:#ffd166;box-shadow:0 0 16px rgba(255,209,102,.6);animation:advpulse 1.8s ease-in-out infinite}
-.advd.st-late{background:#35507f;border-color:#9fd0ff}.advd.fin{background:linear-gradient(135deg,#d4a017,#ffdf6b);color:#3a2600}
-@keyframes advpulse{50%{transform:scale(1.04)}}
 .bub{background:#fff;color:#1b2440;border-radius:16px;padding:10px 12px;font-size:14px;line-height:1.4;text-align:left}.bub .muted{color:#5a6b99}
 .avatar.fr-lichter{box-shadow:0 0 0 2px #2f8f4e,0 0 0 4.5px #ffd34d,0 0 12px 3px rgba(255,90,90,.75),0 0 18px 6px rgba(120,255,160,.45)}
 .advtree svg{display:block;width:min(100%,215px);margin:0 auto;overflow:visible}
@@ -1575,10 +1569,47 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 @keyframes advignite{0%{transform:scale(.2);opacity:0}60%{transform:scale(1.5);opacity:1}100%{transform:scale(1)}}
 @keyframes advpulse2{50%{opacity:.7;transform:scale(1.12)}}
 @media (prefers-reduced-motion:reduce){.advl.on,.advstar.on,.advray,.advstar.ignite,.advray.ignite{animation:none}}
+/* WICHTEL-DORF: festliche Türchen (v2.162) */
+.advscene{position:relative;overflow:hidden;border-radius:22px;padding:18px 8px 34px;background:radial-gradient(1.5px 1.5px at 12% 8%,#fff,transparent),radial-gradient(1.5px 1.5px at 78% 14%,#fff,transparent),radial-gradient(2px 2px at 40% 30%,#ffe9a0,transparent),radial-gradient(1.5px 1.5px at 90% 52%,#fff,transparent),radial-gradient(2px 2px at 8% 70%,#ffe9a0,transparent),linear-gradient(#0c1840,#1a2f68 50%,#27427f);border:2px solid rgba(255,255,255,.12)}
+.advfall{position:absolute;inset:0;pointer-events:none;overflow:hidden}.advsf{position:absolute;top:-20px;font-style:normal;color:#fff;opacity:.75;animation:advfall linear infinite}
+@keyframes advfall{to{transform:translateY(900px) rotate(200deg)}}
+.advrow{position:relative;display:flex;align-items:center;justify-content:space-evenly;gap:6px;margin:0 0 14px}
+.advrow.r1{padding:0 6px}.advrow.r2{padding:0 2px}
+.advp{font-size:40px;line-height:1;flex:0 0 auto;display:block;animation:advbob 2.6s ease-in-out infinite;filter:drop-shadow(0 3px 3px rgba(0,0,0,.35))}
+.advp.svg svg{display:block;width:46px;height:auto}.advp.svg{font-size:0}
+@keyframes advbob{50%{transform:translateY(-5px) rotate(3deg)}}
+.advd{position:relative;flex:0 0 auto;aspect-ratio:3/4;border-radius:12px 12px 5px 5px;border:3px solid #0006;font:inherit;color:#fff;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:0 0 10%;transform:translateY(var(--o)) rotate(var(--r));box-shadow:0 6px 0 rgba(0,0,0,.28),0 10px 14px rgba(0,0,0,.35);transition:transform .15s}
+.advd:active{transform:translateY(var(--o)) rotate(var(--r)) scale(.96)}
+.advd.sz-S{width:22%}.advd.sz-M{width:28%}.advd.sz-L{width:35%}.advd.sz-XL{width:54%;margin:0 auto}
+.advd::after{content:"";position:absolute;right:11%;top:56%;width:9px;height:9px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fff7b0,#e0a600);box-shadow:0 0 0 2px #7a5200}
+.advd.v0{background:linear-gradient(#d83a3a,#a81f2c)}
+.advd.v1{background:linear-gradient(#2f9e5a,#1d6c3c)}.advd.v1::before{content:"";position:absolute;left:44%;width:12%;top:0;bottom:0;background:#ffd34d;box-shadow:inset 0 0 0 2px #b8860b}
+.advd.v2{background:repeating-linear-gradient(135deg,#e8123c 0 10px,#fff 10px 20px)}
+.advd.v3{background:linear-gradient(#b4692f,#8c4a1c);border-style:dashed;border-color:#fff}
+.advd.v4{background:linear-gradient(#3b5fd0,#23398c);border-radius:50% 50% 5px 5px/26% 26% 5px 5px}
+.advd.vs{background:linear-gradient(#e8123c,#8f0f26);border-color:#ffd34d}.advd.vg{background:linear-gradient(#ffe58a,#d4a017 55%,#b8860b);color:#3a2600;border-color:#fff3a0;aspect-ratio:1/1;border-radius:50% 50% 8px 8px/38% 38% 8px 8px;box-shadow:0 0 26px rgba(255,214,102,.65),0 8px 0 rgba(0,0,0,.28)}
+.advcap{position:absolute;left:-7%;right:-7%;top:-13px;height:18px;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 18' preserveAspectRatio='none'><path d='M0 4Q0 0 6 0H94Q100 0 100 4V8Q96 16 90 8Q84 18 76 8Q70 16 62 8Q54 18 46 8Q40 16 32 8Q24 18 16 8Q10 16 4 8Q0 12 0 8z' fill='white'/></svg>") center/100% 100% no-repeat;filter:drop-shadow(0 2px 1px rgba(0,0,0,.3));z-index:2}
+.advplate{position:absolute;top:12%;left:50%;transform:translateX(-50%);width:42%;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,#fff7b0,#ffcf3a 55%,#d99a00);color:#4a2f00;box-shadow:0 0 0 2px #7a5200,0 0 10px rgba(255,214,102,.8);z-index:1}
+.advplate b{font-size:clamp(13px,4.6vw,22px);line-height:1}
+.advd.sz-S .advplate b{font-size:clamp(12px,4vw,18px)}
+.advic{font-size:clamp(18px,6.4vw,30px);line-height:1;min-height:1em;filter:drop-shadow(0 2px 2px rgba(0,0,0,.4));z-index:1}
+.advtag{position:absolute;bottom:-9px;left:50%;transform:translateX(-50%) rotate(-3deg);white-space:nowrap;background:#fff;color:#c0182a;font-size:10px;font-weight:800;padding:2px 7px;border-radius:9px;box-shadow:0 2px 4px rgba(0,0,0,.4);z-index:3}
+.advleaf{display:none}
+.advd.st-lock,.advd.st-over{filter:saturate(.75) brightness(.9)}
+.advd.st-over{opacity:.7}
+.advd.st-today{animation:advtoday 1.6s ease-in-out infinite;box-shadow:0 0 0 3px #ffd166,0 0 22px 6px rgba(255,209,102,.75),0 6px 0 rgba(0,0,0,.28)}
+@keyframes advtoday{50%{transform:translateY(calc(var(--o) - 5px)) rotate(var(--r)) scale(1.05)}}
+.advd.st-late{background:linear-gradient(#6f93c9,#3a5a8f)!important;border-color:#cfe6ff}.advd.st-late::before{display:none}
+.advd.st-open{background:radial-gradient(circle at 50% 70%,#fff6b0,#ffb347 70%,#e07a00)!important;border-color:#fff3a0;box-shadow:0 0 18px 3px rgba(255,200,80,.6),0 6px 0 rgba(0,0,0,.25);color:#3a2600}
+.advd.st-open::before{display:none}.advd.st-open::after{display:none}
+.advd.st-open .advleaf{display:block;position:absolute;left:0;top:0;bottom:0;width:52%;border-radius:10px 0 0 4px;background:linear-gradient(#d83a3a,#a81f2c);border-right:3px solid #0005;transform-origin:left center;transform:perspective(240px) rotateY(-62deg)}
+.advd.st-open .advic{font-size:clamp(22px,8vw,36px)}
+@media (prefers-reduced-motion:reduce){.advsf,.advp,.advd.st-today{animation:none}}
+.advground{position:absolute;left:0;right:0;bottom:0;height:34px;background:radial-gradient(60px 22px at 10% 100%,#fff 98%,transparent),radial-gradient(70px 26px at 38% 100%,#eaf3ff 98%,transparent),radial-gradient(60px 20px at 66% 100%,#fff 98%,transparent),radial-gradient(70px 24px at 94% 100%,#eaf3ff 98%,transparent)}
 </style>
 
 
-<script>window.WORDY_VERSION="2.161.1";window.WORDY_BUILD="67bad12168";</script>
+<script>window.WORDY_VERSION="2.162.0";window.WORDY_BUILD="5f54dfc8a3";</script>
 </head>
 <body>
 <div id="app">
@@ -1607,43 +1638,43 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
   <div id="session" hidden></div>
 </div>
 <div id="arena" hidden></div>
-<script src="data/klasse6.js?v=67bad12168"></script>
-<script src="data/klasse7.js?v=67bad12168"></script>
-<script src="data/klasse8.js?v=67bad12168"></script>
-<script src="data/business.js?v=67bad12168"></script>
-<script src="data/business-basis2.js?v=67bad12168"></script>
-<script src="data/business-aufbau2.js?v=67bad12168"></script>
-<script src="data/business-profi2.js?v=67bad12168"></script>
-<script src="data/smalltalk.js?v=67bad12168"></script>
-<script src="data/advent.js?v=67bad12168"></script>
-<script src="data/idioms.js?v=67bad12168"></script>
-<script src="data/saetze.js?v=67bad12168"></script>
-<script src="data/grammatik.js?v=67bad12168"></script>
-<script src="data/alternativen.js?v=67bad12168"></script>
-<script src="data/saetze2.js?v=67bad12168"></script>
-<script src="data/lernbuch.js?v=67bad12168"></script>
-<script src="data/verben.js?v=67bad12168"></script>
-<script src="data/open/business-aufbau.js?v=67bad12168"></script>
-<script src="data/open/business-basis.js?v=67bad12168"></script>
-<script src="data/open/business-profi.js?v=67bad12168"></script>
-<script src="data/open/saetze-open.js?v=67bad12168"></script>
-<script src="js/engine.js?v=67bad12168"></script>
-<script src="js/cosmetics.js?v=67bad12168"></script>
-<script src="js/saison.js?v=67bad12168"></script>
-<script src="js/saison2.js?v=67bad12168"></script>
-<script src="js/fortnite.js?v=67bad12168"></script>
-<script src="js/figur.js?v=67bad12168"></script>
-<script src="js/stila.js?v=67bad12168"></script>
-<script src="js/stilb.js?v=67bad12168"></script>
-<script src="js/acc.js?v=67bad12168"></script>
-<script src="js/loot.js?v=67bad12168"></script>
-<script src="js/film.js?v=67bad12168"></script>
-<script src="js/einmaleins.js?v=67bad12168"></script>
-<script src="js/app.js?v=67bad12168"></script>
-<script src="js/arena.js?v=67bad12168"></script>
-<script src="js/spiele.js?v=67bad12168"></script>
-<script src="js/grammatik.js?v=67bad12168"></script>
-<script src="js/sync.js?v=67bad12168"></script>
+<script src="data/klasse6.js?v=5f54dfc8a3"></script>
+<script src="data/klasse7.js?v=5f54dfc8a3"></script>
+<script src="data/klasse8.js?v=5f54dfc8a3"></script>
+<script src="data/business.js?v=5f54dfc8a3"></script>
+<script src="data/business-basis2.js?v=5f54dfc8a3"></script>
+<script src="data/business-aufbau2.js?v=5f54dfc8a3"></script>
+<script src="data/business-profi2.js?v=5f54dfc8a3"></script>
+<script src="data/smalltalk.js?v=5f54dfc8a3"></script>
+<script src="data/advent.js?v=5f54dfc8a3"></script>
+<script src="data/idioms.js?v=5f54dfc8a3"></script>
+<script src="data/saetze.js?v=5f54dfc8a3"></script>
+<script src="data/grammatik.js?v=5f54dfc8a3"></script>
+<script src="data/alternativen.js?v=5f54dfc8a3"></script>
+<script src="data/saetze2.js?v=5f54dfc8a3"></script>
+<script src="data/lernbuch.js?v=5f54dfc8a3"></script>
+<script src="data/verben.js?v=5f54dfc8a3"></script>
+<script src="data/open/business-aufbau.js?v=5f54dfc8a3"></script>
+<script src="data/open/business-basis.js?v=5f54dfc8a3"></script>
+<script src="data/open/business-profi.js?v=5f54dfc8a3"></script>
+<script src="data/open/saetze-open.js?v=5f54dfc8a3"></script>
+<script src="js/engine.js?v=5f54dfc8a3"></script>
+<script src="js/cosmetics.js?v=5f54dfc8a3"></script>
+<script src="js/saison.js?v=5f54dfc8a3"></script>
+<script src="js/saison2.js?v=5f54dfc8a3"></script>
+<script src="js/fortnite.js?v=5f54dfc8a3"></script>
+<script src="js/figur.js?v=5f54dfc8a3"></script>
+<script src="js/stila.js?v=5f54dfc8a3"></script>
+<script src="js/stilb.js?v=5f54dfc8a3"></script>
+<script src="js/acc.js?v=5f54dfc8a3"></script>
+<script src="js/loot.js?v=5f54dfc8a3"></script>
+<script src="js/film.js?v=5f54dfc8a3"></script>
+<script src="js/einmaleins.js?v=5f54dfc8a3"></script>
+<script src="js/app.js?v=5f54dfc8a3"></script>
+<script src="js/arena.js?v=5f54dfc8a3"></script>
+<script src="js/spiele.js?v=5f54dfc8a3"></script>
+<script src="js/grammatik.js?v=5f54dfc8a3"></script>
+<script src="js/sync.js?v=5f54dfc8a3"></script>
 
 <script>
 if ('serviceWorker' in navigator) {
