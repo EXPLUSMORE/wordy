@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.166.1
+- **Vorlesen im Türchen-Fenster und im Geschenk-Fenster behoben:** Die Lautsprecher-Knöpfe in diesen Fenstern taten nichts (die Fenster hängen am Seitenrand, der Klick-Handler der Seite erreichte sie nicht). Jetzt bedienen die Fenster ihre Knöpfe selbst (`ovSay()`); getestet bei einem schon geöffneten Türchen (Deutsch wird mit der Erzählerstimme gelesen). Auf der Märchenbuch-Seite unter dem Baum ging es schon.
+
 ## 2.166.0
 - **Weihnachtssocken werden jetzt als Beine getragen** statt als „Dabei“-Teil neben der Figur: neuer Zubehör-Platz **„Beine“** (zwischen Körper und Kopf gezeichnet, über den Beinen und Schuhen der ganzen Figur). Das linke Bein ist rot mit weißen Streifen und grünem Fuß, das rechte grün mit weißen Streifen und rotem Fuß, dazu weiße Bündchen. Sieht bei allen Figuren passend aus. Schon angezogene Socken wandern automatisch von „Dabei“ nach „Beine“. Auf Köpfen, Stickern und im Dashboard-Bild (nur Kopf und Oberkörper) sind die Beine nicht zu sehen. Neue Teile für „Beine“: Eintrag in `ACC` mit Platz `legs` + Zeichnung in `ACCS` (acc.js).
 

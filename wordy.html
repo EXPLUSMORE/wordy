@@ -1668,7 +1668,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.166.0";window.WORDY_BUILD="1ce4c9120e";</script>
+<script>window.WORDY_VERSION="2.166.1";window.WORDY_BUILD="62f6135bd1";</script>
 </head>
 <body>
 <div id="app">
@@ -12574,6 +12574,12 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       '<details class="card"><summary><b>So funktioniert der Kalender</b></summary><p class="small muted" style="margin:8px 0 0">Jedes Türchen öffnet sich nur an seinem Tag. Gewinne das Spiel des Tages (richtige Antworten in einer Runde mit Weihnachtswörtern), dann bekommst du das Geschenk. Klappt es nicht, darfst du es heute so oft probieren, wie du willst. Verpasst du einen Tag, holst du das Türchen mit einem <b>❄️ Joker</b> bis zum 24. Dezember nach (Münzen dann zur Hälfte, alles andere voll). Du startest mit 2 Jokern, alle 5 geöffneten Türchen gibt es einen neuen (höchstens 3).</p></details></div>';
     view.innerHTML = h;
   }
+  /* Overlays hängen am body, der Klick-Handler der Seite (view) erreicht sie nicht: Vorlesen-Knöpfe dort selbst bedienen */
+  function ovSay(e) {
+    var sy = e.target.closest("[data-act=say]"); if (!sy) return false;
+    if (!speak(sy.getAttribute("data-text"), 0, sy.getAttribute("data-lang"))) toast("Dieses Gerät hat keine Sprachausgabe bereit.");
+    return true;
+  }
   function advSheet(d, mode) {
     var ai = S.adventInfo(), x = ai.doors[d - 1], pl = S.advPlan(d), ov = document.createElement("div"); ov.className = "srmd";
     ov.innerHTML = '<div class="dsh advsheet"><div class="dshg"></div><div class="eyebrow">🎄 Türchen ' + d + (d === 6 ? " · Nikolaus 🎅" : d === 24 ? " · Heiligabend" : "") + '</div>' + advStory(d) +
@@ -12584,6 +12590,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       '<div class="row advbtns" style="gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap">' + (mode === "open" ? "" : '<button class="btn" data-d="go">' + (mode === "late" ? "❄️ Nachholen" : "▶ Spiel starten") + '</button>') + '' + (ai.test && mode !== "open" ? '<button class="btn soft" data-d="skip">Test: sofort öffnen</button>' : "") + '<button class="btn soft" data-d="x">Schließen</button></div></div>';
     document.body.appendChild(ov);
     ov.addEventListener("click", function (e) {
+      if (ovSay(e)) return;
       var b = e.target.closest("[data-d]"), k = b && b.getAttribute("data-d");
       if (e.target === ov || k === "x") { ov.remove(); return; }
       if (k === "go") { ov.remove(); advStart(d); }
@@ -12618,6 +12625,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     document.body.appendChild(ov);
     try { if (S.state.settings.audio) global.VTC.sound(S.state.profile.snd, true); } catch (e) {}
     ov.addEventListener("click", function (e) {
+      if (ovSay(e)) return;
       var b = e.target.closest("[data-d]"), k = b && b.getAttribute("data-d");
       if (k === "wear") { var r = S.accToggle(S.state.profile.avatar, it.id); toast(r.error || (r.on ? it.label + " sitzt!" : "Abgenommen")); renderHeader(); return; }
       if (k === "ok" || e.target === ov) { ov.remove(); tab = "spielen"; spielSeg = "advent"; renderHeader(); render(); view.scrollTop = 0; }
