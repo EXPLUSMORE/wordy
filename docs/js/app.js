@@ -1188,7 +1188,7 @@
       '<div class="hhchips"><span class="hhc">🔥 <b class="tnum">' + st.streak.count + '</b></span><span class="hhc">🪙 <b class="tnum">' + st.coins + '</b></span></div></div>' +
       '</section>';
 
-    html += adventTile() + resumeCard() + planCard() + dayCard(pct);
+    html += adventTile() + herbstCard() + resumeCard() + planCard() + dayCard(pct);
 
     var wish = S.wish();
     html += '<section class="card"><div class="eyebrow">Tagesmissionen</div><div style="margin-top:6px">' +
@@ -1764,6 +1764,92 @@
       earnOpen = false;
     }
   }
+  /* ================= HERBST (v2.172): Vogelscheuche-Kumpel mit Krähen-Tipp, Igel, Pilze, Laubhaufen, Ernte, Sankt Martin ================= */
+  function herbstOn() { return seasonNow() === "herbst"; }
+  function hbSheet(inner, onClick) {
+    if (document.querySelector(".srmd")) return null;
+    var ov = document.createElement("div"); ov.className = "srmd";
+    ov.innerHTML = '<div class="dsh" style="text-align:center"><div class="dshg"></div>' + inner + '<div class="row" style="gap:8px;justify-content:center;margin-top:12px"><button class="btn soft" data-hb="x">Schließen</button></div></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener("click", function (e) {
+      if (ovSay(e)) return;
+      var b = e.target.closest("[data-hb]"), k = b && b.getAttribute("data-hb");
+      if (e.target === ov || k === "x") { ov.remove(); return; }
+      if (onClick && onClick(k, ov)) ov.remove();
+    });
+    return ov;
+  }
+  function buddyMount() {   // kleine Vogelscheuche in der Übung: nickt bei richtig, lüftet den Hut bei falsch; die Krähe landet ab und zu und gibt einen Tipp
+    if (!herbstOn() || !global.VTS2 || !global.VTS2.scareArt) return;
+    var b = document.createElement("div"); b.className = "hbuddy"; b.id = "hBuddy"; b.setAttribute("role", "button"); b.setAttribute("aria-label", "Vogelscheuche mit Krähe: Tipp holen");
+    b.innerHTML = global.VTS2.scareArt() + '<div class="cr" id="hbCrow">' + global.VTS2.crowArt() + '</div>';
+    sessionEl.appendChild(b);
+    if (Math.random() < 0.7) setTimeout(function () { var c = $("#hbCrow"); if (c) c.classList.add("here"); }, 900 + Math.random() * 4500);
+  }
+  function buddyReact(ok) {
+    var b = $("#hBuddy"); if (!b || calmMotion) return;
+    b.classList.remove("nod", "tip"); void b.offsetWidth; b.classList.add(ok ? "nod" : "tip"); setTimeout(function () { b.classList.remove("nod", "tip"); }, 950);
+  }
+  function crowHint() {
+    var t = SS && SS.tasks[SS.i], c = $("#hbCrow"); if (!t || SS.answered) return;
+    if (!c || !c.classList.contains("here")) { toast("Die Krähe ist gerade nicht da. Vielleicht gleich! 🐦‍⬛"); return; }
+    c.classList.add("caw"); setTimeout(function () { c.classList.remove("caw"); }, 600);
+    if (t.type === "type") { var hb = $("#hintBtn"); if (hb && !hb.disabled) { hb.click(); toast("Krähe: Kraaah! Hier ein Tipp 🐦‍⬛"); } else toast("Mehr Tipps hat die Krähe nicht."); return; }
+    if (t.opts && t.opts.length >= 3 && t.type !== "stimmts" && !t.hint) {
+      var wrong = []; t.opts.forEach(function (o, i) { if (!o.ok && i !== SS.pick) wrong.push(i); });
+      if (wrong.length < 2) { toast("Hier ist nichts mehr wegzustreichen."); return; }
+      var gi = wrong[Math.random() * wrong.length | 0], bt = $$(".opt")[gi]; if (bt) { bt.classList.add("gone"); bt.disabled = true; } t.hint = 1;
+      toast("Krähe: Kraaah! Die da ist es nicht 🐦‍⬛ (mit Tipp gibt es keine XP)"); return;
+    }
+    toast(t.hint ? "Die Krähe hat dir schon geholfen." : "Hier kann die Krähe nicht helfen.");
+  }
+  function hbHarvestAdd() { var r = S.hbHarvest(1); if (r.done) setTimeout(function () { toast("🍎 Ernte voll! Der Rahmen „Herbstlaub“ gehört dir."); }, 700); }
+  function hbMartin() { var d = new Date(), m = d.getMonth() + 1, t = d.getDate(); if (m !== 11) return ""; return t >= 8 && t <= 10 ? "pre" : t >= 11 && t <= 14 ? "day" : ""; }
+  function hbHooks() {
+    var H = global.VTS2 && global.VTS2.hooks; if (!H) return;
+    H.pileSize = function () { return Math.min(7, (S.state.streak && S.state.streak.count) || 0); };
+    H.mushLeft = function () { return S.hbMushLeft(); };
+    H.scare = function () {};
+    H.crow = function () { toast("Kraaah! 🐦‍⬛ In der Übung hilft dir die Krähe mit einem Tipp: tippe dort auf die Vogelscheuche."); };
+    H.hog = function () {
+      var w = S.hbHog(); if (!w) return;
+      hbSheet('<div style="font-size:48px;line-height:1.1">🦔</div><div class="eyebrow">' + (w.fresh ? "Der Igel bringt dein Wort des Tages" : "Wort des Tages vom Igel") + '</div>' + (audioAvailable() ? speakBtn(w.en, true) : "") +
+        '<div class="prompt" style="margin:6px 0">' + esc(w.en) + '</div><b>' + esc(w.de) + '</b>' + (w.ex ? '<p class="small muted" style="margin:8px 0 0;font-family:Newsreader,serif;font-size:17px">' + esc(w.ex) + '</p>' : "") + '<p class="small muted" style="margin:8px 0 0">Ein Wort pro Tag – ganz ohne Druck.</p>');
+      if (audioAvailable()) setTimeout(function () { speak(w.en); }, 300);
+    };
+    H.mush = function () {
+      var r = S.hbShroom(); if (!r.id) { toast("Heute hast du schon 5 Pilze gesammelt 🍄 Morgen wachsen neue!"); return; }
+      toast("🍄 " + r.name + " gefunden! (" + (5 - r.left) + " von 5 heute · im Pilzbuch " + r.n + "×)");
+    };
+    H.pile = function () {
+      var r = S.hbPile();
+      if (r.got) hbSheet('<div style="font-size:52px;line-height:1.1">🍂🧶</div><div class="eyebrow">7 Tage Serie!</div><h3>Platsch! Du springst in den Laubhaufen</h3><p class="small muted" style="margin:6px 0 0">Dafür bekommst du die <b>Strickmütze</b> (Zubehör). Sie wartet unter Beute › Spind.</p>');
+      else toast(r.size >= 7 ? "Hui! Das raschelt! 🍂" : "Dein Laubhaufen wächst mit jedem Serientag. Bei 7 Tagen darfst du hineinspringen! (" + r.size + " von 7)");
+    };
+  }
+  function herbstCard() {
+    if (!herbstOn()) return "";
+    var h = S.hbInfo(), n = Math.floor(h.harvest / 5), ic = ["🍎", "🌰", "🍎", "🌰", "🍎", "🌰", "🍎", "🌰", "🍎", "🌰"], fr = "", i;
+    for (i = 0; i < 10; i++) fr += '<i class="' + (i < n ? "on" : "") + '">' + ic[i] + '</i>';
+    var pile = Math.min(7, (S.state.streak && S.state.streak.count) || 0), lv = ""; for (i = 0; i < 7; i++) lv += '<i style="' + (i < pile ? "" : "filter:grayscale(1) opacity(.35)") + '">🍂</i>';
+    var kinds = Object.keys(h.book).length, mt = hbMartin(), ml = "";
+    if (mt === "pre") ml = '<div class="small" style="margin-top:8px">🏮 Am 11. November ist Sankt Martin – dann gibt es eine Laterne zum Abholen.</div>';
+    else if (mt === "day") ml = '<div class="small" style="margin-top:8px">🏮 Sankt Martin! ' + (h.lant ? "Deine Laterne hast du schon ✓" : '<button class="btn sm" data-act="martin">Laterne abholen</button>') + '</div>';
+    return '<section class="card hbcard"><button class="chip" data-act="hbopen" style="float:right">Pilzbuch</button><div class="eyebrow">🍂 Herbstkorb</div>' +
+      '<div class="small" style="margin-top:6px"><b>Ernte</b> · ' + h.harvest + ' von ' + h.need + ' Wörtern' + (h.done ? " ✓" : "") + '</div><div class="hbfruit">' + fr + '</div>' +
+      '<div class="small" style="margin-top:8px"><b>Laubhaufen</b> · ' + pile + ' von 7 Serientagen' + (h.cap ? " ✓" : "") + '</div><div class="hbfruit">' + lv + '</div>' +
+      '<div class="small" style="margin-top:8px"><b>Pilzbuch</b> · ' + kinds + ' von ' + h.shrooms.length + ' Sorten · heute noch ' + h.left + ' Pilze</div>' + ml +
+      '<div class="small muted" style="margin-top:6px">Ernte wächst mit jedem richtig gelernten Wort (bei 50 gibt es den Rahmen „Herbstlaub“). Pilze findest du auf der Startseite im Hintergrund – sie geben keine XP.</div></section>';
+  }
+  function hbBook() {
+    var h = S.hbInfo(), V = global.VTS2, cells = h.shrooms.map(function (m) {
+      var c = h.book[m[0]] || 0;
+      return '<div style="width:30%;text-align:center"><div style="width:44px;height:44px;margin:0 auto' + (c ? "" : ";filter:grayscale(1) brightness(.5)") + '">' + (V && V.shroomArt ? V.shroomArt(m[2]) : "🍄") + '</div><div class="small">' + (c ? esc(m[1]) + " ×" + c : "???") + '</div></div>';
+    }).join("");
+    hbSheet('<div style="font-size:42px;line-height:1.1">🍄</div><div class="eyebrow">Pilzbuch</div><h3>' + Object.keys(h.book).length + ' von ' + h.shrooms.length + ' Sorten gefunden</h3><div class="row wrap" style="gap:10px;justify-content:center;margin-top:8px">' + cells + '</div><p class="small muted" style="margin:10px 0 0">Tippe auf der Startseite die Pilze im Hintergrund an. Höchstens 5 am Tag, keine XP, nur zum Sammeln.</p>');
+  }
+  if (global.VTS2) hbHooks();
+
   function seasonCard() {
     var m = S.state.settings.season || "auto", t = seasonNow(), snd = S.state.settings.seasonSound === true;
     if (m === "on") m = "halloween";
@@ -1799,7 +1885,7 @@
   function unitsHtml() {
     var st = S.state, stt = S.stats();
     var biz = st.settings.track === "business";
-    var groups = biz ? ["Basis", "Aufbau", "Profi", "Smalltalk", "Redewendungen"] : ["Headlight 2", 6, 7, 8];
+    var groups = biz ? ["Basis", "Aufbau", "Profi", "Smalltalk", "Redewendungen", "Herbst"] : ["Headlight 2", 6, 7, 8, "Herbst"];
     var sel = S.groupsOf();
     var html = '';
     var guided = S.steered();   // gesteuert: das Kind sieht nur die Einheiten, die für es vorgesehen sind (ohne Hinweis darauf)
@@ -2591,7 +2677,7 @@
 
     /* Einheiten nach Gruppen: Schulbuch (Headlight 2), Klassen 6–8, Eigene Listen bzw. Business Basis bis Redewendungen; je Gruppe nach Lernstand sortiert */
     var bizT = st.settings.track === "business";
-    var ORDER = ["Headlight 2", "6", "7", "8", "Basis", "Aufbau", "Profi", "Smalltalk", "Redewendungen", "0"], byK = {}, ks = [];
+    var ORDER = ["Headlight 2", "6", "7", "8", "Basis", "Aufbau", "Profi", "Smalltalk", "Redewendungen", "Herbst", "0"], byK = {}, ks = [];
     s.perUnit.forEach(function (u) { var k = String(u.k); if (!byK[k]) { byK[k] = []; ks.push(k); } byK[k].push(u); });
     ks.sort(function (a, b) { var ia = ORDER.indexOf(a), ib = ORDER.indexOf(b); return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); });
     var state3 = function (u) { return u.seen === 0 ? 1 : u.sure < u.total ? 0 : 2; };   // 0 angefangen, 1 neu, 2 gefestigt
@@ -3189,7 +3275,7 @@
       var cs = t.step || SS.curStep || 1; SS.curStep = cs;
       stepHtml = '<div class="stepbar">' + (SS.station.verbIds ? [1, 2, 3, 4, 5] : [1, 2, 3, 4]).map(function (k) { return '<i class="' + (k < cs ? "ok" : k === cs ? "now" : "") + '"></i>'; }).join("") + '<b>Station ' + SS.station.n + ' · ' + STEP_NAMES[cs - 1] + '</b></div>';
     }
-    sessionEl.innerHTML = head + stepHtml + '<div class="sbody" id="sbody"></div><div class="sfoot" id="sfoot"></div>';
+    sessionEl.innerHTML = head + stepHtml + '<div class="sbody" id="sbody"></div><div class="sfoot" id="sfoot"></div>'; buddyMount();
     var body = $("#sbody"), foot = $("#sfoot");
     body.className = "sbody pop";
     (RENDER[t.type] || RENDER.mc_en_de)(t, body, foot);
@@ -3450,6 +3536,7 @@
     if (before === 0) SS.newSeen++;
     S.save();
     renderHeader();
+    if (g > 0 && herbstOn()) hbHarvestAdd();
     return res;
   }
   function verdict(ok, w, res, note) {
@@ -3515,6 +3602,7 @@
     var p = S.state.profile;
     if (S.state.settings.audio) global.VTC.sound(p.snd, ok);
     if (ok) global.VTC.burst(p.fx, global.innerWidth / 2, global.innerHeight * .55, 16, 1);
+    buddyReact(ok);
   }
   function verdictSentence(ok, x) {
     var foot = $("#sfoot"); if (!foot) return;
@@ -3594,13 +3682,13 @@
       if (t.opts[i].ok) b.classList.add("right");
       else if (i === SS.pick) b.classList.add("wrong");
     });
-    var res2 = applyGrade(w, ok ? (t.type === "stimmts" ? 1 : 2) : 0);   // Ja/Nein ist leichter zu raten: nur „ordentlich“ (1) statt „sicher“ (2)
+    var hintedM = !!t.hint && ok, res2 = applyGrade(w, ok ? (t.type === "stimmts" || hintedM ? 1 : 2) : 0, hintedM ? { hint: true } : null);   // Ja/Nein ist leichter zu raten: nur „ordentlich“ (1) statt „sicher“ (2)
     if (!ok) SS.retry.push({ type: t.type === "stimmts" ? "mc_en_de" : t.type, w: w });
     if (t.type === "gap") {   // der ganze Satz mit dem richtigen Wort wird gezeigt und noch einmal vorgelesen
       var gu = $(".gapline u"); if (gu) { gu.innerHTML = esc(w.gap); gu.className = ok ? "gfill ok" : "gfill bad"; }
       if (audioAvailable()) setTimeout(function () { speak(w.ex, 0.9); }, 250);
     }
-    verdict(ok, w, res2);
+    verdict(ok, w, res2, hintedM ? "mit Krähen-Tipp geschafft – das Wort kommt bald wieder, XP gibt es dafür nicht" : null);
   }
   function next() {
     if (!SS) return;
@@ -3611,6 +3699,7 @@
   /* ---------- Ereignisse ---------- */
   sessionEl.addEventListener("click", function (e) {
     var t = SS && SS.tasks[SS.i];
+    if (e.target.closest(".hbuddy")) { crowHint(); return; }
     var say = e.target.closest("[data-act='say']");
     if (say) { speak(say.getAttribute("data-text"), 0, say.getAttribute("data-lang")); return; }
     var opt = e.target.closest(".opt");
@@ -4069,6 +4158,8 @@
     else if (a === "shoptab") { shopTab = act.getAttribute("data-k"); beuteSeg = "laden"; render(); }
     else if (a === "dealview") dealSheet(act.getAttribute("data-id"));
     else if (a === "advdoor") advDoor(+act.getAttribute("data-d"));
+    else if (a === "hbopen") { hbBook(); }
+    else if (a === "martin") { var lg = S.hbLantern(); if (lg) toast("🏮 Laterne geschenkt! Du findest sie unter Beute › Spind › Zubehör."); render(); }
     else if (a === "advgo") { tab = "spielen"; spielSeg = "advent"; render(); view.scrollTop = 0; }
     else if (a === "shoprar") { shopRar = act.getAttribute("data-k"); render(); }
     else if (a === "checkupdate") {

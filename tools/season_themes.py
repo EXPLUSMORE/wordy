@@ -242,6 +242,11 @@ def herbst():
     A(".sxh{bottom:10px;width:var(--w);height:var(--h);animation:sxHog 70s linear infinite;animation-delay:var(--dl);left:-60px!important}@keyframes sxHog{0%{transform:translateX(0)}60%,100%{transform:translateX(calc(100vw + 120px))}}.sxh svg{width:100%;height:100%;display:block;animation:sxHogB .5s ease-in-out infinite alternate}@keyframes sxHogB{to{transform:translateY(-2px) rotate(1.5deg)}}")
     A(".sxmu{bottom:9px;width:var(--w);height:var(--h);opacity:0;transform:scale(.2);transform-origin:50% 100%;transition:opacity .4s,transform .5s cubic-bezier(.2,1.6,.4,1);pointer-events:none!important}.sxmu.on{opacity:1;transform:scale(1);pointer-events:auto!important}.sxmu svg{width:100%;height:100%;display:block;filter:drop-shadow(0 2px 2px rgba(60,20,0,.4))}")
     A(".sxlp{bottom:8px;width:var(--w);height:var(--h)}.sxlp svg{width:100%;height:100%;display:block}.sxlp.act{animation:sxPile .8s ease-out}@keyframes sxPile{0%{transform:none}30%{transform:scale(1.12,.86)}60%{transform:scale(.96,1.08)}100%{transform:none}}")
+    A(f"{S} #session{{position:absolute}}.hbuddy{{position:absolute;right:6px;top:54px;width:34px;height:60px;z-index:3;transform-origin:50% 100%;cursor:pointer;-webkit-tap-highlight-color:transparent}}.hbuddy svg{{width:100%;height:100%;display:block;filter:drop-shadow(0 2px 2px rgba(60,20,0,.35))}}")
+    A(".hbuddy.nod{animation:sxVNod .8s ease-out}.hbuddy.tip .sh{animation:hbTip .9s ease-out;transform-origin:40px 30px}@keyframes hbTip{0%{transform:none}30%{transform:translate(-6px,-9px) rotate(-30deg)}70%{transform:translate(-6px,-9px) rotate(-30deg)}100%{transform:none}}")
+    A(".hbuddy .cr{position:absolute;left:-10px;top:-10px;width:26px;height:18px;opacity:0;transition:opacity .5s,transform .5s;transform:translateY(-12px)}.hbuddy .cr.here{opacity:1;transform:none}.hbuddy .cr svg{width:100%;height:100%;filter:none}.hbuddy .cr.caw{animation:sxCaw .5s ease-out}")
+    A(".opt.gone{opacity:.28;text-decoration:line-through;pointer-events:none}")
+    A(".hbfruit{display:flex;gap:2px;flex-wrap:wrap;font-size:17px;line-height:1.2}.hbfruit i{font-style:normal;filter:grayscale(1) opacity(.35)}.hbfruit i.on{filter:none}")
     A(".sxf-herbst{width:54px;height:34px}.sxf-herbst .bd{width:100%;height:100%;filter:drop-shadow(0 3px 3px rgba(40,10,0,.4))}")
     OUT["HERBST"] = "\n".join(o)
 

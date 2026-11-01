@@ -122,6 +122,7 @@
     { id: "fr:eis",     kind: "frame", label: "Eiskristall-Rahmen", cost: 1500, val: "eis", reward: "eis" },
     { id: "fr:none",    kind: "frame", label: "Kein Rahmen", cost: 0,   val: "none" },
     { id: "fr:lichter",  kind: "frame", label: "Lichterketten-Rahmen", cost: 400, val: "lichter", pass: "Advent", rar: "legend" },
+    { id: "fr:laub",     kind: "frame", label: "Herbstlaub-Rahmen", cost: 300, val: "laub", pass: "Herbst", rar: "legend" },
     { id: "fr:gold",    kind: "frame", label: "Goldrahmen",  cost: 120, val: "gold" },
     { id: "fr:rainbow", kind: "frame", label: "Regenbogenrahmen", cost: 200, val: "rainbow" },
     { id: "fr:fire",    kind: "frame", label: "Flammenrahmen", cost: 350, val: "fire" },
@@ -276,9 +277,10 @@
     ["kopf", "ears", "Kopfhörer", 80], ["waerme", "ears", "Ohrenwärmer", 45], ["ohrring", "ears", "Ohrringe", 35],
     ["schal", "neck", "Schal", 50], ["fliege", "neck", "Fliege", 35], ["kette", "neck", "Goldkette", 90], ["tuch", "neck", "Halstuch", 35], ["medaille", "neck", "Medaille", 60], ["bosskette", "neck", "Boss-Kette ($)", 150], ["mkette", "neck", "Fette Goldkette mit M", 150],
     ["skate", "gear", "Skateboard", 70], ["surf", "gear", "Surfbrett", 100], ["gitarre", "gear", "Gitarre", 150],
-    ["nikolaus", "head", "Nikolaus-Mütze", 70], ["xschal", "neck", "Weihnachts-Schal", 50], ["geweih", "ears", "Rentier-Geweih", 100], ["schlitten", "gear", "Schlitten", 150], ["socken", "legs", "Weihnachtssocken", 60]];
+    ["nikolaus", "head", "Nikolaus-Mütze", 70], ["xschal", "neck", "Weihnachts-Schal", 50], ["geweih", "ears", "Rentier-Geweih", 100], ["schlitten", "gear", "Schlitten", 150], ["socken", "legs", "Weihnachtssocken", 60],
+    ["gummistiefel", "legs", "Gummistiefel", 60], ["schirm", "gear", "Regenschirm", 70], ["herbstschal", "neck", "Herbstschal", 50], ["strickmuetze", "head", "Strickmütze", 70], ["laterne", "gear", "Laterne", 80]];
   SHOP = SHOP.concat(ACC.map(function (a) { return { id: "ac:" + a[0], kind: "acc", slot: a[1], label: a[2], cost: a[3], val: a[0], rar: a[3] <= 40 ? "common" : a[3] <= 70 ? "rare" : a[3] <= 100 ? "epic" : "legend" }; }));
-  SHOP.forEach(function (x) { if (x.id === "ac:nikolaus" || x.id === "ac:xschal" || x.id === "ac:geweih" || x.id === "ac:schlitten") x.pass = "Advent"; });   // nur im Wichtel-Kalender (v2.160)
+  SHOP.forEach(function (x) { if (x.id === "ac:nikolaus" || x.id === "ac:xschal" || x.id === "ac:geweih" || x.id === "ac:schlitten") x.pass = "Advent"; if (x.id === "ac:strickmuetze" || x.id === "ac:laterne") x.pass = "Herbst"; });   // nur im Wichtel-Kalender (v2.160)
   /* v2.154: Unreal-Preise halbiert (alter Preis in `was`, für die einmalige Gutschrift in priceMigrate) */
   SHOP.forEach(function (x) { if (x.rar === "unreal" && x.cost > 0 && !x.reward && !x.pass) { x.was = x.cost; x.cost = Math.max(5, Math.round(x.cost / 2 / 5) * 5); } });
   /* Englische Namen aller Gegenstände (Gadget: nebenbei Vokabeln lernen). Sticker = Name der Figur + " sticker". */
@@ -299,7 +301,7 @@
     "sn:none": "Mute", "sn:bell": "Little bell", "sn:arcade": "Arcade", "sn:harp": "Harp", "th:paper": "Paper", "th:mint": "Mint", "th:plum": "Plum", "th:amber": "Amber",
     "ac:beanie": "Winter hat", "ac:party": "Party hat", "ac:zylinder": "Top hat", "ac:prop": "Propeller cap", "ac:cap": "Baseball cap", "ac:stroh": "Straw hat", "ac:blumen": "Flower crown", "ac:heiligen": "Halo", "ac:hasen": "Bunny ears", "ac:teufel": "Devil horns", "ac:eishut": "Ice-cream hat", "ac:pizza": "Pizza hat", "ac:krone": "Gold crown",
     "ac:sonne": "Sunglasses", "ac:nerd": "Nerd glasses", "ac:mono": "Monocle", "ac:brille3d": "3D glasses", "ac:herz": "Heart glasses", "ac:schnurr": "Moustache", "ac:clown": "Clown nose", "ac:ski": "Ski goggles",
-    "ac:kopf": "Headphones", "ac:waerme": "Earmuffs", "ac:ohrring": "Earrings", "ac:schal": "Scarf", "ac:fliege": "Bow tie", "ac:kette": "Gold chain", "ac:tuch": "Neckerchief", "ac:medaille": "Medal", "ac:bosskette": "Boss chain ($)", "ac:mkette": "Fat gold chain with M", "ac:skate": "Skateboard", "ac:surf": "Surfboard", "ac:gitarre": "Guitar", "ac:socken": "Christmas socks"
+    "ac:kopf": "Headphones", "ac:gummistiefel": "Rubber boots", "ac:schirm": "Umbrella", "ac:herbstschal": "Autumn scarf", "ac:strickmuetze": "Knitted hat", "ac:laterne": "Lantern", "fr:laub": "Autumn leaves frame", "ac:waerme": "Earmuffs", "ac:ohrring": "Earrings", "ac:schal": "Scarf", "ac:fliege": "Bow tie", "ac:kette": "Gold chain", "ac:tuch": "Neckerchief", "ac:medaille": "Medal", "ac:bosskette": "Boss chain ($)", "ac:mkette": "Fat gold chain with M", "ac:skate": "Skateboard", "ac:surf": "Surfboard", "ac:gitarre": "Guitar", "ac:socken": "Christmas socks"
   };
   function enName(it) { if (!it) return ""; if (it.kind === "sticker") { var b = EN["av:" + it.id.slice(3)]; return b ? b + " sticker" : ""; } return EN[it.id] || ""; }
   var MAX_STICKERS = 10;
@@ -1547,6 +1549,40 @@
     state.profile[PROFILE_KEY[it.kind]] = it.val; save(true); return { ok: true, item: it };
   }
   /* ---------- Lernpfad (Headlight 2): Abschnitte aus Stationen, Truhe am Ende jedes Abschnitts ---------- */
+  /* Herbst (v2.172): state.herbst = {y, harvest, done, shroom:{day,n}, book:{id:n}, hog:"Tag", cap, lant}; jedes Jahr neu (Ernte, Mütze, Laterne), Pilzbuch bleibt */
+  var HB_SHROOMS = [["fliege", "Fliegenpilz", "#C1331F"], ["stein", "Steinpilz", "#8A4A22"], ["pfiffer", "Pfifferling", "#E0A12E"], ["marone", "Maronenröhrling", "#6B3A1E"], ["parasol", "Parasol", "#D9B98A"], ["champ", "Champignon", "#EADFC8"]];
+  var HB_SHROOM_DAY = 5, HB_HARVEST = 50;
+  function hb() {
+    var y = new Date().getFullYear(), h = state.herbst;
+    if (!h) h = state.herbst = { y: y, harvest: 0, done: 0, shroom: { day: "", n: 0 }, book: {}, hog: "", cap: 0, lant: 0 };
+    if (h.y !== y) { h.y = y; h.harvest = 0; h.done = 0; h.cap = 0; h.lant = 0; }
+    return h;
+  }
+  function hbHarvest(n) {   // Ernte wächst mit jedem richtig gelernten Wort; 50 = Rahmen „Herbstlaub“
+    var h = hb(); h.harvest = Math.min(HB_HARVEST, h.harvest + (n || 1)); var out = { n: h.harvest, need: HB_HARVEST, done: false };
+    if (h.harvest >= HB_HARVEST && !h.done) { h.done = 1; passGrant({ items: ["fr:laub"] }); out.done = true; ev("herbst", { k: "ernte" }); }
+    save(); return out;
+  }
+  function hbMushLeft() { var h = hb(); return h.shroom.day === today() ? Math.max(0, HB_SHROOM_DAY - h.shroom.n) : HB_SHROOM_DAY; }
+  function hbShroom() {   // Pilz im Hintergrund antippen: Pilzbuch, höchstens 5 am Tag, keine XP
+    var h = hb(), t = today(); if (h.shroom.day !== t) h.shroom = { day: t, n: 0 };
+    if (h.shroom.n >= HB_SHROOM_DAY) return { left: 0 };
+    var p = HB_SHROOMS[Math.random() * HB_SHROOMS.length | 0]; h.shroom.n++; h.book[p[0]] = (h.book[p[0]] || 0) + 1;
+    ev("herbst", { k: "pilz", id: p[0] }); save(); return { id: p[0], name: p[1], col: p[2], n: h.book[p[0]], left: HB_SHROOM_DAY - h.shroom.n };
+  }
+  function hbPile() {   // Laubhaufen wächst mit der Serie, bei 7 Tagen: Reinspringen und Strickmütze (einmal im Jahr)
+    var h = hb(), size = Math.max(0, Math.min(7, (state.streak && state.streak.count) || 0)), out = { size: size, got: null };
+    if (size >= 7 && !h.cap) { h.cap = 1; var g = passGrant({ items: ["ac:strickmuetze"] }); out.got = g.items && g.items[0] || { label: "Strickmütze" }; ev("herbst", { k: "haufen" }); save(); }
+    return out;
+  }
+  function hbHog() {   // Igel bringt einmal am Tag ein Herbstwort
+    var h = hb(), t = today(), fresh = h.hog !== t;
+    var biz = state.settings.track === "business", list = words.filter(function (w) { return w.unit === (biz ? "herbst-b" : "herbst-s"); });
+    if (!list.length) return null; h.hog = t; if (fresh) save();
+    var w = list[Math.floor(Date.now() / 864e5) % list.length]; return { id: w.id, en: w.en, de: w.de, ex: w.ex, fresh: fresh };
+  }
+  function hbLantern() { var h = hb(); if (h.lant) return null; h.lant = 1; var g = passGrant({ items: ["ac:laterne"] }); ev("herbst", { k: "laterne" }); save(true); return g.items && g.items[0] || { label: "Laterne" }; }
+  function hbInfo() { var h = hb(); return { harvest: h.harvest, need: HB_HARVEST, done: !!h.done, book: h.book, shrooms: HB_SHROOMS, left: hbMushLeft(), hogSeen: h.hog === today(), cap: !!h.cap, lant: !!h.lant }; }
   var STATION_WORDS = 7, pathCache = null, pathCacheKey = "";
   function pathState() {
     var p = state.path;
@@ -1949,6 +1985,7 @@
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
+    hbHarvest: hbHarvest, hbShroom: hbShroom, hbMushLeft: hbMushLeft, hbPile: hbPile, hbHog: hbHog, hbLantern: hbLantern, hbInfo: hbInfo,
     grantItem: function (id) { return passGrant({ items: [id] }); }, resetProgress: resetProgress, stampNew: stampNew, passStamp: passStamp, shopVisible: shopVisible, shopWeeks: shopWeeks, shopCatalog: shopCatalog, shopTeasers: shopTeasers, shopNow: shopNow, shopRel: shopRel, WELCOME: WELCOME, welcomeGrant: welcomeGrant, welcomeNeeded: welcomeNeeded, steered: steered, pathUnitList: pathUnitList, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathLock: pathLock, adventInfo: adventInfo, advPlan: advPlan, advCan: advCan, advWin: advWin, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostInfo: boostInfo, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, boost: boost, coinFactor: coinFactor, avgCoins: avgCoins, dealItem: dealItem, priceOf: priceOf, passInfo: passInfo, favs: favs, toggleFav: toggleFav, collection: collection, findCollItem: findCollItem, CUP_TIERS: CUP_TIERS, claimPassWeek: claimPassWeek, claimPassTier: claimPassTier, claimPassCrew: claimPassCrew, claimPassFinale: claimPassFinale, passMeta: passMeta, rarityOf: rarityOf, shopList: shopList, activeSetDeal: activeSetDeal, buySet: buySet, takeNews: takeNews, SETS: SETS, itemById: itemById, minXp: minXp, defaultOf: defaultOf
   };
 })(window);

@@ -140,7 +140,7 @@
 
   /* ---------- Takt ---------- */
   function startClock() {
-    var last = Date.now();
+    var last = Date.now(); hbStorm = !!(global.VTS2 && global.VTS2.storm && document.documentElement.getAttribute("data-season") === "herbst" && run && run.mode !== "survival"); if (hbStorm) global.VTS2.storm(0.05);
     timer = setInterval(function () { try { tick(); } catch (e) { try { console.error("arena tick:", e); } catch (x) {} if (run && !run.done && run.mode === "survival" && run.qLeft <= 0) { try { finish("timeout"); } catch (y) { stopClock(); } } } }, 90);
     function tick() {
       if (!run) return stopClock();
@@ -159,10 +159,12 @@
         return;
       }
       if (run.left <= 0) { run.left = 0; paintHud(); return finish("time"); }
+      if (hbStorm) global.VTS2.storm(Math.min(1, Math.max(0, 1 - run.left / run.total)));
       paintHud();
     }
   }
-  function stopClock() { if (timer) clearInterval(timer); timer = null; }
+  var hbStorm = false;   // Herbst: Gewitter-Arena, je weniger Zeit, desto stärker der Wind
+  function stopClock() { if (timer) clearInterval(timer); timer = null; if (hbStorm) { hbStorm = false; global.VTS2.storm(0); } }
 
   /* ================= Modus 1: Match-Rausch ================= */
   function renderMatch() {

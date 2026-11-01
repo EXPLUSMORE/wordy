@@ -10,6 +10,11 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.172.0
+- **Herbst-Look (Teil 2: Spielwelt):** Vogelscheuche als kleiner Kumpel in der Übung (nickt bei richtig, lüftet den Hut bei falsch). Die **Krähe** landet ab und zu darauf und gibt einen **Tipp**: bei Auswahlaufgaben streicht sie eine falsche Antwort weg, beim Tippen öffnet sie den Hinweis; mit Tipp gibt es wie beim Hinweis keine XP. **Igel** bringt einmal am Tag ein Wort des Tages (ohne XP). **Pilze** im Hintergrund der Startseite: antippen füllt das Pilzbuch (6 Sorten, höchstens 5 am Tag, keine XP). **Laubhaufen** wächst mit jedem Serientag, bei 7 Tagen springt man hinein und bekommt die Strickmütze. **Ernte** wächst mit jedem richtig gelernten Wort, bei 50 gibt es den Rahmen „Herbstlaub“. **Gewitter-Arena:** in der Arena kommt mit weniger Zeit mehr Wind und Laub (und ab und zu ein Blitz). **Sankt Martin** (11.–14. Nov.): Laterne zum Abholen. Karte „Herbstkorb“ auf der Startseite.
+- **Zubehör:** Gummistiefel (Beine), Regenschirm (Dabei), Herbstschal, Strickmütze (nur über den Laubhaufen), Laterne (nur Sankt Martin). Rahmen „Herbstlaub“ (nur Ernte).
+- **Herbstwörter:** neue Gruppe „Herbst“ für Schule (28 Wörter) und Business (24 Wörter: Ernte/Ertrag, Saisongeschäft …), wählbar unter Lernen › Einheiten.
+
 ## 2.171.0
 - **Herbst-Look (Teil 1: Atmosphäre):** neuer Saison-Look `herbst` (1. Sep.–14. Okt. und 1. Nov.–30. Nov.). Papier-Optik in Kürbisorange/Burgund/Moos/Creme, Laubwind (30 Blätter in Böen, ruhig dazwischen), gelegentlicher Regenschauer, Nebel unten und warme Vignette. Szene auf der Startseite: Vogelscheuche (wippt beim Antippen, Krähe landet ab und zu darauf), Igel läuft vorbei, Pilze tauchen im Hintergrund auf, Krähen fliegen. Maskottchen Eichel (Tippen, Wurf mit Kastanie, Girlande aus Blättern). Leise Klänge (Wind, Rascheln, Regen, Zupfnoten) hinter dem Schalter „Hintergrundmusik“. „Bewegung reduzieren“ und „Saison-Look aus“ schalten alles ab.
 - **Fenster neu:** Halloween 15.–31. Okt., Herbst ganzer November, Weihnachten 1.–26. Dez., Winter 27. Dez.–28. Feb. Dashboard: Herbst in Fenster-Plan und „Look erzwingen“ (Server-Update nötig).

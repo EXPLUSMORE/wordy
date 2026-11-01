@@ -497,7 +497,7 @@
     var W = global.innerWidth, H = global.innerHeight, dpr = Math.min(2, global.devicePixelRatio || 1), cv = el("canvas"); cv.id = "sxWeather"; cv.width = W * dpr; cv.height = H * dpr; cv.style.cssText = "position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:7"; document.body.appendChild(cv);
     var c = cv.getContext("2d"); c.setTransform(dpr, 0, 0, dpr, 0, 0); var N = id === "winter" ? 110 : id === "xmas" ? 46 : id === "aqua" ? 44 : id === "herbst" ? 30 : 28, P = [], drops = [], stop = false, t0 = 0, raf = 0;
     for (var i = 0; i < N; i++) P.push({ x: Math.random() * W, y: Math.random() * H, z: Math.random(), ph: Math.random() * 6.28, c: Math.random(), r: Math.random() * 6.28 });
-    var HCOL = ["#C1531F", "#E0A12E", "#8A3A14", "#B8442C", "#D9822B", "#7A8A2E"], showerAt = 40 + Math.random() * 30;
+    var HCOL = ["#C1531F", "#E0A12E", "#8A3A14", "#B8442C", "#D9822B", "#7A8A2E"], showerAt = 40 + Math.random() * 30, flash = 0;
     var COL = ["#FF4D79", "#FFD34D", "#7DF0C0", "#6EC8FF", "#fff", "#FF8FB8"];
     function loop(now) {
       if (stop) return; if (!t0) t0 = now; var t = (now - t0) / 1000; c.clearRect(0, 0, W, H); var gust = Math.sin(t * 0.3) * 0.5 + Math.sin(t * 0.77) * 0.3;
@@ -519,16 +519,17 @@
           else { p.y += (14 + p.z * 24) * 0.016; p.x += Math.sin(t * 0.9 + p.ph) * 0.8 + gust * 0.4; p.r += 0.03; if (p.y > H + 10) { p.y = -10; p.x = Math.random() * W; } c.globalAlpha = 0.85; c.save(); c.translate(p.x, p.y); c.rotate(p.r); c.fillStyle = p.c < 0.8 ? "#FF9EC1" : "#FFD23F"; c.beginPath(); c.ellipse(0, 0, 6, 3.2, 0, 0, 6.283); c.fill(); c.restore(); } }
       });
       if (id === "herbst") {
+        if (STORM > 0.7 && flash <= 0 && Math.random() < 0.004) flash = 5; if (flash > 0) { c.globalAlpha = flash * 0.06; c.fillStyle = "#FFF6DC"; c.fillRect(0, 0, W, H); flash--; }
         if (t > showerAt && !drops.length) { for (var di = 0; di < 70; di++) drops.push({ x: Math.random() * W, y: Math.random() * H, v: 520 + Math.random() * 280 }); showerAt = t + 60 + Math.random() * 60; drops.until = t + 5 + Math.random() * 3; }
         if (drops.length) { var fa = Math.min(1, (drops.until - t) / 1.2, 1); if (t > drops.until) { drops.length = 0; } else { c.strokeStyle = "rgba(180,200,215,.55)"; c.lineWidth = 1.3; c.globalAlpha = Math.max(0, fa); c.beginPath(); drops.forEach(function (d) { d.y += d.v * 0.016; d.x -= 60 * 0.016; if (d.y > H) { d.y = -20; d.x = Math.random() * W; } c.moveTo(d.x, d.y); c.lineTo(d.x + 3, d.y + 16); }); c.stroke(); } }
       }
       c.globalAlpha = 1; raf = global.requestAnimationFrame(loop);
     }
-    raf = global.requestAnimationFrame(loop); WX = { id: id, stop: function () { stop = true; global.cancelAnimationFrame(raf); cv.remove(); } };
+    raf = global.requestAnimationFrame(loop); WX = { id: id, cv: cv, stop: function () { stop = true; global.cancelAnimationFrame(raf); cv.remove(); } };
   }
 
   global.VTS2 = {
     themes: function () { return THEMES; }, theme: function (id) { return THEMES[id] || null; }, mount: mount, tap: tap, whack: whack, home: home, weather: weather,
-    hooks: {}, storm: function (v) { STORM = Math.max(0, Math.min(1, v || 0)); }, shroomArt: shroomSvg, pileArt: pileSvg, leafArt: leafSvg, hogArt: hedgehogSvg, crowArt: crow, scareArt: scarecrowSvg, ambientStart: ambientStart, ambientStop: ambientStop, ambientOn: function () { return !!AMB; }, busy: function () { return running || whacking; }, whacking: function () { return whacking; }
+    hooks: {}, storm: function (v) { STORM = Math.max(0, Math.min(1, v || 0)); if (WX && WX.cv) { WX.cv.style.zIndex = STORM > 0 ? 41 : 7; WX.cv.style.opacity = STORM > 0 ? 0.8 : 1; } }, shroomArt: shroomSvg, pileArt: pileSvg, leafArt: leafSvg, hogArt: hedgehogSvg, crowArt: crow, scareArt: scarecrowSvg, ambientStart: ambientStart, ambientStop: ambientStop, ambientOn: function () { return !!AMB; }, busy: function () { return running || whacking; }, whacking: function () { return whacking; }
   };
 })(window);

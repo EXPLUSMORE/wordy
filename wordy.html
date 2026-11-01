@@ -1550,6 +1550,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 .hscroll .chip{flex:0 0 auto;white-space:nowrap}
 /* WICHTEL-KALENDER (Advent, v2.160) */
 .bub{background:#fff;color:#1b2440;border-radius:16px;padding:10px 12px;font-size:14px;line-height:1.4;text-align:left}.bub .muted{color:#5a6b99}
+.avatar.fr-laub{box-shadow:0 0 0 2px #8A3A14,0 0 0 4.5px #E0A12E,0 0 12px 3px rgba(193,83,31,.7),0 0 18px 6px rgba(224,161,46,.4)}
 .avatar.fr-lichter{box-shadow:0 0 0 2px #2f8f4e,0 0 0 4.5px #ffd34d,0 0 12px 3px rgba(255,90,90,.75),0 0 18px 6px rgba(120,255,160,.45)}
 @keyframes advtw{0%,100%{opacity:1}50%{opacity:.55}}
 /* WICHTEL-DORF: festliche Türchen (v2.162) */
@@ -1723,12 +1724,17 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 .sxh{bottom:10px;width:var(--w);height:var(--h);animation:sxHog 70s linear infinite;animation-delay:var(--dl);left:-60px!important}@keyframes sxHog{0%{transform:translateX(0)}60%,100%{transform:translateX(calc(100vw + 120px))}}.sxh svg{width:100%;height:100%;display:block;animation:sxHogB .5s ease-in-out infinite alternate}@keyframes sxHogB{to{transform:translateY(-2px) rotate(1.5deg)}}
 .sxmu{bottom:9px;width:var(--w);height:var(--h);opacity:0;transform:scale(.2);transform-origin:50% 100%;transition:opacity .4s,transform .5s cubic-bezier(.2,1.6,.4,1);pointer-events:none!important}.sxmu.on{opacity:1;transform:scale(1);pointer-events:auto!important}.sxmu svg{width:100%;height:100%;display:block;filter:drop-shadow(0 2px 2px rgba(60,20,0,.4))}
 .sxlp{bottom:8px;width:var(--w);height:var(--h)}.sxlp svg{width:100%;height:100%;display:block}.sxlp.act{animation:sxPile .8s ease-out}@keyframes sxPile{0%{transform:none}30%{transform:scale(1.12,.86)}60%{transform:scale(.96,1.08)}100%{transform:none}}
+:root:root:root[data-season="herbst"] #session{position:absolute}.hbuddy{position:absolute;right:6px;top:54px;width:34px;height:60px;z-index:3;transform-origin:50% 100%;cursor:pointer;-webkit-tap-highlight-color:transparent}.hbuddy svg{width:100%;height:100%;display:block;filter:drop-shadow(0 2px 2px rgba(60,20,0,.35))}
+.hbuddy.nod{animation:sxVNod .8s ease-out}.hbuddy.tip .sh{animation:hbTip .9s ease-out;transform-origin:40px 30px}@keyframes hbTip{0%{transform:none}30%{transform:translate(-6px,-9px) rotate(-30deg)}70%{transform:translate(-6px,-9px) rotate(-30deg)}100%{transform:none}}
+.hbuddy .cr{position:absolute;left:-10px;top:-10px;width:26px;height:18px;opacity:0;transition:opacity .5s,transform .5s;transform:translateY(-12px)}.hbuddy .cr.here{opacity:1;transform:none}.hbuddy .cr svg{width:100%;height:100%;filter:none}.hbuddy .cr.caw{animation:sxCaw .5s ease-out}
+.opt.gone{opacity:.28;text-decoration:line-through;pointer-events:none}
+.hbfruit{display:flex;gap:2px;flex-wrap:wrap;font-size:17px;line-height:1.2}.hbfruit i{font-style:normal;filter:grayscale(1) opacity(.35)}.hbfruit i.on{filter:none}
 .sxf-herbst{width:54px;height:34px}.sxf-herbst .bd{width:100%;height:100%;filter:drop-shadow(0 3px 3px rgba(40,10,0,.4))}
 /* SEASON-HERBST:END */
 </style>
 
 
-<script>window.WORDY_VERSION="2.171.0";window.WORDY_BUILD="606c5c7414";</script>
+<script>window.WORDY_VERSION="2.172.0";window.WORDY_BUILD="0425db87a7";</script>
 </head>
 <body>
 <div id="app">
@@ -3194,6 +3200,66 @@ window.VOCAB_UNITS = (window.VOCAB_UNITS || []).concat([
 ["cosy","gemütlich",2,"The room is warm and cosy."],
 ["to celebrate","feiern",2,"We celebrate together."],
 ["holiday","der Feiertag, die Ferien",1,"The winter holidays start soon."]
+]}
+]);
+</script>
+<script>/* Herbst-Look: Herbstwörter für Schule und Business (Gruppe "Herbst"). Eigene Texte. IDs: herbst-s#<Pos>, herbst-b#<Pos>, nur anhängen. */
+window.VOCAB_UNITS = (window.VOCAB_UNITS || []).concat([
+{k:"Herbst",id:"herbst-s",title:"Herbst & Ernte",icon:"🍂",words:[
+["autumn","der Herbst",1,"In autumn the leaves turn red and yellow."],
+["leaf","das Blatt",1,"A leaf fell on my head."],
+["leaves","die Blätter",1,"The leaves are lying on the ground."],
+["scarecrow","die Vogelscheuche",2,"The scarecrow stands in the middle of the field."],
+["crow","die Krähe",2,"A crow sits on the scarecrow."],
+["harvest","die Ernte",2,"The farmers bring in the harvest."],
+["to harvest","ernten",3,"We harvest the apples in October."],
+["pumpkin","der Kürbis",1,"She carved a funny face into the pumpkin."],
+["acorn","die Eichel",2,"The squirrel found an acorn."],
+["chestnut","die Kastanie",2,"We collect chestnuts in the park."],
+["hedgehog","der Igel",2,"The hedgehog looks for food at night."],
+["squirrel","das Eichhörnchen",2,"The squirrel hides nuts for the winter."],
+["mushroom","der Pilz",1,"Do not eat this mushroom!"],
+["fog","der Nebel",2,"There is thick fog this morning."],
+["foggy","neblig",2,"It is foggy on the hill."],
+["gust","die Böe",3,"A gust of wind blew my hat away."],
+["drizzle","der Nieselregen",3,"We walked home in the drizzle."],
+["puddle","die Pfütze",2,"He jumped into the puddle."],
+["rubber boots","die Gummistiefel",2,"Put on your rubber boots, it is wet."],
+["umbrella","der Regenschirm",1,"Take an umbrella with you."],
+["scarf","der Schal",1,"It is cold, wear a scarf."],
+["woolly hat","die Wollmütze",2,"My woolly hat keeps my ears warm."],
+["lantern","die Laterne",2,"The children walk with their lanterns."],
+["bonfire","das Lagerfeuer",3,"We sat around the bonfire."],
+["apple","der Apfel",1,"I picked an apple from the tree."],
+["to rake","harken",3,"Dad rakes the leaves in the garden."],
+["pile of leaves","der Laubhaufen",2,"She jumped into the pile of leaves."],
+["to turn","sich verfärben",3,"In October the leaves turn brown."]
+]},
+{track:"business",k:"Herbst",id:"herbst-b",title:"Herbst & Saisongeschäft",icon:"🍁",words:[
+["harvest","die Ernte",2,"The wine harvest was good this year."],
+["yield","der Ertrag",3,"The yield per hectare went up."],
+["seasonal","saisonal",2,"This is a seasonal product."],
+["seasonal demand","die saisonale Nachfrage",3,"Seasonal demand peaks in November."],
+["autumn collection","die Herbstkollektion",2,"We present our autumn collection next week."],
+["fall season","die Herbstsaison",2,"The fall season starts with a big sale."],
+["to stock up","Vorräte aufstocken",3,"We need to stock up before winter."],
+["supplier","der Lieferant",2,"Our supplier delivers every Monday."],
+["delivery time","die Lieferzeit",2,"The delivery time is five working days."],
+["bottleneck","der Engpass",3,"We have a bottleneck in the supply chain."],
+["forecast","die Prognose",2,"The forecast for the fourth quarter looks good."],
+["fourth quarter","das vierte Quartal",2,"Sales rise in the fourth quarter."],
+["year-end","der Jahresabschluss",3,"We are busy with the year-end closing."],
+["budget","das Budget",1,"The budget for autumn is limited."],
+["promotion","die Aktion",2,"The autumn promotion starts on Friday."],
+["discount","der Rabatt",1,"We offer a ten percent discount."],
+["trade fair","die Messe",2,"We will present the product at the trade fair."],
+["to peak","den Höhepunkt erreichen",3,"Sales peak shortly before Christmas."],
+["to ramp up","hochfahren",3,"We ramp up production in September."],
+["inventory","der Lagerbestand",2,"The inventory is running low."],
+["to pay off","sich auszahlen",3,"The extra work will pay off."],
+["to reap the benefits","die Früchte ernten",3,"Now we reap the benefits of our hard work."],
+["weather-dependent","wetterabhängig",3,"Our sales are weather-dependent."],
+["to plan ahead","vorausplanen",2,"We must plan ahead for the winter season."]
 ]}
 ]);
 </script>
@@ -6153,6 +6219,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     { id: "fr:eis",     kind: "frame", label: "Eiskristall-Rahmen", cost: 1500, val: "eis", reward: "eis" },
     { id: "fr:none",    kind: "frame", label: "Kein Rahmen", cost: 0,   val: "none" },
     { id: "fr:lichter",  kind: "frame", label: "Lichterketten-Rahmen", cost: 400, val: "lichter", pass: "Advent", rar: "legend" },
+    { id: "fr:laub",     kind: "frame", label: "Herbstlaub-Rahmen", cost: 300, val: "laub", pass: "Herbst", rar: "legend" },
     { id: "fr:gold",    kind: "frame", label: "Goldrahmen",  cost: 120, val: "gold" },
     { id: "fr:rainbow", kind: "frame", label: "Regenbogenrahmen", cost: 200, val: "rainbow" },
     { id: "fr:fire",    kind: "frame", label: "Flammenrahmen", cost: 350, val: "fire" },
@@ -6307,9 +6374,10 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     ["kopf", "ears", "Kopfhörer", 80], ["waerme", "ears", "Ohrenwärmer", 45], ["ohrring", "ears", "Ohrringe", 35],
     ["schal", "neck", "Schal", 50], ["fliege", "neck", "Fliege", 35], ["kette", "neck", "Goldkette", 90], ["tuch", "neck", "Halstuch", 35], ["medaille", "neck", "Medaille", 60], ["bosskette", "neck", "Boss-Kette ($)", 150], ["mkette", "neck", "Fette Goldkette mit M", 150],
     ["skate", "gear", "Skateboard", 70], ["surf", "gear", "Surfbrett", 100], ["gitarre", "gear", "Gitarre", 150],
-    ["nikolaus", "head", "Nikolaus-Mütze", 70], ["xschal", "neck", "Weihnachts-Schal", 50], ["geweih", "ears", "Rentier-Geweih", 100], ["schlitten", "gear", "Schlitten", 150], ["socken", "legs", "Weihnachtssocken", 60]];
+    ["nikolaus", "head", "Nikolaus-Mütze", 70], ["xschal", "neck", "Weihnachts-Schal", 50], ["geweih", "ears", "Rentier-Geweih", 100], ["schlitten", "gear", "Schlitten", 150], ["socken", "legs", "Weihnachtssocken", 60],
+    ["gummistiefel", "legs", "Gummistiefel", 60], ["schirm", "gear", "Regenschirm", 70], ["herbstschal", "neck", "Herbstschal", 50], ["strickmuetze", "head", "Strickmütze", 70], ["laterne", "gear", "Laterne", 80]];
   SHOP = SHOP.concat(ACC.map(function (a) { return { id: "ac:" + a[0], kind: "acc", slot: a[1], label: a[2], cost: a[3], val: a[0], rar: a[3] <= 40 ? "common" : a[3] <= 70 ? "rare" : a[3] <= 100 ? "epic" : "legend" }; }));
-  SHOP.forEach(function (x) { if (x.id === "ac:nikolaus" || x.id === "ac:xschal" || x.id === "ac:geweih" || x.id === "ac:schlitten") x.pass = "Advent"; });   // nur im Wichtel-Kalender (v2.160)
+  SHOP.forEach(function (x) { if (x.id === "ac:nikolaus" || x.id === "ac:xschal" || x.id === "ac:geweih" || x.id === "ac:schlitten") x.pass = "Advent"; if (x.id === "ac:strickmuetze" || x.id === "ac:laterne") x.pass = "Herbst"; });   // nur im Wichtel-Kalender (v2.160)
   /* v2.154: Unreal-Preise halbiert (alter Preis in `was`, für die einmalige Gutschrift in priceMigrate) */
   SHOP.forEach(function (x) { if (x.rar === "unreal" && x.cost > 0 && !x.reward && !x.pass) { x.was = x.cost; x.cost = Math.max(5, Math.round(x.cost / 2 / 5) * 5); } });
   /* Englische Namen aller Gegenstände (Gadget: nebenbei Vokabeln lernen). Sticker = Name der Figur + " sticker". */
@@ -6330,7 +6398,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     "sn:none": "Mute", "sn:bell": "Little bell", "sn:arcade": "Arcade", "sn:harp": "Harp", "th:paper": "Paper", "th:mint": "Mint", "th:plum": "Plum", "th:amber": "Amber",
     "ac:beanie": "Winter hat", "ac:party": "Party hat", "ac:zylinder": "Top hat", "ac:prop": "Propeller cap", "ac:cap": "Baseball cap", "ac:stroh": "Straw hat", "ac:blumen": "Flower crown", "ac:heiligen": "Halo", "ac:hasen": "Bunny ears", "ac:teufel": "Devil horns", "ac:eishut": "Ice-cream hat", "ac:pizza": "Pizza hat", "ac:krone": "Gold crown",
     "ac:sonne": "Sunglasses", "ac:nerd": "Nerd glasses", "ac:mono": "Monocle", "ac:brille3d": "3D glasses", "ac:herz": "Heart glasses", "ac:schnurr": "Moustache", "ac:clown": "Clown nose", "ac:ski": "Ski goggles",
-    "ac:kopf": "Headphones", "ac:waerme": "Earmuffs", "ac:ohrring": "Earrings", "ac:schal": "Scarf", "ac:fliege": "Bow tie", "ac:kette": "Gold chain", "ac:tuch": "Neckerchief", "ac:medaille": "Medal", "ac:bosskette": "Boss chain ($)", "ac:mkette": "Fat gold chain with M", "ac:skate": "Skateboard", "ac:surf": "Surfboard", "ac:gitarre": "Guitar", "ac:socken": "Christmas socks"
+    "ac:kopf": "Headphones", "ac:gummistiefel": "Rubber boots", "ac:schirm": "Umbrella", "ac:herbstschal": "Autumn scarf", "ac:strickmuetze": "Knitted hat", "ac:laterne": "Lantern", "fr:laub": "Autumn leaves frame", "ac:waerme": "Earmuffs", "ac:ohrring": "Earrings", "ac:schal": "Scarf", "ac:fliege": "Bow tie", "ac:kette": "Gold chain", "ac:tuch": "Neckerchief", "ac:medaille": "Medal", "ac:bosskette": "Boss chain ($)", "ac:mkette": "Fat gold chain with M", "ac:skate": "Skateboard", "ac:surf": "Surfboard", "ac:gitarre": "Guitar", "ac:socken": "Christmas socks"
   };
   function enName(it) { if (!it) return ""; if (it.kind === "sticker") { var b = EN["av:" + it.id.slice(3)]; return b ? b + " sticker" : ""; } return EN[it.id] || ""; }
   var MAX_STICKERS = 10;
@@ -7578,6 +7646,40 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     state.profile[PROFILE_KEY[it.kind]] = it.val; save(true); return { ok: true, item: it };
   }
   /* ---------- Lernpfad (Headlight 2): Abschnitte aus Stationen, Truhe am Ende jedes Abschnitts ---------- */
+  /* Herbst (v2.172): state.herbst = {y, harvest, done, shroom:{day,n}, book:{id:n}, hog:"Tag", cap, lant}; jedes Jahr neu (Ernte, Mütze, Laterne), Pilzbuch bleibt */
+  var HB_SHROOMS = [["fliege", "Fliegenpilz", "#C1331F"], ["stein", "Steinpilz", "#8A4A22"], ["pfiffer", "Pfifferling", "#E0A12E"], ["marone", "Maronenröhrling", "#6B3A1E"], ["parasol", "Parasol", "#D9B98A"], ["champ", "Champignon", "#EADFC8"]];
+  var HB_SHROOM_DAY = 5, HB_HARVEST = 50;
+  function hb() {
+    var y = new Date().getFullYear(), h = state.herbst;
+    if (!h) h = state.herbst = { y: y, harvest: 0, done: 0, shroom: { day: "", n: 0 }, book: {}, hog: "", cap: 0, lant: 0 };
+    if (h.y !== y) { h.y = y; h.harvest = 0; h.done = 0; h.cap = 0; h.lant = 0; }
+    return h;
+  }
+  function hbHarvest(n) {   // Ernte wächst mit jedem richtig gelernten Wort; 50 = Rahmen „Herbstlaub“
+    var h = hb(); h.harvest = Math.min(HB_HARVEST, h.harvest + (n || 1)); var out = { n: h.harvest, need: HB_HARVEST, done: false };
+    if (h.harvest >= HB_HARVEST && !h.done) { h.done = 1; passGrant({ items: ["fr:laub"] }); out.done = true; ev("herbst", { k: "ernte" }); }
+    save(); return out;
+  }
+  function hbMushLeft() { var h = hb(); return h.shroom.day === today() ? Math.max(0, HB_SHROOM_DAY - h.shroom.n) : HB_SHROOM_DAY; }
+  function hbShroom() {   // Pilz im Hintergrund antippen: Pilzbuch, höchstens 5 am Tag, keine XP
+    var h = hb(), t = today(); if (h.shroom.day !== t) h.shroom = { day: t, n: 0 };
+    if (h.shroom.n >= HB_SHROOM_DAY) return { left: 0 };
+    var p = HB_SHROOMS[Math.random() * HB_SHROOMS.length | 0]; h.shroom.n++; h.book[p[0]] = (h.book[p[0]] || 0) + 1;
+    ev("herbst", { k: "pilz", id: p[0] }); save(); return { id: p[0], name: p[1], col: p[2], n: h.book[p[0]], left: HB_SHROOM_DAY - h.shroom.n };
+  }
+  function hbPile() {   // Laubhaufen wächst mit der Serie, bei 7 Tagen: Reinspringen und Strickmütze (einmal im Jahr)
+    var h = hb(), size = Math.max(0, Math.min(7, (state.streak && state.streak.count) || 0)), out = { size: size, got: null };
+    if (size >= 7 && !h.cap) { h.cap = 1; var g = passGrant({ items: ["ac:strickmuetze"] }); out.got = g.items && g.items[0] || { label: "Strickmütze" }; ev("herbst", { k: "haufen" }); save(); }
+    return out;
+  }
+  function hbHog() {   // Igel bringt einmal am Tag ein Herbstwort
+    var h = hb(), t = today(), fresh = h.hog !== t;
+    var biz = state.settings.track === "business", list = words.filter(function (w) { return w.unit === (biz ? "herbst-b" : "herbst-s"); });
+    if (!list.length) return null; h.hog = t; if (fresh) save();
+    var w = list[Math.floor(Date.now() / 864e5) % list.length]; return { id: w.id, en: w.en, de: w.de, ex: w.ex, fresh: fresh };
+  }
+  function hbLantern() { var h = hb(); if (h.lant) return null; h.lant = 1; var g = passGrant({ items: ["ac:laterne"] }); ev("herbst", { k: "laterne" }); save(true); return g.items && g.items[0] || { label: "Laterne" }; }
+  function hbInfo() { var h = hb(); return { harvest: h.harvest, need: HB_HARVEST, done: !!h.done, book: h.book, shrooms: HB_SHROOMS, left: hbMushLeft(), hogSeen: h.hog === today(), cap: !!h.cap, lant: !!h.lant }; }
   var STATION_WORDS = 7, pathCache = null, pathCacheKey = "";
   function pathState() {
     var p = state.path;
@@ -7980,6 +8082,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
+    hbHarvest: hbHarvest, hbShroom: hbShroom, hbMushLeft: hbMushLeft, hbPile: hbPile, hbHog: hbHog, hbLantern: hbLantern, hbInfo: hbInfo,
     grantItem: function (id) { return passGrant({ items: [id] }); }, resetProgress: resetProgress, stampNew: stampNew, passStamp: passStamp, shopVisible: shopVisible, shopWeeks: shopWeeks, shopCatalog: shopCatalog, shopTeasers: shopTeasers, shopNow: shopNow, shopRel: shopRel, WELCOME: WELCOME, welcomeGrant: welcomeGrant, welcomeNeeded: welcomeNeeded, steered: steered, pathUnitList: pathUnitList, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathLock: pathLock, adventInfo: adventInfo, advPlan: advPlan, advCan: advCan, advWin: advWin, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostInfo: boostInfo, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, boost: boost, coinFactor: coinFactor, avgCoins: avgCoins, dealItem: dealItem, priceOf: priceOf, passInfo: passInfo, favs: favs, toggleFav: toggleFav, collection: collection, findCollItem: findCollItem, CUP_TIERS: CUP_TIERS, claimPassWeek: claimPassWeek, claimPassTier: claimPassTier, claimPassCrew: claimPassCrew, claimPassFinale: claimPassFinale, passMeta: passMeta, rarityOf: rarityOf, shopList: shopList, activeSetDeal: activeSetDeal, buySet: buySet, takeNews: takeNews, SETS: SETS, itemById: itemById, minXp: minXp, defaultOf: defaultOf
   };
 })(window);
@@ -9514,7 +9617,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     var W = global.innerWidth, H = global.innerHeight, dpr = Math.min(2, global.devicePixelRatio || 1), cv = el("canvas"); cv.id = "sxWeather"; cv.width = W * dpr; cv.height = H * dpr; cv.style.cssText = "position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:7"; document.body.appendChild(cv);
     var c = cv.getContext("2d"); c.setTransform(dpr, 0, 0, dpr, 0, 0); var N = id === "winter" ? 110 : id === "xmas" ? 46 : id === "aqua" ? 44 : id === "herbst" ? 30 : 28, P = [], drops = [], stop = false, t0 = 0, raf = 0;
     for (var i = 0; i < N; i++) P.push({ x: Math.random() * W, y: Math.random() * H, z: Math.random(), ph: Math.random() * 6.28, c: Math.random(), r: Math.random() * 6.28 });
-    var HCOL = ["#C1531F", "#E0A12E", "#8A3A14", "#B8442C", "#D9822B", "#7A8A2E"], showerAt = 40 + Math.random() * 30;
+    var HCOL = ["#C1531F", "#E0A12E", "#8A3A14", "#B8442C", "#D9822B", "#7A8A2E"], showerAt = 40 + Math.random() * 30, flash = 0;
     var COL = ["#FF4D79", "#FFD34D", "#7DF0C0", "#6EC8FF", "#fff", "#FF8FB8"];
     function loop(now) {
       if (stop) return; if (!t0) t0 = now; var t = (now - t0) / 1000; c.clearRect(0, 0, W, H); var gust = Math.sin(t * 0.3) * 0.5 + Math.sin(t * 0.77) * 0.3;
@@ -9536,17 +9639,18 @@ window.SENTENCES = (window.SENTENCES || []).concat([
           else { p.y += (14 + p.z * 24) * 0.016; p.x += Math.sin(t * 0.9 + p.ph) * 0.8 + gust * 0.4; p.r += 0.03; if (p.y > H + 10) { p.y = -10; p.x = Math.random() * W; } c.globalAlpha = 0.85; c.save(); c.translate(p.x, p.y); c.rotate(p.r); c.fillStyle = p.c < 0.8 ? "#FF9EC1" : "#FFD23F"; c.beginPath(); c.ellipse(0, 0, 6, 3.2, 0, 0, 6.283); c.fill(); c.restore(); } }
       });
       if (id === "herbst") {
+        if (STORM > 0.7 && flash <= 0 && Math.random() < 0.004) flash = 5; if (flash > 0) { c.globalAlpha = flash * 0.06; c.fillStyle = "#FFF6DC"; c.fillRect(0, 0, W, H); flash--; }
         if (t > showerAt && !drops.length) { for (var di = 0; di < 70; di++) drops.push({ x: Math.random() * W, y: Math.random() * H, v: 520 + Math.random() * 280 }); showerAt = t + 60 + Math.random() * 60; drops.until = t + 5 + Math.random() * 3; }
         if (drops.length) { var fa = Math.min(1, (drops.until - t) / 1.2, 1); if (t > drops.until) { drops.length = 0; } else { c.strokeStyle = "rgba(180,200,215,.55)"; c.lineWidth = 1.3; c.globalAlpha = Math.max(0, fa); c.beginPath(); drops.forEach(function (d) { d.y += d.v * 0.016; d.x -= 60 * 0.016; if (d.y > H) { d.y = -20; d.x = Math.random() * W; } c.moveTo(d.x, d.y); c.lineTo(d.x + 3, d.y + 16); }); c.stroke(); } }
       }
       c.globalAlpha = 1; raf = global.requestAnimationFrame(loop);
     }
-    raf = global.requestAnimationFrame(loop); WX = { id: id, stop: function () { stop = true; global.cancelAnimationFrame(raf); cv.remove(); } };
+    raf = global.requestAnimationFrame(loop); WX = { id: id, cv: cv, stop: function () { stop = true; global.cancelAnimationFrame(raf); cv.remove(); } };
   }
 
   global.VTS2 = {
     themes: function () { return THEMES; }, theme: function (id) { return THEMES[id] || null; }, mount: mount, tap: tap, whack: whack, home: home, weather: weather,
-    hooks: {}, storm: function (v) { STORM = Math.max(0, Math.min(1, v || 0)); }, shroomArt: shroomSvg, pileArt: pileSvg, leafArt: leafSvg, hogArt: hedgehogSvg, crowArt: crow, scareArt: scarecrowSvg, ambientStart: ambientStart, ambientStop: ambientStop, ambientOn: function () { return !!AMB; }, busy: function () { return running || whacking; }, whacking: function () { return whacking; }
+    hooks: {}, storm: function (v) { STORM = Math.max(0, Math.min(1, v || 0)); if (WX && WX.cv) { WX.cv.style.zIndex = STORM > 0 ? 41 : 7; WX.cv.style.opacity = STORM > 0 ? 0.8 : 1; } }, shroomArt: shroomSvg, pileArt: pileSvg, leafArt: leafSvg, hogArt: hedgehogSvg, crowArt: crow, scareArt: scarecrowSvg, ambientStart: ambientStart, ambientStop: ambientStop, ambientOn: function () { return !!AMB; }, busy: function () { return running || whacking; }, whacking: function () { return whacking; }
   };
 })(window);
 </script>
@@ -10461,9 +10565,22 @@ return '<svg class="afs" viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg
     medaille: ['<path d="M80 158l16 38M140 158l-16 38" stroke="' + L + '" stroke-width="12" stroke-linecap="round"/><path d="M80 158l16 38M140 158l-16 38" stroke="#2f7be8" stroke-width="6" stroke-linecap="round"/><circle cx="110" cy="206" r="19" fill="#ffd34d"' + O + '/><path d="M110 192l4 9 10 1-7 7 2 10-9-5-9 5 2-10-7-7 10-1z" fill="#fff3a0" stroke="' + L + '" stroke-width="2.4" stroke-linejoin="round"/>']
   };
   ACCS.xschal = [ACCS.schal[0].replace(/#2f7be8/g, "#d8202f").replace(/#ffd34d/g, "#ffffff")];   // Weihnachts-Schal = roter Schal mit weißen Streifen
+  ACCS.strickmuetze = [ACCS.beanie[0].replace(/#e8123c/g, "#C1531F").replace(/#ffd2da/g, "#E9A45A").replace(/fill="#fff"/g, 'fill="#F3DFB5"')];   // Herbst-Strickmütze: orange mit cremefarbenem Rand und Bommel
+  ACCS.herbstschal = [ACCS.schal[0].replace(/#2f7be8/g, "#B5532A").replace(/#ffd34d/g, "#E9C58A")];   // Herbstschal: rostrot mit Sandstreifen
+  ACCS.gummistiefel = [(function () {   // gelbe Gummistiefel mit Sohle und Glanz, decken die Schuhe ab
+    function boot(cx) {
+      return '<path d="M' + (cx - 11) + ' 230h22v28H' + (cx - 11) + 'z" fill="#F2C230"/><path d="M' + (cx - 11) + ' 230v28M' + (cx + 11) + ' 230v28" stroke="' + L + '" stroke-width="3.5" stroke-linecap="round"/>' +
+        '<path d="M' + (cx - 11) + ' 256q-12 2-13 13q0 11 13 11h24q13 0 13-11q-1-11-13-13z" fill="#F2C230" stroke="' + L + '" stroke-width="3.5" stroke-linejoin="round"/>' +
+        '<path d="M' + (cx - 24) + ' 274h50" stroke="#3A3A3A" stroke-width="5" stroke-linecap="round"/><path d="M' + (cx - 6) + ' 236v14" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".7"/>' +
+        '<rect x="' + (cx - 14) + '" y="226" width="28" height="9" rx="4" fill="#E0A800" stroke="' + L + '" stroke-width="3.5"/>';
+    }
+    return boot(91) + boot(129);
+  })()];
+  ACCS.schirm = ['<g stroke="' + L + '" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"><path d="M26 44V236q0 22-18 18" fill="none" stroke-width="7"/><path d="M-26 52Q-24-14 26 -22Q76-14 78 52Q64 40 52 52Q39 40 26 52Q13 40 0 52Q-13 40-26 52z" fill="#C1531F"/><path d="M26 -22Q10 10 0 52M26 -22Q42 10 52 52" fill="none" stroke="#8A3A14"/><path d="M-12 18Q-4-10 26-18Q8 6 0 52z" fill="#E9A45A" stroke="none"/><path d="M26 -22V-34" stroke-width="5"/></g>'];
+  ACCS.laterne = ['<g stroke="' + L + '" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"><path d="M26 252V96Q26 84 40 84" fill="none" stroke="#7A4A22" stroke-width="7"/><path d="M40 84V96" fill="none"/><path d="M22 98h36M24 150h32" /><path d="M26 98Q2 124 26 152H54Q76 124 52 98z" fill="#E94B3C"/><path d="M26 102Q12 124 28 148H52Q66 124 50 102z" fill="#FFD34D" class="acc-pulse" stroke="none"/><path d="M40 106v40M30 108q-6 18 0 38M50 108q6 18 0 38" stroke="#C1331F" stroke-width="2.4" fill="none"/><circle cx="40" cy="127" r="6" fill="#FFF3B0" stroke="none"/></g>'];
   var over = null;   // { av, lo } nur während die Anprobe gezeichnet wird
   var VB = { head: "30 -50 160 130", face: "40 56 140 64", ears: "20 -6 180 150", neck: "40 148 140 110", legs: "56 216 108 70", gear: "0 -20 220 320" },
-      VBV = { skate: "-4 152 96 138", schlitten: "-4 152 96 138", surf: "128 -34 112 360", gitarre: "-2 54 84 215" };   // Ausschnitt je Teil (Dabei-Teile sitzen am Rand der Figur)
+      VBV = { schirm: "-34 -40 120 310", laterne: "-8 78 80 180", skate: "-4 152 96 138", schlitten: "-4 152 96 138", surf: "128 -34 112 360", gitarre: "-2 54 84 215" };   // Ausschnitt je Teil (Dabei-Teile sitzen am Rand der Figur)
   function slotOf(val) { var it = global.VT && global.VT.itemById("ac:" + val); return it ? it.slot : "head"; }
   /* Zubehör einer Figur als Markup: { head, neck } */
   function build(loadout) {
@@ -12295,7 +12412,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       '<div class="hhchips"><span class="hhc">🔥 <b class="tnum">' + st.streak.count + '</b></span><span class="hhc">🪙 <b class="tnum">' + st.coins + '</b></span></div></div>' +
       '</section>';
 
-    html += adventTile() + resumeCard() + planCard() + dayCard(pct);
+    html += adventTile() + herbstCard() + resumeCard() + planCard() + dayCard(pct);
 
     var wish = S.wish();
     html += '<section class="card"><div class="eyebrow">Tagesmissionen</div><div style="margin-top:6px">' +
@@ -12871,6 +12988,92 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       earnOpen = false;
     }
   }
+  /* ================= HERBST (v2.172): Vogelscheuche-Kumpel mit Krähen-Tipp, Igel, Pilze, Laubhaufen, Ernte, Sankt Martin ================= */
+  function herbstOn() { return seasonNow() === "herbst"; }
+  function hbSheet(inner, onClick) {
+    if (document.querySelector(".srmd")) return null;
+    var ov = document.createElement("div"); ov.className = "srmd";
+    ov.innerHTML = '<div class="dsh" style="text-align:center"><div class="dshg"></div>' + inner + '<div class="row" style="gap:8px;justify-content:center;margin-top:12px"><button class="btn soft" data-hb="x">Schließen</button></div></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener("click", function (e) {
+      if (ovSay(e)) return;
+      var b = e.target.closest("[data-hb]"), k = b && b.getAttribute("data-hb");
+      if (e.target === ov || k === "x") { ov.remove(); return; }
+      if (onClick && onClick(k, ov)) ov.remove();
+    });
+    return ov;
+  }
+  function buddyMount() {   // kleine Vogelscheuche in der Übung: nickt bei richtig, lüftet den Hut bei falsch; die Krähe landet ab und zu und gibt einen Tipp
+    if (!herbstOn() || !global.VTS2 || !global.VTS2.scareArt) return;
+    var b = document.createElement("div"); b.className = "hbuddy"; b.id = "hBuddy"; b.setAttribute("role", "button"); b.setAttribute("aria-label", "Vogelscheuche mit Krähe: Tipp holen");
+    b.innerHTML = global.VTS2.scareArt() + '<div class="cr" id="hbCrow">' + global.VTS2.crowArt() + '</div>';
+    sessionEl.appendChild(b);
+    if (Math.random() < 0.7) setTimeout(function () { var c = $("#hbCrow"); if (c) c.classList.add("here"); }, 900 + Math.random() * 4500);
+  }
+  function buddyReact(ok) {
+    var b = $("#hBuddy"); if (!b || calmMotion) return;
+    b.classList.remove("nod", "tip"); void b.offsetWidth; b.classList.add(ok ? "nod" : "tip"); setTimeout(function () { b.classList.remove("nod", "tip"); }, 950);
+  }
+  function crowHint() {
+    var t = SS && SS.tasks[SS.i], c = $("#hbCrow"); if (!t || SS.answered) return;
+    if (!c || !c.classList.contains("here")) { toast("Die Krähe ist gerade nicht da. Vielleicht gleich! 🐦‍⬛"); return; }
+    c.classList.add("caw"); setTimeout(function () { c.classList.remove("caw"); }, 600);
+    if (t.type === "type") { var hb = $("#hintBtn"); if (hb && !hb.disabled) { hb.click(); toast("Krähe: Kraaah! Hier ein Tipp 🐦‍⬛"); } else toast("Mehr Tipps hat die Krähe nicht."); return; }
+    if (t.opts && t.opts.length >= 3 && t.type !== "stimmts" && !t.hint) {
+      var wrong = []; t.opts.forEach(function (o, i) { if (!o.ok && i !== SS.pick) wrong.push(i); });
+      if (wrong.length < 2) { toast("Hier ist nichts mehr wegzustreichen."); return; }
+      var gi = wrong[Math.random() * wrong.length | 0], bt = $$(".opt")[gi]; if (bt) { bt.classList.add("gone"); bt.disabled = true; } t.hint = 1;
+      toast("Krähe: Kraaah! Die da ist es nicht 🐦‍⬛ (mit Tipp gibt es keine XP)"); return;
+    }
+    toast(t.hint ? "Die Krähe hat dir schon geholfen." : "Hier kann die Krähe nicht helfen.");
+  }
+  function hbHarvestAdd() { var r = S.hbHarvest(1); if (r.done) setTimeout(function () { toast("🍎 Ernte voll! Der Rahmen „Herbstlaub“ gehört dir."); }, 700); }
+  function hbMartin() { var d = new Date(), m = d.getMonth() + 1, t = d.getDate(); if (m !== 11) return ""; return t >= 8 && t <= 10 ? "pre" : t >= 11 && t <= 14 ? "day" : ""; }
+  function hbHooks() {
+    var H = global.VTS2 && global.VTS2.hooks; if (!H) return;
+    H.pileSize = function () { return Math.min(7, (S.state.streak && S.state.streak.count) || 0); };
+    H.mushLeft = function () { return S.hbMushLeft(); };
+    H.scare = function () {};
+    H.crow = function () { toast("Kraaah! 🐦‍⬛ In der Übung hilft dir die Krähe mit einem Tipp: tippe dort auf die Vogelscheuche."); };
+    H.hog = function () {
+      var w = S.hbHog(); if (!w) return;
+      hbSheet('<div style="font-size:48px;line-height:1.1">🦔</div><div class="eyebrow">' + (w.fresh ? "Der Igel bringt dein Wort des Tages" : "Wort des Tages vom Igel") + '</div>' + (audioAvailable() ? speakBtn(w.en, true) : "") +
+        '<div class="prompt" style="margin:6px 0">' + esc(w.en) + '</div><b>' + esc(w.de) + '</b>' + (w.ex ? '<p class="small muted" style="margin:8px 0 0;font-family:Newsreader,serif;font-size:17px">' + esc(w.ex) + '</p>' : "") + '<p class="small muted" style="margin:8px 0 0">Ein Wort pro Tag – ganz ohne Druck.</p>');
+      if (audioAvailable()) setTimeout(function () { speak(w.en); }, 300);
+    };
+    H.mush = function () {
+      var r = S.hbShroom(); if (!r.id) { toast("Heute hast du schon 5 Pilze gesammelt 🍄 Morgen wachsen neue!"); return; }
+      toast("🍄 " + r.name + " gefunden! (" + (5 - r.left) + " von 5 heute · im Pilzbuch " + r.n + "×)");
+    };
+    H.pile = function () {
+      var r = S.hbPile();
+      if (r.got) hbSheet('<div style="font-size:52px;line-height:1.1">🍂🧶</div><div class="eyebrow">7 Tage Serie!</div><h3>Platsch! Du springst in den Laubhaufen</h3><p class="small muted" style="margin:6px 0 0">Dafür bekommst du die <b>Strickmütze</b> (Zubehör). Sie wartet unter Beute › Spind.</p>');
+      else toast(r.size >= 7 ? "Hui! Das raschelt! 🍂" : "Dein Laubhaufen wächst mit jedem Serientag. Bei 7 Tagen darfst du hineinspringen! (" + r.size + " von 7)");
+    };
+  }
+  function herbstCard() {
+    if (!herbstOn()) return "";
+    var h = S.hbInfo(), n = Math.floor(h.harvest / 5), ic = ["🍎", "🌰", "🍎", "🌰", "🍎", "🌰", "🍎", "🌰", "🍎", "🌰"], fr = "", i;
+    for (i = 0; i < 10; i++) fr += '<i class="' + (i < n ? "on" : "") + '">' + ic[i] + '</i>';
+    var pile = Math.min(7, (S.state.streak && S.state.streak.count) || 0), lv = ""; for (i = 0; i < 7; i++) lv += '<i style="' + (i < pile ? "" : "filter:grayscale(1) opacity(.35)") + '">🍂</i>';
+    var kinds = Object.keys(h.book).length, mt = hbMartin(), ml = "";
+    if (mt === "pre") ml = '<div class="small" style="margin-top:8px">🏮 Am 11. November ist Sankt Martin – dann gibt es eine Laterne zum Abholen.</div>';
+    else if (mt === "day") ml = '<div class="small" style="margin-top:8px">🏮 Sankt Martin! ' + (h.lant ? "Deine Laterne hast du schon ✓" : '<button class="btn sm" data-act="martin">Laterne abholen</button>') + '</div>';
+    return '<section class="card hbcard"><button class="chip" data-act="hbopen" style="float:right">Pilzbuch</button><div class="eyebrow">🍂 Herbstkorb</div>' +
+      '<div class="small" style="margin-top:6px"><b>Ernte</b> · ' + h.harvest + ' von ' + h.need + ' Wörtern' + (h.done ? " ✓" : "") + '</div><div class="hbfruit">' + fr + '</div>' +
+      '<div class="small" style="margin-top:8px"><b>Laubhaufen</b> · ' + pile + ' von 7 Serientagen' + (h.cap ? " ✓" : "") + '</div><div class="hbfruit">' + lv + '</div>' +
+      '<div class="small" style="margin-top:8px"><b>Pilzbuch</b> · ' + kinds + ' von ' + h.shrooms.length + ' Sorten · heute noch ' + h.left + ' Pilze</div>' + ml +
+      '<div class="small muted" style="margin-top:6px">Ernte wächst mit jedem richtig gelernten Wort (bei 50 gibt es den Rahmen „Herbstlaub“). Pilze findest du auf der Startseite im Hintergrund – sie geben keine XP.</div></section>';
+  }
+  function hbBook() {
+    var h = S.hbInfo(), V = global.VTS2, cells = h.shrooms.map(function (m) {
+      var c = h.book[m[0]] || 0;
+      return '<div style="width:30%;text-align:center"><div style="width:44px;height:44px;margin:0 auto' + (c ? "" : ";filter:grayscale(1) brightness(.5)") + '">' + (V && V.shroomArt ? V.shroomArt(m[2]) : "🍄") + '</div><div class="small">' + (c ? esc(m[1]) + " ×" + c : "???") + '</div></div>';
+    }).join("");
+    hbSheet('<div style="font-size:42px;line-height:1.1">🍄</div><div class="eyebrow">Pilzbuch</div><h3>' + Object.keys(h.book).length + ' von ' + h.shrooms.length + ' Sorten gefunden</h3><div class="row wrap" style="gap:10px;justify-content:center;margin-top:8px">' + cells + '</div><p class="small muted" style="margin:10px 0 0">Tippe auf der Startseite die Pilze im Hintergrund an. Höchstens 5 am Tag, keine XP, nur zum Sammeln.</p>');
+  }
+  if (global.VTS2) hbHooks();
+
   function seasonCard() {
     var m = S.state.settings.season || "auto", t = seasonNow(), snd = S.state.settings.seasonSound === true;
     if (m === "on") m = "halloween";
@@ -12906,7 +13109,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   function unitsHtml() {
     var st = S.state, stt = S.stats();
     var biz = st.settings.track === "business";
-    var groups = biz ? ["Basis", "Aufbau", "Profi", "Smalltalk", "Redewendungen"] : ["Headlight 2", 6, 7, 8];
+    var groups = biz ? ["Basis", "Aufbau", "Profi", "Smalltalk", "Redewendungen", "Herbst"] : ["Headlight 2", 6, 7, 8, "Herbst"];
     var sel = S.groupsOf();
     var html = '';
     var guided = S.steered();   // gesteuert: das Kind sieht nur die Einheiten, die für es vorgesehen sind (ohne Hinweis darauf)
@@ -13698,7 +13901,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
 
     /* Einheiten nach Gruppen: Schulbuch (Headlight 2), Klassen 6–8, Eigene Listen bzw. Business Basis bis Redewendungen; je Gruppe nach Lernstand sortiert */
     var bizT = st.settings.track === "business";
-    var ORDER = ["Headlight 2", "6", "7", "8", "Basis", "Aufbau", "Profi", "Smalltalk", "Redewendungen", "0"], byK = {}, ks = [];
+    var ORDER = ["Headlight 2", "6", "7", "8", "Basis", "Aufbau", "Profi", "Smalltalk", "Redewendungen", "Herbst", "0"], byK = {}, ks = [];
     s.perUnit.forEach(function (u) { var k = String(u.k); if (!byK[k]) { byK[k] = []; ks.push(k); } byK[k].push(u); });
     ks.sort(function (a, b) { var ia = ORDER.indexOf(a), ib = ORDER.indexOf(b); return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); });
     var state3 = function (u) { return u.seen === 0 ? 1 : u.sure < u.total ? 0 : 2; };   // 0 angefangen, 1 neu, 2 gefestigt
@@ -14296,7 +14499,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       var cs = t.step || SS.curStep || 1; SS.curStep = cs;
       stepHtml = '<div class="stepbar">' + (SS.station.verbIds ? [1, 2, 3, 4, 5] : [1, 2, 3, 4]).map(function (k) { return '<i class="' + (k < cs ? "ok" : k === cs ? "now" : "") + '"></i>'; }).join("") + '<b>Station ' + SS.station.n + ' · ' + STEP_NAMES[cs - 1] + '</b></div>';
     }
-    sessionEl.innerHTML = head + stepHtml + '<div class="sbody" id="sbody"></div><div class="sfoot" id="sfoot"></div>';
+    sessionEl.innerHTML = head + stepHtml + '<div class="sbody" id="sbody"></div><div class="sfoot" id="sfoot"></div>'; buddyMount();
     var body = $("#sbody"), foot = $("#sfoot");
     body.className = "sbody pop";
     (RENDER[t.type] || RENDER.mc_en_de)(t, body, foot);
@@ -14557,6 +14760,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (before === 0) SS.newSeen++;
     S.save();
     renderHeader();
+    if (g > 0 && herbstOn()) hbHarvestAdd();
     return res;
   }
   function verdict(ok, w, res, note) {
@@ -14622,6 +14826,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var p = S.state.profile;
     if (S.state.settings.audio) global.VTC.sound(p.snd, ok);
     if (ok) global.VTC.burst(p.fx, global.innerWidth / 2, global.innerHeight * .55, 16, 1);
+    buddyReact(ok);
   }
   function verdictSentence(ok, x) {
     var foot = $("#sfoot"); if (!foot) return;
@@ -14701,13 +14906,13 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       if (t.opts[i].ok) b.classList.add("right");
       else if (i === SS.pick) b.classList.add("wrong");
     });
-    var res2 = applyGrade(w, ok ? (t.type === "stimmts" ? 1 : 2) : 0);   // Ja/Nein ist leichter zu raten: nur „ordentlich“ (1) statt „sicher“ (2)
+    var hintedM = !!t.hint && ok, res2 = applyGrade(w, ok ? (t.type === "stimmts" || hintedM ? 1 : 2) : 0, hintedM ? { hint: true } : null);   // Ja/Nein ist leichter zu raten: nur „ordentlich“ (1) statt „sicher“ (2)
     if (!ok) SS.retry.push({ type: t.type === "stimmts" ? "mc_en_de" : t.type, w: w });
     if (t.type === "gap") {   // der ganze Satz mit dem richtigen Wort wird gezeigt und noch einmal vorgelesen
       var gu = $(".gapline u"); if (gu) { gu.innerHTML = esc(w.gap); gu.className = ok ? "gfill ok" : "gfill bad"; }
       if (audioAvailable()) setTimeout(function () { speak(w.ex, 0.9); }, 250);
     }
-    verdict(ok, w, res2);
+    verdict(ok, w, res2, hintedM ? "mit Krähen-Tipp geschafft – das Wort kommt bald wieder, XP gibt es dafür nicht" : null);
   }
   function next() {
     if (!SS) return;
@@ -14718,6 +14923,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   /* ---------- Ereignisse ---------- */
   sessionEl.addEventListener("click", function (e) {
     var t = SS && SS.tasks[SS.i];
+    if (e.target.closest(".hbuddy")) { crowHint(); return; }
     var say = e.target.closest("[data-act='say']");
     if (say) { speak(say.getAttribute("data-text"), 0, say.getAttribute("data-lang")); return; }
     var opt = e.target.closest(".opt");
@@ -15176,6 +15382,8 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     else if (a === "shoptab") { shopTab = act.getAttribute("data-k"); beuteSeg = "laden"; render(); }
     else if (a === "dealview") dealSheet(act.getAttribute("data-id"));
     else if (a === "advdoor") advDoor(+act.getAttribute("data-d"));
+    else if (a === "hbopen") { hbBook(); }
+    else if (a === "martin") { var lg = S.hbLantern(); if (lg) toast("🏮 Laterne geschenkt! Du findest sie unter Beute › Spind › Zubehör."); render(); }
     else if (a === "advgo") { tab = "spielen"; spielSeg = "advent"; render(); view.scrollTop = 0; }
     else if (a === "shoprar") { shopRar = act.getAttribute("data-k"); render(); }
     else if (a === "checkupdate") {
@@ -15503,7 +15711,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
 
   /* ---------- Takt ---------- */
   function startClock() {
-    var last = Date.now();
+    var last = Date.now(); hbStorm = !!(global.VTS2 && global.VTS2.storm && document.documentElement.getAttribute("data-season") === "herbst" && run && run.mode !== "survival"); if (hbStorm) global.VTS2.storm(0.05);
     timer = setInterval(function () { try { tick(); } catch (e) { try { console.error("arena tick:", e); } catch (x) {} if (run && !run.done && run.mode === "survival" && run.qLeft <= 0) { try { finish("timeout"); } catch (y) { stopClock(); } } } }, 90);
     function tick() {
       if (!run) return stopClock();
@@ -15522,10 +15730,12 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
         return;
       }
       if (run.left <= 0) { run.left = 0; paintHud(); return finish("time"); }
+      if (hbStorm) global.VTS2.storm(Math.min(1, Math.max(0, 1 - run.left / run.total)));
       paintHud();
     }
   }
-  function stopClock() { if (timer) clearInterval(timer); timer = null; }
+  var hbStorm = false;   // Herbst: Gewitter-Arena, je weniger Zeit, desto stärker der Wind
+  function stopClock() { if (timer) clearInterval(timer); timer = null; if (hbStorm) { hbStorm = false; global.VTS2.storm(0); } }
 
   /* ================= Modus 1: Match-Rausch ================= */
   function renderMatch() {
