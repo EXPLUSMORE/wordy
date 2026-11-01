@@ -1727,12 +1727,13 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 :root:root:root[data-season="herbst"] .btn:not(.ghost):not(.soft){background:linear-gradient(#E9833A,#C1531F);color:#FFF4E3;border-color:#C1531F;box-shadow:0 4px 0 #7B2F10,0 6px 14px rgba(120,50,10,.3)}
 :root:root:root[data-season="herbst"] .hh{border-color:#E9A45A;background:linear-gradient(#3A1E2A,#7A3A28 52%,#D9803E 100%)!important;box-shadow:0 0 22px rgba(233,140,60,.4)}
 :root:root:root[data-season="herbst"] .eyebrow{color:#9A4A22}
-
-:root:root:root[data-season="herbst"] .hwsp{position:absolute;left:calc(61% - 7px);top:0;width:44px;height:112px;z-index:6;cursor:pointer;-webkit-tap-highlight-color:transparent;transform-origin:22px 0;background:var(--sp) 50% 100%/38px 38px no-repeat,linear-gradient(#E9C58A,#E9C58A) 50% 0/1px 100% no-repeat;animation:hwSwing 3.4s ease-in-out infinite alternate;transition:opacity .25s;filter:drop-shadow(0 2px 6px rgba(233,164,90,.8))}
-:root:root:root[data-season="herbst"][data-tab='home'] .hwsp{animation:hwSwing 3.4s ease-in-out infinite alternate,hwCrawl 24s ease-in-out infinite}
-:root:root:root[data-season="herbst"] .hwsp.gone{opacity:0;pointer-events:none}
-:root:root:root[data-season="herbst"] .hwsp.back{animation:hwBack 1.6s ease-out}
-
+:root:root:root[data-season="herbst"] .hwsp{position:absolute;left:calc(61% - 7px);top:4px;width:40px;height:40px;z-index:6;cursor:pointer;-webkit-tap-highlight-color:transparent;background:var(--sp) 50% 50%/36px 36px no-repeat;animation:hbFall 15s ease-in infinite,hbSway 3.2s ease-in-out infinite alternate;transition:opacity .25s;filter:drop-shadow(0 3px 4px rgba(60,20,0,.4))}
+:root:root:root[data-season="herbst"][data-tab='home'] .hwsp{animation:hbFallH 17s ease-in infinite,hbSway 3.2s ease-in-out infinite alternate}
+@keyframes hbFall{0%{transform:translateY(-34px) rotate(-30deg) scale(.2);opacity:0}8%{transform:translateY(0) rotate(-10deg) scale(1);opacity:1}55%{transform:translateY(30px) rotate(60deg);opacity:1}85%,100%{transform:translateY(50px) rotate(160deg);opacity:1}}
+@keyframes hbFallH{0%{transform:translateY(-34px) rotate(-30deg) scale(.2);opacity:0}7%{transform:translateY(0) rotate(-10deg) scale(1);opacity:1}70%{transform:translateY(250px) rotate(220deg);opacity:1}82%{transform:translateY(310px) rotate(300deg);opacity:0}100%{transform:translateY(-34px);opacity:0}}@keyframes hbSway{from{translate:-26px 0}to{translate:26px 0}}
+:root:root:root[data-season="herbst"] .hwsp.gone{opacity:0;pointer-events:none}:root:root:root[data-season="herbst"] .hwsp.back{animation:hbGrow 1.4s ease-out}@keyframes hbGrow{0%{transform:scale(0) rotate(-90deg);opacity:0}100%{transform:none;opacity:1}}
+.hbWind .hhfig,.hbWind #sxScene .sxv,.hbWind #sxScene .sxmu.on,.hbWind #sxScene .sxlp{animation:hbBlow 1.9s ease-in-out!important}@keyframes hbBlow{0%,100%{transform:none}20%{transform:skewX(-9deg) translateX(8px)}45%{transform:skewX(-14deg) translateX(14px)}70%{transform:skewX(-5deg) translateX(4px)}}
+@media (prefers-reduced-motion:reduce){:root:root:root[data-season="herbst"] .hwsp{animation:none!important;opacity:1}}
 .hfog{position:fixed;left:-20%;right:-20%;bottom:56px;height:120px;pointer-events:none;z-index:5;background:radial-gradient(60% 100% at 25% 100%,rgba(255,247,232,.55),transparent),radial-gradient(55% 100% at 75% 100%,rgba(255,236,205,.45),transparent);filter:blur(7px);animation:sxFog 26s ease-in-out infinite alternate}@keyframes sxFog{from{transform:translateX(-6%)}to{transform:translateX(6%)}}
 .sx3-herbst .sx3g{background:linear-gradient(transparent,rgba(138,74,30,.55) 55%,#6E3A18);opacity:.95}
 .sx3 [data-k]{pointer-events:auto;cursor:pointer;-webkit-tap-highlight-color:transparent}
@@ -1754,7 +1755,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.172.1";window.WORDY_BUILD="6ae7637ee1";</script>
+<script>window.WORDY_VERSION="2.173.0";window.WORDY_BUILD="f6bbb6bae7";</script>
 </head>
 <body>
 <div id="app">
@@ -1783,44 +1784,44 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
   <div id="session" hidden></div>
 </div>
 <div id="arena" hidden></div>
-<script src="data/klasse6.js?v=6ae7637ee1"></script>
-<script src="data/klasse7.js?v=6ae7637ee1"></script>
-<script src="data/klasse8.js?v=6ae7637ee1"></script>
-<script src="data/business.js?v=6ae7637ee1"></script>
-<script src="data/business-basis2.js?v=6ae7637ee1"></script>
-<script src="data/business-aufbau2.js?v=6ae7637ee1"></script>
-<script src="data/business-profi2.js?v=6ae7637ee1"></script>
-<script src="data/smalltalk.js?v=6ae7637ee1"></script>
-<script src="data/advent.js?v=6ae7637ee1"></script>
-<script src="data/herbst.js?v=6ae7637ee1"></script>
-<script src="data/idioms.js?v=6ae7637ee1"></script>
-<script src="data/saetze.js?v=6ae7637ee1"></script>
-<script src="data/grammatik.js?v=6ae7637ee1"></script>
-<script src="data/alternativen.js?v=6ae7637ee1"></script>
-<script src="data/saetze2.js?v=6ae7637ee1"></script>
-<script src="data/lernbuch.js?v=6ae7637ee1"></script>
-<script src="data/verben.js?v=6ae7637ee1"></script>
-<script src="data/open/business-aufbau.js?v=6ae7637ee1"></script>
-<script src="data/open/business-basis.js?v=6ae7637ee1"></script>
-<script src="data/open/business-profi.js?v=6ae7637ee1"></script>
-<script src="data/open/saetze-open.js?v=6ae7637ee1"></script>
-<script src="js/engine.js?v=6ae7637ee1"></script>
-<script src="js/cosmetics.js?v=6ae7637ee1"></script>
-<script src="js/saison.js?v=6ae7637ee1"></script>
-<script src="js/saison2.js?v=6ae7637ee1"></script>
-<script src="js/fortnite.js?v=6ae7637ee1"></script>
-<script src="js/figur.js?v=6ae7637ee1"></script>
-<script src="js/stila.js?v=6ae7637ee1"></script>
-<script src="js/stilb.js?v=6ae7637ee1"></script>
-<script src="js/acc.js?v=6ae7637ee1"></script>
-<script src="js/loot.js?v=6ae7637ee1"></script>
-<script src="js/film.js?v=6ae7637ee1"></script>
-<script src="js/einmaleins.js?v=6ae7637ee1"></script>
-<script src="js/app.js?v=6ae7637ee1"></script>
-<script src="js/arena.js?v=6ae7637ee1"></script>
-<script src="js/spiele.js?v=6ae7637ee1"></script>
-<script src="js/grammatik.js?v=6ae7637ee1"></script>
-<script src="js/sync.js?v=6ae7637ee1"></script>
+<script src="data/klasse6.js?v=f6bbb6bae7"></script>
+<script src="data/klasse7.js?v=f6bbb6bae7"></script>
+<script src="data/klasse8.js?v=f6bbb6bae7"></script>
+<script src="data/business.js?v=f6bbb6bae7"></script>
+<script src="data/business-basis2.js?v=f6bbb6bae7"></script>
+<script src="data/business-aufbau2.js?v=f6bbb6bae7"></script>
+<script src="data/business-profi2.js?v=f6bbb6bae7"></script>
+<script src="data/smalltalk.js?v=f6bbb6bae7"></script>
+<script src="data/advent.js?v=f6bbb6bae7"></script>
+<script src="data/herbst.js?v=f6bbb6bae7"></script>
+<script src="data/idioms.js?v=f6bbb6bae7"></script>
+<script src="data/saetze.js?v=f6bbb6bae7"></script>
+<script src="data/grammatik.js?v=f6bbb6bae7"></script>
+<script src="data/alternativen.js?v=f6bbb6bae7"></script>
+<script src="data/saetze2.js?v=f6bbb6bae7"></script>
+<script src="data/lernbuch.js?v=f6bbb6bae7"></script>
+<script src="data/verben.js?v=f6bbb6bae7"></script>
+<script src="data/open/business-aufbau.js?v=f6bbb6bae7"></script>
+<script src="data/open/business-basis.js?v=f6bbb6bae7"></script>
+<script src="data/open/business-profi.js?v=f6bbb6bae7"></script>
+<script src="data/open/saetze-open.js?v=f6bbb6bae7"></script>
+<script src="js/engine.js?v=f6bbb6bae7"></script>
+<script src="js/cosmetics.js?v=f6bbb6bae7"></script>
+<script src="js/saison.js?v=f6bbb6bae7"></script>
+<script src="js/saison2.js?v=f6bbb6bae7"></script>
+<script src="js/fortnite.js?v=f6bbb6bae7"></script>
+<script src="js/figur.js?v=f6bbb6bae7"></script>
+<script src="js/stila.js?v=f6bbb6bae7"></script>
+<script src="js/stilb.js?v=f6bbb6bae7"></script>
+<script src="js/acc.js?v=f6bbb6bae7"></script>
+<script src="js/loot.js?v=f6bbb6bae7"></script>
+<script src="js/film.js?v=f6bbb6bae7"></script>
+<script src="js/einmaleins.js?v=f6bbb6bae7"></script>
+<script src="js/app.js?v=f6bbb6bae7"></script>
+<script src="js/arena.js?v=f6bbb6bae7"></script>
+<script src="js/spiele.js?v=f6bbb6bae7"></script>
+<script src="js/grammatik.js?v=f6bbb6bae7"></script>
+<script src="js/sync.js?v=f6bbb6bae7"></script>
 
 <script>
 if ('serviceWorker' in navigator) {

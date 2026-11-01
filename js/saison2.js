@@ -86,6 +86,10 @@
       "<path d='M54 106Q60 110 66 106' stroke='#4E280E' stroke-width='2.2' fill='none' stroke-linecap='round'/><circle cx='38' cy='104' r='4' fill='#E8683A' opacity='.35'/><circle cx='82' cy='104' r='4' fill='#E8683A' opacity='.35'/>" +
       "<path d='M26 66Q18 76 22 86' stroke='#B9742F' stroke-width='5' fill='none' stroke-linecap='round'/><ellipse cx='42' cy='38' rx='14' ry='6' fill='#fff' opacity='.28' transform='rotate(-20 42 38)'/></svg>";
   }
+  function bigLeaf(f) {   // großes Herbstblatt (Maskottchen in der Kopfzeile)
+    var c = f ? "#D9822B" : "#C1531F";
+    return "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 1C19 6 22 12 17 19C15 21 13 22 12 23C11 22 9 21 7 19C2 12 5 6 12 1Z' fill='" + c + "' stroke='#7A2E0C' stroke-width='.7'/><path d='M12 4V23M12 10l5 -3M12 14l-5 -3M12 17l5 -3' stroke='#E9A45A' stroke-width='.9' fill='none' stroke-linecap='round'/></svg>";
+  }
   function crow() {   // Krähe von der Seite (Blick nach rechts)
     return "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 40'><path d='M30 18C24 6 12 2 2 8C14 8 22 12 28 22Z' fill='#2B2438' stroke='#120C1C' stroke-width='1'/><path d='M30 18C36 6 48 2 58 8C46 8 38 12 32 22Z' fill='#2B2438' stroke='#120C1C' stroke-width='1'/>" +
       "<ellipse cx='30' cy='23' rx='11' ry='7' fill='#3A3150'/><path d='M20 24L6 30L19 29Z' fill='#2B2438'/><circle cx='39' cy='19' r='5.4' fill='#3A3150'/><path d='M43 18L52 21L43 23Z' fill='#E0B13A' stroke='#8A6A12' stroke-width='.8'/><circle cx='40.4' cy='17.6' r='1.5' fill='#fff'/><circle cx='40.8' cy='17.8' r='.8' fill='#111'/><path d='M26 30v6M32 30v6' stroke='#8A6A12' stroke-width='1.6' stroke-linecap='round'/></svg>";
@@ -130,9 +134,9 @@
       thread: "#E8F8FF", splat: ["#BFF4FF", "#5CE1FF", "#2F9BFF", "#FFFFFF"], hint: "Tipp mich – Fisch an der Angel! 🎣", ambient: "aqua"
     },
     herbst: {
-      name: "Herbst", boo: "RASCHEL!", cheer: "Geschafft! Die Eichel tanzt mit \uD83C\uDF42\uD83C\uDF89", spark: ["#E9A45A", "#C1531F", "#E0B13A", "#8A4A22"], dim: "rgba(40,16,4,", glow: "rgba(233,164,90,",
-      mascot: acorn, mini: acorn, flyer: crow, tool: "ball", bubbles: { weg: ["Volltreffer! \uD83C\uDF30", "Ab ins Laub! \uD83C\uDF42", "Kastanien-Profi! \uD83C\uDF30"], loop: ["Laub-Looping! \uD83C\uDF00", "Windstoß! \uD83C\uDF43"], pinball: ["Flipper im Laub! \uD83C\uDFAF", "Plopp, plopp! \uD83C\uDF30"], splat: ["Matsch! \uD83C\uDF42", "Platsch, Pfütze! \uD83D\uDCA6"] },
-      thread: "#E9C58A", splat: ["#E9A45A", "#C1531F", "#E0B13A", "#8A4A22"], hint: "Tipp mich \u2013 Eichel! \uD83C\uDF30", ambient: "herbst"
+      name: "Herbst", boo: "RASCHEL!", cheer: "Geschafft! Das Laub wirbelt mit \uD83C\uDF42\uD83C\uDF89", spark: ["#E9A45A", "#C1531F", "#E0B13A", "#8A4A22"], dim: "rgba(40,16,4,", glow: "rgba(233,164,90,",
+      mascot: bigLeaf, mini: acorn, flyer: crow, tool: "ball", bubbles: { weg: ["Volltreffer! \uD83C\uDF30", "Ab ins Laub! \uD83C\uDF42", "Kastanien-Profi! \uD83C\uDF30"], loop: ["Laub-Looping! \uD83C\uDF00", "Windstoß! \uD83C\uDF43"], pinball: ["Flipper im Laub! \uD83C\uDFAF", "Plopp, plopp! \uD83C\uDF30"], splat: ["Matsch! \uD83C\uDF42", "Platsch, Pfütze! \uD83D\uDCA6"] },
+      thread: "#E9C58A", splat: ["#E9A45A", "#C1531F", "#E0B13A", "#8A4A22"], hint: "Tipp aufs Blatt \u2013 Windstoß! \uD83C\uDF42", ambient: "herbst"
     },
     spring: {
       name: "Spring Break", boo: "ALOHA!", cheer: "Geschafft! Der Papagei feiert mit 🌴🎉", spark: ["#FFD23F", "#FF5E7A", "#00D1C1", "#FFFFFF"], dim: "rgba(10,40,70,", glow: "rgba(255,210,63,",
@@ -237,8 +241,28 @@
     var T = setTheme(id); if (!T || !host) return; host.style.setProperty("--sp", uri(T.mascot(0))); host.setAttribute("data-th", id);
   }
 
+  /* Herbst: Antippen des fallenden Blatts = Windstoß (Blatt wirbelt hoch, Laub fegt quer über den Bildschirm, Figuren wehen mit) */
+  function gust(rect, onEnd, silent) {
+    if (running) return false; running = true; var T = setTheme("herbst"), W = global.innerWidth, H = global.innerHeight, dpr = Math.min(2, global.devicePixelRatio || 1);
+    var reduce = global.matchMedia && global.matchMedia("(prefers-reduced-motion:reduce)").matches, DUR = reduce ? 1.2 : 2.9;
+    var cv = el("canvas"); cv.width = W * dpr; cv.height = H * dpr; cv.style.cssText = "position:fixed;left:0;top:0;width:100%;height:100%;z-index:9997;pointer-events:none"; document.body.appendChild(cv);
+    var c = cv.getContext("2d"), im = img(bigLeaf(0)), im2 = img(bigLeaf(1)), cols = ["#C1531F", "#E0A12E", "#8A3A14", "#B8442C", "#D9822B", "#7A8A2E"]; c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    var px = rect.left + rect.width / 2, py = rect.bottom + 10, L = [], t0 = 0, done = false, prevStorm = STORM;
+    for (var i = 0; i < (reduce ? 14 : 44); i++) L.push({ x: -30 - Math.random() * 260, y: rnd(60, H - 140), vx: rnd(620, 1100), ph: Math.random() * 6, r: Math.random() * 6, vr: rnd(-7, 7), sz: rnd(9, 22), col: cols[i % cols.length], d: rnd(0.35, 1.0) });
+    if (!silent) { fx("whoosh", 0.25); fx("whoosh", 0.65); fx("pop", 0); }
+    document.body.classList.add("hbWind"); setTimeout(function () { document.body.classList.remove("hbWind"); }, 1900); STORM = 1; vib([30, 30, 60]);
+    function finish() { if (done) return; done = true; STORM = prevStorm; cv.style.transition = "opacity .25s"; cv.style.opacity = "0"; setTimeout(function () { cv.remove(); running = false; if (onEnd) onEnd(); }, 280); }
+    function frame(now) {
+      if (done) return; if (!t0) t0 = now; var t = (now - t0) / 1000; c.clearRect(0, 0, W, H);
+      if (t < 0.9) { var k = t / 0.9, a = k * 11, rr = 8 + 90 * k, x = px + Math.sin(a) * rr * 0.9, y = py - 150 * ease(k) + Math.cos(a) * rr * 0.4, sz = 40 + 50 * k; c.save(); c.translate(x, y); c.rotate(a * 1.3); c.globalAlpha = 1 - Math.max(0, k - 0.8) * 4; c.shadowColor = "rgba(233,164,90,.9)"; c.shadowBlur = 14; if (im.complete) c.drawImage(im, -sz / 2, -sz / 2, sz, sz); c.restore(); }
+      L.forEach(function (o) { var tt = t - o.d * 0.6; if (tt < 0) return; o.x += o.vx * 0.016 * Math.min(1, tt * 2) * (1 - Math.max(0, t - 2.0) * 0.8); o.y += Math.sin(tt * 6 + o.ph) * 2.4 - 0.3; o.r += o.vr * 0.016; c.save(); c.globalAlpha = Math.max(0, Math.min(1, (DUR - t) / 0.8)); c.translate(o.x, o.y); c.rotate(o.r); c.scale(1, Math.abs(Math.cos(tt * 5 + o.ph)) * 0.6 + 0.4); c.fillStyle = o.col; c.beginPath(); c.moveTo(0, -o.sz); c.quadraticCurveTo(o.sz * .8, -o.sz * .2, 0, o.sz); c.quadraticCurveTo(-o.sz * .8, -o.sz * .2, 0, -o.sz); c.fill(); c.restore(); });
+      if (t >= DUR) { finish(); return; } global.requestAnimationFrame(frame);
+    }
+    global.requestAnimationFrame(frame); return true;
+  }
   /* ================= Antipp-Effekte des Maskottchens: pendel, jojo, shoot, rain ================= */
   function tap(id, rect, onEnd, silent) {
+    if (id === "herbst") return gust(rect, onEnd, silent);
     if (running) return false; var T = setTheme(id); if (!T) return false;
     var kinds = ["pendel", "jojo", "shoot", "rain"], k = lastTap; while (k === lastTap) k = kinds[Math.random() * kinds.length | 0]; lastTap = k; running = true;
     var A = art(id), W = global.innerWidth, H = global.innerHeight, dpr = Math.min(2, global.devicePixelRatio || 1), reduce = global.matchMedia && global.matchMedia("(prefers-reduced-motion:reduce)").matches;
