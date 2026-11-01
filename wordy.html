@@ -921,7 +921,20 @@ details.fold>.fbody{padding:2px 0 14px}
 @keyframes ttlSh{to{background-position:-220% 0}}@media (prefers-reduced-motion:reduce){.hh h1 .ttl.legend{animation:none}}
 .hhtip{margin:0;font-size:13px;font-weight:700;text-shadow:0 2px 0 rgba(20,33,61,.55)}
 .hhgoal{position:absolute;z-index:3;left:16px;top:146px;text-align:center}
-.hhring{--p:0;width:78px;height:78px;border-radius:50%;background:conic-gradient(#ffd21f calc(var(--p)*1%),rgba(20,33,61,.45) 0);display:grid;place-items:center;position:relative;border:3px solid #14213d;box-shadow:0 4px 0 rgba(20,33,61,.4)}
+.hhring{--p:0;--rbg:#ffd21f;--rb:#14213d;--rg:0 4px 0 rgba(20,33,61,.4);width:78px;height:78px;border-radius:50%;background:conic-gradient(transparent calc(var(--p)*1%),#2a3556 0),var(--rbg);display:grid;place-items:center;position:relative;border:3px solid var(--rb);box-shadow:var(--rg)}
+/* Fortschrittskreis im Stil des gewählten Rahmens (Farben und Effekte wie beim Figur-Rahmen) */
+.hhring.fr-gold{--rbg:#E8B22B;--rb:#8a6a10;--rg:0 0 10px 1px rgba(255,211,77,.7)}
+.hhring.fr-rainbow{--rbg:conic-gradient(#ff5d7a,#ffb84d,#ffe55c,#5dd68f,#4db8ff,#9a7bff,#ff5d7a);--rg:0 0 10px 2px rgba(255,255,255,.35)}
+.hhring.fr-fire{--rbg:conic-gradient(#ffd21f,#ff8a3d,#e8401c,#ff8a3d,#ffd21f);--rb:#5a1a08;animation:frFire 1.1s ease-in-out infinite alternate}
+.hhring.fr-neon{--rbg:conic-gradient(#00F0FF,#FF3DF0,#00F0FF);--rb:#12082a;animation:frNeon 1.4s ease-in-out infinite alternate}
+.hhring.fr-pirat{--rbg:#d8a85a;--rb:#5a3a1a;--rg:0 0 0 2px #d8a85a,0 0 0 4px #5a3a1a,0 0 8px 6px rgba(255,211,77,.35)}
+.hhring.fr-sterne{--rbg:conic-gradient(#b58cff,#ffe27a,#8ed0f8,#ff8fd0,#ffe27a,#b58cff);--rg:0 0 12px 2px rgba(181,140,255,.6)}
+.hhring.fr-kristall{--rbg:linear-gradient(135deg,#9fefff,#fff,#9fefff);--rb:#fff;--rg:0 0 14px 4px rgba(159,239,255,.85)}
+.hhring.fr-eis{--rbg:#9FE7FF;--rb:#fff;--rg:0 0 12px 2px rgba(120,200,255,.8);animation:frEis 1.6s ease-in-out infinite alternate}
+.hhring.fr-laub{--rbg:conic-gradient(#C1531F,#E0A12E,#8A3A14,#E0A12E,#C1531F);--rb:#8A3A14;--rg:0 0 12px 3px rgba(193,83,31,.7),0 0 18px 6px rgba(224,161,46,.4)}
+.hhring.fr-lichter{--rbg:conic-gradient(#e8123c,#ffd34d,#2f8f4e,#6EC8FF,#e8123c);--rb:#2f8f4e;--rg:0 0 12px 3px rgba(255,90,90,.75),0 0 18px 6px rgba(120,255,160,.45);animation:frLi 1.2s ease-in-out infinite alternate}
+@keyframes frLi{to{filter:brightness(1.25) saturate(1.2)}}
+@media (prefers-reduced-motion:reduce){.hhring[class*=fr-]{animation:none}}
 .hhring:before{content:"";position:absolute;inset:7px;border-radius:50%;background:#14213d}.hhring b{position:relative;font-size:19px}
 .hhgoal small{display:block;margin-top:6px;font-size:11px;font-weight:800;text-shadow:0 1px 0 #14213d}
 .hhbubble{position:absolute;z-index:4;left:106px;top:164px;max-width:112px;background:#fff;color:#14213d;border:3px solid #14213d;border-radius:14px;padding:6px 10px;font-size:12px;font-weight:800;line-height:1.2;box-shadow:0 3px 0 rgba(20,33,61,.3)}
@@ -1734,7 +1747,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.172.0";window.WORDY_BUILD="0425db87a7";</script>
+<script>window.WORDY_VERSION="2.172.1";window.WORDY_BUILD="6ae7637ee1";</script>
 </head>
 <body>
 <div id="app">
@@ -12405,7 +12418,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     html += '<section class="hh sky-' + sky + '"><div class="hhsky"><i class="hhsun"></i><i class="hhcl c1"></i><i class="hhcl c2"></i><i class="hhst"></i></div>' +
       '<div class="hhtop"><div class="hhdate">' + esc(S.today().split("-").reverse().join(".")) + ' · ' + (biz ? "Business English" : "Schule") + '</div>' +
       '<h1>' + greet + '</h1><p class="hhtip">' + esc(tip) + '</p></div>' +
-      '<div class="hhgoal"><div class="hhring" style="--p:' + pct + '"><b class="tnum">' + pct + '%</b></div><small>Tagesziel</small></div>' +
+      '<div class="hhgoal"><div class="hhring ' + global.VTC.frameClass(pf) + '" style="--p:' + pct + '"><b class="tnum">' + pct + '%</b></div><small>Tagesziel</small></div>' +
       (seasonCloud() || adventCloud() || newsCloud()) + duelCloud() + '<div class="hhbubble" id="hhBub">' + esc(cheer) + '</div>' +
       '<div class="hhpod"><i></i></div><button class="hhfig" id="hhFig" data-act="hhdance" aria-label="Figur antippen">' + heroHtml(pf.avatar, 0) + '</button>' +
       '<div class="hhbar"><div class="hhrank"><b>' + esc(rn) + '</b><div class="hhxp"><i style="width:' + xpPct + '%"></i></div><small class="tnum">' + (r.next ? toNext + ' XP bis ' + esc(r.next.n) : "Höchster Rang") + '</small></div>' +

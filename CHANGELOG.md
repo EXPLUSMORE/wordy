@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.172.1
+- **Tagesziel-Kreis im Stil des gewählten Rahmens:** Farben und Effekte (Gold, Regenbogen, Feuer, Neon, Pirat, Sterne, Kristall, Eis, Herbstlaub, Lichterkette) übernimmt jetzt auch der Fortschrittskreis auf der Startseite. Der noch leere Teil des Kreises ist dunkel.
+
 ## 2.172.0
 - **Herbst-Look (Teil 2: Spielwelt):** Vogelscheuche als kleiner Kumpel in der Übung (nickt bei richtig, lüftet den Hut bei falsch). Die **Krähe** landet ab und zu darauf und gibt einen **Tipp**: bei Auswahlaufgaben streicht sie eine falsche Antwort weg, beim Tippen öffnet sie den Hinweis; mit Tipp gibt es wie beim Hinweis keine XP. **Igel** bringt einmal am Tag ein Wort des Tages (ohne XP). **Pilze** im Hintergrund der Startseite: antippen füllt das Pilzbuch (6 Sorten, höchstens 5 am Tag, keine XP). **Laubhaufen** wächst mit jedem Serientag, bei 7 Tagen springt man hinein und bekommt die Strickmütze. **Ernte** wächst mit jedem richtig gelernten Wort, bei 50 gibt es den Rahmen „Herbstlaub“. **Gewitter-Arena:** in der Arena kommt mit weniger Zeit mehr Wind und Laub (und ab und zu ein Blitz). **Sankt Martin** (11.–14. Nov.): Laterne zum Abholen. Karte „Herbstkorb“ auf der Startseite.
 - **Zubehör:** Gummistiefel (Beine), Regenschirm (Dabei), Herbstschal, Strickmütze (nur über den Laubhaufen), Laterne (nur Sankt Martin). Rahmen „Herbstlaub“ (nur Ernte).
