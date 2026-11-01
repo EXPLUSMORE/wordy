@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.173.3
+- **Grün bei richtigen Antworten heller (Dunkel-Designs):** Das Grün für „richtig“ (Antwortfeld bei „Was heißt das auf Deutsch?“, Rückmeldung „Richtig“, Treffer im Zuordnen, erledigte Missionen u. a.) war im dunklen Modus ein sehr dunkles Grün. Jetzt ein deutlich helleres, kräftiges Grün mit gut lesbarer Schrift. Wirkt überall, wo die Farbe `--good-soft` benutzt wird (Gold-/Aurora-Dunkel, Klassisch-Dunkel). Der Herbst-Look hat nun eigene, helle Grüntöne.
+
 ## 2.173.2
 - **Herbstblatt größer und auffälliger:** das fallende Blatt in der Kopfzeile ist etwa 1,5-mal so groß und leuchtet warm. Im Windstoß wirbelt ein größeres Blatt hoch, und die fliegenden Blätter sind größer.
 
