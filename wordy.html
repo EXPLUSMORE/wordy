@@ -1678,7 +1678,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.169.0";window.WORDY_BUILD="050be754aa";</script>
+<script>window.WORDY_VERSION="2.169.1";window.WORDY_BUILD="f8de4e99c2";</script>
 </head>
 <body>
 <div id="app">
@@ -11323,7 +11323,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   /* Leiser Klangteppich: nur mit Saison-Look, Ton an, Klänge an, außerhalb von Lernrunden und Spielen, solange die App sichtbar ist */
   function ambientSync() {
     var V = global.VTC, V2 = global.VTS2, t = seasonNow(); if (!V || !V.ambientStart) return;
-    var want = t && S.state.settings.audio !== false && S.state.settings.seasonSound !== false && sessionEl.hidden && !document.hidden && heard;
+    var want = t && S.state.settings.audio !== false && S.state.settings.seasonSound === true && sessionEl.hidden && !document.hidden && heard;
     if (V.ambientOn() && !(want && t === "halloween")) V.ambientStop();
     if (V2 && V2.ambientOn() && !(want && t !== "halloween")) V2.ambientStop();
     if (want && t === "halloween" && !V.ambientOn()) V.ambientStart();
@@ -12705,7 +12705,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     }
   }
   function seasonCard() {
-    var m = S.state.settings.season || "auto", t = seasonNow(), snd = S.state.settings.seasonSound !== false;
+    var m = S.state.settings.season || "auto", t = seasonNow(), snd = S.state.settings.seasonSound === true;
     if (m === "on") m = "halloween";
     var opts = [["auto", "Automatisch"]].concat(SEASONS.map(function (x) { return [x[0], x[1] + " " + x[2], !seasonOpen(x[0])]; })).concat([["off", "Aus"]]);
     var cur = SEASONS.filter(function (x) { return x[0] === t; })[0];
@@ -13703,9 +13703,11 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       '<input type="checkbox" id="setHearts" ' + (st.settings.hearts ? "checked" : "") + ' style="width:auto"></label>' +
       '<p class="small muted" style="margin:10px 0 0">Gelernt wird als <b>' + esc(playerName()) + '</b>. Den Namen änderst du unter „Spieler“.</p>');
     html += fold("design", "🎨", "Design", "Aussehen von Wordy: " + ((global.VTC.DESIGNS.filter(function (d) { return d[0] === (st.settings.design || "gold"); })[0] || [])[1] || ""), unCard(designCard()));
-    html += fold("ton", "🔊", "Ton &amp; Aussehen", "Vorlesen, Hell oder Dunkel",
+    html += fold("ton", "🔊", "Ton &amp; Aussehen", "Vorlesen, Musik, Hell oder Dunkel",
       '<label class="row" style="margin-top:4px"><span style="flex:1 1 auto">Aussprache vorlesen<br><span class="small muted">Nutzt die englische Stimme des Geräts</span></span>' +
       '<input type="checkbox" id="setAudio" ' + (st.settings.audio ? "checked" : "") + ' style="width:auto"></label>' +
+      '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Hintergrundmusik<br><span class="small muted">Leise Saison-Klänge (Gruseln, Winter, Weihnachten) auf der Startseite. Standard: aus, nicht beim Üben</span></span>' +
+      '<input type="checkbox" id="setMusic" ' + (st.settings.seasonSound === true ? "checked" : "") + ' style="width:auto"></label>' +
       '<div id="pushBox" style="margin-top:10px"></div>' +
       '<div class="row" style="margin-top:10px"><span style="flex:1 1 auto">Neuheiten-Wolke<br><span class="small muted">Zeigt die Ankündigung neuer Spiele auf der Startseite wieder an</span></span><button class="chip" id="setCloud">Wieder anzeigen</button></div>' +
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Bildschirm anlassen<br><span class="small muted">Das Handy dunkelt nicht ab, solange Wordy offen ist</span></span>' +
@@ -13761,6 +13763,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     $("#setNew").onchange = function () { st.settings.newPerDay = +this.value; S.save(true); };
     $("#setVForms").onchange = function () { st.settings.verbForms = this.value === "past" ? "past" : "all"; S.save(true); };
     $("#setAudio").onchange = function () { st.settings.audio = this.checked; S.save(true); };
+    $("#setMusic").onchange = function () { st.settings.seasonSound = this.checked; S.save(true); heard = true; ambientSync(); };
     pushInit();
     $("#setCloud").onclick = function () { var pf2 = st.profile; pf2.cloudSeen = {}; pf2.cloudForce = {}; NEWS.forEach(function (n) { pf2.cloudForce[n.id] = 1; }); S.save(true); toast("Die Wolke erscheint wieder auf der Startseite."); };
     $("#setWake").onchange = function () { st.settings.wake = this.checked; S.save(true); wakeSync(); };
@@ -14932,7 +14935,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     else if (a === "clsleave") { if (confirm("Wirklich aus der Klasse austreten?")) clsDo("/class/leave", {}, function () { toast("Du bist nicht mehr in der Klasse."); }); }
     else if (a === "setdesign") { st.settings.design = act.getAttribute("data-d"); S.save(true); global.VTC.applyLook(st.profile, st.settings.themeMode, st.settings.design, seasonNow()); render(); }
     else if (a === "setseason") { st.settings.season = act.getAttribute("data-v"); S.save(true); heard = true; renderHeader(); render(); }
-    else if (a === "seasonsound") { st.settings.seasonSound = st.settings.seasonSound === false; S.save(true); heard = true; ambientSync(); render(); }
+    else if (a === "seasonsound") { st.settings.seasonSound = st.settings.seasonSound !== true; S.save(true); heard = true; ambientSync(); render(); }
     else if (a === "crewleave") { if (confirm("Crew wirklich verlassen?")) crewDo("/crew/leave", {}, function () { toast("Du hast die Crew verlassen."); }); }
     else if (a === "crewclaim") {
       var rect = act.getBoundingClientRect();
