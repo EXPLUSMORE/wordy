@@ -248,13 +248,13 @@
     var cv = el("canvas"); cv.width = W * dpr; cv.height = H * dpr; cv.style.cssText = "position:fixed;left:0;top:0;width:100%;height:100%;z-index:9997;pointer-events:none"; document.body.appendChild(cv);
     var c = cv.getContext("2d"), im = img(bigLeaf(0)), im2 = img(bigLeaf(1)), cols = ["#C1531F", "#E0A12E", "#8A3A14", "#B8442C", "#D9822B", "#7A8A2E"]; c.setTransform(dpr, 0, 0, dpr, 0, 0);
     var px = rect.left + rect.width / 2, py = rect.bottom + 10, L = [], t0 = 0, done = false, prevStorm = STORM;
-    for (var i = 0; i < (reduce ? 14 : 44); i++) L.push({ x: -30 - Math.random() * 260, y: rnd(60, H - 140), vx: rnd(620, 1100), ph: Math.random() * 6, r: Math.random() * 6, vr: rnd(-7, 7), sz: rnd(9, 22), col: cols[i % cols.length], d: rnd(0.35, 1.0) });
+    for (var i = 0; i < (reduce ? 14 : 44); i++) L.push({ x: -30 - Math.random() * 260, y: rnd(60, H - 140), vx: rnd(620, 1100), ph: Math.random() * 6, r: Math.random() * 6, vr: rnd(-7, 7), sz: rnd(12, 30), col: cols[i % cols.length], d: rnd(0.35, 1.0) });
     if (!silent) { fx("whoosh", 0.25); fx("whoosh", 0.65); fx("pop", 0); }
     document.body.classList.add("hbWind"); setTimeout(function () { document.body.classList.remove("hbWind"); }, 1900); STORM = 1; vib([30, 30, 60]);
     function finish() { if (done) return; done = true; STORM = prevStorm; cv.style.transition = "opacity .25s"; cv.style.opacity = "0"; setTimeout(function () { cv.remove(); running = false; if (onEnd) onEnd(); }, 280); }
     function frame(now) {
       if (done) return; if (!t0) t0 = now; var t = (now - t0) / 1000; c.clearRect(0, 0, W, H);
-      if (t < 0.9) { var k = t / 0.9, a = k * 11, rr = 8 + 90 * k, x = px + Math.sin(a) * rr * 0.9, y = py - 150 * ease(k) + Math.cos(a) * rr * 0.4, sz = 40 + 50 * k; c.save(); c.translate(x, y); c.rotate(a * 1.3); c.globalAlpha = 1 - Math.max(0, k - 0.8) * 4; c.shadowColor = "rgba(233,164,90,.9)"; c.shadowBlur = 14; if (im.complete) c.drawImage(im, -sz / 2, -sz / 2, sz, sz); c.restore(); }
+      if (t < 0.9) { var k = t / 0.9, a = k * 11, rr = 10 + 110 * k, x = px + Math.sin(a) * rr * 0.9, y = py - 150 * ease(k) + Math.cos(a) * rr * 0.4, sz = 64 + 90 * k; c.save(); c.translate(x, y); c.rotate(a * 1.3); c.globalAlpha = 1 - Math.max(0, k - 0.8) * 4; c.shadowColor = "rgba(233,164,90,.9)"; c.shadowBlur = 26; if (im.complete) { c.drawImage(im, -sz / 2, -sz / 2, sz, sz); c.shadowBlur = 0; } if (0) c.drawImage(im, -sz / 2, -sz / 2, sz, sz); c.restore(); }
       L.forEach(function (o) { var tt = t - o.d * 0.6; if (tt < 0) return; o.x += o.vx * 0.016 * Math.min(1, tt * 2) * (1 - Math.max(0, t - 2.0) * 0.8); o.y += Math.sin(tt * 6 + o.ph) * 2.4 - 0.3; o.r += o.vr * 0.016; c.save(); c.globalAlpha = Math.max(0, Math.min(1, (DUR - t) / 0.8)); c.translate(o.x, o.y); c.rotate(o.r); c.scale(1, Math.abs(Math.cos(tt * 5 + o.ph)) * 0.6 + 0.4); c.fillStyle = o.col; c.beginPath(); c.moveTo(0, -o.sz); c.quadraticCurveTo(o.sz * .8, -o.sz * .2, 0, o.sz); c.quadraticCurveTo(-o.sz * .8, -o.sz * .2, 0, -o.sz); c.fill(); c.restore(); });
       if (t >= DUR) { finish(); return; } global.requestAnimationFrame(frame);
     }

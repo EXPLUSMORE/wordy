@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.173.2
+- **Herbstblatt größer und auffälliger:** das fallende Blatt in der Kopfzeile ist etwa 1,5-mal so groß und leuchtet warm. Im Windstoß wirbelt ein größeres Blatt hoch, und die fliegenden Blätter sind größer.
+
 ## 2.173.1
 - **Pilzbuch auf Englisch:** Jede Pilzsorte steht jetzt mit englischem Namen (fly agaric, porcini, chanterelle, bay bolete, parasol mushroom, button mushroom) und darunter dem deutschen Begriff. Auch die Meldung beim Fund nennt beides.
 
