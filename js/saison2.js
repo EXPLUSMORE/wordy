@@ -73,6 +73,44 @@
     else o += "<path d='M14 25L4 15V35Z' fill='#E6B800' stroke='#6a5200' stroke-width='1.4'/><circle cx='42' cy='25' r='22' fill='#FFE066' stroke='#6a5200' stroke-width='1.6'/><ellipse cx='42' cy='34' rx='15' ry='9' fill='#FFF6C4'/><g stroke='#6a5200' stroke-width='1.8' stroke-linecap='round'><path d='M42 2V-0M60 8L63 5M24 8L21 5M20 22L16 21M64 24L68 24M28 40L25 44M56 40L59 44'/></g><circle cx='54' cy='20' r='5' fill='#fff'/><circle cx='55.5' cy='20.5' r='2.6' fill='#111'/><path d='M62 33Q66 36 70 33' stroke='#6a5200' stroke-width='2' fill='none' stroke-linecap='round'/>";
     return o + "<ellipse cx='36' cy='19' rx='9' ry='4' fill='#fff' opacity='.3'/></svg>";
   }
+
+  function acorn(f) {   // Eichel: Kappe mit Muster, Stiel, Gesicht, Beinchen wippen
+    var l = f ? 6 : 0;
+    return "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><radialGradient id='e' cx='.38' cy='.3' r='.9'><stop offset='0' stop-color='#E7B26A'/><stop offset='.6' stop-color='#B9742F'/><stop offset='1' stop-color='#7A4518'/></radialGradient></defs>" +
+      "<path d='M60 0V16' stroke='#E9C58A' stroke-width='2' fill='none'/><path d='M60 14Q70 12 70 22' stroke='#8A5A2B' stroke-width='3.4' fill='none' stroke-linecap='round'/>" +
+      "<path d='M26 " + (86 + l / 2) + "C26 100 44 112 60 114C76 112 94 100 94 " + (86 + l / 2) + "Z' fill='url(#e)' stroke='#5B3210' stroke-width='2.2'/>" +
+      "<path d='M60 114C52 120 50 118 56 112' fill='#7A4518'/>" +
+      "<path d='M16 58C16 34 36 22 60 22C84 22 104 34 104 58Q104 90 60 90Q16 90 16 58Z' fill='#8A4A22' stroke='#4E280E' stroke-width='2.2'/>" +
+      "<g stroke='#5B3210' stroke-width='1.6' fill='none' opacity='.55'><path d='M24 52l12 10 12 -10 12 10 12 -10 12 10 12 -10 8 8M22 68l12 10 12 -10 12 10 12 -10 12 10 12 -10'/></g>" +
+      "<circle cx='46' cy='" + (98 - l / 3) + "' r='4.6' fill='#fff'/><circle cx='74' cy='" + (98 - l / 3) + "' r='4.6' fill='#fff'/><circle cx='46.6' cy='" + (99 - l / 3) + "' r='2.4' fill='#111'/><circle cx='74.6' cy='" + (99 - l / 3) + "' r='2.4' fill='#111'/>" +
+      "<path d='M54 106Q60 110 66 106' stroke='#4E280E' stroke-width='2.2' fill='none' stroke-linecap='round'/><circle cx='38' cy='104' r='4' fill='#E8683A' opacity='.35'/><circle cx='82' cy='104' r='4' fill='#E8683A' opacity='.35'/>" +
+      "<path d='M26 66Q18 76 22 86' stroke='#B9742F' stroke-width='5' fill='none' stroke-linecap='round'/><ellipse cx='42' cy='38' rx='14' ry='6' fill='#fff' opacity='.28' transform='rotate(-20 42 38)'/></svg>";
+  }
+  function crow() {   // Krähe von der Seite (Blick nach rechts)
+    return "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 40'><path d='M30 18C24 6 12 2 2 8C14 8 22 12 28 22Z' fill='#2B2438' stroke='#120C1C' stroke-width='1'/><path d='M30 18C36 6 48 2 58 8C46 8 38 12 32 22Z' fill='#2B2438' stroke='#120C1C' stroke-width='1'/>" +
+      "<ellipse cx='30' cy='23' rx='11' ry='7' fill='#3A3150'/><path d='M20 24L6 30L19 29Z' fill='#2B2438'/><circle cx='39' cy='19' r='5.4' fill='#3A3150'/><path d='M43 18L52 21L43 23Z' fill='#E0B13A' stroke='#8A6A12' stroke-width='.8'/><circle cx='40.4' cy='17.6' r='1.5' fill='#fff'/><circle cx='40.8' cy='17.8' r='.8' fill='#111'/><path d='M26 30v6M32 30v6' stroke='#8A6A12' stroke-width='1.6' stroke-linecap='round'/></svg>";
+  }
+  function scarecrowSvg() {
+    return "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 130'><path d='M40 60V126' stroke='#7A4A22' stroke-width='5'/><path d='M4 70L76 62' stroke='#7A4A22' stroke-width='5' stroke-linecap='round'/>" +
+      "<path d='M26 66L22 110L58 108L54 62Z' fill='#C1531F' stroke='#7A2E0C' stroke-width='2' stroke-linejoin='round'/><path d='M30 80h8v8h-8zM44 92h8v8h-8z' fill='#E9C58A' opacity='.9'/><path d='M22 108L18 124M58 106L62 124' stroke='#E0B13A' stroke-width='3' stroke-linecap='round'/>" +
+      "<path d='M6 70L2 82M10 70L8 84M14 69L14 82M74 62L78 74M70 62L72 76M66 63L66 76' stroke='#E0B13A' stroke-width='2.4' stroke-linecap='round'/>" +
+      "<circle cx='40' cy='42' r='18' fill='#F2D3A0' stroke='#7A4A22' stroke-width='2'/><g class='sh'><path d='M18 32Q40 24 62 32L58 26Q40 -2 22 26Z' fill='#6B3A1E' stroke='#3E2010' stroke-width='2' stroke-linejoin='round'/><rect x='20' y='28' width='40' height='6' rx='3' fill='#8A2B2B'/><path d='M50 14l6 -4l2 7z' fill='#E0B13A'/></g>" +
+      "<circle cx='33' cy='42' r='2.6' fill='#222'/><circle cx='47' cy='42' r='2.6' fill='#222'/><path d='M33 51Q40 56 47 51' stroke='#7A2E0C' stroke-width='2.4' fill='none' stroke-linecap='round'/><circle cx='28' cy='48' r='3' fill='#E8683A' opacity='.4'/><circle cx='52' cy='48' r='3' fill='#E8683A' opacity='.4'/></svg>";
+  }
+  function hedgehogSvg() {
+    return "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 40'><path d='M6 32C2 14 16 4 32 6C48 6 56 16 54 32Z' fill='#6B4426' stroke='#3E2410' stroke-width='1.6'/><g stroke='#3E2410' stroke-width='1.6' stroke-linecap='round'><path d='M12 24l-4 -4M18 16l-3 -5M26 12l-1 -6M34 11l1 -6M42 14l3 -5M49 21l5 -3'/></g>" +
+      "<path d='M44 34C44 24 54 22 58 28L58 34Z' fill='#E3BE8C' stroke='#3E2410' stroke-width='1.4'/><circle cx='56.5' cy='28.5' r='2' fill='#2A1608'/><circle cx='50' cy='28' r='1.8' fill='#111'/><path d='M20 34v4M30 34v4M42 34v4' stroke='#3E2410' stroke-width='3' stroke-linecap='round'/></svg>";
+  }
+  function shroomSvg(c) {
+    return "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><path d='M15 38C16 28 16 24 15 20H25C24 24 24 28 25 38Z' fill='#F4E6C8' stroke='#8A6A3A' stroke-width='1.4'/><path d='M3 22C3 8 14 2 20 2C26 2 37 8 37 22Q20 26 3 22Z' fill='" + c + "' stroke='#4A1A08' stroke-width='1.6'/><circle cx='13' cy='13' r='3' fill='#fff' opacity='.85'/><circle cx='24' cy='9' r='2.2' fill='#fff' opacity='.85'/><circle cx='28' cy='17' r='2.6' fill='#fff' opacity='.85'/></svg>";
+  }
+  function pileSvg(n) {   // Laubhaufen: wächst mit n (0..7)
+    var cols = ["#C1531F", "#E0A12E", "#8A3A14", "#B8442C", "#D9822B", "#7A4A22"], o = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 60'><ellipse cx='50' cy='56' rx='46' ry='5' fill='rgba(60,20,0,.3)'/>";
+    var h = 10 + n * 5.5; o += "<path d='M4 56Q6 " + (56 - h) + " 50 " + (54 - h * 1.15) + "Q94 " + (56 - h) + " 96 56Z' fill='#B8641F' stroke='#6E3A18' stroke-width='1.6'/>";
+    for (var i = 0; i < 6 + n * 4; i++) { var x = 10 + (i * 37 % 80), y = 52 - ((i * 23) % Math.max(10, h)), r = 4 + (i % 3); o += "<ellipse cx='" + x + "' cy='" + y + "' rx='" + r + "' ry='" + (r * 0.6) + "' fill='" + cols[i % cols.length] + "' transform='rotate(" + (i * 41 % 90 - 45) + " " + x + " " + y + ")'/>"; }
+    return o + "</svg>";
+  }
+  function leafSvg(c) { return "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 2C18 6 21 12 17 18C15 20 13 21 12 22C11 21 9 20 7 18C3 12 6 6 12 2Z' fill='" + c + "'/><path d='M12 4V21' stroke='rgba(0,0,0,.3)' stroke-width='1'/></svg>"; }
   function star(c) { return "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><path d='M20 2l5 13h14l-11 9 4 14-12-8-12 8 4-14L1 15h14z' fill='" + c + "' stroke='#fff' stroke-width='1.5'/></svg>"; }
 
   var THEMES = {
@@ -91,6 +129,11 @@
       mascot: fishV, mini: fishV, flyer: fishH, tool: "rod", bubbles: { weg: ["Angel ausgeworfen! 🎣", "Fisch weg! 🐟", "Ab ins Meer! 🌊"], loop: ["Fisch-Looping! 🌀", "Salto im Wasser! 🐬"], pinball: ["Flipper im Becken! 🎯", "Blub, blub! 🫧"], splat: ["Platsch an die Scheibe! 💦", "Blubb! 🫧"] },
       thread: "#E8F8FF", splat: ["#BFF4FF", "#5CE1FF", "#2F9BFF", "#FFFFFF"], hint: "Tipp mich – Fisch an der Angel! 🎣", ambient: "aqua"
     },
+    herbst: {
+      name: "Herbst", boo: "RASCHEL!", cheer: "Geschafft! Die Eichel tanzt mit \uD83C\uDF42\uD83C\uDF89", spark: ["#E9A45A", "#C1531F", "#E0B13A", "#8A4A22"], dim: "rgba(40,16,4,", glow: "rgba(233,164,90,",
+      mascot: acorn, mini: acorn, flyer: crow, tool: "ball", bubbles: { weg: ["Volltreffer! \uD83C\uDF30", "Ab ins Laub! \uD83C\uDF42", "Kastanien-Profi! \uD83C\uDF30"], loop: ["Laub-Looping! \uD83C\uDF00", "Windstoß! \uD83C\uDF43"], pinball: ["Flipper im Laub! \uD83C\uDFAF", "Plopp, plopp! \uD83C\uDF30"], splat: ["Matsch! \uD83C\uDF42", "Platsch, Pfütze! \uD83D\uDCA6"] },
+      thread: "#E9C58A", splat: ["#E9A45A", "#C1531F", "#E0B13A", "#8A4A22"], hint: "Tipp mich \u2013 Eichel! \uD83C\uDF30", ambient: "herbst"
+    },
     spring: {
       name: "Spring Break", boo: "ALOHA!", cheer: "Geschafft! Der Papagei feiert mit 🌴🎉", spark: ["#FFD23F", "#FF5E7A", "#00D1C1", "#FFFFFF"], dim: "rgba(10,40,70,", glow: "rgba(255,210,63,",
       mascot: parrot, mini: parrot, flyer: gull, tool: "ball", bubbles: { weg: ["Tooor! ⚽🌴", "Ab ins Meer! 🌊", "Strandball-Profi! 🏖️"], loop: ["Surf-Looping! 🏄", "Welle gemacht! 🌊"], pinball: ["Beach-Flipper! 🎯", "Plopp, plopp! 💦"], splat: ["Platsch! 💦", "Wasserbombe! 🎈"] },
@@ -105,7 +148,7 @@
 
   /* ================= Töne (Web Audio) ================= */
   function AC() { var a = global.VTC && global.VTC.ctx ? global.VTC.ctx() : null; if (a && a.state === "suspended") { try { a.resume(); } catch (e) {} } return a; }
-  var PENTA = { winter: [587.3, 659.3, 784, 880, 987.8, 1174.7, 1318.5], xmas: [523.3, 587.3, 659.3, 784, 880, 1046.5], spring: [261.6, 293.7, 329.6, 392, 440, 523.3], aqua: [392, 440, 523.3, 587.3, 659.3, 784] };
+  var PENTA = { winter: [587.3, 659.3, 784, 880, 987.8, 1174.7, 1318.5], xmas: [523.3, 587.3, 659.3, 784, 880, 1046.5], spring: [261.6, 293.7, 329.6, 392, 440, 523.3], aqua: [392, 440, 523.3, 587.3, 659.3, 784], herbst: [220, 261.6, 293.7, 329.6, 392, 440, 523.3] };
   function voice(a, out, f, t, dur, kind, vol, f2) {   // kind: bell | glass | wood | pluck | pad | blip
     var o = a.createOscillator(), g = a.createGain(); o.type = kind === "wood" || kind === "pluck" ? "triangle" : kind === "pad" ? "triangle" : "sine"; o.frequency.setValueAtTime(f, t); if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + dur);
     g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + (kind === "pad" ? dur * 0.3 : 0.012)); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
@@ -162,6 +205,11 @@
       var whale = function () { var t = a.currentTime + .05, o = a.createOscillator(), g = a.createGain(); o.type = "sine"; o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(260, t + 2.2); o.frequency.exponentialRampToValueAtTime(170, t + 4.5); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.03, t + 1.2); g.gain.exponentialRampToValueAtTime(0.0001, t + 4.6); o.connect(g); g.connect(m); g.connect(echo); o.start(t); o.stop(t + 4.8); timers.push(setTimeout(whale, 38000 + Math.random() * 20000)); };
       var apad = function () { var t = a.currentTime + .05, ch = [[261.6, 329.6, 392], [220, 277.2, 329.6], [196, 246.9, 293.7], [233.1, 293.7, 349.2]][pos++ % 4]; ch.forEach(function (f) { var o = a.createOscillator(), g = a.createGain(); o.type = "sine"; o.frequency.value = f; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.012, t + 3); g.gain.exponentialRampToValueAtTime(0.0001, t + 8); o.connect(g); g.connect(m); o.start(t); o.stop(t + 8.2); }); timers.push(setTimeout(apad, 7000)); };
       timers.push(setTimeout(blub, 1500)); timers.push(setTimeout(whale, 9000)); timers.push(setTimeout(apad, 500));
+    } else if (id === "herbst") {
+      loopNoise(420, .8, 0.035, 0.09, 0.025); loopNoise(2600, 1.6, 0.006, 0.17, 0.005);   // Wind und Rascheln
+      var rainB = function () { var t = a.currentTime + .05; noiseHit(a, m, t, 5, 5200, 3600, .6, .035, "highpass"); timers.push(setTimeout(rainB, 50000 + Math.random() * 40000)); };
+      var hp = function () { var t = a.currentTime + .05, n = 1 + (Math.random() * 3 | 0); for (var k = 0; k < n; k++) { pos = Math.max(0, Math.min(P.length - 1, pos + [-2, -1, 1, 2][Math.random() * 4 | 0])); note(P[pos], t + k * .7, 1.6, "pluck", .03); } timers.push(setTimeout(hp, 7000 + Math.random() * 8000)); };
+      timers.push(setTimeout(rainB, 20000)); timers.push(setTimeout(hp, 3000));
     } else {
       loopNoise(600, .6, 0.03, 0.13, 0.02, "lowpass"); loopNoise(1800, 1.4, 0.008, 0.09, 0.006);   // sanfte Brandung
       var CH = [[261.6, 329.6, 392, 523.3], [220, 261.6, 329.6, 440], [174.6, 220, 261.6, 349.2], [196, 246.9, 293.7, 392]], ci = 0;
@@ -210,11 +258,12 @@
     var Cc = { x: W / 2 + (px - W / 2) * 0.4, y: H * 0.34 }, minis = [];
     if (k === "rain") for (var i = 0; i < 18; i++) minis.push({ x: (i + 0.5) / 18 * W + rnd(-8, 8), d: 0.1 + Math.random() * 0.9, len: 90 + Math.random() * H * 0.55, sz: 22 + Math.random() * 20, ph: Math.random() * 6, rt: 3.1 + Math.random() * 0.5 });
     function strand(x0, y0, x1, y1, p) {   // Strang je Thema: Eisfaden, Lichterkette, Wimpelkette
-      var xe = x0 + (x1 - x0) * p, ye = y0 + (y1 - y0) * p; line(x0, y0, xe, ye, id === "winter" ? 2.6 : 2, id === "xmas" ? "#2E7D4F" : id === "spring" ? "#7a5a2e" : "rgba(223,246,255,.95)", id === "winter" ? 12 : 0);
+      var xe = x0 + (x1 - x0) * p, ye = y0 + (y1 - y0) * p; line(x0, y0, xe, ye, id === "winter" ? 2.6 : 2, id === "xmas" ? "#2E7D4F" : id === "spring" ? "#7a5a2e" : id === "herbst" ? "#8A5A2B" : "rgba(223,246,255,.95)", id === "winter" ? 12 : 0);
       var n = Math.max(3, Math.round(Math.hypot(x1 - x0, y1 - y0) / (id === "spring" ? 34 : 26)));
       for (var b = 1; b <= n; b++) { var q = b / (n + 1); if (q > p) break; var bx = x0 + (x1 - x0) * q, by = y0 + (y1 - y0) * q + 6;
         if (id === "xmas") { var on = (Math.sin(performance.now() / 160 + b * 1.7) > -0.2); c.save(); c.fillStyle = ["#FF4D79", "#FFD34D", "#7DF0C0", "#6EC8FF"][b % 4]; c.globalAlpha = on ? 1 : 0.35; c.shadowColor = c.fillStyle; c.shadowBlur = on ? 14 : 0; c.beginPath(); c.ellipse(bx, by + 3, 4.5, 7, 0, 0, 6.283); c.fill(); c.restore(); }
         else if (id === "spring") { c.save(); c.fillStyle = ["#FF5E7A", "#FFD23F", "#00D1C1", "#FF9F1C"][b % 4]; c.translate(bx, by); c.rotate(Math.atan2(y1 - y0, x1 - x0)); c.beginPath(); c.moveTo(-9, 0); c.lineTo(9, 0); c.lineTo(0, 17); c.closePath(); c.fill(); c.restore(); }
+        else if (id === "herbst") { c.save(); c.translate(bx, by + 4); c.rotate(Math.sin(performance.now() / 500 + b) * 0.5 + b); c.fillStyle = ["#C1531F", "#E0A12E", "#8A3A14", "#B8442C"][b % 4]; c.beginPath(); c.moveTo(0, -8); c.quadraticCurveTo(8, -2, 0, 9); c.quadraticCurveTo(-8, -2, 0, -8); c.fill(); c.restore(); }
         else if (id === "aqua") { c.save(); c.strokeStyle = "rgba(220,248,255,.9)"; c.fillStyle = "rgba(190,240,255,.22)"; c.lineWidth = 1.5; c.beginPath(); c.arc(bx + Math.sin(performance.now() / 300 + b) * 3, by - 2, 5 + (b % 3) * 2.2, 0, 6.283); c.fill(); c.stroke(); c.restore(); }
         else { c.save(); c.strokeStyle = "rgba(223,246,255,.9)"; c.lineWidth = 1.4; c.translate(bx, by + 4); for (var a = 0; a < 3; a++) { c.rotate(1.0472); c.beginPath(); c.moveTo(-6, 0); c.lineTo(6, 0); c.stroke(); } c.restore(); } }
     }
@@ -263,7 +312,7 @@
   }
 
   /* ================= Figur gegen Maskottchen: Zuckerstange (Schwung), Schneeball und Strandball (Wurf) ================= */
-  var HIT = { winter: "FLUMP!", xmas: "KLING!", spring: "PLOPP!", aqua: "ZACK!" }, SPLAT = { winter: "FLOCKE!", xmas: "ZUCKERGUSS!", spring: "WASSERBOMBE!", aqua: "PLATSCH!" };
+  var HIT = { winter: "FLUMP!", xmas: "KLING!", spring: "PLOPP!", aqua: "ZACK!", herbst: "PLUMPS!" }, SPLAT = { winter: "FLOCKE!", xmas: "ZUCKERGUSS!", spring: "WASSERBOMBE!", aqua: "PLATSCH!", herbst: "RASCHEL!" };
   function cane(c, hand, th, L, ws) {
     c.save(); c.translate(hand.x, hand.y); c.rotate(th); c.shadowColor = "rgba(0,0,0,.4)"; c.shadowBlur = 8; var w = 6.5 * Math.max(0.8, ws * 0.9);
     c.lineCap = "round"; c.lineWidth = w * 2 + 3; c.strokeStyle = "#7a0a22"; c.beginPath(); c.moveTo(0, 6); c.lineTo(0, -L * 0.72); c.arc(-L * 0.16, -L * 0.72, L * 0.16, 0, -Math.PI, true); c.stroke(); c.shadowBlur = 0;
@@ -284,6 +333,7 @@
   function ballDraw(c, id, x, y, r, rot) {
     c.save(); c.translate(x, y); c.rotate(rot);
     if (id === "winter") { var g = c.createRadialGradient(-r * .3, -r * .35, r * .1, 0, 0, r); g.addColorStop(0, "#fff"); g.addColorStop(0.6, "#DDF1FF"); g.addColorStop(1, "#8FC8F0"); c.fillStyle = g; c.shadowColor = "rgba(150,220,255,.9)"; c.shadowBlur = 14; c.beginPath(); c.arc(0, 0, r, 0, 6.283); c.fill(); c.shadowBlur = 0; c.fillStyle = "rgba(120,170,210,.4)"; for (var i = 0; i < 4; i++) { c.beginPath(); c.arc(Math.cos(i * 1.7) * r * .5, Math.sin(i * 1.7) * r * .5, r * .12, 0, 6.283); c.fill(); } }
+    else if (id === "herbst") { var g3 = c.createRadialGradient(-r * .3, -r * .35, r * .1, 0, 0, r); g3.addColorStop(0, "#C9783A"); g3.addColorStop(.6, "#8A4A22"); g3.addColorStop(1, "#4E280E"); c.fillStyle = g3; c.beginPath(); c.arc(0, 0, r, 0, 6.283); c.fill(); c.fillStyle = "#E9C58A"; c.beginPath(); c.ellipse(0, r * .55, r * .5, r * .3, 0, 0, 6.283); c.fill(); c.fillStyle = "rgba(255,255,255,.35)"; c.beginPath(); c.ellipse(-r * .35, -r * .4, r * .22, r * .12, -.6, 0, 6.283); c.fill(); }
     else { var cols = ["#FF5E7A", "#FFFFFF", "#FFD23F", "#FFFFFF", "#00D1C1", "#FFFFFF"]; for (var k = 0; k < 6; k++) { c.fillStyle = cols[k]; c.beginPath(); c.moveTo(0, 0); c.arc(0, 0, r, k * 1.0472, (k + 1) * 1.0472); c.closePath(); c.fill(); } var g2 = c.createRadialGradient(-r * .3, -r * .3, r * .05, 0, 0, r); g2.addColorStop(0, "rgba(255,255,255,.65)"); g2.addColorStop(0.5, "rgba(255,255,255,0)"); g2.addColorStop(1, "rgba(0,0,0,.25)"); c.fillStyle = g2; c.beginPath(); c.arc(0, 0, r, 0, 6.283); c.fill(); c.fillStyle = "#fff"; c.beginPath(); c.arc(0, 0, r * .12, 0, 6.283); c.fill(); }
     c.restore();
   }
@@ -335,7 +385,7 @@
   var ART_CRAB = "<svg viewBox='0 0 50 34'><g stroke='#9E1B1B' stroke-width='2' fill='none' stroke-linecap='round'><path d='M10 24L2 30M13 27L7 33M40 24L48 30M37 27L43 33'/></g><ellipse cx='25' cy='21' rx='15' ry='10' fill='#FF4D4D' stroke='#9E1B1B' stroke-width='1.8'/><path d='M12 14C3 12 1 3 8 3C13 3 14 9 15 12Z' fill='#FF6B6B' stroke='#9E1B1B' stroke-width='1.6'/><path d='M38 14C47 12 49 3 42 3C37 3 36 9 35 12Z' fill='#FF6B6B' stroke='#9E1B1B' stroke-width='1.6'/><path d='M19 12V7M31 12V7' stroke='#9E1B1B' stroke-width='2'/><circle cx='19' cy='6' r='3.2' fill='#fff' stroke='#9E1B1B' stroke-width='1.2'/><circle cx='31' cy='6' r='3.2' fill='#fff' stroke='#9E1B1B' stroke-width='1.2'/><circle cx='19.6' cy='6.4' r='1.4' fill='#111'/><circle cx='31.6' cy='6.4' r='1.4' fill='#111'/><path d='M21 23Q25 26 29 23' stroke='#9E1B1B' stroke-width='1.6' fill='none'/></svg>";
   var ART_CORAL = "<svg viewBox='0 0 44 54'><g fill='none' stroke-linecap='round'><path d='M22 54V30M22 40L10 28V16M22 34L34 22V10M10 28L4 22M34 22L40 16M22 30V12' stroke='#B8325F' stroke-width='9'/><path d='M22 54V30M22 40L10 28V16M22 34L34 22V10M10 28L4 22M34 22L40 16M22 30V12' stroke='#FF6FA0' stroke-width='5.4'/></g><g fill='#FFC2D6'><circle cx='10' cy='15' r='3'/><circle cx='34' cy='9' r='3'/><circle cx='22' cy='11' r='3'/><circle cx='4' cy='21' r='2.4'/><circle cx='40' cy='15' r='2.4'/></g></svg>";
   var ART_CORAL2 = "<svg viewBox='0 0 40 48'><path d='M6 48C4 30 8 14 12 6C16 18 14 32 18 48ZM18 48C18 34 22 20 28 10C32 22 28 36 34 48Z' fill='#A06BFF' stroke='#5B2FA8' stroke-width='1.8' stroke-linejoin='round'/><g fill='#D7C0FF'><circle cx='12' cy='14' r='2.4'/><circle cx='28' cy='18' r='2.4'/><circle cx='11' cy='28' r='2'/><circle cx='27' cy='32' r='2'/></g></svg>";
-  var SC = null, FL = null, WX = null;
+  var SC = null, FL = null, WX = null, STORM = 0;
   function puff(x, y, cols, n) { spark(x, y, n || 12, cols); }
   function buildScene(id, navH) {
     var W = global.innerWidth, root = el("div", "sx3 sx3-" + id); root.id = "sxScene"; root.style.bottom = navH + "px"; root.appendChild(el("div", "sx3g"));
@@ -361,6 +411,18 @@
       put("sxcl", 0.55, [42, 36], "clam", "<div class='sh bs'>" + ART_SHELL + "</div><i class='pe'></i><div class='sh lid'>" + ART_SHELL + "</div>", "--dl:-1s");
       put("sxcr", 0.28, [40, 28], "crab", "<div class='cw'>" + ART_CRAB + "</div>", "--dl:-3s");
       put("sxch", 0.7, [44, 34], "chest", "<div class='bx'></div><div class='ld2'></div><i class='gl'></i>", "--dl:-.2s");
+    } else if (id === "herbst") {
+      var HK = global.VTS2 && global.VTS2.hooks || {};
+      put("sxv", 0.2, [60, 100], "scare", scarecrowSvg() + "<div class='cr' data-k='crow' style='--cd:" + (4 + Math.random() * 10 | 0) + "s'>" + crow() + "</div>", "--dl:-.6s");
+      put("sxh", 0, [46, 31], "hog", hedgehogSvg(), "--dl:-" + (Math.random() * 40 | 0) + "s");
+      var MU = [[0.07, "#C1331F"], [0.36, "#D9822B"], [0.5, "#8A4A22"], [0.66, "#C1331F"], [0.93, "#D9822B"]], mus = [];
+      MU.forEach(function (q) { mus.push(put("sxmu", q[0], [26, 26], "mush", shroomSvg(q[1]))); });
+      var pileN = HK.pileSize ? HK.pileSize() : 0;
+      if (pileN > 0) put("sxlp", 0.84, [78 + pileN * 4, 40 + pileN * 3], "pile", pileSvg(pileN));
+      var muT = setInterval(function () { if (!document.body.contains(root)) { clearInterval(muT); return; } if (document.hidden) return; var on = mus.filter(function (m) { return m.classList.contains("on"); });
+        if (on.length && Math.random() < 0.5) on[Math.random() * on.length | 0].classList.remove("on");
+        if (on.length < 2 && (!HK.mushLeft || HK.mushLeft() > 0)) mus[Math.random() * mus.length | 0].classList.add("on"); }, 14000);
+      setTimeout(function () { if (!HK.mushLeft || HK.mushLeft() > 0) mus[2].classList.add("on"); }, 2500);
     } else {
       [[0.1, 56, 96], [0.9, 50, 90]].forEach(function (q, i) { var lv = ""; for (var k = 0; k < 7; k++) lv += "<b style='--i:" + k + "'></b>"; put("sxl", q[0], [q[1], q[2]], "palm", "<div class='pt'><i></i><i></i><i></i><i></i><i></i></div><div class='lv'>" + lv + "</div><s></s><s></s>", "--dl:" + (-i * 1.5) + "s"); });
       [[0.3, 30], [0.52, 40], [0.74, 26]].forEach(function (q, i) { var r = ""; for (var k = 0; k < 6; k++) r += "<i class='rib' style='--i:" + k + "'></i>"; put("sxb", q[0], [q[1], q[1]], "ball", "<div class='bb'>" + r + "</div><span class='bs'></span>", "--dl:" + (-i * 1.2) + "s"); });
@@ -387,6 +449,11 @@
       else if (k === "crab") { puff(x, y, ["#FF5E5E", "#fff"], 10); fx("pop"); }
       else if (k === "coral") { bubbles(x, y, 6); puff(x, y, ["#FF7AA8", "#FFB25C"], 10); fx("chime"); }
       else if (k === "chest") { puff(x, y - 10, ["#FFD34D", "#FFF3B0", "#fff"], 24); bubbles(x, y, 8); fx("pop"); setTimeout(function () { fx("chime"); }, 150); }
+      else if (k === "scare") { puff(x, y, ["#E9A45A", "#C1531F"], 10); fx("boing"); var hk0 = global.VTS2.hooks || {}; if (hk0.scare) hk0.scare(); }
+      else if (k === "crow") { var cs = getComputedStyle(o).opacity; if (+cs > 0.3) { o.classList.add("caw"); setTimeout(function () { o.classList.remove("caw"); }, 600); puff(x, y, ["#2B2438", "#8A7AA8"], 8); fx("pop"); var hk1 = global.VTS2.hooks || {}; if (hk1.crow) hk1.crow(); } }
+      else if (k === "hog") { puff(x, y, ["#E3BE8C", "#6B4426"], 8); fx("pop"); var hk2 = global.VTS2.hooks || {}; if (hk2.hog) hk2.hog(); }
+      else if (k === "mush") { puff(x, y, ["#fff", "#E9C58A", "#C1331F"], 12); fx("chime"); o.classList.remove("on"); var hk3 = global.VTS2.hooks || {}; if (hk3.mush) hk3.mush(); }
+      else if (k === "pile") { puff(x, y, ["#C1531F", "#E0A12E", "#8A3A14"], 22); fx("boing"); var hk4 = global.VTS2.hooks || {}; if (hk4.pile) hk4.pile(); }
       else if (k === "flamingo") { puff(x, y, ["#7DE8FF", "#fff", "#00D1C1"], 18); fx("pop"); }
       else { puff(x, y, C, 8); fx("pop"); }
     });
@@ -401,7 +468,7 @@
   }
   function coconut(x, y) { var c = el("i"); c.style.cssText = "position:fixed;left:" + x + "px;top:" + y + "px;width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#9A6B3A,#4A2F14);z-index:9990;pointer-events:none"; document.body.appendChild(c); c.animate([{ transform: "translateY(0)" }, { transform: "translateY(" + (global.innerHeight - y - 120) + "px)", offset: 0.5, easing: "ease-in" }, { transform: "translateY(" + (global.innerHeight - y - 150) + "px) translateX(14px)", offset: 0.68 }, { transform: "translateY(" + (global.innerHeight - y - 120) + "px) translateX(26px)", offset: 0.85 }, { transform: "translateY(" + (global.innerHeight - y - 128) + "px) translateX(30px)", opacity: 0 }], { duration: 1500 }).onfinish = function () { c.remove(); }; }
   function buildFlyers(id) {
-    var lay = el("div", "sxFl"); lay.id = "sxFlyers"; document.body.appendChild(lay); var W = global.innerWidth, H = global.innerHeight, alive = true, timers = [], T = THEMES[id], N = id === "xmas" ? 1 : id === "aqua" ? 6 : 4;
+    var lay = el("div", "sxFl"); lay.id = "sxFlyers"; document.body.appendChild(lay); var W = global.innerWidth, H = global.innerHeight, alive = true, timers = [], T = THEMES[id], N = id === "xmas" ? 1 : id === "aqua" ? 6 : id === "herbst" ? 2 : 4;
     function mk(i) {
       var b = el("div", "sxf-" + id), svg = T.flyer(); b.innerHTML = "<div class='bd'>" + svg + "</div>"; lay.appendChild(b); var anim = null;
       function fly() {
@@ -428,8 +495,9 @@
     if (!on || !THEMES[id]) { if (WX) { WX.stop(); WX = null; } return; } if (WX && WX.id === id) return; if (WX) { WX.stop(); WX = null; }
     if (global.matchMedia && global.matchMedia("(prefers-reduced-motion:reduce)").matches) return;
     var W = global.innerWidth, H = global.innerHeight, dpr = Math.min(2, global.devicePixelRatio || 1), cv = el("canvas"); cv.id = "sxWeather"; cv.width = W * dpr; cv.height = H * dpr; cv.style.cssText = "position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:7"; document.body.appendChild(cv);
-    var c = cv.getContext("2d"); c.setTransform(dpr, 0, 0, dpr, 0, 0); var N = id === "winter" ? 110 : id === "xmas" ? 46 : id === "aqua" ? 44 : 28, P = [], stop = false, t0 = 0, raf = 0;
+    var c = cv.getContext("2d"); c.setTransform(dpr, 0, 0, dpr, 0, 0); var N = id === "winter" ? 110 : id === "xmas" ? 46 : id === "aqua" ? 44 : id === "herbst" ? 30 : 28, P = [], drops = [], stop = false, t0 = 0, raf = 0;
     for (var i = 0; i < N; i++) P.push({ x: Math.random() * W, y: Math.random() * H, z: Math.random(), ph: Math.random() * 6.28, c: Math.random(), r: Math.random() * 6.28 });
+    var HCOL = ["#C1531F", "#E0A12E", "#8A3A14", "#B8442C", "#D9822B", "#7A8A2E"], showerAt = 40 + Math.random() * 30;
     var COL = ["#FF4D79", "#FFD34D", "#7DF0C0", "#6EC8FF", "#fff", "#FF8FB8"];
     function loop(now) {
       if (stop) return; if (!t0) t0 = now; var t = (now - t0) / 1000; c.clearRect(0, 0, W, H); var gust = Math.sin(t * 0.3) * 0.5 + Math.sin(t * 0.77) * 0.3;
@@ -442,9 +510,18 @@
         else if (id === "aqua") {
           if (p.c < 0.78) { p.y -= (16 + p.z * 46) * 0.016; p.x += Math.sin(t * 1.3 + p.ph) * 0.35; if (p.y < -24) { p.y = H + 14; p.x = Math.random() * W; } var ar = 2.5 + p.z * p.z * 9 + p.c * 2; c.globalAlpha = 0.28 + p.z * 0.5; c.strokeStyle = "rgba(220,248,255,.95)"; c.lineWidth = 1.2; c.fillStyle = "rgba(170,230,255,.10)"; c.beginPath(); c.arc(p.x, p.y, ar, 0, 6.283); c.fill(); c.stroke(); c.fillStyle = "rgba(255,255,255,.85)"; c.beginPath(); c.arc(p.x - ar * 0.36, p.y - ar * 0.36, Math.max(0.8, ar * 0.2), 0, 6.283); c.fill(); }
           else { p.y -= (3 + p.z * 6) * 0.016; p.x += Math.sin(t * 0.5 + p.ph) * 0.25; if (p.y < -6) { p.y = H + 6; p.x = Math.random() * W; } c.globalAlpha = 0.25 + 0.25 * Math.sin(t * 1.6 + p.ph); c.fillStyle = "#E8FBFF"; c.beginPath(); c.arc(p.x, p.y, 0.9 + p.z, 0, 6.283); c.fill(); } }
+        else if (id === "herbst") {
+          var g = Math.max(0, Math.sin(t * 0.32 + 1)); g = g * g * g; g = Math.min(1.6, g + STORM * 1.4); var spd = 22 + p.z * 38 + STORM * 70;
+          p.y += (spd * (0.7 + 0.5 * Math.abs(Math.sin(t * 1.3 + p.ph)))) * 0.016; p.x += (Math.sin(t * 0.9 + p.ph) * 14 + g * (90 + 120 * p.z)) * 0.016; p.r += (0.5 + g * 3) * 0.016 * (p.c < 0.5 ? 1 : -1);
+          if (p.y > H + 12) { p.y = -12; p.x = Math.random() * W * 0.8; } if (p.x > W + 14) { p.x = -14; p.y = Math.random() * H; }
+          c.globalAlpha = 0.55 + p.z * 0.4; c.save(); c.translate(p.x, p.y); c.rotate(p.r); c.scale(1, Math.abs(Math.cos(t * 1.2 + p.ph)) * 0.6 + 0.4); var lz = 7 + p.z * 8; c.fillStyle = HCOL[(p.c * 100 | 0) % HCOL.length]; c.beginPath(); c.moveTo(0, -lz); c.quadraticCurveTo(lz * .8, -lz * .2, 0, lz); c.quadraticCurveTo(-lz * .8, -lz * .2, 0, -lz); c.fill(); c.restore(); }
         else { if (p.c < 0.6) { p.y -= (12 + p.z * 28) * 0.016; p.x += Math.sin(t * 1.1 + p.ph) * 0.4; if (p.y < -20) { p.y = H + 10; p.x = Math.random() * W; } var br = 5 + p.z * 11; c.globalAlpha = 0.55; c.strokeStyle = "rgba(255,255,255,.9)"; c.lineWidth = 1.4; c.fillStyle = "rgba(190,240,255,.18)"; c.beginPath(); c.arc(p.x, p.y, br, 0, 6.283); c.fill(); c.stroke(); c.fillStyle = "rgba(255,255,255,.9)"; c.beginPath(); c.arc(p.x - br * .35, p.y - br * .35, br * .2, 0, 6.283); c.fill(); }
           else { p.y += (14 + p.z * 24) * 0.016; p.x += Math.sin(t * 0.9 + p.ph) * 0.8 + gust * 0.4; p.r += 0.03; if (p.y > H + 10) { p.y = -10; p.x = Math.random() * W; } c.globalAlpha = 0.85; c.save(); c.translate(p.x, p.y); c.rotate(p.r); c.fillStyle = p.c < 0.8 ? "#FF9EC1" : "#FFD23F"; c.beginPath(); c.ellipse(0, 0, 6, 3.2, 0, 0, 6.283); c.fill(); c.restore(); } }
       });
+      if (id === "herbst") {
+        if (t > showerAt && !drops.length) { for (var di = 0; di < 70; di++) drops.push({ x: Math.random() * W, y: Math.random() * H, v: 520 + Math.random() * 280 }); showerAt = t + 60 + Math.random() * 60; drops.until = t + 5 + Math.random() * 3; }
+        if (drops.length) { var fa = Math.min(1, (drops.until - t) / 1.2, 1); if (t > drops.until) { drops.length = 0; } else { c.strokeStyle = "rgba(180,200,215,.55)"; c.lineWidth = 1.3; c.globalAlpha = Math.max(0, fa); c.beginPath(); drops.forEach(function (d) { d.y += d.v * 0.016; d.x -= 60 * 0.016; if (d.y > H) { d.y = -20; d.x = Math.random() * W; } c.moveTo(d.x, d.y); c.lineTo(d.x + 3, d.y + 16); }); c.stroke(); } }
+      }
       c.globalAlpha = 1; raf = global.requestAnimationFrame(loop);
     }
     raf = global.requestAnimationFrame(loop); WX = { id: id, stop: function () { stop = true; global.cancelAnimationFrame(raf); cv.remove(); } };
@@ -452,6 +529,6 @@
 
   global.VTS2 = {
     themes: function () { return THEMES; }, theme: function (id) { return THEMES[id] || null; }, mount: mount, tap: tap, whack: whack, home: home, weather: weather,
-    ambientStart: ambientStart, ambientStop: ambientStop, ambientOn: function () { return !!AMB; }, busy: function () { return running || whacking; }, whacking: function () { return whacking; }
+    hooks: {}, storm: function (v) { STORM = Math.max(0, Math.min(1, v || 0)); }, shroomArt: shroomSvg, pileArt: pileSvg, leafArt: leafSvg, hogArt: hedgehogSvg, crowArt: crow, scareArt: scarecrowSvg, ambientStart: ambientStart, ambientStop: ambientStop, ambientOn: function () { return !!AMB; }, busy: function () { return running || whacking; }, whacking: function () { return whacking; }
   };
 })(window);

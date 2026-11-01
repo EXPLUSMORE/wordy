@@ -10,6 +10,10 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.171.0
+- **Herbst-Look (Teil 1: Atmosphäre):** neuer Saison-Look `herbst` (1. Sep.–14. Okt. und 1. Nov.–30. Nov.). Papier-Optik in Kürbisorange/Burgund/Moos/Creme, Laubwind (30 Blätter in Böen, ruhig dazwischen), gelegentlicher Regenschauer, Nebel unten und warme Vignette. Szene auf der Startseite: Vogelscheuche (wippt beim Antippen, Krähe landet ab und zu darauf), Igel läuft vorbei, Pilze tauchen im Hintergrund auf, Krähen fliegen. Maskottchen Eichel (Tippen, Wurf mit Kastanie, Girlande aus Blättern). Leise Klänge (Wind, Rascheln, Regen, Zupfnoten) hinter dem Schalter „Hintergrundmusik“. „Bewegung reduzieren“ und „Saison-Look aus“ schalten alles ab.
+- **Fenster neu:** Halloween 15.–31. Okt., Herbst ganzer November, Weihnachten 1.–26. Dez., Winter 27. Dez.–28. Feb. Dashboard: Herbst in Fenster-Plan und „Look erzwingen“ (Server-Update nötig).
+
 ## 2.170.0
 - **Neue Grammatik-Übung „am / is / are und isn't / aren't“** (Thema `be1`, Bauernhof-Geschichte nach dem Arbeitsblatt „A Day at the Farm“, Sätze selbst formuliert): Erklärseite mit Beispielen und 15 Aufgaben (6 Auswahl, 4 Tippen, 3 Sätze bauen, 2 Fehler finden). Sie hängt als Station **„Grammatik“ im Lernpfad bei Headlight 2 · Unit 1 · Together again (1)** (vor der Boss-Runde) und ist unter Lernen › Grammatik zu finden; auch im 10-Min-Plan-Generator wählbar (`GRAM_TOPICS`). Eine Lektion zieht 8 der 15 Aufgaben.
 

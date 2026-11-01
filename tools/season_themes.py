@@ -205,7 +205,47 @@ def aqua():
     A(".sxf-aqua{width:64px;height:40px}.sxf-aqua .bd{width:100%;height:100%;transform-origin:25% 50%;animation:sxFishT .34s ease-in-out infinite alternate;filter:drop-shadow(0 0 6px rgba(100,220,255,.55))}@keyframes sxFishT{from{transform:skewX(0) scaleX(1)}to{transform:skewX(-7deg) scaleX(.93)}}")
     OUT["AQUA"] = "\n".join(o)
 
-winter(); xmas(); spring(); aqua()
+# ---------------- HERBST ----------------
+def herbst():
+    S = R("herbst"); o = [COMMON]; A = o.append
+    leafs = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 22' preserveAspectRatio='none'><path fill='#C1531F' d='M0 0H120V8Q114 20 108 8Q100 18 92 8Q84 22 76 8Q68 18 60 8Q52 20 44 8Q36 18 28 8Q20 22 12 8Q6 16 0 8z'/><path fill='#E9A45A' opacity='.85' d='M0 0H120V4Q110 12 100 4Q90 14 80 4Q70 12 60 4Q50 14 40 4Q30 12 20 4Q10 14 0 4z'/></svg>"
+    litter = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 22' preserveAspectRatio='none'><path fill='#E9A45A' d='M0 22V12Q8 4 16 12T32 10T48 13T64 9T80 12T96 10T112 12T120 11V22z'/><path fill='#C1531F' opacity='.85' d='M0 22V16Q12 9 24 16T48 15T72 14T96 16T120 14V22z'/></svg>"
+    paper = "<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'><filter id='f'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='4'/><feColorMatrix values='0 0 0 0 .45  0 0 0 0 .3  0 0 0 0 .15  0 0 0 .07 0'/></filter><rect width='80' height='80' filter='url(#f)'/></svg>"
+    A(f"{S}{{color-scheme:light;--paper:#FBEFD9;--card:#FFF8EA;--card-2:#F6E4C3;--ink:#4A2C1A;--ink-2:#7A4F33;--ink-3:#A47A58;--rule:#E2C48C;--line:#EBD3A6;--accent:#C1531F;--accent-ink:#FFF4E3;--accent-soft:#F7D9BC;--gold:#D89A2B;--bar:linear-gradient(90deg,#E9A45A,#C1531F,#8A2A1A);--eyebrow:#9A4A22;--btn-sh:#7B2F10;--shadow:0 8px 20px rgba(120,60,20,.22);"
+      + cta("linear-gradient(165deg,#FFF8EA,#F6E4C3)", "rgba(193,83,31,.55)", "rgba(193,83,31,.2)", "#9A4A22", "linear-gradient(#E9833A,#C1531F)", "#FFF4E3", "#7B2F10", "rgba(193,83,31,.4)", "rgba(193,83,31,.16)", "#7B2F10", "#C1531F", "#4A2C1A", "#7A4F33", "#A47A58") + "--cta-box:rgba(193,83,31,.07);--cta-day:rgba(74,44,26,.06);}")
+    A(f"{S} body{{background:radial-gradient(ellipse at 85% 4%,rgba(255,214,140,.75) 0 40px,transparent 120px),linear-gradient(#F6D9A8,#FBEFD9 38%,#F9E2BC 100%)!important;background-attachment:fixed}}")
+    A(f"{S} body::before{{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:{u(paper)};opacity:.9}}")
+    A(f"{S} body::after{{content:'';position:fixed;inset:0;pointer-events:none;z-index:6;box-shadow:inset 0 0 90px 12px rgba(110,45,10,.28);background:linear-gradient(transparent 78%,rgba(255,244,225,.38))}}")
+    A(f"{S} header#top{{position:relative;background:linear-gradient(90deg,#6E2A18,#8A3A1C 55%,#B5532A);border-bottom:3px solid #E9A45A;box-shadow:0 5px 14px rgba(80,30,10,.35)}}")
+    A(f"{S} header#top,{S} header#top *{{color:#FFF1DC!important}}{S} header#top .muted{{color:#F2D3A0!important}}")
+    A(f"{S} header#top::after{{content:'';position:absolute;left:0;right:0;top:100%;margin-top:-1px;height:18px;pointer-events:none;z-index:2;background:{u(leafs)} 0 0/120px 18px repeat-x}}")
+    A(f"{S} nav#tabs{{position:relative;background:#6E2A18;border-top:3px solid #E9A45A;box-shadow:0 -5px 14px rgba(80,30,10,.3)}}")
+    A(f"{S} nav#tabs::before{{content:'';position:absolute;left:0;right:0;top:-18px;height:18px;pointer-events:none;z-index:2;background:{u(litter)} 0 100%/120px 18px repeat-x}}")
+    A(f"{S} nav#tabs button{{color:#F2D2A8}}{S} nav#tabs button[aria-current='true']{{color:#4A1A08;background:linear-gradient(#F4C27A,#E9A45A);box-shadow:0 0 14px rgba(233,164,90,.7)}}")
+    A(f"{S} .card{{position:relative;border:2px solid #E2C48C;background:linear-gradient(#FFF8EA,#F8EBD0)!important;box-shadow:0 4px 0 rgba(200,160,100,.45),0 10px 22px rgba(120,60,20,.2);border-radius:18px}}")
+    A(f"{S} .card::after{{content:'';position:absolute;right:8px;top:-9px;width:30px;height:30px;pointer-events:none;background:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 34'%3E%3Cpath d='M17 2C26 8 30 18 17 32C4 18 8 8 17 2z' fill='%23D8861A' stroke='%238A4A0A' stroke-width='1.6'/%3E%3Cpath d='M17 4V30' stroke='%238A4A0A' stroke-width='1.2' fill='none'/%3E%3C/svg%3E\") 0 0/100% 100% no-repeat;transform-origin:50% 0;animation:sxLeafSway 4s ease-in-out infinite alternate}}")
+    A("@keyframes sxLeafSway{from{transform:rotate(-14deg)}to{transform:rotate(16deg)}}")
+    A(f"{S} .btn:not(.ghost):not(.soft){{background:linear-gradient(#E9833A,#C1531F);color:#FFF4E3;border-color:#C1531F;box-shadow:0 4px 0 #7B2F10,0 6px 14px rgba(120,50,10,.3)}}")
+    A(f"{S} .hh{{border-color:#E9A45A;background:linear-gradient(#3A1E2A,#7A3A28 52%,#D9803E 100%)!important;box-shadow:0 0 22px rgba(233,140,60,.4)}}")
+    A(f"{S} .eyebrow{{color:#9A4A22}}")
+    A(MASCOT.format(S=S, th="#E9C58A", gl="rgba(233,164,90,.8)"))
+    # Nebel ganz unten (dünn, zieht langsam)
+    A(".hfog{position:fixed;left:-20%;right:-20%;bottom:56px;height:120px;pointer-events:none;z-index:5;background:radial-gradient(60% 100% at 25% 100%,rgba(255,247,232,.55),transparent),radial-gradient(55% 100% at 75% 100%,rgba(255,236,205,.45),transparent);filter:blur(7px);animation:sxFog 26s ease-in-out infinite alternate}@keyframes sxFog{from{transform:translateX(-6%)}to{transform:translateX(6%)}}")
+    # 3D-Szene
+    A(".sx3-herbst .sx3g{background:linear-gradient(transparent,rgba(138,74,30,.55) 55%,#6E3A18);opacity:.95}")
+    A(".sx3 [data-k]{pointer-events:auto;cursor:pointer;-webkit-tap-highlight-color:transparent}")
+    A(".sxv{bottom:8px;width:var(--w);height:var(--h);transform-origin:50% 100%;animation:sxSwayV 5s ease-in-out infinite alternate;animation-delay:var(--dl)}@keyframes sxSwayV{from{transform:rotate(-2.4deg)}to{transform:rotate(2.4deg)}}.sxv>svg{width:100%;height:100%;display:block;filter:drop-shadow(0 4px 3px rgba(60,20,0,.4))}")
+    A(".sxv.act{animation:sxVNod .9s ease-out}@keyframes sxVNod{0%{transform:none}25%{transform:rotate(-8deg) translateY(2px)}55%{transform:rotate(6deg)}100%{transform:none}}")
+    A(".sxv .cr{position:absolute;left:50%;top:-22px;width:30px;height:22px;margin-left:-4px;opacity:0;animation:sxCrowLand 44s ease-in-out infinite;animation-delay:var(--cd,6s);pointer-events:auto}.sxv .cr svg{width:100%;height:100%;display:block}")
+    A("@keyframes sxCrowLand{0%{opacity:0;transform:translate(140px,-90px) scale(.8)}3%{opacity:1}8%{transform:translate(0,0) scale(1)}12%,48%{opacity:1;transform:translate(0,0) rotate(0)}15%{transform:translate(0,-2px)}20%{transform:translate(0,0)}26%{transform:translate(0,-2px) rotate(-6deg)}32%{transform:translate(0,0)}52%{opacity:1;transform:translate(-30px,-24px) scale(.9)}58%,100%{opacity:0;transform:translate(-160px,-110px) scale(.7)}}")
+    A(".sxv .cr.caw{animation:sxCaw .5s ease-out}@keyframes sxCaw{0%{transform:translate(0,0)}30%{transform:translate(0,-8px) scale(1.18)}100%{transform:translate(0,0)}}")
+    A(".sxh{bottom:10px;width:var(--w);height:var(--h);animation:sxHog 70s linear infinite;animation-delay:var(--dl);left:-60px!important}@keyframes sxHog{0%{transform:translateX(0)}60%,100%{transform:translateX(calc(100vw + 120px))}}.sxh svg{width:100%;height:100%;display:block;animation:sxHogB .5s ease-in-out infinite alternate}@keyframes sxHogB{to{transform:translateY(-2px) rotate(1.5deg)}}")
+    A(".sxmu{bottom:9px;width:var(--w);height:var(--h);opacity:0;transform:scale(.2);transform-origin:50% 100%;transition:opacity .4s,transform .5s cubic-bezier(.2,1.6,.4,1);pointer-events:none!important}.sxmu.on{opacity:1;transform:scale(1);pointer-events:auto!important}.sxmu svg{width:100%;height:100%;display:block;filter:drop-shadow(0 2px 2px rgba(60,20,0,.4))}")
+    A(".sxlp{bottom:8px;width:var(--w);height:var(--h)}.sxlp svg{width:100%;height:100%;display:block}.sxlp.act{animation:sxPile .8s ease-out}@keyframes sxPile{0%{transform:none}30%{transform:scale(1.12,.86)}60%{transform:scale(.96,1.08)}100%{transform:none}}")
+    A(".sxf-herbst{width:54px;height:34px}.sxf-herbst .bd{width:100%;height:100%;filter:drop-shadow(0 3px 3px rgba(40,10,0,.4))}")
+    OUT["HERBST"] = "\n".join(o)
+
+winter(); xmas(); spring(); aqua(); herbst()
 p = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "index.html")
 s = open(p, encoding="utf-8").read()
 for key, css in OUT.items():
