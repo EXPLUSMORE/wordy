@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.173.1
+- **Pilzbuch auf Englisch:** Jede Pilzsorte steht jetzt mit englischem Namen (fly agaric, porcini, chanterelle, bay bolete, parasol mushroom, button mushroom) und darunter dem deutschen Begriff. Auch die Meldung beim Fund nennt beides.
+
 ## 2.173.0
 - **Herbst-Maskottchen neu:** statt der Eichel am Faden (zu nah an der Halloween-Spinne) löst sich jetzt ein **großes Blatt** vom Kopf und schaukelt langsam nach unten (auf der Startseite bis über die Karten, danach wächst oben ein neues). **Antippen = Windstoß:** das Blatt wirbelt hoch, 44 Blätter fegen quer über den Bildschirm, Figur, Vogelscheuche, Pilze und Laubhaufen wehen mit, dazu Wind-Geräusch (mit „Hintergrundmusik“/Ton an). „Bewegung reduzieren“ zeigt nur eine kurze, kleine Version.
 

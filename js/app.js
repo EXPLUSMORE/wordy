@@ -1819,7 +1819,7 @@
     };
     H.mush = function () {
       var r = S.hbShroom(); if (!r.id) { toast("Heute hast du schon 5 Pilze gesammelt 🍄 Morgen wachsen neue!"); return; }
-      toast("🍄 " + r.name + " gefunden! (" + (5 - r.left) + " von 5 heute · im Pilzbuch " + r.n + "×)");
+      toast("🍄 " + r.en + " (" + r.name + ") gefunden! (" + (5 - r.left) + " von 5 heute · im Pilzbuch " + r.n + "×)");
     };
     H.pile = function () {
       var r = S.hbPile();
@@ -1844,7 +1844,7 @@
   function hbBook() {
     var h = S.hbInfo(), V = global.VTS2, cells = h.shrooms.map(function (m) {
       var c = h.book[m[0]] || 0;
-      return '<div style="width:30%;text-align:center"><div style="width:44px;height:44px;margin:0 auto' + (c ? "" : ";filter:grayscale(1) brightness(.5)") + '">' + (V && V.shroomArt ? V.shroomArt(m[2]) : "🍄") + '</div><div class="small">' + (c ? esc(m[1]) + " ×" + c : "???") + '</div></div>';
+      return '<div style="width:30%;text-align:center"><div style="width:44px;height:44px;margin:0 auto' + (c ? "" : ";filter:grayscale(1) brightness(.5)") + '">' + (V && V.shroomArt ? V.shroomArt(m[2]) : "🍄") + '</div><div class="small">' + (c ? '<b>' + esc(m[3]) + '</b><br>' + esc(m[1]) + " ×" + c : "???") + '</div></div>';
     }).join("");
     hbSheet('<div style="font-size:42px;line-height:1.1">🍄</div><div class="eyebrow">Pilzbuch</div><h3>' + Object.keys(h.book).length + ' von ' + h.shrooms.length + ' Sorten gefunden</h3><div class="row wrap" style="gap:10px;justify-content:center;margin-top:8px">' + cells + '</div><p class="small muted" style="margin:10px 0 0">Tippe auf der Startseite die Pilze im Hintergrund an. Höchstens 5 am Tag, keine XP, nur zum Sammeln.</p>');
   }

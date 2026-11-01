@@ -1550,7 +1550,7 @@
   }
   /* ---------- Lernpfad (Headlight 2): Abschnitte aus Stationen, Truhe am Ende jedes Abschnitts ---------- */
   /* Herbst (v2.172): state.herbst = {y, harvest, done, shroom:{day,n}, book:{id:n}, hog:"Tag", cap, lant}; jedes Jahr neu (Ernte, Mütze, Laterne), Pilzbuch bleibt */
-  var HB_SHROOMS = [["fliege", "Fliegenpilz", "#C1331F"], ["stein", "Steinpilz", "#8A4A22"], ["pfiffer", "Pfifferling", "#E0A12E"], ["marone", "Maronenröhrling", "#6B3A1E"], ["parasol", "Parasol", "#D9B98A"], ["champ", "Champignon", "#EADFC8"]];
+  var HB_SHROOMS = [["fliege", "Fliegenpilz", "#C1331F", "fly agaric"], ["stein", "Steinpilz", "#8A4A22", "porcini"], ["pfiffer", "Pfifferling", "#E0A12E", "chanterelle"], ["marone", "Maronenröhrling", "#6B3A1E", "bay bolete"], ["parasol", "Parasol", "#D9B98A", "parasol mushroom"], ["champ", "Champignon", "#EADFC8", "button mushroom"]];
   var HB_SHROOM_DAY = 5, HB_HARVEST = 50;
   function hb() {
     var y = new Date().getFullYear(), h = state.herbst;
@@ -1568,7 +1568,7 @@
     var h = hb(), t = today(); if (h.shroom.day !== t) h.shroom = { day: t, n: 0 };
     if (h.shroom.n >= HB_SHROOM_DAY) return { left: 0 };
     var p = HB_SHROOMS[Math.random() * HB_SHROOMS.length | 0]; h.shroom.n++; h.book[p[0]] = (h.book[p[0]] || 0) + 1;
-    ev("herbst", { k: "pilz", id: p[0] }); save(); return { id: p[0], name: p[1], col: p[2], n: h.book[p[0]], left: HB_SHROOM_DAY - h.shroom.n };
+    ev("herbst", { k: "pilz", id: p[0] }); save(); return { id: p[0], name: p[1], col: p[2], en: p[3], n: h.book[p[0]], left: HB_SHROOM_DAY - h.shroom.n };
   }
   function hbPile() {   // Laubhaufen wächst mit der Serie, bei 7 Tagen: Reinspringen und Strickmütze (einmal im Jahr)
     var h = hb(), size = Math.max(0, Math.min(7, (state.streak && state.streak.count) || 0)), out = { size: size, got: null };
