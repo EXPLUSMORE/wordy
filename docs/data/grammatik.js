@@ -6,6 +6,42 @@
    error:  s = Satz, bad = Nummer des falschen Wortes (ab 0), fix = Verbesserungen (erste ist richtig)
    [[…]] hebt Teile in Beispielen hervor. IDs der Themen nie ändern (Lernstand hängt daran). */
 window.GRAMMAR = [
+  { id: "be1", unit: "H2-1a", icon: "🚜", title: "am / is / are und isn't / aren't", book: "Headlight 2 · Unit 1",
+    short: "sein: sagen, was ist und was nicht ist",
+    explain: {
+      lead: "Mit <b>be</b> (sein) sagst du, wer oder wie etwas ist und wo es ist. Die Form hängt davon ab, <b>wer</b> oder <b>was</b> gemeint ist.",
+      points: [
+        "<b>I am</b>, <b>he / she / it is</b>, <b>we / you / they are</b>. Auch Namen und Dinge: My name <b>is</b> Ben. The farm <b>is</b> big.",
+        "Einzahl: <b>is</b>. Mehrzahl: <b>are</b>. The cow <b>is</b> in the field. The cows <b>are</b> in the field.",
+        "Verneinung: <b>isn't</b> (is not) und <b>aren't</b> (are not), bei „ich“: <b>I am not</b>. The tractor <b>isn't</b> red. The pigs <b>aren't</b> small.",
+        "Frage: Das Verb steht vorn. <b>Is</b> the stable clean? <b>Are</b> the horses in the stable?",
+        "<b>There is / There isn't</b> + Einzahl, <b>There are / There aren't</b> + Mehrzahl: There <b>is</b> a rabbit in the barn. There <b>are</b> three pigs."
+      ],
+      examples: [
+        { en: "My name [[is]] Ben.", de: "Ich heiße Ben." },
+        { en: "The pigs [[aren't]] small. They are very big!", de: "Die Schweine sind nicht klein. Sie sind sehr groß!" },
+        { en: "[[Is]] the stable clean today?", de: "Ist der Stall heute sauber?" }
+      ],
+      merk: "Einzahl: is / isn't. Mehrzahl: are / aren't. Ich: am / am not. In Fragen steht is / are vorn."
+    },
+    items: [
+      { t: "choice", q: "My name ____ Ben. I live on a farm.", opts: ["is", "are", "am", "be"], why: "Name = Einzahl: is." },
+      { t: "choice", q: "There ____ many animals on the farm.", opts: ["are", "is", "am", "be"], why: "many animals ist Mehrzahl: There are." },
+      { t: "choice", q: "The barn is red. It ____ green.", opts: ["isn't", "aren't", "not", "don't"], why: "Es ist rot, also nicht grün: It isn't (is not) green." },
+      { t: "choice", q: "The pigs ____ small. They are very big!", opts: ["aren't", "isn't", "not", "doesn't"], why: "pigs ist Mehrzahl: aren't (are not)." },
+      { t: "choice", q: "The cows ____ hungry. They are eating.", opts: ["are", "is", "am", "be"], why: "Die Kühe sind (Mehrzahl): are." },
+      { t: "choice", q: "____ the stable clean today?", opts: ["Is", "Are", "Am", "Do"], why: "stable ist Einzahl: Is the stable …?" },
+      { t: "type", q: "My dog ____ (be not) in the house. He is outside.", a: ["isn't", "is not"], full: "My dog isn't in the house.", why: "dog ist Einzahl, Verneinung: isn't." },
+      { t: "type", q: "The cats ____ (be) on the roof.", a: ["are"], full: "The cats are on the roof.", why: "cats ist Mehrzahl: are." },
+      { t: "type", q: "There ____ (be) a little rabbit in the barn.", a: ["is"], full: "There is a little rabbit in the barn.", why: "a rabbit ist Einzahl: There is." },
+      { t: "type", q: "The tractor ____ (be not) red. It is green.", a: ["isn't", "is not"], full: "The tractor isn't red.", why: "tractor ist Einzahl: isn't." },
+      { t: "order", w: ["The", "chickens", "aren't", "in", "the", "house."], why: "Mehrzahl, Verneinung: aren't." },
+      { t: "order", w: ["Is", "my", "father", "in", "the", "field?"], why: "Frage: Is steht vorn." },
+      { t: "order", w: ["There", "isn't", "a", "big", "tree", "near", "the", "house."], why: "There isn't + Einzahl." },
+      { t: "error", s: "The cows is in the field.", bad: 2, fix: ["are", "be", "am", "been"], why: "cows ist Mehrzahl: are." },
+      { t: "error", s: "My brothers isn't at school today.", bad: 2, fix: ["aren't", "am not", "not", "be"], why: "brothers ist Mehrzahl: aren't." }
+    ]
+  },
   { id: "pres1", icon: "🕒", title: "Simple Present und Present Progressive", book: "Headlight 2 · Wiederholung",
     short: "immer vs. gerade jetzt",
     explain: {

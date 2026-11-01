@@ -572,7 +572,7 @@ function dayplanOf(pid) {
 
 /* ---------- Plan-Generator: Eltern stellen den Tagesplan selbst zusammen (ersetzt den automatischen Plan, bis er gelöscht wird) ----------
    Bausteine: Mitlesen/Einheit je Einheit, Lernarten, Spiele (optional je Einheit), Grammatik-Thema, Duell nach Wahl. Die Texte baut der Server, die App führt nur aus. */
-const GRAM_TOPICS = { pres1: ["🕒", "Simple Present und Present Progressive"], past1: ["⏪", "Simple Past: Das ist passiert"], past2: ["❓", "Simple Past: Fragen und Verneinung"], modal1: ["💪", "have to, should, can / could"], will1: ["🔮", "will, going to, I'll"], comp1: ["📈", "Steigerung"], quant1: ["🍎", "some, any, there is / there are"], if1: ["🔀", "If-Sätze (Typ 1)"] };
+const GRAM_TOPICS = { be1: ["🚜", "am / is / are und isn't / aren't"], pres1: ["🕒", "Simple Present und Present Progressive"], past1: ["⏪", "Simple Past: Das ist passiert"], past2: ["❓", "Simple Past: Fragen und Verneinung"], modal1: ["💪", "have to, should, can / could"], will1: ["🔮", "will, going to, I'll"], comp1: ["📈", "Steigerung"], quant1: ["🍎", "some, any, there is / there are"], if1: ["🔀", "If-Sätze (Typ 1)"] };
 const PLAN_GAMES = { match: ["⚡", "Match-Rausch", "arena"], blitz: ["🔥", "Blitzrunde", "arena"], survival: ["💠", "Letztes Herz", "arena"], hunt: ["🎯", "Fehlerjagd", "arena"], detective: ["🕵️", "Wort-Detektiv", "wgame"], eisi: ["🧊", "Freezy", "wgame"], kreuz: ["✖️", "Xing", "wgame"], letters: ["🔤", "Letters", "wgame"], blast: ["🚀", "Blast", "wgame"], blast3d: ["🛸", "Blast 3D", "wgame"] };
 const PLAN_TYPES = {
   mitlesen: { label: "Mitlesen", group: "Lernen", unit: "opt" }, unit: { label: "Einheit üben", group: "Lernen", unit: "req" },

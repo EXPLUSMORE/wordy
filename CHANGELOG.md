@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.170.0
+- **Neue Grammatik-Übung „am / is / are und isn't / aren't“** (Thema `be1`, Bauernhof-Geschichte nach dem Arbeitsblatt „A Day at the Farm“, Sätze selbst formuliert): Erklärseite mit Beispielen und 15 Aufgaben (6 Auswahl, 4 Tippen, 3 Sätze bauen, 2 Fehler finden). Sie hängt als Station **„Grammatik“ im Lernpfad bei Headlight 2 · Unit 1 · Together again (1)** (vor der Boss-Runde) und ist unter Lernen › Grammatik zu finden; auch im 10-Min-Plan-Generator wählbar (`GRAM_TOPICS`). Eine Lektion zieht 8 der 15 Aufgaben.
+
 ## 2.169.3
 - **Aussprache:** „antivirus“ wird jetzt als „an-ti-vi-rus“ gesprochen (nicht mehr „anti-wirus“), das Adjektiv „live“ in „live gig“, „live music“, „live show“ … als [laɪv] (nicht [lɪv]); `speechClean()` in app.js, wirkt in Wort und Beispielsatz. „to live“ und „I live in Berlin“ bleiben unverändert.
 - **Übersetzung:** „page-turner“ heißt jetzt „fesselndes Buch“ (vorher „der Pageturner“). Wort-ID und Lernstand bleiben gleich.
