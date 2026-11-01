@@ -1678,7 +1678,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.169.1";window.WORDY_BUILD="f8de4e99c2";</script>
+<script>window.WORDY_VERSION="2.169.2";window.WORDY_BUILD="932e3dd17b";</script>
 </head>
 <body>
 <div id="app">
@@ -6289,6 +6289,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
   function buildCatalogue(state) {
     units = (global.VOCAB_UNITS || []).slice();
     var cfg = state && state.settings;   // einmalig: Schulstoff (Headlight 2) ist die Voreinstellung, die Klassen kommen optional dazu
+    if (cfg && !cfg.musicOff) { cfg.musicOff = 1; cfg.seasonSound = false; }   // einmalig (2.170): Hintergrundmusik ist Standard aus, auch bei Profilen, die sie früher einmal eingeschaltet hatten
     if (cfg && (cfg.hl2 || 0) < 2) { cfg.hl2 = 2; cfg.klassen = ["Headlight 2"]; }
     /* Einmalig mit dem neuen Sticker-System (Version 2.17): alle aufgeklebten Sticker abnehmen, ein Platz frei. Gekaufte Sticker bleiben im Besitz. */
     if (state && state.profile && !state.profile.stickerReset) { state.profile.stickers = []; state.profile.stickerSlots = 1; state.profile.stickerReset = 1; }

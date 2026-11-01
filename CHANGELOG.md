@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.169.2
+- Hintergrundmusik: **Standard aus auch für bestehende Profile.** Einmalig wird die Musik bei allen Profilen ausgeschaltet (auch bei denen, die sie früher einmal eingeschaltet hatten, und neue Profile starten sowieso aus). Wer sie danach in Profil › Ton & Aussehen einschaltet, behält die Wahl.
+
 ## 2.169.1
 - **Hintergrundmusik ist jetzt optional und standardmäßig aus.** Die leisen Saison-Klänge (Gruseln, Winter, Weihnachten) laufen nur noch, wenn man sie in **Profil › Ton & Aussehen › „Hintergrundmusik“** einschaltet (derselbe Schalter steht auch unter Design › Saison-Look). Wer die Klänge vorher an hatte, muss sie einmal neu einschalten.
 
