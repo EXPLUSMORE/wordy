@@ -1678,7 +1678,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.169.2";window.WORDY_BUILD="932e3dd17b";</script>
+<script>window.WORDY_VERSION="2.169.3";window.WORDY_BUILD="dca754a4e2";</script>
 </head>
 <body>
 <div id="app">
@@ -2980,7 +2980,7 @@ window.VOCAB_UNITS = (window.VOCAB_UNITS || []).concat([
 ["plot","die Handlung",2,"The plot falls apart in the last half hour."],
 ["soundtrack","die Filmmusik",2,"The soundtrack carried the whole film."],
 ["novel","der Roman",2,"I'm halfway through a Japanese novel."],
-["page-turner","der Pageturner",3,"It is a proper page-turner."],
+["page-turner","fesselndes Buch",3,"It is a proper page-turner."],
 ["review","die Kritik",2,"The review in the paper was brutal."],
 ["live gig","das Konzert",3,"We saw them at a live gig in Berlin."],
 ["taste","der Geschmack",2,"We clearly have different taste in music."],
@@ -11053,6 +11053,8 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   /* Englischen Text für die Sprachausgabe aufbereiten: Abkürzungen ausschreiben, Klammern und Schrägstriche glätten */
   function speechClean(t) {
     return String(t)
+      .replace(/\bantivirus\b/gi, "anti virus")   // sonst „anti-wirus“
+      .replace(/\blive(?=\s+(?:gig|music|show|concert|stream|band|act|performance|album|recording|broadcast|coverage|event|session)s?\b)/gi, "lyve")   // Adjektiv „live“ = [laɪv], nicht [lɪv]
       .replace(/\bsb\.?\s*\/\s*sth\.?/gi, "somebody or something")
       .replace(/\bsth\.?\s*\/\s*sb\.?/gi, "something or somebody")
       .replace(/\bsb\.?(?=\W|$)/gi, "somebody")

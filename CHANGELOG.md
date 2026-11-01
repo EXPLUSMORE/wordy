@@ -10,6 +10,10 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.169.3
+- **Aussprache:** „antivirus“ wird jetzt als „an-ti-vi-rus“ gesprochen (nicht mehr „anti-wirus“), das Adjektiv „live“ in „live gig“, „live music“, „live show“ … als [laɪv] (nicht [lɪv]); `speechClean()` in app.js, wirkt in Wort und Beispielsatz. „to live“ und „I live in Berlin“ bleiben unverändert.
+- **Übersetzung:** „page-turner“ heißt jetzt „fesselndes Buch“ (vorher „der Pageturner“). Wort-ID und Lernstand bleiben gleich.
+
 ## 2.169.2
 - Hintergrundmusik: **Standard aus auch für bestehende Profile.** Einmalig wird die Musik bei allen Profilen ausgeschaltet (auch bei denen, die sie früher einmal eingeschaltet hatten, und neue Profile starten sowieso aus). Wer sie danach in Profil › Ton & Aussehen einschaltet, behält die Wahl.
 

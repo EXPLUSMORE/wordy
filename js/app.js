@@ -109,6 +109,8 @@
   /* Englischen Text für die Sprachausgabe aufbereiten: Abkürzungen ausschreiben, Klammern und Schrägstriche glätten */
   function speechClean(t) {
     return String(t)
+      .replace(/\bantivirus\b/gi, "anti virus")   // sonst „anti-wirus“
+      .replace(/\blive(?=\s+(?:gig|music|show|concert|stream|band|act|performance|album|recording|broadcast|coverage|event|session)s?\b)/gi, "lyve")   // Adjektiv „live“ = [laɪv], nicht [lɪv]
       .replace(/\bsb\.?\s*\/\s*sth\.?/gi, "somebody or something")
       .replace(/\bsth\.?\s*\/\s*sb\.?/gi, "something or somebody")
       .replace(/\bsb\.?(?=\W|$)/gi, "somebody")

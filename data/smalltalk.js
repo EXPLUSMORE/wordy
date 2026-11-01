@@ -90,7 +90,7 @@ window.VOCAB_UNITS = (window.VOCAB_UNITS || []).concat([
 ["plot","die Handlung",2,"The plot falls apart in the last half hour."],
 ["soundtrack","die Filmmusik",2,"The soundtrack carried the whole film."],
 ["novel","der Roman",2,"I'm halfway through a Japanese novel."],
-["page-turner","der Pageturner",3,"It is a proper page-turner."],
+["page-turner","fesselndes Buch",3,"It is a proper page-turner."],
 ["review","die Kritik",2,"The review in the paper was brutal."],
 ["live gig","das Konzert",3,"We saw them at a live gig in Berlin."],
 ["taste","der Geschmack",2,"We clearly have different taste in music."],
