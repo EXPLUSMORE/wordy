@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.173.4
+- **Herbst: kein Faden mehr am Blatt**, wenn man die Figur antippt (Figur schlägt/wirft nach dem Blatt). Das Blatt fliegt jetzt frei.
+
 ## 2.173.3
 - **Grün bei richtigen Antworten heller (Dunkel-Designs):** Das Grün für „richtig“ (Antwortfeld bei „Was heißt das auf Deutsch?“, Rückmeldung „Richtig“, Treffer im Zuordnen, erledigte Missionen u. a.) war im dunklen Modus ein sehr dunkles Grün. Jetzt ein deutlich helleres, kräftiges Grün mit gut lesbarer Schrift. Wirkt überall, wo die Farbe `--good-soft` benutzt wird (Gold-/Aurora-Dunkel, Klassisch-Dunkel). Der Herbst-Look hat nun eigene, helle Grüntöne.
 

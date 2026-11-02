@@ -1748,7 +1748,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.173.3";window.WORDY_BUILD="0907de0125";</script>
+<script>window.WORDY_VERSION="2.173.4";window.WORDY_BUILD="499de2da2e";</script>
 </head>
 <body>
 <div id="app">
@@ -9523,7 +9523,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     }
     function frame(now) {
       if (!t0) { t0 = now; last = now; } var t = (now - t0) / 1000, dt = Math.min(0.05, (now - last) / 1000); last = now; c.clearRect(0, 0, W, H);
-      if (t < T_HIT) { var ks = Math.min(1, t / T_HIT), es = ks * ks * (3 - 2 * ks), sx = S0.x + (TARGET.x - S0.x) * es + Math.sin(t * 2.6) * 7 * (1 - es * 0.8), sy = S0.y + (TARGET.y - S0.y) * es; c.strokeStyle = T.thread; c.lineWidth = 1.6; c.beginPath(); c.moveTo(pivot.x, pivot.y); c.lineTo(sx, sy - size * 0.3); c.stroke(); sprite(sx, sy, size, Math.sin(t * 3) * 0.1, (t * 5 | 0) % 2, 1, 14); }
+      if (t < T_HIT) { var ks = Math.min(1, t / T_HIT), es = ks * ks * (3 - 2 * ks), sx = S0.x + (TARGET.x - S0.x) * es + Math.sin(t * 2.6) * 7 * (1 - es * 0.8), sy = S0.y + (TARGET.y - S0.y) * es; if (id !== "herbst") { c.strokeStyle = T.thread; c.lineWidth = 1.6; c.beginPath(); c.moveTo(pivot.x, pivot.y); c.lineTo(sx, sy - size * 0.3); c.stroke(); } sprite(sx, sy, size, Math.sin(t * 3) * 0.1, (t * 5 | 0) % 2, 1, 14); }
       else { if (!hit) { hit = true; ring = t; var b = el("div", "sxBoo sxKrack", HIT[id]); b.style.left = Math.max(80, TARGET.x) + "px"; b.style.top = Math.max(90, TARGET.y - 10) + "px"; document.body.appendChild(b); boxes.push(b); setTimeout(function () { b.remove(); }, 1300); spark(TARGET.x, TARGET.y, 18, T.spark); document.body.classList.add("sxShake2"); setTimeout(function () { document.body.classList.remove("sxShake2"); }, 320); vib([40, 30, 60]); try { if (onHit) onHit(mode); } catch (e) {} }
         var rk = (t - ring) / 0.42; if (rk < 1) { c.strokeStyle = "rgba(255,255,255," + (1 - rk) + ")"; c.lineWidth = 6 * (1 - rk) + 1; c.beginPath(); c.arc(TARGET.x, TARGET.y, 8 + 120 * rk, 0, 6.283); c.stroke(); }
         if (flight(t - T_HIT, dt, t)) { done(); return; } }
