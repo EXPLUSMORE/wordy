@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.173.5
+- **Herbst: Blatt bleibt beim Antippen der Figur nicht mehr oben „hängen“.** Während die Figur nach dem Blatt wirft, war das Blatt in der Kopfzeile noch sichtbar (die Fall-Animation überschrieb das Ausblenden), das sah wie ein Blatt am Faden aus. Jetzt verschwindet es sofort und das fliegende Blatt ist das einzige.
+
 ## 2.173.4
 - **Herbst: kein Faden mehr am Blatt**, wenn man die Figur antippt (Figur schlägt/wirft nach dem Blatt). Das Blatt fliegt jetzt frei.
 

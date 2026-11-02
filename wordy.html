@@ -1724,7 +1724,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 :root:root:root[data-season="herbst"][data-tab='home'] .hwsp{animation:hbFallH 17s ease-in infinite,hbSway 3.2s ease-in-out infinite alternate}
 @keyframes hbFall{0%{transform:translateY(-34px) rotate(-30deg) scale(.2);opacity:0}8%{transform:translateY(0) rotate(-10deg) scale(1);opacity:1}55%{transform:translateY(30px) rotate(60deg);opacity:1}85%,100%{transform:translateY(50px) rotate(160deg);opacity:1}}
 @keyframes hbFallH{0%{transform:translateY(-34px) rotate(-30deg) scale(.2);opacity:0}7%{transform:translateY(0) rotate(-10deg) scale(1);opacity:1}70%{transform:translateY(250px) rotate(220deg);opacity:1}82%{transform:translateY(310px) rotate(300deg);opacity:0}100%{transform:translateY(-34px);opacity:0}}@keyframes hbSway{from{translate:-26px 0}to{translate:26px 0}}
-:root:root:root[data-season="herbst"] .hwsp.gone{opacity:0;pointer-events:none}:root:root:root[data-season="herbst"] .hwsp.back{animation:hbGrow 1.4s ease-out}@keyframes hbGrow{0%{transform:scale(0) rotate(-90deg);opacity:0}100%{transform:none;opacity:1}}
+:root:root:root[data-season="herbst"] .hwsp.gone{opacity:0!important;animation:none!important;pointer-events:none}:root:root:root[data-season="herbst"] .hwsp.back{animation:hbGrow 1.4s ease-out}@keyframes hbGrow{0%{transform:scale(0) rotate(-90deg);opacity:0}100%{transform:none;opacity:1}}
 .hbWind .hhfig,.hbWind #sxScene .sxv,.hbWind #sxScene .sxmu.on,.hbWind #sxScene .sxlp{animation:hbBlow 1.9s ease-in-out!important}@keyframes hbBlow{0%,100%{transform:none}20%{transform:skewX(-9deg) translateX(8px)}45%{transform:skewX(-14deg) translateX(14px)}70%{transform:skewX(-5deg) translateX(4px)}}
 @media (prefers-reduced-motion:reduce){:root:root:root[data-season="herbst"] .hwsp{animation:none!important;opacity:1}}
 .hfog{position:fixed;left:-20%;right:-20%;bottom:56px;height:120px;pointer-events:none;z-index:5;background:radial-gradient(60% 100% at 25% 100%,rgba(255,247,232,.55),transparent),radial-gradient(55% 100% at 75% 100%,rgba(255,236,205,.45),transparent);filter:blur(7px);animation:sxFog 26s ease-in-out infinite alternate}@keyframes sxFog{from{transform:translateX(-6%)}to{transform:translateX(6%)}}
@@ -1748,7 +1748,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.173.4";window.WORDY_BUILD="499de2da2e";</script>
+<script>window.WORDY_VERSION="2.173.5";window.WORDY_BUILD="cfdcb397ae";</script>
 </head>
 <body>
 <div id="app">

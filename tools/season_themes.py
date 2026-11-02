@@ -232,7 +232,7 @@ def herbst():
     A(f"{S}[data-tab='home'] .hwsp{{animation:hbFallH 17s ease-in infinite,hbSway 3.2s ease-in-out infinite alternate}}")
     A("@keyframes hbFall{0%{transform:translateY(-34px) rotate(-30deg) scale(.2);opacity:0}8%{transform:translateY(0) rotate(-10deg) scale(1);opacity:1}55%{transform:translateY(30px) rotate(60deg);opacity:1}85%,100%{transform:translateY(50px) rotate(160deg);opacity:1}}")
     A("@keyframes hbFallH{0%{transform:translateY(-34px) rotate(-30deg) scale(.2);opacity:0}7%{transform:translateY(0) rotate(-10deg) scale(1);opacity:1}70%{transform:translateY(250px) rotate(220deg);opacity:1}82%{transform:translateY(310px) rotate(300deg);opacity:0}100%{transform:translateY(-34px);opacity:0}}@keyframes hbSway{from{translate:-26px 0}to{translate:26px 0}}")
-    A(f"{S} .hwsp.gone{{opacity:0;pointer-events:none}}{S} .hwsp.back{{animation:hbGrow 1.4s ease-out}}@keyframes hbGrow{{0%{{transform:scale(0) rotate(-90deg);opacity:0}}100%{{transform:none;opacity:1}}}}")
+    A(f"{S} .hwsp.gone{{opacity:0!important;animation:none!important;pointer-events:none}}{S} .hwsp.back{{animation:hbGrow 1.4s ease-out}}@keyframes hbGrow{{0%{{transform:scale(0) rotate(-90deg);opacity:0}}100%{{transform:none;opacity:1}}}}")
     A(".hbWind .hhfig,.hbWind #sxScene .sxv,.hbWind #sxScene .sxmu.on,.hbWind #sxScene .sxlp{animation:hbBlow 1.9s ease-in-out!important}@keyframes hbBlow{0%,100%{transform:none}20%{transform:skewX(-9deg) translateX(8px)}45%{transform:skewX(-14deg) translateX(14px)}70%{transform:skewX(-5deg) translateX(4px)}}")
     A("@media (prefers-reduced-motion:reduce){"+S+" .hwsp{animation:none!important;opacity:1}}")
     # Nebel ganz unten (dünn, zieht langsam)
