@@ -868,7 +868,6 @@
     var done = sec.filter(function (s) { return p.stars[s.id]; }).length, pend = p.pending.some(function (c) { return c.section === first.section; });
     var boss = sec[n - 1], h = '<div class="psec' + (isCur ? " cur" : "") + '" data-sec="' + esc(first.section) + '"><div class="psechead"><div><div class="eyebrow">Abschnitt ' + secNo + ' von ' + secCount + '</div><b>' + esc(first.sectionTitle) + '</b></div>' +
       '<span class="pill tnum">' + done + ' / ' + n + (p.chests[first.section] ? " · 💰" : "") + '</span></div>' +
-      '<button class="chip" data-act="mitlesen" data-sec="' + esc(first.section) + '" style="margin:0 0 8px">🗣️ Mitlesen (optional)</button>' +
       '<div class="pmap" style="height:' + H + 'px"><svg viewBox="0 0 100 ' + H + '" preserveAspectRatio="none" aria-hidden="true">' +
       '<path d="' + d + '" fill="none" stroke="#fff" stroke-opacity=".85" stroke-width="16" stroke-linecap="round" vector-effect="non-scaling-stroke"/>' +
       '<path d="' + dDone + '" fill="none" stroke="#2e7d4f" stroke-width="6" stroke-linecap="round" stroke-dasharray="1 12" vector-effect="non-scaling-stroke"/></svg>';
@@ -887,7 +886,8 @@
       h += '<div class="pme" id="pme" style="left:calc(' + cpt.x + '% + ' + (side * 62) + 'px);top:' + (cpt.y - 4) + 'px">' + avatarHtml(S.state.profile.avatar, true) + '</div>' +
         '<div class="pbubble" style="left:calc(' + cpt.x + '% + ' + (side * 62) + 'px);top:' + (cpt.y - 46) + 'px;transform:translateX(-50%)">Los geht’s!</div>';
     }
-    return { html: h + '</div></div>', pts: pts, curIdx: curIdx, H: H };
+    /* „Mitlesen“ gehört an den Anfang des Pfads (die Karte läuft von unten nach oben, Station 1 steht unten) */
+    return { html: h + '</div><div class="pread"><button class="chip" data-act="mitlesen" data-sec="' + esc(first.section) + '">🗣️ Mitlesen (optional) – vor Station 1</button></div></div>', pts: pts, curIdx: curIdx, H: H };
   }
   function pathCard() {
     var st = S.state; if (st.settings.pathOn === false) return "";

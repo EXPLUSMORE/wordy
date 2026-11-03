@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.174.1
+- **Lernpfad: „Mitlesen“ am Anfang des Pfads.** Der Knopf stand oben unter dem Einheiten-Kopf, also am Ende des Wegs (die Karte läuft von unten nach oben). Jetzt steht er jeder Einheit unten direkt vor Station 1. Die nicht aktuellen Einheiten-Köpfe haben im Dunkelmodus nun ein festes dunkles Blaugrau mit weißer Schrift (vorher zu hell).
+
 ## 2.174.0
 - **Lernpfad: Einheiten klar erkennbar.** Jeder Abschnitt (Einheit) hat jetzt einen kräftigen farbigen Kopf mit großem Titel und weißer Schrift (die aktuelle Einheit in der Akzentfarbe mit Rahmen, die übrigen in einem dunklen Grau-Ton), mit Abstand und Schatten zwischen den Einheiten. Der Weg zwischen den Stationen ist dunkler und besser sichtbar, gesperrte Stationen sind deutlich grau mit weißem Schloss statt fast unsichtbar.
 
