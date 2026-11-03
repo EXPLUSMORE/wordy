@@ -1577,7 +1577,8 @@
   }
   function hbPile() {   // Laubhaufen wächst mit der Serie, bei 7 Tagen: Reinspringen und Strickmütze (einmal im Jahr)
     var h = hb(), size = Math.max(0, Math.min(7, (state.streak && state.streak.count) || 0)), out = { size: size, got: null };
-    if (size >= 7 && !h.cap) { h.cap = 1; var g = passGrant({ items: ["ac:strickmuetze"] }); out.got = g.items && g.items[0] || { label: "Strickmütze" }; ev("herbst", { k: "haufen" }); save(); }
+    if (size >= 7 && !h.cap && state.profile.owned.indexOf("ac:strickmuetze") >= 0) { h.cap = 1; out.had = true; save(); }   // Mütze schon da: nur springen, keine Belohnung
+    else if (size >= 7 && !h.cap) { h.cap = 1; var g = passGrant({ items: ["ac:strickmuetze"] }); out.got = g.items && g.items[0] || { label: "Strickmütze" }; ev("herbst", { k: "haufen" }); save(); }
     return out;
   }
   function hbHog() {   // Igel bringt einmal am Tag ein Herbstwort

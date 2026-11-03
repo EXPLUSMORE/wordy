@@ -1783,7 +1783,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.173.10";window.WORDY_BUILD="c1d8a6615b";</script>
+<script>window.WORDY_VERSION="2.173.11";window.WORDY_BUILD="1f8bebd2ca";</script>
 </head>
 <body>
 <div id="app">
@@ -7723,7 +7723,8 @@ window.SENTENCES = (window.SENTENCES || []).concat([
   }
   function hbPile() {   // Laubhaufen wächst mit der Serie, bei 7 Tagen: Reinspringen und Strickmütze (einmal im Jahr)
     var h = hb(), size = Math.max(0, Math.min(7, (state.streak && state.streak.count) || 0)), out = { size: size, got: null };
-    if (size >= 7 && !h.cap) { h.cap = 1; var g = passGrant({ items: ["ac:strickmuetze"] }); out.got = g.items && g.items[0] || { label: "Strickmütze" }; ev("herbst", { k: "haufen" }); save(); }
+    if (size >= 7 && !h.cap && state.profile.owned.indexOf("ac:strickmuetze") >= 0) { h.cap = 1; out.had = true; save(); }   // Mütze schon da: nur springen, keine Belohnung
+    else if (size >= 7 && !h.cap) { h.cap = 1; var g = passGrant({ items: ["ac:strickmuetze"] }); out.got = g.items && g.items[0] || { label: "Strickmütze" }; ev("herbst", { k: "haufen" }); save(); }
     return out;
   }
   function hbHog() {   // Igel bringt einmal am Tag ein Herbstwort
@@ -13130,7 +13131,8 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     };
     H.pile = function () {
       var r = S.hbPile();
-      if (r.got) hbSheet('<div style="font-size:52px;line-height:1.1">🍂🧶</div><div class="eyebrow">7 Tage Serie!</div><h3>Platsch! Du springst in den Laubhaufen</h3><p class="small muted" style="margin:6px 0 0">Dafür bekommst du die <b>Strickmütze</b> (Zubehör). Sie wartet unter Beute › Spind.</p>');
+      if (r.had) toast("Platsch! Du springst in den Laubhaufen 🍂 Die Strickmütze hast du schon.");
+      else if (r.got) hbSheet('<div style="font-size:52px;line-height:1.1">🍂🧶</div><div class="eyebrow">7 Tage Serie!</div><h3>Platsch! Du springst in den Laubhaufen</h3><p class="small muted" style="margin:6px 0 0">Dafür bekommst du die <b>Strickmütze</b> (Zubehör). Sie wartet unter Beute › Spind.</p>');
       else toast(r.size >= 7 ? "Hui! Das raschelt! 🍂" : r.size === 0 ? "Schaffe dein Tagesziel, dann wächst dein Laubhaufen! Mit jedem Tag in Folge wird er größer, bei 7 Tagen darfst du hineinspringen." : "Dein Laubhaufen wächst mit jedem Serientag (" + r.size + " von 7). Bei 7 Tagen darfst du hineinspringen und bekommst eine Strickmütze!");
     };
   }
