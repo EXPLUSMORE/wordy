@@ -1748,7 +1748,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.173.6";window.WORDY_BUILD="77ffc2a516";</script>
+<script>window.WORDY_VERSION="2.173.7";window.WORDY_BUILD="e22b1a953d";</script>
 </head>
 <body>
 <div id="app">
@@ -7276,7 +7276,10 @@ window.SENTENCES = (window.SENTENCES || []).concat([
   function medalGroups() {
     var ps = pathState(), st = stats(), t = state.totals || {}, groups = [];
     var bosses = pathStations().filter(function (x) { return x.last && ps.stars[x.id]; }).length, stations = Object.keys(ps.stars || {}).length;
-    var mast = st.dist[4], seen = st.dist[1] + st.dist[2] + st.dist[3] + st.dist[4];
+    /* Wörter-Abzeichen zählen über ALLE geübten Wörter (nicht nur die gerade gewählten Gruppen) und nie unter den bisherigen Höchststand (v2.173.7) */
+    var all = [0, 0, 0, 0, 0]; Object.keys(state.w || {}).forEach(function (id) { if (byId[id]) all[levelOf(id)]++; });
+    var hw = state.hw || (state.hw = { seen: 0, mast: 0 });
+    var mast = Math.max(st.dist[4], all[4], hw.mast || 0), seen = Math.max(st.dist[1] + st.dist[2] + st.dist[3] + st.dist[4], all[1] + all[2] + all[3] + all[4], hw.seen || 0);
     var best = (state.streak && state.streak.best) || 0, days = Object.keys(state.history || {}).length + (state.daily && state.daily.items ? 1 : 0);
     var du = state.duels || { p: 0, w: 0 }, chBest = (state.chal && state.chal.best) || 0, crw = state.crew || { joined: 0, gold: 0 };
     var perfect = Math.max(t.perfect || 0, state.badges.indexOf("clean") >= 0 ? 1 : 0), games = Math.max(t.games || 0, state.badges.indexOf("arena1") >= 0 ? 1 : 0);
@@ -7284,7 +7287,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     var owned = (state.profile && state.profile.owned) || [], figs = owned.filter(function (id) { return id.indexOf("av:") === 0; }).length, buys = owned.length;
     var stk = ((state.profile && state.profile.stickers) || []).length;
     function G(id, title, icon) { var g = { id: id, title: title, icon: icon, items: [] }; groups.push(g); return g; }
-    function M(g, id, label, rar, done, how, val, prog, need) { g.items.push({ id: "md:" + id, label: label, kind: "medal", rar: rar, owned: !!done, how: how, val: val, prog: prog, need: need }); }
+    function M(g, id, label, rar, done, how, val, prog, need) { g.items.push({ id: "md:" + id, label: label, kind: "medal", rar: rar, owned: !!done || !!(state.medalsGot && state.medalsGot["md:" + id]), how: how, val: val, prog: prog, need: need }); }
     /* Leiter: steps = Schwellen, cur = Zählerstand, name(n) = Titel, how(n) = Bedingung; ids = optionale alte IDs je Schwelle */
     function ladder(g, key, steps, cur, name, how, rars) {
       steps.forEach(function (n, i) { M(g, key + n, name(n), (rars && rars[n]) || ladderRar(i, steps.length), cur >= n, how(n) + (cur >= n ? "" : " (" + nfmt(Math.min(cur, n)) + "/" + nfmt(n) + ")"), kfmt(n), Math.min(cur, n), n); });
@@ -7344,6 +7347,8 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     medalGroups().forEach(function (g) { if (g.id === "pass" || g.id === "start") return; g.items.forEach(function (m) {
       if (!m.owned || got[m.id]) return; got[m.id] = 1; if (!first) out.push({ id: m.id, n: m.label, d: m.how.replace(/ \(\d+\/\d+\)$/, "") });
     }); });
+    var hw2 = state.hw || (state.hw = { seen: 0, mast: 0 }), st2 = stats(), al = [0, 0, 0, 0, 0]; Object.keys(state.w || {}).forEach(function (id) { if (byId[id]) al[levelOf(id)]++; });
+    hw2.mast = Math.max(hw2.mast || 0, st2.dist[4], al[4]); hw2.seen = Math.max(hw2.seen || 0, st2.dist[1] + st2.dist[2] + st2.dist[3] + st2.dist[4], al[1] + al[2] + al[3] + al[4]);
     state.medalsInit = 1; return out;
   }
   function howText(x) {

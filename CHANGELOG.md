@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.173.7
+- **Abzeichen „Wörter“ fehlten (Checker):** Die Abzeichen „Wörter geübt“ und „Meister“ zählten nur die Wörter der gerade ausgewählten Gruppen (und nur den aktuellen Stand). Wechselte man die Klasse/Gruppe oder fielen Wörter zurück, verschwanden schon erspielte Abzeichen. Jetzt zählen alle geübten Wörter aus allen Gruppen, es gilt der bisherige Höchststand, und einmal erreichte Abzeichen bleiben dauerhaft erhalten. Der Lernstand selbst bleibt unverändert, es wird nichts zurückgesetzt.
+
 ## 2.173.6
 - **Spielen › Crew: mehr Kontrast.** Fortschrittsbalken mit sichtbarem Rand und dunklerer Leiste, Bronze/Silber/Gold-Felder mit kräftigen Rändern und größerer Schrift (gesperrte gestrichelt, aber lesbar), Mitglieder-Namen weiß mit Schatten und nicht mehr so blass, hellerer Rahmen um den Crew-Kopf, dunklere Zusatztexte in den Wochenzielen. Gilt in Hell und Dunkel.
 
