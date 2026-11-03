@@ -366,17 +366,17 @@ hr.sep{border:0;border-top:1px solid var(--line);margin:4px 0}
 .pnode.done{background:var(--good,#2e7d4f)}
 .pnode.cur{background:var(--accent,#1e6273);animation:ppulse 1.6s ease-in-out infinite}
 .pnode.boss.cur,.pnode.boss.done{background:#7a4bc8}.pnode.boss.done{background:var(--good,#2e7d4f)}
-.pnode.lock{background:#cfd7e3;color:#8896ab;cursor:default;box-shadow:0 3px 0 rgba(0,0,0,.1)}
+.pmap svg path:first-of-type{stroke:rgba(110,130,150,.45)!important}.pnode.lock{background:#8E9BAE;color:#fff;cursor:default;box-shadow:0 3px 0 rgba(0,0,0,.1)}
 .pnode.shake{animation:pshake .4s}
 .pstars{position:absolute;margin:30px 0 0 -29px;width:58px;text-align:center;font-size:12px;letter-spacing:1px;color:var(--gold,#f2b33d);pointer-events:none}
 .pchest{position:absolute;margin:-34px 0 0 -38px;width:76px;height:66px;border:0;background:none;padding:0;cursor:pointer;filter:grayscale(1) opacity(.5)}
 .pchest svg{width:100%;height:100%;display:block}
 .pchest.ready{filter:none;animation:pwobble 1.1s ease-in-out infinite}.pchest.got{filter:none;opacity:.9}
 .pscroll{position:relative;max-height:min(560px,68vh);overflow-y:auto;margin:10px 0 12px;border-radius:16px;background:var(--card-2,#f1f5f9);overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
-.psec{position:relative}.psec+.psec{margin-bottom:0}
-.psechead{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;position:sticky;top:0;z-index:6;background:var(--card,#fff);border-bottom:1px solid var(--line,#dce2ec);font-size:14px}
+.psec{position:relative;margin-bottom:14px;border-radius:16px;box-shadow:0 2px 0 rgba(0,0,0,.12)}.psechead{border-radius:16px 16px 0 0}.psec+.psec{margin-bottom:14px}.pscroll{padding:0 0 4px}
+.psechead{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;position:sticky;top:0;z-index:6;background:var(--ink-2,#475569);color:#fff;border-bottom:3px solid rgba(0,0,0,.2);font-size:16px}.psechead .eyebrow{color:rgba(255,255,255,.8)!important;font-size:11px}.psechead b{font-size:17px;line-height:1.2;color:#fff}.psechead .pill{background:rgba(255,255,255,.22);color:#fff;border-color:transparent;font-weight:800}
 .psechead .pill{white-space:nowrap;flex:0 0 auto}
-.psec.cur .psechead{background:var(--accent-soft,#ddeef2)}
+.psec.cur .psechead{background:var(--accent,#1e6273);color:var(--accent-ink,#fff);box-shadow:0 3px 10px rgba(0,0,0,.25)}.psec.cur .psechead b{color:var(--accent-ink,#fff)}.psec.cur{outline:3px solid var(--accent,#1e6273);outline-offset:-3px}
 .psec .pmap{margin:0;border-radius:0}
 .pnode:hover::after,.pnode:focus-visible::after,.pchest:hover::after{content:attr(data-tip);position:absolute;left:50%;transform:translateX(-50%);width:176px;background:#16202e;color:#fff;font-size:12px;font-weight:600;line-height:1.3;padding:6px 9px;border-radius:8px;z-index:10;pointer-events:none;text-align:center;font-family:inherit}
 .pnode:hover::after,.pnode:focus-visible::after{bottom:calc(100% + 8px)}.pchest:hover::after{top:calc(100% + 4px)}
@@ -1790,7 +1790,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.173.11";window.WORDY_BUILD="1f8bebd2ca";</script>
+<script>window.WORDY_VERSION="2.174.0";window.WORDY_BUILD="dbbcece39d";</script>
 </head>
 <body>
 <div id="app">
@@ -1819,44 +1819,44 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
   <div id="session" hidden></div>
 </div>
 <div id="arena" hidden></div>
-<script src="data/klasse6.js?v=1f8bebd2ca"></script>
-<script src="data/klasse7.js?v=1f8bebd2ca"></script>
-<script src="data/klasse8.js?v=1f8bebd2ca"></script>
-<script src="data/business.js?v=1f8bebd2ca"></script>
-<script src="data/business-basis2.js?v=1f8bebd2ca"></script>
-<script src="data/business-aufbau2.js?v=1f8bebd2ca"></script>
-<script src="data/business-profi2.js?v=1f8bebd2ca"></script>
-<script src="data/smalltalk.js?v=1f8bebd2ca"></script>
-<script src="data/advent.js?v=1f8bebd2ca"></script>
-<script src="data/herbst.js?v=1f8bebd2ca"></script>
-<script src="data/idioms.js?v=1f8bebd2ca"></script>
-<script src="data/saetze.js?v=1f8bebd2ca"></script>
-<script src="data/grammatik.js?v=1f8bebd2ca"></script>
-<script src="data/alternativen.js?v=1f8bebd2ca"></script>
-<script src="data/saetze2.js?v=1f8bebd2ca"></script>
-<script src="data/lernbuch.js?v=1f8bebd2ca"></script>
-<script src="data/verben.js?v=1f8bebd2ca"></script>
-<script src="data/open/business-aufbau.js?v=1f8bebd2ca"></script>
-<script src="data/open/business-basis.js?v=1f8bebd2ca"></script>
-<script src="data/open/business-profi.js?v=1f8bebd2ca"></script>
-<script src="data/open/saetze-open.js?v=1f8bebd2ca"></script>
-<script src="js/engine.js?v=1f8bebd2ca"></script>
-<script src="js/cosmetics.js?v=1f8bebd2ca"></script>
-<script src="js/saison.js?v=1f8bebd2ca"></script>
-<script src="js/saison2.js?v=1f8bebd2ca"></script>
-<script src="js/fortnite.js?v=1f8bebd2ca"></script>
-<script src="js/figur.js?v=1f8bebd2ca"></script>
-<script src="js/stila.js?v=1f8bebd2ca"></script>
-<script src="js/stilb.js?v=1f8bebd2ca"></script>
-<script src="js/acc.js?v=1f8bebd2ca"></script>
-<script src="js/loot.js?v=1f8bebd2ca"></script>
-<script src="js/film.js?v=1f8bebd2ca"></script>
-<script src="js/einmaleins.js?v=1f8bebd2ca"></script>
-<script src="js/app.js?v=1f8bebd2ca"></script>
-<script src="js/arena.js?v=1f8bebd2ca"></script>
-<script src="js/spiele.js?v=1f8bebd2ca"></script>
-<script src="js/grammatik.js?v=1f8bebd2ca"></script>
-<script src="js/sync.js?v=1f8bebd2ca"></script>
+<script src="data/klasse6.js?v=dbbcece39d"></script>
+<script src="data/klasse7.js?v=dbbcece39d"></script>
+<script src="data/klasse8.js?v=dbbcece39d"></script>
+<script src="data/business.js?v=dbbcece39d"></script>
+<script src="data/business-basis2.js?v=dbbcece39d"></script>
+<script src="data/business-aufbau2.js?v=dbbcece39d"></script>
+<script src="data/business-profi2.js?v=dbbcece39d"></script>
+<script src="data/smalltalk.js?v=dbbcece39d"></script>
+<script src="data/advent.js?v=dbbcece39d"></script>
+<script src="data/herbst.js?v=dbbcece39d"></script>
+<script src="data/idioms.js?v=dbbcece39d"></script>
+<script src="data/saetze.js?v=dbbcece39d"></script>
+<script src="data/grammatik.js?v=dbbcece39d"></script>
+<script src="data/alternativen.js?v=dbbcece39d"></script>
+<script src="data/saetze2.js?v=dbbcece39d"></script>
+<script src="data/lernbuch.js?v=dbbcece39d"></script>
+<script src="data/verben.js?v=dbbcece39d"></script>
+<script src="data/open/business-aufbau.js?v=dbbcece39d"></script>
+<script src="data/open/business-basis.js?v=dbbcece39d"></script>
+<script src="data/open/business-profi.js?v=dbbcece39d"></script>
+<script src="data/open/saetze-open.js?v=dbbcece39d"></script>
+<script src="js/engine.js?v=dbbcece39d"></script>
+<script src="js/cosmetics.js?v=dbbcece39d"></script>
+<script src="js/saison.js?v=dbbcece39d"></script>
+<script src="js/saison2.js?v=dbbcece39d"></script>
+<script src="js/fortnite.js?v=dbbcece39d"></script>
+<script src="js/figur.js?v=dbbcece39d"></script>
+<script src="js/stila.js?v=dbbcece39d"></script>
+<script src="js/stilb.js?v=dbbcece39d"></script>
+<script src="js/acc.js?v=dbbcece39d"></script>
+<script src="js/loot.js?v=dbbcece39d"></script>
+<script src="js/film.js?v=dbbcece39d"></script>
+<script src="js/einmaleins.js?v=dbbcece39d"></script>
+<script src="js/app.js?v=dbbcece39d"></script>
+<script src="js/arena.js?v=dbbcece39d"></script>
+<script src="js/spiele.js?v=dbbcece39d"></script>
+<script src="js/grammatik.js?v=dbbcece39d"></script>
+<script src="js/sync.js?v=dbbcece39d"></script>
 
 <script>
 if ('serviceWorker' in navigator) {

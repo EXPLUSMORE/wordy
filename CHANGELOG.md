@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.174.0
+- **Lernpfad: Einheiten klar erkennbar.** Jeder Abschnitt (Einheit) hat jetzt einen kräftigen farbigen Kopf mit großem Titel und weißer Schrift (die aktuelle Einheit in der Akzentfarbe mit Rahmen, die übrigen in einem dunklen Grau-Ton), mit Abstand und Schatten zwischen den Einheiten. Der Weg zwischen den Stationen ist dunkler und besser sichtbar, gesperrte Stationen sind deutlich grau mit weißem Schloss statt fast unsichtbar.
+
 ## 2.173.11
 - **Herbst: Strickmütze nicht doppelt versprochen.** Wer die Mütze schon hat, bekommt beim nächsten 7-Tage-Sprung in den Laubhaufen keine „Belohnung“-Meldung mehr, sondern den Hinweis, dass er sie schon hat (ein Teil gibt es nur einmal).
 
