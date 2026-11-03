@@ -18,6 +18,10 @@ MASCOT = """
 """
 
 COMMON = """
+:root:root:root[data-season] .card.crewhero{background:linear-gradient(150deg,#2b2f8f,#6a2fc0 55%,#c83fa0)!important;color:#fff;border-color:rgba(255,255,255,.55)}
+:root:root:root[data-season="herbst"] .card.crewhero{background:linear-gradient(150deg,#5A1E14,#8A3A1C 55%,#B5532A)!important;border-color:#E9A45A}
+.crt.lock{opacity:1!important}.crt.lock b,.crt.lock small{color:var(--ink-2)!important}
+.card.crewhero h2,.card.crewhero .small,.card.crewhero b{color:#fff!important}.card.crewhero .eyebrow{color:#ffe58a!important}
 .sxBoo{position:fixed;left:50%;top:42%;z-index:9999;pointer-events:none;font:900 60px/1 system-ui,sans-serif;letter-spacing:.04em;transform:translate(-50%,-50%) rotate(-6deg) scale(0);animation:sxBoo 1.5s cubic-bezier(.2,1.6,.4,1) forwards}
 @keyframes sxBoo{0%{transform:translate(-50%,-50%) rotate(-6deg) scale(0);opacity:0}15%{transform:translate(-50%,-50%) rotate(-6deg) scale(1.25);opacity:1}30%{transform:translate(-50%,-50%) rotate(-6deg) scale(1)}80%{opacity:1}100%{transform:translate(-50%,-90%) rotate(-6deg) scale(1.05);opacity:0}}
 .sxKrack{font-size:44px}
@@ -236,7 +240,7 @@ def herbst():
     A(".hbWind .hhfig,.hbWind #sxScene .sxv,.hbWind #sxScene .sxmu.on,.hbWind #sxScene .sxlp{animation:hbBlow 1.9s ease-in-out!important}@keyframes hbBlow{0%,100%{transform:none}20%{transform:skewX(-9deg) translateX(8px)}45%{transform:skewX(-14deg) translateX(14px)}70%{transform:skewX(-5deg) translateX(4px)}}")
     A("@media (prefers-reduced-motion:reduce){"+S+" .hwsp{animation:none!important;opacity:1}}")
     # Nebel ganz unten (dünn, zieht langsam)
-    A(".hfog{position:fixed;left:-20%;right:-20%;bottom:56px;height:120px;pointer-events:none;z-index:5;background:radial-gradient(60% 100% at 25% 100%,rgba(255,247,232,.55),transparent),radial-gradient(55% 100% at 75% 100%,rgba(255,236,205,.45),transparent);filter:blur(7px);animation:sxFog 26s ease-in-out infinite alternate}@keyframes sxFog{from{transform:translateX(-6%)}to{transform:translateX(6%)}}")
+    A(".hfog{position:fixed;left:-20%;right:-20%;bottom:56px;height:70px;pointer-events:none;z-index:5;background:radial-gradient(60% 100% at 25% 100%,rgba(255,247,232,.22),transparent),radial-gradient(55% 100% at 75% 100%,rgba(255,236,205,.18),transparent);filter:blur(7px);animation:sxFog 26s ease-in-out infinite alternate}@keyframes sxFog{from{transform:translateX(-6%)}to{transform:translateX(6%)}}")
     # 3D-Szene
     A(".sx3-herbst .sx3g{background:linear-gradient(transparent,rgba(138,74,30,.55) 55%,#6E3A18);opacity:.95}")
     A(".sx3 [data-k]{pointer-events:auto;cursor:pointer;-webkit-tap-highlight-color:transparent}")
