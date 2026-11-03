@@ -442,7 +442,7 @@
       var MU = [[0.07, "#C1331F"], [0.36, "#D9822B"], [0.5, "#8A4A22"], [0.66, "#C1331F"], [0.93, "#D9822B"]], mus = [];
       MU.forEach(function (q) { mus.push(put("sxmu", q[0], [26, 26], "mush", shroomSvg(q[1]))); });
       var pileN = HK.pileSize ? HK.pileSize() : 0;
-      if (pileN > 0) put("sxlp", 0.84, [78 + pileN * 4, 40 + pileN * 3], "pile", pileSvg(pileN));
+      put("sxlp", 0.84, [78 + pileN * 4, 40 + pileN * 3], "pile", pileSvg(pileN));   // immer da: klein bei 0 Tagen, wächst mit der Serie
       var muT = setInterval(function () { if (!document.body.contains(root)) { clearInterval(muT); return; } if (document.hidden) return; var on = mus.filter(function (m) { return m.classList.contains("on"); });
         if (on.length && Math.random() < 0.5) on[Math.random() * on.length | 0].classList.remove("on");
         if (on.length < 2 && (!HK.mushLeft || HK.mushLeft() > 0)) mus[Math.random() * mus.length | 0].classList.add("on"); }, 14000);
@@ -482,6 +482,11 @@
       else { puff(x, y, C, 8); fx("pop"); }
     });
     return root;
+  }
+  function pileUpdate() {   // Laubhaufen an die aktuelle Serie anpassen (nach dem Üben, ohne die Szene neu zu bauen)
+    if (!SC || SC.id !== "herbst") return; var o = SC.root.querySelector(".sxlp"), H = global.VTS2 && global.VTS2.hooks; if (!o || !H || !H.pileSize) return;
+    var n = H.pileSize(); if (o.getAttribute("data-n") === String(n)) return; o.setAttribute("data-n", n); var W = global.innerWidth, w = 78 + n * 4, h = 40 + n * 3;
+    o.style.left = (0.84 * W - w / 2) + "px"; o.style.setProperty("--w", w + "px"); o.style.setProperty("--h", h + "px"); o.innerHTML = pileSvg(n);
   }
   function bubbles(x, y, n) {   // Luftblasen steigen auf und platzen
     for (var i = 0; i < n; i++) {
@@ -554,6 +559,6 @@
 
   global.VTS2 = {
     themes: function () { return THEMES; }, theme: function (id) { return THEMES[id] || null; }, mount: mount, tap: tap, whack: whack, home: home, weather: weather,
-    hooks: {}, storm: function (v) { STORM = Math.max(0, Math.min(1, v || 0)); if (WX && WX.cv) { WX.cv.style.zIndex = STORM > 0 ? 41 : 7; WX.cv.style.opacity = STORM > 0 ? 0.8 : 1; } }, shroomArt: shroomSvg, pileArt: pileSvg, leafArt: leafSvg, hogArt: hedgehogSvg, crowArt: crow, scareArt: scarecrowSvg, ambientStart: ambientStart, ambientStop: ambientStop, ambientOn: function () { return !!AMB; }, busy: function () { return running || whacking; }, whacking: function () { return whacking; }
+    hooks: {}, pileUpdate: pileUpdate, storm: function (v) { STORM = Math.max(0, Math.min(1, v || 0)); if (WX && WX.cv) { WX.cv.style.zIndex = STORM > 0 ? 41 : 7; WX.cv.style.opacity = STORM > 0 ? 0.8 : 1; } }, shroomArt: shroomSvg, pileArt: pileSvg, leafArt: leafSvg, hogArt: hedgehogSvg, crowArt: crow, scareArt: scarecrowSvg, ambientStart: ambientStart, ambientStop: ambientStop, ambientOn: function () { return !!AMB; }, busy: function () { return running || whacking; }, whacking: function () { return whacking; }
   };
 })(window);

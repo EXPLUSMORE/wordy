@@ -393,7 +393,7 @@
     var h = $("#top"), el = $("#hwSp"), t = seasonNow(), on = !!t, home = on && tab === "home" && sessionEl.hidden;
     var live = !calmMotion;   // „Bewegung reduzieren“: keine Szene, kein Wetter, keine Flieger
     if (global.VTS && global.VTS.home) global.VTS.home(t === "halloween" && home && live);
-    if (global.VTS2) { global.VTS2.home(t && t !== "halloween" ? t : "", home && live); global.VTS2.weather(t && t !== "halloween" ? t : "", on && sessionEl.hidden && live); }
+    if (global.VTS2) { global.VTS2.home(t && t !== "halloween" ? t : "", home && live); if (global.VTS2.pileUpdate) global.VTS2.pileUpdate(); global.VTS2.weather(t && t !== "halloween" ? t : "", on && sessionEl.hidden && live); }
     var fg = document.getElementById("hwFog"); if (t === "herbst" && live && !fg) { fg = document.createElement("div"); fg.id = "hwFog"; fg.className = "hfog"; document.body.appendChild(fg); } else if ((t !== "herbst" || !live) && fg) fg.remove();
     if (on && !lookForce()) seasonBadge(t);
     if (on && home && !lookForce()) seasonSheet(t);
@@ -1824,7 +1824,7 @@
     H.pile = function () {
       var r = S.hbPile();
       if (r.got) hbSheet('<div style="font-size:52px;line-height:1.1">🍂🧶</div><div class="eyebrow">7 Tage Serie!</div><h3>Platsch! Du springst in den Laubhaufen</h3><p class="small muted" style="margin:6px 0 0">Dafür bekommst du die <b>Strickmütze</b> (Zubehör). Sie wartet unter Beute › Spind.</p>');
-      else toast(r.size >= 7 ? "Hui! Das raschelt! 🍂" : "Dein Laubhaufen wächst mit jedem Serientag. Bei 7 Tagen darfst du hineinspringen! (" + r.size + " von 7)");
+      else toast(r.size >= 7 ? "Hui! Das raschelt! 🍂" : r.size === 0 ? "Schaffe dein Tagesziel, dann wächst dein Laubhaufen! Mit jedem Tag in Folge wird er größer, bei 7 Tagen darfst du hineinspringen." : "Dein Laubhaufen wächst mit jedem Serientag (" + r.size + " von 7). Bei 7 Tagen darfst du hineinspringen und bekommst eine Strickmütze!");
     };
   }
   function herbstCard() {
@@ -1837,7 +1837,7 @@
     else if (mt === "day") ml = '<div class="small" style="margin-top:8px">🏮 Sankt Martin! ' + (h.lant ? "Deine Laterne hast du schon ✓" : '<button class="btn sm" data-act="martin">Laterne abholen</button>') + '</div>';
     return '<section class="card hbcard"><button class="chip" data-act="hbopen" style="float:right">Pilzbuch</button><div class="eyebrow">🍂 Herbstkorb</div>' +
       '<div class="small" style="margin-top:6px"><b>Ernte</b> · ' + h.harvest + ' von ' + h.need + ' Wörtern' + (h.done ? " ✓" : "") + '</div><div class="hbfruit">' + fr + '</div>' +
-      '<div class="small" style="margin-top:8px"><b>Laubhaufen</b> · ' + pile + ' von 7 Serientagen' + (h.cap ? " ✓" : "") + '</div><div class="hbfruit">' + lv + '</div>' +
+      '<div class="small" style="margin-top:8px"><b>Laubhaufen</b> · ' + pile + ' von 7 Serientagen' + (h.cap ? " ✓" : "") + '</div><div class="hbfruit">' + lv + '</div><div class="small muted">Jeder Tag mit geschafftem Tagesziel in Folge = ein Blatt mehr. Bei 7: Haufen auf der Startseite antippen, hineinspringen und die Strickmütze holen.</div>' +
       '<div class="small" style="margin-top:8px"><b>Pilzbuch</b> · ' + kinds + ' von ' + h.shrooms.length + ' Sorten · heute noch ' + h.left + ' Pilze</div>' + ml +
       '<div class="small muted" style="margin-top:6px">Ernte wächst mit jedem richtig gelernten Wort (bei 50 gibt es den Rahmen „Herbstlaub“). Pilze findest du auf der Startseite im Hintergrund – sie geben keine XP.</div></section>';
   }

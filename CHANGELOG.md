@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.173.10
+- **Herbst: Laubhaufen auf der Startseite funktioniert jetzt:** Der Haufen ist immer da (klein bei 0 Serientagen) und wächst nach dem Üben sofort mit, ohne dass man die App neu öffnen muss. Vorher gab es bei 0 Tagen gar keinen Haufen und er passte sich erst beim Neuaufbau der Szene an. Antippen erklärt, wie es geht; bei 7 Serientagen springt man hinein und bekommt die Strickmütze. Die Karte „Herbstkorb“ erklärt es ebenfalls.
+
 ## 2.173.9
 - **Wochenpass im Saison-Look lesbar:** Wie bei der Crew bekam die Pass-Karte im Herbst-Look (und den anderen Saison-Looks) einen hellen Hintergrund mit weißer Schrift. Jetzt ist sie in jedem Saison-Look dunkel (im Herbst Burgund, sonst Blau) mit weißer Schrift, die Stufen-Felder Bronze/Silber/Gold bleiben hell mit dunkler Schrift.
 

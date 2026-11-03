@@ -1783,7 +1783,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.173.9";window.WORDY_BUILD="68c8b6ac17";</script>
+<script>window.WORDY_VERSION="2.173.10";window.WORDY_BUILD="c1d8a6615b";</script>
 </head>
 <body>
 <div id="app">
@@ -9616,7 +9616,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
       var MU = [[0.07, "#C1331F"], [0.36, "#D9822B"], [0.5, "#8A4A22"], [0.66, "#C1331F"], [0.93, "#D9822B"]], mus = [];
       MU.forEach(function (q) { mus.push(put("sxmu", q[0], [26, 26], "mush", shroomSvg(q[1]))); });
       var pileN = HK.pileSize ? HK.pileSize() : 0;
-      if (pileN > 0) put("sxlp", 0.84, [78 + pileN * 4, 40 + pileN * 3], "pile", pileSvg(pileN));
+      put("sxlp", 0.84, [78 + pileN * 4, 40 + pileN * 3], "pile", pileSvg(pileN));   // immer da: klein bei 0 Tagen, wächst mit der Serie
       var muT = setInterval(function () { if (!document.body.contains(root)) { clearInterval(muT); return; } if (document.hidden) return; var on = mus.filter(function (m) { return m.classList.contains("on"); });
         if (on.length && Math.random() < 0.5) on[Math.random() * on.length | 0].classList.remove("on");
         if (on.length < 2 && (!HK.mushLeft || HK.mushLeft() > 0)) mus[Math.random() * mus.length | 0].classList.add("on"); }, 14000);
@@ -9656,6 +9656,11 @@ window.SENTENCES = (window.SENTENCES || []).concat([
       else { puff(x, y, C, 8); fx("pop"); }
     });
     return root;
+  }
+  function pileUpdate() {   // Laubhaufen an die aktuelle Serie anpassen (nach dem Üben, ohne die Szene neu zu bauen)
+    if (!SC || SC.id !== "herbst") return; var o = SC.root.querySelector(".sxlp"), H = global.VTS2 && global.VTS2.hooks; if (!o || !H || !H.pileSize) return;
+    var n = H.pileSize(); if (o.getAttribute("data-n") === String(n)) return; o.setAttribute("data-n", n); var W = global.innerWidth, w = 78 + n * 4, h = 40 + n * 3;
+    o.style.left = (0.84 * W - w / 2) + "px"; o.style.setProperty("--w", w + "px"); o.style.setProperty("--h", h + "px"); o.innerHTML = pileSvg(n);
   }
   function bubbles(x, y, n) {   // Luftblasen steigen auf und platzen
     for (var i = 0; i < n; i++) {
@@ -9728,7 +9733,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
 
   global.VTS2 = {
     themes: function () { return THEMES; }, theme: function (id) { return THEMES[id] || null; }, mount: mount, tap: tap, whack: whack, home: home, weather: weather,
-    hooks: {}, storm: function (v) { STORM = Math.max(0, Math.min(1, v || 0)); if (WX && WX.cv) { WX.cv.style.zIndex = STORM > 0 ? 41 : 7; WX.cv.style.opacity = STORM > 0 ? 0.8 : 1; } }, shroomArt: shroomSvg, pileArt: pileSvg, leafArt: leafSvg, hogArt: hedgehogSvg, crowArt: crow, scareArt: scarecrowSvg, ambientStart: ambientStart, ambientStop: ambientStop, ambientOn: function () { return !!AMB; }, busy: function () { return running || whacking; }, whacking: function () { return whacking; }
+    hooks: {}, pileUpdate: pileUpdate, storm: function (v) { STORM = Math.max(0, Math.min(1, v || 0)); if (WX && WX.cv) { WX.cv.style.zIndex = STORM > 0 ? 41 : 7; WX.cv.style.opacity = STORM > 0 ? 0.8 : 1; } }, shroomArt: shroomSvg, pileArt: pileSvg, leafArt: leafSvg, hogArt: hedgehogSvg, crowArt: crow, scareArt: scarecrowSvg, ambientStart: ambientStart, ambientStop: ambientStop, ambientOn: function () { return !!AMB; }, busy: function () { return running || whacking; }, whacking: function () { return whacking; }
   };
 })(window);
 </script>
@@ -11695,7 +11700,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var h = $("#top"), el = $("#hwSp"), t = seasonNow(), on = !!t, home = on && tab === "home" && sessionEl.hidden;
     var live = !calmMotion;   // „Bewegung reduzieren“: keine Szene, kein Wetter, keine Flieger
     if (global.VTS && global.VTS.home) global.VTS.home(t === "halloween" && home && live);
-    if (global.VTS2) { global.VTS2.home(t && t !== "halloween" ? t : "", home && live); global.VTS2.weather(t && t !== "halloween" ? t : "", on && sessionEl.hidden && live); }
+    if (global.VTS2) { global.VTS2.home(t && t !== "halloween" ? t : "", home && live); if (global.VTS2.pileUpdate) global.VTS2.pileUpdate(); global.VTS2.weather(t && t !== "halloween" ? t : "", on && sessionEl.hidden && live); }
     var fg = document.getElementById("hwFog"); if (t === "herbst" && live && !fg) { fg = document.createElement("div"); fg.id = "hwFog"; fg.className = "hfog"; document.body.appendChild(fg); } else if ((t !== "herbst" || !live) && fg) fg.remove();
     if (on && !lookForce()) seasonBadge(t);
     if (on && home && !lookForce()) seasonSheet(t);
@@ -13126,7 +13131,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     H.pile = function () {
       var r = S.hbPile();
       if (r.got) hbSheet('<div style="font-size:52px;line-height:1.1">🍂🧶</div><div class="eyebrow">7 Tage Serie!</div><h3>Platsch! Du springst in den Laubhaufen</h3><p class="small muted" style="margin:6px 0 0">Dafür bekommst du die <b>Strickmütze</b> (Zubehör). Sie wartet unter Beute › Spind.</p>');
-      else toast(r.size >= 7 ? "Hui! Das raschelt! 🍂" : "Dein Laubhaufen wächst mit jedem Serientag. Bei 7 Tagen darfst du hineinspringen! (" + r.size + " von 7)");
+      else toast(r.size >= 7 ? "Hui! Das raschelt! 🍂" : r.size === 0 ? "Schaffe dein Tagesziel, dann wächst dein Laubhaufen! Mit jedem Tag in Folge wird er größer, bei 7 Tagen darfst du hineinspringen." : "Dein Laubhaufen wächst mit jedem Serientag (" + r.size + " von 7). Bei 7 Tagen darfst du hineinspringen und bekommst eine Strickmütze!");
     };
   }
   function herbstCard() {
@@ -13139,7 +13144,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     else if (mt === "day") ml = '<div class="small" style="margin-top:8px">🏮 Sankt Martin! ' + (h.lant ? "Deine Laterne hast du schon ✓" : '<button class="btn sm" data-act="martin">Laterne abholen</button>') + '</div>';
     return '<section class="card hbcard"><button class="chip" data-act="hbopen" style="float:right">Pilzbuch</button><div class="eyebrow">🍂 Herbstkorb</div>' +
       '<div class="small" style="margin-top:6px"><b>Ernte</b> · ' + h.harvest + ' von ' + h.need + ' Wörtern' + (h.done ? " ✓" : "") + '</div><div class="hbfruit">' + fr + '</div>' +
-      '<div class="small" style="margin-top:8px"><b>Laubhaufen</b> · ' + pile + ' von 7 Serientagen' + (h.cap ? " ✓" : "") + '</div><div class="hbfruit">' + lv + '</div>' +
+      '<div class="small" style="margin-top:8px"><b>Laubhaufen</b> · ' + pile + ' von 7 Serientagen' + (h.cap ? " ✓" : "") + '</div><div class="hbfruit">' + lv + '</div><div class="small muted">Jeder Tag mit geschafftem Tagesziel in Folge = ein Blatt mehr. Bei 7: Haufen auf der Startseite antippen, hineinspringen und die Strickmütze holen.</div>' +
       '<div class="small" style="margin-top:8px"><b>Pilzbuch</b> · ' + kinds + ' von ' + h.shrooms.length + ' Sorten · heute noch ' + h.left + ' Pilze</div>' + ml +
       '<div class="small muted" style="margin-top:6px">Ernte wächst mit jedem richtig gelernten Wort (bei 50 gibt es den Rahmen „Herbstlaub“). Pilze findest du auf der Startseite im Hintergrund – sie geben keine XP.</div></section>';
   }
