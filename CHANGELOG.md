@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.173.6
+- **Spielen › Crew: mehr Kontrast.** Fortschrittsbalken mit sichtbarem Rand und dunklerer Leiste, Bronze/Silber/Gold-Felder mit kräftigen Rändern und größerer Schrift (gesperrte gestrichelt, aber lesbar), Mitglieder-Namen weiß mit Schatten und nicht mehr so blass, hellerer Rahmen um den Crew-Kopf, dunklere Zusatztexte in den Wochenzielen. Gilt in Hell und Dunkel.
+
 ## 2.173.5
 - **Herbst: Blatt bleibt beim Antippen der Figur nicht mehr oben „hängen“.** Während die Figur nach dem Blatt wirft, war das Blatt in der Kopfzeile noch sichtbar (die Fall-Animation überschrieb das Ausblenden), das sah wie ein Blatt am Faden aus. Jetzt verschwindet es sofort und das fliegende Blatt ist das einzige.
 
