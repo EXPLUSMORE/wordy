@@ -21,6 +21,9 @@ COMMON = """
 :root:root:root[data-season] .card.crewhero{background:linear-gradient(150deg,#2b2f8f,#6a2fc0 55%,#c83fa0)!important;color:#fff;border-color:rgba(255,255,255,.55)}
 :root:root:root[data-season="herbst"] .card.crewhero{background:linear-gradient(150deg,#5A1E14,#8A3A1C 55%,#B5532A)!important;border-color:#E9A45A}
 .crt.lock{opacity:1!important}.crt.lock b,.crt.lock small{color:var(--ink-2)!important}
+:root:root:root[data-season] .card.passc{background:linear-gradient(160deg,#17306b,#0d1b45)!important;color:#fff;border:2px solid #7fd0ff!important}
+:root:root:root[data-season="herbst"] .card.passc{background:linear-gradient(160deg,#5A1E14,#7A2E18 60%,#3E140C)!important;border-color:#E9A45A!important}
+.card.passc h2,.card.passc h3{color:#fff}.card.passc .ptr{background:#FFF8EA!important;opacity:.92}.card.passc .ptr b{color:#3A2A18!important}.card.passc .ptr small{color:#5E4630!important}.card.passc .ptr.got{border-color:#2C7A57}.card.passc .muted{color:#d9dff2!important}.card.passc .eyebrow{color:#ffe58a!important}
 .card.crewhero h2,.card.crewhero .small,.card.crewhero b{color:#fff!important}.card.crewhero .eyebrow{color:#ffe58a!important}
 .sxBoo{position:fixed;left:50%;top:42%;z-index:9999;pointer-events:none;font:900 60px/1 system-ui,sans-serif;letter-spacing:.04em;transform:translate(-50%,-50%) rotate(-6deg) scale(0);animation:sxBoo 1.5s cubic-bezier(.2,1.6,.4,1) forwards}
 @keyframes sxBoo{0%{transform:translate(-50%,-50%) rotate(-6deg) scale(0);opacity:0}15%{transform:translate(-50%,-50%) rotate(-6deg) scale(1.25);opacity:1}30%{transform:translate(-50%,-50%) rotate(-6deg) scale(1)}80%{opacity:1}100%{transform:translate(-50%,-90%) rotate(-6deg) scale(1.05);opacity:0}}

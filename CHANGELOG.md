@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.173.9
+- **Wochenpass im Saison-Look lesbar:** Wie bei der Crew bekam die Pass-Karte im Herbst-Look (und den anderen Saison-Looks) einen hellen Hintergrund mit weißer Schrift. Jetzt ist sie in jedem Saison-Look dunkel (im Herbst Burgund, sonst Blau) mit weißer Schrift, die Stufen-Felder Bronze/Silber/Gold bleiben hell mit dunkler Schrift.
+
 ## 2.173.8
 - **Crew im Saison-Look lesbar:** Der Crew-Kopf („Flinke Füchse“, Mitglieder, Serie) bekam im Herbst-Look (und den anderen Saison-Looks) einen hellen Papier-Hintergrund, die Schrift blieb aber weiß, also kaum lesbar. Jetzt hat der Kopf in jedem Saison-Look einen dunklen, farbigen Hintergrund (im Herbst Burgund/Orange) mit weißer Schrift. Gesperrte Ziel-Felder sind nicht mehr verblasst. Der Herbst-Nebel unten ist deutlich schwächer, damit der Inhalt über der Menüleiste nicht blass wirkt.
 
