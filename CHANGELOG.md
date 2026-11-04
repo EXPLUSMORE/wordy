@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.174.3
+- **Herbstkorb: Laubhaufen-Blätter werden angezeigt.** Die Blätter für die Serientage in der Karte „Herbstkorb“ blieben immer grau, auch bei einer Serie, weil die Farbe für erreichte Tage nie gesetzt wurde. Jetzt sind so viele Blätter bunt, wie man Serientage hat (bis 7).
+
 ## 2.174.2
 - **Bonus-Runden höchstens 5 Minuten (Wunsch von Checker):** Nach der Daily Challenge dauert jede weitere Runde (Challenge-Karte „Bonus-Runde“, „Zusatz“ in „Dein Tag“ und „Bonus-Runde“ auf der Ergebnisseite) jetzt höchstens 5 Minuten statt der Tagesziel-Länge (z. B. 10 Min.). Die erste Daily Challenge bleibt so lang wie das Tagesziel.
 

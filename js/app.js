@@ -1832,7 +1832,7 @@
     if (!herbstOn()) return "";
     var h = S.hbInfo(), n = Math.floor(h.harvest / 5), ic = ["🍎", "🌰", "🍎", "🌰", "🍎", "🌰", "🍎", "🌰", "🍎", "🌰"], fr = "", i;
     for (i = 0; i < 10; i++) fr += '<i class="' + (i < n ? "on" : "") + '">' + ic[i] + '</i>';
-    var pile = Math.min(7, (S.state.streak && S.state.streak.count) || 0), lv = ""; for (i = 0; i < 7; i++) lv += '<i style="' + (i < pile ? "" : "filter:grayscale(1) opacity(.35)") + '">🍂</i>';
+    var pile = Math.min(7, (S.state.streak && S.state.streak.count) || 0), lv = ""; for (i = 0; i < 7; i++) lv += '<i class="' + (i < pile ? "on" : "") + '">🍂</i>';
     var kinds = Object.keys(h.book).length, mt = hbMartin(), ml = "";
     if (mt === "pre") ml = '<div class="small" style="margin-top:8px">🏮 Am 11. November ist Sankt Martin – dann gibt es eine Laterne zum Abholen.</div>';
     else if (mt === "day") ml = '<div class="small" style="margin-top:8px">🏮 Sankt Martin! ' + (h.lant ? "Deine Laterne hast du schon ✓" : '<button class="btn sm" data-act="martin">Laterne abholen</button>') + '</div>';
