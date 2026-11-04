@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.174.6
+- **Igel (und Laubhaufen) auf dem Handy: Fenster ging sofort wieder zu.** Das Fenster öffnet beim Antippen, der anschließende Klick des Fingers traf dann sofort das Fenster und schloss es wieder – am Handy sah es aus, als passiere nichts (am Rechner nicht). Jetzt ignoriert das Fenster Klicks in den ersten 0,5 Sekunden. Betrifft Wort des Tages vom Igel und die Strickmützen-Meldung am Laubhaufen. Außerdem laufen die Herbst-Aktionen (Igel, Pilze, Haufen, Krähe) vor den Effekten und Tönen, ein Fehler im Ton kann sie nicht mehr verhindern.
+
 ## 2.174.5
 - **Igel-Wort zuverlässiger erreichbar:** Neuer Knopf „🦔 Wort des Tages vom Igel“ in der Karte „Herbstkorb“ (zeigt das Wort jederzeit, so oft man will), der Igel selbst hat eine größere Tipp-Fläche, und ein offenes Fenster blockiert das Wort nicht mehr stillschweigend (alte Herbst-Fenster werden ersetzt, bei anderen Fenstern kommt ein Hinweis).
 

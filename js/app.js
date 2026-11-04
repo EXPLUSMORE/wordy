@@ -1772,7 +1772,9 @@
     var ov = document.createElement("div"); ov.className = "srmd"; ov.setAttribute("data-hb", "1");
     ov.innerHTML = '<div class="dsh" style="text-align:center"><div class="dshg"></div>' + inner + '<div class="row" style="gap:8px;justify-content:center;margin-top:12px"><button class="btn soft" data-hb="x">Schließen</button></div></div>';
     document.body.appendChild(ov);
+    var opened = Date.now();   // das Fenster öffnet beim Antippen (pointerdown); der nachfolgende Klick auf dem Handy trifft sonst gleich das Fenster und schließt es wieder
     ov.addEventListener("click", function (e) {
+      if (Date.now() - opened < 500) return;
       if (ovSay(e)) return;
       var b = e.target.closest("[data-hb]"), k = b && b.getAttribute("data-hb");
       if (e.target === ov || k === "x") { ov.remove(); return; }

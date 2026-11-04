@@ -473,11 +473,13 @@
       else if (k === "crab") { puff(x, y, ["#FF5E5E", "#fff"], 10); fx("pop"); }
       else if (k === "coral") { bubbles(x, y, 6); puff(x, y, ["#FF7AA8", "#FFB25C"], 10); fx("chime"); }
       else if (k === "chest") { puff(x, y - 10, ["#FFD34D", "#FFF3B0", "#fff"], 24); bubbles(x, y, 8); fx("pop"); setTimeout(function () { fx("chime"); }, 150); }
-      else if (k === "scare") { puff(x, y, ["#E9A45A", "#C1531F"], 10); fx("boing"); var hk0 = global.VTS2.hooks || {}; if (hk0.scare) hk0.scare(); }
-      else if (k === "crow") { var cs = getComputedStyle(o).opacity; if (+cs > 0.3) { o.classList.add("caw"); setTimeout(function () { o.classList.remove("caw"); }, 600); puff(x, y, ["#2B2438", "#8A7AA8"], 8); fx("pop"); var hk1 = global.VTS2.hooks || {}; if (hk1.crow) hk1.crow(); } }
-      else if (k === "hog") { puff(x, y, ["#E3BE8C", "#6B4426"], 8); fx("pop"); var hk2 = global.VTS2.hooks || {}; if (hk2.hog) hk2.hog(); }
-      else if (k === "mush") { puff(x, y, ["#fff", "#E9C58A", "#C1331F"], 12); fx("chime"); o.classList.remove("on"); var hk3 = global.VTS2.hooks || {}; if (hk3.mush) hk3.mush(); }
-      else if (k === "pile") { puff(x, y, ["#C1531F", "#E0A12E", "#8A3A14"], 22); fx("boing"); var hk4 = global.VTS2.hooks || {}; if (hk4.pile) hk4.pile(); }
+      else if (k === "scare" || k === "crow" || k === "hog" || k === "mush" || k === "pile") {   // Herbst: zuerst die Aktion (Fenster/Meldung), Effekte danach und abgesichert (ein Fehler im Ton darf sie nie verhindern)
+        var HKS = global.VTS2.hooks || {}, act = HKS[k === "scare" ? "scare" : k], crowOk = true;
+        if (k === "crow") { crowOk = +getComputedStyle(o).opacity > 0.3; if (crowOk) { o.classList.add("caw"); setTimeout(function () { o.classList.remove("caw"); }, 600); } }
+        if (k === "mush") o.classList.remove("on");
+        if (crowOk && act) { try { act(); } catch (e1) { try { console.error("herbst", k, e1); } catch (e2) {} } }
+        try { if (crowOk) { puff(x, y, k === "hog" ? ["#E3BE8C", "#6B4426"] : k === "pile" ? ["#C1531F", "#E0A12E", "#8A3A14"] : k === "mush" ? ["#fff", "#E9C58A", "#C1331F"] : k === "crow" ? ["#2B2438", "#8A7AA8"] : ["#E9A45A", "#C1531F"], k === "pile" ? 22 : 10); fx(k === "scare" || k === "pile" ? "boing" : k === "mush" ? "chime" : "pop"); } } catch (e3) {}
+      }
       else if (k === "flamingo") { puff(x, y, ["#7DE8FF", "#fff", "#00D1C1"], 18); fx("pop"); }
       else { puff(x, y, C, 8); fx("pop"); }
     });
