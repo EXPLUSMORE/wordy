@@ -1049,7 +1049,7 @@
   function dayCard(pct) {
     var st = S.state, W = window.WordySync, steps = [], goalSec = S.goalMin() * 60, d = st.daily || {};
     steps.push({ icon: "🏆", t: "Daily Challenge", sub: S.challengeDone() ? "geschafft · Zusatz-Runden sind Bonus" : "Bunte Runde aus allem, was dran ist · 🪙 10", done: S.challengeDone(),
-      go: 'data-act="start" data-mode="mix" data-min="' + S.goalMin() + '"', btn: S.challengeDone() ? "Zusatz" : "Los ▶" });
+      go: 'data-act="start" data-mode="mix" data-min="' + (S.challengeDone() ? Math.min(5, S.goalMin()) : S.goalMin()) + '"', btn: S.challengeDone() ? "Zusatz" : "Los ▶" });
     var all = st.settings.pathOn === false ? [] : S.pathStations();
     if (all.length) {
       var p = S.pathSync(), fin = p.pos >= all.length;
@@ -1559,7 +1559,7 @@
   function challengeHtml() {
     var ci = S.chalInfo(), done = ci.doneToday, st = S.state, kl = classHtml();
     var dots = ci.days.map(function (d) { return '<span class="ctad' + (d.ok ? " ok" : "") + (d.today ? " now" : "") + '"><i>' + (d.ok ? "🔥" : d.today ? "⭐" : "·") + '</i>' + d.wd + '</span>'; }).join("");
-    var left = ci.next ? ci.next - ci.streak : 0, xl = ci.extraLeft, mins = Math.max(5, S.goalMin());
+    var left = ci.next ? ci.next - ci.streak : 0, xl = ci.extraLeft, mins = done ? 5 : Math.max(5, S.goalMin());   // Bonus-Runden höchstens 5 Minuten
     var nx = ci.next ? 'Noch ' + left + (left === 1 ? ' Tag' : ' Tage') + ' bis Serienbonus +' + ci.nextCoins + ' 🪙' : 'Alle Serienboni erreicht. Stark!';
     var rew = !done ? '<em>🪙</em><div><b>+15 Münzen für Runde 1</b><small>' + nx + '</small></div>'
       : xl ? '<em>🎁</em><div><b>Bonus-Runden: +' + ci.extraCoins + ' 🪙 je Runde</b><small>Tagesbonus ist geholt. Noch ' + xl + (xl === 1 ? ' Bonus-Runde' : ' Bonus-Runden') + ' heute. ' + nx + '</small></div>'
@@ -3750,7 +3750,7 @@
     }
     else if (a === "close") closeSession();
     else if (a === "openchest") openChest();
-    else if (a === "again") { closeSession(); startSession({ minutes: S.goalMin() }); }
+    else if (a === "again") { var bonusAgain = S.challengeDone() && SS && SS.mode === "mix"; closeSession(); startSession({ minutes: bonusAgain ? Math.min(5, S.goalMin()) : S.goalMin() }); }   // Bonus-Runde: höchstens 5 Min.
     else if (a === "undo" && t && (t.type === "spell" || t.type === "build") && !SS.answered) {
       if (!t.built.length) return;
       var del = t.type === "spell" && t.cursor != null ? Math.min(t.cursor, t.built.length) - 1 : t.built.length - 1;   // wie die Löschtaste: der Buchstabe vor dem Cursor

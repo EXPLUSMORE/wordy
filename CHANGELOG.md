@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.174.2
+- **Bonus-Runden höchstens 5 Minuten (Wunsch von Checker):** Nach der Daily Challenge dauert jede weitere Runde (Challenge-Karte „Bonus-Runde“, „Zusatz“ in „Dein Tag“ und „Bonus-Runde“ auf der Ergebnisseite) jetzt höchstens 5 Minuten statt der Tagesziel-Länge (z. B. 10 Min.). Die erste Daily Challenge bleibt so lang wie das Tagesziel.
+
 ## 2.174.1
 - **Lernpfad: „Mitlesen“ am Anfang des Pfads.** Der Knopf stand oben unter dem Einheiten-Kopf, also am Ende des Wegs (die Karte läuft von unten nach oben). Jetzt steht er jeder Einheit unten direkt vor Station 1. Die nicht aktuellen Einheiten-Köpfe haben im Dunkelmodus nun ein festes dunkles Blaugrau mit weißer Schrift (vorher zu hell).
 
