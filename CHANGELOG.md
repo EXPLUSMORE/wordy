@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.174.4
+- **Herbstkorb bei Serie 7:** Der Text unter dem Laubhaufen sagt dann „Der Haufen ist voll! 🎉 Tippe ihn unten rechts auf der Startseite an, spring hinein und hol dir die Strickmütze.“ (wer die Mütze schon hat: „Der Haufen ist voll! Tippe ihn … an und spring hinein“).
+
 ## 2.174.3
 - **Herbstkorb: Laubhaufen-Blätter werden angezeigt.** Die Blätter für die Serientage in der Karte „Herbstkorb“ blieben immer grau, auch bei einer Serie, weil die Farbe für erreichte Tage nie gesetzt wurde. Jetzt sind so viele Blätter bunt, wie man Serientage hat (bis 7).
 
