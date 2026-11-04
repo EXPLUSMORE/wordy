@@ -1767,8 +1767,9 @@
   /* ================= HERBST (v2.172): Vogelscheuche-Kumpel mit Krähen-Tipp, Igel, Pilze, Laubhaufen, Ernte, Sankt Martin ================= */
   function herbstOn() { return seasonNow() === "herbst"; }
   function hbSheet(inner, onClick) {
-    if (document.querySelector(".srmd")) return null;
-    var ov = document.createElement("div"); ov.className = "srmd";
+    document.querySelectorAll(".srmd[data-hb]").forEach(function (e) { e.remove(); });
+    if (document.querySelector(".srmd")) { toast("Schließe erst das offene Fenster, dann klappt es."); return null; }
+    var ov = document.createElement("div"); ov.className = "srmd"; ov.setAttribute("data-hb", "1");
     ov.innerHTML = '<div class="dsh" style="text-align:center"><div class="dshg"></div>' + inner + '<div class="row" style="gap:8px;justify-content:center;margin-top:12px"><button class="btn soft" data-hb="x">Schließen</button></div></div>';
     document.body.appendChild(ov);
     ov.addEventListener("click", function (e) {
@@ -1812,7 +1813,7 @@
     H.scare = function () {};
     H.crow = function () { toast("Kraaah! 🐦‍⬛ In der Übung hilft dir die Krähe mit einem Tipp: tippe dort auf die Vogelscheuche."); };
     H.hog = function () {
-      var w = S.hbHog(); if (!w) return;
+      var w = S.hbHog(); if (!w) { toast("Der Igel hat heute kein Wort dabei 🦔"); return; }
       hbSheet('<div style="font-size:48px;line-height:1.1">🦔</div><div class="eyebrow">' + (w.fresh ? "Der Igel bringt dein Wort des Tages" : "Wort des Tages vom Igel") + '</div>' + (audioAvailable() ? speakBtn(w.en, true) : "") +
         '<div class="prompt" style="margin:6px 0">' + esc(w.en) + '</div><b>' + esc(w.de) + '</b>' + (w.ex ? '<p class="small muted" style="margin:8px 0 0;font-family:Newsreader,serif;font-size:17px">' + esc(w.ex) + '</p>' : "") + '<p class="small muted" style="margin:8px 0 0">Ein Wort pro Tag – ganz ohne Druck.</p>');
       if (audioAvailable()) setTimeout(function () { speak(w.en); }, 300);
@@ -1839,6 +1840,7 @@
     return '<section class="card hbcard"><button class="chip" data-act="hbopen" style="float:right">Pilzbuch</button><div class="eyebrow">🍂 Herbstkorb</div>' +
       '<div class="small" style="margin-top:6px"><b>Ernte</b> · ' + h.harvest + ' von ' + h.need + ' Wörtern' + (h.done ? " ✓" : "") + '</div><div class="hbfruit">' + fr + '</div>' +
       '<div class="small" style="margin-top:8px"><b>Laubhaufen</b> · ' + pile + ' von 7 Serientagen' + (h.cap ? " ✓" : "") + '</div><div class="hbfruit">' + lv + '</div><div class="small muted">' + (pile >= 7 ? (h.cap ? "Der Haufen ist voll! Tippe ihn auf der Startseite an und spring hinein 🍂" : "Der Haufen ist voll! 🎉 Tippe ihn unten rechts auf der Startseite an, spring hinein und hol dir die Strickmütze.") : "Jeder Tag mit geschafftem Tagesziel in Folge = ein Blatt mehr. Bei 7: Haufen auf der Startseite antippen, hineinspringen und die Strickmütze holen.") + '</div>' +
+      '<div class="small" style="margin-top:8px"><button class="chip" data-act="hbhog">🦔 Wort des Tages vom Igel</button></div>' +
       '<div class="small" style="margin-top:8px"><b>Pilzbuch</b> · ' + kinds + ' von ' + h.shrooms.length + ' Sorten · heute noch ' + h.left + ' Pilze</div>' + ml +
       '<div class="small muted" style="margin-top:6px">Ernte wächst mit jedem richtig gelernten Wort (bei 50 gibt es den Rahmen „Herbstlaub“). Pilze findest du auf der Startseite im Hintergrund – sie geben keine XP.</div></section>';
   }
@@ -4160,6 +4162,7 @@
     else if (a === "dealview") dealSheet(act.getAttribute("data-id"));
     else if (a === "advdoor") advDoor(+act.getAttribute("data-d"));
     else if (a === "hbopen") { hbBook(); }
+    else if (a === "hbhog") { var HH = global.VTS2 && global.VTS2.hooks; if (HH && HH.hog) HH.hog(); }
     else if (a === "martin") { var lg = S.hbLantern(); if (lg) toast("🏮 Laterne geschenkt! Du findest sie unter Beute › Spind › Zubehör."); render(); }
     else if (a === "advgo") { tab = "spielen"; spielSeg = "advent"; render(); view.scrollTop = 0; }
     else if (a === "shoprar") { shopRar = act.getAttribute("data-k"); render(); }

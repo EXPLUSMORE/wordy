@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.174.5
+- **Igel-Wort zuverlässiger erreichbar:** Neuer Knopf „🦔 Wort des Tages vom Igel“ in der Karte „Herbstkorb“ (zeigt das Wort jederzeit, so oft man will), der Igel selbst hat eine größere Tipp-Fläche, und ein offenes Fenster blockiert das Wort nicht mehr stillschweigend (alte Herbst-Fenster werden ersetzt, bei anderen Fenstern kommt ein Hinweis).
+
 ## 2.174.4
 - **Herbstkorb bei Serie 7:** Der Text unter dem Laubhaufen sagt dann „Der Haufen ist voll! 🎉 Tippe ihn unten rechts auf der Startseite an, spring hinein und hol dir die Strickmütze.“ (wer die Mütze schon hat: „Der Haufen ist voll! Tippe ihn … an und spring hinein“).
 
