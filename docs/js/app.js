@@ -2201,7 +2201,7 @@
 
   /* ---------- Münzen: Übersicht und Regeln ---------- */
   function coinsCard() {
-    var c = S.coinsToday(), st = S.state, total = c.fortschritt + c.missionen + c.ziel + c.serie + c.arena + c.eltern + (c.rang || 0);
+    var c = S.coinsToday(), st = S.state, total = c.fortschritt + c.missionen + c.ziel + c.serie + c.arena + (c.gram || 0) + c.eltern + (c.rang || 0);
     function row(label, sub, val, done) {
       return '<div class="row" style="gap:10px;align-items:baseline;padding:6px 0;border-top:1px solid var(--line)"><div style="flex:1 1 auto"><b class="small">' + label + '</b>' +
         (sub ? '<div class="small muted">' + sub + '</div>' : "") + '</div><b class="tnum" style="' + (done ? "color:var(--good)" : "") + '">' + val + '</b></div>';
@@ -2211,7 +2211,8 @@
       row("Lernfortschritt", "neue Wörter, höhere Stufen, Fehlerkartei, Einheiten", "+" + c.fortschritt) +
       row("Missionen", c.missionenDone + " von " + c.missionenAll + " erfüllt", "+" + c.missionen, c.missionenDone === c.missionenAll && c.missionenAll > 0) +
       row("Tagesziel & Boni", c.zielDone ? "Tagesziel, Challenge, Zeit- und Wochen-Bonus" : "noch offen: " + S.goalMin() + " Minuten üben", c.zielDone ? "+" + c.ziel : "+30 möglich", c.zielDone) +
-      row("Arena", "Tageslimit 30", c.arena + " / 30", c.arena >= 30) +
+      row("Arena & Wortspiele", "Tageslimit 30", c.arena + " / 30", c.arena >= 30) +
+      row("Grammatik", "eigenes Tageslimit 50", (c.gram || 0) + " / 50", (c.gram || 0) >= 50) +
       (c.rang ? row("Rangaufstieg", "neuer Rang erreicht", "+" + c.rang, true) : "") +
       (c.eltern ? row("Ziele der Eltern", "Wochenziel oder Lernplan geschafft", "+" + c.eltern, true) : "") +
       (c.streakNext ? row("Serien-Bonus", "noch " + c.streakDays + " " + plural(c.streakDays, "Tag", "Tage") + " bis zum " + c.streakNext + ". Tag", "+" + c.streakBonus + " möglich") : "") +
@@ -2228,7 +2229,8 @@
       '• <b>Wochen-Bonus</b> (neu) für Tage mit geschafftem Tagesziel: 3 Tage <b>+20</b>, 5 Tage <b>+40</b>, 7 Tage <b>+60</b><br>' +
       '• Lern-Serie: 3 Tage <b>+15</b>, 7 <b>+40</b>, 14 <b>+80</b>, 30 <b>+200</b>, 60 <b>+300</b>, 100 <b>+500</b> · Challenge-Serie: 3 Tage +10, 7 +30, 14 +60, 30 +150<br>' +
       '<b style="display:block;margin-top:6px">Spielen</b>' +
-      '• Arena bis <b>30</b> pro Tag, <b>+10</b> bei Rekord · Duell-Sieg <b>+20</b> (bis 3 am Tag)<br>' +
+      '• Arena und Wortspiele bis <b>30</b> pro Tag, <b>+10</b> bei Rekord · Duell-Sieg <b>+20</b> (bis 3 am Tag)<br>' +
+      '• Grammatik bis <b>25</b> je Lektion, höchstens <b>50</b> am Tag (eigenes Limit, zählt nicht zur Arena)<br>' +
       '• Einmaleins bis <b>10</b> je Runde, höchstens <b>150</b> am Tag<br>' +
       '<b style="display:block;margin-top:6px">Extras</b>' +
       '• Boss-Truhen <b>25 bis 50</b>, manchmal mit Überraschung · Pass-Geschenke<br>' +
@@ -2260,7 +2262,7 @@
       '• Falsche Antwort: <b>+2</b> (Dranbleiben zählt)<br>' +
       '• Satz richtig gebaut: <b>+14</b>, falsch <b>+3</b><br>' +
       '• Arena und Wortspiele: <b>+2</b> pro Treffer, dazu am Ende bis zu <b>+60</b> nach Punkten<br>' +
-      '• Grammatik: bis zu <b>+40</b> je Lektion<br>' +
+      '• Grammatik: bis zu <b>+75</b> je Lektion (eine volle Lektion mit allen Aufgaben gleich richtig)<br>' +
       '• Einmaleins: bis zu <b>+30</b> je Runde (Match 15 oder 25), höchstens <b>150</b> XP am Tag<br>' +
       '• Mit einem <b>Booster</b> gibt es doppelte XP (in der Übersicht siehst du normal und mit Booster) und die Boss-Truhe doppelte Münzen<br>' +
       '<span class="muted">Ab Elite I wächst der Abstand von Rang zu Rang um 500 XP (5.000, 5.500, 6.000 …). „The real Unreal“ erreichst du ab ' + S.RANKS[S.RANKS.length - 1].xp.toLocaleString("de-DE") + ' XP.</span></div>' +

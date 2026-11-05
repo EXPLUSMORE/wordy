@@ -1850,7 +1850,7 @@
   function coinsToday() {
     var d = state.daily || {}, cl = d.cl || {}, next = 0, nextDays = 0;
     Object.keys(STREAK_BONUS).map(Number).sort(function (a, b) { return a - b; }).some(function (k) { if (k > state.streak.count) { next = k; nextDays = k - state.streak.count; return true; } });
-    return { fortschritt: cl.fortschritt || 0, missionen: cl.missionen || 0, ziel: cl.ziel || 0, serie: cl.serie || 0, rang: cl.rang || 0, eltern: cl.eltern || 0, arena: d.arenaCoins || 0,
+    return { fortschritt: cl.fortschritt || 0, missionen: cl.missionen || 0, ziel: cl.ziel || 0, serie: cl.serie || 0, rang: cl.rang || 0, eltern: cl.eltern || 0, arena: d.arenaCoins || 0, gram: d.gramCoins || 0,
       missionenDone: (d.missions || []).filter(function (m) { return m.done; }).length, missionenAll: (d.missions || []).length,
       zielDone: !!d.done, streakNext: next, streakDays: nextDays, streakBonus: STREAK_BONUS[next] || 0 };
   }

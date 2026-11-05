@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.175.0
+- **Grammatik gibt mehr Münzen und XP (Checker fühlte sich unfair behandelt):** bis zu **25 Münzen** (vorher 12; 1 Münze je 6 Punkte, eine volle Lektion mit allen Aufgaben gleich richtig = 150 Punkte) und bis zu **75 XP** (vorher 40) je Lektion. Grammatik hat jetzt ein **eigenes Tageslimit von 50 Münzen** und teilt es nicht mehr mit Arena und Wortspielen (bisher gab es nach Arena oft gar keine Münzen mehr). Texte angepasst: „So verdienst du Münzen“ (Zeilen Arena & Wortspiele / Grammatik, Münzen-Übersicht mit Grammatik-Zeile) und „So bekommst du XP“.
+
 ## 2.174.7
 - **Igel-Text wieder raus:** Der Knopf „Wort des Tages vom Igel“ im Herbstkorb ist weg. Das Wort erscheint nur noch, wenn man den Igel antippt.
 

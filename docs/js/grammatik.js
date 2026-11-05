@@ -162,13 +162,13 @@
     var t = L.t, r = rec(t.id), sec = Math.round((Date.now() - L.start) / 1000), items = L.right + L.wrong, correct = L.right;
     var complete = !L.quit;   // abgebrochene Lektion: XP für die Antworten, aber keine Münzen und keine Lektion gezählt
     if (complete) { r.lessons++; r.best = Math.max(r.best || 0, L.score); r.last = Date.now(); }
-    var coins = complete ? Math.min(12, Math.floor(L.score / 8)) : 0;
+    var coins = complete ? Math.min(25, Math.floor(L.score / 6)) : 0;   // v2.175: bis 25 Münzen je Lektion (150 Punkte = volle 15 Aufgaben)
     S.rollDay();
-    var xpGain = S.addXp(Math.min(40, Math.round(L.score / 2))) || 0;
+    var xpGain = S.addXp(Math.min(75, Math.round(L.score / 2))) || 0;
     if (global.WordySync) { global.WordySync.sessionEnd({ sec: sec, items: items, correct: correct, mode: "arena", sub: "grammar:" + t.id, score: L.score, coins: coins, xp: xpGain, end: L.quit ? "quit" : "done" }); global.WordySync.ctx = null; }
     S.rollDay();
-    var left = Math.max(0, 30 - (S.state.daily.arenaCoins || 0)), capped = coins > left; coins = Math.min(coins, left);
-    S.state.daily.arenaCoins = (S.state.daily.arenaCoins || 0) + coins;
+    var left = Math.max(0, 50 - (S.state.daily.gramCoins || 0)), capped = coins > left; coins = Math.min(coins, left);   // eigenes Tageslimit 50, getrennt von Arena und Wortspielen
+    S.state.daily.gramCoins = (S.state.daily.gramCoins || 0) + coins;
     coins = S.boost(coins); S.addCoins(coins);
     var rw = S.finishSession({ items: items, correct: correct, sec: sec, maxChain: L.maxStreak, newSeen: 0, boxSolved: 0, mastered: 0, sentOk: 0, arena: true, complete: complete });
     var info = list().filter(function (x) { return x.id === t.id; })[0], acc = items ? Math.round(correct * 100 / items) : 0;
