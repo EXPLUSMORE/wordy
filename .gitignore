@@ -13,3 +13,4 @@ private/
 *.private.json
 data/private/
 privat-blocklist.txt
+__pycache__/

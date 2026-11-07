@@ -12,7 +12,7 @@ const SOURCES = {
   own:     { name: 'eigene Formulierung', lic: ['CC-BY-SA-4.0'] }
 };
 const STUFEN = ['Basis', 'Aufbau', 'Profi', 'Branchen', 'Fachgebiete', 'Jargon', 'Sprüche'];
-const LIMITS = { wordsMin: 12, wordsMax: 20, sentMin: 3, sentMax: 5, sentWordsMin: 4, sentWordsMax: 12 };
+const LIMITS = { wordsMin: 12, wordsMax: 20, sentMin: 0, sentMax: 5, sentWordsMin: 4, sentWordsMax: 12 };
 
 function checkMeta(m, where, errs, needAuthor) {
   if (!m || typeof m !== 'object') { errs.push(where + ': Herkunft (src, lic) fehlt'); return; }
