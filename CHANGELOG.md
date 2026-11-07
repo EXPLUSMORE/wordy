@@ -10,6 +10,14 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.176.0
+- **610 neue Business-Wörter in 4 neuen Gruppen (38 Einheiten)**, alle selbst formuliert (Herkunft `own`, CC-BY-SA-4.0) und vorab gegen den **gesamten** Bestand auf Dubletten geprüft (neues Werkzeug `tools/dupcheck.js`: gleiche Wörter, andere Schreibweise, Teilphrasen; 100 Treffer wurden ersetzt, z. B. „in the red“). Wählbar unter Lernen › Was lernen? (Business):
+  - **Jargon** (b-61–70, 162 Wörter): Akronyme, Buzzwords, Phrasal Verbs, Wortpaare, falsche Freunde, britisch/amerikanisch, E-Mail- und Meeting-Bausteine, Zahlen & Anteile, Probleme lösen.
+  - **Fachgebiete** (b-71–78, 128): Start-up, Scrum, Kennzahlen, Kundenbindung/CRM, Patente & Marken, Arbeitsrecht, Mahnwesen, Beratung & Freelance.
+  - **Branchen** (b-79–90, 192): Außenhandel & Zoll, Immobilien, Energie, Automobil, Lebensmittel, Landwirtschaft, Medizin, Einzelhandel, Tourismus & Events, Medien & PR, Handwerk, Behörden.
+  - **Sprüche** (b-91–98, 128): Sprichwörter, Sport-, Bau-, Spiel-, Koch-, See- und Farb-Redewendungen, kurze Arbeits-Weisheiten.
+  Je Einheit 3 Beispielsätze für die Satzübungen. Dashboard: Die neuen Gruppen erscheinen dort nach dem Server-Update (`deploy.sh`).
+
 ## 2.175.0
 - **Grammatik gibt mehr Münzen und XP (Checker fühlte sich unfair behandelt):** bis zu **25 Münzen** (vorher 12; 1 Münze je 6 Punkte, eine volle Lektion mit allen Aufgaben gleich richtig = 150 Punkte) und bis zu **75 XP** (vorher 40) je Lektion. Grammatik hat jetzt ein **eigenes Tageslimit von 50 Münzen** und teilt es nicht mehr mit Arena und Wortspielen (bisher gab es nach Arena oft gar keine Münzen mehr). Texte angepasst: „So verdienst du Münzen“ (Zeilen Arena & Wortspiele / Grammatik, Münzen-Übersicht mit Grammatik-Zeile) und „So bekommst du XP“.
 

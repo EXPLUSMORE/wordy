@@ -37,7 +37,7 @@ sent.sort((a, b) => rank(a) - rank(b));
 const J = JSON.stringify, files = {};
 for (const k of rules.STUFEN) {
   const us = Object.values(units).filter(u => u.k === k).sort((a, b) => a.id.localeCompare(b.id)); if (!us.length) continue;
-  files['business-' + k.toLowerCase() + '.js'] = '/* Offene Business-Einheiten, Stufe ' + k + ' – Herkunft je Eintrag im 5. Feld (src, lic). Lizenz: CC BY-SA 4.0, siehe LICENSE-DATA.md */\nwindow.VOCAB_UNITS = (window.VOCAB_UNITS || []).concat([\n' + us.map(u => '{track:"business",k:' + J(u.k) + ',id:' + J(u.id) + ',title:' + J(u.title) + ',icon:' + J(u.icon) + ',words:[\n' + u.words.map(w => J(w)).join(',\n') + ']}').join(',\n') + '\n]);\n';
+  files['business-' + k.toLowerCase().replace(/ü/g, 'ue') + '.js'] = '/* Offene Business-Einheiten, Stufe ' + k + ' – Herkunft je Eintrag im 5. Feld (src, lic). Lizenz: CC BY-SA 4.0, siehe LICENSE-DATA.md */\nwindow.VOCAB_UNITS = (window.VOCAB_UNITS || []).concat([\n' + us.map(u => '{track:"business",k:' + J(u.k) + ',id:' + J(u.id) + ',title:' + J(u.title) + ',icon:' + J(u.icon) + ',words:[\n' + u.words.map(w => J(w)).join(',\n') + ']}').join(',\n') + '\n]);\n';
 }
 files['saetze-open.js'] = '/* Sätze der offenen Business-Einheiten – angehängt, damit bestehende Satz-IDs gleich bleiben. Herkunft im 6. Feld. Lizenz: CC BY-SA 4.0, siehe LICENSE-DATA.md */\nwindow.SENTENCES = (window.SENTENCES || []).concat([\n' + sent.map(r => J(r)).join(',\n') + '\n]);\n';
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'own-'));

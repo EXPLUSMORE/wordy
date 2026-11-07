@@ -1599,7 +1599,7 @@
     if (!p.bossFail) p.bossFail = {};
     return p;
   }
-  var BIZ_ORDER = ["Basis", "Aufbau", "Profi", "Smalltalk", "Redewendungen"];
+  var BIZ_ORDER = ["Basis", "Aufbau", "Profi", "Smalltalk", "Redewendungen", "Branchen", "Fachgebiete", "Jargon", "Sprüche", "Herbst"];
   /* Welche Einheiten stehen im Pfad? Die Eltern können das im Dashboard festlegen; sonst Schule = Headlight 2, Business = die gewählten Stufen */
   function pathUnitList() {
     var tr = state.settings.track === "business" ? "business" : "schule", r = global.WordySync && global.WordySync.remote ? (global.WordySync.remote() || {}).pathUnits : null;

@@ -373,9 +373,9 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
     return h + "</div>";
   }
   /* Fortschritt pro Einheit, gegliedert nach Schuljahr bzw. Business-Stufe; je Einheit die Abschnitte des Lernpfads */
-  var GROUP_RANK = ["Headlight 2", "6", "7", "8", "Basis", "Aufbau", "Profi", "Smalltalk", "Redewendungen", "Eigene Listen"];
+  var GROUP_RANK = ["Headlight 2", "6", "7", "8", "Basis", "Aufbau", "Profi", "Smalltalk", "Redewendungen", "Branchen", "Fachgebiete", "Jargon", "Sprüche", "Herbst", "Eigene Listen"];
   /* Lernbereich einer Gruppe: Schule (Headlight 2, Klassen), Business English oder Eigene Vokabeln */
-  var BIZ_G = ["Basis", "Aufbau", "Profi", "Smalltalk", "Redewendungen"];
+  var BIZ_G = ["Basis", "Aufbau", "Profi", "Smalltalk", "Redewendungen", "Branchen", "Fachgebiete", "Jargon", "Sprüche", "Herbst"];
   function areaOf(g) { return g === "Eigene Listen" ? "✏️ Eigene Vokabeln" : BIZ_G.indexOf(g) >= 0 ? "💼 Business English" : "🎒 Schule"; }
   function areaHead(g, prev) { var a = areaOf(g); return a === prev ? "" : '<h3 style="margin:16px 0 4px;font-size:15px">' + a + "</h3>"; }
   function groupName(g) { return /^\d+$/.test(g) ? "Klasse " + g : g === "Headlight 2" ? "Headlight 2 (Schulbuch)" : g; }
@@ -707,7 +707,7 @@ details.sg .sgb{padding:0 0 12px}details.sg .sgb>.card{box-shadow:none;border:0;
   function unitPicker(cat, id) {
     var groups = {}, order = [];
     cat.forEach(function (u) { var g = String(u.k); if (!groups[g]) { groups[g] = []; order.push(g); } groups[g].push(u); });
-    var RANK = ["Headlight 2", "6", "7", "8", "Basis", "Aufbau", "Profi", "Smalltalk", "Redewendungen", "Eigene Listen"], rk = function (x) { var i = RANK.indexOf(x); return i < 0 ? 99 : i; };
+    var RANK = ["Headlight 2", "6", "7", "8", "Basis", "Aufbau", "Profi", "Smalltalk", "Redewendungen", "Branchen", "Fachgebiete", "Jargon", "Sprüche", "Herbst", "Eigene Listen"], rk = function (x) { var i = RANK.indexOf(x); return i < 0 ? 99 : i; };
     order.sort(function (a, b) { return (rk(a) - rk(b)) || (a < b ? -1 : 1); });
     var prevA = "";
     return '<div class="pick" id="' + id + '">' + order.map(function (g) {

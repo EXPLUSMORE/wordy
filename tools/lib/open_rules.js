@@ -11,7 +11,7 @@ const SOURCES = {
   ewn:     { name: 'Open English WordNet', lic: ['CC-BY-4.0'] },
   own:     { name: 'eigene Formulierung', lic: ['CC-BY-SA-4.0'] }
 };
-const STUFEN = ['Basis', 'Aufbau', 'Profi'];
+const STUFEN = ['Basis', 'Aufbau', 'Profi', 'Branchen', 'Fachgebiete', 'Jargon', 'Sprüche'];
 const LIMITS = { wordsMin: 12, wordsMax: 20, sentMin: 3, sentMax: 5, sentWordsMin: 4, sentWordsMax: 12 };
 
 function checkMeta(m, where, errs, needAuthor) {

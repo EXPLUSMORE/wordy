@@ -623,6 +623,958 @@
     "own:Our systems were attacked last night.",
     "own:Please report anything unusual to the IT team."
    ]
+  },
+  "b-61": {
+   "words": [
+    "ASAP|abbr",
+    "FYI|abbr",
+    "EOD|abbr",
+    "KPI|noun",
+    "ROI|noun",
+    "B2B|adj",
+    "B2C|adj",
+    "ETA|noun",
+    "TBD|abbr",
+    "PTO|noun",
+    "OOO|abbr",
+    "NDA|noun",
+    "SLA|noun",
+    "USP|noun",
+    "FAQ|noun",
+    "QA|noun",
+    "RSVP|abbr",
+    "AOB|abbr"
+   ],
+   "sentences": [
+    "own:Please reply to me ASAP.",
+    "own:The ETA is two o'clock.",
+    "own:The date is still TBD."
+   ]
+  },
+  "b-62": {
+   "words": [
+    "low-hanging fruit|noun",
+    "to move the needle|verb",
+    "deep dive|noun",
+    "bandwidth|noun",
+    "to circle back|verb",
+    "to reach out|verb",
+    "to push back|verb",
+    "to double down|verb",
+    "elevator pitch|noun",
+    "to bounce ideas|phrase",
+    "pain point|noun",
+    "silo|noun",
+    "paradigm shift|noun",
+    "to ping|verb",
+    "at the end of the day|phrase",
+    "to drill down|verb"
+   ],
+   "sentences": [
+    "own:Let us start with the low-hanging fruit.",
+    "own:I will circle back with you tomorrow.",
+    "own:We are on the same page."
+   ]
+  },
+  "b-63": {
+   "words": [
+    "to sign off|verb",
+    "to look into|verb",
+    "to carry out|verb",
+    "to set up|verb",
+    "to hold up|verb",
+    "to step down|verb",
+    "to run through|verb",
+    "to follow through|verb",
+    "to back up|verb",
+    "to chip in|verb",
+    "to call off|verb",
+    "to bring up|verb",
+    "to turn down|verb",
+    "to sort out|verb",
+    "to line up|verb",
+    "to kick off|verb"
+   ],
+   "sentences": [
+    "own:Please fill in this form.",
+    "own:We had to put off the meeting.",
+    "own:She turned down the offer."
+   ]
+  },
+  "b-64": {
+   "words": [
+    "to make a decision|phrase",
+    "to raise a concern|phrase",
+    "to reach an agreement|phrase",
+    "to draw a conclusion|phrase",
+    "to pay attention|phrase",
+    "to run a meeting|phrase",
+    "to do business|phrase",
+    "to give feedback|phrase",
+    "to set a goal|phrase",
+    "to make progress|phrase",
+    "to take responsibility|phrase",
+    "to cut costs|phrase",
+    "to launch a product|phrase",
+    "to file a complaint|phrase",
+    "to meet expectations|phrase",
+    "to break the news|phrase"
+   ],
+   "sentences": [
+    "own:We must make a decision today.",
+    "own:They reached an agreement.",
+    "own:She took responsibility for the project."
+   ]
+  },
+  "b-65": {
+   "words": [
+    "eventually|adv",
+    "actually|adv",
+    "sensible|adj",
+    "sensitive|adj",
+    "commission|noun",
+    "gift|noun",
+    "chef|noun",
+    "fabric|noun",
+    "decent|adj",
+    "physician|noun",
+    "to realize|verb",
+    "sympathetic|adj",
+    "dose|noun",
+    "handy|adj",
+    "brave|adj",
+    "gymnasium|noun"
+   ],
+   "sentences": [
+    "own:Eventually, we found a solution.",
+    "own:I got your email.",
+    "own:She wants to become a manager."
+   ]
+  },
+  "b-66": {
+   "words": [
+    "lift (UK) / elevator (US)|noun",
+    "flat (UK) / apartment (US)|noun",
+    "holiday (UK) / vacation (US)|noun",
+    "mobile (UK) / cell phone (US)|noun",
+    "post (UK) / mail (US)|noun",
+    "lorry (UK) / truck (US)|noun",
+    "queue (UK) / line (US)|noun",
+    "rubbish (UK) / trash (US)|noun",
+    "estate agent (UK) / realtor (US)|noun",
+    "timetable (UK) / schedule (US)|noun",
+    "pavement (UK) / sidewalk (US)|noun",
+    "petrol (UK) / gas (US)|noun",
+    "cheque (UK) / check (US)|noun",
+    "tap (UK) / faucet (US)|noun",
+    "full stop (UK) / period (US)|noun",
+    "CV (UK) / résumé (US)|noun"
+   ],
+   "sentences": [
+    "own:Take the lift to the third floor.",
+    "own:I am on holiday next week.",
+    "own:Please send us your CV."
+   ]
+  },
+  "b-67": {
+   "words": [
+    "I am writing to …|phrase",
+    "Please find attached …|phrase",
+    "Yours faithfully|phrase",
+    "I hope this email finds you well.|phrase",
+    "Apologies for the delay.|phrase",
+    "Could you kindly …|phrase",
+    "Thank you for getting back to me.|phrase",
+    "I would like to enquire about …|phrase",
+    "Unfortunately, I am unable to …|phrase",
+    "In response to your email …|phrase",
+    "Many thanks for your help.|phrase",
+    "Best regards|phrase",
+    "Dear Sir or Madam|phrase",
+    "Just a quick reminder|phrase",
+    "Please let me know if …|phrase",
+    "Sorry to bother you|phrase"
+   ],
+   "sentences": [
+    "own:Please find attached the invoice.",
+    "own:Thank you for getting back to me.",
+    "own:I look forward to hearing from you."
+   ]
+  },
+  "b-68": {
+   "words": [
+    "Let us get started.|phrase",
+    "May I interrupt for a moment?|phrase",
+    "That is a fair point.|phrase",
+    "I agree up to a point.|phrase",
+    "Let me summarise.|phrase",
+    "Could we come back to that later?|phrase",
+    "Let us take this offline.|phrase",
+    "Any other business?|phrase",
+    "Could you repeat that, please?|phrase",
+    "I would like to add something.|phrase",
+    "Shall we vote on it?|phrase",
+    "Let us park that for now.|phrase",
+    "Who is taking the minutes?|phrase",
+    "Can everyone hear me?|phrase",
+    "I am afraid I disagree.|phrase",
+    "Let us go round the table.|phrase"
+   ],
+   "sentences": [
+    "own:Shall we move on to the next point?",
+    "own:Who is taking the minutes?",
+    "own:I am afraid I disagree."
+   ]
+  },
+  "b-69": {
+   "words": [
+    "a third|noun",
+    "three quarters|noun",
+    "double|verb",
+    "triple|verb",
+    "percentage point|noun",
+    "twice as much|phrase",
+    "one in ten|phrase",
+    "roughly|adv",
+    "a tenth|noun",
+    "to round down|verb",
+    "a dozen|noun",
+    "a fifth|noun",
+    "in the region of|phrase",
+    "well over|phrase",
+    "fewer than|phrase",
+    "no more than|phrase"
+   ],
+   "sentences": [
+    "own:A quarter of our staff works from home.",
+    "own:We want to double our sales.",
+    "own:Fewer than ten people came."
+   ]
+  },
+  "b-70": {
+   "words": [
+    "to deal with|verb",
+    "to troubleshoot|verb",
+    "to take action|phrase",
+    "setback|noun",
+    "to straighten out|verb",
+    "knock-on effect|noun",
+    "to flag an issue|phrase",
+    "to take ownership|phrase",
+    "to bring to your attention|phrase",
+    "to put right|verb",
+    "temporary fix|noun",
+    "damage control|noun",
+    "to get things moving|phrase",
+    "to fall behind|verb",
+    "to mitigate|verb",
+    "to come up with|verb"
+   ],
+   "sentences": [
+    "own:We found a workaround for now.",
+    "own:We apologise for the inconvenience.",
+    "own:We are falling behind schedule."
+   ]
+  },
+  "b-71": {
+   "words": [
+    "pitch deck|noun",
+    "seed round|noun",
+    "runway|noun",
+    "unicorn|noun",
+    "business angel|noun",
+    "to bootstrap|verb",
+    "cap table|noun",
+    "burn rate|noun",
+    "exit|noun",
+    "founder|noun",
+    "scale-up|noun",
+    "to raise funds|phrase",
+    "product-market fit|noun",
+    "MVP|noun",
+    "term sheet|noun",
+    "to pivot|verb"
+   ],
+   "sentences": [
+    "own:The founder started the firm in a garage.",
+    "own:We need to raise funds for the launch.",
+    "own:They are still looking for product-market fit."
+   ]
+  },
+  "b-72": {
+   "words": [
+    "story points|noun",
+    "sprint review|noun",
+    "stand-up|noun",
+    "retrospective|noun",
+    "user story|noun",
+    "product owner|noun",
+    "scrum master|noun",
+    "velocity|noun",
+    "kanban board|noun",
+    "increment|noun",
+    "definition of done|noun",
+    "burndown chart|noun",
+    "iteration|noun",
+    "epic|noun",
+    "timebox|noun",
+    "pair programming|noun"
+   ],
+   "sentences": [
+    "own:Our stand-up starts at nine.",
+    "own:The product owner sets the priorities.",
+    "own:Each iteration lasts two weeks."
+   ]
+  },
+  "b-73": {
+   "words": [
+    "leading indicator|noun",
+    "dashboard|noun",
+    "variance|noun",
+    "downturn|noun",
+    "to track|verb",
+    "metric|noun",
+    "conversion rate|noun",
+    "baseline|noun",
+    "outlier|noun",
+    "year-on-year|adv",
+    "quarter-on-quarter|adv",
+    "run rate|noun",
+    "data point|noun",
+    "target vs actual|phrase",
+    "to measure|verb",
+    "to drop|verb"
+   ],
+   "sentences": [
+    "own:The dashboard shows our sales live.",
+    "own:Sales grew ten percent year-on-year.",
+    "own:How do you measure success?"
+   ]
+  },
+  "b-74": {
+   "words": [
+    "churn|noun",
+    "to onboard|verb",
+    "upselling|noun",
+    "cross-selling|noun",
+    "touchpoint|noun",
+    "customer journey|noun",
+    "lifetime value|noun",
+    "loyalty programme|noun",
+    "prospect|noun",
+    "pipeline|noun",
+    "retention|noun",
+    "NPS|noun",
+    "account manager|noun",
+    "renewal|noun",
+    "referral|noun",
+    "to nurture|verb"
+   ],
+   "sentences": [
+    "own:Your account manager will call you.",
+    "own:Most new clients come through referral.",
+    "own:Every touchpoint should feel consistent."
+   ]
+  },
+  "b-75": {
+   "words": [
+    "trademark|noun",
+    "patent office|noun",
+    "infringement|noun",
+    "copyright|noun",
+    "royalty|noun",
+    "patent pending|phrase",
+    "plagiarism|noun",
+    "public domain|noun",
+    "licensor|noun",
+    "trade secret|noun",
+    "brand name|noun",
+    "to sue|verb",
+    "intellectual property|noun",
+    "counterfeit|adj",
+    "disclaimer|noun",
+    "to register a design|phrase"
+   ],
+   "sentences": [
+    "own:The photo is protected by copyright.",
+    "own:They are going to sue the supplier.",
+    "own:We protect our intellectual property."
+   ]
+  },
+  "b-76": {
+   "words": [
+    "unfair dismissal|noun",
+    "termination agreement|noun",
+    "workplace agreement|noun",
+    "fixed-term contract|noun",
+    "probation|noun",
+    "dismissal|noun",
+    "sick pay|noun",
+    "wage slip|noun",
+    "employment contract|noun",
+    "collective agreement|noun",
+    "overtime pay|noun",
+    "to give notice|phrase",
+    "to lay off|verb",
+    "agency worker|noun",
+    "trade union|noun",
+    "minimum wage|noun"
+   ],
+   "sentences": [
+    "own:The notice period is three months.",
+    "own:She resigned last Friday.",
+    "own:The company laid off thirty workers."
+   ]
+  },
+  "b-77": {
+   "words": [
+    "debt collection|noun",
+    "dunning letter|noun",
+    "arrears|noun",
+    "outstanding balance|noun",
+    "late fee|noun",
+    "payment plan|noun",
+    "creditor|noun",
+    "debtor|noun",
+    "to waive|verb",
+    "final demand|noun",
+    "bailiff|noun",
+    "statute of limitations|noun",
+    "bad debt|noun",
+    "late payer|noun",
+    "credit check|noun",
+    "to chase payment|phrase"
+   ],
+   "sentences": [
+    "own:This invoice is overdue.",
+    "own:We agreed on a payment plan.",
+    "own:We run a credit check on new clients."
+   ]
+  },
+  "b-78": {
+   "words": [
+    "retainer|noun",
+    "scope creep|noun",
+    "to pitch for|phrase",
+    "hourly rate|noun",
+    "freelancer|noun",
+    "statement of work|noun",
+    "kick-off call|noun",
+    "billable hours|noun",
+    "client brief|noun",
+    "turnaround time|noun",
+    "non-compete clause|noun",
+    "day rate|noun",
+    "pro bono|adv",
+    "self-employed|adj",
+    "portfolio|noun",
+    "to bill by the hour|phrase"
+   ],
+   "sentences": [
+    "own:We hired a freelancer for the website.",
+    "own:Can you quote for the whole job?",
+    "own:She has been self-employed since 2020."
+   ]
+  },
+  "b-79": {
+   "words": [
+    "customs clearance|noun",
+    "tariff|noun",
+    "Incoterms|noun",
+    "bill of lading|noun",
+    "export licence|noun",
+    "import duty|noun",
+    "freight forwarder|noun",
+    "container|noun",
+    "free trade zone|noun",
+    "certificate of origin|noun",
+    "port|noun",
+    "quota|noun",
+    "trade barrier|noun",
+    "embargo|noun",
+    "customs declaration|noun",
+    "to export|verb"
+   ],
+   "sentences": [
+    "own:Customs clearance took two days.",
+    "own:We export machines to Asia.",
+    "own:The container leaves the port tomorrow."
+   ]
+  },
+  "b-80": {
+   "words": [
+    "landlord|noun",
+    "tenant|noun",
+    "floor plan|noun",
+    "rent increase|noun",
+    "notice to quit|noun",
+    "viewing|noun",
+    "utilities|noun",
+    "furnished|adj",
+    "freehold|noun",
+    "caretaker|noun",
+    "rental agreement|noun",
+    "commercial property|noun",
+    "to evict|verb",
+    "to sublet|verb",
+    "move-in date|noun",
+    "deposit protection|noun"
+   ],
+   "sentences": [
+    "own:The viewing is on Saturday at ten.",
+    "own:The flat is fully furnished.",
+    "own:Utilities are not included in the rent."
+   ]
+  },
+  "b-81": {
+   "words": [
+    "power grid|noun",
+    "meter reading|noun",
+    "renewable energy|noun",
+    "solar panel|noun",
+    "wind turbine|noun",
+    "electricity bill|noun",
+    "power cut|noun",
+    "energy supplier|noun",
+    "heat pump|noun",
+    "charging station|noun",
+    "kilowatt hour|noun",
+    "blackout|noun",
+    "to switch supplier|phrase",
+    "fossil fuel|noun",
+    "gas storage|noun",
+    "energy-saving|adj"
+   ],
+   "sentences": [
+    "own:Please send us your meter reading.",
+    "own:A power cut stopped production.",
+    "own:It is easy to switch supplier."
+   ]
+  },
+  "b-82": {
+   "words": [
+    "recall|noun",
+    "spark plug|noun",
+    "test drive|noun",
+    "dealership|noun",
+    "oil change|noun",
+    "brake|noun",
+    "engine|noun",
+    "service interval|noun",
+    "exhaust|noun",
+    "gearbox|noun",
+    "roadworthy|adj",
+    "tow truck|noun",
+    "windscreen|noun",
+    "number plate|noun",
+    "seat belt|noun",
+    "roadside assistance|noun"
+   ],
+   "sentences": [
+    "own:Would you like a test drive?",
+    "own:The brakes need to be checked.",
+    "own:We had a breakdown on the motorway."
+   ]
+  },
+  "b-83": {
+   "words": [
+    "supplier audit|noun",
+    "to marinate|verb",
+    "allergen|noun",
+    "hygiene inspection|noun",
+    "to garnish|verb",
+    "kitchen staff|noun",
+    "food safety|noun",
+    "cold chain|noun",
+    "best-before date|noun",
+    "portion size|noun",
+    "food waste|noun",
+    "wholesale|noun",
+    "to cater|verb",
+    "organic|adj",
+    "frozen|adj",
+    "to prepare|verb"
+   ],
+   "sentences": [
+    "own:Check the best-before date.",
+    "own:We want to reduce food waste.",
+    "own:All our eggs are organic."
+   ]
+  },
+  "b-84": {
+   "words": [
+    "livestock|noun",
+    "subsidy|noun",
+    "crop|noun",
+    "fertiliser|noun",
+    "tractor|noun",
+    "organic farming|noun",
+    "irrigation|noun",
+    "dairy|noun",
+    "greenhouse|noun",
+    "pesticide|noun",
+    "grain|noun",
+    "farmland|noun",
+    "cattle|noun",
+    "to plough|verb",
+    "farm shop|noun",
+    "drought|noun"
+   ],
+   "sentences": [
+    "own:Tomatoes grow in the greenhouse.",
+    "own:The drought damaged the crops.",
+    "own:Farmers get a subsidy per hectare."
+   ]
+  },
+  "b-85": {
+   "words": [
+    "blood test|noun",
+    "side effect|noun",
+    "clinical trial|noun",
+    "dosage|noun",
+    "to prescribe|verb",
+    "patient record|noun",
+    "vaccine|noun",
+    "diagnosis|noun",
+    "painkiller|noun",
+    "medical device|noun",
+    "package leaflet|noun",
+    "over-the-counter|adj",
+    "check-up|noun",
+    "specialist|noun",
+    "to approve a drug|phrase",
+    "x-ray|noun"
+   ],
+   "sentences": [
+    "own:The pharmacy opens at eight.",
+    "own:Read the package leaflet carefully.",
+    "own:She was sent to a specialist."
+   ]
+  },
+  "b-86": {
+   "words": [
+    "return policy|noun",
+    "stock-take|noun",
+    "display stand|noun",
+    "in-store pickup|noun",
+    "window display|noun",
+    "shopping basket|noun",
+    "shoplifting|noun",
+    "stockroom|noun",
+    "bulk buy|noun",
+    "clearance sale|noun",
+    "to browse|verb",
+    "to restock|verb",
+    "footfall|noun",
+    "pop-up store|noun",
+    "to mark down|verb",
+    "mark-up|noun"
+   ],
+   "sentences": [
+    "own:Do you have a loyalty card?",
+    "own:We restock the shelves every morning.",
+    "own:All winter coats are marked down."
+   ]
+  },
+  "b-87": {
+   "words": [
+    "city break|noun",
+    "keynote speaker|noun",
+    "catering|noun",
+    "tour guide|noun",
+    "package holiday|noun",
+    "sightseeing|noun",
+    "guest list|noun",
+    "stage|noun",
+    "seating plan|noun",
+    "exhibitor|noun",
+    "brochure|noun",
+    "to organise an event|phrase",
+    "peak season|noun",
+    "off-season|noun",
+    "tour operator|noun",
+    "registration desk|noun"
+   ],
+   "sentences": [
+    "own:Your name is on the guest list.",
+    "own:Hotels are full in peak season.",
+    "own:She organises events for a living."
+   ]
+  },
+  "b-88": {
+   "words": [
+    "op-ed|noun",
+    "media coverage|noun",
+    "embargo date|noun",
+    "journalist|noun",
+    "headline|noun",
+    "spokesperson|noun",
+    "press conference|noun",
+    "media outlet|noun",
+    "to broadcast|verb",
+    "influencer|noun",
+    "sponsorship|noun",
+    "media kit|noun",
+    "newsroom|noun",
+    "to leak|verb",
+    "podcast|noun",
+    "to quote a source|phrase"
+   ],
+   "sentences": [
+    "own:We published a press release today.",
+    "own:The video went viral overnight.",
+    "own:She hosts a weekly podcast."
+   ]
+  },
+  "b-89": {
+   "words": [
+    "wiring|noun",
+    "plumbing|noun",
+    "spirit level|noun",
+    "on-site|adv",
+    "wrench|noun",
+    "fuse|noun",
+    "socket|noun",
+    "insulation|noun",
+    "sandpaper|noun",
+    "plaster|noun",
+    "radiator|noun",
+    "apprentice|noun",
+    "to measure up|verb",
+    "drainpipe|noun",
+    "boiler|noun",
+    "to tile|verb"
+   ],
+   "sentences": [
+    "own:Can I have an estimate for the job?",
+    "own:There is a leak under the sink.",
+    "own:The engineer will be on-site tomorrow."
+   ]
+  },
+  "b-90": {
+   "words": [
+    "permit|noun",
+    "hearing|noun",
+    "regulation|noun",
+    "authority|noun",
+    "application form|noun",
+    "civil servant|noun",
+    "ministry|noun",
+    "local council|noun",
+    "citizen|noun",
+    "registration office|noun",
+    "fine|noun",
+    "to appeal|verb",
+    "decision notice|noun",
+    "public sector|noun",
+    "to apply for a permit|phrase",
+    "red tape|noun"
+   ],
+   "sentences": [
+    "own:Fill in the application form.",
+    "own:You can appeal within four weeks.",
+    "own:Too much red tape slows us down."
+   ]
+  },
+  "b-91": {
+   "words": [
+    "A stitch in time saves nine.|proverb",
+    "Do not count your chickens before they hatch.|proverb",
+    "Many hands make light work.|proverb",
+    "Birds of a feather flock together.|proverb",
+    "Honesty is the best policy.|proverb",
+    "Fortune favours the bold.|proverb",
+    "Two heads are better than one.|proverb",
+    "Slow and steady wins the race.|proverb",
+    "All that glitters is not gold.|proverb",
+    "Rome was not built in a day.|proverb",
+    "A bird in the hand is worth two in the bush.|proverb",
+    "Look before you leap.|proverb",
+    "Curiosity killed the cat.|proverb",
+    "There is no such thing as a free lunch.|proverb",
+    "The pen is mightier than the sword.|proverb",
+    "Do not judge a book by its cover.|proverb"
+   ],
+   "sentences": [
+    "own:Better late than never.",
+    "own:Practice always makes perfect.",
+    "own:Do not count your chickens before they hatch."
+   ]
+  },
+  "b-92": {
+   "words": [
+    "a level playing field|idiom",
+    "a curveball|idiom",
+    "to move the goalposts|idiom",
+    "game plan|noun",
+    "a team player|idiom",
+    "to hit it out of the park|idiom",
+    "to step up to the plate|idiom",
+    "in the home stretch|idiom",
+    "to play hardball|idiom",
+    "to throw in the towel|idiom",
+    "a long shot|idiom",
+    "to be on the bench|idiom",
+    "to make the cut|idiom",
+    "to score a point|idiom",
+    "a game of two halves|idiom",
+    "to keep your eye on the ball|idiom"
+   ],
+   "sentences": [
+    "own:She is a real team player.",
+    "own:The ball is in your court.",
+    "own:The new director calls the shots."
+   ]
+  },
+  "b-93": {
+   "words": [
+    "to lay the groundwork|idiom",
+    "nuts and bolts|idiom",
+    "to build bridges|idiom",
+    "a solid foundation|idiom",
+    "to tighten the screws|idiom",
+    "blueprint|noun",
+    "to raise the bar|idiom",
+    "cornerstone|noun",
+    "back to the drawing board|idiom",
+    "to patch things up|idiom",
+    "to hammer out a deal|idiom",
+    "rough around the edges|idiom",
+    "to nail it|idiom",
+    "to put the finishing touches|idiom",
+    "to knock down walls|idiom",
+    "under construction|phrase"
+   ],
+   "sentences": [
+    "own:She builds bridges between the teams.",
+    "own:You nailed it in the interview.",
+    "own:Our website is still under construction."
+   ]
+  },
+  "b-94": {
+   "words": [
+    "an ace up your sleeve|idiom",
+    "to cut your losses|idiom",
+    "to raise the stakes|idiom",
+    "to call someone's bluff|idiom",
+    "to play your cards right|idiom",
+    "a wild card|idiom",
+    "a game of chance|idiom",
+    "a deal breaker|idiom",
+    "the odds are against us|idiom",
+    "to bet on the wrong horse|idiom",
+    "jackpot|noun",
+    "all in|idiom",
+    "to be a gamble|idiom",
+    "to push your luck|idiom",
+    "to shuffle the deck|idiom",
+    "a gamble that paid off|idiom"
+   ],
+   "sentences": [
+    "own:This supplier is a safe bet.",
+    "own:Price is a deal breaker for us.",
+    "own:We decided to play it safe."
+   ]
+  },
+  "b-95": {
+   "words": [
+    "too many cooks spoil the broth|idiom",
+    "half-baked|adj",
+    "a piece of cake|idiom",
+    "bread and butter|idiom",
+    "to cook the books|idiom",
+    "on the back burner|idiom",
+    "to eat humble pie|idiom",
+    "a hot potato|idiom",
+    "to spill the beans|idiom",
+    "to butter someone up|idiom",
+    "to bite off more than you can chew|idiom",
+    "cream of the crop|idiom",
+    "a taste of your own medicine|idiom",
+    "icing on the cake|idiom",
+    "a recipe for disaster|idiom",
+    "to have a lot on your plate|idiom"
+   ],
+   "sentences": [
+    "own:The test was a piece of cake.",
+    "own:I have a lot on my plate this week.",
+    "own:Take his numbers with a pinch of salt."
+   ]
+  },
+  "b-96": {
+   "words": [
+    "to sail through|idiom",
+    "to be at the helm|idiom",
+    "to rock the boat|idiom",
+    "smooth sailing|idiom",
+    "to jump ship|idiom",
+    "all hands on deck|idiom",
+    "to learn the ropes|idiom",
+    "to turn the tide|idiom",
+    "to miss the boat|idiom",
+    "a loose cannon|idiom",
+    "to run a tight ship|idiom",
+    "to set sail|idiom",
+    "dead in the water|idiom",
+    "a sinking ship|idiom",
+    "to keep your head above water|idiom",
+    "to stay on course|idiom"
+   ],
+   "sentences": [
+    "own:We are all in the same boat.",
+    "own:New staff learn the ropes quickly.",
+    "own:The company weathered the storm."
+   ]
+  },
+  "b-97": {
+   "words": [
+    "green light|noun",
+    "white elephant|idiom",
+    "blue-sky thinking|noun",
+    "a grey area|idiom",
+    "to see red|idiom",
+    "golden handshake|noun",
+    "black sheep|idiom",
+    "one-off|noun",
+    "at sixes and sevens|idiom",
+    "a zero-sum game|idiom",
+    "a one-man show|idiom",
+    "fifty-fifty|adj",
+    "second to none|idiom",
+    "a 360-degree view|phrase",
+    "to be in the pink|idiom",
+    "to paint a bleak picture|idiom"
+   ],
+   "sentences": [
+    "own:We got the green light for the project.",
+    "own:We split the costs fifty-fifty.",
+    "own:Our service is second to none."
+   ]
+  },
+  "b-98": {
+   "words": [
+    "Teamwork makes the dream work.|saying",
+    "Fail fast, learn fast.|saying",
+    "Done is better than perfect.|saying",
+    "Nothing ventured, nothing gained.|saying",
+    "Less is more.|saying",
+    "Quality over quantity.|saying",
+    "Lead by example.|saying",
+    "Communication is key.|saying",
+    "Knowledge is power.|saying",
+    "Measure twice, cut once.|saying",
+    "Keep it simple.|saying",
+    "The customer is always right.|saying",
+    "Trust takes years to build.|saying",
+    "Small steps lead to big results.|saying",
+    "Ask for help early.|saying",
+    "Under-promise and over-deliver.|saying"
+   ],
+   "sentences": [
+    "own:Good managers lead by example.",
+    "own:Trust takes years to build.",
+    "own:Keep it simple and clear."
+   ]
   }
  },
  "sentenceOrder": [
@@ -721,6 +1673,119 @@
   "own:Never click on links in suspicious emails.",
   "own:Use a different password for each account.",
   "own:Our systems were attacked last night.",
-  "own:Please report anything unusual to the IT team."
+  "own:Please report anything unusual to the IT team.",
+  "own:Please reply to me ASAP.",
+  "own:The ETA is two o'clock.",
+  "own:The date is still TBD.",
+  "own:Let us start with the low-hanging fruit.",
+  "own:I will circle back with you tomorrow.",
+  "own:We are on the same page.",
+  "own:Please fill in this form.",
+  "own:We had to put off the meeting.",
+  "own:She turned down the offer.",
+  "own:We must make a decision today.",
+  "own:They reached an agreement.",
+  "own:She took responsibility for the project.",
+  "own:Eventually, we found a solution.",
+  "own:I got your email.",
+  "own:She wants to become a manager.",
+  "own:Take the lift to the third floor.",
+  "own:I am on holiday next week.",
+  "own:Please send us your CV.",
+  "own:Please find attached the invoice.",
+  "own:Thank you for getting back to me.",
+  "own:I look forward to hearing from you.",
+  "own:Shall we move on to the next point?",
+  "own:Who is taking the minutes?",
+  "own:I am afraid I disagree.",
+  "own:A quarter of our staff works from home.",
+  "own:We want to double our sales.",
+  "own:Fewer than ten people came.",
+  "own:We found a workaround for now.",
+  "own:We are falling behind schedule.",
+  "own:The founder started the firm in a garage.",
+  "own:We need to raise funds for the launch.",
+  "own:They are still looking for product-market fit.",
+  "own:Our stand-up starts at nine.",
+  "own:The product owner sets the priorities.",
+  "own:Each iteration lasts two weeks.",
+  "own:The dashboard shows our sales live.",
+  "own:Sales grew ten percent year-on-year.",
+  "own:How do you measure success?",
+  "own:Your account manager will call you.",
+  "own:Most new clients come through referral.",
+  "own:Every touchpoint should feel consistent.",
+  "own:The photo is protected by copyright.",
+  "own:They are going to sue the supplier.",
+  "own:We protect our intellectual property.",
+  "own:The notice period is three months.",
+  "own:She resigned last Friday.",
+  "own:The company laid off thirty workers.",
+  "own:This invoice is overdue.",
+  "own:We agreed on a payment plan.",
+  "own:We run a credit check on new clients.",
+  "own:We hired a freelancer for the website.",
+  "own:Can you quote for the whole job?",
+  "own:She has been self-employed since 2020.",
+  "own:Customs clearance took two days.",
+  "own:We export machines to Asia.",
+  "own:The container leaves the port tomorrow.",
+  "own:The viewing is on Saturday at ten.",
+  "own:The flat is fully furnished.",
+  "own:Utilities are not included in the rent.",
+  "own:Please send us your meter reading.",
+  "own:A power cut stopped production.",
+  "own:It is easy to switch supplier.",
+  "own:Would you like a test drive?",
+  "own:The brakes need to be checked.",
+  "own:We had a breakdown on the motorway.",
+  "own:Check the best-before date.",
+  "own:We want to reduce food waste.",
+  "own:All our eggs are organic.",
+  "own:Tomatoes grow in the greenhouse.",
+  "own:The drought damaged the crops.",
+  "own:Farmers get a subsidy per hectare.",
+  "own:The pharmacy opens at eight.",
+  "own:Read the package leaflet carefully.",
+  "own:She was sent to a specialist.",
+  "own:Do you have a loyalty card?",
+  "own:We restock the shelves every morning.",
+  "own:All winter coats are marked down.",
+  "own:Your name is on the guest list.",
+  "own:Hotels are full in peak season.",
+  "own:She organises events for a living.",
+  "own:We published a press release today.",
+  "own:The video went viral overnight.",
+  "own:She hosts a weekly podcast.",
+  "own:Can I have an estimate for the job?",
+  "own:There is a leak under the sink.",
+  "own:The engineer will be on-site tomorrow.",
+  "own:Fill in the application form.",
+  "own:You can appeal within four weeks.",
+  "own:Too much red tape slows us down.",
+  "own:Better late than never.",
+  "own:Practice always makes perfect.",
+  "own:Do not count your chickens before they hatch.",
+  "own:She is a real team player.",
+  "own:The ball is in your court.",
+  "own:The new director calls the shots.",
+  "own:She builds bridges between the teams.",
+  "own:You nailed it in the interview.",
+  "own:Our website is still under construction.",
+  "own:This supplier is a safe bet.",
+  "own:Price is a deal breaker for us.",
+  "own:We decided to play it safe.",
+  "own:The test was a piece of cake.",
+  "own:I have a lot on my plate this week.",
+  "own:Take his numbers with a pinch of salt.",
+  "own:We are all in the same boat.",
+  "own:New staff learn the ropes quickly.",
+  "own:The company weathered the storm.",
+  "own:We got the green light for the project.",
+  "own:We split the costs fifty-fifty.",
+  "own:Our service is second to none.",
+  "own:Good managers lead by example.",
+  "own:Trust takes years to build.",
+  "own:Keep it simple and clear."
  ]
 }

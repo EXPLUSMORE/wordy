@@ -1,30 +1,775 @@
 {
-  "_hinweis": "ENTWURF zur Freigabe. Themen und Stufen nach Lückenanalyse (Altbestand wird nicht gedoppelt). 'topics' und 'categories' sind Suchmuster auf die Themen-/Kategorie-Angaben der Wiktextract-Daten und müssen am echten Datensatz geprüft werden; 'include'/'exclude' sind Listen von Stichwörtern, die der Betreiber pflegt. Es werden nur Wörter aufgenommen, die in NGSL oder BSL stehen UND in Wiktextract eine deutsche Übersetzung haben.",
-  "bands": { "_hinweis": "Annahme (zu bestätigen): höchster Häufigkeitsrang (NGSL/BSL) je Stufe, ersatzweise Listenposition", "Basis": 1500, "Aufbau": 3000, "Profi": 99999 },
-  "units": [
-    { "id": "b-37", "k": "Basis",  "cefr": "A2",    "icon": "🛒", "title": "Bestellen & Liefern",              "topics": ["commerce","business","logistics"], "categories": ["order","deliver","shop","purchas"] },
-    { "id": "b-38", "k": "Basis",  "cefr": "A2",    "icon": "🏷️", "title": "Preise, Rabatt & Angebot",         "topics": ["commerce","business","finance"],   "categories": ["price","cost","discount","offer"] },
-    { "id": "b-39", "k": "Basis",  "cefr": "A2",    "icon": "🧾", "title": "Rechnung & Zahlung",               "topics": ["finance","business","accounting"], "categories": ["invoice","payment","pay","bill"] },
-    { "id": "b-40", "k": "Aufbau", "cefr": "B1",    "icon": "🧑‍💼", "title": "Bewerbung & Vorstellungsgespräch", "topics": ["employment","business"],            "categories": ["job","employ","career","interview","apply"] },
-    { "id": "b-41", "k": "Basis",  "cefr": "A2",    "icon": "💻", "title": "IT-Support & Geräte",              "topics": ["computing","technology"],          "categories": ["comput","software","hardware","internet"] },
-    { "id": "b-42", "k": "Aufbau", "cefr": "B1",    "icon": "🐞", "title": "Software-Projekte & Fehler",       "topics": ["computing","software"],            "categories": ["software","program","bug","develop"] },
-    { "id": "b-43", "k": "Aufbau", "cefr": "B1",    "icon": "🛡️", "title": "Versicherung: Police & Schaden",   "topics": ["insurance","law","finance"],       "categories": ["insur"] },
-    { "id": "b-44", "k": "Basis",  "cefr": "A2",    "icon": "💳", "title": "Konto, Karte & Geld abheben",      "topics": ["banking","finance"],               "categories": ["bank","money","card","account"] },
-    { "id": "b-45", "k": "Aufbau", "cefr": "B1",    "icon": "🏦", "title": "Kredit, Zinsen & Anlage",          "topics": ["banking","finance","economics"],   "categories": ["bank","loan","interest","invest"] },
-    { "id": "b-46", "k": "Basis",  "cefr": "A1-A2", "icon": "🍽️", "title": "Restaurant: Reservierung & Bestellung", "topics": ["food","gastronomy","cooking"], "categories": ["restaurant","food","drink","dining","meal"] },
-    { "id": "b-47", "k": "Aufbau", "cefr": "B1",    "icon": "🛎️", "title": "Hotel: Rezeption & Beschwerde",    "topics": ["tourism","hospitality"],           "categories": ["hotel","tourism","hospitality","travel"] },
-    { "id": "b-48", "k": "Basis",  "cefr": "A2",    "icon": "🔧", "title": "Werkzeug & Material",              "topics": ["tools","construction","carpentry"],"categories": ["tool","construct","material","building"] },
-    { "id": "b-49", "k": "Aufbau", "cefr": "B1",    "icon": "🏗️", "title": "Baustelle: Angebot & Termin",      "topics": ["construction","architecture"],     "categories": ["construct","building","architect","engineer"] },
-    { "id": "b-50", "k": "Basis",  "cefr": "A2",    "icon": "🩺", "title": "Praxis & Termin beim Arzt",        "topics": ["medicine","health"],               "categories": ["medic","health","hospital","doctor"] },
-    { "id": "b-51", "k": "Aufbau", "cefr": "B1",    "icon": "🧑‍⚕️", "title": "Pflege & Betreuung",              "topics": ["medicine","health","nursing"],     "categories": ["nurs","care","patient","health"] },
-    { "id": "b-52", "k": "Basis",  "cefr": "A1-A2", "icon": "🛍️", "title": "Laden & Kasse",                    "topics": ["commerce","retail"],               "categories": ["shop","retail","store","sale"] },
-    { "id": "b-53", "k": "Aufbau", "cefr": "B1",    "icon": "🧴", "title": "Sortiment & Kundenberatung",       "topics": ["commerce","retail","marketing"],   "categories": ["retail","product","customer","brand"] },
-    { "id": "b-54", "k": "Basis",  "cefr": "A2",    "icon": "📦", "title": "Versand & Transport",              "topics": ["transport","logistics","shipping"],"categories": ["transport","ship","deliver","vehicle"] },
-    { "id": "b-55", "k": "Aufbau", "cefr": "B1",    "icon": "🏭", "title": "Lager & Fuhrpark",                 "topics": ["logistics","transport","automotive"],"categories": ["warehouse","vehicle","truck","stock"] },
-    { "id": "b-56", "k": "Basis",  "cefr": "A2",    "icon": "🗃️", "title": "Verwaltung: Formulare & Post",     "topics": ["business","law"],                  "categories": ["form","mail","office","document","administr"] },
-    { "id": "b-57", "k": "Basis",  "cefr": "A2",    "icon": "⚙️", "title": "Produktion: Maschinen & Arbeitsschritte", "topics": ["engineering","manufacturing","machinery"], "categories": ["machine","manufactur","factory","produc"] },
-    { "id": "b-58", "k": "Aufbau", "cefr": "B1",    "icon": "🦺", "title": "Wartung & Sicherheit am Arbeitsplatz", "topics": ["engineering","safety","manufacturing"], "categories": ["safety","maintenance","repair","machine"] },
-    { "id": "b-59", "k": "Aufbau", "cefr": "B1",    "icon": "📲", "title": "Online-Vertrieb & Social Media",   "topics": ["marketing","internet","commerce"], "categories": ["market","internet","advertis","online"] },
-    { "id": "b-60", "k": "Profi",  "cefr": "B1",    "icon": "🛰️", "title": "IT-Sicherheit im Alltag",          "topics": ["computing","security"],            "categories": ["security","comput","network","internet"] }
-  ]
+ "_hinweis": "ENTWURF zur Freigabe. Themen und Stufen nach Lückenanalyse (Altbestand wird nicht gedoppelt). 'topics' und 'categories' sind Suchmuster auf die Themen-/Kategorie-Angaben der Wiktextract-Daten und müssen am echten Datensatz geprüft werden; 'include'/'exclude' sind Listen von Stichwörtern, die der Betreiber pflegt. Es werden nur Wörter aufgenommen, die in NGSL oder BSL stehen UND in Wiktextract eine deutsche Übersetzung haben.",
+ "bands": {
+  "_hinweis": "Annahme (zu bestätigen): höchster Häufigkeitsrang (NGSL/BSL) je Stufe, ersatzweise Listenposition",
+  "Basis": 1500,
+  "Aufbau": 3000,
+  "Profi": 99999
+ },
+ "units": [
+  {
+   "id": "b-37",
+   "k": "Basis",
+   "cefr": "A2",
+   "icon": "🛒",
+   "title": "Bestellen & Liefern",
+   "topics": [
+    "commerce",
+    "business",
+    "logistics"
+   ],
+   "categories": [
+    "order",
+    "deliver",
+    "shop",
+    "purchas"
+   ]
+  },
+  {
+   "id": "b-38",
+   "k": "Basis",
+   "cefr": "A2",
+   "icon": "🏷️",
+   "title": "Preise, Rabatt & Angebot",
+   "topics": [
+    "commerce",
+    "business",
+    "finance"
+   ],
+   "categories": [
+    "price",
+    "cost",
+    "discount",
+    "offer"
+   ]
+  },
+  {
+   "id": "b-39",
+   "k": "Basis",
+   "cefr": "A2",
+   "icon": "🧾",
+   "title": "Rechnung & Zahlung",
+   "topics": [
+    "finance",
+    "business",
+    "accounting"
+   ],
+   "categories": [
+    "invoice",
+    "payment",
+    "pay",
+    "bill"
+   ]
+  },
+  {
+   "id": "b-40",
+   "k": "Aufbau",
+   "cefr": "B1",
+   "icon": "🧑‍💼",
+   "title": "Bewerbung & Vorstellungsgespräch",
+   "topics": [
+    "employment",
+    "business"
+   ],
+   "categories": [
+    "job",
+    "employ",
+    "career",
+    "interview",
+    "apply"
+   ]
+  },
+  {
+   "id": "b-41",
+   "k": "Basis",
+   "cefr": "A2",
+   "icon": "💻",
+   "title": "IT-Support & Geräte",
+   "topics": [
+    "computing",
+    "technology"
+   ],
+   "categories": [
+    "comput",
+    "software",
+    "hardware",
+    "internet"
+   ]
+  },
+  {
+   "id": "b-42",
+   "k": "Aufbau",
+   "cefr": "B1",
+   "icon": "🐞",
+   "title": "Software-Projekte & Fehler",
+   "topics": [
+    "computing",
+    "software"
+   ],
+   "categories": [
+    "software",
+    "program",
+    "bug",
+    "develop"
+   ]
+  },
+  {
+   "id": "b-43",
+   "k": "Aufbau",
+   "cefr": "B1",
+   "icon": "🛡️",
+   "title": "Versicherung: Police & Schaden",
+   "topics": [
+    "insurance",
+    "law",
+    "finance"
+   ],
+   "categories": [
+    "insur"
+   ]
+  },
+  {
+   "id": "b-44",
+   "k": "Basis",
+   "cefr": "A2",
+   "icon": "💳",
+   "title": "Konto, Karte & Geld abheben",
+   "topics": [
+    "banking",
+    "finance"
+   ],
+   "categories": [
+    "bank",
+    "money",
+    "card",
+    "account"
+   ]
+  },
+  {
+   "id": "b-45",
+   "k": "Aufbau",
+   "cefr": "B1",
+   "icon": "🏦",
+   "title": "Kredit, Zinsen & Anlage",
+   "topics": [
+    "banking",
+    "finance",
+    "economics"
+   ],
+   "categories": [
+    "bank",
+    "loan",
+    "interest",
+    "invest"
+   ]
+  },
+  {
+   "id": "b-46",
+   "k": "Basis",
+   "cefr": "A1-A2",
+   "icon": "🍽️",
+   "title": "Restaurant: Reservierung & Bestellung",
+   "topics": [
+    "food",
+    "gastronomy",
+    "cooking"
+   ],
+   "categories": [
+    "restaurant",
+    "food",
+    "drink",
+    "dining",
+    "meal"
+   ]
+  },
+  {
+   "id": "b-47",
+   "k": "Aufbau",
+   "cefr": "B1",
+   "icon": "🛎️",
+   "title": "Hotel: Rezeption & Beschwerde",
+   "topics": [
+    "tourism",
+    "hospitality"
+   ],
+   "categories": [
+    "hotel",
+    "tourism",
+    "hospitality",
+    "travel"
+   ]
+  },
+  {
+   "id": "b-48",
+   "k": "Basis",
+   "cefr": "A2",
+   "icon": "🔧",
+   "title": "Werkzeug & Material",
+   "topics": [
+    "tools",
+    "construction",
+    "carpentry"
+   ],
+   "categories": [
+    "tool",
+    "construct",
+    "material",
+    "building"
+   ]
+  },
+  {
+   "id": "b-49",
+   "k": "Aufbau",
+   "cefr": "B1",
+   "icon": "🏗️",
+   "title": "Baustelle: Angebot & Termin",
+   "topics": [
+    "construction",
+    "architecture"
+   ],
+   "categories": [
+    "construct",
+    "building",
+    "architect",
+    "engineer"
+   ]
+  },
+  {
+   "id": "b-50",
+   "k": "Basis",
+   "cefr": "A2",
+   "icon": "🩺",
+   "title": "Praxis & Termin beim Arzt",
+   "topics": [
+    "medicine",
+    "health"
+   ],
+   "categories": [
+    "medic",
+    "health",
+    "hospital",
+    "doctor"
+   ]
+  },
+  {
+   "id": "b-51",
+   "k": "Aufbau",
+   "cefr": "B1",
+   "icon": "🧑‍⚕️",
+   "title": "Pflege & Betreuung",
+   "topics": [
+    "medicine",
+    "health",
+    "nursing"
+   ],
+   "categories": [
+    "nurs",
+    "care",
+    "patient",
+    "health"
+   ]
+  },
+  {
+   "id": "b-52",
+   "k": "Basis",
+   "cefr": "A1-A2",
+   "icon": "🛍️",
+   "title": "Laden & Kasse",
+   "topics": [
+    "commerce",
+    "retail"
+   ],
+   "categories": [
+    "shop",
+    "retail",
+    "store",
+    "sale"
+   ]
+  },
+  {
+   "id": "b-53",
+   "k": "Aufbau",
+   "cefr": "B1",
+   "icon": "🧴",
+   "title": "Sortiment & Kundenberatung",
+   "topics": [
+    "commerce",
+    "retail",
+    "marketing"
+   ],
+   "categories": [
+    "retail",
+    "product",
+    "customer",
+    "brand"
+   ]
+  },
+  {
+   "id": "b-54",
+   "k": "Basis",
+   "cefr": "A2",
+   "icon": "📦",
+   "title": "Versand & Transport",
+   "topics": [
+    "transport",
+    "logistics",
+    "shipping"
+   ],
+   "categories": [
+    "transport",
+    "ship",
+    "deliver",
+    "vehicle"
+   ]
+  },
+  {
+   "id": "b-55",
+   "k": "Aufbau",
+   "cefr": "B1",
+   "icon": "🏭",
+   "title": "Lager & Fuhrpark",
+   "topics": [
+    "logistics",
+    "transport",
+    "automotive"
+   ],
+   "categories": [
+    "warehouse",
+    "vehicle",
+    "truck",
+    "stock"
+   ]
+  },
+  {
+   "id": "b-56",
+   "k": "Basis",
+   "cefr": "A2",
+   "icon": "🗃️",
+   "title": "Verwaltung: Formulare & Post",
+   "topics": [
+    "business",
+    "law"
+   ],
+   "categories": [
+    "form",
+    "mail",
+    "office",
+    "document",
+    "administr"
+   ]
+  },
+  {
+   "id": "b-57",
+   "k": "Basis",
+   "cefr": "A2",
+   "icon": "⚙️",
+   "title": "Produktion: Maschinen & Arbeitsschritte",
+   "topics": [
+    "engineering",
+    "manufacturing",
+    "machinery"
+   ],
+   "categories": [
+    "machine",
+    "manufactur",
+    "factory",
+    "produc"
+   ]
+  },
+  {
+   "id": "b-58",
+   "k": "Aufbau",
+   "cefr": "B1",
+   "icon": "🦺",
+   "title": "Wartung & Sicherheit am Arbeitsplatz",
+   "topics": [
+    "engineering",
+    "safety",
+    "manufacturing"
+   ],
+   "categories": [
+    "safety",
+    "maintenance",
+    "repair",
+    "machine"
+   ]
+  },
+  {
+   "id": "b-59",
+   "k": "Aufbau",
+   "cefr": "B1",
+   "icon": "📲",
+   "title": "Online-Vertrieb & Social Media",
+   "topics": [
+    "marketing",
+    "internet",
+    "commerce"
+   ],
+   "categories": [
+    "market",
+    "internet",
+    "advertis",
+    "online"
+   ]
+  },
+  {
+   "id": "b-60",
+   "k": "Profi",
+   "cefr": "B1",
+   "icon": "🛰️",
+   "title": "IT-Sicherheit im Alltag",
+   "topics": [
+    "computing",
+    "security"
+   ],
+   "categories": [
+    "security",
+    "comput",
+    "network",
+    "internet"
+   ]
+  },
+  {
+   "id": "b-61",
+   "k": "Jargon",
+   "cefr": "B1",
+   "icon": "🔤",
+   "title": "Akronyme & Abkürzungen",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-62",
+   "k": "Jargon",
+   "cefr": "B1",
+   "icon": "💬",
+   "title": "Buzzwords & Business-Jargon",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-63",
+   "k": "Jargon",
+   "cefr": "B1",
+   "icon": "⚙️",
+   "title": "Phrasal Verbs im Büro",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-64",
+   "k": "Jargon",
+   "cefr": "B1",
+   "icon": "🔗",
+   "title": "Typische Wortpaare im Beruf",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-65",
+   "k": "Jargon",
+   "cefr": "B1",
+   "icon": "⚠️",
+   "title": "Falsche Freunde (Denglisch)",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-66",
+   "k": "Jargon",
+   "cefr": "B1",
+   "icon": "🌍",
+   "title": "Britisch & amerikanisch",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-67",
+   "k": "Jargon",
+   "cefr": "B1",
+   "icon": "✉️",
+   "title": "E-Mail-Bausteine",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-68",
+   "k": "Jargon",
+   "cefr": "B1",
+   "icon": "🗣️",
+   "title": "Meeting-Bausteine",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-69",
+   "k": "Jargon",
+   "cefr": "B1",
+   "icon": "🔢",
+   "title": "Zahlen & Anteile sagen",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-70",
+   "k": "Jargon",
+   "cefr": "B1",
+   "icon": "🛠️",
+   "title": "Probleme ansprechen & lösen",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-71",
+   "k": "Fachgebiete",
+   "cefr": "B1",
+   "icon": "🚀",
+   "title": "Start-up & Finanzierung",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-72",
+   "k": "Fachgebiete",
+   "cefr": "B1",
+   "icon": "🏃",
+   "title": "Agiles Arbeiten (Scrum)",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-73",
+   "k": "Fachgebiete",
+   "cefr": "B1",
+   "icon": "📊",
+   "title": "Kennzahlen & Reporting",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-74",
+   "k": "Fachgebiete",
+   "cefr": "B1",
+   "icon": "🤝",
+   "title": "Kundenbindung & CRM",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-75",
+   "k": "Fachgebiete",
+   "cefr": "B1",
+   "icon": "©️",
+   "title": "Patente, Marken & Urheberrecht",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-76",
+   "k": "Fachgebiete",
+   "cefr": "B1",
+   "icon": "⚖️",
+   "title": "Arbeitsrecht & Betriebsrat",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-77",
+   "k": "Fachgebiete",
+   "cefr": "B1",
+   "icon": "📬",
+   "title": "Mahnwesen & Forderungen",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-78",
+   "k": "Fachgebiete",
+   "cefr": "B1",
+   "icon": "💼",
+   "title": "Beratung & Freelance",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-79",
+   "k": "Branchen",
+   "cefr": "B1",
+   "icon": "🚢",
+   "title": "Außenhandel & Zoll",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-80",
+   "k": "Branchen",
+   "cefr": "B1",
+   "icon": "🏢",
+   "title": "Immobilien & Vermietung",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-81",
+   "k": "Branchen",
+   "cefr": "B1",
+   "icon": "⚡",
+   "title": "Energie & Versorger",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-82",
+   "k": "Branchen",
+   "cefr": "B1",
+   "icon": "🚗",
+   "title": "Automobil & Werkstatt",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-83",
+   "k": "Branchen",
+   "cefr": "B1",
+   "icon": "🍽️",
+   "title": "Lebensmittel & Gastronomie-Betrieb",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-84",
+   "k": "Branchen",
+   "cefr": "B1",
+   "icon": "🌾",
+   "title": "Landwirtschaft & Agrarhandel",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-85",
+   "k": "Branchen",
+   "cefr": "B1",
+   "icon": "💊",
+   "title": "Medizin & Pharma",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-86",
+   "k": "Branchen",
+   "cefr": "B1",
+   "icon": "🛍️",
+   "title": "Einzelhandel & Retoure",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-87",
+   "k": "Branchen",
+   "cefr": "B1",
+   "icon": "🎪",
+   "title": "Tourismus & Veranstaltungen",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-88",
+   "k": "Branchen",
+   "cefr": "B1",
+   "icon": "📰",
+   "title": "Medien, PR & Presse",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-89",
+   "k": "Branchen",
+   "cefr": "B1",
+   "icon": "🔧",
+   "title": "Handwerk & Installation",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-90",
+   "k": "Branchen",
+   "cefr": "B1",
+   "icon": "🏛️",
+   "title": "Behörden & öffentlicher Dienst",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-91",
+   "k": "Sprüche",
+   "cefr": "B1",
+   "icon": "📜",
+   "title": "Sprichwörter",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-92",
+   "k": "Sprüche",
+   "cefr": "B1",
+   "icon": "⚽",
+   "title": "Sport-Metaphern",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-93",
+   "k": "Sprüche",
+   "cefr": "B1",
+   "icon": "🏗️",
+   "title": "Bauen & Handwerk",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-94",
+   "k": "Sprüche",
+   "cefr": "B1",
+   "icon": "🃏",
+   "title": "Spiel, Karten & Glück",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-95",
+   "k": "Sprüche",
+   "cefr": "B1",
+   "icon": "🍳",
+   "title": "Essen & Kochen",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-96",
+   "k": "Sprüche",
+   "cefr": "B1",
+   "icon": "⚓",
+   "title": "Seefahrt & Wasser",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-97",
+   "k": "Sprüche",
+   "cefr": "B1",
+   "icon": "🎨",
+   "title": "Farben & Zahlen im Business",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-98",
+   "k": "Sprüche",
+   "cefr": "B1",
+   "icon": "💡",
+   "title": "Kurze Arbeits-Weisheiten",
+   "topics": [],
+   "categories": []
+  }
+ ]
 }

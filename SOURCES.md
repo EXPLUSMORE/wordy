@@ -55,7 +55,45 @@ Diese Einheiten haben **keine** `src`/`lic`-Angaben. Ihre Herkunft ist nicht bel
 | b-54 | 📦 Versand & Transport | Basis | 16 | own 16 | own 16 | Entwurf zur Prüfung: eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft |
 | b-56 | 🗃️ Verwaltung: Formulare & Post | Basis | 16 | own 16 | own 16 | Entwurf zur Prüfung: eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft |
 | b-57 | ⚙️ Produktion: Maschinen & Arbeitsschritte | Basis | 16 | own 16 | own 16 | Entwurf zur Prüfung: eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft |
+| b-79 | 🚢 Außenhandel & Zoll | Branchen | 16 | own 16 | own 16 | Entwurf |
+| b-80 | 🏢 Immobilien & Vermietung | Branchen | 16 | own 16 | own 16 | Entwurf |
+| b-81 | ⚡ Energie & Versorger | Branchen | 16 | own 16 | own 16 | Entwurf |
+| b-82 | 🚗 Automobil & Werkstatt | Branchen | 16 | own 16 | own 16 | Entwurf |
+| b-83 | 🍽️ Lebensmittel & Gastronomie-Betrieb | Branchen | 16 | own 16 | own 16 | Entwurf |
+| b-84 | 🌾 Landwirtschaft & Agrarhandel | Branchen | 16 | own 16 | own 16 | Entwurf |
+| b-85 | 💊 Medizin & Pharma | Branchen | 16 | own 16 | own 16 | Entwurf |
+| b-86 | 🛍️ Einzelhandel & Retoure | Branchen | 16 | own 16 | own 16 | Entwurf |
+| b-87 | 🎪 Tourismus & Veranstaltungen | Branchen | 16 | own 16 | own 16 | Entwurf |
+| b-88 | 📰 Medien, PR & Presse | Branchen | 16 | own 16 | own 16 | Entwurf |
+| b-89 | 🔧 Handwerk & Installation | Branchen | 16 | own 16 | own 16 | Entwurf |
+| b-90 | 🏛️ Behörden & öffentlicher Dienst | Branchen | 16 | own 16 | own 16 | Entwurf |
+| b-71 | 🚀 Start-up & Finanzierung | Fachgebiete | 16 | own 16 | own 16 | Entwurf |
+| b-72 | 🏃 Agiles Arbeiten (Scrum) | Fachgebiete | 16 | own 16 | own 16 | Entwurf |
+| b-73 | 📊 Kennzahlen & Reporting | Fachgebiete | 16 | own 16 | own 16 | Entwurf |
+| b-74 | 🤝 Kundenbindung & CRM | Fachgebiete | 16 | own 16 | own 16 | Entwurf |
+| b-75 | ©️ Patente, Marken & Urheberrecht | Fachgebiete | 16 | own 16 | own 16 | Entwurf |
+| b-76 | ⚖️ Arbeitsrecht & Betriebsrat | Fachgebiete | 16 | own 16 | own 16 | Entwurf |
+| b-77 | 📬 Mahnwesen & Forderungen | Fachgebiete | 16 | own 16 | own 16 | Entwurf |
+| b-78 | 💼 Beratung & Freelance | Fachgebiete | 16 | own 16 | own 16 | Entwurf |
+| b-61 | 🔤 Akronyme & Abkürzungen | Jargon | 18 | own 18 | own 18 | Entwurf |
+| b-62 | 💬 Buzzwords & Business-Jargon | Jargon | 16 | own 16 | own 16 | Entwurf |
+| b-63 | ⚙️ Phrasal Verbs im Büro | Jargon | 16 | own 16 | own 16 | Entwurf |
+| b-64 | 🔗 Typische Wortpaare im Beruf | Jargon | 16 | own 16 | own 16 | Entwurf |
+| b-65 | ⚠️ Falsche Freunde (Denglisch) | Jargon | 16 | own 16 | own 16 | Entwurf |
+| b-66 | 🌍 Britisch & amerikanisch | Jargon | 16 | own 16 | own 16 | Entwurf |
+| b-67 | ✉️ E-Mail-Bausteine | Jargon | 16 | own 16 | own 16 | Entwurf |
+| b-68 | 🗣️ Meeting-Bausteine | Jargon | 16 | own 16 | own 16 | Entwurf |
+| b-69 | 🔢 Zahlen & Anteile sagen | Jargon | 16 | own 16 | own 16 | Entwurf |
+| b-70 | 🛠️ Probleme ansprechen & lösen | Jargon | 16 | own 16 | own 16 | Entwurf |
 | b-60 | 🛰️ IT-Sicherheit im Alltag | Profi | 16 | own 16 | own 16 | Entwurf zur Prüfung: eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft |
+| b-91 | 📜 Sprichwörter | Sprüche | 16 | own 16 | own 16 | Entwurf |
+| b-92 | ⚽ Sport-Metaphern | Sprüche | 16 | own 16 | own 16 | Entwurf |
+| b-93 | 🏗️ Bauen & Handwerk | Sprüche | 16 | own 16 | own 16 | Entwurf |
+| b-94 | 🃏 Spiel, Karten & Glück | Sprüche | 16 | own 16 | own 16 | Entwurf |
+| b-95 | 🍳 Essen & Kochen | Sprüche | 16 | own 16 | own 16 | Entwurf |
+| b-96 | ⚓ Seefahrt & Wasser | Sprüche | 16 | own 16 | own 16 | Entwurf |
+| b-97 | 🎨 Farben & Zahlen im Business | Sprüche | 16 | own 16 | own 16 | Entwurf |
+| b-98 | 💡 Kurze Arbeits-Weisheiten | Sprüche | 16 | own 16 | own 16 | Entwurf |
 
 ## Offene Punkte (rechtlich und fachlich, keine Rechtsberatung)
 

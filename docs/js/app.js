@@ -1889,7 +1889,7 @@
   function unitsHtml() {
     var st = S.state, stt = S.stats();
     var biz = st.settings.track === "business";
-    var groups = biz ? ["Basis", "Aufbau", "Profi", "Smalltalk", "Redewendungen", "Herbst"] : ["Headlight 2", 6, 7, 8, "Herbst"];
+    var groups = biz ? ["Basis", "Aufbau", "Profi", "Smalltalk", "Redewendungen", "Branchen", "Fachgebiete", "Jargon", "Sprüche", "Herbst"] : ["Headlight 2", 6, 7, 8, "Herbst"];
     var sel = S.groupsOf();
     var html = '';
     var guided = S.steered();   // gesteuert: das Kind sieht nur die Einheiten, die für es vorgesehen sind (ohne Hinweis darauf)
@@ -2683,7 +2683,7 @@
 
     /* Einheiten nach Gruppen: Schulbuch (Headlight 2), Klassen 6–8, Eigene Listen bzw. Business Basis bis Redewendungen; je Gruppe nach Lernstand sortiert */
     var bizT = st.settings.track === "business";
-    var ORDER = ["Headlight 2", "6", "7", "8", "Basis", "Aufbau", "Profi", "Smalltalk", "Redewendungen", "Herbst", "0"], byK = {}, ks = [];
+    var ORDER = ["Headlight 2", "6", "7", "8", "Basis", "Aufbau", "Profi", "Smalltalk", "Redewendungen", "Branchen", "Fachgebiete", "Jargon", "Sprüche", "Herbst", "0"], byK = {}, ks = [];
     s.perUnit.forEach(function (u) { var k = String(u.k); if (!byK[k]) { byK[k] = []; ks.push(k); } byK[k].push(u); });
     ks.sort(function (a, b) { var ia = ORDER.indexOf(a), ib = ORDER.indexOf(b); return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); });
     var state3 = function (u) { return u.seen === 0 ? 1 : u.sure < u.total ? 0 : 2; };   // 0 angefangen, 1 neu, 2 gefestigt
