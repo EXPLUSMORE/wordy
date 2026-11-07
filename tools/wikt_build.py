@@ -34,7 +34,13 @@ def pick(en, hintde, hintpos, v):
     best = max(gl, key=score) if gl else None
     if best is None: return None, 'keine deutsche Übersetzung'
     sense, tr = best
+    BAD = {'archaic', 'dated', 'obsolete', 'rare', 'dialectal', 'regional', 'vulgar', 'slang', 'derogatory', 'humorous', 'Austria', 'Switzerland', 'Swiss', 'Low-German', 'Northern-Germany'}
+    good = [t for t in tr if not (set(t.get('tags') or []) & BAD) and not re.search(r'[()\[\]]', t['word'])]
+    tr = good or tr
     matched = score(best) > 0
+    # Nur übernehmen, wenn die Bedeutung eindeutig ist: Mit Vorgabe muss eine Übersetzung dazu passen; ohne Vorgabe darf es höchstens zwei Bedeutungsgruppen geben
+    if hint and not matched: return None, 'deutsche Bedeutung in Wiktionary passt nicht zum gemeinten Sinn'
+    if not hint and len(gl) > 2: return None, 'mehrere Bedeutungen, ohne Vorgabe nicht eindeutig'
     de = []
     for t in tr:
         a = art(t)

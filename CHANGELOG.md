@@ -10,6 +10,11 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.177.0
+- **Neue Business-Wörter jetzt ausschließlich aus Wiktionary (CC BY-SA 4.0):** Die selbst formulierten Einheiten aus 2.176.0 (b-61–b-98) sind ersetzt. Stichwort, Wortart, **deutsche Übersetzung** (mit Artikel aus dem Geschlechts-Eintrag) und **Beispielsatz** stammen aus Wiktionary (abgerufen über Wiktextract/kaikki.org); nichts davon ist selbst geschrieben. Was es dort nicht gibt oder ohne deutsche Übersetzung/eindeutigen Sinn, wurde weggelassen. Ergebnis: **36 Einheiten mit 567 Wörtern** in den Gruppen **Jargon** (b-61–68), **Fachgebiete** (b-69–76), **Branchen** (b-77–91) und **Sprüche** (b-92–96). Die Einheiten „Falsche Freunde“ und „Britisch/Amerikanisch“ entfallen (die Erklärungen liefert Wiktionary nicht). Beispielsätze gibt es nur, wo Wiktionary einen hat; Satzübungen gibt es für diese Gruppen nicht (Wiktionary hat keine deutschen Sätze).
+- **Dublettenprüfung:** vorab gegen den gesamten Bestand (`tools/dupcheck.js`). Neue Werkzeuge: `tools/wikt_lookup.py`, `wikt_variants.py`, `wikt_build.py`. Quellenangabe je Eintrag (`src: wikt`, `ref`) und in `SOURCES.md`.
+- Achtung Lernstand: Die Einheiten b-61–b-96 sind neu belegt. Wer die kurzzeitig vorhandenen Einheiten aus 2.176.0 schon geübt hat, verliert dafür den Lernstand.
+
 ## 2.176.0
 - **610 neue Business-Wörter in 4 neuen Gruppen (38 Einheiten)**, alle selbst formuliert (Herkunft `own`, CC-BY-SA-4.0) und vorab gegen den **gesamten** Bestand auf Dubletten geprüft (neues Werkzeug `tools/dupcheck.js`: gleiche Wörter, andere Schreibweise, Teilphrasen; 100 Treffer wurden ersetzt, z. B. „in the red“). Wählbar unter Lernen › Was lernen? (Business):
   - **Jargon** (b-61–70, 162 Wörter): Akronyme, Buzzwords, Phrasal Verbs, Wortpaare, falsche Freunde, britisch/amerikanisch, E-Mail- und Meeting-Bausteine, Zahlen & Anteile, Probleme lösen.

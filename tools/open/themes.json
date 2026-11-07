@@ -434,7 +434,7 @@
    "k": "Jargon",
    "cefr": "B1",
    "icon": "🔤",
-   "title": "Akronyme & Abkürzungen",
+   "title": "Akronyme & Buzzwords",
    "topics": [],
    "categories": []
   },
@@ -442,8 +442,8 @@
    "id": "b-62",
    "k": "Jargon",
    "cefr": "B1",
-   "icon": "💬",
-   "title": "Buzzwords & Business-Jargon",
+   "icon": "⚙️",
+   "title": "Phrasal Verbs im Büro (1)",
    "topics": [],
    "categories": []
   },
@@ -452,7 +452,7 @@
    "k": "Jargon",
    "cefr": "B1",
    "icon": "⚙️",
-   "title": "Phrasal Verbs im Büro",
+   "title": "Phrasal Verbs im Büro (2)",
    "topics": [],
    "categories": []
   },
@@ -461,7 +461,7 @@
    "k": "Jargon",
    "cefr": "B1",
    "icon": "🔗",
-   "title": "Typische Wortpaare im Beruf",
+   "title": "Wortpaare & Formulierungen",
    "topics": [],
    "categories": []
   },
@@ -469,8 +469,8 @@
    "id": "b-65",
    "k": "Jargon",
    "cefr": "B1",
-   "icon": "⚠️",
-   "title": "Falsche Freunde (Denglisch)",
+   "icon": "🗣️",
+   "title": "Meeting-Sprache",
    "topics": [],
    "categories": []
   },
@@ -478,8 +478,8 @@
    "id": "b-66",
    "k": "Jargon",
    "cefr": "B1",
-   "icon": "🌍",
-   "title": "Britisch & amerikanisch",
+   "icon": "🔢",
+   "title": "Zahlen & Anteile (1)",
    "topics": [],
    "categories": []
   },
@@ -487,31 +487,13 @@
    "id": "b-67",
    "k": "Jargon",
    "cefr": "B1",
-   "icon": "✉️",
-   "title": "E-Mail-Bausteine",
+   "icon": "🔢",
+   "title": "Zahlen & Anteile (2)",
    "topics": [],
    "categories": []
   },
   {
    "id": "b-68",
-   "k": "Jargon",
-   "cefr": "B1",
-   "icon": "🗣️",
-   "title": "Meeting-Bausteine",
-   "topics": [],
-   "categories": []
-  },
-  {
-   "id": "b-69",
-   "k": "Jargon",
-   "cefr": "B1",
-   "icon": "🔢",
-   "title": "Zahlen & Anteile sagen",
-   "topics": [],
-   "categories": []
-  },
-  {
-   "id": "b-70",
    "k": "Jargon",
    "cefr": "B1",
    "icon": "🛠️",
@@ -520,7 +502,7 @@
    "categories": []
   },
   {
-   "id": "b-71",
+   "id": "b-69",
    "k": "Fachgebiete",
    "cefr": "B1",
    "icon": "🚀",
@@ -529,34 +511,34 @@
    "categories": []
   },
   {
+   "id": "b-70",
+   "k": "Fachgebiete",
+   "cefr": "B1",
+   "icon": "📊",
+   "title": "Agiles Arbeiten & Kennzahlen (1)",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-71",
+   "k": "Fachgebiete",
+   "cefr": "B1",
+   "icon": "📊",
+   "title": "Agiles Arbeiten & Kennzahlen (2)",
+   "topics": [],
+   "categories": []
+  },
+  {
    "id": "b-72",
    "k": "Fachgebiete",
    "cefr": "B1",
-   "icon": "🏃",
-   "title": "Agiles Arbeiten (Scrum)",
+   "icon": "🤝",
+   "title": "Kundenbindung & Beratung",
    "topics": [],
    "categories": []
   },
   {
    "id": "b-73",
-   "k": "Fachgebiete",
-   "cefr": "B1",
-   "icon": "📊",
-   "title": "Kennzahlen & Reporting",
-   "topics": [],
-   "categories": []
-  },
-  {
-   "id": "b-74",
-   "k": "Fachgebiete",
-   "cefr": "B1",
-   "icon": "🤝",
-   "title": "Kundenbindung & CRM",
-   "topics": [],
-   "categories": []
-  },
-  {
-   "id": "b-75",
    "k": "Fachgebiete",
    "cefr": "B1",
    "icon": "©️",
@@ -565,16 +547,25 @@
    "categories": []
   },
   {
-   "id": "b-76",
+   "id": "b-74",
    "k": "Fachgebiete",
    "cefr": "B1",
    "icon": "⚖️",
-   "title": "Arbeitsrecht & Betriebsrat",
+   "title": "Arbeitsrecht & Betriebsrat (1)",
    "topics": [],
    "categories": []
   },
   {
-   "id": "b-77",
+   "id": "b-75",
+   "k": "Fachgebiete",
+   "cefr": "B1",
+   "icon": "⚖️",
+   "title": "Arbeitsrecht & Betriebsrat (2)",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-76",
    "k": "Fachgebiete",
    "cefr": "B1",
    "icon": "📬",
@@ -583,16 +574,7 @@
    "categories": []
   },
   {
-   "id": "b-78",
-   "k": "Fachgebiete",
-   "cefr": "B1",
-   "icon": "💼",
-   "title": "Beratung & Freelance",
-   "topics": [],
-   "categories": []
-  },
-  {
-   "id": "b-79",
+   "id": "b-77",
    "k": "Branchen",
    "cefr": "B1",
    "icon": "🚢",
@@ -601,7 +583,7 @@
    "categories": []
   },
   {
-   "id": "b-80",
+   "id": "b-78",
    "k": "Branchen",
    "cefr": "B1",
    "icon": "🏢",
@@ -610,16 +592,25 @@
    "categories": []
   },
   {
-   "id": "b-81",
+   "id": "b-79",
    "k": "Branchen",
    "cefr": "B1",
    "icon": "⚡",
-   "title": "Energie & Versorger",
+   "title": "Energie & Versorger (1)",
    "topics": [],
    "categories": []
   },
   {
-   "id": "b-82",
+   "id": "b-80",
+   "k": "Branchen",
+   "cefr": "B1",
+   "icon": "⚡",
+   "title": "Energie & Versorger (2)",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-81",
    "k": "Branchen",
    "cefr": "B1",
    "icon": "🚗",
@@ -628,7 +619,7 @@
    "categories": []
   },
   {
-   "id": "b-83",
+   "id": "b-82",
    "k": "Branchen",
    "cefr": "B1",
    "icon": "🍽️",
@@ -637,11 +628,20 @@
    "categories": []
   },
   {
+   "id": "b-83",
+   "k": "Branchen",
+   "cefr": "B1",
+   "icon": "🌾",
+   "title": "Landwirtschaft & Agrarhandel (1)",
+   "topics": [],
+   "categories": []
+  },
+  {
    "id": "b-84",
    "k": "Branchen",
    "cefr": "B1",
    "icon": "🌾",
-   "title": "Landwirtschaft & Agrarhandel",
+   "title": "Landwirtschaft & Agrarhandel (2)",
    "topics": [],
    "categories": []
   },
@@ -650,7 +650,7 @@
    "k": "Branchen",
    "cefr": "B1",
    "icon": "💊",
-   "title": "Medizin & Pharma",
+   "title": "Medizin & Pharma (1)",
    "topics": [],
    "categories": []
   },
@@ -658,8 +658,8 @@
    "id": "b-86",
    "k": "Branchen",
    "cefr": "B1",
-   "icon": "🛍️",
-   "title": "Einzelhandel & Retoure",
+   "icon": "💊",
+   "title": "Medizin & Pharma (2)",
    "topics": [],
    "categories": []
   },
@@ -668,12 +668,21 @@
    "k": "Branchen",
    "cefr": "B1",
    "icon": "🎪",
-   "title": "Tourismus & Veranstaltungen",
+   "title": "Handel, Tourismus & Veranstaltungen (1)",
    "topics": [],
    "categories": []
   },
   {
    "id": "b-88",
+   "k": "Branchen",
+   "cefr": "B1",
+   "icon": "🎪",
+   "title": "Handel, Tourismus & Veranstaltungen (2)",
+   "topics": [],
+   "categories": []
+  },
+  {
+   "id": "b-89",
    "k": "Branchen",
    "cefr": "B1",
    "icon": "📰",
@@ -682,7 +691,7 @@
    "categories": []
   },
   {
-   "id": "b-89",
+   "id": "b-90",
    "k": "Branchen",
    "cefr": "B1",
    "icon": "🔧",
@@ -691,7 +700,7 @@
    "categories": []
   },
   {
-   "id": "b-90",
+   "id": "b-91",
    "k": "Branchen",
    "cefr": "B1",
    "icon": "🏛️",
@@ -700,20 +709,11 @@
    "categories": []
   },
   {
-   "id": "b-91",
-   "k": "Sprüche",
-   "cefr": "B1",
-   "icon": "📜",
-   "title": "Sprichwörter",
-   "topics": [],
-   "categories": []
-  },
-  {
    "id": "b-92",
    "k": "Sprüche",
    "cefr": "B1",
-   "icon": "⚽",
-   "title": "Sport-Metaphern",
+   "icon": "📜",
+   "title": "Sprichwörter & Weisheiten",
    "topics": [],
    "categories": []
   },
@@ -722,7 +722,7 @@
    "k": "Sprüche",
    "cefr": "B1",
    "icon": "🏗️",
-   "title": "Bauen & Handwerk",
+   "title": "Bauen, Farben & Zahlen (Redewendungen) (1)",
    "topics": [],
    "categories": []
   },
@@ -730,8 +730,8 @@
    "id": "b-94",
    "k": "Sprüche",
    "cefr": "B1",
-   "icon": "🃏",
-   "title": "Spiel, Karten & Glück",
+   "icon": "🏗️",
+   "title": "Bauen, Farben & Zahlen (Redewendungen) (2)",
    "topics": [],
    "categories": []
   },
@@ -739,8 +739,8 @@
    "id": "b-95",
    "k": "Sprüche",
    "cefr": "B1",
-   "icon": "🍳",
-   "title": "Essen & Kochen",
+   "icon": "🎲",
+   "title": "Redewendungen: Sport, Spiel & See",
    "topics": [],
    "categories": []
   },
@@ -748,26 +748,8 @@
    "id": "b-96",
    "k": "Sprüche",
    "cefr": "B1",
-   "icon": "⚓",
-   "title": "Seefahrt & Wasser",
-   "topics": [],
-   "categories": []
-  },
-  {
-   "id": "b-97",
-   "k": "Sprüche",
-   "cefr": "B1",
-   "icon": "🎨",
-   "title": "Farben & Zahlen im Business",
-   "topics": [],
-   "categories": []
-  },
-  {
-   "id": "b-98",
-   "k": "Sprüche",
-   "cefr": "B1",
-   "icon": "💡",
-   "title": "Kurze Arbeits-Weisheiten",
+   "icon": "🍳",
+   "title": "Essen & Kochen (Redewendungen)",
    "topics": [],
    "categories": []
   }

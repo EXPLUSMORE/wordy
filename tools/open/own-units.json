@@ -3361,5147 +3361,5358 @@
   ]
  },
  "b-61": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
   "words": [
    [
     "ASAP",
-    "so schnell wie möglich",
-    "abbr",
+    "so bald wie möglich / so schnell wie möglich",
+    "adv",
     1,
-    "Please send me the file ASAP."
+    "Susan, please check those figures ASAP!",
+    "wikt",
+    "ASAP"
    ],
    [
-    "FYI",
-    "zur Information",
-    "abbr",
-    1,
-    "FYI, the meeting starts at ten."
-   ],
-   [
-    "EOD",
-    "bis Feierabend (Ende des Tages)",
-    "abbr",
-    2,
-    "I need your answer by EOD."
-   ],
-   [
-    "KPI",
-    "die Kennzahl",
+    "IT",
+    "die IT / EDV",
     "noun",
     2,
-    "Our main KPI is customer satisfaction."
+    "",
+    "wikt",
+    "IT"
    ],
    [
-    "ROI",
-    "die Rendite (Return on Investment)",
+    "R&D",
+    "die F&E / F+E",
     "noun",
     2,
-    "The ROI of this campaign is very high."
+    "",
+    "wikt",
+    "R&D"
    ],
    [
-    "B2B",
-    "zwischen Unternehmen",
+    "GDP",
+    "BIP",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "GDP"
+   ],
+   [
+    "PLC",
+    "AG",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "PLC"
+   ],
+   [
+    "UK",
+    "das VK",
+    "name",
+    2,
+    "",
+    "wikt",
+    "UK"
+   ],
+   [
+    "EU",
+    "die EU",
+    "name",
+    2,
+    "",
+    "wikt",
+    "EU"
+   ],
+   [
+    "SME",
+    "das KMU",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "SME"
+   ],
+   [
+    "VIP",
+    "die VIP",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "VIP"
+   ],
+   [
+    "ATM",
+    "der Geldautomat / der Bankautomat",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "ATM"
+   ],
+   [
+    "best practice",
+    "die Best Practice / die beste Vorgehensweise",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "best practice"
+   ],
+   [
+    "proactive",
+    "proaktiv",
     "adj",
     2,
-    "We are a B2B company."
+    "",
+    "wikt",
+    "proactive"
    ],
    [
-    "B2C",
-    "an Endkunden gerichtet",
+    "holistic",
+    "holistisch",
     "adj",
     2,
-    "B2C marketing needs a different tone."
+    "",
+    "wikt",
+    "holistic"
    ],
    [
-    "ETA",
-    "die voraussichtliche Ankunftszeit",
+    "buy-in",
+    "die Unterstützung",
     "noun",
     2,
-    "What is the ETA of the delivery?"
+    "Let's show the idea around and get buy-in from marketing.",
+    "wikt",
+    "buy-in"
    ],
    [
-    "TBD",
-    "noch zu klären",
-    "abbr",
-    2,
-    "The date is still TBD."
-   ],
-   [
-    "PTO",
-    "der bezahlte Urlaub",
+    "ecosystem",
+    "das Ökosystem",
     "noun",
     2,
-    "She is on PTO until Monday."
+    "The company’s ecosystem mainly comprises its supply chain, customers, end consumers and competitors.",
+    "wikt",
+    "ecosystem"
    ],
    [
-    "OOO",
-    "nicht im Büro",
-    "abbr",
-    2,
-    "I am OOO on Friday."
-   ],
-   [
-    "NDA",
-    "die Geheimhaltungsvereinbarung",
+    "mindset",
+    "der Mindset / die Denkweise",
     "noun",
     2,
-    "Please sign the NDA first."
+    "Earth Day is a way of propagating and celebrating the environmentalist mindset.",
+    "wikt",
+    "mindset"
    ],
    [
-    "SLA",
-    "die Dienstgütevereinbarung",
-    "noun",
-    3,
-    "The SLA guarantees a reply within four hours."
-   ],
-   [
-    "USP",
-    "das Alleinstellungsmerkmal",
-    "noun",
-    3,
-    "Our USP is fast delivery."
-   ],
-   [
-    "FAQ",
-    "die häufig gestellten Fragen",
-    "noun",
-    1,
-    "You can find the answer in our FAQ."
-   ],
-   [
-    "QA",
-    "die Qualitätssicherung",
+    "downsizing",
+    "das Downsizing",
     "noun",
     2,
-    "The QA team tests every release."
+    "Downsizing is one of the leading trends in automotive engine design.",
+    "wikt",
+    "downsizing"
    ],
    [
-    "RSVP",
-    "um Antwort wird gebeten",
-    "abbr",
-    3,
-    "Please RSVP by next Friday."
+    "outsourcing",
+    "das Outsourcing / die Auslagerung",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "outsourcing"
    ],
    [
-    "AOB",
-    "Sonstiges (Tagesordnungspunkt)",
-    "abbr",
-    3,
-    "Is there any AOB at the end?"
+    "brainstorming",
+    "das Brainstorming",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "brainstorming"
+   ],
+   [
+    "networking",
+    "die Vernetzung",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "networking"
    ]
   ],
-  "sentences": [
-   [
-    "Please reply to me ASAP.",
-    "Bitte antworten Sie mir so schnell wie möglich.",
-    "ASAP wird als einzelne Buchstaben gesprochen: e-i-es-ei-pi."
-   ],
-   [
-    "The ETA is two o'clock.",
-    "Die voraussichtliche Ankunft ist um zwei Uhr.",
-    "Abkürzungen werden meist Buchstabe für Buchstabe gesprochen."
-   ],
-   [
-    "The date is still TBD.",
-    "Das Datum ist noch offen.",
-    "still steht vor dem Adjektiv bzw. der Angabe: noch immer."
-   ]
-  ]
+  "sentences": []
  },
  "b-62": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
   "words": [
-   [
-    "low-hanging fruit",
-    "leicht erreichbares Ziel",
-    "noun",
-    3,
-    "Let us start with the low-hanging fruit."
-   ],
-   [
-    "to move the needle",
-    "spürbar etwas bewegen",
-    "verb",
-    3,
-    "This change will not move the needle."
-   ],
-   [
-    "deep dive",
-    "die gründliche Analyse",
-    "noun",
-    3,
-    "We need a deep dive into the numbers."
-   ],
-   [
-    "bandwidth",
-    "die Kapazität (Zeit, Kraft)",
-    "noun",
-    3,
-    "I do not have the bandwidth for this."
-   ],
-   [
-    "to circle back",
-    "später darauf zurückkommen",
-    "verb",
-    3,
-    "Let us circle back on this tomorrow."
-   ],
-   [
-    "to reach out",
-    "sich melden, Kontakt aufnehmen",
-    "verb",
-    2,
-    "I will reach out to you next week."
-   ],
-   [
-    "to push back",
-    "Widerstand leisten, zurückweisen",
-    "verb",
-    3,
-    "The team pushed back on the new deadline."
-   ],
-   [
-    "to double down",
-    "verstärkt setzen auf",
-    "verb",
-    3,
-    "We will double down on online sales."
-   ],
-   [
-    "elevator pitch",
-    "die Kurzvorstellung (in 30 Sekunden)",
-    "noun",
-    3,
-    "Prepare a short elevator pitch."
-   ],
-   [
-    "to bounce ideas",
-    "Ideen austauschen",
-    "phrase",
-    2,
-    "Let us bounce some ideas around."
-   ],
-   [
-    "pain point",
-    "der Schwachpunkt (beim Kunden)",
-    "noun",
-    3,
-    "Slow delivery is our customers' pain point."
-   ],
-   [
-    "silo",
-    "das Abteilungsdenken (Silo)",
-    "noun",
-    3,
-    "We want to break down silos."
-   ],
-   [
-    "paradigm shift",
-    "der Paradigmenwechsel",
-    "noun",
-    3,
-    "This is a paradigm shift for the industry."
-   ],
-   [
-    "to ping",
-    "kurz anschreiben",
-    "verb",
-    2,
-    "Just ping me if you need help."
-   ],
-   [
-    "at the end of the day",
-    "letztendlich",
-    "phrase",
-    2,
-    "At the end of the day, price decides."
-   ],
-   [
-    "to drill down",
-    "im Detail untersuchen",
-    "verb",
-    3,
-    "Let us drill down into the data."
-   ]
-  ],
-  "sentences": [
-   [
-    "Let us start with the low-hanging fruit.",
-    "Fangen wir mit dem leicht Erreichbaren an.",
-    "Let us + Grundform = Vorschlag: Lass uns …"
-   ],
-   [
-    "I will circle back with you tomorrow.",
-    "Ich melde mich morgen noch einmal bei dir.",
-    "will + Grundform: spontane Zusage."
-   ],
-   [
-    "We are on the same page.",
-    "Wir sind uns einig.",
-    "on the same page ist ein feststehender Ausdruck."
-   ]
-  ]
- },
- "b-63": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
-  "words": [
-   [
-    "to sign off",
-    "freigeben, abzeichnen",
-    "verb",
-    2,
-    "My manager has to sign off the budget."
-   ],
-   [
-    "to look into",
-    "prüfen, untersuchen",
-    "verb",
-    2,
-    "I will look into the problem."
-   ],
-   [
-    "to carry out",
-    "durchführen",
-    "verb",
-    2,
-    "We carry out a survey every year."
-   ],
    [
     "to set up",
-    "einrichten, aufbauen",
+    "aufbauen / für den Einsatz vorbereiten",
     "verb",
     1,
-    "Can you set up the meeting room?"
-   ],
-   [
-    "to hold up",
-    "aufhalten, verzögern",
-    "verb",
-    2,
-    "A strike is holding up the delivery."
+    "We set up the sprinkler.",
+    "wikt",
+    "set up"
    ],
    [
     "to step down",
     "zurücktreten",
     "verb",
     2,
-    "The director will step down in June."
+    "to step down carefully from a train",
+    "wikt",
+    "step down"
    ],
    [
     "to run through",
-    "kurz durchgehen",
+    "durchgehen",
     "verb",
     2,
-    "Let me run through the agenda."
-   ],
-   [
-    "to follow through",
-    "konsequent umsetzen",
-    "verb",
-    3,
-    "He always follows through on his promises."
-   ],
-   [
-    "to back up",
-    "sichern, unterstützen",
-    "verb",
-    2,
-    "Please back up your files every day."
-   ],
-   [
-    "to chip in",
-    "etwas beisteuern",
-    "verb",
-    3,
-    "Everyone chipped in for the gift."
+    "Let me run through today's meeting for those who missed it.",
+    "wikt",
+    "run through"
    ],
    [
     "to call off",
     "absagen",
     "verb",
     2,
-    "They called off the trip."
-   ],
-   [
-    "to bring up",
-    "zur Sprache bringen",
-    "verb",
-    2,
-    "She brought up the budget again."
+    "If you want me to call off the dog, then get off my land.",
+    "wikt",
+    "call off"
    ],
    [
     "to turn down",
-    "ablehnen",
+    "ablehnen / absagen",
     "verb",
     2,
-    "He turned down the offer."
+    "He turned down all our offers of help.",
+    "wikt",
+    "turn down"
    ],
    [
     "to sort out",
-    "klären, in Ordnung bringen",
+    "klären",
     "verb",
     2,
-    "We need to sort out the problem."
+    "It's a bit confused at the moment, I'll try to sort it out later.",
+    "wikt",
+    "sort out"
    ],
    [
-    "to line up",
-    "organisieren, bereitstellen",
-    "verb",
-    3,
-    "We have lined up three speakers."
-   ],
-   [
-    "to kick off",
-    "beginnen, starten",
+    "to take over",
+    "übernehmen",
     "verb",
     2,
-    "The project kicks off on Monday."
+    "He will take over the job permanently when the accountant retires.",
+    "wikt",
+    "take over"
+   ],
+   [
+    "to go ahead",
+    "vorausgehen",
+    "verb",
+    2,
+    "I went ahead with my plan.",
+    "wikt",
+    "go ahead"
+   ],
+   [
+    "to set out",
+    "sich aufmachen",
+    "verb",
+    2,
+    "Tomorrow we set out for America.",
+    "wikt",
+    "set out"
+   ],
+   [
+    "to figure out",
+    "herausfinden",
+    "verb",
+    2,
+    "We'd already figured out that the trip would cost $1,000.",
+    "wikt",
+    "figure out"
+   ],
+   [
+    "to opt out",
+    "ablehnen",
+    "verb",
+    2,
+    "",
+    "wikt",
+    "opt out"
+   ],
+   [
+    "to cut down",
+    "fällen",
+    "verb",
+    2,
+    "They want to cut down several trees to make room for the parking lot.",
+    "wikt",
+    "cut down"
+   ],
+   [
+    "to phase out",
+    "auslaufen lassen / nach und nach abschaffen / aussondern",
+    "verb",
+    2,
+    "Leaded petrol was phased out in the course of the 1990s.",
+    "wikt",
+    "phase out"
    ]
   ],
-  "sentences": [
+  "sentences": []
+ },
+ "b-63": {
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
+  "words": [
    [
-    "Please fill in this form.",
-    "Bitte füllen Sie dieses Formular aus.",
-    "Phrasal Verb: fill + in; das Objekt kann dazwischen stehen: fill it in."
+    "to turn around",
+    "umdrehen",
+    "verb",
+    2,
+    "The world turns around once every twenty-four hours.",
+    "wikt",
+    "turn around"
    ],
    [
-    "We had to put off the meeting.",
-    "Wir mussten das Treffen verschieben.",
-    "had to + Grundform: Vergangenheit von must."
+    "to build up",
+    "sich ansammeln / sich türmen",
+    "verb",
+    2,
+    "to build up a door",
+    "wikt",
+    "build up"
    ],
    [
-    "She turned down the offer.",
-    "Sie hat das Angebot abgelehnt.",
-    "turn down = ablehnen (nicht: herunterdrehen)."
+    "to come across",
+    "wirken / vorkommen",
+    "verb",
+    2,
+    "How did she come across when you met with her?",
+    "wikt",
+    "come across"
+   ],
+   [
+    "to deal with",
+    "behandeln",
+    "verb",
+    2,
+    "This book deals with incest.",
+    "wikt",
+    "deal with"
+   ],
+   [
+    "to hold on",
+    "warten",
+    "verb",
+    2,
+    "Hold on while I get my coat.",
+    "wikt",
+    "hold on"
+   ],
+   [
+    "to pull out",
+    "herausziehen",
+    "verb",
+    2,
+    "He pulled his gun out before she had a chance to scream.",
+    "wikt",
+    "pull out"
+   ],
+   [
+    "to put forward",
+    "vorbringen",
+    "verb",
+    2,
+    "The Prime Minister put forward new plans to tackle corruption.",
+    "wikt",
+    "put forward"
+   ],
+   [
+    "to show up",
+    "auftauchen / erscheinen",
+    "verb",
+    2,
+    "Please come on time; don't just show up whenever you feel like it.",
+    "wikt",
+    "show up"
+   ],
+   [
+    "to step in",
+    "ersetzen / einspringen",
+    "verb",
+    2,
+    "",
+    "wikt",
+    "step in"
+   ],
+   [
+    "to think over",
+    "nachdenken / überlegen",
+    "verb",
+    2,
+    "When he has time to think over what he did, he will regret it.",
+    "wikt",
+    "think over"
+   ],
+   [
+    "to write down",
+    "aufschreiben",
+    "verb",
+    2,
+    "",
+    "wikt",
+    "write down"
+   ],
+   [
+    "to follow through",
+    "in die Tat umsetzen",
+    "verb",
+    3,
+    "I don't appreciate salesmen who make promises and then fail to follow through.",
+    "wikt",
+    "follow through"
    ]
-  ]
+  ],
+  "sentences": []
  },
  "b-64": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
   "words": [
    [
     "to make a decision",
     "eine Entscheidung treffen",
-    "phrase",
+    "verb",
     1,
-    "We must make a decision today."
-   ],
-   [
-    "to raise a concern",
-    "ein Bedenken äußern",
-    "phrase",
-    2,
-    "I would like to raise a concern."
-   ],
-   [
-    "to reach an agreement",
-    "eine Einigung erzielen",
-    "phrase",
-    2,
-    "The two sides reached an agreement."
-   ],
-   [
-    "to draw a conclusion",
-    "einen Schluss ziehen",
-    "phrase",
-    2,
-    "We can draw only one conclusion."
+    "You need to make a decision whether or not to go.",
+    "wikt",
+    "make a decision"
    ],
    [
     "to pay attention",
-    "aufpassen, beachten",
-    "phrase",
+    "beachten / achten",
+    "verb",
     1,
-    "Please pay attention to the details."
+    "Please pay attention to the danger signs.",
+    "wikt",
+    "pay attention"
    ],
    [
-    "to run a meeting",
-    "eine Besprechung leiten",
-    "phrase",
-    2,
-    "Anna runs the weekly meeting."
-   ],
-   [
-    "to do business",
-    "Geschäfte machen",
+    "please find attached",
+    "anbei finden Sie / anbei erhalten Sie",
     "phrase",
     1,
-    "We do business with many countries."
-   ],
-   [
-    "to give feedback",
-    "Rückmeldung geben",
-    "phrase",
-    1,
-    "Please give me feedback on my report."
-   ],
-   [
-    "to set a goal",
-    "ein Ziel setzen",
-    "phrase",
-    1,
-    "We set a goal for this quarter."
-   ],
-   [
-    "to make progress",
-    "Fortschritte machen",
-    "phrase",
-    1,
-    "We are making good progress."
+    "Please find attached the amended employment contract.",
+    "wikt",
+    "please find attached"
    ],
    [
     "to take responsibility",
     "Verantwortung übernehmen",
-    "phrase",
+    "verb",
     2,
-    "He took responsibility for the mistake."
+    "I take responsibility for my poor choice; it was my fault.",
+    "wikt",
+    "take responsibility"
    ],
    [
-    "to cut costs",
-    "Kosten senken",
-    "phrase",
+    "to make an effort",
+    "sich anstrengen",
+    "verb",
     2,
-    "The company wants to cut costs."
+    "",
+    "wikt",
+    "make an effort"
    ],
    [
-    "to launch a product",
-    "ein Produkt auf den Markt bringen",
-    "phrase",
+    "to make a mistake",
+    "versehen",
+    "verb",
     2,
-    "They will launch a new product in May."
+    "",
+    "wikt",
+    "make a mistake"
    ],
    [
-    "to file a complaint",
-    "eine Beschwerde einreichen",
-    "phrase",
+    "to take a risk",
+    "ein Risiko eingehen",
+    "verb",
     2,
-    "The customer filed a complaint."
+    "",
+    "wikt",
+    "take a risk"
    ],
    [
-    "to meet expectations",
-    "Erwartungen erfüllen",
-    "phrase",
+    "to take part",
+    "teilnehmen / sich beteiligen",
+    "verb",
     2,
-    "The product meets our expectations."
+    "I listened to a discussion in which she took part.",
+    "wikt",
+    "take part"
    ],
    [
-    "to break the news",
-    "eine Nachricht überbringen",
-    "phrase",
-    3,
-    "Who will break the news to the team?"
+    "to take place",
+    "stattfinden",
+    "verb",
+    2,
+    "Unfortunately, the meeting never took place.",
+    "wikt",
+    "take place"
+   ],
+   [
+    "to pay a visit",
+    "einen Besuch abstatten",
+    "verb",
+    2,
+    "",
+    "wikt",
+    "pay a visit"
+   ],
+   [
+    "to draw attention",
+    "Aufmerksamkeit anziehen / auf sich aufmerksam machen",
+    "verb",
+    2,
+    "Please be quiet. We don't want to draw attention to ourselves.",
+    "wikt",
+    "draw attention"
+   ],
+   [
+    "to keep track",
+    "verfolgen / nachverfolgen",
+    "verb",
+    2,
+    "Please sign in, so that we can keep track of who is here.",
+    "wikt",
+    "keep track"
+   ],
+   [
+    "yours faithfully",
+    "hochachtungsvoll",
+    "adj",
+    2,
+    "",
+    "wikt",
+    "yours faithfully"
+   ],
+   [
+    "yours sincerely",
+    "hochachtungsvoll / mit freundlichen Grüßen",
+    "adj",
+    2,
+    "",
+    "wikt",
+    "yours sincerely"
+   ],
+   [
+    "regards",
+    "der Gruß / der Grüße",
+    "noun",
+    2,
+    "Give my regards to your brother when you next see him.",
+    "wikt",
+    "regards"
+   ],
+   [
+    "as per",
+    "laut",
+    "prep",
+    2,
+    "As per Captain Smith, no midshipman shall sit or linger in this area.",
+    "wikt",
+    "as per"
+   ],
+   [
+    "enclosed",
+    "eingeschlossen",
+    "adj",
+    2,
+    "The gas is completely enclosed within the bottle.",
+    "wikt",
+    "enclosed"
+   ],
+   [
+    "inbox",
+    "der Posteingang / die Inbox",
+    "noun",
+    2,
+    "The kids, my ex, my parents, the job, bills — my inbox is full.",
+    "wikt",
+    "inbox"
+   ],
+   [
+    "to unsubscribe",
+    "abbestellen",
+    "verb",
+    2,
+    "How do I unsubscribe from your mailing list?",
+    "wikt",
+    "unsubscribe"
+   ],
+   [
+    "kindly",
+    "freundlicherweise / liebenswürdig",
+    "adv",
+    2,
+    "He kindly offered to take us to the station in his car.",
+    "wikt",
+    "kindly"
    ]
   ],
-  "sentences": [
-   [
-    "We must make a decision today.",
-    "Wir müssen heute eine Entscheidung treffen.",
-    "Mit decision sagt man make (nicht do)."
-   ],
-   [
-    "They reached an agreement.",
-    "Sie haben eine Einigung erzielt.",
-    "reach = erreichen; reached ist die Vergangenheit."
-   ],
-   [
-    "She took responsibility for the project.",
-    "Sie hat Verantwortung für das Projekt übernommen.",
-    "take responsibility for + Nomen."
-   ]
-  ]
+  "sentences": []
  },
  "b-65": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
   "words": [
    [
-    "eventually",
-    "schließlich (nicht: eventuell)",
-    "adv",
+    "chairperson",
+    "der Vorsitzender / die Vorsitzende",
+    "noun",
     2,
-    "Eventually, we found a solution."
+    "She was the chairperson of the board and she presided over the meeting.",
+    "wikt",
+    "chairperson"
    ],
    [
-    "actually",
-    "eigentlich, tatsächlich (nicht: aktuell)",
-    "adv",
+    "quorum",
+    "das Quorum",
+    "noun",
     2,
-    "Actually, I disagree."
+    "We can discuss the issue tonight but cannot vote until we have a quorum.",
+    "wikt",
+    "quorum"
    ],
    [
-    "sensible",
-    "vernünftig (nicht: sensibel)",
+    "motion",
+    "die Bewegung",
+    "noun",
+    2,
+    "The motion to amend is now open for discussion.",
+    "wikt",
+    "motion"
+   ],
+   [
+    "unanimous",
+    "einstimmig / einmütig",
     "adj",
     2,
-    "That is a sensible decision."
+    "The debate went on for hours, but in the end the decision was unanimous.",
+    "wikt",
+    "unanimous"
    ],
    [
-    "sensitive",
-    "empfindlich, sensibel",
-    "adj",
-    2,
-    "This is a sensitive topic."
-   ],
-   [
-    "commission",
-    "die Provision (nicht: Kommission)",
+    "majority",
+    "die Mehrheit / die Majorität",
     "noun",
     2,
-    "Sales staff earn a commission."
+    "The majority agreed that the new proposal was the best.",
+    "wikt",
+    "majority"
    ],
    [
-    "gift",
-    "das Geschenk (nicht: Gift)",
-    "noun",
-    1,
-    "The client gave us a small gift."
-   ],
-   [
-    "chef",
-    "der Koch (nicht: Chef)",
-    "noun",
-    1,
-    "The chef cooks for forty guests."
-   ],
-   [
-    "fabric",
-    "der Stoff (nicht: Fabrik)",
+    "round table",
+    "der runder Tisch",
     "noun",
     2,
-    "This fabric is very soft."
+    "",
+    "wikt",
+    "round table"
    ],
    [
-    "decent",
-    "anständig (nicht: dezent)",
-    "adj",
-    2,
-    "They pay a decent salary."
-   ],
-   [
-    "physician",
-    "der Arzt (nicht: Physiker)",
-    "noun",
-    3,
-    "The physician sees patients every day."
-   ],
-   [
-    "to realize",
-    "erkennen, begreifen (nicht: realisieren)",
+    "to give the floor",
+    "das Wort erteilen",
     "verb",
     2,
-    "I realized my mistake too late."
+    "",
+    "wikt",
+    "give the floor"
    ],
    [
-    "sympathetic",
-    "mitfühlend (nicht: sympathisch)",
-    "adj",
-    3,
-    "The manager was very sympathetic."
-   ],
-   [
-    "dose",
-    "die Dosis (nicht: Dose)",
+    "point of order",
+    "der Antrag zur Geschäftsordnung / der Geschäftsordnungsantrag",
     "noun",
-    3,
-    "Take one dose every morning."
-   ],
-   [
-    "handy",
-    "praktisch (nicht: Mobiltelefon)",
-    "adj",
     2,
-    "This tool is really handy."
+    "",
+    "wikt",
+    "point of order"
    ],
    [
-    "brave",
-    "mutig (nicht: brav)",
-    "adj",
+    "to interrupt",
+    "unterbrechen",
+    "verb",
     2,
-    "It was a brave decision."
+    "A maverick politician repeatedly interrupted the debate by shouting.",
+    "wikt",
+    "interrupt"
    ],
    [
-    "gymnasium",
-    "die Turnhalle (nicht: Gymnasium)",
+    "to disagree",
+    "anderer Meinung sein / widersprechen",
+    "verb",
+    2,
+    "John disagreed with Mary frequently.",
+    "wikt",
+    "disagree"
+   ],
+   [
+    "consensus",
+    "der Konsens / das Einvernehmen",
     "noun",
-    3,
-    "The gymnasium is open in the evening."
+    2,
+    "a financial consensus forecast",
+    "wikt",
+    "consensus"
+   ],
+   [
+    "brainstorm",
+    "der Geistesblitz",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "brainstorm"
    ]
   ],
-  "sentences": [
-   [
-    "Eventually, we found a solution.",
-    "Schließlich haben wir eine Lösung gefunden.",
-    "eventually heißt schließlich, nicht eventuell (= possibly)."
-   ],
-   [
-    "I got your email.",
-    "Ich habe deine E-Mail bekommen.",
-    "get = bekommen; werden heißt become."
-   ],
-   [
-    "She wants to become a manager.",
-    "Sie will Managerin werden.",
-    "become + Nomen: werden."
-   ]
-  ]
+  "sentences": []
  },
  "b-66": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
   "words": [
    [
-    "lift (UK) / elevator (US)",
-    "der Aufzug",
+    "third",
+    "das Drittel",
     "noun",
     1,
-    "Take the lift to the third floor."
+    "He ate a third of the pie. Divided by two-thirds.",
+    "wikt",
+    "third"
    ],
    [
-    "flat (UK) / apartment (US)",
-    "die Wohnung",
-    "noun",
-    1,
-    "They rent a flat near the office."
-   ],
-   [
-    "holiday (UK) / vacation (US)",
-    "der Urlaub",
-    "noun",
-    1,
-    "I am on holiday next week."
-   ],
-   [
-    "mobile (UK) / cell phone (US)",
-    "das Handy",
-    "noun",
-    1,
-    "Please switch off your mobile."
-   ],
-   [
-    "post (UK) / mail (US)",
-    "die Post",
-    "noun",
-    1,
-    "The post arrives at nine."
-   ],
-   [
-    "lorry (UK) / truck (US)",
-    "der Lastwagen",
-    "noun",
-    2,
-    "The lorry delivers the goods."
-   ],
-   [
-    "queue (UK) / line (US)",
-    "die Warteschlange",
-    "noun",
-    2,
-    "There is a long queue at the counter."
-   ],
-   [
-    "rubbish (UK) / trash (US)",
-    "der Müll",
-    "noun",
-    2,
-    "Put the rubbish in the bin."
-   ],
-   [
-    "estate agent (UK) / realtor (US)",
-    "der Immobilienmakler",
-    "noun",
-    3,
-    "The estate agent shows us the flat."
-   ],
-   [
-    "timetable (UK) / schedule (US)",
-    "der Fahrplan, der Zeitplan",
-    "noun",
-    2,
-    "Check the timetable first."
-   ],
-   [
-    "pavement (UK) / sidewalk (US)",
-    "der Gehweg",
-    "noun",
-    2,
-    "Do not park on the pavement."
-   ],
-   [
-    "petrol (UK) / gas (US)",
-    "das Benzin",
-    "noun",
-    2,
-    "Petrol is expensive here."
-   ],
-   [
-    "cheque (UK) / check (US)",
-    "der Scheck",
-    "noun",
-    2,
-    "He paid by cheque."
-   ],
-   [
-    "tap (UK) / faucet (US)",
-    "der Wasserhahn",
-    "noun",
-    2,
-    "The tap in the kitchen is broken."
-   ],
-   [
-    "full stop (UK) / period (US)",
-    "der Punkt (Satzzeichen)",
-    "noun",
-    2,
-    "Put a full stop at the end."
-   ],
-   [
-    "CV (UK) / résumé (US)",
-    "der Lebenslauf",
-    "noun",
-    2,
-    "Please send us your CV."
-   ]
-  ],
-  "sentences": [
-   [
-    "Take the lift to the third floor.",
-    "Nehmen Sie den Aufzug in den dritten Stock.",
-    "Im britischen Englisch heißt der Aufzug lift, im amerikanischen elevator."
-   ],
-   [
-    "I am on holiday next week.",
-    "Ich habe nächste Woche Urlaub.",
-    "on holiday (UK) = im Urlaub; amerikanisch: on vacation."
-   ],
-   [
-    "Please send us your CV.",
-    "Bitte schicken Sie uns Ihren Lebenslauf.",
-    "CV ist britisch, résumé amerikanisch."
-   ]
-  ]
- },
- "b-67": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
-  "words": [
-   [
-    "I am writing to …",
-    "Ich schreibe Ihnen, um …",
-    "phrase",
-    1,
-    "I am writing to ask about your offer."
-   ],
-   [
-    "Please find attached …",
-    "Anbei finden Sie …",
-    "phrase",
-    1,
-    "Please find attached the contract."
-   ],
-   [
-    "Yours faithfully",
-    "Hochachtungsvoll (formelle Schlussformel)",
-    "phrase",
-    2,
-    "Yours faithfully, J. Smith"
-   ],
-   [
-    "I hope this email finds you well.",
-    "Ich hoffe, es geht Ihnen gut.",
-    "phrase",
-    2,
-    "I hope this email finds you well."
-   ],
-   [
-    "Apologies for the delay.",
-    "Entschuldigung für die Verzögerung.",
-    "phrase",
-    2,
-    "Apologies for the delay in replying."
-   ],
-   [
-    "Could you kindly …",
-    "Könnten Sie bitte …",
-    "phrase",
-    2,
-    "Could you kindly confirm the time?"
-   ],
-   [
-    "Thank you for getting back to me.",
-    "Danke für Ihre Rückmeldung.",
-    "phrase",
-    2,
-    "Thank you for getting back to me so quickly."
-   ],
-   [
-    "I would like to enquire about …",
-    "Ich möchte mich erkundigen nach …",
-    "phrase",
-    2,
-    "I would like to enquire about your prices."
-   ],
-   [
-    "Unfortunately, I am unable to …",
-    "Leider kann ich nicht …",
-    "phrase",
-    2,
-    "Unfortunately, I am unable to attend."
-   ],
-   [
-    "In response to your email …",
-    "Als Antwort auf Ihre E-Mail …",
-    "phrase",
-    2,
-    "In response to your email, I can confirm the booking."
-   ],
-   [
-    "Many thanks for your help.",
-    "Vielen Dank für Ihre Hilfe.",
-    "phrase",
-    1,
-    "Many thanks for your help."
-   ],
-   [
-    "Best regards",
-    "Beste Grüße",
-    "phrase",
-    1,
-    "Best regards, Anna Keller"
-   ],
-   [
-    "Dear Sir or Madam",
-    "Sehr geehrte Damen und Herren",
-    "phrase",
-    1,
-    "Dear Sir or Madam, I saw your advert."
-   ],
-   [
-    "Just a quick reminder",
-    "Nur eine kurze Erinnerung",
-    "phrase",
-    2,
-    "Just a quick reminder about tomorrow."
-   ],
-   [
-    "Please let me know if …",
-    "Bitte sagen Sie mir Bescheid, falls …",
-    "phrase",
-    1,
-    "Please let me know if you need more time."
-   ],
-   [
-    "Sorry to bother you",
-    "Entschuldigen Sie die Störung",
-    "phrase",
-    2,
-    "Sorry to bother you, but I have a question."
-   ]
-  ],
-  "sentences": [
-   [
-    "Please find attached the invoice.",
-    "Anbei finden Sie die Rechnung.",
-    "Please find attached: feste Formel für Anhänge."
-   ],
-   [
-    "Thank you for getting back to me.",
-    "Danke für Ihre Rückmeldung.",
-    "get back to someone = sich bei jemandem melden."
-   ],
-   [
-    "I look forward to hearing from you.",
-    "Ich freue mich auf Ihre Antwort.",
-    "look forward to + -ing (hier: hearing)."
-   ]
-  ]
- },
- "b-68": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
-  "words": [
-   [
-    "Let us get started.",
-    "Fangen wir an.",
-    "phrase",
-    1,
-    "Let us get started with the first point."
-   ],
-   [
-    "May I interrupt for a moment?",
-    "Darf ich kurz unterbrechen?",
-    "phrase",
-    2,
-    "May I interrupt for a moment?"
-   ],
-   [
-    "That is a fair point.",
-    "Das ist ein berechtigter Einwand.",
-    "phrase",
-    2,
-    "That is a fair point."
-   ],
-   [
-    "I agree up to a point.",
-    "Ich stimme teilweise zu.",
-    "phrase",
-    2,
-    "I agree up to a point."
-   ],
-   [
-    "Let me summarise.",
-    "Lassen Sie mich zusammenfassen.",
-    "phrase",
-    2,
-    "Let me summarise the main results."
-   ],
-   [
-    "Could we come back to that later?",
-    "Können wir später darauf zurückkommen?",
-    "phrase",
-    2,
-    "Could we come back to that later?"
-   ],
-   [
-    "Let us take this offline.",
-    "Das klären wir außerhalb der Besprechung.",
-    "phrase",
-    3,
-    "Let us take this offline."
-   ],
-   [
-    "Any other business?",
-    "Noch etwas anderes?",
-    "phrase",
-    2,
-    "Any other business before we close?"
-   ],
-   [
-    "Could you repeat that, please?",
-    "Könnten Sie das bitte wiederholen?",
-    "phrase",
-    1,
-    "Could you repeat that, please?"
-   ],
-   [
-    "I would like to add something.",
-    "Ich möchte etwas ergänzen.",
-    "phrase",
-    2,
-    "I would like to add something to that."
-   ],
-   [
-    "Shall we vote on it?",
-    "Sollen wir darüber abstimmen?",
-    "phrase",
-    2,
-    "Shall we vote on it?"
-   ],
-   [
-    "Let us park that for now.",
-    "Das stellen wir erst einmal zurück.",
-    "phrase",
-    3,
-    "Let us park that for now."
-   ],
-   [
-    "Who is taking the minutes?",
-    "Wer führt das Protokoll?",
-    "phrase",
-    2,
-    "Who is taking the minutes today?"
-   ],
-   [
-    "Can everyone hear me?",
-    "Können mich alle hören?",
-    "phrase",
-    1,
-    "Can everyone hear me?"
-   ],
-   [
-    "I am afraid I disagree.",
-    "Da muss ich leider widersprechen.",
-    "phrase",
-    2,
-    "I am afraid I disagree."
-   ],
-   [
-    "Let us go round the table.",
-    "Gehen wir reihum.",
-    "phrase",
-    3,
-    "Let us go round the table."
-   ]
-  ],
-  "sentences": [
-   [
-    "Shall we move on to the next point?",
-    "Gehen wir zum nächsten Punkt über?",
-    "Shall we + Grundform: höflicher Vorschlag."
-   ],
-   [
-    "Who is taking the minutes?",
-    "Wer führt das Protokoll?",
-    "the minutes = das Protokoll (Mehrzahlform)."
-   ],
-   [
-    "I am afraid I disagree.",
-    "Ich muss leider widersprechen.",
-    "I am afraid macht eine Ablehnung höflicher."
-   ]
-  ]
- },
- "b-69": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
-  "words": [
-   [
-    "a third",
-    "ein Drittel",
-    "noun",
-    1,
-    "A third of our customers are new."
-   ],
-   [
-    "three quarters",
-    "drei Viertel",
-    "noun",
-    2,
-    "Three quarters of the work is done."
-   ],
-   [
-    "double",
-    "verdoppeln, doppelt",
+    "to double",
+    "verdoppeln / doppeln",
     "verb",
     2,
-    "We want to double our sales."
-   ],
-   [
-    "triple",
-    "verdreifachen",
-    "verb",
-    3,
-    "Profits have tripled."
-   ],
-   [
-    "percentage point",
-    "der Prozentpunkt",
-    "noun",
-    3,
-    "Sales rose by two percentage points."
-   ],
-   [
-    "twice as much",
-    "doppelt so viel",
-    "phrase",
-    2,
-    "We sold twice as much as last year."
-   ],
-   [
-    "one in ten",
-    "jeder Zehnte",
-    "phrase",
-    2,
-    "One in ten customers complains."
-   ],
-   [
-    "roughly",
-    "ungefähr",
-    "adv",
-    2,
-    "It costs roughly fifty euros."
-   ],
-   [
-    "a tenth",
-    "ein Zehntel",
-    "noun",
-    2,
-    "A tenth of the budget is left."
+    "The company doubled their earnings per share over last quarter.",
+    "wikt",
+    "double"
    ],
    [
     "to round down",
     "abrunden",
     "verb",
     2,
-    "Round down to the nearest ten."
+    "",
+    "wikt",
+    "round down"
    ],
    [
-    "a dozen",
-    "ein Dutzend",
+    "dozen",
+    "das Dutzend",
     "noun",
     2,
-    "We ordered a dozen chairs."
+    "Can I have a dozen eggs, please?",
+    "wikt",
+    "dozen"
    ],
    [
-    "a fifth",
-    "ein Fünftel",
+    "fifth",
+    "das Fünftel",
     "noun",
     2,
-    "A fifth of the budget is spent."
+    "",
+    "wikt",
+    "fifth"
    ],
    [
-    "in the region of",
-    "ungefähr in Höhe von",
-    "phrase",
-    3,
-    "Costs are in the region of ten thousand euros."
-   ],
-   [
-    "well over",
-    "deutlich über",
-    "phrase",
-    3,
-    "We have well over a thousand customers."
-   ],
-   [
-    "fewer than",
-    "weniger als (zählbar)",
-    "phrase",
+    "half",
+    "die Hälfte",
+    "noun",
     2,
-    "Fewer than ten people came."
+    "I ate the smaller half of the apple.",
+    "wikt",
+    "half"
    ],
    [
-    "no more than",
-    "nicht mehr als",
-    "phrase",
+    "percent",
+    "vom Hundert / das Prozent",
+    "noun",
     2,
-    "It takes no more than an hour."
+    "only a small percent attain the top ranks",
+    "wikt",
+    "percent"
+   ],
+   [
+    "decimal",
+    "dezimal",
+    "adj",
+    2,
+    "",
+    "wikt",
+    "decimal"
+   ],
+   [
+    "ratio",
+    "das Verhältnis",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "ratio"
+   ],
+   [
+    "proportion",
+    "der Teil / die Proportion",
+    "noun",
+    2,
+    "the proportion of the parts of a building, or of the body",
+    "wikt",
+    "proportion"
+   ],
+   [
+    "minority",
+    "die Minderheit / die Minorität",
+    "noun",
+    2,
+    "Most people agreed, but a sizable minority were upset by the decision.",
+    "wikt",
+    "minority"
+   ],
+   [
+    "median",
+    "die Seitenhalbierende",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "median"
+   ],
+   [
+    "sum",
+    "die Summe",
+    "noun",
+    2,
+    "The sum of 3 and 4 is 7.",
+    "wikt",
+    "sum"
+   ],
+   [
+    "subtotal",
+    "die Zwischensumme",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "subtotal"
+   ],
+   [
+    "around",
+    "um",
+    "prep",
+    2,
+    "She wore a gold chain around her neck.",
+    "wikt",
+    "around"
+   ],
+   [
+    "nearly",
+    "beinahe / fast",
+    "adv",
+    2,
+    "He left a nearly full beer on the bar.",
+    "wikt",
+    "nearly"
    ]
   ],
-  "sentences": [
-   [
-    "A quarter of our staff works from home.",
-    "Ein Viertel unserer Belegschaft arbeitet von zu Hause.",
-    "Bruchzahlen: a quarter, a third, a half."
-   ],
-   [
-    "We want to double our sales.",
-    "Wir wollen unseren Umsatz verdoppeln.",
-    "double kann Verb und Adjektiv sein."
-   ],
-   [
-    "Fewer than ten people came.",
-    "Weniger als zehn Personen kamen.",
-    "fewer bei zählbaren, less bei unzählbaren Dingen."
-   ]
-  ]
+  "sentences": []
  },
- "b-70": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
+ "b-67": {
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
   "words": [
    [
-    "to deal with",
-    "sich befassen mit, erledigen",
-    "verb",
-    1,
-    "I will deal with the complaint today."
+    "exactly",
+    "genau",
+    "adv",
+    2,
+    "Measure exactly so we can be sure it is right.",
+    "wikt",
+    "exactly"
    ],
    [
-    "to troubleshoot",
-    "Fehler suchen und beheben",
+    "precisely",
+    "präzise",
+    "adv",
+    2,
+    "I always try to express myself precisely.",
+    "wikt",
+    "precisely"
+   ],
+   [
+    "at least",
+    "mindestens / zumindest",
+    "prep_phrase",
+    2,
+    "",
+    "wikt",
+    "at least"
+   ],
+   [
+    "at most",
+    "maximal / höchstens",
+    "prep_phrase",
+    2,
+    "There weren't so many people at the concert — 40 at most.",
+    "wikt",
+    "at most"
+   ],
+   [
+    "twice",
+    "zweimal / doppelt",
+    "adv",
+    2,
+    "You should brush your teeth twice a day.",
+    "wikt",
+    "twice"
+   ],
+   [
+    "thrice",
+    "dreimal",
+    "adv",
+    2,
+    "",
+    "wikt",
+    "thrice"
+   ],
+   [
+    "hundred",
+    "hundert / einhundert",
+    "num",
+    2,
+    "hundreds of thousands of faces.",
+    "wikt",
+    "hundred"
+   ],
+   [
+    "thousand",
+    "das tausend",
+    "num",
+    2,
+    "The company earned fifty thousand dollars last month.",
+    "wikt",
+    "thousand"
+   ],
+   [
+    "million",
+    "die Million",
+    "num",
+    2,
+    "SLM parameters usually range from a few million to a few billion.",
+    "wikt",
+    "million"
+   ],
+   [
+    "trillion",
+    "die Billion",
+    "num",
+    2,
+    "There were trillions of people at the concert.",
+    "wikt",
+    "trillion"
+   ],
+   [
+    "to increase",
+    "zunehmen / steigen",
+    "verb",
+    2,
+    "His rage only increased when I told him of the lost money.",
+    "wikt",
+    "increase"
+   ],
+   [
+    "to decrease",
+    "abnehmen",
+    "verb",
+    2,
+    "The quality of our products has decreased since the main designer left.",
+    "wikt",
+    "decrease"
+   ],
+   [
+    "to fluctuate",
+    "schwanken / fluktuieren",
+    "verb",
+    2,
+    "I fluctuated between wishing he was back home and wishing I'd never met him.",
+    "wikt",
+    "fluctuate"
+   ],
+   [
+    "to triple",
+    "verdreifachen",
     "verb",
     3,
-    "He is troubleshooting the network."
+    "The company tripled their earnings per share over last quarter.",
+    "wikt",
+    "triple"
    ],
    [
-    "to take action",
-    "Maßnahmen ergreifen",
-    "phrase",
-    2,
-    "We must take action now."
-   ],
+    "percentage point",
+    "der Prozentpunkt",
+    "noun",
+    3,
+    "",
+    "wikt",
+    "percentage point"
+   ]
+  ],
+  "sentences": []
+ },
+ "b-68": {
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
+  "words": [
    [
     "setback",
-    "der Rückschlag",
+    "das Rückschlag / das Hindernis",
     "noun",
     2,
-    "The delay was a setback for the project."
+    "After some initial setbacks, the expedition went safely on its way.",
+    "wikt",
+    "setback"
+   ],
+   [
+    "to come up with",
+    "ausdenken",
+    "verb",
+    2,
+    "How can you come up with such brilliant ideas?",
+    "wikt",
+    "come up with"
+   ],
+   [
+    "problem",
+    "das Problem",
+    "noun",
+    2,
+    "She's leaving because she faced numerous problems to do with racism.",
+    "wikt",
+    "problem"
+   ],
+   [
+    "to mistake",
+    "verwechseln",
+    "verb",
+    2,
+    "Sorry, I mistook you for my brother. You look very similar.",
+    "wikt",
+    "mistake"
+   ],
+   [
+    "obstacle",
+    "das Hindernis / die Hürde",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "obstacle"
+   ],
+   [
+    "remedy",
+    "das Gegenmittel",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "remedy"
+   ],
+   [
+    "tackle",
+    "Angel",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "tackle"
+   ],
+   [
+    "to cope with",
+    "verkraften / bewältigen",
+    "verb",
+    2,
+    "She finds her mental illness very difficult to cope with.",
+    "wikt",
+    "cope with"
+   ],
+   [
+    "to diagnose",
+    "diagnostizieren",
+    "verb",
+    2,
+    "Flu was diagnosed.",
+    "wikt",
+    "diagnose"
+   ],
+   [
+    "to replace",
+    "zurückstellen",
+    "verb",
+    2,
+    "When you've finished using the telephone, please replace the handset.",
+    "wikt",
+    "replace"
+   ],
+   [
+    "to rectify",
+    "destillieren",
+    "verb",
+    2,
+    "to rectify the crisis",
+    "wikt",
+    "rectify"
+   ],
+   [
+    "correct",
+    "korrekt / richtig",
+    "adj",
+    2,
+    "Your test was completely correct, you get 10 out of 10",
+    "wikt",
+    "correct"
+   ],
+   [
+    "to improve",
+    "verbessern",
+    "verb",
+    2,
+    "Painting the woodwork will improve this house.",
+    "wikt",
+    "improve"
+   ],
+   [
+    "blame",
+    "die Schuld",
+    "noun",
+    2,
+    "Blame came from all directions.",
+    "wikt",
+    "blame"
+   ],
+   [
+    "responsibility",
+    "die Verantwortung / die Verantwortlichkeit",
+    "noun",
+    2,
+    "Responsibility is a heavy burden.",
+    "wikt",
+    "responsibility"
    ],
    [
     "to straighten out",
-    "klarstellen, bereinigen",
+    "klarstellen",
     "verb",
     3,
-    "Let us straighten out the misunderstanding."
-   ],
-   [
-    "knock-on effect",
-    "der Folgeeffekt",
-    "noun",
-    3,
-    "The strike had a knock-on effect on sales."
-   ],
-   [
-    "to flag an issue",
-    "ein Problem melden",
-    "phrase",
-    3,
-    "Please flag any issues early."
-   ],
-   [
-    "to take ownership",
-    "Verantwortung übernehmen (für)",
-    "phrase",
-    3,
-    "Someone has to take ownership."
-   ],
-   [
-    "to bring to your attention",
-    "auf etwas hinweisen",
-    "phrase",
-    3,
-    "I would like to bring this to your attention."
-   ],
-   [
-    "to put right",
-    "in Ordnung bringen",
-    "verb",
-    2,
-    "We will put the mistake right."
-   ],
-   [
-    "temporary fix",
-    "die vorläufige Lösung",
-    "noun",
-    2,
-    "This is only a temporary fix."
+    "Straighten out your necktie and comb your hair.",
+    "wikt",
+    "straighten out"
    ],
    [
     "damage control",
     "die Schadensbegrenzung",
     "noun",
     3,
-    "The press team is doing damage control."
-   ],
-   [
-    "to get things moving",
-    "etwas in Gang bringen",
-    "phrase",
-    2,
-    "We need to get things moving."
-   ],
-   [
-    "to fall behind",
-    "in Rückstand geraten",
-    "verb",
-    2,
-    "We are falling behind schedule."
+    "As news of the impending layoffs spread faster, the company finally began damage control.",
+    "wikt",
+    "damage control"
    ],
    [
     "to mitigate",
-    "abmildern",
+    "mildern / abschwächen",
     "verb",
     3,
-    "We want to mitigate the risk."
-   ],
-   [
-    "to come up with",
-    "sich ausdenken, vorschlagen",
-    "verb",
-    2,
-    "Can you come up with a better idea?"
+    "We've mitigated against the chance of flooding.",
+    "wikt",
+    "mitigate"
    ]
   ],
-  "sentences": [
-   [
-    "We found a workaround for now.",
-    "Wir haben vorerst eine Übergangslösung gefunden.",
-    "for now = vorerst."
-   ],
-   [
-    "We apologise for the inconvenience.",
-    "Wir entschuldigen uns für die Unannehmlichkeiten.",
-    "Britische Schreibweise: apologise (amerikanisch: apologize)."
-   ],
-   [
-    "We are falling behind schedule.",
-    "Wir geraten im Zeitplan in Rückstand.",
-    "Present Continuous: ein Vorgang, der gerade läuft."
-   ]
-  ]
+  "sentences": []
  },
- "b-71": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
+ "b-69": {
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
   "words": [
-   [
-    "pitch deck",
-    "die Präsentation für Investoren",
-    "noun",
-    3,
-    "She sent the pitch deck to three investors."
-   ],
-   [
-    "seed round",
-    "die erste Finanzierungsrunde",
-    "noun",
-    3,
-    "The start-up closed its seed round in May."
-   ],
-   [
-    "runway",
-    "die Zeit bis das Geld aufgebraucht ist",
-    "noun",
-    3,
-    "We have a runway of twelve months."
-   ],
-   [
-    "unicorn",
-    "das Start-up mit Milliardenwert",
-    "noun",
-    3,
-    "Only a few start-ups become a unicorn."
-   ],
-   [
-    "business angel",
-    "der Geschäftsengel (private Geldgeber)",
-    "noun",
-    3,
-    "A business angel invested in our idea."
-   ],
-   [
-    "to bootstrap",
-    "aus eigener Kraft aufbauen",
-    "verb",
-    3,
-    "They bootstrapped the company without outside money."
-   ],
-   [
-    "cap table",
-    "die Gesellschafterübersicht",
-    "noun",
-    3,
-    "The cap table shows who owns what."
-   ],
-   [
-    "burn rate",
-    "die monatlichen Geldausgaben",
-    "noun",
-    3,
-    "Our burn rate is fifty thousand euros a month."
-   ],
-   [
-    "exit",
-    "der Ausstieg, der Verkauf der Firma",
-    "noun",
-    3,
-    "Investors hope for a quick exit."
-   ],
    [
     "founder",
     "der Gründer / die Gründerin",
     "noun",
     1,
-    "The founder started the firm in a garage."
+    "The founder of Facebook is Mark Zuckerberg.",
+    "wikt",
+    "founder"
    ],
    [
-    "scale-up",
-    "das schnell wachsende Unternehmen",
+    "venture capital",
+    "das Wagniskapital / das Risikokapital",
     "noun",
-    3,
-    "The scale-up now has two hundred employees."
-   ],
-   [
-    "to raise funds",
-    "Geld einsammeln",
-    "phrase",
     2,
-    "We need to raise funds for the launch."
+    "",
+    "wikt",
+    "venture capital"
    ],
    [
-    "product-market fit",
-    "die Passung von Produkt und Markt",
+    "crowdfunding",
+    "das Crowdfunding / die Schwarmfinanzierung",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "crowdfunding"
+   ],
+   [
+    "angel investor",
+    "der Business Angel",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "angel investor"
+   ],
+   [
+    "business plan",
+    "der Geschäftsplan",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "business plan"
+   ],
+   [
+    "dilution",
+    "die Verdünnung",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "dilution"
+   ],
+   [
+    "exit strategy",
+    "die Ausstiegsstrategie / die Exit-Strategie",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "exit strategy"
+   ],
+   [
+    "profit margin",
+    "die Gewinnspanne",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "profit margin"
+   ],
+   [
+    "customer base",
+    "der Kundenstamm",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "customer base"
+   ],
+   [
+    "scalability",
+    "die Skalierbarkeit",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "scalability"
+   ],
+   [
+    "market research",
+    "die Marktforschung",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "market research"
+   ],
+   [
+    "business model",
+    "das Geschäftsmodell",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "business model"
+   ],
+   [
+    "sole proprietor",
+    "der Alleininhaber / der Einzelinhaber",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "sole proprietor"
+   ],
+   [
+    "exit",
+    "der Abtritt / die Abwanderung",
     "noun",
     3,
-    "They are still looking for product-market fit."
-   ],
-   [
-    "MVP",
-    "das Mindestprodukt (minimum viable product)",
-    "noun",
-    3,
-    "We built an MVP in six weeks."
-   ],
-   [
-    "term sheet",
-    "die Eckpunkte eines Investments",
-    "noun",
-    3,
-    "The investor sent us a term sheet."
-   ],
-   [
-    "to pivot",
-    "die Geschäftsidee ändern",
-    "verb",
-    3,
-    "The team decided to pivot to B2B."
+    "He made his exit at the opportune time.",
+    "wikt",
+    "exit"
    ]
   ],
-  "sentences": [
-   [
-    "The founder started the firm in a garage.",
-    "Der Gründer hat die Firma in einer Garage gegründet.",
-    "Vergangenheit mit started: regelmäßiges Verb mit -ed."
-   ],
-   [
-    "We need to raise funds for the launch.",
-    "Wir müssen Geld für den Start einsammeln.",
-    "need to + Grundform: etwas tun müssen."
-   ],
-   [
-    "They are still looking for product-market fit.",
-    "Sie suchen noch die Passung von Produkt und Markt.",
-    "still = noch; Present Continuous für etwas Laufendes."
-   ]
-  ]
+  "sentences": []
  },
- "b-72": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
+ "b-70": {
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
   "words": [
-   [
-    "story points",
-    "die Aufwandspunkte (Schätzung)",
-    "noun",
-    3,
-    "We estimate in story points."
-   ],
-   [
-    "sprint review",
-    "die Vorführung am Ende des Sprints",
-    "noun",
-    3,
-    "We present the results in the sprint review."
-   ],
-   [
-    "stand-up",
-    "das kurze Tagestreffen im Stehen",
-    "noun",
-    2,
-    "Our stand-up starts at nine."
-   ],
-   [
-    "retrospective",
-    "der Rückblick (Verbesserungstreffen)",
-    "noun",
-    3,
-    "In the retrospective we talk about what went wrong."
-   ],
-   [
-    "user story",
-    "die Anforderung aus Nutzersicht",
-    "noun",
-    3,
-    "Each user story has a clear goal."
-   ],
-   [
-    "product owner",
-    "der Produktverantwortliche",
-    "noun",
-    3,
-    "The product owner sets the priorities."
-   ],
-   [
-    "scrum master",
-    "der Scrum-Master (Prozessbegleiter)",
-    "noun",
-    3,
-    "The scrum master removes obstacles."
-   ],
-   [
-    "velocity",
-    "die Teamgeschwindigkeit",
-    "noun",
-    3,
-    "Our velocity is twenty story points."
-   ],
-   [
-    "kanban board",
-    "das Aufgabenbrett (To do, Doing, Done)",
-    "noun",
-    2,
-    "Move the card to Done on the kanban board."
-   ],
-   [
-    "increment",
-    "das fertige Teilergebnis",
-    "noun",
-    3,
-    "Each sprint ends with a working increment."
-   ],
-   [
-    "definition of done",
-    "die Kriterien für „fertig“",
-    "noun",
-    3,
-    "We agreed on a definition of done."
-   ],
-   [
-    "burndown chart",
-    "das Diagramm der Restarbeit",
-    "noun",
-    3,
-    "The burndown chart shows our progress."
-   ],
-   [
-    "iteration",
-    "die Wiederholungsrunde",
-    "noun",
-    2,
-    "Each iteration lasts two weeks."
-   ],
-   [
-    "epic",
-    "das große Aufgabenpaket",
-    "noun",
-    3,
-    "This epic contains twelve user stories."
-   ],
-   [
-    "timebox",
-    "der festgelegte Zeitrahmen",
-    "noun",
-    3,
-    "We set a timebox of fifteen minutes."
-   ],
-   [
-    "pair programming",
-    "das Programmieren zu zweit",
-    "noun",
-    3,
-    "Pair programming helps us find mistakes."
-   ]
-  ],
-  "sentences": [
-   [
-    "Our stand-up starts at nine.",
-    "Unser Tagestreffen beginnt um neun.",
-    "Fahrplanartige Zeiten stehen im Present Simple."
-   ],
-   [
-    "The product owner sets the priorities.",
-    "Der Produktverantwortliche legt die Prioritäten fest.",
-    "Present Simple: Er legt immer fest (3. Person mit -s)."
-   ],
-   [
-    "Each iteration lasts two weeks.",
-    "Jede Runde dauert zwei Wochen.",
-    "each + Einzahl: jede(r)."
-   ]
-  ]
- },
- "b-73": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
-  "words": [
-   [
-    "leading indicator",
-    "der Frühindikator",
-    "noun",
-    3,
-    "Orders are a leading indicator for sales."
-   ],
-   [
-    "dashboard",
-    "die Übersichtsanzeige (Kennzahlen)",
-    "noun",
-    2,
-    "The dashboard shows our sales live."
-   ],
-   [
-    "variance",
-    "die Abweichung",
-    "noun",
-    3,
-    "The variance from the plan is small."
-   ],
-   [
-    "downturn",
-    "der Abschwung",
-    "noun",
-    2,
-    "The downturn hit the whole sector."
-   ],
-   [
-    "to track",
-    "verfolgen, nachhalten",
-    "verb",
-    2,
-    "We track our results every week."
-   ],
-   [
-    "metric",
-    "die Messgröße",
-    "noun",
-    3,
-    "Which metric matters most to you?"
-   ],
-   [
-    "conversion rate",
-    "die Abschlussquote",
-    "noun",
-    3,
-    "The conversion rate rose to four percent."
-   ],
-   [
-    "baseline",
-    "der Ausgangswert",
-    "noun",
-    3,
-    "We need a baseline before we start."
-   ],
-   [
-    "outlier",
-    "der Ausreißer",
-    "noun",
-    3,
-    "One outlier changes the average."
-   ],
-   [
-    "year-on-year",
-    "im Vergleich zum Vorjahr",
-    "adv",
-    3,
-    "Sales grew ten percent year-on-year."
-   ],
-   [
-    "quarter-on-quarter",
-    "im Vergleich zum Vorquartal",
-    "adv",
-    3,
-    "Costs fell quarter-on-quarter."
-   ],
-   [
-    "run rate",
-    "der hochgerechnete Jahreswert",
-    "noun",
-    3,
-    "Our run rate is two million euros."
-   ],
-   [
-    "data point",
-    "der einzelne Messwert",
-    "noun",
-    2,
-    "Each data point is stored here."
-   ],
-   [
-    "target vs actual",
-    "Soll-Ist-Vergleich",
-    "phrase",
-    2,
-    "The report compares target vs actual."
-   ],
    [
     "to measure",
     "messen",
     "verb",
     1,
-    "How do you measure success?"
+    "We measured the temperature with a thermometer.",
+    "wikt",
+    "measure"
    ],
    [
     "to drop",
-    "fallen, sinken",
+    "fallen",
     "verb",
     1,
-    "Sales dropped in March."
+    "A single shot was fired and the bird dropped from the sky.",
+    "wikt",
+    "drop"
+   ],
+   [
+    "agile",
+    "behände / agil",
+    "adj",
+    2,
+    "an agile creature",
+    "wikt",
+    "agile"
+   ],
+   [
+    "scrum",
+    "das Gedränge / die Rummelei",
+    "noun",
+    2,
+    "A scrum developed around the bar when free beer was announced.",
+    "wikt",
+    "scrum"
+   ],
+   [
+    "code review",
+    "der Codereview / der Review",
+    "noun",
+    2,
+    "After several painful episodes, we've decided to adopt code review for all major changes.",
+    "wikt",
+    "code review"
+   ],
+   [
+    "continuous integration",
+    "die kontinuierliche Integration",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "continuous integration"
+   ],
+   [
+    "waterfall",
+    "der Wasserfall / die Kaskade",
+    "noun",
+    2,
+    "A waterfall of mist came from the open freezer.",
+    "wikt",
+    "waterfall"
+   ],
+   [
+    "priority",
+    "die Priorität / der Vorrang",
+    "noun",
+    2,
+    "He set his e-mail message's priority to high.",
+    "wikt",
+    "priority"
+   ],
+   [
+    "task",
+    "die Aufgabe / die Pflicht",
+    "noun",
+    2,
+    "daily task, monotonous task, regular task, parental task",
+    "wikt",
+    "task"
+   ],
+   [
+    "demo",
+    "die Demonstration",
+    "noun",
+    2,
+    "The professor prepared a demo to help her class understand the topic.",
+    "wikt",
+    "demo"
+   ],
+   [
+    "feedback loop",
+    "die Rückkopplungsschleife",
+    "noun",
+    2,
+    "a positive feedback loop",
+    "wikt",
+    "feedback loop"
+   ],
+   [
+    "downturn",
+    "der Abschwung / der Rückgang",
+    "noun",
+    2,
+    "The downturn in the economy made it harder to find jobs.",
+    "wikt",
+    "downturn"
+   ],
+   [
+    "to track",
+    "verfolgen",
+    "verb",
+    2,
+    "Agent Miles has been tracking the terrorist since Madrid.",
+    "wikt",
+    "track"
    ]
   ],
-  "sentences": [
-   [
-    "The dashboard shows our sales live.",
-    "Die Übersichtsanzeige zeigt unseren Umsatz live.",
-    "show + Objekt: Present Simple, 3. Person mit -s."
-   ],
-   [
-    "Sales grew ten percent year-on-year.",
-    "Der Umsatz ist im Jahresvergleich um zehn Prozent gewachsen.",
-    "grew ist die Vergangenheit von grow (unregelmäßig)."
-   ],
-   [
-    "How do you measure success?",
-    "Wie messen Sie Erfolg?",
-    "Fragen im Present Simple: How do you …?"
-   ]
-  ]
+  "sentences": []
  },
- "b-74": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
+ "b-71": {
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
   "words": [
    [
-    "churn",
-    "die Kundenabwanderung",
-    "noun",
-    3,
-    "Churn went down after the price change."
-   ],
-   [
-    "to onboard",
-    "neue Kunden/Mitarbeiter einführen",
-    "verb",
-    3,
-    "We onboard new customers within a week."
-   ],
-   [
-    "upselling",
-    "der Verkauf höherwertiger Produkte",
-    "noun",
-    3,
-    "Upselling increased our revenue."
-   ],
-   [
-    "cross-selling",
-    "der Zusatzverkauf passender Produkte",
-    "noun",
-    3,
-    "Cross-selling works well online."
-   ],
-   [
-    "touchpoint",
-    "der Kontaktpunkt mit dem Kunden",
-    "noun",
-    3,
-    "Every touchpoint should feel consistent."
-   ],
-   [
-    "customer journey",
-    "der Weg des Kunden zum Kauf",
-    "noun",
-    3,
-    "We map the whole customer journey."
-   ],
-   [
-    "lifetime value",
-    "der Gesamtwert eines Kunden",
-    "noun",
-    3,
-    "Lifetime value matters more than one sale."
-   ],
-   [
-    "loyalty programme",
-    "das Kundenbindungsprogramm",
+    "graph",
+    "der Graph / der Funktionsgraph",
     "noun",
     2,
-    "Our loyalty programme has fifty thousand members."
+    "",
+    "wikt",
+    "graph"
    ],
    [
-    "prospect",
-    "der potenzielle Kunde",
+    "data",
+    "das Daten / die Informationseinheiten",
     "noun",
     2,
-    "We called ten prospects today."
+    "Data can be sent through email.",
+    "wikt",
+    "data"
    ],
    [
-    "pipeline",
-    "die Verkaufschancen im Überblick",
+    "target",
+    "die Zielscheibe / die Schießscheibe",
     "noun",
     2,
-    "The sales pipeline looks full."
+    "Take careful aim at the target.",
+    "wikt",
+    "target"
    ],
    [
-    "retention",
-    "das Halten von Kunden",
+    "net profit",
+    "der Reingewinn",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "net profit"
+   ],
+   [
+    "income statement",
+    "die Gewinn- und Verlustrechnung",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "income statement"
+   ],
+   [
+    "annual report",
+    "der Jahresbericht",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "annual report"
+   ],
+   [
+    "pivot table",
+    "die Pivot-Tabelle",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "pivot table"
+   ],
+   [
+    "correlation",
+    "die Korrelation",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "correlation"
+   ],
+   [
+    "analytics",
+    "die Analytik",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "analytics"
+   ],
+   [
+    "measurement",
+    "die Messung",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "measurement"
+   ],
+   [
+    "metric",
+    "die Metrik / die Messgröße",
     "noun",
     3,
-    "Retention is cheaper than new business."
+    "What metric should be used for performance evaluation?",
+    "wikt",
+    "metric"
    ],
    [
-    "NPS",
-    "der Kundenzufriedenheitswert",
+    "baseline",
+    "der Ausgangswert / der Bezugswert",
     "noun",
     3,
-    "Our NPS rose to sixty."
+    "We used the last doctor visit to provide baselines for vital statistics.",
+    "wikt",
+    "baseline"
    ],
    [
-    "account manager",
-    "der Kundenbetreuer",
+    "outlier",
+    "der Ausreißer / der Sonderfall",
+    "noun",
+    3,
+    "",
+    "wikt",
+    "outlier"
+   ]
+  ],
+  "sentences": []
+ },
+ "b-72": {
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
+  "words": [
+   [
+    "hotline",
+    "die Hotline",
     "noun",
     2,
-    "Your account manager will call you."
+    "If you've got any problems with the product, ring our hotline.",
+    "wikt",
+    "hotline"
    ],
    [
-    "renewal",
-    "die Vertragsverlängerung",
+    "segment",
+    "das Segment",
     "noun",
     2,
-    "The renewal is due in June."
+    "a segment of rope",
+    "wikt",
+    "segment"
    ],
    [
-    "referral",
-    "die Weiterempfehlung",
+    "persona",
+    "die Persona",
     "noun",
     2,
-    "Most new clients come through referral."
+    "He keeps his online persona completely separate from his real-world one.",
+    "wikt",
+    "persona"
+   ],
+   [
+    "database",
+    "die Datenbank",
+    "noun",
+    2,
+    "I have a database of all my contacts in my personal organizer.",
+    "wikt",
+    "database"
+   ],
+   [
+    "cold call",
+    "die Kaltakquise / der Cold Call",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "cold call"
+   ],
+   [
+    "freelancer",
+    "der Freiberufler / der freier Mitarbeiter",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "freelancer"
+   ],
+   [
+    "self-employed",
+    "selbstständig / selbständig",
+    "adj",
+    2,
+    "",
+    "wikt",
+    "self-employed"
+   ],
+   [
+    "consultant",
+    "der Berater / die Beraterin",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "consultant"
+   ],
+   [
+    "subcontractor",
+    "der Subunternehmer",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "subcontractor"
+   ],
+   [
+    "brief",
+    "kurz",
+    "adj",
+    2,
+    "Her reign was brief but spectacular.",
+    "wikt",
+    "brief"
+   ],
+   [
+    "proposal",
+    "der Vorschlag",
+    "noun",
+    2,
+    "proposals for the construction of a new building",
+    "wikt",
+    "proposal"
+   ],
+   [
+    "timeline",
+    "die Zeittafel / die Zeitleiste",
+    "noun",
+    2,
+    "on an alternate timeline",
+    "wikt",
+    "timeline"
+   ],
+   [
+    "assessment",
+    "die Bewertung / die Schätzung",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "assessment"
+   ],
+   [
+    "recommendation",
+    "die Empfehlung / der Rekommandation",
+    "noun",
+    2,
+    "Your next employer may require a recommendation.",
+    "wikt",
+    "recommendation"
+   ],
+   [
+    "presentation",
+    "die Darstellung / der Ausdruck",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "presentation"
+   ],
+   [
+    "expertise",
+    "die Expertise / die Fachkenntnis",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "expertise"
    ],
    [
     "to nurture",
-    "pflegen, aufbauen (Kontakte)",
+    "umsorgen / hegen und pflegen",
     "verb",
     3,
-    "We nurture our leads with a monthly email."
+    "",
+    "wikt",
+    "nurture"
    ]
   ],
-  "sentences": [
-   [
-    "Your account manager will call you.",
-    "Ihr Kundenbetreuer ruft Sie an.",
-    "will + Grundform: Ankündigung."
-   ],
-   [
-    "Most new clients come through referral.",
-    "Die meisten neuen Kunden kommen durch Empfehlung.",
-    "through = durch, über."
-   ],
-   [
-    "Every touchpoint should feel consistent.",
-    "Jeder Kontaktpunkt sollte einheitlich wirken.",
-    "should + Grundform: Empfehlung."
-   ]
-  ]
+  "sentences": []
  },
- "b-75": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
+ "b-73": {
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
   "words": [
    [
     "trademark",
-    "die Marke (rechtlich geschützt)",
+    "die Marke / das Warenzeichen",
     "noun",
     2,
-    "The name is a registered trademark."
-   ],
-   [
-    "patent office",
-    "das Patentamt",
-    "noun",
-    3,
-    "The patent office has not answered yet."
-   ],
-   [
-    "infringement",
-    "die Rechtsverletzung",
-    "noun",
-    3,
-    "The company sued for patent infringement."
+    "",
+    "wikt",
+    "trademark"
    ],
    [
     "copyright",
     "das Urheberrecht",
     "noun",
     2,
-    "The photo is protected by copyright."
+    "Copyright is a separate legal area from trademarks.",
+    "wikt",
+    "copyright"
    ],
    [
-    "royalty",
-    "die Lizenzgebühr",
+    "to sue",
+    "verklagen / klagen",
+    "verb",
+    2,
+    "sue someone for selling a faulty product",
+    "wikt",
+    "sue"
+   ],
+   [
+    "license",
+    "die Lizenz / die Erlaubnis",
     "noun",
-    3,
-    "The author earns a royalty on every copy."
+    2,
+    "In order to enter the building, I need to show my license.",
+    "wikt",
+    "license"
    ],
    [
-    "patent pending",
-    "zum Patent angemeldet",
-    "phrase",
-    3,
-    "The device is patent pending."
+    "piracy",
+    "die Piraterie / die Seeräuberei",
+    "noun",
+    2,
+    "How should the international community respond to Somali piracy?",
+    "wikt",
+    "piracy"
+   ],
+   [
+    "logo",
+    "das Logo",
+    "noun",
+    2,
+    "How many new logos did we close this quarter?",
+    "wikt",
+    "logo"
+   ],
+   [
+    "permission",
+    "die Erlaubnis / die Gestattung",
+    "noun",
+    2,
+    "Sire, do I have your permission to execute this traitor?",
+    "wikt",
+    "permission"
+   ],
+   [
+    "attribution",
+    "die Zuschreibung",
+    "noun",
+    2,
+    "The attribution of the quote is widely regarded as dubious.",
+    "wikt",
+    "attribution"
+   ],
+   [
+    "author",
+    "der Autor / die Autorin",
+    "noun",
+    2,
+    "The copyright of any original writing belongs initially and properly to its author.",
+    "wikt",
+    "author"
+   ],
+   [
+    "inventor",
+    "der Erfinder / die Erfinderin",
+    "noun",
+    2,
+    "Thomas Edison was the inventor of the phonograph.",
+    "wikt",
+    "inventor"
+   ],
+   [
+    "expiry",
+    "der Ablauf",
+    "noun",
+    2,
+    "The contract becomes void upon expiry.",
+    "wikt",
+    "expiry"
+   ],
+   [
+    "litigation",
+    "der Rechtsstreit / die Prozessführung",
+    "noun",
+    2,
+    "There is ongoing litigation in this matter.",
+    "wikt",
+    "litigation"
+   ],
+   [
+    "lawsuit",
+    "das Gerichtsverfahren / der Rechtsstreit",
+    "noun",
+    2,
+    "My ex-fiancé filed a lawsuit against me for a false restraining order and defamation.",
+    "wikt",
+    "lawsuit"
+   ],
+   [
+    "to cease and desist",
+    "hören Sie auf und verzichten Sie",
+    "verb",
+    2,
+    "We are told to cease and desist or we will cease to exist.",
+    "wikt",
+    "cease and desist"
+   ],
+   [
+    "licensee",
+    "der Lizenznehmer / der Lizenzinhaber",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "licensee"
    ],
    [
     "plagiarism",
     "das Plagiat",
     "noun",
     3,
-    "Plagiarism can end a career."
+    "Even if it's not illegal, plagiarism is usually frowned upon.",
+    "wikt",
+    "plagiarism"
    ],
    [
     "public domain",
-    "gemeinfrei",
+    "die Public Domain / die Gemeinfreiheit",
     "noun",
     3,
-    "The book is now in the public domain."
-   ],
-   [
-    "licensor",
-    "der Lizenzgeber",
-    "noun",
-    3,
-    "The licensor owns all rights."
+    "Very little information about the treaty is in the public domain.",
+    "wikt",
+    "public domain"
    ],
    [
     "trade secret",
-    "das Geschäftsgeheimnis",
+    "das Geschäftsgeheimnis / das Kunstgeheimnis",
     "noun",
     3,
-    "The recipe is a trade secret."
-   ],
-   [
-    "brand name",
-    "der Markenname",
-    "noun",
-    1,
-    "Choose a short brand name."
-   ],
-   [
-    "to sue",
-    "verklagen",
-    "verb",
-    2,
-    "They are going to sue the supplier."
+    "",
+    "wikt",
+    "trade secret"
    ],
    [
     "intellectual property",
-    "das geistige Eigentum",
+    "das geistiges Eigentum",
     "noun",
     3,
-    "We protect our intellectual property."
+    "",
+    "wikt",
+    "intellectual property"
    ],
    [
     "counterfeit",
-    "gefälscht, die Fälschung",
+    "gefälscht / nachgemacht",
     "adj",
     3,
-    "The shop sold counterfeit watches."
-   ],
-   [
-    "disclaimer",
-    "der Haftungsausschluss",
-    "noun",
-    3,
-    "Read the disclaimer on the website."
-   ],
-   [
-    "to register a design",
-    "ein Design schützen lassen",
-    "phrase",
-    3,
-    "We registered the design last year."
+    "",
+    "wikt",
+    "counterfeit"
    ]
   ],
-  "sentences": [
-   [
-    "The photo is protected by copyright.",
-    "Das Foto ist urheberrechtlich geschützt.",
-    "Passiv: is protected by …"
-   ],
-   [
-    "They are going to sue the supplier.",
-    "Sie werden den Lieferanten verklagen.",
-    "going to + Grundform: feste Absicht."
-   ],
-   [
-    "We protect our intellectual property.",
-    "Wir schützen unser geistiges Eigentum.",
-    "protect + Objekt."
-   ]
-  ]
+  "sentences": []
  },
- "b-76": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
+ "b-74": {
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
   "words": [
-   [
-    "unfair dismissal",
-    "die ungerechtfertigte Kündigung",
-    "noun",
-    3,
-    "He sued for unfair dismissal."
-   ],
-   [
-    "termination agreement",
-    "der Aufhebungsvertrag",
-    "noun",
-    3,
-    "Both sides signed a termination agreement."
-   ],
-   [
-    "workplace agreement",
-    "die Betriebsvereinbarung",
-    "noun",
-    3,
-    "The workplace agreement covers flexible hours."
-   ],
-   [
-    "fixed-term contract",
-    "der befristete Vertrag",
-    "noun",
-    3,
-    "She has a fixed-term contract until May."
-   ],
    [
     "probation",
     "die Probezeit",
     "noun",
     2,
-    "The probation lasts six months."
-   ],
-   [
-    "dismissal",
-    "die Kündigung durch den Arbeitgeber",
-    "noun",
-    3,
-    "The dismissal came as a shock."
+    "He got two years probation for robbery.",
+    "wikt",
+    "probation"
    ],
    [
     "sick pay",
-    "die Lohnfortzahlung im Krankheitsfall",
+    "das Krankengeld / die Lohnfortzahlung",
     "noun",
     2,
-    "Sick pay is paid for six weeks."
-   ],
-   [
-    "wage slip",
-    "die Gehaltsabrechnung",
-    "noun",
-    2,
-    "Your wage slip is in the portal."
+    "",
+    "wikt",
+    "sick pay"
    ],
    [
     "employment contract",
-    "der Arbeitsvertrag",
+    "der Arbeitsvertrag / der Dienstvertrag",
     "noun",
     2,
-    "Please sign the employment contract."
-   ],
-   [
-    "collective agreement",
-    "der Tarifvertrag",
-    "noun",
-    3,
-    "The collective agreement sets the pay."
-   ],
-   [
-    "overtime pay",
-    "die Überstundenvergütung",
-    "noun",
-    2,
-    "Overtime pay is included in the salary."
+    "",
+    "wikt",
+    "employment contract"
    ],
    [
     "to give notice",
-    "kündigen, die Kündigung einreichen",
-    "phrase",
-    2,
-    "She gave notice at the end of May."
-   ],
-   [
-    "to lay off",
-    "entlassen (wegen Auftragsmangel)",
+    "kündigen",
     "verb",
-    3,
-    "The company laid off thirty workers."
-   ],
-   [
-    "agency worker",
-    "der Zeitarbeiter",
-    "noun",
-    3,
-    "An agency worker covers the holiday."
+    2,
+    "He gave notice yesterday that he'll leave in two weeks.",
+    "wikt",
+    "give notice"
    ],
    [
     "trade union",
     "die Gewerkschaft",
     "noun",
     2,
-    "The trade union called a strike."
+    "",
+    "wikt",
+    "trade union"
    ],
    [
     "minimum wage",
     "der Mindestlohn",
     "noun",
     2,
-    "The minimum wage went up again."
+    "",
+    "wikt",
+    "minimum wage"
+   ],
+   [
+    "employee",
+    "der Arbeitnehmer / die Arbeitnehmerin",
+    "noun",
+    2,
+    "One way to encourage your employees to work harder is by giving them incentives.",
+    "wikt",
+    "employee"
+   ],
+   [
+    "employer",
+    "der Arbeitgeber / die Arbeitgeberin",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "employer"
+   ],
+   [
+    "severance",
+    "die Scheidung / die Trennung",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "severance"
+   ],
+   [
+    "maternity leave",
+    "der Mutterschaftsurlaub / der Mutterschutz",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "maternity leave"
+   ],
+   [
+    "paternity leave",
+    "der Vaterschaftsurlaub",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "paternity leave"
+   ],
+   [
+    "wage",
+    "der Lohn / das Arbeitsentgelt",
+    "noun",
+    2,
+    "Before her promotion, her wages were 20% less.",
+    "wikt",
+    "wage"
+   ],
+   [
+    "bonus",
+    "der Bonus / die Dreingabe",
+    "noun",
+    2,
+    "The employee of the week receives a bonus for his excellent work.",
+    "wikt",
+    "bonus"
    ]
   ],
-  "sentences": [
-   [
-    "The notice period is three months.",
-    "Die Kündigungsfrist beträgt drei Monate.",
-    "is = beträgt; Present Simple von be."
-   ],
-   [
-    "She resigned last Friday.",
-    "Sie hat letzten Freitag gekündigt.",
-    "last Friday ohne Präposition."
-   ],
-   [
-    "The company laid off thirty workers.",
-    "Die Firma hat dreißig Arbeiter entlassen.",
-    "laid off: Vergangenheit von lay off."
-   ]
-  ]
+  "sentences": []
  },
- "b-77": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
+ "b-75": {
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
   "words": [
    [
+    "payslip",
+    "die Entgeltabrechnung / die Gehaltsabrechnung",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "payslip"
+   ],
+   [
+    "temporary",
+    "zeitweilig / temporär",
+    "adj",
+    2,
+    "",
+    "wikt",
+    "temporary"
+   ],
+   [
+    "permanent",
+    "permanent / ständig",
+    "adj",
+    2,
+    "Nothing in this world is truly permanent.",
+    "wikt",
+    "permanent"
+   ],
+   [
+    "apprenticeship",
+    "die Ausbildungszeit / die Lehre",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "apprenticeship"
+   ],
+   [
+    "trainee",
+    "der Praktikant / die Praktikantin",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "trainee"
+   ],
+   [
+    "demotion",
+    "die Herabstufung / die Herunterstufung",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "demotion"
+   ],
+   [
+    "discrimination",
+    "die Diskriminierung / die Unterscheidung",
+    "noun",
+    2,
+    "sexual or racial discrimination",
+    "wikt",
+    "discrimination"
+   ],
+   [
+    "harassment",
+    "die Belästigung",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "harassment"
+   ],
+   [
+    "tribunal",
+    "das Tribunal / der Gerichtshof",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "tribunal"
+   ],
+   [
+    "fixed-term contract",
+    "der befristeter Vertrag",
+    "noun",
+    3,
+    "",
+    "wikt",
+    "fixed-term contract"
+   ],
+   [
+    "dismissal",
+    "die Entlassung / die Kündigung",
+    "noun",
+    3,
+    "",
+    "wikt",
+    "dismissal"
+   ],
+   [
+    "collective agreement",
+    "der Tarifvertrag",
+    "noun",
+    3,
+    "",
+    "wikt",
+    "collective agreement"
+   ],
+   [
+    "to lay off",
+    "entlassen",
+    "verb",
+    3,
+    "Lay off the singing, will you! I'm trying to study.",
+    "wikt",
+    "lay off"
+   ]
+  ],
+  "sentences": []
+ },
+ "b-76": {
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
+  "words": [
+   [
+    "court order",
+    "der Gerichtsbeschluss",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "court order"
+   ],
+   [
+    "bankruptcy",
+    "der Bankrott / die Pleite",
+    "noun",
+    2,
+    "The company ended up filing for bankruptcy.",
+    "wikt",
+    "bankruptcy"
+   ],
+   [
+    "liquidation",
+    "die Abwicklung / die Liquidation",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "liquidation"
+   ],
+   [
+    "receivership",
+    "Konkursverwaltung",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "receivership"
+   ],
+   [
+    "credit score",
+    "Kreditscoring",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "credit score"
+   ],
+   [
+    "guarantor",
+    "der Garant / der Garantiegeber",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "guarantor"
+   ],
+   [
+    "lien",
+    "das Zurückbehaltungsrecht / das Retentionsrecht",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "lien"
+   ],
+   [
     "debt collection",
-    "das Inkasso",
+    "das Inkasso / das Eintreiben",
     "noun",
     3,
-    "The invoice went to debt collection."
-   ],
-   [
-    "dunning letter",
-    "das Mahnschreiben",
-    "noun",
-    3,
-    "The dunning letter arrived on Monday."
-   ],
-   [
-    "arrears",
-    "der Zahlungsrückstand",
-    "noun",
-    3,
-    "The tenant is in arrears."
-   ],
-   [
-    "outstanding balance",
-    "der offene Betrag",
-    "noun",
-    2,
-    "Your outstanding balance is 800 euros."
-   ],
-   [
-    "late fee",
-    "die Verzugsgebühr",
-    "noun",
-    2,
-    "A late fee applies after thirty days."
-   ],
-   [
-    "payment plan",
-    "der Ratenzahlungsplan",
-    "noun",
-    2,
-    "We agreed on a payment plan."
+    "",
+    "wikt",
+    "debt collection"
    ],
    [
     "creditor",
-    "der Gläubiger",
+    "der Gläubiger / der Kreditor",
     "noun",
     3,
-    "The creditor wants its money."
+    "The creditor demanded immediate payment.",
+    "wikt",
+    "creditor"
    ],
    [
     "debtor",
-    "der Schuldner",
+    "der Schuldner / die Schuldnerin",
     "noun",
     3,
-    "The debtor has not paid for months."
+    "The debtor agreed to repay the loan within six months.",
+    "wikt",
+    "debtor"
    ],
    [
     "to waive",
-    "verzichten auf",
+    "verzichten / aufgeben",
     "verb",
     3,
-    "We waive the late fee this time."
-   ],
-   [
-    "final demand",
-    "die letzte Zahlungsaufforderung",
-    "noun",
-    3,
-    "This is our final demand."
+    "",
+    "wikt",
+    "waive"
    ],
    [
     "bailiff",
     "der Gerichtsvollzieher",
     "noun",
     3,
-    "The bailiff visited the shop."
-   ],
-   [
-    "statute of limitations",
-    "die Verjährungsfrist",
-    "noun",
-    3,
-    "The statute of limitations is three years."
+    "",
+    "wikt",
+    "bailiff"
    ],
    [
     "bad debt",
-    "der uneinbringliche Forderungsausfall",
+    "der Forderungsausfall",
     "noun",
     3,
-    "Bad debt cost us ten thousand euros."
-   ],
-   [
-    "late payer",
-    "der säumige Zahler",
-    "noun",
-    2,
-    "He is a known late payer."
-   ],
-   [
-    "credit check",
-    "die Bonitätsprüfung",
-    "noun",
-    3,
-    "We run a credit check on new clients."
-   ],
-   [
-    "to chase payment",
-    "Zahlung anmahnen",
-    "phrase",
-    2,
-    "Our team chases payment every week."
+    "",
+    "wikt",
+    "bad debt"
    ]
   ],
-  "sentences": [
-   [
-    "This invoice is overdue.",
-    "Diese Rechnung ist überfällig.",
-    "is overdue: Zustand, daher be + Adjektiv."
-   ],
-   [
-    "We agreed on a payment plan.",
-    "Wir haben einen Ratenplan vereinbart.",
-    "agree on + Nomen: sich auf etwas einigen."
-   ],
-   [
-    "We run a credit check on new clients.",
-    "Wir führen bei Neukunden eine Bonitätsprüfung durch.",
-    "run a check = eine Prüfung durchführen."
-   ]
-  ]
+  "sentences": []
  },
- "b-78": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
+ "b-77": {
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
   "words": [
-   [
-    "retainer",
-    "das monatliche Beratungshonorar",
-    "noun",
-    3,
-    "The agency works on a monthly retainer."
-   ],
-   [
-    "scope creep",
-    "die schleichende Ausweitung des Auftrags",
-    "noun",
-    3,
-    "Scope creep made the project late."
-   ],
-   [
-    "to pitch for",
-    "sich um einen Auftrag bewerben",
-    "phrase",
-    3,
-    "Three agencies pitch for the contract."
-   ],
-   [
-    "hourly rate",
-    "der Stundensatz",
-    "noun",
-    2,
-    "My hourly rate is eighty euros."
-   ],
-   [
-    "freelancer",
-    "der Freiberufler",
-    "noun",
-    2,
-    "We hired a freelancer for the website."
-   ],
-   [
-    "statement of work",
-    "die Leistungsbeschreibung",
-    "noun",
-    3,
-    "Please read the statement of work."
-   ],
-   [
-    "kick-off call",
-    "das Auftakt-Telefonat",
-    "noun",
-    2,
-    "The kick-off call is on Monday."
-   ],
-   [
-    "billable hours",
-    "die abrechenbaren Stunden",
-    "noun",
-    3,
-    "We track billable hours every day."
-   ],
-   [
-    "client brief",
-    "die Auftragsbeschreibung des Kunden",
-    "noun",
-    3,
-    "The client brief was very short."
-   ],
-   [
-    "turnaround time",
-    "die Bearbeitungszeit",
-    "noun",
-    3,
-    "Our turnaround time is two days."
-   ],
-   [
-    "non-compete clause",
-    "die Wettbewerbsklausel",
-    "noun",
-    3,
-    "The contract has a non-compete clause."
-   ],
-   [
-    "day rate",
-    "der Tagessatz",
-    "noun",
-    2,
-    "Her day rate is six hundred euros."
-   ],
-   [
-    "pro bono",
-    "unentgeltlich (für einen guten Zweck)",
-    "adv",
-    3,
-    "He works pro bono for a charity."
-   ],
-   [
-    "self-employed",
-    "selbstständig",
-    "adj",
-    2,
-    "She has been self-employed since 2020."
-   ],
-   [
-    "portfolio",
-    "die Referenzmappe",
-    "noun",
-    2,
-    "Please send us your portfolio."
-   ],
-   [
-    "to bill by the hour",
-    "nach Stunden abrechnen",
-    "phrase",
-    2,
-    "We bill by the hour."
-   ]
-  ],
-  "sentences": [
-   [
-    "We hired a freelancer for the website.",
-    "Wir haben einen Freiberufler für die Website engagiert.",
-    "hired: Vergangenheit von hire."
-   ],
-   [
-    "Can you quote for the whole job?",
-    "Können Sie für den ganzen Auftrag ein Angebot machen?",
-    "quote for = ein Angebot machen für."
-   ],
-   [
-    "She has been self-employed since 2020.",
-    "Sie ist seit 2020 selbstständig.",
-    "has been + since: Present Perfect mit Zeitpunkt."
-   ]
-  ]
- },
- "b-79": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
-  "words": [
-   [
-    "customs clearance",
-    "die Zollabfertigung",
-    "noun",
-    3,
-    "Customs clearance took two days."
-   ],
-   [
-    "tariff",
-    "der Zolltarif",
-    "noun",
-    3,
-    "The new tariff makes imports more expensive."
-   ],
-   [
-    "Incoterms",
-    "die internationalen Lieferklauseln",
-    "noun",
-    3,
-    "The Incoterms say who pays for transport."
-   ],
-   [
-    "bill of lading",
-    "der Frachtbrief (Seefracht)",
-    "noun",
-    3,
-    "Please send the bill of lading by email."
-   ],
-   [
-    "export licence",
-    "die Ausfuhrgenehmigung",
-    "noun",
-    3,
-    "We need an export licence for this machine."
-   ],
-   [
-    "import duty",
-    "der Einfuhrzoll",
-    "noun",
-    3,
-    "Import duty is added to the price."
-   ],
-   [
-    "freight forwarder",
-    "der Spediteur",
-    "noun",
-    3,
-    "Our freight forwarder arranges the shipment."
-   ],
    [
     "container",
     "der Container",
     "noun",
     1,
-    "The container leaves the port tomorrow."
-   ],
-   [
-    "free trade zone",
-    "die Freihandelszone",
-    "noun",
-    3,
-    "The factory is in a free trade zone."
-   ],
-   [
-    "certificate of origin",
-    "das Ursprungszeugnis",
-    "noun",
-    3,
-    "The buyer asked for a certificate of origin."
+    "",
+    "wikt",
+    "container"
    ],
    [
     "port",
     "der Hafen",
     "noun",
     1,
-    "The ship arrives at the port on Monday."
+    "Each eight has four ports and four starboards.",
+    "wikt",
+    "port"
+   ],
+   [
+    "to export",
+    "exportieren / ausführen",
+    "verb",
+    1,
+    "Japan exports electronic goods throughout the world.",
+    "wikt",
+    "export"
+   ],
+   [
+    "import",
+    "die Importware / das Importgut",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "import"
+   ],
+   [
+    "consignment",
+    "die Sendung",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "consignment"
+   ],
+   [
+    "airport",
+    "der Flughafen / der Flugplatz",
+    "noun",
+    2,
+    "She met Sam and the others at the airport at 7:00 am.",
+    "wikt",
+    "airport"
+   ],
+   [
+    "consignee",
+    "der Empfänger / der Adressat",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "consignee"
+   ],
+   [
+    "broker",
+    "der Vermittler / der Makler",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "broker"
+   ],
+   [
+    "waybill",
+    "der Frachtbrief",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "waybill"
+   ],
+   [
+    "manifest",
+    "manifest",
+    "adj",
+    2,
+    "",
+    "wikt",
+    "manifest"
+   ],
+   [
+    "letter of credit",
+    "das Akkreditiv",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "letter of credit"
+   ],
+   [
+    "free trade",
+    "der Freihandel",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "free trade"
+   ],
+   [
+    "trade deficit",
+    "das Handelsdefizit",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "trade deficit"
+   ],
+   [
+    "trade surplus",
+    "der Handelsüberschuss",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "trade surplus"
+   ],
+   [
+    "customs clearance",
+    "die Zollkontrolle / die Verzollung",
+    "noun",
+    3,
+    "",
+    "wikt",
+    "customs clearance"
    ],
    [
     "quota",
-    "die Quote, das Kontingent",
+    "die Quote / das Kontingent",
     "noun",
     3,
-    "There is a quota for steel imports."
+    "",
+    "wikt",
+    "quota"
    ],
    [
     "trade barrier",
     "das Handelshemmnis",
     "noun",
     3,
-    "Trade barriers slow down exports."
+    "",
+    "wikt",
+    "trade barrier"
    ],
    [
     "embargo",
-    "das Handelsverbot",
+    "das Embargo / die Ausfuhrsperre",
     "noun",
     3,
-    "The embargo stopped all deliveries."
-   ],
-   [
-    "customs declaration",
-    "die Zollerklärung",
-    "noun",
-    3,
-    "Fill in the customs declaration."
-   ],
-   [
-    "to export",
-    "ausführen, exportieren",
-    "verb",
-    1,
-    "We export machines to Asia."
+    "This copy of the federal budget is under embargo until 2 p.m.",
+    "wikt",
+    "embargo"
    ]
   ],
-  "sentences": [
-   [
-    "Customs clearance took two days.",
-    "Die Zollabfertigung hat zwei Tage gedauert.",
-    "took: Vergangenheit von take."
-   ],
-   [
-    "We export machines to Asia.",
-    "Wir exportieren Maschinen nach Asien.",
-    "export to + Land: Ziel der Ausfuhr."
-   ],
-   [
-    "The container leaves the port tomorrow.",
-    "Der Container verlässt morgen den Hafen.",
-    "Present Simple für Fahrpläne und feste Termine."
-   ]
-  ]
+  "sentences": []
  },
- "b-80": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
+ "b-78": {
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
   "words": [
    [
-    "landlord",
-    "der Vermieter",
-    "noun",
+    "to landlord",
+    "der Vermieter / der Hauswirt",
+    "verb",
     2,
-    "The landlord lives in the same building."
+    "",
+    "wikt",
+    "landlord"
    ],
    [
     "tenant",
-    "der Mieter",
+    "der Mieter / der Pächter",
     "noun",
     2,
-    "The tenant pays the rent on the first."
+    "",
+    "wikt",
+    "tenant"
    ],
    [
     "floor plan",
     "der Grundriss",
     "noun",
     2,
-    "The floor plan shows four rooms."
-   ],
-   [
-    "rent increase",
-    "die Mieterhöhung",
-    "noun",
-    2,
-    "A rent increase of five percent is planned."
-   ],
-   [
-    "notice to quit",
-    "die Kündigung des Mietverhältnisses",
-    "noun",
-    3,
-    "The tenant received a notice to quit."
-   ],
-   [
-    "viewing",
-    "die Besichtigung",
-    "noun",
-    2,
-    "The viewing is on Saturday at ten."
-   ],
-   [
-    "utilities",
-    "die Nebenkosten (Wasser, Strom)",
-    "noun",
-    2,
-    "Utilities are not included in the rent."
+    "",
+    "wikt",
+    "floor plan"
    ],
    [
     "furnished",
     "möbliert",
     "adj",
     2,
-    "The flat is fully furnished."
-   ],
-   [
-    "freehold",
-    "das Volleigentum an Grundstück",
-    "noun",
-    3,
-    "He bought the freehold of the building."
+    "",
+    "wikt",
+    "furnished"
    ],
    [
     "caretaker",
     "der Hausmeister",
     "noun",
     2,
-    "Call the caretaker if the lift breaks."
+    "",
+    "wikt",
+    "caretaker"
    ],
    [
-    "rental agreement",
-    "der Mietvertrag",
+    "landlady",
+    "die Vermieterin / die Hauswirtin",
     "noun",
     2,
-    "Please sign the rental agreement."
+    "",
+    "wikt",
+    "landlady"
    ],
    [
-    "commercial property",
-    "die Gewerbeimmobilie",
-    "noun",
-    3,
-    "They invest in commercial property."
-   ],
-   [
-    "to evict",
-    "zwangsräumen",
-    "verb",
-    3,
-    "The landlord wants to evict the tenant."
-   ],
-   [
-    "to sublet",
-    "untervermieten",
-    "verb",
-    3,
-    "She sublets a room to a student."
-   ],
-   [
-    "move-in date",
-    "der Einzugstermin",
+    "lease",
+    "die Pacht",
     "noun",
     2,
-    "Our move-in date is the first of March."
+    "",
+    "wikt",
+    "lease"
    ],
    [
-    "deposit protection",
-    "die Kautionssicherung",
+    "real estate",
+    "die unbewegliche Sache / die Immobilie",
     "noun",
-    3,
-    "The deposit protection scheme is mandatory."
+    2,
+    "",
+    "wikt",
+    "real estate"
+   ],
+   [
+    "realtor",
+    "der Immobilienmakler / die Immobilienmaklerin",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "realtor"
+   ],
+   [
+    "apartment",
+    "die Wohnung",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "apartment"
+   ],
+   [
+    "premises",
+    "das Lokal / die Räumlichkeiten",
+    "noun",
+    2,
+    "The caretaker lives on the premises.",
+    "wikt",
+    "premises"
+   ],
+   [
+    "subtenant",
+    "der Untermieter / die Untermieterin",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "subtenant"
+   ],
+   [
+    "eviction",
+    "die Ausweisung / die Exmission",
+    "noun",
+    2,
+    "order of eviction",
+    "wikt",
+    "eviction"
+   ],
+   [
+    "basement",
+    "der Keller / das Untergeschoss",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "basement"
+   ],
+   [
+    "attic",
+    "das Dachgeschoss / der Dachboden",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "attic"
+   ],
+   [
+    "balcony",
+    "der Balkon",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "balcony"
+   ],
+   [
+    "unfurnished",
+    "unmöbliert",
+    "adj",
+    2,
+    "",
+    "wikt",
+    "unfurnished"
+   ],
+   [
+    "vacant",
+    "frei / vakant",
+    "adj",
+    2,
+    "a vacant room",
+    "wikt",
+    "vacant"
+   ],
+   [
+    "renovation",
+    "die Renovierung",
+    "noun",
+    2,
+    "His room was currently under renovation.",
+    "wikt",
+    "renovation"
+   ],
+   [
+    "planning permission",
+    "die Baugenehmigung / die Baubewilligung",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "planning permission"
    ]
   ],
-  "sentences": [
-   [
-    "The viewing is on Saturday at ten.",
-    "Die Besichtigung ist am Samstag um zehn.",
-    "on + Tag, at + Uhrzeit."
-   ],
-   [
-    "The flat is fully furnished.",
-    "Die Wohnung ist voll möbliert.",
-    "fully + Adjektiv verstärkt: völlig."
-   ],
-   [
-    "Utilities are not included in the rent.",
-    "Die Nebenkosten sind nicht in der Miete enthalten.",
-    "Passiv Verneinung: are not included."
-   ]
-  ]
+  "sentences": []
  },
- "b-81": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
+ "b-79": {
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
   "words": [
    [
-    "power grid",
-    "das Stromnetz",
+    "solar panel",
+    "das Solarmodul / der Sonnenkollektor",
     "noun",
-    3,
-    "The power grid needs new lines."
-   ],
-   [
-    "meter reading",
-    "der Zählerstand",
-    "noun",
-    2,
-    "Please send us your meter reading."
+    1,
+    "",
+    "wikt",
+    "solar panel"
    ],
    [
     "renewable energy",
-    "die erneuerbare Energie",
+    "die erneuerbare Energie / die regenerative Energie",
     "noun",
     2,
-    "Renewable energy is growing fast."
-   ],
-   [
-    "solar panel",
-    "das Solarmodul",
-    "noun",
-    1,
-    "They put solar panels on the roof."
+    "",
+    "wikt",
+    "renewable energy"
    ],
    [
     "wind turbine",
-    "die Windkraftanlage",
+    "die Windkraftanlage / die Windenergieanlage",
     "noun",
     2,
-    "The wind turbine produces power all night."
-   ],
-   [
-    "electricity bill",
-    "die Stromrechnung",
-    "noun",
-    1,
-    "Our electricity bill went up."
+    "",
+    "wikt",
+    "wind turbine"
    ],
    [
     "power cut",
-    "der Stromausfall",
+    "der Stromausfall / die Stromunterbrechung",
     "noun",
     2,
-    "A power cut stopped production."
-   ],
-   [
-    "energy supplier",
-    "der Energieversorger",
-    "noun",
-    2,
-    "We changed our energy supplier."
+    "",
+    "wikt",
+    "power cut"
    ],
    [
     "heat pump",
     "die Wärmepumpe",
     "noun",
     2,
-    "A heat pump saves heating costs."
+    "",
+    "wikt",
+    "heat pump"
    ],
    [
     "charging station",
-    "die Ladestation",
+    "die Stromtankstelle / die Ladesäule",
     "noun",
     2,
-    "There is a charging station in the car park."
-   ],
-   [
-    "kilowatt hour",
-    "die Kilowattstunde",
-    "noun",
-    2,
-    "A kilowatt hour costs thirty cents."
-   ],
-   [
-    "blackout",
-    "der großflächige Stromausfall",
-    "noun",
-    3,
-    "A blackout hit the whole city."
-   ],
-   [
-    "to switch supplier",
-    "den Anbieter wechseln",
-    "phrase",
-    2,
-    "It is easy to switch supplier."
+    "",
+    "wikt",
+    "charging station"
    ],
    [
     "fossil fuel",
-    "der fossile Brennstoff",
+    "der fossiler Brennstoff",
     "noun",
     2,
-    "Fossil fuels are getting more expensive."
+    "",
+    "wikt",
+    "fossil fuel"
    ],
    [
-    "gas storage",
-    "der Gasspeicher",
+    "electricity",
+    "die Elektrizität",
     "noun",
-    3,
-    "The gas storage is almost full."
+    2,
+    "He took up the job of studying electricity in college.",
+    "wikt",
+    "electricity"
    ],
    [
-    "energy-saving",
-    "energiesparend",
+    "gas",
+    "das Gas",
+    "noun",
+    2,
+    "A lot of gas had escaped from the cylinder.",
+    "wikt",
+    "gas"
+   ],
+   [
+    "solar",
+    "solar / Sonnen-",
     "adj",
-    1,
-    "We bought energy-saving lamps."
+    2,
+    "a solar furnace",
+    "wikt",
+    "solar"
+   ],
+   [
+    "wind",
+    "der Wind",
+    "noun",
+    2,
+    "The winds in Chicago are fierce.",
+    "wikt",
+    "wind"
+   ],
+   [
+    "biomass",
+    "die Biomasse",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "biomass"
+   ],
+   [
+    "geothermal",
+    "geothermisch",
+    "adj",
+    2,
+    "",
+    "wikt",
+    "geothermal"
+   ],
+   [
+    "power station",
+    "das Kraftwerk / das Elektrizitätswerk",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "power station"
+   ],
+   [
+    "transformer",
+    "der Transformator",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "transformer"
    ]
   ],
-  "sentences": [
-   [
-    "Please send us your meter reading.",
-    "Bitte schicken Sie uns Ihren Zählerstand.",
-    "Bitte mit please am Anfang."
-   ],
-   [
-    "A power cut stopped production.",
-    "Ein Stromausfall hat die Produktion gestoppt.",
-    "stopped: Vergangenheit mit Verdoppelung des p."
-   ],
-   [
-    "It is easy to switch supplier.",
-    "Es ist leicht, den Anbieter zu wechseln.",
-    "It is + Adjektiv + to + Grundform."
-   ]
-  ]
+  "sentences": []
  },
- "b-82": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
+ "b-80": {
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
   "words": [
    [
-    "recall",
-    "der Rückruf",
+    "pipeline",
+    "die Pipeline / die Rohrleitung",
     "noun",
     2,
-    "The recall affects ten thousand cars."
+    "An oil pipeline has been opened from the Caspian Sea.",
+    "wikt",
+    "pipeline"
    ],
    [
-    "spark plug",
-    "die Zündkerze",
+    "refinery",
+    "die Raffinerie",
     "noun",
     2,
-    "The spark plug has to be changed."
+    "",
+    "wikt",
+    "refinery"
    ],
+   [
+    "generator",
+    "der Generator",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "generator"
+   ],
+   [
+    "turbine",
+    "die Turbine",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "turbine"
+   ],
+   [
+    "meter",
+    "das Messgerät",
+    "noun",
+    2,
+    "a labouring coal-meter",
+    "wikt",
+    "meter"
+   ],
+   [
+    "consumer",
+    "der Konsument / die Konsumentin",
+    "noun",
+    2,
+    "This new system favours the consumer over the producer.",
+    "wikt",
+    "consumer"
+   ],
+   [
+    "shortage",
+    "der Mangel / die Knappheit",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "shortage"
+   ],
+   [
+    "outage",
+    "der Ausfall / der Stromausfall",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "outage"
+   ],
+   [
+    "sustainable",
+    "nachhaltig / aufrechterhaltbar",
+    "adj",
+    2,
+    "",
+    "wikt",
+    "sustainable"
+   ],
+   [
+    "insulation",
+    "die Isolation",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "insulation"
+   ],
+   [
+    "heating",
+    "die Heizung",
+    "noun",
+    2,
+    "We're hoping to have the new heating installed before winter.",
+    "wikt",
+    "heating"
+   ],
+   [
+    "cooling",
+    "die Kühlung",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "cooling"
+   ],
+   [
+    "thermostat",
+    "der Thermostat / der Temperaturregler",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "thermostat"
+   ],
+   [
+    "power grid",
+    "das Stromnetz",
+    "noun",
+    3,
+    "",
+    "wikt",
+    "power grid"
+   ],
+   [
+    "blackout",
+    "der Stromausfall / der Blackout",
+    "noun",
+    3,
+    "the 2012 English Wikipedia blackout",
+    "wikt",
+    "blackout"
+   ]
+  ],
+  "sentences": []
+ },
+ "b-81": {
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
+  "words": [
    [
     "test drive",
     "die Probefahrt",
     "noun",
     1,
-    "Would you like a test drive?"
-   ],
-   [
-    "dealership",
-    "das Autohaus",
-    "noun",
-    2,
-    "The dealership sells new and used cars."
+    "",
+    "wikt",
+    "test drive"
    ],
    [
     "oil change",
     "der Ölwechsel",
     "noun",
     1,
-    "The oil change takes half an hour."
+    "",
+    "wikt",
+    "oil change"
    ],
    [
     "brake",
     "die Bremse",
     "noun",
     1,
-    "The brakes need to be checked."
+    "You’re pressing the brakes too hard—try just squeezing them.",
+    "wikt",
+    "brake"
    ],
    [
     "engine",
-    "der Motor",
+    "der Motor / das Triebwerk",
     "noun",
     1,
-    "The engine makes a strange noise."
-   ],
-   [
-    "service interval",
-    "der Wartungsintervall",
-    "noun",
-    3,
-    "The service interval is fifteen thousand kilometres."
-   ],
-   [
-    "exhaust",
-    "der Auspuff",
-    "noun",
-    2,
-    "The exhaust is loud."
-   ],
-   [
-    "gearbox",
-    "das Getriebe",
-    "noun",
-    2,
-    "The gearbox needs a repair."
-   ],
-   [
-    "roadworthy",
-    "verkehrssicher",
-    "adj",
-    3,
-    "The van is not roadworthy."
-   ],
-   [
-    "tow truck",
-    "der Abschleppwagen",
-    "noun",
-    2,
-    "A tow truck took the car away."
-   ],
-   [
-    "windscreen",
-    "die Windschutzscheibe",
-    "noun",
-    2,
-    "A stone cracked the windscreen."
-   ],
-   [
-    "number plate",
-    "das Nummernschild",
-    "noun",
-    1,
-    "The number plate is dirty."
+    "a graphics engine",
+    "wikt",
+    "engine"
    ],
    [
     "seat belt",
     "der Sicherheitsgurt",
     "noun",
     1,
-    "Please fasten your seat belt."
+    "",
+    "wikt",
+    "seat belt"
    ],
    [
-    "roadside assistance",
-    "der Pannenhilfsdienst",
+    "recall",
+    "der Rückruf / die Rückrufaktion",
     "noun",
-    3,
-    "Call roadside assistance."
+    2,
+    "precision and recall",
+    "wikt",
+    "recall"
+   ],
+   [
+    "spark plug",
+    "die Zündkerze",
+    "noun",
+    2,
+    "Helen is a real spark plug. We're lucky she's on the team.",
+    "wikt",
+    "spark plug"
+   ],
+   [
+    "exhaust",
+    "der Auspuff",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "exhaust"
+   ],
+   [
+    "gearbox",
+    "das Getriebe",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "gearbox"
+   ],
+   [
+    "tow truck",
+    "der Abschleppwagen / das Abschleppfahrzeug",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "tow truck"
+   ],
+   [
+    "to clutch",
+    "schnappen / packen",
+    "verb",
+    2,
+    "She clutched her purse tightly and walked nervously into the building.",
+    "wikt",
+    "clutch"
+   ],
+   [
+    "steering wheel",
+    "das Lenkrad / das Steuer",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "steering wheel"
+   ],
+   [
+    "bumper",
+    "die Stoßstange",
+    "noun",
+    2,
+    "The company sells screw-on rubber bumpers and feet.",
+    "wikt",
+    "bumper"
+   ],
+   [
+    "headlight",
+    "der Scheinwerfer / der Vorderscheinwerfer",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "headlight"
+   ],
+   [
+    "diesel",
+    "der Diesel",
+    "noun",
+    2,
+    "His next truck will be a diesel.",
+    "wikt",
+    "diesel"
+   ],
+   [
+    "electric car",
+    "das Elektroauto / das E-Auto",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "electric car"
+   ],
+   [
+    "garage",
+    "die Garage",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "garage"
+   ],
+   [
+    "mechanic",
+    "der Mechaniker / die Mechanikerin",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "mechanic"
+   ],
+   [
+    "dealer",
+    "der Händler",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "dealer"
+   ],
+   [
+    "showroom",
+    "der Ausstellungsraum / die Showroom",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "showroom"
    ]
   ],
-  "sentences": [
-   [
-    "Would you like a test drive?",
-    "Möchten Sie eine Probefahrt machen?",
-    "Would you like …? ist die höfliche Frage nach einem Wunsch."
-   ],
-   [
-    "The brakes need to be checked.",
-    "Die Bremsen müssen geprüft werden.",
-    "need to be + Partizip: Passiv mit Notwendigkeit."
-   ],
-   [
-    "We had a breakdown on the motorway.",
-    "Wir hatten eine Panne auf der Autobahn.",
-    "had: Vergangenheit von have."
-   ]
-  ]
+  "sentences": []
  },
- "b-83": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
+ "b-82": {
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
   "words": [
    [
-    "supplier audit",
-    "die Lieferantenprüfung",
-    "noun",
-    3,
-    "The supplier audit starts next week."
+    "organic",
+    "biologisch / organisch",
+    "adj",
+    1,
+    "The writing of the script was an organic process.",
+    "wikt",
+    "organic"
    ],
    [
-    "to marinate",
-    "marinieren",
+    "to prepare",
+    "zubereiten / vorbereiten",
     "verb",
-    3,
-    "We marinate the meat overnight."
-   ],
-   [
-    "allergen",
-    "der Allergieauslöser",
-    "noun",
-    2,
-    "All allergens are marked on the menu."
-   ],
-   [
-    "hygiene inspection",
-    "die Hygienekontrolle",
-    "noun",
-    3,
-    "The hygiene inspection was a success."
-   ],
-   [
-    "to garnish",
-    "garnieren",
-    "verb",
-    3,
-    "The chef garnishes the plate with herbs."
-   ],
-   [
-    "kitchen staff",
-    "das Küchenpersonal",
-    "noun",
-    2,
-    "The kitchen staff starts at six."
-   ],
-   [
-    "food safety",
-    "die Lebensmittelsicherheit",
-    "noun",
-    2,
-    "Food safety comes first."
-   ],
-   [
-    "cold chain",
-    "die Kühlkette",
-    "noun",
-    3,
-    "The cold chain must not be broken."
-   ],
-   [
-    "best-before date",
-    "das Mindesthaltbarkeitsdatum",
-    "noun",
-    2,
-    "Check the best-before date."
-   ],
-   [
-    "portion size",
-    "die Portionsgröße",
-    "noun",
-    2,
-    "The portion size is too small."
-   ],
-   [
-    "food waste",
-    "die Lebensmittelverschwendung",
-    "noun",
-    2,
-    "We want to reduce food waste."
+    1,
+    "We prepared a fish for dinner.",
+    "wikt",
+    "prepare"
    ],
    [
     "wholesale",
     "der Großhandel",
     "noun",
     2,
-    "We buy vegetables wholesale."
+    "",
+    "wikt",
+    "wholesale"
    ],
    [
-    "to cater",
-    "verpflegen, ein Catering liefern",
-    "verb",
+    "kitchen",
+    "die Küche",
+    "noun",
     2,
-    "We cater for weddings and parties."
+    "We cook in the kitchen.",
+    "wikt",
+    "kitchen"
    ],
    [
-    "organic",
-    "biologisch, Bio-",
+    "chef",
+    "der Chefkoch / die Chefköchin",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "chef"
+   ],
+   [
+    "cook",
+    "der Koch / die Köchin",
+    "noun",
+    2,
+    "I'm a terrible cook, so I eat a lot of frozen dinners.",
+    "wikt",
+    "cook"
+   ],
+   [
+    "main course",
+    "das Hauptgericht",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "main course"
+   ],
+   [
+    "recipe",
+    "das Rezept / das Kochrezept",
+    "noun",
+    2,
+    "His new approach is definitely a recipe for success.",
+    "wikt",
+    "recipe"
+   ],
+   [
+    "portion",
+    "der Teil / Portion",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "portion"
+   ],
+   [
+    "gluten-free",
+    "glutenfrei",
     "adj",
-    1,
-    "All our eggs are organic."
+    2,
+    "",
+    "wikt",
+    "gluten-free"
    ],
    [
-    "frozen",
-    "tiefgekühlt",
+    "canned",
+    "konserviert / Dosen-",
     "adj",
-    1,
-    "The fish is frozen."
+    2,
+    "If you don't have fresh cardoon I'll take canned.",
+    "wikt",
+    "canned"
    ],
    [
-    "to prepare",
-    "zubereiten, vorbereiten",
+    "expiry date",
+    "das Ablaufdatum / das Haltbarkeitsdatum",
+    "noun",
+    2,
+    "The expiry date of my debit card is the 30th of April.",
+    "wikt",
+    "expiry date"
+   ],
+   [
+    "oven",
+    "der Backofen / das Backrohr",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "oven"
+   ],
+   [
+    "dishwasher",
+    "der Geschirrspüler / die Geschirrspülmaschine",
+    "noun",
+    2,
+    "load the dishwasher",
+    "wikt",
+    "dishwasher"
+   ],
+   [
+    "wholesaler",
+    "der Großhändler",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "wholesaler"
+   ],
+   [
+    "leftovers",
+    "der Essensrest / der Essensreste",
+    "noun",
+    2,
+    "I had leftovers from yesterday for dinner tonight.",
+    "wikt",
+    "leftovers"
+   ],
+   [
+    "catering",
+    "die Verpflegung / die Nahrungsversorgung",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "catering"
+   ],
+   [
+    "buffet",
+    "das Buffet",
+    "noun",
+    2,
+    "We'll be serving supper buffet style.",
+    "wikt",
+    "buffet"
+   ],
+   [
+    "banquet",
+    "das Festmahl / das Bankett",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "banquet"
+   ],
+   [
+    "to marinate",
+    "marinieren",
     "verb",
-    1,
-    "The chef prepares the sauce fresh."
+    3,
+    "You'll get a better flavour from the chicken if you marinate it first.",
+    "wikt",
+    "marinate"
    ]
   ],
-  "sentences": [
-   [
-    "Check the best-before date.",
-    "Prüfen Sie das Mindesthaltbarkeitsdatum.",
-    "Befehlsform: einfach das Verb am Anfang."
-   ],
-   [
-    "We want to reduce food waste.",
-    "Wir wollen die Lebensmittelverschwendung verringern.",
-    "want to + Grundform: etwas vorhaben."
-   ],
-   [
-    "All our eggs are organic.",
-    "Alle unsere Eier sind Bio.",
-    "all + Mehrzahl: alle."
-   ]
-  ]
+  "sentences": []
  },
- "b-84": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
+ "b-83": {
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
   "words": [
    [
-    "livestock",
-    "der Viehbestand",
-    "noun",
-    3,
-    "The farm has a large livestock."
-   ],
-   [
-    "subsidy",
-    "die Subvention",
-    "noun",
-    3,
-    "Farmers get a subsidy per hectare."
-   ],
-   [
-    "crop",
-    "die Feldfrucht, die Ernte",
-    "noun",
-    2,
-    "Wheat is the main crop here."
-   ],
-   [
-    "fertiliser",
-    "der Dünger",
-    "noun",
-    2,
-    "Too much fertiliser harms the soil."
-   ],
-   [
     "tractor",
-    "der Traktor",
+    "der Traktor / der Trecker",
     "noun",
     1,
-    "The tractor is parked in the barn."
-   ],
-   [
-    "organic farming",
-    "der ökologische Landbau",
-    "noun",
-    2,
-    "Organic farming needs more space."
-   ],
-   [
-    "irrigation",
-    "die Bewässerung",
-    "noun",
-    3,
-    "Irrigation saves the crop in dry summers."
-   ],
-   [
-    "dairy",
-    "die Milchwirtschaft, die Molkerei",
-    "noun",
-    2,
-    "The dairy collects milk every day."
-   ],
-   [
-    "greenhouse",
-    "das Gewächshaus",
-    "noun",
-    2,
-    "Tomatoes grow in the greenhouse."
-   ],
-   [
-    "pesticide",
-    "das Pflanzenschutzmittel",
-    "noun",
-    3,
-    "The use of pesticides is limited."
-   ],
-   [
-    "grain",
-    "das Getreide",
-    "noun",
-    2,
-    "The grain is stored in silos."
-   ],
-   [
-    "farmland",
-    "das Ackerland",
-    "noun",
-    2,
-    "Farmland is getting expensive."
-   ],
-   [
-    "cattle",
-    "das Rindvieh",
-    "noun",
-    2,
-    "They keep cattle on the hills."
-   ],
-   [
-    "to plough",
-    "pflügen",
-    "verb",
-    3,
-    "The farmer ploughs the field in March."
+    "",
+    "wikt",
+    "tractor"
    ],
    [
     "farm shop",
     "der Hofladen",
     "noun",
     1,
-    "The farm shop sells fresh eggs."
+    "",
+    "wikt",
+    "farm shop"
+   ],
+   [
+    "crop",
+    "die Feldfrucht / das Erntegut",
+    "noun",
+    2,
+    "The decade produced a whole crop of ideas about space travel.",
+    "wikt",
+    "crop"
+   ],
+   [
+    "organic farming",
+    "die ökologische Landwirtschaft",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "organic farming"
+   ],
+   [
+    "dairy",
+    "die Molkerei",
+    "noun",
+    2,
+    "Go and fetch the butter from the dairy.",
+    "wikt",
+    "dairy"
+   ],
+   [
+    "greenhouse",
+    "das Gewächshaus / das Treibhaus",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "greenhouse"
+   ],
+   [
+    "grain",
+    "das Korn / das Getreide",
+    "noun",
+    2,
+    "We stored a thousand tons of grain for the winter.",
+    "wikt",
+    "grain"
+   ],
+   [
+    "farmland",
+    "das Ackerland",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "farmland"
+   ],
+   [
+    "cattle",
+    "die Kühe / das Rinder",
+    "noun",
+    2,
+    "Many cattle were suffering from a disease called BSE.",
+    "wikt",
+    "cattle"
+   ],
+   [
+    "farm",
+    "der Bauernhof / die Farm",
+    "noun",
+    2,
+    "antenna farm; fuel farm; solar farm; wind farm",
+    "wikt",
+    "farm"
+   ],
+   [
+    "farmer",
+    "der Landwirt / die Landwirtin",
+    "noun",
+    2,
+    "a farmer of the revenues",
+    "wikt",
+    "farmer"
+   ],
+   [
+    "wheat",
+    "der Weizen",
+    "noun",
+    2,
+    "They debated the paint color options for the bathroom walls and settled on wheat.",
+    "wikt",
+    "wheat"
+   ],
+   [
+    "barley",
+    "die Gerste",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "barley"
+   ],
+   [
+    "maize",
+    "der Mais / das Türkisch Korn",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "maize"
+   ],
+   [
+    "rice",
+    "der Reis",
+    "noun",
+    2,
+    "This is my first rice!",
+    "wikt",
+    "rice"
+   ],
+   [
+    "orchard",
+    "der Obstgarten / die Obstwiese",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "orchard"
+   ]
+  ],
+  "sentences": []
+ },
+ "b-84": {
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
+  "words": [
+   [
+    "vineyard",
+    "der Weinberg / der Weingarten",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "vineyard"
+   ],
+   [
+    "sheep",
+    "das Schaf",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "sheep"
+   ],
+   [
+    "poultry",
+    "das Geflügel",
+    "noun",
+    2,
+    "a poultry farmer",
+    "wikt",
+    "poultry"
+   ],
+   [
+    "milk",
+    "die Milch",
+    "noun",
+    2,
+    "Skyr is a product made of curdled milk.",
+    "wikt",
+    "milk"
+   ],
+   [
+    "combine harvester",
+    "der Mähdrescher / die Combine",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "combine harvester"
+   ],
+   [
+    "barn",
+    "die Scheune / der Stadel",
+    "noun",
+    2,
+    "Maple Leaf Gardens was a grand old barn.",
+    "wikt",
+    "barn"
+   ],
+   [
+    "silo",
+    "der Silo / der Kornspeicher",
+    "noun",
+    2,
+    "Our networking is organized in silos, and employees lose time manually transferring data.",
+    "wikt",
+    "silo"
+   ],
+   [
+    "flood",
+    "die Flut / die Überflutung",
+    "noun",
+    2,
+    "a flood of complaints",
+    "wikt",
+    "flood"
+   ],
+   [
+    "GMO",
+    "der GVO",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "GMO"
+   ],
+   [
+    "agriculture",
+    "die Landwirtschaft / der Ackerbau",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "agriculture"
+   ],
+   [
+    "rural",
+    "ländlich / dörflich",
+    "adj",
+    2,
+    "",
+    "wikt",
+    "rural"
+   ],
+   [
+    "countryside",
+    "das Land",
+    "noun",
+    2,
+    "We live in the Swedish countryside.",
+    "wikt",
+    "countryside"
+   ],
+   [
+    "subsidy",
+    "die Subvention / die Unterstützung",
+    "noun",
+    3,
+    "Manufacturing firms are supported by government subsidies in some countries.",
+    "wikt",
+    "subsidy"
+   ],
+   [
+    "irrigation",
+    "die Bewässerung / die Irrigation",
+    "noun",
+    3,
+    "",
+    "wikt",
+    "irrigation"
+   ],
+   [
+    "to plough",
+    "pflügen",
+    "verb",
+    3,
+    "I've still got to plough that field.",
+    "wikt",
+    "plough"
    ],
    [
     "drought",
-    "die Dürre",
+    "die Dürre / die Trockenzeit",
     "noun",
     3,
-    "The drought damaged the crops."
+    "His village had faced a drought twice.",
+    "wikt",
+    "drought"
    ]
   ],
-  "sentences": [
-   [
-    "Tomatoes grow in the greenhouse.",
-    "Tomaten wachsen im Gewächshaus.",
-    "Present Simple für Allgemeines: grow."
-   ],
-   [
-    "The drought damaged the crops.",
-    "Die Dürre hat die Ernte beschädigt.",
-    "damaged: Vergangenheit mit -ed."
-   ],
-   [
-    "Farmers get a subsidy per hectare.",
-    "Landwirte bekommen eine Subvention pro Hektar.",
-    "per = pro."
-   ]
-  ]
+  "sentences": []
  },
  "b-85": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
   "words": [
    [
     "blood test",
-    "die Blutuntersuchung",
+    "die Blutprobe / der Bluttest",
     "noun",
     2,
-    "The blood test is on Monday."
+    "",
+    "wikt",
+    "blood test"
    ],
    [
     "side effect",
-    "die Nebenwirkung",
+    "die Nebenwirkung / der Nebeneffekt",
     "noun",
     2,
-    "The drug has few side effects."
-   ],
-   [
-    "clinical trial",
-    "die klinische Studie",
-    "noun",
-    3,
-    "The clinical trial lasts two years."
-   ],
-   [
-    "dosage",
-    "die Dosierung",
-    "noun",
-    3,
-    "Please follow the dosage on the leaflet."
-   ],
-   [
-    "to prescribe",
-    "verschreiben",
-    "verb",
-    3,
-    "The doctor prescribed a new drug."
-   ],
-   [
-    "patient record",
-    "die Patientenakte",
-    "noun",
-    3,
-    "The patient record is confidential."
+    "",
+    "wikt",
+    "side effect"
    ],
    [
     "vaccine",
-    "der Impfstoff",
+    "das Vakzin / die Vakzine",
     "noun",
     2,
-    "A new vaccine was approved."
-   ],
-   [
-    "diagnosis",
-    "die Diagnose",
-    "noun",
-    3,
-    "The diagnosis came back on Friday."
+    "My dog has had two vaccines this year.",
+    "wikt",
+    "vaccine"
    ],
    [
     "painkiller",
     "das Schmerzmittel",
     "noun",
     2,
-    "Take a painkiller with water."
+    "",
+    "wikt",
+    "painkiller"
    ],
    [
-    "medical device",
-    "das Medizinprodukt",
+    "specialist",
+    "der Spezialist / die Spezialistin",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "specialist"
+   ],
+   [
+    "hospital",
+    "das Krankenhaus / das Spital",
+    "noun",
+    2,
+    "Luckily an ambulance arrived quickly and he was rushed to hospital.",
+    "wikt",
+    "hospital"
+   ],
+   [
+    "clinic",
+    "die Klinik / die Ambulanz",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "clinic"
+   ],
+   [
+    "ambulance",
+    "die Ambulanz / der Krankenwagen",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "ambulance"
+   ],
+   [
+    "tablet",
+    "die Tafel",
+    "noun",
+    2,
+    "Many people take vitamin tablets as a food supplement.",
+    "wikt",
+    "tablet"
+   ],
+   [
+    "dose",
+    "die Dosis",
+    "noun",
+    2,
+    "a healthy dose of skepticism.",
+    "wikt",
+    "dose"
+   ],
+   [
+    "therapy",
+    "die Therapie",
+    "noun",
+    2,
+    "inclined bed therapy",
+    "wikt",
+    "therapy"
+   ],
+   [
+    "infection",
+    "die Ansteckung / die Infektion",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "infection"
+   ]
+  ],
+  "sentences": []
+ },
+ "b-86": {
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
+  "words": [
+   [
+    "antibiotic",
+    "das Antibiotikum",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "antibiotic"
+   ],
+   [
+    "pharmacist",
+    "der Apotheker / die Apothekerin",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "pharmacist"
+   ],
+   [
+    "laboratory",
+    "das Labor / das Laboratorium",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "laboratory"
+   ],
+   [
+    "referral",
+    "die Überweisung",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "referral"
+   ],
+   [
+    "health insurance",
+    "die Krankenversicherung",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "health insurance"
+   ],
+   [
+    "approval",
+    "die Genehmigung / die Billigung",
+    "noun",
+    2,
+    "I need to get an approval on this purchase order.",
+    "wikt",
+    "approval"
+   ],
+   [
+    "drug",
+    "die Arznei / die Droge",
+    "noun",
+    2,
+    "Aspirin is a drug that reduces pain, acts against inflammation and lowers body temperature.",
+    "wikt",
+    "drug"
+   ],
+   [
+    "dosage",
+    "die Dosierung",
     "noun",
     3,
-    "The medical device needs approval."
+    "",
+    "wikt",
+    "dosage"
+   ],
+   [
+    "to prescribe",
+    "verschreiben / verordnen",
+    "verb",
+    3,
+    "The doctor prescribed aspirin.",
+    "wikt",
+    "prescribe"
+   ],
+   [
+    "diagnosis",
+    "die Diagnose",
+    "noun",
+    3,
+    "Diagnosis is a challenging art informed by wide-ranging science.",
+    "wikt",
+    "diagnosis"
    ],
    [
     "package leaflet",
-    "der Beipackzettel",
+    "die Packungsbeilage / der Beipackzettel",
     "noun",
     3,
-    "Read the package leaflet carefully."
+    "",
+    "wikt",
+    "package leaflet"
    ],
    [
     "over-the-counter",
     "rezeptfrei",
     "adj",
     3,
-    "Aspirin is sold over-the-counter."
-   ],
-   [
-    "check-up",
-    "die Vorsorgeuntersuchung",
-    "noun",
-    2,
-    "I have a check-up on Friday."
-   ],
-   [
-    "specialist",
-    "der Facharzt, der Spezialist",
-    "noun",
-    2,
-    "She was sent to a specialist."
-   ],
-   [
-    "to approve a drug",
-    "ein Medikament zulassen",
-    "phrase",
-    3,
-    "The authority approved the drug in May."
-   ],
-   [
-    "x-ray",
-    "die Röntgenaufnahme",
-    "noun",
-    2,
-    "The x-ray shows no problem."
+    "over-the-counter drug, over-the-counter medicine",
+    "wikt",
+    "over-the-counter"
    ]
   ],
-  "sentences": [
-   [
-    "The pharmacy opens at eight.",
-    "Die Apotheke öffnet um acht.",
-    "opens: Present Simple, 3. Person mit -s."
-   ],
-   [
-    "Read the package leaflet carefully.",
-    "Lesen Sie den Beipackzettel sorgfältig.",
-    "carefully: Adverb zu careful."
-   ],
-   [
-    "She was sent to a specialist.",
-    "Sie wurde zu einem Facharzt überwiesen.",
-    "Passiv Vergangenheit: was sent."
-   ]
-  ]
- },
- "b-86": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
-  "words": [
-   [
-    "return policy",
-    "die Rückgaberegelung",
-    "noun",
-    2,
-    "Our return policy is thirty days."
-   ],
-   [
-    "stock-take",
-    "die Inventur",
-    "noun",
-    3,
-    "The stock-take is on Sunday."
-   ],
-   [
-    "display stand",
-    "der Verkaufsständer",
-    "noun",
-    2,
-    "The display stand is next to the till."
-   ],
-   [
-    "in-store pickup",
-    "die Abholung im Laden",
-    "noun",
-    2,
-    "In-store pickup is free."
-   ],
-   [
-    "window display",
-    "die Schaufensterdekoration",
-    "noun",
-    2,
-    "The window display changes every month."
-   ],
-   [
-    "shopping basket",
-    "der Warenkorb",
-    "noun",
-    1,
-    "Add the item to your shopping basket."
-   ],
-   [
-    "shoplifting",
-    "der Ladendiebstahl",
-    "noun",
-    3,
-    "Shoplifting is a problem in big stores."
-   ],
-   [
-    "stockroom",
-    "das Lager im Laden",
-    "noun",
-    2,
-    "The goods are in the stockroom."
-   ],
-   [
-    "bulk buy",
-    "der Großeinkauf",
-    "noun",
-    3,
-    "A bulk buy saves us money."
-   ],
-   [
-    "clearance sale",
-    "der Räumungsverkauf",
-    "noun",
-    2,
-    "The clearance sale starts on Friday."
-   ],
-   [
-    "to browse",
-    "stöbern",
-    "verb",
-    2,
-    "Customers browse the shelves for an hour."
-   ],
-   [
-    "to restock",
-    "nachfüllen, auffüllen",
-    "verb",
-    2,
-    "We restock the shelves every morning."
-   ],
-   [
-    "footfall",
-    "die Kundenfrequenz",
-    "noun",
-    3,
-    "Footfall is down this month."
-   ],
-   [
-    "pop-up store",
-    "der Pop-up-Laden",
-    "noun",
-    2,
-    "They opened a pop-up store for a month."
-   ],
-   [
-    "to mark down",
-    "herabsetzen (Preis)",
-    "verb",
-    2,
-    "All winter coats are marked down."
-   ],
-   [
-    "mark-up",
-    "der Preisaufschlag",
-    "noun",
-    3,
-    "The mark-up on this item is thirty percent."
-   ]
-  ],
-  "sentences": [
-   [
-    "Do you have a loyalty card?",
-    "Haben Sie eine Kundenkarte?",
-    "Do you have …? Frage im Present Simple."
-   ],
-   [
-    "We restock the shelves every morning.",
-    "Wir füllen die Regale jeden Morgen auf.",
-    "every morning ohne Präposition."
-   ],
-   [
-    "All winter coats are marked down.",
-    "Alle Wintermäntel sind reduziert.",
-    "are marked down: Passiv."
-   ]
-  ]
+  "sentences": []
  },
  "b-87": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
   "words": [
    [
-    "city break",
-    "der Städtetrip",
+    "shopping basket",
+    "der Einkaufskorb / der Warenkorb",
     "noun",
-    2,
-    "They booked a city break to Rome."
-   ],
-   [
-    "keynote speaker",
-    "der Hauptredner",
-    "noun",
-    3,
-    "The keynote speaker starts at ten."
-   ],
-   [
-    "catering",
-    "die Verpflegung",
-    "noun",
-    2,
-    "Catering is included in the price."
+    1,
+    "",
+    "wikt",
+    "shopping basket"
    ],
    [
     "tour guide",
-    "der Reiseführer / die Reiseleiterin",
+    "der Reiseleiter / die Reiseleiterin",
     "noun",
     1,
-    "The tour guide speaks four languages."
-   ],
-   [
-    "package holiday",
-    "die Pauschalreise",
-    "noun",
-    2,
-    "They booked a package holiday to Spain."
+    "",
+    "wikt",
+    "tour guide"
    ],
    [
     "sightseeing",
-    "die Besichtigung von Sehenswürdigkeiten",
+    "das Sightseeing / der Tourismus",
     "noun",
     1,
-    "We did some sightseeing in the morning."
-   ],
-   [
-    "guest list",
-    "die Gästeliste",
-    "noun",
-    1,
-    "Your name is on the guest list."
+    "Sightseeing is a frequent reason to visit San Francisco.",
+    "wikt",
+    "sightseeing"
    ],
    [
     "stage",
     "die Bühne",
     "noun",
     1,
-    "The band is on stage at nine."
-   ],
-   [
-    "seating plan",
-    "der Sitzplan",
-    "noun",
-    2,
-    "Please check the seating plan."
-   ],
-   [
-    "exhibitor",
-    "der Aussteller",
-    "noun",
-    3,
-    "Every exhibitor gets a free table."
+    "He is in the recovery stage of his illness.",
+    "wikt",
+    "stage"
    ],
    [
     "brochure",
     "die Broschüre",
     "noun",
     1,
-    "We sent them our brochure."
+    "Have a look in the Acme brochure for a new vacuum cleaner.",
+    "wikt",
+    "brochure"
    ],
    [
-    "to organise an event",
-    "eine Veranstaltung organisieren",
-    "phrase",
+    "to browse",
+    "blättern / durchsuchen",
+    "verb",
     2,
-    "She organises events for a living."
+    "I'm just browsing around.",
+    "wikt",
+    "browse"
    ],
    [
-    "peak season",
-    "die Hauptsaison",
+    "shop",
+    "der Laden / das Geschäft",
     "noun",
     2,
-    "Hotels are full in peak season."
+    "a barber shop",
+    "wikt",
+    "shop"
+   ],
+   [
+    "retail",
+    "der Einzelhandel / der Einzelhandelsabsatz",
+    "noun",
+    2,
+    "She works in retail.",
+    "wikt",
+    "retail"
+   ],
+   [
+    "shopper",
+    "der Käufer / die Käuferin",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "shopper"
+   ],
+   [
+    "checkout",
+    "die Kasse / die Supermarktkasse",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "checkout"
+   ],
+   [
+    "gift card",
+    "die Geschenkkarte",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "gift card"
+   ],
+   [
+    "mall",
+    "das Einkaufszentrum",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "mall"
+   ],
+   [
+    "package holiday",
+    "die Pauschalreise / der Pauschalurlaub",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "package holiday"
    ],
    [
     "off-season",
     "die Nebensaison",
     "noun",
     2,
-    "Prices are lower in the off-season."
+    "Seaside resorts in the off-season are really depressing.",
+    "wikt",
+    "off-season"
    ],
    [
     "tour operator",
     "der Reiseveranstalter",
     "noun",
     2,
-    "The tour operator cancelled the trip."
+    "",
+    "wikt",
+    "tour operator"
    ],
    [
-    "registration desk",
-    "der Anmeldetisch",
+    "tourist",
+    "der Tourist / die Touristin",
     "noun",
     2,
-    "Please go to the registration desk."
+    "Tourist shops are full of kitsch.",
+    "wikt",
+    "tourist"
+   ],
+   [
+    "travel agency",
+    "die Reiseagentur / das Reisebüro",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "travel agency"
    ]
   ],
-  "sentences": [
-   [
-    "Your name is on the guest list.",
-    "Ihr Name steht auf der Gästeliste.",
-    "on a list: Präposition on."
-   ],
-   [
-    "Hotels are full in peak season.",
-    "Die Hotels sind in der Hauptsaison voll.",
-    "in + Saison."
-   ],
-   [
-    "She organises events for a living.",
-    "Sie organisiert beruflich Veranstaltungen.",
-    "for a living = beruflich, als Lebensunterhalt."
-   ]
-  ]
+  "sentences": []
  },
  "b-88": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
   "words": [
    [
-    "op-ed",
-    "der Gastkommentar",
+    "guide",
+    "der Reiseleiter / die Reiseleiterin",
     "noun",
-    3,
-    "She wrote an op-ed for a newspaper."
+    2,
+    "The guide led us around the museum and explained the exhibits.",
+    "wikt",
+    "guide"
    ],
    [
-    "media coverage",
-    "die Medienberichterstattung",
+    "excursion",
+    "der Ausflug / die Exkursion",
     "noun",
-    3,
-    "The launch got a lot of media coverage."
+    2,
+    "While driving home I took an excursion and saw some deer.",
+    "wikt",
+    "excursion"
    ],
    [
-    "embargo date",
-    "die Sperrfrist",
+    "booking",
+    "die Buchung / die Reservierung",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "booking"
+   ],
+   [
+    "cancellation",
+    "die Aufhebung / die Kündigung",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "cancellation"
+   ],
+   [
+    "all-inclusive",
+    "pauschal",
+    "adj",
+    2,
+    "",
+    "wikt",
+    "all-inclusive"
+   ],
+   [
+    "half board",
+    "Halbpension",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "half board"
+   ],
+   [
+    "full board",
+    "die Vollpension",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "full board"
+   ],
+   [
+    "resort",
+    "der Kurort / der Resort",
+    "noun",
+    2,
+    "to have resort to violence",
+    "wikt",
+    "resort"
+   ],
+   [
+    "hotel",
+    "das Hotel / der Gasthof",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "hotel"
+   ],
+   [
+    "hostel",
+    "die Herberge / das Wohnheim",
+    "noun",
+    2,
+    "a rundown hostel",
+    "wikt",
+    "hostel"
+   ],
+   [
+    "campsite",
+    "der Campingplatz / das Camping",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "campsite"
+   ],
+   [
+    "passport",
+    "der Reisepass / der Pass",
+    "noun",
+    2,
+    "You will have to bring your passport to prove who you are.",
+    "wikt",
+    "passport"
+   ],
+   [
+    "visa",
+    "das Visum",
+    "noun",
+    2,
+    "I came on a six-month tourist visa.",
+    "wikt",
+    "visa"
+   ],
+   [
+    "cruise",
+    "die Kreuzfahrt / die Seereise",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "cruise"
+   ],
+   [
+    "souvenir",
+    "das Andenken / das Reisemitbringsel",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "souvenir"
+   ],
+   [
+    "conference",
+    "die Konferenz / die Tagung",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "conference"
+   ],
+   [
+    "shoplifting",
+    "der Ladendiebstahl",
     "noun",
     3,
-    "The embargo date is Monday at nine."
-   ],
+    "",
+    "wikt",
+    "shoplifting"
+   ]
+  ],
+  "sentences": []
+ },
+ "b-89": {
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
+  "words": [
    [
     "journalist",
-    "der Journalist",
+    "der Journalist / die Journalistin",
     "noun",
     1,
-    "A journalist called us this morning."
+    "",
+    "wikt",
+    "journalist"
+   ],
+   [
+    "podcast",
+    "der Podcast / die Audio-Internetsendung",
+    "noun",
+    1,
+    "",
+    "wikt",
+    "podcast"
    ],
    [
     "headline",
-    "die Schlagzeile",
+    "die Schlagzeile / die Überschrift",
     "noun",
     2,
-    "The headline caught everyone's eye."
-   ],
-   [
-    "spokesperson",
-    "der Pressesprecher",
-    "noun",
-    3,
-    "The spokesperson answered all questions."
+    "The headline on today's newspaper reads \"John Doe Wins Wood-Splitting Competition.\"",
+    "wikt",
+    "headline"
    ],
    [
     "press conference",
-    "die Pressekonferenz",
+    "die Pressekonferenz / die Nachrichtenkonferenz",
     "noun",
     2,
-    "The press conference starts at noon."
-   ],
-   [
-    "media outlet",
-    "das Medium (Zeitung, Sender)",
-    "noun",
-    3,
-    "Every media outlet reported the story."
-   ],
-   [
-    "to broadcast",
-    "senden, übertragen",
-    "verb",
-    3,
-    "They broadcast the event live."
+    "",
+    "wikt",
+    "press conference"
    ],
    [
     "influencer",
-    "der Influencer",
+    "der Influencer / die Influencerin",
     "noun",
     2,
-    "They work with an influencer."
+    "",
+    "wikt",
+    "influencer"
+   ],
+   [
+    "newspaper",
+    "die Zeitung",
+    "noun",
+    2,
+    "Many major newspapers are paywalled because they need the revenue.",
+    "wikt",
+    "newspaper"
+   ],
+   [
+    "reporter",
+    "der Reporter / die Reporterin",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "reporter"
+   ],
+   [
+    "interview",
+    "das Interview",
+    "noun",
+    2,
+    "The reporter gave the witness an interview.",
+    "wikt",
+    "interview"
+   ],
+   [
+    "media",
+    "das Medien",
+    "noun",
+    2,
+    "Some celebrities dislike press conferences, where the media bombards them with questions.",
+    "wikt",
+    "media"
+   ],
+   [
+    "blog",
+    "das Blog / der Internetblog",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "blog"
+   ],
+   [
+    "advertisement",
+    "die Anzeige / die Werbung",
+    "noun",
+    2,
+    "The good manners and intelligence of the students are an advertisement for the school.",
+    "wikt",
+    "advertisement"
+   ],
+   [
+    "sponsor",
+    "der Sponsor / die Sponsorin",
+    "noun",
+    2,
+    "He was my sponsor when I applied to join the club.",
+    "wikt",
+    "sponsor"
+   ],
+   [
+    "publicity",
+    "die Werbung",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "publicity"
+   ],
+   [
+    "public relations",
+    "die Öffentlichkeitsarbeit / die ÖA",
+    "noun",
+    2,
+    "to get bad public relations",
+    "wikt",
+    "public relations"
+   ],
+   [
+    "scandal",
+    "der Skandal",
+    "noun",
+    2,
+    "Their affair was reported as a scandal by most tabloids.",
+    "wikt",
+    "scandal"
+   ],
+   [
+    "coverage",
+    "die Abdeckung",
+    "noun",
+    2,
+    "Don't go to lunch if we don't have enough coverage for the help-desk phones.",
+    "wikt",
+    "coverage"
+   ],
+   [
+    "to broadcast",
+    "übertragen",
+    "verb",
+    3,
+    "",
+    "wikt",
+    "broadcast"
    ],
    [
     "sponsorship",
     "das Sponsoring",
     "noun",
     3,
-    "Sponsorship brings us new customers."
-   ],
-   [
-    "media kit",
-    "die Pressemappe",
-    "noun",
-    3,
-    "You can download the media kit here."
+    "The company provided sponsorship to the research team.",
+    "wikt",
+    "sponsorship"
    ],
    [
     "newsroom",
-    "die Redaktion",
+    "die Redaktion / das Newsdesk",
     "noun",
     3,
-    "The newsroom is busy tonight."
+    "",
+    "wikt",
+    "newsroom"
    ],
    [
     "to leak",
-    "durchsickern lassen",
+    "durchsickern / durchstechen",
     "verb",
     3,
-    "Someone leaked the plan to the press."
-   ],
-   [
-    "podcast",
-    "der Podcast",
-    "noun",
-    1,
-    "She hosts a weekly podcast."
-   ],
-   [
-    "to quote a source",
-    "eine Quelle zitieren",
-    "phrase",
-    3,
-    "Always quote your source."
+    "The faucet has been leaking since last month.",
+    "wikt",
+    "leak"
    ]
   ],
-  "sentences": [
-   [
-    "We published a press release today.",
-    "Wir haben heute eine Pressemitteilung veröffentlicht.",
-    "published: Vergangenheit mit -ed."
-   ],
-   [
-    "The video went viral overnight.",
-    "Das Video ging über Nacht viral.",
-    "went: Vergangenheit von go."
-   ],
-   [
-    "She hosts a weekly podcast.",
-    "Sie moderiert einen wöchentlichen Podcast.",
-    "weekly = wöchentlich."
-   ]
-  ]
+  "sentences": []
  },
- "b-89": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
+ "b-90": {
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
   "words": [
    [
-    "wiring",
-    "die Elektroinstallation",
+    "wrench",
+    "der Schraubenschlüssel / der Schlüssel",
     "noun",
-    2,
-    "The wiring in the old house is dangerous."
+    1,
+    "",
+    "wikt",
+    "wrench"
    ],
    [
-    "plumbing",
-    "die Wasserinstallation",
+    "socket",
+    "die Steckdose / die Buchse",
     "noun",
-    2,
-    "The plumbing needs to be replaced."
+    1,
+    "",
+    "wikt",
+    "socket"
    ],
    [
     "spirit level",
     "die Wasserwaage",
     "noun",
     2,
-    "Check it with a spirit level."
+    "",
+    "wikt",
+    "spirit level"
    ],
    [
     "on-site",
     "vor Ort",
-    "adv",
+    "adj",
     2,
-    "The engineer will be on-site tomorrow."
-   ],
-   [
-    "wrench",
-    "der Schraubenschlüssel",
-    "noun",
-    1,
-    "Pass me the wrench, please."
-   ],
-   [
-    "fuse",
-    "die Sicherung",
-    "noun",
-    2,
-    "The fuse has blown."
-   ],
-   [
-    "socket",
-    "die Steckdose",
-    "noun",
-    1,
-    "Is there a socket near the window?"
-   ],
-   [
-    "insulation",
-    "die Dämmung",
-    "noun",
-    2,
-    "Good insulation saves energy."
+    "Our supplier offers on-site support.",
+    "wikt",
+    "on-site"
    ],
    [
     "sandpaper",
-    "das Schleifpapier",
+    "das Schleifpapier / das Schmirgelpapier",
     "noun",
     2,
-    "Use sandpaper on the wood."
+    "I need a scraper and a sandpaper over here.",
+    "wikt",
+    "sandpaper"
    ],
    [
     "plaster",
-    "der Putz, das Gips",
+    "der Putz / der Verputz",
     "noun",
     2,
-    "The plaster is coming off the wall."
-   ],
-   [
-    "radiator",
-    "der Heizkörper",
-    "noun",
-    1,
-    "The radiator is cold."
+    "",
+    "wikt",
+    "plaster"
    ],
    [
     "apprentice",
-    "der Auszubildende",
+    "der Lehrling / der Auszubildender",
     "noun",
     2,
-    "The apprentice learns from the master."
+    "",
+    "wikt",
+    "apprentice"
    ],
    [
-    "to measure up",
-    "ausmessen",
-    "verb",
-    2,
-    "He measured up the room yesterday."
-   ],
-   [
-    "drainpipe",
-    "das Abflussrohr",
+    "carpenter",
+    "der Zimmermann / der Zimmerer",
     "noun",
     2,
-    "The drainpipe is blocked."
+    "",
+    "wikt",
+    "carpenter"
    ],
    [
-    "boiler",
-    "der Heizkessel",
+    "bricklayer",
+    "der Maurer / die Maurerin",
     "noun",
     2,
-    "The boiler is broken again."
+    "",
+    "wikt",
+    "bricklayer"
+   ],
+   [
+    "plasterer",
+    "der Stuckateur / der Gipser",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "plasterer"
+   ],
+   [
+    "painter",
+    "der Maler / die Malerin",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "painter"
+   ],
+   [
+    "roofer",
+    "der Dachdecker / die Dachdeckerin",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "roofer"
+   ],
+   [
+    "tiler",
+    "der Fliesenleger / die Fliesenlegerin",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "tiler"
+   ],
+   [
+    "welder",
+    "der Schweißer / die Schweißerin",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "welder"
+   ],
+   [
+    "spanner",
+    "der Schraubenschlüssel / der Schlüssel",
+    "noun",
+    2,
+    "Pass me that spanner, Jake; there's just one more bolt to screw in.",
+    "wikt",
+    "spanner"
    ],
    [
     "to tile",
-    "fliesen",
+    "fliesen / kacheln",
     "verb",
     3,
-    "He tiled the bathroom floor."
+    "The handyman tiled the kitchen.",
+    "wikt",
+    "tile"
    ]
   ],
-  "sentences": [
-   [
-    "Can I have an estimate for the job?",
-    "Kann ich einen Kostenvoranschlag für die Arbeit haben?",
-    "Can I have …? Höfliche Bitte."
-   ],
-   [
-    "There is a leak under the sink.",
-    "Unter dem Waschbecken ist ein Leck.",
-    "There is + Einzahl: Es gibt …"
-   ],
-   [
-    "The engineer will be on-site tomorrow.",
-    "Der Techniker ist morgen vor Ort.",
-    "will be: Zukunft mit sicherer Erwartung."
-   ]
-  ]
+  "sentences": []
  },
- "b-90": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
+ "b-91": {
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
   "words": [
    [
+    "application form",
+    "das Antragsformular / das Anmeldeformular",
+    "noun",
+    1,
+    "",
+    "wikt",
+    "application form"
+   ],
+   [
+    "citizen",
+    "der Staatsbürger / die Staatsbürgerin",
+    "noun",
+    1,
+    "I am a Roman citizen.",
+    "wikt",
+    "citizen"
+   ],
+   [
     "permit",
-    "die Genehmigung",
+    "die Genehmigung / die Erlaubnis",
     "noun",
     2,
-    "You need a permit to build here."
-   ],
-   [
-    "hearing",
-    "die Anhörung",
-    "noun",
-    3,
-    "The hearing is next Tuesday."
-   ],
-   [
-    "regulation",
-    "die Vorschrift",
-    "noun",
-    2,
-    "Safety regulations apply to everyone."
+    "A construction permit can be obtained from the town offices.",
+    "wikt",
+    "permit"
    ],
    [
     "authority",
-    "die Behörde",
+    "die Autorität / die Behörde",
     "noun",
     2,
-    "Contact the local authority."
-   ],
-   [
-    "application form",
-    "das Antragsformular",
-    "noun",
-    1,
-    "Fill in the application form."
-   ],
-   [
-    "civil servant",
-    "der Beamte",
-    "noun",
-    2,
-    "Her father is a civil servant."
+    "Authorities say the suspect fled on foot.",
+    "wikt",
+    "authority"
    ],
    [
     "ministry",
     "das Ministerium",
     "noun",
     2,
-    "The ministry published new rules."
-   ],
-   [
-    "local council",
-    "die Stadtverwaltung",
-    "noun",
-    2,
-    "The local council decides on the plan."
-   ],
-   [
-    "citizen",
-    "der Bürger",
-    "noun",
-    1,
-    "Every citizen has the right to vote."
-   ],
-   [
-    "registration office",
-    "das Einwohnermeldeamt",
-    "noun",
-    3,
-    "Go to the registration office first."
+    "She works for the ministry of finance.",
+    "wikt",
+    "ministry"
    ],
    [
     "fine",
-    "das Bußgeld",
+    "die Geldstrafe / die Buße",
     "noun",
     2,
-    "He had to pay a fine."
-   ],
-   [
-    "to appeal",
-    "Widerspruch einlegen",
-    "verb",
-    3,
-    "You can appeal within four weeks."
-   ],
-   [
-    "decision notice",
-    "der Bescheid",
-    "noun",
-    3,
-    "The decision notice arrived by post."
+    "",
+    "wikt",
+    "fine"
    ],
    [
     "public sector",
-    "der öffentliche Dienst",
+    "die öffentliche Hand / der öffentlicher Sektor",
     "noun",
     2,
-    "She works in the public sector."
+    "",
+    "wikt",
+    "public sector"
    ],
    [
-    "to apply for a permit",
-    "eine Genehmigung beantragen",
-    "phrase",
+    "council",
+    "der Rat",
+    "noun",
     2,
-    "We applied for a permit in March."
+    "the First Council of Nicaea",
+    "wikt",
+    "council"
    ],
    [
-    "red tape",
-    "die Bürokratie",
+    "official",
+    "offiziell",
+    "adj",
+    2,
+    "The Official Strategy Guide",
+    "wikt",
+    "official"
+   ],
+   [
+    "town hall",
+    "das Rathaus / das Bürgermeisteramt",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "town hall"
+   ],
+   [
+    "mayor",
+    "der Bürgermeister / die Bürgermeisterin",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "mayor"
+   ],
+   [
+    "election",
+    "die Wahl",
+    "noun",
+    2,
+    "The parliamentary election(s) will be held in March.",
+    "wikt",
+    "election"
+   ],
+   [
+    "vote",
+    "die Stimme / das Votum",
+    "noun",
+    2,
+    "The city council decided the matter should go to public vote.",
+    "wikt",
+    "vote"
+   ],
+   [
+    "procurement",
+    "der Einkauf",
+    "noun",
+    2,
+    "He was responsible for the procurement of materials and supplies.",
+    "wikt",
+    "procurement"
+   ],
+   [
+    "public service",
+    "die öffentliche Dienstleistung / die Daseinsvorsorge",
+    "noun",
+    2,
+    "They provide counseling as a public service.",
+    "wikt",
+    "public service"
+   ],
+   [
+    "hearing",
+    "die Anhörung",
     "noun",
     3,
-    "Too much red tape slows us down."
+    "There will be a public hearing to discuss the new traffic light.",
+    "wikt",
+    "hearing"
    ]
   ],
-  "sentences": [
-   [
-    "Fill in the application form.",
-    "Füllen Sie das Antragsformular aus.",
-    "Befehlsform ohne Subjekt."
-   ],
-   [
-    "You can appeal within four weeks.",
-    "Sie können innerhalb von vier Wochen Widerspruch einlegen.",
-    "within = innerhalb."
-   ],
-   [
-    "Too much red tape slows us down.",
-    "Zu viel Bürokratie bremst uns aus.",
-    "too much + unzählbares Nomen."
-   ]
-  ]
- },
- "b-91": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
-  "words": [
-   [
-    "A stitch in time saves nine.",
-    "Wer früh handelt, spart später Mühe.",
-    "proverb",
-    2,
-    "Fix the leak now: a stitch in time saves nine."
-   ],
-   [
-    "Do not count your chickens before they hatch.",
-    "Freu dich nicht zu früh.",
-    "proverb",
-    2,
-    "Do not count your chickens before they hatch."
-   ],
-   [
-    "Many hands make light work.",
-    "Viele Hände machen die Arbeit leicht.",
-    "proverb",
-    1,
-    "Ask the team: many hands make light work."
-   ],
-   [
-    "Birds of a feather flock together.",
-    "Gleich und gleich gesellt sich gern.",
-    "proverb",
-    3,
-    "Birds of a feather flock together."
-   ],
-   [
-    "Honesty is the best policy.",
-    "Ehrlichkeit währt am längsten.",
-    "proverb",
-    2,
-    "Honesty is the best policy with clients."
-   ],
-   [
-    "Fortune favours the bold.",
-    "Dem Mutigen gehört die Welt.",
-    "proverb",
-    3,
-    "Fortune favours the bold, so make the call."
-   ],
-   [
-    "Two heads are better than one.",
-    "Vier Augen sehen mehr als zwei.",
-    "proverb",
-    2,
-    "Ask Tom: two heads are better than one."
-   ],
-   [
-    "Slow and steady wins the race.",
-    "Langsam und stetig gewinnt.",
-    "proverb",
-    2,
-    "Slow and steady wins the race."
-   ],
-   [
-    "All that glitters is not gold.",
-    "Es ist nicht alles Gold, was glänzt.",
-    "proverb",
-    3,
-    "The offer looks good, but all that glitters is not gold."
-   ],
-   [
-    "Rome was not built in a day.",
-    "Gut Ding will Weile haben.",
-    "proverb",
-    2,
-    "Be patient: Rome was not built in a day."
-   ],
-   [
-    "A bird in the hand is worth two in the bush.",
-    "Ein Spatz in der Hand ist besser als die Taube auf dem Dach.",
-    "proverb",
-    3,
-    "Take the offer: a bird in the hand is worth two in the bush."
-   ],
-   [
-    "Look before you leap.",
-    "Erst denken, dann handeln.",
-    "proverb",
-    2,
-    "Read the contract: look before you leap."
-   ],
-   [
-    "Curiosity killed the cat.",
-    "Neugier ist gefährlich.",
-    "proverb",
-    3,
-    "Do not ask too much: curiosity killed the cat."
-   ],
-   [
-    "There is no such thing as a free lunch.",
-    "Nichts ist umsonst.",
-    "proverb",
-    2,
-    "Remember: there is no such thing as a free lunch."
-   ],
-   [
-    "The pen is mightier than the sword.",
-    "Worte sind stärker als Gewalt.",
-    "proverb",
-    3,
-    "The pen is mightier than the sword."
-   ],
-   [
-    "Do not judge a book by its cover.",
-    "Urteile nicht nach dem Äußeren.",
-    "proverb",
-    2,
-    "Do not judge a book by its cover."
-   ]
-  ],
-  "sentences": [
-   [
-    "Better late than never.",
-    "Besser spät als nie.",
-    "Vergleich mit than: later, better."
-   ],
-   [
-    "Practice always makes perfect.",
-    "Übung macht immer den Meister.",
-    "always steht vor dem Verb: Practice always makes perfect."
-   ],
-   [
-    "Do not count your chickens before they hatch.",
-    "Freu dich nicht zu früh.",
-    "before leitet einen Nebensatz ein."
-   ]
-  ]
+  "sentences": []
  },
  "b-92": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
   "words": [
    [
-    "a level playing field",
-    "gleiche Chancen für alle",
-    "idiom",
-    3,
-    "We want a level playing field for all suppliers."
-   ],
-   [
-    "a curveball",
-    "eine unerwartete Wendung",
-    "idiom",
-    3,
-    "The client threw us a curveball."
-   ],
-   [
-    "to move the goalposts",
-    "die Spielregeln nachträglich ändern",
-    "idiom",
-    3,
-    "They keep moving the goalposts."
-   ],
-   [
-    "game plan",
-    "der Schlachtplan, die Strategie",
-    "noun",
-    2,
-    "What is our game plan for May?"
-   ],
-   [
-    "a team player",
-    "ein Teamplayer",
-    "idiom",
+    "many hands make light work",
+    "viele Hände machen bald ein Ende",
+    "proverb",
     1,
-    "She is a real team player."
+    "",
+    "wikt",
+    "many hands make light work"
    ],
    [
-    "to hit it out of the park",
-    "einen Volltreffer landen",
-    "idiom",
-    3,
-    "Your presentation hit it out of the park."
+    "less is more",
+    "weniger ist mehr",
+    "proverb",
+    1,
+    "",
+    "wikt",
+    "less is more"
    ],
    [
-    "to step up to the plate",
-    "Verantwortung übernehmen",
-    "idiom",
-    3,
-    "It is time to step up to the plate."
+    "knowledge is power",
+    "Wissen ist Macht",
+    "proverb",
+    1,
+    "",
+    "wikt",
+    "knowledge is power"
    ],
    [
-    "in the home stretch",
-    "auf der Zielgeraden",
-    "idiom",
-    3,
-    "The project is in the home stretch."
+    "the customer is always right",
+    "der Kunde ist König",
+    "proverb",
+    1,
+    "",
+    "wikt",
+    "the customer is always right"
    ],
    [
-    "to play hardball",
-    "mit harten Bandagen kämpfen",
-    "idiom",
-    3,
-    "They played hardball in the talks."
-   ],
-   [
-    "to throw in the towel",
-    "aufgeben",
-    "idiom",
+    "honesty is the best policy",
+    "ehrlich währt am längsten / Ehrlichkeit ist die beste Politik",
+    "proverb",
     2,
-    "Do not throw in the towel yet."
+    "",
+    "wikt",
+    "honesty is the best policy"
    ],
    [
-    "a long shot",
-    "eine geringe Chance",
-    "idiom",
-    3,
-    "Winning the contract is a long shot."
-   ],
-   [
-    "to be on the bench",
-    "auf der Ersatzbank sitzen",
-    "idiom",
-    3,
-    "He was on the bench during the project."
-   ],
-   [
-    "to make the cut",
-    "es in die Auswahl schaffen",
-    "idiom",
-    3,
-    "Only three ideas made the cut."
-   ],
-   [
-    "to score a point",
-    "einen Punkt machen",
-    "idiom",
+    "two heads are better than one",
+    "vier Augen sehen mehr als zwei",
+    "proverb",
     2,
-    "You scored a point with that argument."
+    "",
+    "wikt",
+    "two heads are better than one"
    ],
    [
-    "a game of two halves",
-    "ein Spiel mit zwei Gesichtern",
-    "idiom",
-    3,
-    "The year was a game of two halves."
+    "slow and steady wins the race",
+    "mit kleinen Schritten zu großen Zielen heißt viel gewinnen und wenig verspielen",
+    "proverb",
+    2,
+    "",
+    "wikt",
+    "slow and steady wins the race"
    ],
    [
-    "to keep your eye on the ball",
-    "konzentriert bleiben",
-    "idiom",
+    "all good things come to an end",
+    "alles hat ein Ende",
+    "proverb",
+    2,
+    "",
+    "wikt",
+    "all good things come to an end"
+   ],
+   [
+    "charity begins at home",
+    "Wohltätigkeit beginnt zu Hause",
+    "proverb",
+    2,
+    "",
+    "wikt",
+    "charity begins at home"
+   ],
+   [
+    "good things come to those who wait",
+    "was lange währt, wird endlich gut / gut Ding will Weile haben",
+    "proverb",
+    2,
+    "",
+    "wikt",
+    "good things come to those who wait"
+   ],
+   [
+    "haste makes waste",
+    "Eile mit Weile",
+    "proverb",
+    2,
+    "",
+    "wikt",
+    "haste makes waste"
+   ],
+   [
+    "laughter is the best medicine",
+    "Lachen ist die beste Medizin",
+    "proverb",
+    2,
+    "",
+    "wikt",
+    "laughter is the best medicine"
+   ],
+   [
+    "necessity is the mother of invention",
+    "Not macht erfinderisch / Notwendigkeit ist die Mutter der Erfindung",
+    "proverb",
+    2,
+    "",
+    "wikt",
+    "necessity is the mother of invention"
+   ],
+   [
+    "no news is good news",
+    "keine Nachrichten sind gute Nachrichten",
+    "proverb",
+    2,
+    "",
+    "wikt",
+    "no news is good news"
+   ],
+   [
+    "Rome wasn't built in a day",
+    "Rom ist nicht an einem Tag erbaut worden / Rom wurde nicht in einem Tag erbaut",
+    "proverb",
+    2,
+    "",
+    "wikt",
+    "Rome wasn't built in a day"
+   ],
+   [
+    "when the cat's away the mice will play",
+    "ist die Katze aus dem Haus, tanzen die Mäuse auf dem Tisch",
+    "proverb",
+    2,
+    "",
+    "wikt",
+    "when the cat's away the mice will play"
+   ],
+   [
+    "to strike while the iron is hot",
+    "man muss das Eisen schmieden, solange es heiß ist",
+    "verb",
+    2,
+    "",
+    "wikt",
+    "strike while the iron is hot"
+   ],
+   [
+    "birds of a feather flock together",
+    "Gleich und Gleich gesellt sich gern / zeig mir deine Freunde und ich sage dir, wer du bist",
+    "proverb",
     3,
-    "Keep your eye on the ball."
+    "",
+    "wikt",
+    "birds of a feather flock together"
+   ],
+   [
+    "all that glitters is not gold",
+    "es ist nicht alles Gold, was glänzt",
+    "proverb",
+    3,
+    "",
+    "wikt",
+    "all that glitters is not gold"
+   ],
+   [
+    "a bird in the hand is worth two in the bush",
+    "besser ein Spatz in der Hand als eine Taube auf dem Dach",
+    "proverb",
+    3,
+    "",
+    "wikt",
+    "a bird in the hand is worth two in the bush"
    ]
   ],
-  "sentences": [
-   [
-    "She is a real team player.",
-    "Sie ist eine echte Teamplayerin.",
-    "real vor dem Nomen: echt."
-   ],
-   [
-    "The ball is in your court.",
-    "Sie sind am Zug.",
-    "in your court = bei Ihnen."
-   ],
-   [
-    "The new director calls the shots.",
-    "Der neue Direktor hat das Sagen.",
-    "calls: Present Simple, 3. Person."
-   ]
-  ]
+  "sentences": []
  },
  "b-93": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
   "words": [
    [
-    "to lay the groundwork",
-    "die Grundlagen schaffen",
-    "idiom",
-    3,
-    "We laid the groundwork for the merger."
+    "fifty-fifty",
+    "fifty-fifty / halbe-halbe",
+    "adv",
+    1,
+    "I'll handle production, you handle sales, and we'll split profits fifty-fifty.",
+    "wikt",
+    "fifty-fifty"
    ],
    [
-    "nuts and bolts",
-    "die praktischen Grundlagen",
-    "idiom",
-    3,
-    "Let us talk about the nuts and bolts."
-   ],
-   [
-    "to build bridges",
-    "Brücken bauen",
-    "idiom",
+    "groundwork",
+    "die Grundlage",
+    "noun",
     2,
-    "She builds bridges between the teams."
+    "",
+    "wikt",
+    "groundwork"
    ],
    [
-    "a solid foundation",
-    "ein solides Fundament",
-    "idiom",
+    "to knock down",
+    "umwerfen / niederschlagen",
+    "verb",
     2,
-    "Good training is a solid foundation."
+    "We knocked down the garden shed when we moved.",
+    "wikt",
+    "knock down"
    ],
    [
-    "to tighten the screws",
-    "den Druck erhöhen",
-    "idiom",
-    3,
-    "The bank is tightening the screws."
+    "to patch up",
+    "zusammenflicken / zusammenklittern",
+    "verb",
+    2,
+    "I needed to patch up my trousers after ripping them on the brambles.",
+    "wikt",
+    "patch up"
+   ],
+   [
+    "to rebuild",
+    "wiederaufbauen / umbauen",
+    "verb",
+    2,
+    "",
+    "wikt",
+    "rebuild"
+   ],
+   [
+    "state of the art",
+    "die aktuelle Technik / der Stand der Technik",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "state of the art"
+   ],
+   [
+    "to pave the way",
+    "den Weg ebnen",
+    "verb",
+    2,
+    "Germany's development of rocket weapons paved the way for human controlled spaceflight.",
+    "wikt",
+    "pave the way"
+   ],
+   [
+    "green light",
+    "das grünes Licht / das Grünlicht",
+    "noun",
+    2,
+    "We have a green light on the project. Work starts today.",
+    "wikt",
+    "green light"
+   ],
+   [
+    "grey area",
+    "die Grauzone",
+    "noun",
+    2,
+    "It exists in a grey area between legal and illegal.",
+    "wikt",
+    "grey area"
+   ],
+   [
+    "black sheep",
+    "das schwarzes Schaf",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "black sheep"
+   ],
+   [
+    "one-off",
+    "die einmalige Sache",
+    "noun",
+    2,
+    "It is a one-off; there is nothing else like it.",
+    "wikt",
+    "one-off"
+   ],
+   [
+    "blue-collar",
+    "die Arbeiterklasse",
+    "adj",
+    2,
+    "Blue-collar workers represent a diminishing segment of society.",
+    "wikt",
+    "blue-collar"
+   ],
+   [
+    "golden opportunity",
+    "die einmalige Gelegenheit",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "golden opportunity"
+   ]
+  ],
+  "sentences": []
+ },
+ "b-94": {
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
+  "words": [
+   [
+    "black and white",
+    "Amerikaner",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "black and white"
+   ],
+   [
+    "red flag",
+    "das Warnsignal / der Warnhinweis",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "red flag"
+   ],
+   [
+    "to paint the town red",
+    "die Sau rauslassen",
+    "verb",
+    2,
+    "",
+    "wikt",
+    "paint the town red"
+   ],
+   [
+    "green with envy",
+    "grün vor Neid",
+    "phrase",
+    2,
+    "",
+    "wikt",
+    "green with envy"
+   ],
+   [
+    "yellow-bellied",
+    "gelbbäuchig",
+    "adj",
+    2,
+    "",
+    "wikt",
+    "yellow-bellied"
+   ],
+   [
+    "black market",
+    "der Schwarzmarkt",
+    "noun",
+    2,
+    "associational black market",
+    "wikt",
+    "black market"
+   ],
+   [
+    "gold standard",
+    "der Goldstandard",
+    "noun",
+    2,
+    "The OED is the gold standard for English dictionaries.",
+    "wikt",
+    "gold standard"
    ],
    [
     "blueprint",
-    "der Plan, die Vorlage",
+    "der Plan / das Blaupause",
     "noun",
     3,
-    "This is the blueprint for our new strategy."
-   ],
-   [
-    "to raise the bar",
-    "die Messlatte höher legen",
-    "idiom",
-    3,
-    "The new model raises the bar."
+    "",
+    "wikt",
+    "blueprint"
    ],
    [
     "cornerstone",
-    "der Eckpfeiler",
+    "der Eckpfeiler / der Eckstein",
     "noun",
     3,
-    "Trust is the cornerstone of our business."
-   ],
-   [
-    "back to the drawing board",
-    "noch einmal von vorn planen",
-    "idiom",
-    3,
-    "The test failed. Back to the drawing board."
-   ],
-   [
-    "to patch things up",
-    "sich versöhnen, etwas flicken",
-    "idiom",
-    3,
-    "They patched things up after the argument."
-   ],
-   [
-    "to hammer out a deal",
-    "einen Vertrag aushandeln",
-    "idiom",
-    3,
-    "They hammered out a deal late at night."
-   ],
-   [
-    "rough around the edges",
-    "noch nicht ausgefeilt",
-    "idiom",
-    3,
-    "The prototype is rough around the edges."
-   ],
-   [
-    "to nail it",
-    "es perfekt hinbekommen",
-    "idiom",
-    2,
-    "You nailed it in the interview."
-   ],
-   [
-    "to put the finishing touches",
-    "den letzten Schliff geben",
-    "idiom",
-    3,
-    "We are putting the finishing touches on the report."
-   ],
-   [
-    "to knock down walls",
-    "Hindernisse beseitigen",
-    "idiom",
-    3,
-    "We want to knock down walls between teams."
-   ],
-   [
-    "under construction",
-    "im Aufbau",
-    "phrase",
-    2,
-    "Our new website is still under construction."
-   ]
-  ],
-  "sentences": [
-   [
-    "She builds bridges between the teams.",
-    "Sie baut Brücken zwischen den Teams.",
-    "between + zwei Gruppen."
-   ],
-   [
-    "You nailed it in the interview.",
-    "Du hast es im Vorstellungsgespräch geschafft.",
-    "nailed: Vergangenheit mit -ed."
-   ],
-   [
-    "Our website is still under construction.",
-    "Unsere Website ist noch im Aufbau.",
-    "under construction: Zustand, daher be."
-   ]
-  ]
- },
- "b-94": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
-  "words": [
-   [
-    "an ace up your sleeve",
-    "ein Trumpf im Ärmel",
-    "idiom",
-    3,
-    "She still has an ace up her sleeve."
-   ],
-   [
-    "to cut your losses",
-    "Verluste begrenzen",
-    "idiom",
-    3,
-    "It is time to cut our losses."
-   ],
-   [
-    "to raise the stakes",
-    "den Einsatz erhöhen",
-    "idiom",
-    3,
-    "The competitor raised the stakes."
-   ],
-   [
-    "to call someone's bluff",
-    "jemandes Bluff entlarven",
-    "idiom",
-    3,
-    "We called their bluff and they gave in."
-   ],
-   [
-    "to play your cards right",
-    "klug vorgehen",
-    "idiom",
-    3,
-    "Play your cards right and you will get the job."
-   ],
-   [
-    "a wild card",
-    "das unberechenbare Element",
-    "idiom",
-    3,
-    "The new competitor is a wild card."
-   ],
-   [
-    "a game of chance",
-    "ein Glücksspiel",
-    "idiom",
-    2,
-    "Investing is not a game of chance."
-   ],
-   [
-    "a deal breaker",
-    "das Ausschlusskriterium",
-    "idiom",
-    3,
-    "Price is a deal breaker for us."
-   ],
-   [
-    "the odds are against us",
-    "die Chancen stehen schlecht",
-    "idiom",
-    3,
-    "The odds are against us this time."
-   ],
-   [
-    "to bet on the wrong horse",
-    "aufs falsche Pferd setzen",
-    "idiom",
-    3,
-    "We bet on the wrong horse."
-   ],
-   [
-    "jackpot",
-    "der Hauptgewinn",
-    "noun",
-    2,
-    "We hit the jackpot with this client."
-   ],
-   [
-    "all in",
-    "alles auf eine Karte setzen",
-    "idiom",
-    3,
-    "They went all in on the new product."
-   ],
-   [
-    "to be a gamble",
-    "ein Glücksspiel sein",
-    "idiom",
-    2,
-    "The new market is a gamble."
-   ],
-   [
-    "to push your luck",
-    "sein Glück überstrapazieren",
-    "idiom",
-    3,
-    "Do not push your luck with the deadline."
-   ],
-   [
-    "to shuffle the deck",
-    "die Karten neu mischen",
-    "idiom",
-    3,
-    "The reorganisation shuffled the deck."
-   ],
-   [
-    "a gamble that paid off",
-    "ein Risiko, das sich gelohnt hat",
-    "idiom",
-    3,
-    "The new market was a gamble that paid off."
-   ]
-  ],
-  "sentences": [
-   [
-    "This supplier is a safe bet.",
-    "Dieser Lieferant ist eine sichere Sache.",
-    "a safe bet: feste Wendung."
-   ],
-   [
-    "Price is a deal breaker for us.",
-    "Der Preis ist für uns ein Ausschlusskriterium.",
-    "for us = für uns."
-   ],
-   [
-    "We decided to play it safe.",
-    "Wir haben beschlossen, auf Nummer sicher zu gehen.",
-    "decide to + Grundform."
-   ]
-  ]
- },
- "b-95": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
-  "words": [
-   [
-    "too many cooks spoil the broth",
-    "viele Köche verderben den Brei",
-    "idiom",
-    3,
-    "Too many cooks spoil the broth, so only two of us will decide."
-   ],
-   [
-    "half-baked",
-    "unausgegoren",
-    "adj",
-    3,
-    "That is a half-baked plan."
-   ],
-   [
-    "a piece of cake",
-    "ein Kinderspiel",
-    "idiom",
-    1,
-    "The test was a piece of cake."
-   ],
-   [
-    "bread and butter",
-    "das Kerngeschäft, die Haupteinnahme",
-    "idiom",
-    3,
-    "Repairs are our bread and butter."
-   ],
-   [
-    "to cook the books",
-    "die Bücher frisieren",
-    "idiom",
-    3,
-    "The manager cooked the books."
-   ],
-   [
-    "on the back burner",
-    "zurückgestellt",
-    "idiom",
-    3,
-    "The project is on the back burner."
-   ],
-   [
-    "to eat humble pie",
-    "zu Kreuze kriechen",
-    "idiom",
-    3,
-    "He had to eat humble pie."
-   ],
-   [
-    "a hot potato",
-    "ein heißes Eisen",
-    "idiom",
-    3,
-    "Taxes are a hot potato in this firm."
-   ],
-   [
-    "to spill the beans",
-    "ein Geheimnis verraten",
-    "idiom",
-    2,
-    "Someone spilled the beans about the launch."
-   ],
-   [
-    "to butter someone up",
-    "jemandem schmeicheln",
-    "idiom",
-    3,
-    "He buttered up the boss."
-   ],
-   [
-    "to bite off more than you can chew",
-    "sich zu viel vornehmen",
-    "idiom",
-    3,
-    "I think we bit off more than we can chew."
-   ],
-   [
-    "cream of the crop",
-    "das Beste vom Besten",
-    "idiom",
-    3,
-    "These are the cream of the crop."
-   ],
-   [
-    "a taste of your own medicine",
-    "die eigene Medizin zu schmecken bekommen",
-    "idiom",
-    3,
-    "The rival got a taste of its own medicine."
-   ],
-   [
-    "icing on the cake",
-    "das Sahnehäubchen",
-    "idiom",
-    3,
-    "The bonus was the icing on the cake."
-   ],
-   [
-    "a recipe for disaster",
-    "ein sicheres Rezept für ein Desaster",
-    "idiom",
-    3,
-    "No planning is a recipe for disaster."
-   ],
-   [
-    "to have a lot on your plate",
-    "viel zu tun haben",
-    "idiom",
-    2,
-    "I have a lot on my plate this week."
-   ]
-  ],
-  "sentences": [
-   [
-    "The test was a piece of cake.",
-    "Der Test war ein Kinderspiel.",
-    "Vergangenheit von be: was."
-   ],
-   [
-    "I have a lot on my plate this week.",
-    "Ich habe diese Woche viel zu tun.",
-    "a lot of: viel."
-   ],
-   [
-    "Take his numbers with a pinch of salt.",
-    "Nimm seine Zahlen mit Vorsicht.",
-    "Befehlsform mit take."
-   ]
-  ]
- },
- "b-96": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
-  "words": [
-   [
-    "to sail through",
-    "mühelos durchkommen",
-    "idiom",
-    3,
-    "She sailed through the exam."
-   ],
-   [
-    "to be at the helm",
-    "am Ruder sein, die Leitung haben",
-    "idiom",
-    3,
-    "Who is at the helm of the project?"
-   ],
-   [
-    "to rock the boat",
-    "Unruhe stiften",
-    "idiom",
-    3,
-    "Do not rock the boat now."
-   ],
-   [
-    "smooth sailing",
-    "reibungsloser Ablauf",
-    "idiom",
-    3,
-    "After the first week it was smooth sailing."
-   ],
-   [
-    "to jump ship",
-    "das Unternehmen verlassen",
-    "idiom",
-    3,
-    "Many staff jumped ship."
-   ],
-   [
-    "all hands on deck",
-    "alle müssen mit anpacken",
-    "idiom",
-    3,
-    "It is all hands on deck this week."
-   ],
-   [
-    "to learn the ropes",
-    "sich einarbeiten",
-    "idiom",
-    2,
-    "New staff learn the ropes quickly."
-   ],
-   [
-    "to turn the tide",
-    "das Blatt wenden",
-    "idiom",
-    3,
-    "The new product turned the tide."
-   ],
-   [
-    "to miss the boat",
-    "die Gelegenheit verpassen",
-    "idiom",
-    3,
-    "We missed the boat on that deal."
-   ],
-   [
-    "a loose cannon",
-    "ein unberechenbarer Mensch",
-    "idiom",
-    3,
-    "He is a loose cannon in meetings."
-   ],
-   [
-    "to run a tight ship",
-    "ein straffes Regiment führen",
-    "idiom",
-    3,
-    "She runs a tight ship."
-   ],
-   [
-    "to set sail",
-    "in See stechen, starten",
-    "idiom",
-    3,
-    "We set sail with a new product."
-   ],
-   [
-    "dead in the water",
-    "gescheitert, am Boden",
-    "idiom",
-    3,
-    "The project is dead in the water."
-   ],
-   [
-    "a sinking ship",
-    "ein sinkendes Schiff",
-    "idiom",
-    3,
-    "Nobody wants to join a sinking ship."
-   ],
-   [
-    "to keep your head above water",
-    "sich über Wasser halten",
-    "idiom",
-    3,
-    "We are just keeping our heads above water."
-   ],
-   [
-    "to stay on course",
-    "auf Kurs bleiben",
-    "idiom",
-    2,
-    "We will stay on course."
-   ]
-  ],
-  "sentences": [
-   [
-    "We are all in the same boat.",
-    "Wir sitzen alle im selben Boot.",
-    "all steht nach dem Verb be."
-   ],
-   [
-    "New staff learn the ropes quickly.",
-    "Neue Mitarbeiter arbeiten sich schnell ein.",
-    "quickly: Adverb der Art und Weise."
-   ],
-   [
-    "The company weathered the storm.",
-    "Die Firma hat den Sturm überstanden.",
-    "weathered: Vergangenheit von weather (Verb)."
-   ]
-  ]
- },
- "b-97": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
-  "words": [
-   [
-    "green light",
-    "grünes Licht, die Freigabe",
-    "noun",
-    2,
-    "We got the green light for the project."
-   ],
-   [
-    "white elephant",
-    "das teure, nutzlose Projekt",
-    "idiom",
-    3,
-    "The new building became a white elephant."
-   ],
-   [
-    "blue-sky thinking",
-    "freies, kreatives Denken",
-    "noun",
-    3,
-    "We need some blue-sky thinking."
-   ],
-   [
-    "a grey area",
-    "die Grauzone",
-    "idiom",
-    2,
-    "The law is a grey area here."
+    "Exceptional service is the cornerstone of the hospitality industry.",
+    "wikt",
+    "cornerstone"
    ],
    [
     "to see red",
     "rotsehen",
-    "idiom",
+    "verb",
     3,
-    "He saw red when he read the email."
-   ],
-   [
-    "golden handshake",
-    "die hohe Abfindung",
-    "noun",
-    3,
-    "The manager got a golden handshake."
-   ],
-   [
-    "black sheep",
-    "das schwarze Schaf",
-    "idiom",
-    2,
-    "He is the black sheep of the family firm."
-   ],
-   [
-    "one-off",
-    "einmalig, einmalige Sache",
-    "noun",
-    2,
-    "This is a one-off payment."
+    "",
+    "wikt",
+    "see red"
    ],
    [
     "at sixes and sevens",
-    "in Unordnung, durcheinander",
-    "idiom",
+    "völlig durcheinander sein",
+    "prep_phrase",
     3,
-    "The office is at sixes and sevens."
+    "",
+    "wikt",
+    "at sixes and sevens"
    ],
    [
-    "a zero-sum game",
-    "ein Nullsummenspiel",
-    "idiom",
+    "zero-sum game",
+    "das Nullsummenspiel",
+    "noun",
     3,
-    "Negotiation is not a zero-sum game."
-   ],
-   [
-    "a one-man show",
-    "eine Ein-Mann-Show",
-    "idiom",
-    3,
-    "The firm is a one-man show."
-   ],
-   [
-    "fifty-fifty",
-    "halbe-halbe",
-    "adj",
-    1,
-    "We split the costs fifty-fifty."
+    "",
+    "wikt",
+    "zero-sum game"
    ],
    [
     "second to none",
-    "unübertroffen",
-    "idiom",
+    "niemanden nachstehend / unübertroffen",
+    "adj",
     3,
-    "Our service is second to none."
-   ],
-   [
-    "a 360-degree view",
-    "ein Rundumblick",
-    "phrase",
-    3,
-    "We need a 360-degree view of the market."
-   ],
-   [
-    "to be in the pink",
-    "gesund und munter sein",
-    "idiom",
-    3,
-    "The business is in the pink."
-   ],
-   [
-    "to paint a bleak picture",
-    "ein düsteres Bild zeichnen",
-    "idiom",
-    3,
-    "The report paints a bleak picture."
+    "",
+    "wikt",
+    "second to none"
    ]
   ],
-  "sentences": [
-   [
-    "We got the green light for the project.",
-    "Wir haben grünes Licht für das Projekt bekommen.",
-    "got: Vergangenheit von get."
-   ],
-   [
-    "We split the costs fifty-fifty.",
-    "Wir teilen die Kosten halbe-halbe.",
-    "split ist in der Vergangenheit gleich."
-   ],
-   [
-    "Our service is second to none.",
-    "Unser Service ist unübertroffen.",
-    "second to none = niemand ist besser."
-   ]
-  ]
+  "sentences": []
  },
- "b-98": {
-  "status": "neu 2.176",
-  "note": "eigene Formulierung; Häufigkeit nicht gegen NGSL/BSL geprüft; Dublettenprüfung gegen den gesamten Bestand (tools/dupcheck.js) bestanden",
+ "b-95": {
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
   "words": [
    [
-    "Teamwork makes the dream work.",
-    "Gemeinsam erreicht man mehr.",
-    "saying",
+    "team player",
+    "der Teamplayer / die Teamplayerin",
+    "noun",
     1,
-    "Teamwork makes the dream work."
+    "",
+    "wikt",
+    "team player"
    ],
    [
-    "Fail fast, learn fast.",
-    "Schnell scheitern, schnell lernen.",
-    "saying",
+    "home stretch",
+    "die Zielgerade",
+    "noun",
     2,
-    "Our motto is: fail fast, learn fast."
+    "I think we're finally on the home stretch with this project.",
+    "wikt",
+    "home stretch"
    ],
    [
-    "Done is better than perfect.",
-    "Fertig ist besser als perfekt.",
-    "saying",
+    "sudden death",
+    "der plötzlicher Tod",
+    "noun",
     2,
-    "Done is better than perfect, so let us ship it."
+    "",
+    "wikt",
+    "sudden death"
    ],
    [
-    "Nothing ventured, nothing gained.",
-    "Wer nichts wagt, der nichts gewinnt.",
-    "saying",
+    "neck and neck",
+    "Kopf an Kopf",
+    "phrase",
     2,
-    "Nothing ventured, nothing gained."
+    "The polls suggest that the candidates were neck and neck in the election.",
+    "wikt",
+    "neck and neck"
    ],
    [
-    "Less is more.",
-    "Weniger ist mehr.",
-    "saying",
-    1,
-    "Use fewer slides: less is more."
-   ],
-   [
-    "Quality over quantity.",
-    "Qualität vor Quantität.",
-    "saying",
-    1,
-    "We choose quality over quantity."
-   ],
-   [
-    "Lead by example.",
-    "Mit gutem Beispiel vorangehen.",
-    "saying",
+    "game of chance",
+    "das Glücksspiel",
+    "noun",
     2,
-    "Good managers lead by example."
+    "",
+    "wikt",
+    "game of chance"
    ],
    [
-    "Communication is key.",
-    "Kommunikation ist der Schlüssel.",
-    "saying",
-    1,
-    "Communication is key in every team."
-   ],
-   [
-    "Knowledge is power.",
-    "Wissen ist Macht.",
-    "saying",
-    1,
-    "Knowledge is power, so keep learning."
-   ],
-   [
-    "Measure twice, cut once.",
-    "Erst zweimal messen, dann schneiden.",
-    "saying",
+    "jackpot",
+    "das Hauptgewinn",
+    "noun",
     2,
-    "Measure twice, cut once."
+    "",
+    "wikt",
+    "jackpot"
    ],
    [
-    "Keep it simple.",
-    "Halte es einfach.",
-    "saying",
-    1,
-    "Keep it simple and clear."
-   ],
-   [
-    "The customer is always right.",
-    "Der Kunde hat immer recht.",
-    "saying",
-    1,
-    "The customer is always right, they say."
-   ],
-   [
-    "Trust takes years to build.",
-    "Vertrauen braucht Jahre.",
-    "saying",
+    "gamble",
+    "das Glücksspiel / das Hazardspiel",
+    "noun",
     2,
-    "Trust takes years to build and seconds to break."
+    "I had a gamble on the horses last weekend.",
+    "wikt",
+    "gamble"
    ],
    [
-    "Small steps lead to big results.",
-    "Kleine Schritte führen zu großen Ergebnissen.",
-    "saying",
+    "bluff",
+    "das Bluffen",
+    "noun",
     2,
-    "Small steps lead to big results."
+    "That is only bluff, or That is only a bluff.",
+    "wikt",
+    "bluff"
    ],
    [
-    "Ask for help early.",
-    "Bitte früh um Hilfe.",
-    "saying",
-    1,
-    "Ask for help early, not late."
+    "on board",
+    "an Bord",
+    "adj",
+    2,
+    "Is that new teammate properly on board yet?",
+    "wikt",
+    "on board"
    ],
    [
-    "Under-promise and over-deliver.",
-    "Wenig versprechen, viel liefern.",
-    "saying",
+    "to batten down the hatches",
+    "sich warm anziehen",
+    "verb",
+    2,
+    "It's time to batten down the hatches and prepare for the coming challenge.",
+    "wikt",
+    "batten down the hatches"
+   ],
+   [
+    "to cut one's losses",
+    "die Verluste begrenzen / einen harten Schnitt machen",
+    "verb",
     3,
-    "Under-promise and over-deliver."
+    "",
+    "wikt",
+    "cut one's losses"
+   ],
+   [
+    "to push one's luck",
+    "sein Glück herausfordern",
+    "verb",
+    3,
+    "",
+    "wikt",
+    "push one's luck"
+   ],
+   [
+    "all hands on deck",
+    "alle Mann an Deck",
+    "intj",
+    3,
+    "",
+    "wikt",
+    "all hands on deck"
+   ],
+   [
+    "to turn the tide",
+    "das Blatt wenden",
+    "verb",
+    3,
+    "",
+    "wikt",
+    "turn the tide"
+   ],
+   [
+    "loose cannon",
+    "unberechenbarer Mensch / unkontrollierbarer Mensch",
+    "noun",
+    3,
+    "",
+    "wikt",
+    "loose cannon"
+   ],
+   [
+    "sinking ship",
+    "das sinkendes Schiff",
+    "noun",
+    3,
+    "",
+    "wikt",
+    "sinking ship"
+   ],
+   [
+    "to keep one's head above water",
+    "sich über Wasser halten",
+    "verb",
+    3,
+    "",
+    "wikt",
+    "keep one's head above water"
    ]
   ],
-  "sentences": [
+  "sentences": []
+ },
+ "b-96": {
+  "status": "Wiktionary",
+  "note": "Alle Angaben (Stichwort, Wortart, deutsche Übersetzung, Beispielsatz) stammen aus Wiktionary (CC BY-SA 4.0, über Wiktextract/kaikki.org); Auswahl der Stichwörter und Einteilung durch das Projekt; Häufigkeit nicht gegen NGSL/BSL geprüft",
+  "words": [
    [
-    "Good managers lead by example.",
-    "Gute Führungskräfte gehen mit gutem Beispiel voran.",
-    "by example = durch Vorbild."
+    "piece of cake",
+    "das Kinderspiel / die Pillepalle",
+    "noun",
+    1,
+    "Sure, no problem. It'll be a piece of cake.",
+    "wikt",
+    "piece of cake"
    ],
    [
-    "Trust takes years to build.",
-    "Vertrauen braucht Jahre, um aufgebaut zu werden.",
-    "take + Zeitangabe: dauern."
+    "to spill the beans",
+    "ausplaudern / auspacken",
+    "verb",
+    2,
+    "They had planned it as a surprise party, but somebody spilled the beans.",
+    "wikt",
+    "spill the beans"
    ],
    [
-    "Keep it simple and clear.",
-    "Halte es einfach und klar.",
-    "Befehlsform: keep + it + Adjektiv."
+    "to simmer down",
+    "runterkühlen / abregen",
+    "verb",
+    2,
+    "You need to simmer down and stop yelling at me.",
+    "wikt",
+    "simmer down"
+   ],
+   [
+    "sour grapes",
+    "die saure Traube / die unreife Traube",
+    "noun",
+    2,
+    "",
+    "wikt",
+    "sour grapes"
+   ],
+   [
+    "to take the cake",
+    "den Vogel abschießen",
+    "verb",
+    2,
+    "Thanks! You guys take the cake.",
+    "wikt",
+    "take the cake"
+   ],
+   [
+    "cool as a cucumber",
+    "kalt wie Hundeschnauze",
+    "adj",
+    2,
+    "Even during the elections, Josh was as cool as a cucumber.",
+    "wikt",
+    "cool as a cucumber"
+   ],
+   [
+    "to cut the mustard",
+    "es bringen",
+    "verb",
+    2,
+    "Give me the bigger hammer. This little one just doesn’t cut the mustard.",
+    "wikt",
+    "cut the mustard"
+   ],
+   [
+    "too many cooks spoil the broth",
+    "viele Köche verderben den Brei",
+    "proverb",
+    3,
+    "",
+    "wikt",
+    "too many cooks spoil the broth"
+   ],
+   [
+    "half-baked",
+    "halbgar / unausgegoren",
+    "adj",
+    3,
+    "The guy had some half-baked idea for getting rich in the stock market.",
+    "wikt",
+    "half-baked"
+   ],
+   [
+    "to eat humble pie",
+    "zu Kreuze kriechen",
+    "verb",
+    3,
+    "",
+    "wikt",
+    "eat humble pie"
+   ],
+   [
+    "hot potato",
+    "das heißes Eisen",
+    "noun",
+    3,
+    "",
+    "wikt",
+    "hot potato"
+   ],
+   [
+    "icing on the cake",
+    "das Sahnehäubchen",
+    "noun",
+    3,
+    "",
+    "wikt",
+    "icing on the cake"
    ]
-  ]
+  ],
+  "sentences": []
  }
 }

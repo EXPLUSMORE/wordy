@@ -17,7 +17,8 @@ const OWN = { src: 'own', lic: 'CC-BY-SA-4.0' }, WIKT = { src: 'wikt', lic: 'CC-
 const old = {}, oldSent = [];
 if (fs.existsSync(OUT)) fs.readdirSync(OUT).filter(f => /^business-.*\.js$/.test(f)).forEach(f => rules.load(path.join(OUT, f)).units.forEach(u => (old[u.id] = u)));
 if (fs.existsSync(path.join(OUT, 'saetze-open.js'))) rules.load(path.join(OUT, 'saetze-open.js')).sentences.forEach(s => oldSent.push(s));
-const units = Object.assign({}, old), sent = oldSent.filter(s => ids.indexOf(s[5].unit) < 0);
+Object.keys(old).forEach(id => { if (!own[id]) delete old[id]; });   // Einheiten, die nicht mehr in own-units.json stehen, entfallen samt Sätzen
+const units = Object.assign({}, old), sent = oldSent.filter(s => own[s[5].unit] && ids.indexOf(s[5].unit) < 0);
 const nl = JSON.parse(JSON.stringify(lock)), problems = [], seen = {};
 Object.values(old).forEach(u => { if (ids.indexOf(u.id) < 0) u.words.forEach(w => (seen[norm(w[0])] = u.id)); });
 for (const id of ids) {
@@ -26,7 +27,7 @@ for (const id of ids) {
   const keys = o.words.map(w => w[0] + '|' + w[2]);
   locked.forEach((k, i) => { if (keys[i] !== k) { console.error(id + ': Reihenfolge/Inhalt der bereits vergebenen Wörter geändert (Position ' + i + ') – nur anhängen!'); process.exit(1); } });
   o.words.forEach(w => { const k = norm(w[0]); if (legacy.has(k)) problems.push(id + ': "' + w[0] + '" steht schon im Altbestand'); else if (seen[k] && seen[k] !== id) problems.push(id + ': "' + w[0] + '" steht schon in ' + seen[k]); seen[k] = id; });
-  units[id] = { track: 'business', k: th.k, id, title: th.title, icon: th.icon, words: o.words.map(w => { const M = w[5] === 'wikt' ? WIKT : OWN, m = Object.assign({ pos: w[2] }, M, w[6] ? { ref: w[6] } : {}); if (w[4]) m.ex = Object.assign({}, M); return [w[0], w[1], w[3], w[4], m]; }) };
+  units[id] = { track: 'business', k: th.k, id, title: th.title, icon: th.icon, words: o.words.map(w => { const M = w[5] === 'wikt' ? WIKT : OWN, m = Object.assign({ pos: w[2] }, w[4] ? { ex: Object.assign({}, M) } : {}, M, w[6] ? { ref: w[6] } : {}); return [w[0], w[1], w[3], w[4], m]; }) };
   (o.sentences || []).forEach(s => sent.push(['business', th.k, s[0], s[1], s[2], Object.assign({ unit: id }, OWN)]));
   nl.units[id] = { words: keys, sentences: (o.sentences || []).map(s => 'own:' + s[0]) };
   (o.sentences || []).forEach(s => { if (nl.sentenceOrder.indexOf('own:' + s[0]) < 0) nl.sentenceOrder.push('own:' + s[0]); });
