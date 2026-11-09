@@ -1013,6 +1013,42 @@ details.fold>.fbody{padding:2px 0 14px}
 .fslot svg,.hhf svg{width:100%!important;height:100%!important}
 /* Seltenheits-Karten im Shop */
 .rgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+/* ===== LADEN NEU (Anprobe-Bühne) ===== */
+.lad .lstage{position:sticky;top:0;z-index:8;height:178px;border-radius:22px;background:linear-gradient(#cfe9f3,#eaf5fa);border:2px solid var(--line);overflow:hidden;box-shadow:0 6px 16px rgba(0,0,0,.14)}
+:root[data-theme="dark"] .lad .lstage{background:linear-gradient(#233a5e,#1a2742)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .lad .lstage{background:linear-gradient(#233a5e,#1a2742)}}
+.lad .lsfl{position:absolute;left:50%;top:2px;transform:translateX(-50%);width:128px;height:172px;pointer-events:none}
+.lad .lsfl svg,.lad .lsfl .afig{width:100%;height:100%}
+.lad .lstag{position:absolute;left:8px;top:8px;background:rgba(255,255,255,.88);color:#14213d;border-radius:12px;padding:3px 9px;font-size:11px;font-weight:800;max-width:48%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lad .lsprof{position:absolute;right:10px;top:8px;width:54px;height:54px;font-size:28px}
+.lad .lsplay{position:absolute;right:8px;bottom:8px;border:0;border-radius:14px;padding:8px 13px;background:var(--accent);color:var(--accent-ink,#fff);font-weight:900;font-size:13px;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.2)}
+.lad .lssti{position:absolute;left:12px;bottom:48px}.lad .lstit{position:absolute;left:8px;bottom:8px;background:#1b2a41;color:#fff;border-radius:12px;padding:4px 10px;font-size:12px;font-weight:800;max-width:70%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lad .lfigs{position:absolute;left:8px;bottom:8px;max-width:34%;display:flex;gap:5px;overflow-x:auto;scrollbar-width:none}.lad .lfigs::-webkit-scrollbar{display:none}
+.lad .lfig{flex:0 0 auto;width:34px;height:34px;border-radius:50%;border:2px solid var(--line);background:var(--card);padding:0;display:grid;place-items:center;font-size:24px;cursor:pointer;overflow:hidden}
+.lad .lfig .avatar,.lad .lfig svg{width:100%;height:100%}.lad .lfig.on{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 25%,transparent)}
+.lad .ldeal{display:block;width:100%;text-align:left;border:2px dashed var(--accent);border-radius:12px;background:var(--accent-soft);padding:6px 10px;font-size:12px;color:var(--ink);cursor:pointer}.lad .ldeal em{font-style:normal;display:block;font-size:11px;color:var(--ink-3)}
+.lad .lcats{display:grid;grid-template-columns:repeat(6,1fr);gap:5px}
+.lad .lcat{position:relative;border:2px solid var(--line);background:var(--card);border-radius:14px;padding:7px 0 5px;font-size:10.5px;font-weight:800;line-height:1.1;color:var(--ink);cursor:pointer;font-family:inherit}
+.lad .lcat i{display:block;font-style:normal;font-size:20px;margin-bottom:2px}.lad .lcat.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink,#fff)}
+.lad .lcat em{position:absolute;top:-6px;right:-3px;background:#e8123c;color:#fff;border-radius:9px;font-size:9px;font-style:normal;padding:1px 5px;font-weight:900}
+.lad .lsrch input{width:100%;padding:11px 14px;border-radius:14px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:14px}
+.lad .lflt{display:flex;gap:6px;overflow-x:auto}.lad .lflt .chip.on{background:var(--accent);color:var(--accent-ink,#fff);border-color:var(--accent)}
+.lad .lsec{display:flex;align-items:center;gap:8px;margin:12px 0 6px;font-size:13px}.lad .lsec small{color:var(--ink-3);font-weight:700}.lad .lsec i{flex:1;height:2px;background:var(--line);border-radius:2px}
+.lad .lgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.lad .lt{position:relative;border:2px solid var(--line);background:var(--card);border-radius:16px;padding:8px 3px 6px;text-align:center;cursor:pointer;color:var(--ink);font-family:inherit;min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px}
+.lad .lt .ltd{position:absolute;top:6px;left:6px;width:9px;height:9px;border-radius:50%;background:var(--c)}
+.lad .lt .lti{height:54px;display:grid;place-items:center;font-size:30px;max-width:100%}.lad .lt .lti .avatar,.lad .lt .lti svg{max-height:52px}
+.lad .lt .ltn{font-size:11.5px;line-height:1.15;max-width:100%;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.lad .lt .ltp{font-size:11px;font-weight:700;color:var(--ink-2)}.lad .lt .ltp.own{color:var(--good,#2c7a57)}
+.lad .lt .ltn2{position:absolute;top:-6px;right:-3px;background:#e8123c;color:#fff;border-radius:9px;font-size:9px;font-style:normal;padding:1px 5px;font-weight:900}
+.lad .lt.own{background:var(--good-soft,#dcf0e6)}.lad .lt.lock{opacity:.72}
+.lad .lt.sel{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 30%,transparent)}
+.lad .lbar{position:sticky;bottom:8px;z-index:9;display:flex;align-items:center;gap:10px;border-radius:18px;background:#1b2a41;color:#fff;padding:10px 12px;box-shadow:0 8px 20px rgba(0,0,0,.3)}
+.lad .lbar.hint{justify-content:center;font-size:13px;font-weight:700}
+.lad .lbi{flex:1;min-width:0}.lad .lbi b{display:block;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.lad .lbi small{opacity:.8;font-size:11px}
+.lad .lgo{border:0;border-radius:14px;background:#F4C45E;color:#2a1c00;font-weight:900;font-size:14px;padding:10px 14px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.lad .lown{font-size:12.5px;font-weight:800;text-align:right;white-space:nowrap}
+.lad .lwish{border:2px solid rgba(255,255,255,.35);background:transparent;border-radius:12px;padding:6px 8px;color:#fff;cursor:pointer;opacity:.7}.lad .lwish[aria-pressed="true"]{opacity:1;background:rgba(255,255,255,.2)}
 .rtile{position:relative;border-radius:16px;border:3px solid #14213d;background:radial-gradient(circle at 50% 28%,var(--c1),var(--c2) 78%);color:#fff;padding:26px 8px 8px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px;box-shadow:0 4px 0 rgba(20,33,61,.35);overflow:hidden}
 .rtile.epic{box-shadow:0 4px 0 rgba(20,33,61,.35),0 0 16px var(--g)}.rtile.legend{box-shadow:0 4px 0 rgba(20,33,61,.35),0 0 22px var(--g);animation:rtpl 2.4s ease-in-out infinite alternate}
 @keyframes rtpl{to{box-shadow:0 4px 0 rgba(20,33,61,.35),0 0 34px var(--g)}}
@@ -1791,7 +1827,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.178.0";window.WORDY_BUILD="53ef976372";</script>
+<script>window.WORDY_VERSION="2.179.0";window.WORDY_BUILD="3271dd7cda";</script>
 </head>
 <body>
 <div id="app">
@@ -1820,48 +1856,48 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
   <div id="session" hidden></div>
 </div>
 <div id="arena" hidden></div>
-<script src="data/klasse6.js?v=53ef976372"></script>
-<script src="data/klasse7.js?v=53ef976372"></script>
-<script src="data/klasse8.js?v=53ef976372"></script>
-<script src="data/business.js?v=53ef976372"></script>
-<script src="data/business-basis2.js?v=53ef976372"></script>
-<script src="data/business-aufbau2.js?v=53ef976372"></script>
-<script src="data/business-profi2.js?v=53ef976372"></script>
-<script src="data/smalltalk.js?v=53ef976372"></script>
-<script src="data/advent.js?v=53ef976372"></script>
-<script src="data/herbst.js?v=53ef976372"></script>
-<script src="data/idioms.js?v=53ef976372"></script>
-<script src="data/saetze.js?v=53ef976372"></script>
-<script src="data/grammatik.js?v=53ef976372"></script>
-<script src="data/alternativen.js?v=53ef976372"></script>
-<script src="data/saetze2.js?v=53ef976372"></script>
-<script src="data/lernbuch.js?v=53ef976372"></script>
-<script src="data/verben.js?v=53ef976372"></script>
-<script src="data/open/business-aufbau.js?v=53ef976372"></script>
-<script src="data/open/business-basis.js?v=53ef976372"></script>
-<script src="data/open/business-branchen.js?v=53ef976372"></script>
-<script src="data/open/business-fachgebiete.js?v=53ef976372"></script>
-<script src="data/open/business-jargon.js?v=53ef976372"></script>
-<script src="data/open/business-profi.js?v=53ef976372"></script>
-<script src="data/open/business-sprueche.js?v=53ef976372"></script>
-<script src="data/open/saetze-open.js?v=53ef976372"></script>
-<script src="js/engine.js?v=53ef976372"></script>
-<script src="js/cosmetics.js?v=53ef976372"></script>
-<script src="js/saison.js?v=53ef976372"></script>
-<script src="js/saison2.js?v=53ef976372"></script>
-<script src="js/fortnite.js?v=53ef976372"></script>
-<script src="js/figur.js?v=53ef976372"></script>
-<script src="js/stila.js?v=53ef976372"></script>
-<script src="js/stilb.js?v=53ef976372"></script>
-<script src="js/acc.js?v=53ef976372"></script>
-<script src="js/loot.js?v=53ef976372"></script>
-<script src="js/film.js?v=53ef976372"></script>
-<script src="js/einmaleins.js?v=53ef976372"></script>
-<script src="js/app.js?v=53ef976372"></script>
-<script src="js/arena.js?v=53ef976372"></script>
-<script src="js/spiele.js?v=53ef976372"></script>
-<script src="js/grammatik.js?v=53ef976372"></script>
-<script src="js/sync.js?v=53ef976372"></script>
+<script src="data/klasse6.js?v=3271dd7cda"></script>
+<script src="data/klasse7.js?v=3271dd7cda"></script>
+<script src="data/klasse8.js?v=3271dd7cda"></script>
+<script src="data/business.js?v=3271dd7cda"></script>
+<script src="data/business-basis2.js?v=3271dd7cda"></script>
+<script src="data/business-aufbau2.js?v=3271dd7cda"></script>
+<script src="data/business-profi2.js?v=3271dd7cda"></script>
+<script src="data/smalltalk.js?v=3271dd7cda"></script>
+<script src="data/advent.js?v=3271dd7cda"></script>
+<script src="data/herbst.js?v=3271dd7cda"></script>
+<script src="data/idioms.js?v=3271dd7cda"></script>
+<script src="data/saetze.js?v=3271dd7cda"></script>
+<script src="data/grammatik.js?v=3271dd7cda"></script>
+<script src="data/alternativen.js?v=3271dd7cda"></script>
+<script src="data/saetze2.js?v=3271dd7cda"></script>
+<script src="data/lernbuch.js?v=3271dd7cda"></script>
+<script src="data/verben.js?v=3271dd7cda"></script>
+<script src="data/open/business-aufbau.js?v=3271dd7cda"></script>
+<script src="data/open/business-basis.js?v=3271dd7cda"></script>
+<script src="data/open/business-branchen.js?v=3271dd7cda"></script>
+<script src="data/open/business-fachgebiete.js?v=3271dd7cda"></script>
+<script src="data/open/business-jargon.js?v=3271dd7cda"></script>
+<script src="data/open/business-profi.js?v=3271dd7cda"></script>
+<script src="data/open/business-sprueche.js?v=3271dd7cda"></script>
+<script src="data/open/saetze-open.js?v=3271dd7cda"></script>
+<script src="js/engine.js?v=3271dd7cda"></script>
+<script src="js/cosmetics.js?v=3271dd7cda"></script>
+<script src="js/saison.js?v=3271dd7cda"></script>
+<script src="js/saison2.js?v=3271dd7cda"></script>
+<script src="js/fortnite.js?v=3271dd7cda"></script>
+<script src="js/figur.js?v=3271dd7cda"></script>
+<script src="js/stila.js?v=3271dd7cda"></script>
+<script src="js/stilb.js?v=3271dd7cda"></script>
+<script src="js/acc.js?v=3271dd7cda"></script>
+<script src="js/loot.js?v=3271dd7cda"></script>
+<script src="js/film.js?v=3271dd7cda"></script>
+<script src="js/einmaleins.js?v=3271dd7cda"></script>
+<script src="js/app.js?v=3271dd7cda"></script>
+<script src="js/arena.js?v=3271dd7cda"></script>
+<script src="js/spiele.js?v=3271dd7cda"></script>
+<script src="js/grammatik.js?v=3271dd7cda"></script>
+<script src="js/sync.js?v=3271dd7cda"></script>
 
 <script>
 if ('serviceWorker' in navigator) {

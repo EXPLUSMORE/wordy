@@ -1922,8 +1922,7 @@
     if (state.coins < price) return { error: "Dafür fehlen noch " + (price - state.coins) + " Münzen." };
     state.coins -= price; state.profile.owned.push(id);
     ev("buy", { id: id, name: it.label || it.id, cost: price });
-    if (it.kind === "sticker") { var l = stickers(); l.push(it.id); while (l.length > stickerSlots()) l.shift(); }
-    else if (it.kind !== "acc") state.profile[PROFILE_KEY[it.kind]] = it.val;   // Zubehör zieht die Oberfläche selbst an (accToggle)
+    /* Seit 2.179 zieht ein Kauf nichts mehr an und klebt keinen Sticker auf: gekauft = im Spind, angezogen wird im Showroom (equip) */
     checkSets();
     save(true); return { ok: true, item: it };
   }

@@ -1006,6 +1006,42 @@ details.fold>.fbody{padding:2px 0 14px}
 .fslot svg,.hhf svg{width:100%!important;height:100%!important}
 /* Seltenheits-Karten im Shop */
 .rgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+/* ===== LADEN NEU (Anprobe-Bühne) ===== */
+.lad .lstage{position:sticky;top:0;z-index:8;height:178px;border-radius:22px;background:linear-gradient(#cfe9f3,#eaf5fa);border:2px solid var(--line);overflow:hidden;box-shadow:0 6px 16px rgba(0,0,0,.14)}
+:root[data-theme="dark"] .lad .lstage{background:linear-gradient(#233a5e,#1a2742)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .lad .lstage{background:linear-gradient(#233a5e,#1a2742)}}
+.lad .lsfl{position:absolute;left:50%;top:2px;transform:translateX(-50%);width:128px;height:172px;pointer-events:none}
+.lad .lsfl svg,.lad .lsfl .afig{width:100%;height:100%}
+.lad .lstag{position:absolute;left:8px;top:8px;background:rgba(255,255,255,.88);color:#14213d;border-radius:12px;padding:3px 9px;font-size:11px;font-weight:800;max-width:48%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lad .lsprof{position:absolute;right:10px;top:8px;width:54px;height:54px;font-size:28px}
+.lad .lsplay{position:absolute;right:8px;bottom:8px;border:0;border-radius:14px;padding:8px 13px;background:var(--accent);color:var(--accent-ink,#fff);font-weight:900;font-size:13px;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.2)}
+.lad .lssti{position:absolute;left:12px;bottom:48px}.lad .lstit{position:absolute;left:8px;bottom:8px;background:#1b2a41;color:#fff;border-radius:12px;padding:4px 10px;font-size:12px;font-weight:800;max-width:70%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lad .lfigs{position:absolute;left:8px;bottom:8px;max-width:34%;display:flex;gap:5px;overflow-x:auto;scrollbar-width:none}.lad .lfigs::-webkit-scrollbar{display:none}
+.lad .lfig{flex:0 0 auto;width:34px;height:34px;border-radius:50%;border:2px solid var(--line);background:var(--card);padding:0;display:grid;place-items:center;font-size:24px;cursor:pointer;overflow:hidden}
+.lad .lfig .avatar,.lad .lfig svg{width:100%;height:100%}.lad .lfig.on{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 25%,transparent)}
+.lad .ldeal{display:block;width:100%;text-align:left;border:2px dashed var(--accent);border-radius:12px;background:var(--accent-soft);padding:6px 10px;font-size:12px;color:var(--ink);cursor:pointer}.lad .ldeal em{font-style:normal;display:block;font-size:11px;color:var(--ink-3)}
+.lad .lcats{display:grid;grid-template-columns:repeat(6,1fr);gap:5px}
+.lad .lcat{position:relative;border:2px solid var(--line);background:var(--card);border-radius:14px;padding:7px 0 5px;font-size:10.5px;font-weight:800;line-height:1.1;color:var(--ink);cursor:pointer;font-family:inherit}
+.lad .lcat i{display:block;font-style:normal;font-size:20px;margin-bottom:2px}.lad .lcat.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink,#fff)}
+.lad .lcat em{position:absolute;top:-6px;right:-3px;background:#e8123c;color:#fff;border-radius:9px;font-size:9px;font-style:normal;padding:1px 5px;font-weight:900}
+.lad .lsrch input{width:100%;padding:11px 14px;border-radius:14px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:14px}
+.lad .lflt{display:flex;gap:6px;overflow-x:auto}.lad .lflt .chip.on{background:var(--accent);color:var(--accent-ink,#fff);border-color:var(--accent)}
+.lad .lsec{display:flex;align-items:center;gap:8px;margin:12px 0 6px;font-size:13px}.lad .lsec small{color:var(--ink-3);font-weight:700}.lad .lsec i{flex:1;height:2px;background:var(--line);border-radius:2px}
+.lad .lgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.lad .lt{position:relative;border:2px solid var(--line);background:var(--card);border-radius:16px;padding:8px 3px 6px;text-align:center;cursor:pointer;color:var(--ink);font-family:inherit;min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px}
+.lad .lt .ltd{position:absolute;top:6px;left:6px;width:9px;height:9px;border-radius:50%;background:var(--c)}
+.lad .lt .lti{height:54px;display:grid;place-items:center;font-size:30px;max-width:100%}.lad .lt .lti .avatar,.lad .lt .lti svg{max-height:52px}
+.lad .lt .ltn{font-size:11.5px;line-height:1.15;max-width:100%;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.lad .lt .ltp{font-size:11px;font-weight:700;color:var(--ink-2)}.lad .lt .ltp.own{color:var(--good,#2c7a57)}
+.lad .lt .ltn2{position:absolute;top:-6px;right:-3px;background:#e8123c;color:#fff;border-radius:9px;font-size:9px;font-style:normal;padding:1px 5px;font-weight:900}
+.lad .lt.own{background:var(--good-soft,#dcf0e6)}.lad .lt.lock{opacity:.72}
+.lad .lt.sel{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 30%,transparent)}
+.lad .lbar{position:sticky;bottom:8px;z-index:9;display:flex;align-items:center;gap:10px;border-radius:18px;background:#1b2a41;color:#fff;padding:10px 12px;box-shadow:0 8px 20px rgba(0,0,0,.3)}
+.lad .lbar.hint{justify-content:center;font-size:13px;font-weight:700}
+.lad .lbi{flex:1;min-width:0}.lad .lbi b{display:block;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.lad .lbi small{opacity:.8;font-size:11px}
+.lad .lgo{border:0;border-radius:14px;background:#F4C45E;color:#2a1c00;font-weight:900;font-size:14px;padding:10px 14px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.lad .lown{font-size:12.5px;font-weight:800;text-align:right;white-space:nowrap}
+.lad .lwish{border:2px solid rgba(255,255,255,.35);background:transparent;border-radius:12px;padding:6px 8px;color:#fff;cursor:pointer;opacity:.7}.lad .lwish[aria-pressed="true"]{opacity:1;background:rgba(255,255,255,.2)}
 .rtile{position:relative;border-radius:16px;border:3px solid #14213d;background:radial-gradient(circle at 50% 28%,var(--c1),var(--c2) 78%);color:#fff;padding:26px 8px 8px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px;box-shadow:0 4px 0 rgba(20,33,61,.35);overflow:hidden}
 .rtile.epic{box-shadow:0 4px 0 rgba(20,33,61,.35),0 0 16px var(--g)}.rtile.legend{box-shadow:0 4px 0 rgba(20,33,61,.35),0 0 22px var(--g);animation:rtpl 2.4s ease-in-out infinite alternate}
 @keyframes rtpl{to{box-shadow:0 4px 0 rgba(20,33,61,.35),0 0 34px var(--g)}}
@@ -1784,7 +1820,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.178.0";window.WORDY_BUILD="53ef976372";</script>
+<script>window.WORDY_VERSION="2.179.0";window.WORDY_BUILD="3271dd7cda";</script>
 </head>
 <body>
 <div id="app">
@@ -8688,8 +8724,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     if (state.coins < price) return { error: "Dafür fehlen noch " + (price - state.coins) + " Münzen." };
     state.coins -= price; state.profile.owned.push(id);
     ev("buy", { id: id, name: it.label || it.id, cost: price });
-    if (it.kind === "sticker") { var l = stickers(); l.push(it.id); while (l.length > stickerSlots()) l.shift(); }
-    else if (it.kind !== "acc") state.profile[PROFILE_KEY[it.kind]] = it.val;   // Zubehör zieht die Oberfläche selbst an (accToggle)
+    /* Seit 2.179 zieht ein Kauf nichts mehr an und klebt keinen Sticker auf: gekauft = im Spind, angezogen wird im Showroom (equip) */
     checkSets();
     save(true); return { ok: true, item: it };
   }
@@ -14668,11 +14703,105 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   }
 
   /* ================= SHOP & ABZEICHEN ================= */
-  function viewShop() {
-    var st = S.state, html = '<div class="stack">';
-    html += '<div class="row" style="align-items:center"><h1 style="font-size:22px;flex:1 1 auto">Laden</h1><span class="pill tnum nowrap">🪙 ' + st.coins + '</span></div>';
-    view.innerHTML = html + shopCard() + '</div>';
+  /* ================= LADEN NEU (v2.179): Anprobe-Bühne =================
+     Oben die gewählte Figur (Bühne). Antippen eines Teils zeigt es an der Figur, gekauft wird unten. Kaufen legt nur in den Spind,
+     angezogen wird dort (Showroom) – der Laden ändert nie das Aussehen. Sechs Kategorien, ein Suchfeld, keine Untermenüs. */
+  var LAD_CATS = [
+    { k: "fig", n: "Figuren", i: "🦊", kinds: ["avatar", "sticker"] }, { k: "cloth", n: "Kleidung", i: "👕", kinds: ["outfit", "kit"] },
+    { k: "acc", n: "Zubehör", i: "🎩", kinds: ["acc"] }, { k: "frame", n: "Rahmen", i: "🖼️", kinds: ["frame"] },
+    { k: "moves", n: "Moves", i: "💃", kinds: ["dance", "fx", "snd"] }, { k: "world", n: "Welt", i: "🌄", kinds: ["bg", "theme", "title"] }
+  ];
+  var LAD_KIND = { avatar: "Figuren", sticker: "Sticker", outfit: "Outfits", kit: "Trikots", acc: "Zubehör", frame: "Rahmen", dance: "Tänze", fx: "Effekte", snd: "Töne", bg: "Hintergründe", theme: "Farbwelten", title: "Titel" };
+  var ladCat = "fig", ladFig = "", ladSel = "", ladQ = "", ladFlt = "all", ladDn = 0;
+  function ladItems(kinds) {
+    return S.SHOP.filter(function (it) {
+      if (kinds.indexOf(it.kind) < 0) return false;
+      return (it.kind === "avatar" || it.kind === "sticker") ? (!global.VTA || it.kind === "sticker" || global.VTA.has(it.val) || true) : S.shopVisible(it);
+    });
   }
+  function ladSort(list) {
+    var RO = { common: 0, rare: 1, epic: 2, legend: 3, unreal: 4 };
+    return list.map(function (it, i) { return { it: it, i: i }; }).sort(function (a, b) { return (RO[S.rarityOf(a.it)] - RO[S.rarityOf(b.it)]) || (S.minXp(a.it) - S.minXp(b.it)) || (a.it.cost - b.it.cost) || (a.i - b.i); }).map(function (x) { return x.it; });
+  }
+  function ladFigs() {
+    var pf = S.state.profile, l = S.SHOP.filter(function (x) { return x.kind === "avatar" && S.owns(x); }).map(function (x) { return { v: x.val, l: x.label }; });
+    if (!l.some(function (x) { return x.v === pf.avatar; })) l.unshift({ v: pf.avatar, l: "Meine Figur" });
+    return l;
+  }
+  var LAD_WORDS = { avatar: "figur figuren tier", sticker: "sticker aufkleber", outfit: "outfit outfits kleidung anzug", kit: "trikot trikots kleidung fußball", acc: "zubehör zubehoer", frame: "rahmen", dance: "tanz tänze tanzen move moves", fx: "effekt effekte moves", snd: "ton töne sound klang moves", bg: "hintergrund hintergründe welt", theme: "farbe farben farbwelt welt", title: "titel welt" };
+  function ladText(it) { return [it.label, S.enName(it) || "", LAD_KIND[it.kind] || "", LAD_WORDS[it.kind] || "", it.kind === "acc" ? (S.ACC_SLOTS.filter(function (z) { return z[0] === it.slot; })[0] || ["", ""])[1] : "", RAR_NAME[S.rarityOf(it)]].join(" ").toLowerCase(); }
+  function ladSetIds() { var o = {}; S.SETS.forEach(function (st) { st.items.concat([st.reward]).forEach(function (id) { o[id] = 1; }); }); return o; }
+  function ladVisible(it) {
+    if (ladFlt === "new") return S.shopIsNew(it) && !S.owns(it);
+    if (ladFlt === "afford") return !S.owns(it) && !it.pass && !it.reward && !S.shopSoon(it) && S.minXp(it) <= S.state.xp && S.priceOf(it) <= S.state.coins && it.cost > 0;
+    if (ladFlt === "sets") return !!ladSetIds()[it.id];
+    return true;
+  }
+  function ladTile(it) {
+    var own = S.owns(it), soon = !own && S.shopSoon(it), lock = !own && (lockNote(it) || soon), rar = S.rarityOf(it), c = MED_COL[rar] || MED_COL.common, price = S.priceOf(it), deal = price !== it.cost;
+    var pr = own ? '<span class="ltp own">✓ gehört dir</span>' : soon ? '<span class="ltp">🕒 bald</span>' : it.pass ? '<span class="ltp">🎁 ' + esc(it.pass) + '</span>' : it.reward ? '<span class="ltp">🎁 Set</span>' : lock ? '<span class="ltp">🔒 ' + esc(it.rank) + '</span>' : '<span class="ltp">🪙 ' + (deal ? '<s>' + it.cost + '</s> ' : "") + '<b>' + price + '</b></span>';
+    var ico = soon ? '<span style="font-size:34px;filter:grayscale(1) brightness(.6)">❔</span>' : shopIcon(it);
+    return '<button class="lt ' + rar + (own ? " own" : "") + (lock ? " lock" : "") + (ladSel === it.id ? " sel" : "") + '" data-act="ladsel" data-id="' + esc(it.id) + '" style="--c:' + c[1] + '"><i class="ltd"></i>' + (S.shopIsNew(it) && !own ? '<em class="ltn2">NEU</em>' : "") + '<span class="lti">' + ico + '</span><b class="ltn">' + (soon ? "???" : esc(it.label)) + '</b>' + pr + '</button>';
+  }
+  function ladGridHtml() {
+    var q = ladQ.trim().toLowerCase(), cat = LAD_CATS.filter(function (c) { return c.k === ladCat; })[0], kinds = q ? Object.keys(LAD_KIND) : cat.kinds, out = "", total = 0;
+    var toks = q ? q.split(/\s+/) : [];
+    kinds.forEach(function (k) {
+      var list = ladSort(ladItems([k]).filter(function (it) { if (!ladVisible(it)) return false; if (!toks.length) return true; var t = ladText(it); return toks.every(function (x) { return t.indexOf(x) >= 0; }); }));
+      if (!list.length) return;
+      var groups = k === "acc" ? S.ACC_SLOTS.map(function (z) { return { n: z[1], l: list.filter(function (it) { return it.slot === z[0]; }) }; }) : [{ n: LAD_KIND[k], l: list }];
+      groups.forEach(function (g) {
+        if (!g.l.length) return; total += g.l.length;
+        var own = g.l.filter(function (it) { return S.owns(it); }).length;
+        out += '<div class="lsec"><b>' + esc(g.n) + '</b><small>' + own + ' / ' + g.l.length + '</small><i></i></div><div class="lgrid">' + g.l.map(ladTile).join("") + '</div>';
+      });
+    });
+    return total ? out : '<p class="small muted" style="text-align:center;margin:24px 0">' + (q ? "Nichts gefunden. Probier ein anderes Wort, z. B. „Rahmen“, „Hut“ oder „gold“." : ladFlt === "afford" ? "Gerade ist nichts in deiner Preisklasse frei. Sammle weiter Münzen! 🪙" : "Hier ist gerade nichts.") + '</p>';
+  }
+  function ladStage() {
+    var pf = S.state.profile, it = ladSel && S.itemById(ladSel), figs = ladFigs();
+    if (!ladFig || !figs.some(function (x) { return x.v === ladFig; })) ladFig = pf.avatar;
+    var shown = ladFig, look = Object.assign({}, S.accOf(ladFig)), frame = pf.frame, extra = "", play = "";
+    if (it) {
+      if (it.kind === "avatar") { shown = it.val; look = Object.assign({}, S.accOf(it.val)); }
+      else if (it.kind === "acc") look[it.slot] = it.val;
+      else if (it.kind === "frame") frame = it.val;
+      else if (it.kind === "sticker") extra = '<span class="lssti">' + stickerHtml(it, 60, -6, S.accOf(it.id)) + '</span>';
+      else if (it.kind === "title") extra = '<span class="lstit">🏷️ ' + esc(it.label) + '</span>';
+      if (["dance", "outfit", "kit", "fx", "snd"].indexOf(it.kind) >= 0) play = '<button class="lsplay" data-act="ladplay" aria-label="Vorschau">▶ ' + (it.kind === "snd" ? "Anhören" : "Vorschau") + '</button>';
+    } else if (pf.title) extra = '';
+    var po = pf.outfit; if (it && (it.kind === "outfit" || it.kind === "kit")) pf.outfit = it.val;
+    var fig; try { fig = heroWith(shown, look, ladDn); } finally { pf.outfit = po; }
+    var sh = S.SHOP.filter(function (x) { return x.kind === "avatar" && x.val === shown; })[0];
+    var strip = figs.map(function (f) { return '<button class="lfig' + (f.v === ladFig ? " on" : "") + '" data-act="ladfig" data-v="' + esc(f.v) + '" title="' + esc(f.l) + '" aria-label="' + esc(f.l) + '">' + avatarHtml(f.v) + '</button>'; }).join("");
+    return '<section class="lstage"><div class="lsfl">' + fig + '</div>' + extra + '<span class="lstag">👀 Anprobe · ' + esc(sh ? sh.label : "Meine Figur") + '</span>' +
+      '<span class="avatar ' + global.VTC.frameClass({ frame: frame }) + ' lsprof" aria-hidden="true">' + avatarHtml(shown) + '</span>' + play + '<div class="lfigs" aria-label="Figur wählen">' + strip + '</div></section>';
+  }
+  function ladBar() {
+    var it = ladSel && S.itemById(ladSel);
+    if (!it) return '<div class="lbar hint">👆 Tippe ein Teil an – du siehst es gleich an deiner Figur.</div>';
+    var own = S.owns(it), soon = !own && S.shopSoon(it), lock = !own && lockNote(it), price = S.priceOf(it), left = price - S.state.coins, deal = price !== it.cost;
+    var act = own ? '<span class="lown">✓ liegt im Spind</span>' : soon ? '<span class="lown">🕒 Kommt bald</span>' : it.pass ? '<span class="lown">🎁 Gibt es im ' + esc(it.pass) + '-Pass</span>' : it.reward ? '<span class="lown">🎁 Belohnung fürs ganze Set</span>' : lock ? '<span class="lown">🔒 ab Rang ' + esc(it.rank) + '</span>'
+      : left > 0 ? '<span class="lown">Noch <b>' + left + '</b> 🪙</span>' : '<button class="lgo" data-act="ladbuy">🪙 ' + price + ' Kaufen</button>';
+    var wish = (own || soon || it.pass || it.reward) ? "" : '<button class="lwish" data-act="wish" data-id="' + esc(it.id) + '" aria-pressed="' + ((S.wish() || {}).id === it.id) + '" aria-label="Wunsch">⭐</button>';
+    return '<div class="lbar"><div class="lbi"><b>' + esc(soon ? "???" : it.label) + '</b><small>' + RAR_NAME[S.rarityOf(it)] + ' · ' + (LAD_KIND[it.kind] || "").replace(/e$|en$/, function (m) { return m; }) + (deal ? ' · 🔥 Angebot' : '') + '</small></div>' + wish + act + '</div>';
+  }
+  function viewShop() {
+    var st = S.state, deal = S.dealItem(), dl = deal && !S.owns(deal) ? '<button class="ldeal" data-act="ladsel" data-id="' + esc(deal.id) + '">🔥 <b>Heute:</b> ' + esc(deal.label) + ' <s>' + deal.cost + '</s> <b>' + S.priceOf(deal) + ' 🪙</b> · noch ' + untilMidnight() + '</button>' : "";
+    var html = '<div class="stack lad"><div class="row" style="align-items:center"><h1 style="font-size:22px;flex:1 1 auto">🛍️ Laden</h1><span class="pill tnum nowrap">🪙 ' + st.coins + '</span></div>' + ladStage() +
+      dl + '<div class="lcats">' + LAD_CATS.map(function (c) { var un = ladItems(c.kinds).filter(function (it) { return !S.owns(it) && S.shopIsNew(it); }).length; return '<button class="lcat' + (c.k === ladCat && !ladQ ? " on" : "") + '" data-act="ladcat" data-k="' + c.k + '"><i>' + c.i + '</i>' + c.n + (un ? '<em>' + un + '</em>' : "") + '</button>'; }).join("") + '</div>' +
+      '<div class="lsrch"><input id="ladQ" type="search" placeholder="🔍 Suchen: z. B. Rahmen gold, Hut, Tanz …" value="' + esc(ladQ) + '" autocomplete="off" aria-label="Im Laden suchen"></div>' +
+      '<div class="lflt">' + [["all", "Alles"], ["new", "Neu"], ["afford", "Leistbar"], ["sets", "Sets"]].map(function (f) { return '<button class="chip' + (ladFlt === f[0] ? " on" : "") + '" data-act="ladflt" data-k="' + f[0] + '" aria-pressed="' + (ladFlt === f[0]) + '">' + f[1] + '</button>'; }).join("") + '</div>' +
+      '<div id="ladGrid">' + ladGridHtml() + '</div><p class="small muted" style="margin:10px 0 70px;text-align:center">Kaufen legt ein Teil in deinen Spind. Anziehen und Zusammenstellen machst du dort – der Laden ändert nichts an deiner Figur.</p>' + ladBar() + '</div>';
+    view.innerHTML = html; ladLook();
+  }
+  /* Hintergrund und Farbwelt probiert man an der ganzen App aus (nur bis zum nächsten Bildschirmwechsel) */
+  function ladLook() {
+    var it = ladSel && S.itemById(ladSel), q = Object.assign({}, S.state.profile);
+    if (it && (it.kind === "bg" || it.kind === "theme")) q[it.kind] = it.val;
+    global.VTC.applyLook(q, S.state.settings.themeMode, S.state.settings.design, seasonNow());
+  }
+  function ladRefresh() { var y = view.scrollTop; render(); view.scrollTop = y; }
   /* Spind: Showroom (anziehen, Favoriten), Sammlung, Abzeichen, Ränge mit Rang-Pfad */
   function viewSpind(top) {
     var SUB = [["showroom", "🏆 Showroom"], ["sammlung", "Album"], ["abzeichen", "Abzeichen"], ["raenge", "Ränge"]];
@@ -15643,6 +15772,9 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   }
 
   /* ---------- Ereignisse ---------- */
+  view.addEventListener("input", function (e) {   // Laden: Suchfeld filtert live, ohne das Feld neu zu zeichnen
+    if (e.target && e.target.id === "ladQ") { ladQ = e.target.value; var g = $("#ladGrid"); if (g) g.innerHTML = ladGridHtml(); $$(".lcat").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-k") === ladCat && !ladQ); }); }
+  });
   sessionEl.addEventListener("click", function (e) {
     var t = SS && SS.tasks[SS.i];
     if (e.target.closest(".hbuddy")) { crowHint(); return; }
@@ -16101,6 +16233,20 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     else if (a === "vforms") { S.state.settings.verbForms = act.getAttribute("data-k") === "past" ? "past" : "all"; S.save(true); render(); }
     else if (a === "shopview") { shopView = act.getAttribute("data-k"); render(); }
     else if (a === "lockinfo") { var li = S.itemById(act.getAttribute("data-id")); if (li) { var need = S.minXp(li) - S.state.xp, sw = S.shopSoon(li); toast("🔒 " + (sw ? "Geheimes Stück" : li.label) + (sw ? ": kommt in " + sw + (sw === 1 ? " Woche" : " Wochen") + " in den Shop" : "") + (li.rank ? ": ab Rang " + li.rank : "") + (need > 0 ? " · noch " + need.toLocaleString("de-DE") + " XP" : "") + (li.cost && !sw ? " · " + li.cost + " 🪙" : ""), 4200); } }
+    else if (a === "ladsel") { ladSel = act.getAttribute("data-id") === ladSel ? ladSel : act.getAttribute("data-id"); ladDn = 0; ladRefresh(); }
+    else if (a === "ladcat") { ladCat = act.getAttribute("data-k"); ladQ = ""; ladSel = ""; ladRefresh(); view.scrollTop = 0; }
+    else if (a === "ladflt") { ladFlt = act.getAttribute("data-k"); ladRefresh(); }
+    else if (a === "ladfig") { ladFig = act.getAttribute("data-v"); ladRefresh(); }
+    else if (a === "ladbuy") {
+      var lit = ladSel && S.itemById(ladSel); if (lit) { var lr = S.buy(lit.id); if (lr.error) toast(lr.error); else { var lnw = S.takeNews(); if (lnw && lnw.sets.length) { S.save(true); openSetReveal(lnw.sets); } renderHeader(); ladRefresh(); } }
+    }
+    else if (a === "ladplay") {
+      var pit = ladSel && S.itemById(ladSel), ppf = S.state.profile; if (pit) {
+        if (pit.kind === "fx") { var sr = ($(".lstage") || view).getBoundingClientRect(); global.VTC.burst(pit.val, sr.left + sr.width / 2, sr.top + sr.height / 2, 30, 1.4); }
+        else if (pit.kind === "snd") { try { global.VTC.sound(pit.val, true); } catch (e) {} }
+        else global.VTC.dance({ av: ladFig || ppf.avatar, avatar: avatarHtml(ladFig || ppf.avatar), outfit: (pit.kind === "outfit" || pit.kind === "kit") ? pit.val : ppf.outfit, dance: pit.kind === "dance" ? pit.val : (ppf.dance || "wackler"), title: pit.label });
+      }
+    }
     else if (a === "shoptab") { shopTab = act.getAttribute("data-k"); beuteSeg = "laden"; render(); }
     else if (a === "dealview") dealSheet(act.getAttribute("data-id"));
     else if (a === "advdoor") advDoor(+act.getAttribute("data-d"));

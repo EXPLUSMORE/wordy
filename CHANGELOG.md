@@ -10,6 +10,10 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.179.0
+- **Laden komplett neu**: Beute › Laden zeigt eine Anprobe-Bühne mit deiner Figur, 6 Kategorien (Figuren, Kleidung, Zubehör, Rahmen, Moves, Welt), Suchfeld und Filter (Alles/Neu/Leistbar/Sets). Antippen = sofort an der gewählten Figur sehen, unten die Kaufleiste. Figur oben wählbar.
+- Ein Kauf zieht nichts mehr an und klebt keinen Sticker auf: Gekauftes liegt im Spind, angezogen wird im Showroom.
+
 ## 2.178.0
 - **Tippen bei Redewendungen mit „your“/„one's“ lockerer:** Bei 23 Redewendungen gelten jetzt alle Possessive als richtig (your, one's, someone's, my, his, her, our, their). Bei 14 davon (z. B. „to tighten your belt“, „on your left“, „to burn your bridges“) zusätzlich auch „the“ („tighten the belt“, „on the left“). Beim Rest („to speak your mind“, „hold your horses“ …) zählt „the“ als „fast richtig“. Nur die Prüfung ändert sich, nicht die Anzeige. Feste Wendungen mit bestimmter Person (my pleasure, I take your point …) bleiben streng.
 
