@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.178.0
+- **Tippen bei Redewendungen mit „your“/„one's“ lockerer:** Bei 23 Redewendungen gelten jetzt alle Possessive als richtig (your, one's, someone's, my, his, her, our, their). Bei 14 davon (z. B. „to tighten your belt“, „on your left“, „to burn your bridges“) zusätzlich auch „the“ („tighten the belt“, „on the left“). Beim Rest („to speak your mind“, „hold your horses“ …) zählt „the“ als „fast richtig“. Nur die Prüfung ändert sich, nicht die Anzeige. Feste Wendungen mit bestimmter Person (my pleasure, I take your point …) bleiben streng.
+
 ## 2.177.0
 - **Neue Business-Wörter jetzt ausschließlich aus Wiktionary (CC BY-SA 4.0):** Die selbst formulierten Einheiten aus 2.176.0 (b-61–b-98) sind ersetzt. Stichwort, Wortart, **deutsche Übersetzung** (mit Artikel aus dem Geschlechts-Eintrag) und **Beispielsatz** stammen aus Wiktionary (abgerufen über Wiktextract/kaikki.org); nichts davon ist selbst geschrieben. Was es dort nicht gibt oder ohne deutsche Übersetzung/eindeutigen Sinn, wurde weggelassen. Ergebnis: **36 Einheiten mit 567 Wörtern** in den Gruppen **Jargon** (b-61–68), **Fachgebiete** (b-69–76), **Branchen** (b-77–91) und **Sprüche** (b-92–96). Die Einheiten „Falsche Freunde“ und „Britisch/Amerikanisch“ entfallen (die Erklärungen liefert Wiktionary nicht). Beispielsätze gibt es nur, wo Wiktionary einen hat; Satzübungen gibt es für diese Gruppen nicht (Wiktionary hat keine deutschen Sätze).
 - **Dublettenprüfung:** vorab gegen den gesamten Bestand (`tools/dupcheck.js`). Neue Werkzeuge: `tools/wikt_lookup.py`, `wikt_variants.py`, `wikt_build.py`. Quellenangabe je Eintrag (`src: wikt`, `ref`) und in `SOURCES.md`.

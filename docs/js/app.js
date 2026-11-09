@@ -287,8 +287,18 @@
   }
   /* Weitere richtige Antworten aus data/alternativen.js (Schlüssel = englisches Wort wie im Wortschatz) */
   function altsOf(en) { var l = global.ALTS && global.ALTS[String(en).toLowerCase().trim()]; return Array.isArray(l) ? l : []; }
+  /* Locker bei Redewendungen mit „your“/„one's“ (v2.178): jedes Possessiv gilt (your, one's, someone's, my, his, her, our, their); bei POSS_THE zusätzlich „the“.
+     Nur fürs Prüfen, nicht für die Anzeige. */
+  var POSS_THE = ["to tighten your belt", "to share your screen", "on your left", "don't count your chickens", "to pull your weight", "to roll up your sleeves", "to burn your bridges", "to put all your eggs in one basket", "to put your foot in it", "to get it off your chest", "to put your foot down", "to have your hands full", "to pull your leg", "to get a bee in your bonnet"];
+  var POSS_ANY = ["to speak your mind", "to hedge your bets", "the ball is in your court", "to keep your options open", "to cross your fingers", "hold your horses", "to cut one's losses", "to push one's luck", "to keep one's head above water"];
+  function possAlts(target) {
+    var t = String(target).toLowerCase().trim(), the = POSS_THE.indexOf(t) >= 0;
+    if (!the && POSS_ANY.indexOf(t) < 0) return [];
+    var words = ["your", "one's", "someone's", "my", "his", "her", "our", "their"].concat(the ? ["the"] : []);
+    return words.map(function (w) { return t.replace(/\b(your|one's)\b/, w); }).filter(function (x) { return x !== t; });
+  }
   function judgeTyped(input, target) {
-    var a = norm(input), alts = enAlts(target).concat(altsOf(target)); if (!a) return 0;
+    var a = norm(input), alts = enAlts(target).concat(altsOf(target)).concat(possAlts(target)); if (!a) return 0;
     var plain = [];
     for (var i = 0; i < alts.length; i++) {
       var alt = alts[i], nn = norm(alt); if (!nn) continue;
