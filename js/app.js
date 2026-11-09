@@ -2760,8 +2760,8 @@
   }
   function ladFigs() {
     var pf = S.state.profile, l = S.SHOP.filter(function (x) { return x.kind === "avatar" && S.owns(x); }).map(function (x) { return { v: x.val, l: x.label }; });
-    if (!l.some(function (x) { return x.v === pf.avatar; })) l.unshift({ v: pf.avatar, l: "Meine Figur" });
-    return l;
+    var cur = l.filter(function (x) { return x.v === pf.avatar; })[0] || { v: pf.avatar, l: "Meine Figur" };
+    return [cur].concat(l.filter(function (x) { return x.v !== pf.avatar; }));
   }
   var LAD_WORDS = { avatar: "figur figuren tier", sticker: "sticker aufkleber", outfit: "outfit outfits kleidung anzug", kit: "trikot trikots kleidung fußball", acc: "zubehör zubehoer", frame: "rahmen", dance: "tanz tänze tanzen move moves", fx: "effekt effekte moves", snd: "ton töne sound klang moves", bg: "hintergrund hintergründe welt", theme: "farbe farben farbwelt welt", title: "titel welt" };
   function ladText(it) { return [it.label, S.enName(it) || "", LAD_KIND[it.kind] || "", LAD_WORDS[it.kind] || "", it.kind === "acc" ? (S.ACC_SLOTS.filter(function (z) { return z[0] === it.slot; })[0] || ["", ""])[1] : "", RAR_NAME[S.rarityOf(it)]].join(" ").toLowerCase(); }

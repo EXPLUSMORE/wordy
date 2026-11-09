@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.179.1
+- Laden: Figurenleiste zeigt die gewählte Figur immer zuerst und ist deutlich breiter (vorher nur ein schmaler Ausschnitt mit ca. 3 Figuren).
+
 ## 2.179.0
 - **Laden komplett neu**: Beute › Laden zeigt eine Anprobe-Bühne mit deiner Figur, 6 Kategorien (Figuren, Kleidung, Zubehör, Rahmen, Moves, Welt), Suchfeld und Filter (Alles/Neu/Leistbar/Sets). Antippen = sofort an der gewählten Figur sehen, unten die Kaufleiste. Figur oben wählbar.
 - Ein Kauf zieht nichts mehr an und klebt keinen Sticker auf: Gekauftes liegt im Spind, angezogen wird im Showroom.

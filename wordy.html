@@ -1016,7 +1016,7 @@ details.fold>.fbody{padding:2px 0 14px}
 .lad .lsprof{position:absolute;right:10px;top:8px;width:54px;height:54px;font-size:28px}
 .lad .lsplay{position:absolute;right:8px;bottom:8px;border:0;border-radius:14px;padding:8px 13px;background:var(--accent);color:var(--accent-ink,#fff);font-weight:900;font-size:13px;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.2)}
 .lad .lssti{position:absolute;left:12px;bottom:48px}.lad .lstit{position:absolute;left:8px;bottom:8px;background:#1b2a41;color:#fff;border-radius:12px;padding:4px 10px;font-size:12px;font-weight:800;max-width:70%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.lad .lfigs{position:absolute;left:8px;bottom:8px;max-width:34%;display:flex;gap:5px;overflow-x:auto;scrollbar-width:none}.lad .lfigs::-webkit-scrollbar{display:none}
+.lad .lfigs{position:absolute;left:8px;bottom:8px;max-width:calc(100% - 100px);display:flex;gap:5px;overflow-x:auto;scrollbar-width:none}.lad .lfigs::-webkit-scrollbar{display:none}
 .lad .lfig{flex:0 0 auto;width:34px;height:34px;border-radius:50%;border:2px solid var(--line);background:var(--card);padding:0;display:grid;place-items:center;font-size:24px;cursor:pointer;overflow:hidden}
 .lad .lfig .avatar,.lad .lfig svg{width:100%;height:100%}.lad .lfig.on{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 25%,transparent)}
 .lad .ldeal{display:block;width:100%;text-align:left;border:2px dashed var(--accent);border-radius:12px;background:var(--accent-soft);padding:6px 10px;font-size:12px;color:var(--ink);cursor:pointer}.lad .ldeal em{font-style:normal;display:block;font-size:11px;color:var(--ink-3)}
@@ -1820,7 +1820,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.179.0";window.WORDY_BUILD="3271dd7cda";</script>
+<script>window.WORDY_VERSION="2.179.1";window.WORDY_BUILD="ff2bd2bcd6";</script>
 </head>
 <body>
 <div id="app">
@@ -14725,8 +14725,8 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   }
   function ladFigs() {
     var pf = S.state.profile, l = S.SHOP.filter(function (x) { return x.kind === "avatar" && S.owns(x); }).map(function (x) { return { v: x.val, l: x.label }; });
-    if (!l.some(function (x) { return x.v === pf.avatar; })) l.unshift({ v: pf.avatar, l: "Meine Figur" });
-    return l;
+    var cur = l.filter(function (x) { return x.v === pf.avatar; })[0] || { v: pf.avatar, l: "Meine Figur" };
+    return [cur].concat(l.filter(function (x) { return x.v !== pf.avatar; }));
   }
   var LAD_WORDS = { avatar: "figur figuren tier", sticker: "sticker aufkleber", outfit: "outfit outfits kleidung anzug", kit: "trikot trikots kleidung fußball", acc: "zubehör zubehoer", frame: "rahmen", dance: "tanz tänze tanzen move moves", fx: "effekt effekte moves", snd: "ton töne sound klang moves", bg: "hintergrund hintergründe welt", theme: "farbe farben farbwelt welt", title: "titel welt" };
   function ladText(it) { return [it.label, S.enName(it) || "", LAD_KIND[it.kind] || "", LAD_WORDS[it.kind] || "", it.kind === "acc" ? (S.ACC_SLOTS.filter(function (z) { return z[0] === it.slot; })[0] || ["", ""])[1] : "", RAR_NAME[S.rarityOf(it)]].join(" ").toLowerCase(); }
