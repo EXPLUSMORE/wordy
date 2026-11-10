@@ -1820,7 +1820,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 </style>
 
 
-<script>window.WORDY_VERSION="2.179.1";window.WORDY_BUILD="ff2bd2bcd6";</script>
+<script>window.WORDY_VERSION="2.179.2";window.WORDY_BUILD="9356387951";</script>
 </head>
 <body>
 <div id="app">
@@ -14756,6 +14756,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
         out += '<div class="lsec"><b>' + esc(g.n) + '</b><small>' + own + ' / ' + g.l.length + '</small><i></i></div><div class="lgrid">' + g.l.map(ladTile).join("") + '</div>';
       });
     });
+    if (ladCat === "fig" && !q && ladFlt === "all") out = slotsHtml() + out;
     return total ? out : '<p class="small muted" style="text-align:center;margin:24px 0">' + (q ? "Nichts gefunden. Probier ein anderes Wort, z. B. „Rahmen“, „Hut“ oder „gold“." : ladFlt === "afford" ? "Gerade ist nichts in deiner Preisklasse frei. Sammle weiter Münzen! 🪙" : "Hier ist gerade nichts.") + '</p>';
   }
   function ladStage() {

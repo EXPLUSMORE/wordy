@@ -2791,6 +2791,7 @@
         out += '<div class="lsec"><b>' + esc(g.n) + '</b><small>' + own + ' / ' + g.l.length + '</small><i></i></div><div class="lgrid">' + g.l.map(ladTile).join("") + '</div>';
       });
     });
+    if (ladCat === "fig" && !q && ladFlt === "all") out = slotsHtml() + out;
     return total ? out : '<p class="small muted" style="text-align:center;margin:24px 0">' + (q ? "Nichts gefunden. Probier ein anderes Wort, z. B. „Rahmen“, „Hut“ oder „gold“." : ladFlt === "afford" ? "Gerade ist nichts in deiner Preisklasse frei. Sammle weiter Münzen! 🪙" : "Hier ist gerade nichts.") + '</p>';
   }
   function ladStage() {

@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.179.2
+- Laden: Sticker-Plätze (freischalten, Anzahl) stehen wieder oben in der Kategorie Figuren.
+
 ## 2.179.1
 - Laden: Figurenleiste zeigt die gewählte Figur immer zuerst und ist deutlich breiter (vorher nur ein schmaler Ausschnitt mit ca. 3 Figuren).
 
