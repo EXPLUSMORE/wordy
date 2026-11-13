@@ -1021,6 +1021,17 @@ div.msr{cursor:default}.msr.done{opacity:.7}.msr .mst{flex:0 0 20px;height:20px;
 .pstats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px;text-align:center}.pstats i{font-style:normal;font-size:20px;display:block}.pstats b{display:block;font-size:17px}.pstats small{display:block;font-size:10.5px;color:var(--ink-3,#777);line-height:1.2}
 .lad.umk{padding-bottom:0}#hCoinsBtn{cursor:pointer}
 .backb{position:sticky;top:6px;z-index:6;align-self:flex-start;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--ink);font:inherit;font-weight:700;font-size:14px;padding:8px 14px;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.14)}
+/* ===== SPIELEN NEU (v2.182) ===== */
+.chb{display:flex;align-items:center;gap:12px;border-radius:18px;padding:12px 14px;background:linear-gradient(135deg,#1b2238,#2a2140);color:#fff;border:2px solid #f2b33d;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.chbt{flex:1 1 auto;min-width:0}.chbt small{display:block;font-size:11px;font-weight:800;letter-spacing:.06em;color:#ffd978;text-transform:uppercase}.chbt b{display:block;font-size:16px;margin:2px 0}.chbt span{display:block;font-size:12px;opacity:.85}
+.chbb{flex:none;border:0;border-radius:14px;padding:12px 14px;font:inherit;font-weight:900;background:linear-gradient(#ffd978,#f2b33d);color:#2b1d00;box-shadow:0 4px 0 #a8730f;cursor:pointer;white-space:nowrap}
+.arsec{margin:14px 0 6px;font-weight:800;font-size:14px}.arsec small{font-weight:500;color:var(--ink-3);margin-left:6px}
+.arn .tile .tt b{white-space:normal}
+.arlast{display:flex;align-items:center;gap:12px;width:100%;margin-top:10px;text-align:left;border:2px solid var(--accent);border-radius:16px;background:var(--accent-soft);color:var(--ink);padding:10px 12px;font:inherit;cursor:pointer}
+.arlast .ali{font-size:30px}.arlast .alt{flex:1 1 auto;min-width:0}.arlast small{display:block;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}.arlast b{display:block;font-size:16px}.arlast em{font-style:normal;font-size:12px;color:var(--ink-2)}.arlast i{font-style:normal;font-size:20px;font-weight:900;color:var(--accent)}
+.lset>summary,details.card[data-fx]>summary{display:flex;align-items:center;gap:10px;cursor:pointer;list-style:none}.lset>summary::-webkit-details-marker,details.card[data-fx]>summary::-webkit-details-marker,.gsp>summary::-webkit-details-marker{display:none}
+.gsp{margin:0 0 8px}.gsp>summary{display:inline-flex;list-style:none;cursor:pointer}
+.segs .howto{flex:0 0 auto;min-width:0;padding-left:12px;padding-right:12px}
 /* ===== LADEN NEU (Anprobe-Bühne) ===== */
 .lad .lstage{position:sticky;top:0;z-index:8;height:178px;border-radius:22px;background:linear-gradient(#cfe9f3,#eaf5fa);border:2px solid var(--line);overflow:hidden;box-shadow:0 6px 16px rgba(0,0,0,.14)}
 :root[data-theme="dark"] .lad .lstage{background:linear-gradient(#233a5e,#1a2742)}
@@ -1865,7 +1876,7 @@ body.arcGlitch #app{animation:arcGl .5s steps(2) 2}@keyframes arcGl{0%{transform
 </style>
 
 
-<script>window.WORDY_VERSION="2.181.2";window.WORDY_BUILD="8d97dc3d89";</script>
+<script>window.WORDY_VERSION="2.182.0";window.WORDY_BUILD="7b056a1d7c";</script>
 </head>
 <body>
 <div id="app">
@@ -12721,7 +12732,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   function segBar(group, cur, items) {
     return '<div class="segs">' + items.map(function (x) {
       return '<button data-act="seg" data-g="' + group + '" data-v="' + x[0] + '" aria-pressed="' + (cur === x[0]) + '">' + x[1] + '</button>';
-    }).join("") + (global.VTFILM && (group === "lernen" || group === "spielen") ? '<button class="howto" data-act="howto" aria-label="How-to: Erklärfilme">▶ How-to</button>' : "") + '</div>';
+    }).join("") + (global.VTFILM && (group === "lernen" || group === "spielen") ? '<button class="howto" data-act="howto" aria-label="How-to: Erklärfilme" title="Kurz erklärt">❓</button>' : "") + '</div>';
   }
   /* How-to: die Erklärfilme liegen hinter einem eigenen Knopf, damit sie das Üben nicht stören */
   function howtoSheet() {
@@ -13374,18 +13385,24 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var films = global.VTFILM ? '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">🎬 Erklärfilme</div><span class="pill">neu</span></div>' +
       '<p class="small muted" style="margin:6px 0 10px">Bruno, Pingo, Robbi und Eisi erklären jeden Modus in 30 Sekunden.</p><div class="fmlist">' +
       global.VTFILM.list.map(function (f) { return '<button class="fmcard" data-act="film" data-id="' + f.id + '"><span>' + f.icon + '</span><b>' + esc(f.title) + '</b><i>▶</i></button>'; }).join("") + '</div></section>' : "";
-    var playCard = '<section class="card"><div class="eyebrow">Arena</div>' +
-      (few ? '<p class="small muted" style="margin:6px 0 0">Für die Spiele brauchst du mindestens acht Wörter im gewählten Bereich. Schalte unter „Was lernen?“ ein weiteres Schuljahr dazu.</p>' : '') +
-      '<div class="tiles">' + play + '</div>' +
+    var lg = st.profile.lastGame, lastT = "";
+    if (lg && !few) { var lm = lg.k === "arena" ? modes.filter(function (m) { return m.id === lg.id; })[0] : (global.VTG ? global.VTG.GAMES.filter(function (m) { return m.id === lg.id; })[0] : null), lb = lm ? (lg.k === "arena" ? global.ARENA.best(lm.id) : global.VTG.best(lm.id)) : null;
+      if (lm) lastT = '<button class="arlast" data-act="' + (lg.k === "arena" ? "arena" : "wgame") + '" data-id="' + esc(lm.id) + '"><span class="ali">' + esc(lm.icon) + '</span><span class="alt"><small>Weiterspielen</small><b>' + esc(lm.name) + '</b>' + (lb && lb.best ? '<em class="tnum">Bestwert ' + lb.best + '</em>' : '') + '</span><i>▶</i></button>'; }
+    function gtile(m, act) { var b = act === "arena" ? global.ARENA.best(m.id) : global.VTG.best(m.id); return tile(esc(m.icon), esc(m.name), esc(m.tag), 'data-act="' + act + '" data-id="' + esc(m.id) + '"' + (few ? " disabled" : ""), b.best ? '<span class="pill tnum">Bestwert ' + b.best + '</span>' : ""); }
+    var playCard = '<section class="card arn"><div class="eyebrow">Arena</div>' +
+      (few ? '<p class="small muted" style="margin:6px 0 0">Für die Spiele brauchst du mindestens acht Wörter im gewählten Bereich. Schalte unter Lernen ein weiteres Schuljahr dazu.</p>' : '') + lastT +
+      '<div class="arsec">⚡ Schnell <small>60–90 Sekunden</small></div><div class="tiles">' + modes.map(function (m) { return gtile(m, "arena"); }).join("") + '</div>' +
+      (global.VTG ? '<div class="arsec">🧩 Knobeln &amp; Action</div><div class="tiles">' + global.VTG.GAMES.map(function (m) { return gtile(m, "wgame"); }).join("") + '</div>' : "") +
+      (einmalOn() ? '<div class="arsec">✖️ Mathe</div><div class="tiles">' + tile("✖️", "Einmaleins", "Blitz, Stimmt\'s? und Match", 'data-act="seg" data-g="spielen" data-v="mal"') + '</div>' : "") +
       '<details style="margin-top:12px"><summary class="small" style="cursor:pointer;font-weight:700">Wie die Spiele zählen</summary>' +
       '<p class="small muted" style="margin:8px 0 0">Ein Treffer unter Zeitdruck wird als sichere, aber flache Wiederholung gewertet. Er schiebt ein Wort eine Stufe weiter, ersetzt aber nicht das ruhige Training. Ein Fehlgriff landet sofort in der Fehlerkartei. Die Zeit läuft aufs Tagesziel.' + (plays ? ' Bisher ' + plays + ' ' + plural(plays, "Spiel", "Spiele") + ' gespielt.' : '') + '</p></details></section>';
     if (part === "spiel") return playCard;
-    return '<section class="card"><div class="eyebrow">Lernen</div>' +
-      '<div class="row wrap" style="margin-top:8px"><span class="small muted">Dauer in Min</span>' + [3, 5, 10, 15].map(function (m2) { return '<button class="chip" data-act="setmin" data-min="' + m2 + '" aria-pressed="' + (mins === m2) + '">' + m2 + '</button>'; }).join("") + '</div>' +
+    return '<section class="card"><div class="eyebrow">Schnellstart</div>' +
+      '<div class="row wrap" style="margin-top:8px;align-items:center"><span class="small" style="font-weight:700">Wie lange?</span>' + [3, 5, 10, 15].map(function (m2) { return '<button class="chip" data-act="setmin" data-min="' + m2 + '" aria-pressed="' + (mins === m2) + '">' + m2 + ' Min</button>'; }).join("") + '</div>' +
       '<div class="tiles">' + learn + '</div></section>' +
-      '<section class="card"><div class="row"><div class="eyebrow" style="flex:1 1 auto">Gezielt üben</div><span class="pill">neu</span></div>' +
-      '<p class="small muted" style="margin:6px 0 0">Eine Aufgabenform üben, mit Wörtern, die dran sind (ca. ' + mins + ' Min).</p><div class="tiles">' +
-      focusT.map(function (f) { return tile(f[0], f[1], f[2], 'data-act="start" data-mode="focus" data-focus="' + f[3] + '" data-min="' + mins + '"' + (f[4] ? " disabled" : "")); }).join("") + tile("🗣️", "Mitlesen", "Alle gelernten Wörter hören und laut mitsprechen", 'data-act="mitlesen"') + '</div></section>';
+      '<details class="card" data-fx="focus"' + (openFolds.focus ? " open" : "") + '><summary><span><b>🎯 Gezielt üben</b><span class="small muted" style="display:block">Hören, Tippen, Lücken, Zuordnen, Mitlesen</span></span></summary>' +
+      '<p class="small muted" style="margin:8px 0 0">Eine Aufgabenform üben, mit Wörtern, die dran sind (ca. ' + mins + ' Min).</p><div class="tiles">' +
+      focusT.map(function (f) { return tile(f[0], f[1], f[2], 'data-act="start" data-mode="focus" data-focus="' + f[3] + '" data-min="' + mins + '"' + (f[4] ? " disabled" : "")); }).join("") + tile("🗣️", "Mitlesen", "Alle gelernten Wörter hören und laut mitsprechen", 'data-act="mitlesen"') + '</div></details>';
   }
 
 
@@ -13641,20 +13658,22 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   /* Einmaleins-Training (nicht Teil des Wortschatzes): im Profil ein-/ausblendbar, Standard aus */
   function einmalOn() { return !!global.VTM && S.state.settings.einmaleins === true; }
   function viewLernen() {
-    var seg = detailUnit ? "units" : lernSeg;
-    if (seg === "mal" && !einmalOn()) seg = lernSeg = "ueben";
     var pfadOn = S.state.settings.pathOn !== false && S.pathStations().length > 0;
-    if (seg === "pfad" && !pfadOn) seg = "ueben";
-    var top = segBar("lernen", seg, [["units", "📚 Was lernen?"]].concat(pfadOn ? [["pfad", "🗺️ Pfad"]] : []).concat([["ueben", "🎮 Üben"]]).concat([["stats", "📈 Fortschritt"]]).concat(einmalOn() ? [["mal", "✖️ Einmaleins"]] : []));
+    if (lernSeg === "start") lernSeg = pfadOn ? "pfad" : "units";   // erster Besuch: der Pfad, wenn es einen gibt
+    if (lernSeg === "ueben") lernSeg = "units";                      // „Üben“ wohnt seit 2.182 in „Einheiten“
+    if (lernSeg === "mal") { lernSeg = "units"; if (einmalOn()) { tab = "spielen"; spielSeg = "mal"; return render(); } }
+    var seg = detailUnit ? "units" : lernSeg;
+    if (seg === "pfad" && !pfadOn) seg = "units";
+    var top = segBar("lernen", seg === "gram" ? "units" : seg, (pfadOn ? [["pfad", "🗺️ Pfad"]] : []).concat([["units", "📚 Einheiten"], ["stats", "📈 Fortschritt"]]));
     if (detailUnit === "__verbs") return viewVerbList();
     if (detailUnit) return viewUnitDetail(detailUnit);
     if (seg === "stats") viewStats();
-    else if (seg === "mal") view.innerHTML = '<div class="stack">' + global.VTM.panel() + '</div>';
     else if (seg === "pfad") view.innerHTML = '<div class="stack">' + pathCard() + '</div>';
     else if (seg === "gram") view.innerHTML = '<div class="stack"><button class="backb" data-act="seg" data-g="lernen" data-v="units">← Zurück</button>' + gramHtml() + '</div>';
     else {
-      view.innerHTML = '<div class="stack">' + (seg === "units" ? unitsHtml() : modiHtml("lern")) + '</div>';
+      view.innerHTML = '<div class="stack">' + unitsHtml() + '</div>';
       $$("details.grp").forEach(function (d) { d.addEventListener("toggle", function () { openGroups[d.getAttribute("data-k")] = d.open; }); });
+      $$("details[data-fx]").forEach(function (d) { d.addEventListener("toggle", function () { openFolds[d.getAttribute("data-fx")] = d.open; }); });
     }
     topSegs(top);
   }
@@ -13664,7 +13683,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (!socOn() || cls.loading || (!force && Date.now() - cls.ts < 5000)) return;
     cls.loading = true; var before = JSON.stringify(cls.d);
     global.WordySync.social("GET", "/class").then(function (d) { cls.d = d; cls.err = ""; if (d.task && !global.WordySync.activePlans().some(function (x) { return x.id === "c" + d.task.id; })) return global.WordySync.pull(true); }).catch(function (e) { cls.err = e.message; })
-      .then(function () { cls.loading = false; cls.ts = Date.now(); if (JSON.stringify(cls.d) !== before && tab === "spielen" && spielSeg === "challenge" && sessionEl.hidden && !document.activeElement.matches("input")) render(); });
+      .then(function () { cls.loading = false; cls.ts = Date.now(); if (JSON.stringify(cls.d) !== before && tab === "spielen" && spielSeg === "arena" && sessionEl.hidden && !document.activeElement.matches("input")) render(); });
   }
   function clsDo(path, body, ok) {
     return global.WordySync.social("POST", path, body).then(function (r) { cls.ts = 0; clsLoad(true); if (ok) ok(r); }).catch(function (e) { toast(e.message); });
@@ -13708,13 +13727,27 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       (done ? '' : '<button class="ctablitz" data-act="start" data-mode="mix" data-min="4">⚡ Keine Zeit? Blitz-Challenge (4 Min)</button>') +
       '<p class="small ctap" style="margin:12px 0 0;opacity:.8">Serienboni gibt es bei 3, 7, 14 und 30 Tagen in Folge' + (ci.best > 1 ? '. Bestserie: ' + ci.best + ' Tage' : '') + '.</p></section>' + kl.bottom;
   }
+  /* Daily Challenge als schlanker Banner oben in der Arena (v2.182; die große Karte gibt es nicht mehr als eigenen Reiter) */
+  function challengeBanner() {
+    var ci = S.chalInfo(), done = ci.doneToday, xl = ci.extraLeft, mins = done ? 5 : Math.max(5, S.goalMin());
+    var sub = !done ? "+15 🪙 für Runde 1" : xl ? "Bonus-Runde: +" + ci.extraCoins + " 🪙 (noch " + xl + ")" : "Heute alles geholt ✓";
+    return '<section class="chb"><div class="chbt"><small>🏆 Daily Challenge · 🔥 ' + ci.streak + (ci.streak === 1 ? " Tag" : " Tage") + '</small><b>' + (done ? "Heute geschafft!" : "Deine Tagesbelohnung wartet") + '</b><span>' + sub + (ci.next ? " · noch " + (ci.next - ci.streak) + " bis Serienbonus" : "") + '</span></div>' +
+      '<button class="chbb" data-act="start" data-mode="mix" data-min="' + mins + '">' + (!done ? "Start ▶" : xl ? "Bonus ▶" : "Nochmal ▶") + '</button></section>';
+  }
   function viewSpielen() {
-    var ai = S.adventInfo(), sg = [["challenge", "🏆 Challenge"]];
-    if (ai.phase !== "off") sg.push(["advent", "🎄 Advent"]); else if (spielSeg === "advent") spielSeg = "challenge";
-    sg = sg.concat([["arena", "🕹️ Arena"], ["freunde", "👥 Freunde"], ["crew", "🛡️ Crew"], ["rang", "🥇 Liga"]]);
-    var top = segBar("spielen", spielSeg, sg);
+    var ai = S.adventInfo(), SOCS = ["freunde", "crew", "rang"], isSoc = SOCS.indexOf(spielSeg) >= 0;
+    if (spielSeg === "challenge" || (spielSeg === "advent" && ai.phase === "off") || (spielSeg === "mal" && !einmalOn())) spielSeg = "arena";
+    var sg = [["arena", "🕹️ Arena"]]; if (ai.phase !== "off") sg.push(["advent", "🎄 Advent"]); sg.push(["freunde", "👥 Freunde"]);
+    var top = segBar("spielen", isSoc ? "freunde" : spielSeg === "mal" ? "arena" : spielSeg, sg);
     if (spielSeg === "advent") { viewAdvent(ai, top); return; }
-    view.innerHTML = '<div class="stack">' + top + (spielSeg === "arena" ? modiHtml("spiel") : spielSeg === "freunde" ? friendsHtml() : spielSeg === "crew" ? crewHtml() : spielSeg === "rang" ? boardHtml() : challengeHtml()) + '</div>';
+    if (spielSeg === "mal") { view.innerHTML = '<div class="stack">' + top + '<button class="backb" data-act="seg" data-g="spielen" data-v="arena">← Zurück</button>' + global.VTM.panel() + '</div>'; return; }
+    if (isSoc) {   // Freunde, Crew und Liga wohnen unter einem Reiter; ohne Server-Verbindung nur eine Erklärkarte
+      var gate = socGate(), sub = gate ? "" : segBar("spielen", spielSeg, [["freunde", "⚔️ Duelle"], ["crew", "🛡️ Crew"], ["rang", "🥇 Liga"]]).replace(/<button class="howto"[^>]*>[^<]*<\/button>/, "");
+      view.innerHTML = '<div class="stack">' + top + (gate ? (socOn() ? gate : '<section class="card" style="text-align:center"><div style="font-size:44px">👥</div><h2 style="margin:4px 0 6px">Freunde, Crew &amp; Liga</h2><p class="small muted" style="margin:0 0 12px">Fordere Freunde zum Duell, sammelt als Crew Wochenziele und steigt in der Liga auf. Dafür muss Wordy mit dem Server verbunden sein – das richten deine Eltern ein.</p><button class="btn" data-act="gosync">Verbinden</button></section>') : sub + (spielSeg === "crew" ? crewHtml() : spielSeg === "rang" ? boardHtml() : friendsHtml())) + '</div>';
+      return;
+    }
+    var kl = classHtml();
+    view.innerHTML = '<div class="stack">' + top + kl.top + challengeBanner() + modiHtml("spiel") + kl.bottom + '</div>';
   }
   /* ---------- Wichtel-Kalender (Advent, v2.160): Logik in engine.js (adventInfo/advPlan/advWin) ---------- */
   var ADV_ICON = { "ac:nikolaus": "🎅", "ac:xschal": "🧣", "ac:geweih": "🦌", "ac:schlitten": "🛷", "fr:lichter": "🎁" };
@@ -14076,8 +14109,9 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var sel = S.groupsOf();
     var html = '';
     var guided = S.steered();   // gesteuert: das Kind sieht nur die Einheiten, die für es vorgesehen sind (ohne Hinweis darauf)
-    html += '<section class="card"><div class="eyebrow">Was lernen?</div><div style="margin-top:8px">' + trackSwitch() + '</div></section>';
-    if (!guided) html += '<section class="card">' +
+    var selNames = sel.map(function (k) { return groupLabel(k); });
+    html += '<details class="card lset" data-fx="lset"' + (openFolds.lset ? " open" : "") + '><summary><span style="flex:1 1 auto;min-width:0"><b>' + (biz ? "💼 Business English" : "🎒 Schule") + (guided ? "" : " · " + esc(selNames.slice(0, 2).join(", ") + (selNames.length > 2 ? " +" + (selNames.length - 2) : ""))) + '</b></span><span class="chip" style="pointer-events:none">ändern ▾</span></summary><div style="margin-top:10px">' + trackSwitch() + '</div>';
+    if (!guided) html += '<div style="margin-top:12px">' +
       '<div class="eyebrow">' + (biz ? "Stufe" : "Schuljahr") + '</div>' +
       '<div class="row wrap" style="margin-top:8px">' +
       groups.map(function (k) {
@@ -14085,7 +14119,8 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       }).join("") +
       '</div><p class="small muted" style="margin:10px 0 0">' + (biz
         ? "Wähle, was im Training vorkommen soll. Unten stehen die Einheiten dazu."
-        : "Headlight 2 ist das Schulbuch. Klassen kannst du dazuschalten.") + '</p></section>';
+        : "Headlight 2 ist das Schulbuch. Klassen kannst du dazuschalten.") + '</p></div>';
+    html += '</details>' + modiHtml("lern");
 
     if (!biz) {
       var vs0 = S.verbStats();
@@ -14126,7 +14161,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       html += '<details class="grp" data-k="' + esc(k) + '"' + (isOpen ? " open" : "") + '><summary><span class="chev">▸</span><span style="flex:1 1 auto;min-width:0"><b>' + esc(title) + '</b>' +
         '<span class="small muted" style="display:block">' + byGroup[k].length + ' ' + plural(byGroup[k].length, "Einheit", "Einheiten") + ' · ' + Math.round(sure * 100 / Math.max(1, tot)) + ' % sicher · ' + seenW + ' von ' + tot + ' Wörtern geübt</span></span></summary>' +
         '<button class="btn soft wide" data-act="start" data-scope="' + esc(gids.join(",")) + '" data-min="5" style="margin:4px 0 8px">Gruppe üben (5 Min.)</button>' +
-        '<div class="small muted" style="margin:2px 2px 4px">Oder als Spiel mit allen Wörtern der Gruppe:</div><div class="row wrap" style="gap:8px;margin-bottom:10px">' + gameChips("data-scope", gids.join(","), tot >= 8) + '</div>' +
+        '<details class="gsp"><summary class="chip">🎮 Als Spiel üben</summary><div class="row wrap" style="gap:8px;margin:8px 0 10px">' + gameChips("data-scope", gids.join(","), tot >= 8) + '</div></details>' +
         '<div>' + rest.map(unitRow).join("") + '</div>' +
         (books.length ? bookTile(BOOKS.filter(function (b) { return books[0].id.indexOf(b.pre) === 0; })[0], books) + books.map(unitRow).join("") : "") + '</details>';
     });
@@ -14484,7 +14519,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       (sd ? '<div class="shopitem card" style="background:linear-gradient(135deg,#dff3ff,#eaf6ff);border-radius:12px;padding:8px 10px;margin-bottom:8px"><span class="si">❄️</span><span style="flex:1 1 auto"><b class="small">Set-Angebot heute: ' + esc(sd.set.name) + '</b><br><span class="small muted">Jedes Teil nur ' + sd.price + ' 🪙 · noch ' + untilMidnight() + '</span></span><button class="btn soft" data-act="shoptab" data-k="sets">Ansehen</button></div>' : "");
   }
   var KIND_NAME = { sticker: "Sticker", avatar: "Figur", frame: "Rahmen", title: "Titel", bg: "Hintergrund", fx: "Effekt", dance: "Tanz", outfit: "Outfit", kit: "Trikot", snd: "Ton", theme: "Farbwelt" };
-  var shopTab = "avatar", shopView = "stufe", lernSeg = "units", spielSeg = "challenge", beuteSeg = "heute";
+  var shopTab = "avatar", shopView = "stufe", lernSeg = "start", spielSeg = "arena", beuteSeg = "heute";
   var TABMAP = { ueben: "lernen", stats: "lernen", shop: "beute", showroom: "beute" };
   var THEME_DOT = { paper: "#1E6273", mint: "#2E7357", plum: "#6A3D70", amber: "#8A5A1B" };
   function shopIcon(it) {
@@ -14904,7 +14939,13 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var html = '<div class="stack"><div class="row" style="gap:8px"><span class="pill">' + (bizT ? "💼 Business English" : "🎒 Schule") + '</span><span class="small muted">Fortschritt in diesem Lernbereich</span></div>' + segBar("stats", statsSeg, [["ueb", "Übersicht"], ["woerter", "Wörter"], ["verlauf", "Verlauf"]]);
     if (statsSeg === "woerter") html += secDist + wordListCard() + secBox + secVerbs;
     else if (statsSeg === "verlauf") html += weekPlanCard() + parentCards() + secDays + secSent;
-    else html += secTiles + secDist + secOverview + secBehind;
+    else {
+      var selG = S.groupsOf(), inSel = function (u) { return u.track === "eigen" || selG.indexOf(u.k) >= 0; };   // nur gewählte Schuljahre/Stufen
+      var wk = s.perUnit.filter(function (u) { return inSel(u) && u.seen > 0 && u.sure < u.total; }).sort(function (a, b) { return (a.sure / a.total) - (b.sure / b.total); }).slice(0, 3);
+      if (wk.length < 3) wk = wk.concat(s.perUnit.filter(function (u) { return inSel(u) && u.seen === 0; }).slice(0, 3 - wk.length));
+      html += secOverview + secDist + '<section class="card"><div class="eyebrow">Hier lohnt sich Üben</div><p class="small muted" style="margin:4px 0 6px">Die Einheiten, bei denen du am meisten gewinnst.</p>' + wk.map(behindRow).join("") +
+        '<button class="btn ghost wide" data-act="seg" data-g="lernen" data-v="units" style="margin-top:10px">Alle Einheiten →</button></section>';
+    }
     view.innerHTML = html + '</div>';
     var ws = $("#wSearch");
     if (ws) ws.addEventListener("input", function () { wQuery = ws.value; wMax = 40; $("#wList").innerHTML = wordListHtml(); });
@@ -16181,8 +16222,8 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       else if (global.VTG) global.VTG.start(act.getAttribute("data-game"), { units: ids });
       return;
     }
-    if (a === "wgame") { if (global.VTG) global.VTG.start(act.getAttribute("data-id")); return; }
-    if (a === "arena") { if (global.ARENA) global.ARENA.start(act.getAttribute("data-id")); return; }
+    if (a === "wgame") { S.state.profile.lastGame = { k: "wgame", id: act.getAttribute("data-id") }; if (global.VTG) global.VTG.start(act.getAttribute("data-id")); return; }
+    if (a === "arena") { S.state.profile.lastGame = { k: "arena", id: act.getAttribute("data-id") }; if (global.ARENA) global.ARENA.start(act.getAttribute("data-id")); return; }
     if (a === "start") {
       var fc = act.getAttribute("data-focus") || null;
       startSession({ minutes: +(act.getAttribute("data-min") || S.goalMin()), mode: act.getAttribute("data-mode") || (fc ? "focus" : "mix"), unit: act.getAttribute("data-unit") || null, scope: act.getAttribute("data-scope") ? act.getAttribute("data-scope").split(",") : undefined,
@@ -16203,7 +16244,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     else if (a === "malmax") { global.VTM.setMax(act.getAttribute("data-v")); var syX = view.scrollTop; render(); view.scrollTop = syX; }
     else if (a === "maltimed") { global.VTM.setTimed(act.getAttribute("data-v") === "1"); var syT = view.scrollTop; render(); view.scrollTop = syT; }
     else if (a === "malrow") { global.VTM.toggleRow(+act.getAttribute("data-v")); var syR = view.scrollTop; render(); view.scrollTop = syR; }
-    else if (a === "malgo") { global.VTM.start(act.getAttribute("data-v"), { sfx: feedback, refresh: renderHeader, onClose: function () { if (tab === "lernen") render(); } }); }
+    else if (a === "malgo") { global.VTM.start(act.getAttribute("data-v"), { sfx: feedback, refresh: renderHeader, onClose: function () { if (tab === "lernen" || tab === "spielen") render(); } }); }
     else if (a === "verblist") { detailUnit = "__verbs"; tab = "ueben"; uebenSeg = "units"; render(); view.scrollTop = 0; }
     else if (a === "seg") {
       var sg = act.getAttribute("data-g"), sv = act.getAttribute("data-v");
@@ -16409,7 +16450,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       var cl = act.closest(".newscloud"); if (cl) cl.remove();
       var nn = NEWS.filter(function (x) { return x.id === nid; })[0];
       if (a === "newscloud" && nn && nn.go === "verdienst") { render(); coinSheet(true); }
-      else if (a === "newscloud" && nn && nn.go === "mal") { tab = "lernen"; lernSeg = "mal"; uebenSeg = "modi"; detailUnit = null; render(); view.scrollTop = 0; }
+      else if (a === "newscloud" && nn && nn.go === "mal") { tab = "spielen"; spielSeg = "mal"; render(); view.scrollTop = 0; }
       else if (a === "newscloud" && nn && nn.shop) { tab = "beute"; beuteSeg = "shop"; shopTab = nn.shop; render(); view.scrollTop = 0; }
       else if (a === "newscloud" && global.VTG) global.VTG.start(nid);
     }
@@ -16470,6 +16511,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       }
     }
     else if (a === "coinsheet") coinSheet();
+    else if (a === "gosync") { tab = "parent"; profSeg = "set"; openFolds.save = true; render(); var sv = view.querySelector('details[data-f="save"]'); if (sv) sv.scrollIntoView({ block: "start" }); }
     else if (a === "passhelp") passHelp();
     else if (a === "umkcat") { umkCat = act.getAttribute("data-k"); var syU = view.scrollTop; render(); view.scrollTop = syU; }
     else if (a === "umkfig") { var uv = act.getAttribute("data-v"), ui = S.SHOP.filter(function (x) { return x.kind === "avatar" && x.val === uv; })[0]; if (ui) S.equip(ui.id); else { S.state.profile.avatar = uv; S.save(true); } renderHeader(); var syF = view.scrollTop; render(); view.scrollTop = syF; }

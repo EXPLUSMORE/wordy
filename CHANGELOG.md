@@ -10,6 +10,12 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.182.0
+- **Lernen aufgeräumt**: nur noch drei Reiter – Pfad · Einheiten · Fortschritt. „Üben“ steckt jetzt als „Schnellstart“ (mit „Wie lange?“) oben in den Einheiten; Schule/Schuljahr wählt man hinter „ändern ▾“; die neun Spiel-Knöpfe je Gruppe liegen hinter „🎮 Als Spiel üben“; „Gezielt üben“ ist einklappbar. How-to ist ein kleines ❓.
+- **Fortschritt kürzer**: ein Zahlenblock statt zwei und „Hier lohnt sich Üben“ mit den drei lohnendsten Einheiten statt der ganzen Liste.
+- **Spielen aufgeräumt**: Arena · Freunde. Die Daily Challenge ist ein Banner oben in der Arena; die Spiele sind in „Schnell“ und „Knobeln & Action“ sortiert, oben steht „Weiterspielen“ (zuletzt gespieltes Spiel mit Bestwert). Freunde, Crew und Liga wohnen unter einem Reiter; ohne Server-Verbindung gibt es eine Erklärkarte mit „Verbinden“.
+- **Einmaleins** ist als Kachel „Mathe“ in die Arena umgezogen (wenn es eingeschaltet ist).
+
 ## 2.181.2
 - Rechtschreibung (Buchstaben legen): großes I und kleines l zu verwechseln zählt nicht mehr als Fehler; die Buchstaben-Kacheln nutzen jetzt eine Schrift, in der man beide unterscheiden kann.
 
