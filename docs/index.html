@@ -1014,6 +1014,19 @@ details.fold>.fbody{padding:2px 0 14px}
 .fslot svg,.hhf svg{width:100%!important;height:100%!important}
 /* Seltenheits-Karten im Shop */
 .rgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+/* ===== START NEU (v2.181): kürzere Bühne, Ring = Weiter-Knopf, Missionen als schlanke Zeilen ===== */
+.hh{min-height:300px}.hhbar{padding:7px 10px}.hhpod{bottom:40px}.hhfig{bottom:56px}.hhbubble{top:140px}
+button.hhgoal{top:124px;border:0;background:none;padding:0;color:inherit;font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button.hhgoal small{display:inline-block;background:#ffd21f;color:#14213d;border:2px solid #14213d;border-radius:999px;padding:2px 9px;text-shadow:none;box-shadow:0 2px 0 #14213d;margin-top:-10px;position:relative}
+button.hhgoal:active{transform:scale(.96)}
+.msl{margin-top:8px;display:flex;flex-direction:column;gap:6px}
+.msr{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:1px solid var(--line);border-radius:14px;background:var(--card-2,transparent);padding:8px 10px;color:inherit;font:inherit;cursor:pointer}
+div.msr{cursor:default}.msr.done{opacity:.7}.msr .mst{flex:0 0 20px;height:20px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:12px;font-weight:900}
+.msr.done .mst{background:var(--good);border-color:var(--good);color:#fff}.msr .msx{flex:1 1 auto;min-width:0;display:block}.msr .msx b{display:block;font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msr .bar{display:block;margin-top:5px;height:6px}.msr .msgo{font-size:20px;font-weight:900;color:var(--accent);line-height:1}
+.wishpill{max-width:58%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px}
+.pstats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px;text-align:center}.pstats i{font-style:normal;font-size:20px;display:block}.pstats b{display:block;font-size:17px}.pstats small{display:block;font-size:10.5px;color:var(--ink-3,#777);line-height:1.2}
+.lad.umk{padding-bottom:0}#hCoinsBtn{cursor:pointer}
 /* ===== LADEN NEU (Anprobe-Bühne) ===== */
 .lad .lstage{position:sticky;top:0;z-index:8;height:178px;border-radius:22px;background:linear-gradient(#cfe9f3,#eaf5fa);border:2px solid var(--line);overflow:hidden;box-shadow:0 6px 16px rgba(0,0,0,.14)}
 :root[data-theme="dark"] .lad .lstage{background:linear-gradient(#233a5e,#1a2742)}
@@ -1856,7 +1869,7 @@ body.arcGlitch #app{animation:arcGl .5s steps(2) 2}@keyframes arcGl{0%{transform
 </style>
 
 
-<script>window.WORDY_VERSION="2.180.0";window.WORDY_BUILD="6773ccff99";</script>
+<script>window.WORDY_VERSION="2.181.0";window.WORDY_BUILD="b3183e3278";</script>
 </head>
 <body>
 <div id="app">
@@ -1885,49 +1898,49 @@ body.arcGlitch #app{animation:arcGl .5s steps(2) 2}@keyframes arcGl{0%{transform
   <div id="session" hidden></div>
 </div>
 <div id="arena" hidden></div>
-<script src="data/klasse6.js?v=6773ccff99"></script>
-<script src="data/klasse7.js?v=6773ccff99"></script>
-<script src="data/klasse8.js?v=6773ccff99"></script>
-<script src="data/business.js?v=6773ccff99"></script>
-<script src="data/business-basis2.js?v=6773ccff99"></script>
-<script src="data/business-aufbau2.js?v=6773ccff99"></script>
-<script src="data/business-profi2.js?v=6773ccff99"></script>
-<script src="data/smalltalk.js?v=6773ccff99"></script>
-<script src="data/advent.js?v=6773ccff99"></script>
-<script src="data/herbst.js?v=6773ccff99"></script>
-<script src="data/idioms.js?v=6773ccff99"></script>
-<script src="data/saetze.js?v=6773ccff99"></script>
-<script src="data/grammatik.js?v=6773ccff99"></script>
-<script src="data/alternativen.js?v=6773ccff99"></script>
-<script src="data/saetze2.js?v=6773ccff99"></script>
-<script src="data/lernbuch.js?v=6773ccff99"></script>
-<script src="data/verben.js?v=6773ccff99"></script>
-<script src="data/open/business-aufbau.js?v=6773ccff99"></script>
-<script src="data/open/business-basis.js?v=6773ccff99"></script>
-<script src="data/open/business-branchen.js?v=6773ccff99"></script>
-<script src="data/open/business-fachgebiete.js?v=6773ccff99"></script>
-<script src="data/open/business-jargon.js?v=6773ccff99"></script>
-<script src="data/open/business-profi.js?v=6773ccff99"></script>
-<script src="data/open/business-sprueche.js?v=6773ccff99"></script>
-<script src="data/open/saetze-open.js?v=6773ccff99"></script>
-<script src="js/engine.js?v=6773ccff99"></script>
-<script src="js/cosmetics.js?v=6773ccff99"></script>
-<script src="js/saison.js?v=6773ccff99"></script>
-<script src="js/saison2.js?v=6773ccff99"></script>
-<script src="js/saison3.js?v=6773ccff99"></script>
-<script src="js/fortnite.js?v=6773ccff99"></script>
-<script src="js/figur.js?v=6773ccff99"></script>
-<script src="js/stila.js?v=6773ccff99"></script>
-<script src="js/stilb.js?v=6773ccff99"></script>
-<script src="js/acc.js?v=6773ccff99"></script>
-<script src="js/loot.js?v=6773ccff99"></script>
-<script src="js/film.js?v=6773ccff99"></script>
-<script src="js/einmaleins.js?v=6773ccff99"></script>
-<script src="js/app.js?v=6773ccff99"></script>
-<script src="js/arena.js?v=6773ccff99"></script>
-<script src="js/spiele.js?v=6773ccff99"></script>
-<script src="js/grammatik.js?v=6773ccff99"></script>
-<script src="js/sync.js?v=6773ccff99"></script>
+<script src="data/klasse6.js?v=b3183e3278"></script>
+<script src="data/klasse7.js?v=b3183e3278"></script>
+<script src="data/klasse8.js?v=b3183e3278"></script>
+<script src="data/business.js?v=b3183e3278"></script>
+<script src="data/business-basis2.js?v=b3183e3278"></script>
+<script src="data/business-aufbau2.js?v=b3183e3278"></script>
+<script src="data/business-profi2.js?v=b3183e3278"></script>
+<script src="data/smalltalk.js?v=b3183e3278"></script>
+<script src="data/advent.js?v=b3183e3278"></script>
+<script src="data/herbst.js?v=b3183e3278"></script>
+<script src="data/idioms.js?v=b3183e3278"></script>
+<script src="data/saetze.js?v=b3183e3278"></script>
+<script src="data/grammatik.js?v=b3183e3278"></script>
+<script src="data/alternativen.js?v=b3183e3278"></script>
+<script src="data/saetze2.js?v=b3183e3278"></script>
+<script src="data/lernbuch.js?v=b3183e3278"></script>
+<script src="data/verben.js?v=b3183e3278"></script>
+<script src="data/open/business-aufbau.js?v=b3183e3278"></script>
+<script src="data/open/business-basis.js?v=b3183e3278"></script>
+<script src="data/open/business-branchen.js?v=b3183e3278"></script>
+<script src="data/open/business-fachgebiete.js?v=b3183e3278"></script>
+<script src="data/open/business-jargon.js?v=b3183e3278"></script>
+<script src="data/open/business-profi.js?v=b3183e3278"></script>
+<script src="data/open/business-sprueche.js?v=b3183e3278"></script>
+<script src="data/open/saetze-open.js?v=b3183e3278"></script>
+<script src="js/engine.js?v=b3183e3278"></script>
+<script src="js/cosmetics.js?v=b3183e3278"></script>
+<script src="js/saison.js?v=b3183e3278"></script>
+<script src="js/saison2.js?v=b3183e3278"></script>
+<script src="js/saison3.js?v=b3183e3278"></script>
+<script src="js/fortnite.js?v=b3183e3278"></script>
+<script src="js/figur.js?v=b3183e3278"></script>
+<script src="js/stila.js?v=b3183e3278"></script>
+<script src="js/stilb.js?v=b3183e3278"></script>
+<script src="js/acc.js?v=b3183e3278"></script>
+<script src="js/loot.js?v=b3183e3278"></script>
+<script src="js/film.js?v=b3183e3278"></script>
+<script src="js/einmaleins.js?v=b3183e3278"></script>
+<script src="js/app.js?v=b3183e3278"></script>
+<script src="js/arena.js?v=b3183e3278"></script>
+<script src="js/spiele.js?v=b3183e3278"></script>
+<script src="js/grammatik.js?v=b3183e3278"></script>
+<script src="js/sync.js?v=b3183e3278"></script>
 
 <script>
 if ('serviceWorker' in navigator) {

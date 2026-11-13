@@ -10,6 +10,12 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.181.0
+- **Start aufgeräumt**: kürzere Bühne, der Tagesziel-Ring ist jetzt der „Weiter“-Knopf (startet den nächsten offenen Schritt). Tagesmissionen sind schlanke Zeilen ohne eigene „Los“-Knöpfe, der Wunsch steht als kleines Sparschwein daneben.
+- **Beute neu sortiert**: Pass · Laden · Meine Sachen. „Münzen heute“ öffnet sich per Tipp auf den Münzstand (Kopfzeile oder Pass).
+- **Neue Umkleide** (Beute › Meine Sachen): nur was dir gehört; antippen = anziehen/ablegen, Sticker kleben, Figur wechseln, Tanz ansehen. Sammlung und Album daneben.
+- **Profil ist jetzt dein Profil**: Ich (Stand, Saison-Look) · Abzeichen · Ränge · Optionen. „Aussehen“ bündelt Saison-Look, Hell/Dunkel und Design; „Ton & Mitteilungen“ den Rest.
+
 ## 2.180.0
 - **Neuer Saison-Look „Arcade 3000“** (Neon-Spielhalle, 1.–30. November, ersetzt dort den Herbst-Look; Herbst gilt weiter 1.9.–14.10. und bleibt wählbar/steuerbar): Synthwave-Bühne mit laufendem Gitter, UFO in der Kopfzeile (Antippen = Laser-Show, einmal am Tag +5 🪙), fallende Pixel-Blöcke, Chiptune-Klang.
 - Invader-Welle: jede richtige Antwort schießt einen Invader ab, 8 am Tag = Welle geschafft (+10 🪙); nach 3/8/15 Wellen gibt es Pixel-Brille, Joystick und den Neon-Gitter-Rahmen. Combo-Anzeige ab 3 richtigen in Folge, HI-SCORE = bester XP-Tag.

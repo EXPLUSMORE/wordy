@@ -3,7 +3,7 @@
   "use strict";
   var S = global.VT, view = document.getElementById("view"), tabs = document.getElementById("tabs"),
       sessionEl = document.getElementById("session"), tab = "home", detailUnit = null,
-      uebenSeg = "modi", statsSeg = "ueb", shopSeg = "shop", earnOpen = false, startMin = null, lastRec = null, openGroups = {}, openFolds = {}, wFilter = "alle", wQuery = "", wMax = 40;
+      uebenSeg = "modi", statsSeg = "ueb", shopSeg = "shop", earnOpen = false, profSeg = "ich", umkCat = "acc", startMin = null, lastRec = null, openGroups = {}, openFolds = {}, wFilter = "alle", wQuery = "", wMax = 40;
 
   /* ---------- Werkzeug ---------- */
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]; }); }
@@ -774,13 +774,13 @@
     if (!pf.seen) { seen = pf.seen = {}; c.shelves.forEach(function (s) { s.items.forEach(function (i) { if (i.owned) seen[i.id] = 1; }); }); S.save(); }
     var favHtml = [0, 1, 2].map(function (i) { var id = S.favs()[i]; return id ? '<button class="fslot" data-act="sritem" data-id="' + esc(id) + '">' + favIcon(id) + '</button>' : '<button class="fslot e" data-act="srfavhint">＋</button>'; }).join("");
     if (!srAv) srAv = pf.avatar;
-    var h = '<div class="stack srv"><div><h1 style="font-size:22px">🏆 Mein Showroom</h1><p class="small muted" style="margin:2px 0 0">Alles, was du gesammelt, gekauft und erspielt hast. Tippe auf ein Stück.</p></div>' +
+    var h = '<div class="stack srv"><div><h1 style="font-size:22px">🏆 Meine Sammlung</h1><p class="small muted" style="margin:2px 0 0">Alles, was es zu sammeln gibt. Anziehen geht schneller in der Umkleide. Abzeichen findest du im Profil.</p></div>' +
       '<section class="srtop"><div class="srring" style="--p:' + c.pct + '"><b>' + c.pct + '%</b></div><div class="srcups">' + c.cups.map(function (t) { var col = { Bronze: ["#e0975a", "#8a4a1e"], Silber: ["#eef2fa", "#8794ad"], Gold: ["#ffd24a", "#c8780a"], Platin: ["#c9efff", "#7a8fff"] }[t.n]; return '<div class="srcup' + (t.done ? "" : " lock") + '">' + svgCup(col[0], col[1]) + '<b>' + t.n + '</b><small>ab ' + t.pct + '%</small></div>'; }).join("") + '</div></section>' +
       '<div class="srrar">' + ["common", "rare", "epic", "legend", "unreal"].map(function (r) { return '<span class="' + r + '"><b>' + c.rar[r] + '</b>' + RAR_NAME[r] + '</span>'; }).join("") + '</div>' +
       '<section class="srstage"><div class="srray"></div><div class="srfloor"></div><div class="srfav">' + favHtml + '</div><div class="srlbl">Favoriten</div><div class="srpod"><i></i></div><div class="srhero" id="srHero"></div>' +
       '<div class="srname" id="srName"></div><div class="srbtns"><button class="sbtn" data-act="srdance">💃 Tanzen</button><button class="sbtn b2" data-act="srswap">🔄 Wechseln</button></div></section>' +
       '<button class="sbtn b5 srwear" id="srWear" data-act="srwear" hidden>✅ Als Avatar übernehmen</button>' +
-      '<section class="srcab">' + c.shelves.map(function (s) {
+      '<section class="srcab">' + c.shelves.filter(function (s) { return !s.medals; }).map(function (s) {
         return '<div class="srshelf"><div class="srhead"><span>' + s.icon + ' ' + esc(s.title) + '</span><span class="c' + (s.own === s.items.length ? " full" : "") + '">' + s.own + ' / ' + s.items.length + '</span></div><div class="sritems">' + s.items.map(function (i) {
           var isNew = i.owned && !seen[i.id];
           return '<button class="srs ' + i.rar + (i.owned ? "" : " lock") + (isNew ? " isnew" : "") + '" data-act="sritem" data-id="' + esc(i.id) + '" style="--g:' + RAR_GLOW[i.rar] + '"><div class="ped"><span class="rb"></span><div class="it">' + srIcon(i) + '</div></div><b>' + esc(i.label) + '</b></button>';
@@ -1056,7 +1056,7 @@
     return h + '</div>' + (all ? '<p class="small" style="text-align:center;margin:6px 0 0">🎉 Plan geschafft! Alles Weitere ist Bonus.</p>' : "") + '</section>';
   }
   /* „Dein Tag“: feste Reihenfolge der Dinge, die heute dran sind (Daily Challenge, Pfad, Lernplan/Klassenaufgabe, Tagesziel) */
-  function dayCard(pct) {
+  function daySteps(pct) {
     var st = S.state, W = window.WordySync, steps = [], goalSec = S.goalMin() * 60, d = st.daily || {};
     steps.push({ icon: "🏆", t: "Daily Challenge", sub: S.challengeDone() ? "geschafft · Zusatz-Runden sind Bonus" : "Bunte Runde aus allem, was dran ist · 🪙 10", done: S.challengeDone(),
       go: 'data-act="start" data-mode="mix" data-min="' + (S.challengeDone() ? Math.min(5, S.goalMin()) : S.goalMin()) + '"', btn: S.challengeDone() ? "Zusatz" : "Los ▶" });
@@ -1077,6 +1077,12 @@
     var goalDone = pct >= 100;
     steps.push({ icon: "🎯", t: "Tagesziel " + S.goalMin() + " Min.", sub: goalDone ? "geschafft · alles Weitere ist Bonus" : "noch " + fmtMin(Math.max(0, goalSec - (d.sec || 0))), done: goalDone,
       go: 'data-act="start" data-mode="mix" data-min="' + Math.max(5, Math.min(15, Math.ceil(Math.max(0, goalSec - (d.sec || 0)) / 60))) + '"', btn: "Los ▶" });
+    steps.hasPath = all.length > 0; return steps;
+  }
+  /* Nächster offener Schritt des Tages (für den Tagesziel-Ring und den Hauptknopf) */
+  function dayNext(pct) { var s = daySteps(pct); return s.filter(function (x) { return !x.done; })[0] || s[0]; }
+  function dayCard(pct) {
+    var steps = daySteps(pct), all = { length: steps.hasPath ? 1 : 0 };
     var nowIx = -1; steps.forEach(function (s, i) { if (nowIx < 0 && !s.done) nowIx = i; });
     var doneN = steps.filter(function (s) { return s.done; }).length;
     var h = '<section class="card dayw"><div class="row" style="align-items:baseline"><div class="eyebrow" style="flex:1 1 auto">Dein Tag</div><span class="small muted tnum">' + doneN + ' von ' + steps.length + '</span></div><div class="dwl">';
@@ -1191,30 +1197,24 @@
     html += '<section class="hh sky-' + sky + '"><div class="hhsky"><i class="hhsun"></i><i class="hhcl c1"></i><i class="hhcl c2"></i><i class="hhst"></i></div>' +
       '<div class="hhtop"><div class="hhdate">' + esc(S.today().split("-").reverse().join(".")) + ' · ' + (biz ? "Business English" : "Schule") + '</div>' +
       '<h1>' + greet + '</h1><p class="hhtip">' + esc(tip) + '</p></div>' +
-      '<div class="hhgoal"><div class="hhring ' + global.VTC.frameClass(pf) + '" style="--p:' + pct + '"><b class="tnum">' + pct + '%</b></div><small>Tagesziel</small></div>' +
+      '<button class="hhgoal" ' + dayNext(pct).go + ' aria-label="Tagesziel: jetzt weiterlernen"><div class="hhring ' + global.VTC.frameClass(pf) + '" style="--p:' + pct + '"><b class="tnum">' + pct + '%</b></div><small>' + (pct >= 100 ? "Tagesziel ✓" : "▶ Weiter") + '</small></button>' +
       (seasonCloud() || adventCloud() || newsCloud()) + duelCloud() + '<div class="hhbubble" id="hhBub">' + esc(cheer) + '</div>' +
       '<div class="hhpod"><i></i></div><button class="hhfig" id="hhFig" data-act="hhdance" aria-label="Figur antippen">' + heroHtml(pf.avatar, 0) + '</button>' +
       '<div class="hhbar"><div class="hhrank"><b>' + esc(rn) + '</b><div class="hhxp"><i style="width:' + xpPct + '%"></i></div><small class="tnum">' + (r.next ? toNext + ' XP bis ' + esc(r.next.n) : "Höchster Rang") + '</small></div>' +
-      '<div class="hhchips"><span class="hhc">🔥 <b class="tnum">' + st.streak.count + '</b></span><span class="hhc">🪙 <b class="tnum">' + st.coins + '</b></span></div></div>' +
+      '</div>' +
       '</section>';
 
     html += adventTile() + herbstCard() + arcadeCard() + resumeCard() + planCard() + dayCard(pct);
 
-    var wish = S.wish();
-    html += '<section class="card"><div class="eyebrow">Tagesmissionen</div><div style="margin-top:6px">' +
+    var wish = S.wish(), wpc = wish ? Math.min(100, Math.round(st.coins * 100 / Math.max(1, wish.cost))) : 0;
+    html += '<section class="card"><div class="row" style="align-items:center;gap:8px"><div class="eyebrow" style="flex:1 1 auto">Tagesmissionen</div>' +
+      '<button class="chip wishpill" data-act="goshop" title="Dein Wunsch">' + (wish ? '🐷 ' + esc(wish.label) + ' · <b class="tnum">' + wpc + ' %</b>' : '⭐ Wunsch wählen') + '</button></div><div class="msl">' +
       st.daily.missions.map(function (m) {
         var pc = Math.min(100, Math.round(m.p * 100 / m.goal)), go = m.done ? "" : missionGo(m);
-        return '<div class="mission' + (m.done ? " done" : "") + '"><div class="tick">✓</div>' +
-          '<div class="txt"><div class="small" style="font-weight:600">' + esc(m.n) + '</div>' +
-          '<div class="bar"><i style="width:' + pc + '%"></i></div>' +
-          (go ? '<div class="row" style="margin-top:6px;gap:8px"><span class="small muted" style="flex:1 1 auto">' + esc(MISSION_TIP[m.type] || "") + '</span><button class="chip" style="white-space:nowrap" ' + go + '>Los →</button></div>' : '') + '</div>' +
-          '<div class="pill nowrap">🪙 ' + m.coins + '</div></div>';
-      }).join("") +
-      (wish ? '<div class="mission">' + wishFigure(wish, Math.round(Math.min(st.coins, wish.cost) * 100 / Math.max(1, wish.cost)), S.minXp(wish) > st.xp) + '<div class="txt"><div class="small" style="font-weight:600">Dein Wunsch: ' + esc(wish.label) + '</div>' +
-          '<div class="bar"><i style="width:' + Math.min(100, Math.round(st.coins * 100 / Math.max(1, wish.cost))) + '%"></i></div></div>' +
-          '<div class="pill nowrap tnum">' + Math.min(st.coins, wish.cost) + ' / ' + wish.cost + '</div></div>'
-        : '<div class="mission"><div class="tick" style="background:none">⭐</div><div class="txt small muted">Noch kein Wunsch gewählt.</div><button class="chip" data-act="goshop">Zum Shop</button></div>') +
-      '</div></section>';
+        return '<' + (go ? 'button ' + go : 'div') + ' class="msr' + (m.done ? " done" : "") + '" title="' + esc(MISSION_TIP[m.type] || "") + '"><span class="mst">' + (m.done ? "✓" : "") + '</span>' +
+          '<span class="msx"><b>' + esc(m.n) + '</b><span class="bar"><i style="width:' + pc + '%"></i></span></span>' +
+          '<span class="pill nowrap">🪙 ' + m.coins + '</span>' + (go ? '<span class="msgo" aria-hidden="true">›</span>' : '') + '</' + (go ? 'button' : 'div') + '>';
+      }).join("") + '</div><p class="small muted" style="margin:8px 0 0">Missionen erfüllen sich beim Lernen von selbst. Antippen startet die passende Runde.</p></section>';
     html += '<div style="text-align:center"><button class="chip" data-act="goueben">Alle Spielmodi und Einheiten →</button></div>';
     html += '</div>';
     view.innerHTML = html;
@@ -1756,22 +1756,48 @@
     var t = ai.phase === "pre" ? ["Wichtel-Kalender", "Noch " + ai.left + (ai.left === 1 ? " Tag" : " Tage") + " bis zum 1. Dezember"] : ["Türchen " + ai.day + " wartet!", "Gewinne das Spiel des Tages ✨"];
     return '<div class="newscloud"><i class="ncs s1">✨</i><i class="ncs s2">⭐</i><i class="ncs s3">✨</i><span class="ncnew">' + (ai.phase === "pre" ? "BALD" : "🎄") + '</span><button class="ncbody" data-act="advgo"><span class="nci">🎄</span><span class="nct"><b>' + esc(t[0]) + '</b><small>' + esc(t[1]) + '</small></span></button></div>';
   }
+  /* Münzen heute + „So verdienst du Münzen“ als Fenster (Tipp auf den Münzstand in der Kopfzeile oder im Pass) */
+  function coinSheet(open) {
+    if (document.querySelector(".srmd")) return;
+    earnOpen = !!open; var ov = document.createElement("div"); ov.className = "srmd"; ov.id = "coinSheet";
+    ov.innerHTML = '<div class="dsh" style="max-height:86vh;overflow:auto;text-align:left"><div class="dshg"></div>' + coinsCard().replace('<section class="card"', '<section') + '<div class="row" style="justify-content:center;margin-top:12px"><button class="btn soft" data-cs="x">Schließen</button></div></div>';
+    earnOpen = false; document.body.appendChild(ov);
+    ov.addEventListener("click", function (e) { if (e.target === ov || (e.target.closest && e.target.closest("[data-cs]"))) ov.remove(); });
+  }
+  /* Umkleide (v2.181): nur was dir gehört. Antippen = anziehen/ablegen, aufkleben/ablösen. Figur oben wechseln = neue aktive Figur. */
+  var UMK = [["acc", "🎩", "Zubehör", ["acc"]], ["cloth", "👕", "Kleidung", ["outfit", "kit"]], ["frame", "🖼️", "Rahmen", ["frame"]], ["moves", "💃", "Moves", ["dance", "fx", "snd"]], ["stk", "🏷️", "Sticker", ["sticker"]], ["world", "🌄", "Welt", ["bg", "theme", "title"]]];
+  function umkleideHtml() {
+    var pf = S.state.profile, figs = ladFigs(), cat = UMK.filter(function (c) { return c[0] === umkCat; })[0] || UMK[0];
+    var cur = S.SHOP.filter(function (x) { return x.kind === "avatar" && x.val === pf.avatar; })[0];
+    var strip = figs.map(function (f) { return '<button class="lfig' + (f.v === pf.avatar ? " on" : "") + '" data-act="umkfig" data-v="' + esc(f.v) + '" title="' + esc(f.l) + '" aria-label="' + esc(f.l) + '">' + avatarHtml(f.v) + '</button>'; }).join("");
+    var h = '<div class="lad umk"><div><h1 style="font-size:22px">👕 Umkleide</h1><p class="small muted" style="margin:2px 0 0">Hier stellst du deine Figur zusammen. Tippe ein Teil an: anziehen oder wieder ablegen.</p></div>' +
+      '<section class="lstage"><div class="lsfl">' + heroWith(pf.avatar, S.accOf(pf.avatar), 0) + '</div><span class="lstag">🧍 ' + esc(cur ? cur.label : "Meine Figur") + ' · aktiv</span>' +
+      '<span class="avatar ' + global.VTC.frameClass(pf) + ' lsprof" aria-hidden="true">' + avatarHtml(pf.avatar, true) + '</span><button class="lsplay" data-act="umkdance">💃 Tanzen</button><div class="lfigs" aria-label="Figur wählen">' + strip + '</div></section>' +
+      '<div class="lcats">' + UMK.map(function (c) { var n = S.SHOP.filter(function (x) { return c[3].indexOf(x.kind) >= 0 && S.owns(x); }).length; return '<button class="lcat' + (c[0] === cat[0] ? " on" : "") + '" data-act="umkcat" data-k="' + c[0] + '"><i>' + c[1] + '</i>' + c[2] + '<em style="background:var(--accent-soft);color:var(--ink)">' + n + '</em></button>'; }).join("") + '</div>';
+    var all = S.SHOP.filter(function (x) { return cat[3].indexOf(x.kind) >= 0 && S.shopVisible(x); }), own = ladSort(all.filter(function (x) { return S.owns(x); })), rest = all.length - own.length;
+    if (cat[0] === "stk") h += '<p class="small muted" style="margin:0">' + S.stickers().length + ' von ' + S.stickerSlots() + ' Sticker-Plätzen belegt. Mehr Plätze gibt es im Laden unter Figuren.</p>';
+    h += own.length ? '<div class="lgrid">' + own.map(function (it) {
+      var on = S.isActive(it), stk = it.kind === "sticker";
+      return '<button class="lt own ' + S.rarityOf(it) + (on ? " sel" : "") + '" data-act="umkeq" data-id="' + esc(it.id) + '" style="--c:' + (MED_COL[S.rarityOf(it)] || MED_COL.common)[1] + '" aria-pressed="' + on + '"><i class="ltd"></i><span class="lti">' + shopIcon(it) + '</span><b class="ltn">' + esc(it.label) + '</b><span class="ltp' + (on ? " own" : "") + '">' + (on ? (stk ? "✓ klebt" : "✓ an") : (stk ? "aufkleben" : "anziehen")) + '</span></button>';
+    }).join("") + '</div>' : '<p class="small muted" style="text-align:center;margin:18px 0">Hier hast du noch nichts. Schau im Laden vorbei!</p>';
+    h += '<button class="btn soft wide" data-act="umkshop" data-k="' + cat[0] + '" style="margin-top:6px">🛍️ ' + (rest > 0 ? "Noch " + rest + " im Laden entdecken" : "Zum Laden") + '</button></div>';
+    return h;
+  }
   function viewBeute() {
     var LEG = { pass: "heute", shop: "laden", showroom: "spind" };
     if (LEG[beuteSeg]) beuteSeg = LEG[beuteSeg];   // alte Namen (Links, Wolken) leben weiter
     if (beuteSeg === "advent") beuteSeg = "heute";   // der Advent wohnt seit 2.164 unter Spielen
-    var top = segBar("beute", beuteSeg, [["heute", "🎯 Heute"], ["laden", "🛍️ Laden"], ["spind", "🧍 Spind"]]);
+    var top = segBar("beute", beuteSeg, [["heute", "🎁 Pass"], ["laden", "🛍️ Laden"], ["spind", "🧍 Meine Sachen"]]);
     if (beuteSeg === "laden") { viewShop(); topSegs(top); }
     else if (beuteSeg === "spind") viewSpind(top);
     else {
       var pend = S.pathState().pending.length;
       view.innerHTML = '<div class="stack">' + top +
-        '<div class="row" style="align-items:center"><h1 style="font-size:22px;flex:1 1 auto">Deine Beute</h1><span class="pill tnum nowrap">🪙 ' + S.state.coins + '</span></div>' +
+        '<div class="row" style="align-items:center"><h1 style="font-size:22px;flex:1 1 auto">Dein Pass</h1><button class="chip tnum nowrap" data-act="coinsheet">🪙 ' + S.state.coins + ' · heute</button></div>' +
         (pend ? '<button class="btn wide lg" data-act="openchest" style="background:var(--gold,#f2b33d);color:#2b1d00">💰 Truhe öffnen' + (pend > 1 ? ' (' + pend + ')' : '') + '</button>' : "") +
-        dealHtml(true) + wishCard() + passCard() +
+        passCard() +
         '<details class="card"><summary><b>So funktioniert der Monatspass</b></summary><p class="small muted" style="margin:8px 0 0">Der Pass läuft einen Monat in vier Wochen plus Finale. Jede Woche zählt, an wie vielen Tagen du dein Tagesziel schaffst, und jeder Tag gibt einen Stempel. Ein verpasster Tag pro Woche zählt als Joker mit. Sind genug Tage zusammen, öffnest du die Wochen-Beute mit Figur, Tanz und Münzen. Schon ab 3 Tagen gibt es Bronze, bei 5 Silber, bei 7 Gold, jeweils mit Münzen. Mit doppeltem Tagesziel holst du einen verpassten Tag nach, ein Crew-Wochenziel gibt Bonusmünzen, und nächste Woche wartet ein geheimes Geschenk. Alle vier Wochen geschafft? Dann wartet das Finale.</p></details>' +
-        coinsCard() + '</div>';
-      earnOpen = false;
+        '</div>';
     }
   }
   /* ================= HERBST (v2.172): Vogelscheuche-Kumpel mit Krähen-Tipp, Igel, Pilze, Laubhaufen, Ernte, Sankt Martin ================= */
@@ -1880,6 +1906,7 @@
     hbSheet('<div style="font-size:42px;line-height:1.1">🍄</div><div class="eyebrow">Pilzbuch</div><h3>' + Object.keys(h.book).length + ' von ' + h.shrooms.length + ' Sorten gefunden</h3><div class="row wrap" style="gap:10px;justify-content:center;margin-top:8px">' + cells + '</div><p class="small muted" style="margin:10px 0 0">Tippe auf der Startseite die Pilze im Hintergrund an. Höchstens 5 am Tag, keine XP, nur zum Sammeln.</p>');
   }
   if (global.VTS2) hbHooks();
+  (function () { var hc = $("#hCoins"); if (hc && hc.parentNode) { hc.parentNode.id = "hCoinsBtn"; hc.parentNode.setAttribute("role", "button"); hc.parentNode.addEventListener("click", function () { if (sessionEl.hidden) coinSheet(); }); } })();
   if (global.VTS2) global.VTS2.hooks.arcBeam = function (n) { renderHeader(); toast("🛸 Das UFO beamt dir " + n + " 🪙!"); };
 
   function seasonCard() {
@@ -1891,11 +1918,11 @@
       '<div class="row wrap" style="gap:8px">' + opts.map(function (x) { return '<button class="chip" data-act="setseason" data-v="' + x[0] + '"' + (x[2] ? ' disabled style="opacity:.5"' : '') + ' aria-pressed="' + (m === x[0]) + '">' + (x[2] ? "🔒 " : "") + x[1] + (m === x[0] ? " ✓" : "") + '</button>'; }).join("") + '</div>' +
       '<div class="row" style="gap:8px;margin-top:12px;align-items:center"><button class="chip" data-act="seasonsound" aria-pressed="' + snd + '">🔊 Saison-Klänge ' + (snd ? "an" : "aus") + '</button><span class="small muted">leise Hintergrundmusik, nur wenn „Ton“ an ist und nicht beim Üben</span></div></section>';
   }
-  function designCard() {
+  function designCard(noSeason) {
     var cur = S.state.settings.design || "gold";
     return '<section class="card"><div class="eyebrow">🎨 Design</div><p class="small muted" style="margin:4px 0 10px">Such dir aus, wie Wordy aussieht. Du kannst jederzeit wechseln.</p><div class="dsgrid">' + global.VTC.DESIGNS.map(function (d) {
       return '<button class="dstile" data-act="setdesign" data-d="' + d[0] + '" aria-pressed="' + (cur === d[0]) + '"><i style="background:' + d[3] + '"></i><b>' + d[1] + (cur === d[0] ? " ✓" : "") + '</b><small>' + d[2] + '</small></button>';
-    }).join("") + '</div><p class="small muted" style="margin:10px 0 0">„Hell“ oder „Dunkel“ stellst du unter Ton &amp; Aussehen ein (gilt für Nachtgold). Die Shop-Farbwelten gelten im Design „Klassisch“.</p></section>' + seasonCard();
+    }).join("") + '</div><p class="small muted" style="margin:10px 0 0">„Hell“ oder „Dunkel“ stellst du gleich hier darüber ein (gilt für Nachtgold). Die Shop-Farbwelten gelten im Design „Klassisch“.</p></section>' + (noSeason ? "" : seasonCard());
   }
   function profileCard() {
     var st = S.state, r = S.rankOf(st.xp), pn = playerName(), pf = st.profile, xpPct = r.next ? Math.min(100, Math.round(r.into * 100 / Math.max(1, r.span))) : 100;
@@ -1903,7 +1930,7 @@
     return '<section class="card"><div class="row" style="gap:14px;align-items:center"><div class="avatar ' + global.VTC.frameClass(pf) + '" style="width:64px;height:64px;font-size:34px;flex:none">' + avatarHtml(pf.avatar, true) + '</div>' +
       '<div style="flex:1 1 auto;min-width:0"><b style="font-size:18px">' + esc(pn || "Spieler") + '</b><div class="small muted">' + esc(r.rank.n) + ' · <span class="tnum">' + st.xp + '</span> XP</div>' +
       '<div class="bar" style="margin-top:6px"><i style="width:' + xpPct + '%"></i></div></div></div>' +
-      '<div class="row" style="gap:8px;margin-top:12px;align-items:center"><span class="small muted">⭐ Favoriten</span>' + (favs || '<span class="small muted">noch keine</span>') + '<button class="chip" style="margin-left:auto" data-act="gotab" data-t="showroom">🏆 Showroom</button></div></section>';
+      '<div class="row" style="gap:8px;margin-top:12px;align-items:center"><span class="small muted">⭐ Favoriten</span>' + (favs || '<span class="small muted">noch keine</span>') + '<button class="chip" style="margin-left:auto" data-act="goumk">👕 Umkleide</button></div></section>';
   }
   function viewUeben() {
     if (detailUnit === "__verbs") return viewVerbList();
@@ -2858,13 +2885,19 @@
   function ladRefresh() { var y = view.scrollTop; render(); view.scrollTop = y; }
   /* Spind: Showroom (anziehen, Favoriten), Sammlung, Abzeichen, Ränge mit Rang-Pfad */
   function viewSpind(top) {
-    var SUB = [["showroom", "🏆 Showroom"], ["sammlung", "Album"], ["abzeichen", "Abzeichen"], ["raenge", "Ränge"]];
-    if (!SUB.some(function (x) { return x[0] === shopSeg; })) shopSeg = "showroom";
-    var sub = segBar("shop", shopSeg, SUB).replace('class="segs"', 'class="segs s4"');
+    if (shopSeg === "abzeichen" || shopSeg === "raenge") { profSeg = shopSeg; shopSeg = "umkleide"; tab = "parent"; return render(); }   // wohnen seit 2.181 im Profil
+    var SUB = [["umkleide", "👕 Umkleide"], ["showroom", "🏆 Sammlung"], ["sammlung", "📖 Album"]];
+    if (!SUB.some(function (x) { return x[0] === shopSeg; })) shopSeg = "umkleide";
+    var sub = segBar("shop", shopSeg, SUB);
     if (shopSeg === "showroom") { viewShowroom(); topSegs(top + sub); return; }
     var html = '<div class="stack">' + top + sub;
     if (shopSeg === "sammlung") html += albumCard() + albumCard("fn") + stickerBook() + stickerBook("fn");
-    else if (shopSeg === "abzeichen") {
+    else html += umkleideHtml();
+    view.innerHTML = html + '</div>';
+  }
+
+  function abzHtml() {
+    var html = "";
       var mg = S.medalGroups(), mo = 0, mt = 0; mg.forEach(function (g) { g.items.forEach(function (m) { mt++; if (m.owned) mo++; }); });
       html += '<section class="card"><div class="eyebrow">Abzeichen · ' + mo + ' von ' + mt + '</div><p class="small muted" style="margin:6px 0 0">Sammle Abzeichen in elf Kategorien. Je höher die Stufe, desto seltener das Abzeichen – ganz oben wartet „Unreal“. Tippe ein Abzeichen an, um zu sehen, wie du es bekommst.</p></section>';
       mg.forEach(function (g) {
@@ -2873,11 +2906,9 @@
           g.items.map(function (m) { return '<button class="mdt ' + m.rar + (m.owned ? "" : " lock") + '" data-act="sritem" data-id="' + esc(m.id) + '" title="' + esc(m.label) + '" aria-label="' + esc(m.label) + '"><span class="mdi">' + srIcon(m) + '</span><small>' + esc(m.label) + '</small></button>'; }).join("") + '</div>' +
           (nx ? '<div class="small muted" style="margin-top:8px">Als Nächstes: <b>' + esc(nx.label) + '</b> – ' + esc(nx.how) + '</div>' + (nx.need ? '<div class="bar" style="margin-top:4px"><i style="width:' + Math.round(nx.prog * 100 / nx.need) + '%"></i></div>' : "") : '<div class="small" style="margin-top:8px">✓ Alles geschafft in dieser Kategorie!</div>') + '</section>';
       });
-    }
-    else html += ranksCard() + '<section class="card"><div class="eyebrow">Rang-Pfad</div>' + rankPathHtml() + '</section>';
-    view.innerHTML = html + '</div>';
+        return html;
   }
-
+  function raengeHtml() { return ranksCard() + '<section class="card"><div class="eyebrow">Rang-Pfad</div>' + rankPathHtml() + '</section>'; }
   /* ================= ELTERN / LEHRER ================= */
   function playersCard() {
     var d = S.profiles();
@@ -2947,8 +2978,16 @@
   }
   function viewParent() {
     var st = S.state, s = S.stats();
-    var html = '<div class="stack">';
-    html += profileCard() + howToCard();
+    var psb = segBar("prof", profSeg, [["ich", "👤 Ich"], ["abzeichen", "Abzeichen"], ["raenge", "Ränge"], ["set", "⚙️ Optionen"]]).replace('class="segs"', 'class="segs s4"');
+    if (profSeg !== "set") {
+      var mgI = S.medalGroups(), moI = 0, mtI = 0; mgI.forEach(function (g) { g.items.forEach(function (m) { mtI++; if (m.owned) moI++; }); });
+      view.innerHTML = '<div class="stack">' + psb + (profSeg === "abzeichen" ? abzHtml() : profSeg === "raenge" ? raengeHtml()
+        : profileCard() + '<section class="card"><div class="eyebrow">Mein Stand</div><div class="pstats">' +
+          [["🔥", st.streak.count, "Tage in Serie"], ["📚", Object.keys(st.w || {}).length, "Wörter gelernt"], ["🏅", moI + " / " + mtI, "Abzeichen"], ["🪙", st.coins, "Münzen"]].map(function (x) { return '<div><i>' + x[0] + '</i><b class="tnum">' + x[1] + '</b><small>' + x[2] + '</small></div>'; }).join("") + '</div>' +
+          '<div class="row wrap" style="gap:8px;margin-top:12px"><button class="btn soft" data-act="goumk" style="flex:1 1 40%">👕 Umkleide</button><button class="btn soft" data-act="seg" data-g="prof" data-v="abzeichen" style="flex:1 1 40%">🏅 Abzeichen</button><button class="btn soft" data-act="gostats" style="flex:1 1 40%">📈 Fortschritt</button><button class="btn soft" data-act="seg" data-g="prof" data-v="set" style="flex:1 1 40%">⚙️ Optionen</button></div></section>' + seasonCard() + howToCard()) + '</div>';
+      return;
+    }
+    var html = '<div class="stack">' + psb;
     function unCard(h) { return h.replace(/^<section class="card"[^>]*>(<div class="eyebrow"[^>]*>[^<]*<\/div>)?/, "").replace(/<\/section>$/, ""); }
     function fold(key, icon, title, sub, inner) {
       return '<details class="fold" data-f="' + key + '"' + (openFolds[key] ? " open" : "") + '><summary><span class="chev">▸</span><span style="flex:1 1 auto;min-width:0"><b>' + icon + " " + title + '</b>' +
@@ -2977,8 +3016,12 @@
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Herzen benutzen<br><span class="small muted">Aus = Üben ohne Abbruch</span></span>' +
       '<input type="checkbox" id="setHearts" ' + (st.settings.hearts ? "checked" : "") + ' style="width:auto"></label>' +
       '<p class="small muted" style="margin:10px 0 0">Gelernt wird als <b>' + esc(playerName()) + '</b>. Den Namen änderst du unter „Spieler“.</p>');
-    html += fold("design", "🎨", "Design", "Aussehen von Wordy: " + ((global.VTC.DESIGNS.filter(function (d) { return d[0] === (st.settings.design || "gold"); })[0] || [])[1] || ""), unCard(designCard()));
-    html += fold("ton", "🔊", "Ton &amp; Aussehen", "Vorlesen, Musik, Hell oder Dunkel",
+    html += fold("design", "🎨", "Aussehen", "Saison-Look, Hell oder Dunkel, Design: " + ((global.VTC.DESIGNS.filter(function (d) { return d[0] === (st.settings.design || "gold"); })[0] || [])[1] || ""), unCard(seasonCard()) + '<hr class="sep" style="margin:14px 0">' +
+      '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Erscheinungsbild<br><span class="small muted">Automatisch folgt der Einstellung des Geräts</span></span>' +
+      '<select id="setMode" style="width:auto">' + [["auto", "Automatisch"], ["light", "Hell"], ["dark", "Dunkel"]].map(function (o) {
+        return '<option value="' + o[0] + '"' + ((st.settings.themeMode || "auto") === o[0] ? " selected" : "") + '>' + o[1] + '</option>';
+      }).join("") + '</select></label>' + '<hr class="sep" style="margin:14px 0">' + unCard(designCard(true)));
+    html += fold("ton", "🔊", "Ton &amp; Mitteilungen", "Vorlesen, Musik, Erinnerung",
       '<label class="row" style="margin-top:4px"><span style="flex:1 1 auto">Aussprache vorlesen<br><span class="small muted">Nutzt die englische Stimme des Geräts</span></span>' +
       '<input type="checkbox" id="setAudio" ' + (st.settings.audio ? "checked" : "") + ' style="width:auto"></label>' +
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Hintergrundmusik<br><span class="small muted">Leise Saison-Klänge (Gruseln, Winter, Weihnachten) auf der Startseite. Standard: aus, nicht beim Üben</span></span>' +
@@ -2987,10 +3030,6 @@
       '<div class="row" style="margin-top:10px"><span style="flex:1 1 auto">Neuheiten-Wolke<br><span class="small muted">Zeigt die Ankündigung neuer Spiele auf der Startseite wieder an</span></span><button class="chip" id="setCloud">Wieder anzeigen</button></div>' +
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Bildschirm anlassen<br><span class="small muted">Das Handy dunkelt nicht ab, solange Wordy offen ist</span></span>' +
       '<input type="checkbox" id="setWake" ' + (st.settings.wake !== false ? "checked" : "") + ' style="width:auto"></label>' +
-      '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Erscheinungsbild<br><span class="small muted">Automatisch folgt der Einstellung des Geräts</span></span>' +
-      '<select id="setMode" style="width:auto">' + [["auto", "Automatisch"], ["light", "Hell"], ["dark", "Dunkel"]].map(function (o) {
-        return '<option value="' + o[0] + '"' + ((st.settings.themeMode || "auto") === o[0] ? " selected" : "") + '>' + o[1] + '</option>';
-      }).join("") + '</select></label>' +
       '<label class="row" style="margin-top:10px"><span style="flex:1 1 auto">Vorlauf beim Vorlesen<br><span class="small muted">Länger, wenn der Anfang eines Satzes fehlt. „Stimme testen“ zeigt die Wirkung.</span></span>' +
       '<select id="setLead" style="width:auto">' + [[0, "Aus"], [500, "Kurz"], [1000, "Mittel"], [1600, "Lang"]].map(function (o) {
         return '<option value="' + o[0] + '"' + (speechLead() === o[0] ? " selected" : "") + '>' + o[1] + '</option>';
@@ -4041,7 +4080,7 @@
     else if (a === "seg") {
       var sg = act.getAttribute("data-g"), sv = act.getAttribute("data-v");
       if (sg === "ueben") uebenSeg = sv; else if (sg === "stats") statsSeg = sv; else if (sg === "shop") shopSeg = sv;
-      else if (sg === "lernen") { lernSeg = sv; uebenSeg = sv === "units" ? "units" : "modi"; detailUnit = null; } else if (sg === "spielen") spielSeg = sv; else if (sg === "beute") beuteSeg = sv;
+      else if (sg === "lernen") { lernSeg = sv; uebenSeg = sv === "units" ? "units" : "modi"; detailUnit = null; } else if (sg === "spielen") spielSeg = sv; else if (sg === "beute") beuteSeg = sv; else if (sg === "prof") profSeg = sv;
       render(); view.scrollTop = 0;
     }
     else if (a === "startrec") { if (lastRec) startSession(lastRec.opts); }
@@ -4241,7 +4280,7 @@
       var nid = act.getAttribute("data-id"), pfc = S.state.profile; (pfc.cloudSeen || (pfc.cloudSeen = {}))[nid] = 1; if (pfc.cloudForce) delete pfc.cloudForce[nid]; S.save(true);
       var cl = act.closest(".newscloud"); if (cl) cl.remove();
       var nn = NEWS.filter(function (x) { return x.id === nid; })[0];
-      if (a === "newscloud" && nn && nn.go === "verdienst") { tab = "beute"; beuteSeg = "heute"; earnOpen = true; render(); var eh = document.getElementById("earnHow"); if (eh) eh.scrollIntoView({ block: "start" }); }
+      if (a === "newscloud" && nn && nn.go === "verdienst") { render(); coinSheet(true); }
       else if (a === "newscloud" && nn && nn.go === "mal") { tab = "lernen"; lernSeg = "mal"; uebenSeg = "modi"; detailUnit = null; render(); view.scrollTop = 0; }
       else if (a === "newscloud" && nn && nn.shop) { tab = "beute"; beuteSeg = "shop"; shopTab = nn.shop; render(); view.scrollTop = 0; }
       else if (a === "newscloud" && global.VTG) global.VTG.start(nid);
@@ -4302,12 +4341,20 @@
         else global.VTC.dance({ av: ladFig || ppf.avatar, avatar: avatarHtml(ladFig || ppf.avatar), outfit: (pit.kind === "outfit" || pit.kind === "kit") ? pit.val : ppf.outfit, dance: pit.kind === "dance" ? pit.val : (ppf.dance || "wackler"), title: pit.label });
       }
     }
+    else if (a === "coinsheet") coinSheet();
+    else if (a === "umkcat") { umkCat = act.getAttribute("data-k"); var syU = view.scrollTop; render(); view.scrollTop = syU; }
+    else if (a === "umkfig") { var uv = act.getAttribute("data-v"), ui = S.SHOP.filter(function (x) { return x.kind === "avatar" && x.val === uv; })[0]; if (ui) S.equip(ui.id); else { S.state.profile.avatar = uv; S.save(true); } renderHeader(); var syF = view.scrollTop; render(); view.scrollTop = syF; }
+    else if (a === "umkeq") { var uid = act.getAttribute("data-id"), uit = S.itemById(uid), ur = uit && uit.kind === "acc" ? S.accToggle(S.state.profile.avatar, uid) : S.equip(uid); if (ur.error) toast(ur.error); renderHeader(); var syE = view.scrollTop; render(); view.scrollTop = syE; }
+    else if (a === "umkdance") { var up = S.state.profile; global.VTC.dance({ av: up.avatar, avatar: avatarHtml(up.avatar, true), outfit: up.outfit, dance: up.dance || "wackler", title: "Dein Look" }); }
+    else if (a === "umkshop") { var uk = act.getAttribute("data-k"); ladCat = uk === "stk" ? "fig" : uk; ladQ = ""; ladFlt = "all"; ladSel = ""; tab = "beute"; beuteSeg = "laden"; render(); view.scrollTop = 0; }
+    else if (a === "goumk") { tab = "beute"; beuteSeg = "spind"; shopSeg = "umkleide"; render(); view.scrollTop = 0; }
+    else if (a === "gostats") { tab = "lernen"; lernSeg = "stats"; render(); view.scrollTop = 0; }
     else if (a === "shoptab") { shopTab = act.getAttribute("data-k"); beuteSeg = "laden"; render(); }
     else if (a === "dealview") dealSheet(act.getAttribute("data-id"));
     else if (a === "advdoor") advDoor(+act.getAttribute("data-d"));
     else if (a === "hbopen") { hbBook(); }
     else if (a === "hbhog") { var HH = global.VTS2 && global.VTS2.hooks; if (HH && HH.hog) HH.hog(); }
-    else if (a === "martin") { var lg = S.hbLantern(); if (lg) toast("🏮 Laterne geschenkt! Du findest sie unter Beute › Spind › Zubehör."); render(); }
+    else if (a === "martin") { var lg = S.hbLantern(); if (lg) toast("🏮 Laterne geschenkt! Du findest sie unter Beute › Meine Sachen › Umkleide."); render(); }
     else if (a === "advgo") { tab = "spielen"; spielSeg = "advent"; render(); view.scrollTop = 0; }
     else if (a === "shoprar") { shopRar = act.getAttribute("data-k"); render(); }
     else if (a === "checkupdate") {
@@ -4331,7 +4378,7 @@
         .then(done, done);
     }
     else if (a === "wish") { var rw2 = S.setWish(act.getAttribute("data-id")); toast(rw2.error || (rw2.on ? "Wunsch: " + rw2.item.label : "Wunsch entfernt")); render(); }
-    else if (a === "goshop") { tab = "shop"; shopSeg = "shop"; render(); var shopEl = view.querySelector(".shopitem"); if (shopEl) shopEl.scrollIntoView({ block: "center" }); }
+    else if (a === "goshop") { tab = "beute"; beuteSeg = "laden"; render(); view.scrollTop = 0; }
     else if (a === "albuminfo") {
       var ai = S.SHOP.filter(function (x) { return x.id === act.getAttribute("data-id"); })[0];
       if (ai) toast(S.minXp(ai) > S.state.xp ? ai.label + ": erst ab Rang " + ai.rank + " (" + ai.cost + " Münzen)." : ai.label + ": " + ai.cost + " Münzen.");
