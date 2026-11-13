@@ -1014,6 +1014,7 @@ div.msr{cursor:default}.msr.done{opacity:.7}.msr .mst{flex:0 0 20px;height:20px;
 .wishpill{max-width:58%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px}
 .pstats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px;text-align:center}.pstats i{font-style:normal;font-size:20px;display:block}.pstats b{display:block;font-size:17px}.pstats small{display:block;font-size:10.5px;color:var(--ink-3,#777);line-height:1.2}
 .lad.umk{padding-bottom:0}#hCoinsBtn{cursor:pointer}
+.backb{position:sticky;top:6px;z-index:6;align-self:flex-start;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--ink);font:inherit;font-weight:700;font-size:14px;padding:8px 14px;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.14)}
 /* ===== LADEN NEU (Anprobe-Bühne) ===== */
 .lad .lstage{position:sticky;top:0;z-index:8;height:178px;border-radius:22px;background:linear-gradient(#cfe9f3,#eaf5fa);border:2px solid var(--line);overflow:hidden;box-shadow:0 6px 16px rgba(0,0,0,.14)}
 :root[data-theme="dark"] .lad .lstage{background:linear-gradient(#233a5e,#1a2742)}
@@ -1040,9 +1041,9 @@ div.msr{cursor:default}.msr.done{opacity:.7}.msr .mst{flex:0 0 20px;height:20px;
 .lad .lt .ltd{position:absolute;top:6px;left:6px;width:9px;height:9px;border-radius:50%;background:var(--c)}
 .lad .lt .lti{height:54px;display:grid;place-items:center;font-size:30px;max-width:100%}.lad .lt .lti .avatar,.lad .lt .lti svg{max-height:52px}
 .lad .lt .ltn{font-size:11.5px;line-height:1.15;max-width:100%;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.lad .lt .ltp{font-size:11px;font-weight:700;color:var(--ink-2)}.lad .lt .ltp.own{color:var(--good,#2c7a57)}
+.lad .lt .ltp{font-size:11px;font-weight:700;color:var(--ink-2)}.lad .lt .ltp.own{color:color-mix(in srgb,var(--good,#2c7a57) 60%,var(--ink))}
 .lad .lt .ltn2{position:absolute;top:-6px;right:-3px;background:#e8123c;color:#fff;border-radius:9px;font-size:9px;font-style:normal;padding:1px 5px;font-weight:900}
-.lad .lt.own{background:var(--good-soft,#dcf0e6)}.lad .lt.lock{opacity:.72}
+.lad .lt.own{background:color-mix(in srgb,var(--good,#2c7a57) 18%,var(--card))}.lad .lt.lock{opacity:.72}
 .lad .lt.sel{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 30%,transparent)}
 .lad .lbar{position:sticky;bottom:8px;z-index:9;display:flex;align-items:center;gap:10px;border-radius:18px;background:#1b2a41;color:#fff;padding:10px 12px;box-shadow:0 8px 20px rgba(0,0,0,.3)}
 .lad .lbar.hint{justify-content:center;font-size:13px;font-weight:700}
@@ -1846,11 +1847,12 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 :root:root:root[data-season="arcade"] .hwsp.gone{opacity:0!important;pointer-events:none}:root:root:root[data-season="arcade"] .hwsp.back{animation:arcWarp 1.2s ease-out}@keyframes arcWarp{0%{transform:scale(0) rotate(360deg);opacity:0}100%{transform:none;opacity:1}}
 .arcLaser{position:fixed;top:0;height:100vh;width:5px;margin-left:-2px;z-index:9995;pointer-events:none;background:linear-gradient(#fff,var(--c));box-shadow:0 0 18px 6px var(--c);transform-origin:50% 0;animation:arcLz .9s ease-out forwards}@keyframes arcLz{0%{transform:rotate(var(--r)) scaleY(0);opacity:1}25%{transform:rotate(var(--r)) scaleY(1)}100%{transform:rotate(calc(var(--r) * -1)) scaleY(1);opacity:0}}
 body.arcGlitch #app{animation:arcGl .5s steps(2) 2}@keyframes arcGl{0%{transform:translate(3px,0);filter:hue-rotate(60deg) saturate(2)}50%{transform:translate(-4px,2px) skewX(2deg);filter:hue-rotate(-70deg)}100%{transform:none;filter:none}}
-.arcBlk{position:fixed;top:-20px;z-index:5;pointer-events:none;width:14px;height:14px;opacity:.5;box-shadow:inset 0 0 0 2px rgba(255,255,255,.5),0 0 10px var(--c),14px 0 0 var(--c),var(--bx,0) 14px 0 var(--c);background:var(--c);animation:arcFall var(--d,9s) steps(34) forwards}@keyframes arcFall{to{transform:translateY(calc(100vh + 60px))}}
+.arcBlk{position:fixed;top:-20px;z-index:0;pointer-events:none;width:14px;height:14px;opacity:.5;box-shadow:inset 0 0 0 2px rgba(255,255,255,.5),0 0 10px var(--c),14px 0 0 var(--c),var(--bx,0) 14px 0 var(--c);background:var(--c);animation:arcFall var(--d,9s) steps(34) forwards}@keyframes arcFall{to{transform:translateY(calc(100vh + 60px))}}
 .arcCoin{position:fixed;z-index:9996;pointer-events:none;font-size:26px;animation:arcCoinD 1.2s cubic-bezier(.3,0,.7,1) forwards;filter:drop-shadow(0 0 8px #FFE14D)}@keyframes arcCoinD{0%{transform:translateY(0) scale(.3)}70%{transform:translateY(150px) scale(1.2)}100%{transform:translateY(170px) scale(1);opacity:0}}
 .arcCombo{position:fixed;left:50%;top:22%;z-index:9997;pointer-events:none;font:900 34px/1 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.06em;color:#FFE14D;text-shadow:3px 0 #FF2BD6,-3px 0 #00F0FF,0 0 20px #FF2BD6;transform:translate(-50%,-50%) scale(0);animation:arcCb 1.1s steps(8) forwards;white-space:nowrap}@keyframes arcCb{15%{transform:translate(-50%,-50%) scale(1.3)}30%,75%{transform:translate(-50%,-50%) scale(1);opacity:1}100%{transform:translate(-50%,-120%) scale(1);opacity:0}}
 :root:root:root[data-season="arcade"] #session{position:absolute}.arcHud{position:absolute;left:0;right:0;top:50px;z-index:3;display:flex;gap:7px;justify-content:center;align-items:center;pointer-events:none;height:20px}.arcHud svg{width:20px;height:15px;image-rendering:pixelated;filter:drop-shadow(0 0 5px currentColor)}.arcHud svg.dead{opacity:.16;filter:none}.arcHud svg.zap{animation:arcZap .5s steps(5)}.arcHud b{font:900 10px/1 ui-monospace,Menlo,monospace;color:#FFE14D;letter-spacing:.12em;margin-left:4px}
 :root:root:root[data-season="arcade"] .card.passc,:root:root:root[data-season="arcade"] .card.crewhero{border-color:#00F0FF!important}
+:root:root:root[data-season="arcade"] #app{position:relative;z-index:1}
 @media (prefers-reduced-motion:reduce){.arcGrid,.arcInv,.arcStars{animation:none}:root:root:root[data-season="arcade"] .hwsp{animation:none}}
 /* SEASON-ARCADE:END */
 </style>

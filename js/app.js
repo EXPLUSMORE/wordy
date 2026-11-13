@@ -531,7 +531,7 @@
         '<button class="btn soft" data-act="start" data-mode="verbs" data-vtype="1" data-verb="' + esc(v.id) + '" style="align-self:flex-start">✍️ Dieses Verb tippen</button></div>';
     }).join("");
     view.innerHTML = '<div class="stack">' +
-      '<button class="btn ghost" data-act="back" style="align-self:flex-start">← Zurück</button>' +
+      '<button class="backb" data-act="back">← Zurück</button>' +
       '<section class="card"><div class="eyebrow">Unregelmäßige Verben</div>' +
       '<h1 style="font-size:24px">Verbenliste</h1>' +
       '<p class="small muted" style="margin:6px 0 0">' + vs.total + ' Verben · ' + vs.seen + ' geübt · ' + vs.mastered + ' gemeistert. Infinitiv – Simple Past (Präteritum)' + (vPastOnly() ? '' : ' – Past Participle (Partizip Perfekt)') + '.</p>' + verbFormsSwitch() +
@@ -676,7 +676,7 @@
         var lab = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"][(new Date(d.k + "T00:00:00Z").getUTCDay() + 6) % 7], cls = d.ok ? "ok" : d.joker || d.makeup ? "joker" : d.today ? "now" : d.future ? "fut" : "miss", fresh = d.ok && d.today && S.stampNew(d.k);
         if (fresh) setTimeout(function () { try { if (S.state.settings.audio) global.VTC.sound(S.state.profile.snd, true); global.VTC.burst(S.state.profile.fx, global.innerWidth / 2, global.innerHeight * .4, 14, 1); } catch (e) {} }, 350);
         return '<span class="stp ' + cls + (fresh ? " new" : "") + '"><span class="stpi">' + (d.ok ? sIcon : d.joker ? "🃏" : d.makeup ? "💪" : d.today ? "▶" : d.future ? "○" : "·") + '</span><small>' + lab + '</small></span>';
-      }).join("") + '</div>' + (w.joker ? '<p class="small muted" style="margin:6px 0 0">🃏 Joker: ein verpasster Tag zählt in dieser Woche trotzdem mit.</p>' : '<p class="small muted" style="margin:6px 0 0">🃏 Pro Woche zählt ein verpasster Tag als Joker mit.</p>') + (w.makeup ? '<p class="small" style="margin:4px 0 0">💪 Nachgeholt: Mit dem doppelten Tagesziel heute zählt ein weiterer Tag mit.</p>' : w.state === "cur" ? '<p class="small muted" style="margin:4px 0 0">💪 Nachholen: Schaffst du heute das doppelte Tagesziel, zählt ein weiterer verpasster Tag.</p>' : "");
+      }).join("") + '</div>' + (w.joker ? '<p class="small muted" style="margin:6px 0 0">🃏 Joker: ein verpasster Tag zählt in dieser Woche trotzdem mit.</p>' : "") + (w.makeup ? '<p class="small" style="margin:4px 0 0">💪 Nachgeholt: Mit dem doppelten Tagesziel heute zählt ein weiterer Tag mit.</p>' : "");
       var TN = { bronze: "🥉 Bronze", silber: "🥈 Silber", gold: "🥇 Gold" };
       var tierHtml = '<div class="ptiers">' + w.tiers.map(function (t) {
         return '<button class="ptr ' + t.k + (t.got ? " got" : t.ok ? " rdy" : "") + '" ' + (t.ok && !t.got ? 'data-act="passtier" data-n="' + w.n + '" data-k="' + t.k + '"' : "disabled") + '><b>' + TN[t.k] + '</b><small>' + t.d + ' Tage</small><span>' + (t.got ? "✓" : "+" + t.c + " 🪙") + '</span></button>';
@@ -1527,7 +1527,7 @@
     if (seg === "stats") viewStats();
     else if (seg === "mal") view.innerHTML = '<div class="stack">' + global.VTM.panel() + '</div>';
     else if (seg === "pfad") view.innerHTML = '<div class="stack">' + pathCard() + '</div>';
-    else if (seg === "gram") view.innerHTML = '<div class="stack"><button class="chip" data-act="seg" data-g="lernen" data-v="units" style="align-self:flex-start">← Was lernen?</button>' + gramHtml() + '</div>';
+    else if (seg === "gram") view.innerHTML = '<div class="stack"><button class="backb" data-act="seg" data-g="lernen" data-v="units">← Zurück</button>' + gramHtml() + '</div>';
     else {
       view.innerHTML = '<div class="stack">' + (seg === "units" ? unitsHtml() : modiHtml("lern")) + '</div>';
       $$("details.grp").forEach(function (d) { d.addEventListener("toggle", function () { openGroups[d.getAttribute("data-k")] = d.open; }); });
@@ -1783,6 +1783,11 @@
     h += '<button class="btn soft wide" data-act="umkshop" data-k="' + cat[0] + '" style="margin-top:6px">🛍️ ' + (rest > 0 ? "Noch " + rest + " im Laden entdecken" : "Zum Laden") + '</button></div>';
     return h;
   }
+  function passHelp() {
+    if (document.querySelector(".srmd")) return; var ov = document.createElement("div"); ov.className = "srmd";
+    ov.innerHTML = '<div class="dsh" style="text-align:left"><div class="dshg"></div><div class="eyebrow">Monatspass</div><h3>So funktioniert der Pass</h3><ul class="small" style="margin:8px 0 0;padding-left:18px;line-height:1.55"><li>Vier Wochen plus Finale. Jeder Tag mit geschafftem Tagesziel gibt einen Stempel.</li><li>Genug Stempel in der Woche = Wochen-Beute (Figur, Tanz, Münzen).</li><li>🥉 ab 3 Tagen, 🥈 ab 5, 🥇 ab 7 – jeweils mit Münzen.</li><li>🃏 Joker: ein verpasster Tag pro Woche zählt trotzdem mit.</li><li>💪 Nachholen: doppeltes Tagesziel an einem Tag holt einen weiteren verpassten Tag zurück.</li><li>👥 Ein geschafftes Crew-Wochenziel gibt Bonusmünzen.</li><li>Alle vier Wochen geschafft? Dann wartet das Finale.</li></ul><div class="row" style="justify-content:center;margin-top:12px"><button class="btn soft" data-ph="x">Alles klar</button></div></div>';
+    document.body.appendChild(ov); ov.addEventListener("click", function (e) { if (e.target === ov || (e.target.closest && e.target.closest("[data-ph]"))) ov.remove(); });
+  }
   function viewBeute() {
     var LEG = { pass: "heute", shop: "laden", showroom: "spind" };
     if (LEG[beuteSeg]) beuteSeg = LEG[beuteSeg];   // alte Namen (Links, Wolken) leben weiter
@@ -1793,10 +1798,9 @@
     else {
       var pend = S.pathState().pending.length;
       view.innerHTML = '<div class="stack">' + top +
-        '<div class="row" style="align-items:center"><h1 style="font-size:22px;flex:1 1 auto">Dein Pass</h1><button class="chip tnum nowrap" data-act="coinsheet">🪙 ' + S.state.coins + ' · heute</button></div>' +
+        '<div class="row" style="align-items:center"><h1 style="font-size:22px;flex:1 1 auto">Dein Pass</h1><button class="chip" data-act="passhelp" aria-label="So funktioniert der Monatspass">❓ Regeln</button><button class="chip tnum nowrap" data-act="coinsheet">🪙 ' + S.state.coins + ' · heute</button></div>' +
         (pend ? '<button class="btn wide lg" data-act="openchest" style="background:var(--gold,#f2b33d);color:#2b1d00">💰 Truhe öffnen' + (pend > 1 ? ' (' + pend + ')' : '') + '</button>' : "") +
         passCard() +
-        '<details class="card"><summary><b>So funktioniert der Monatspass</b></summary><p class="small muted" style="margin:8px 0 0">Der Pass läuft einen Monat in vier Wochen plus Finale. Jede Woche zählt, an wie vielen Tagen du dein Tagesziel schaffst, und jeder Tag gibt einen Stempel. Ein verpasster Tag pro Woche zählt als Joker mit. Sind genug Tage zusammen, öffnest du die Wochen-Beute mit Figur, Tanz und Münzen. Schon ab 3 Tagen gibt es Bronze, bei 5 Silber, bei 7 Gold, jeweils mit Münzen. Mit doppeltem Tagesziel holst du einen verpassten Tag nach, ein Crew-Wochenziel gibt Bonusmünzen, und nächste Woche wartet ein geheimes Geschenk. Alle vier Wochen geschafft? Dann wartet das Finale.</p></details>' +
         '</div>';
     }
   }
@@ -2113,7 +2117,7 @@
         '<span class="pill l' + lv + '">' + esc(S.LEVELS[lv].n) + '</span></div>';
     }).join("");
     view.innerHTML = '<div class="stack">' +
-      '<button class="btn ghost" data-act="back" style="align-self:flex-start">← Alle Einheiten</button>' +
+      '<button class="backb" data-act="back">← Zurück</button>' +
       '<section class="card"><div class="eyebrow">' + (u.track === "eigen" ? "Eigene Liste" : (u.track === "business" ? "Business · " : "") + groupLabel(u.k)) + '</div>' +
       '<h1 style="font-size:24px">' + esc(u.icon) + ' ' + esc(u.title) + '</h1>' +
       '<p class="small muted" style="margin:6px 0 0">' + u.words.length + ' Wörter · ' + mastered + ' gemeistert</p>' +
@@ -4342,6 +4346,7 @@
       }
     }
     else if (a === "coinsheet") coinSheet();
+    else if (a === "passhelp") passHelp();
     else if (a === "umkcat") { umkCat = act.getAttribute("data-k"); var syU = view.scrollTop; render(); view.scrollTop = syU; }
     else if (a === "umkfig") { var uv = act.getAttribute("data-v"), ui = S.SHOP.filter(function (x) { return x.kind === "avatar" && x.val === uv; })[0]; if (ui) S.equip(ui.id); else { S.state.profile.avatar = uv; S.save(true); } renderHeader(); var syF = view.scrollTop; render(); view.scrollTop = syF; }
     else if (a === "umkeq") { var uid = act.getAttribute("data-id"), uit = S.itemById(uid), ur = uit && uit.kind === "acc" ? S.accToggle(S.state.profile.avatar, uid) : S.equip(uid); if (ur.error) toast(ur.error); renderHeader(); var syE = view.scrollTop; render(); view.scrollTop = syE; }

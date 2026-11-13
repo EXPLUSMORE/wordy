@@ -1020,6 +1020,7 @@ div.msr{cursor:default}.msr.done{opacity:.7}.msr .mst{flex:0 0 20px;height:20px;
 .wishpill{max-width:58%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px}
 .pstats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px;text-align:center}.pstats i{font-style:normal;font-size:20px;display:block}.pstats b{display:block;font-size:17px}.pstats small{display:block;font-size:10.5px;color:var(--ink-3,#777);line-height:1.2}
 .lad.umk{padding-bottom:0}#hCoinsBtn{cursor:pointer}
+.backb{position:sticky;top:6px;z-index:6;align-self:flex-start;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--ink);font:inherit;font-weight:700;font-size:14px;padding:8px 14px;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.14)}
 /* ===== LADEN NEU (Anprobe-Bühne) ===== */
 .lad .lstage{position:sticky;top:0;z-index:8;height:178px;border-radius:22px;background:linear-gradient(#cfe9f3,#eaf5fa);border:2px solid var(--line);overflow:hidden;box-shadow:0 6px 16px rgba(0,0,0,.14)}
 :root[data-theme="dark"] .lad .lstage{background:linear-gradient(#233a5e,#1a2742)}
@@ -1046,9 +1047,9 @@ div.msr{cursor:default}.msr.done{opacity:.7}.msr .mst{flex:0 0 20px;height:20px;
 .lad .lt .ltd{position:absolute;top:6px;left:6px;width:9px;height:9px;border-radius:50%;background:var(--c)}
 .lad .lt .lti{height:54px;display:grid;place-items:center;font-size:30px;max-width:100%}.lad .lt .lti .avatar,.lad .lt .lti svg{max-height:52px}
 .lad .lt .ltn{font-size:11.5px;line-height:1.15;max-width:100%;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.lad .lt .ltp{font-size:11px;font-weight:700;color:var(--ink-2)}.lad .lt .ltp.own{color:var(--good,#2c7a57)}
+.lad .lt .ltp{font-size:11px;font-weight:700;color:var(--ink-2)}.lad .lt .ltp.own{color:color-mix(in srgb,var(--good,#2c7a57) 60%,var(--ink))}
 .lad .lt .ltn2{position:absolute;top:-6px;right:-3px;background:#e8123c;color:#fff;border-radius:9px;font-size:9px;font-style:normal;padding:1px 5px;font-weight:900}
-.lad .lt.own{background:var(--good-soft,#dcf0e6)}.lad .lt.lock{opacity:.72}
+.lad .lt.own{background:color-mix(in srgb,var(--good,#2c7a57) 18%,var(--card))}.lad .lt.lock{opacity:.72}
 .lad .lt.sel{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 30%,transparent)}
 .lad .lbar{position:sticky;bottom:8px;z-index:9;display:flex;align-items:center;gap:10px;border-radius:18px;background:#1b2a41;color:#fff;padding:10px 12px;box-shadow:0 8px 20px rgba(0,0,0,.3)}
 .lad .lbar.hint{justify-content:center;font-size:13px;font-weight:700}
@@ -1852,17 +1853,18 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 :root:root:root[data-season="arcade"] .hwsp.gone{opacity:0!important;pointer-events:none}:root:root:root[data-season="arcade"] .hwsp.back{animation:arcWarp 1.2s ease-out}@keyframes arcWarp{0%{transform:scale(0) rotate(360deg);opacity:0}100%{transform:none;opacity:1}}
 .arcLaser{position:fixed;top:0;height:100vh;width:5px;margin-left:-2px;z-index:9995;pointer-events:none;background:linear-gradient(#fff,var(--c));box-shadow:0 0 18px 6px var(--c);transform-origin:50% 0;animation:arcLz .9s ease-out forwards}@keyframes arcLz{0%{transform:rotate(var(--r)) scaleY(0);opacity:1}25%{transform:rotate(var(--r)) scaleY(1)}100%{transform:rotate(calc(var(--r) * -1)) scaleY(1);opacity:0}}
 body.arcGlitch #app{animation:arcGl .5s steps(2) 2}@keyframes arcGl{0%{transform:translate(3px,0);filter:hue-rotate(60deg) saturate(2)}50%{transform:translate(-4px,2px) skewX(2deg);filter:hue-rotate(-70deg)}100%{transform:none;filter:none}}
-.arcBlk{position:fixed;top:-20px;z-index:5;pointer-events:none;width:14px;height:14px;opacity:.5;box-shadow:inset 0 0 0 2px rgba(255,255,255,.5),0 0 10px var(--c),14px 0 0 var(--c),var(--bx,0) 14px 0 var(--c);background:var(--c);animation:arcFall var(--d,9s) steps(34) forwards}@keyframes arcFall{to{transform:translateY(calc(100vh + 60px))}}
+.arcBlk{position:fixed;top:-20px;z-index:0;pointer-events:none;width:14px;height:14px;opacity:.5;box-shadow:inset 0 0 0 2px rgba(255,255,255,.5),0 0 10px var(--c),14px 0 0 var(--c),var(--bx,0) 14px 0 var(--c);background:var(--c);animation:arcFall var(--d,9s) steps(34) forwards}@keyframes arcFall{to{transform:translateY(calc(100vh + 60px))}}
 .arcCoin{position:fixed;z-index:9996;pointer-events:none;font-size:26px;animation:arcCoinD 1.2s cubic-bezier(.3,0,.7,1) forwards;filter:drop-shadow(0 0 8px #FFE14D)}@keyframes arcCoinD{0%{transform:translateY(0) scale(.3)}70%{transform:translateY(150px) scale(1.2)}100%{transform:translateY(170px) scale(1);opacity:0}}
 .arcCombo{position:fixed;left:50%;top:22%;z-index:9997;pointer-events:none;font:900 34px/1 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.06em;color:#FFE14D;text-shadow:3px 0 #FF2BD6,-3px 0 #00F0FF,0 0 20px #FF2BD6;transform:translate(-50%,-50%) scale(0);animation:arcCb 1.1s steps(8) forwards;white-space:nowrap}@keyframes arcCb{15%{transform:translate(-50%,-50%) scale(1.3)}30%,75%{transform:translate(-50%,-50%) scale(1);opacity:1}100%{transform:translate(-50%,-120%) scale(1);opacity:0}}
 :root:root:root[data-season="arcade"] #session{position:absolute}.arcHud{position:absolute;left:0;right:0;top:50px;z-index:3;display:flex;gap:7px;justify-content:center;align-items:center;pointer-events:none;height:20px}.arcHud svg{width:20px;height:15px;image-rendering:pixelated;filter:drop-shadow(0 0 5px currentColor)}.arcHud svg.dead{opacity:.16;filter:none}.arcHud svg.zap{animation:arcZap .5s steps(5)}.arcHud b{font:900 10px/1 ui-monospace,Menlo,monospace;color:#FFE14D;letter-spacing:.12em;margin-left:4px}
 :root:root:root[data-season="arcade"] .card.passc,:root:root:root[data-season="arcade"] .card.crewhero{border-color:#00F0FF!important}
+:root:root:root[data-season="arcade"] #app{position:relative;z-index:1}
 @media (prefers-reduced-motion:reduce){.arcGrid,.arcInv,.arcStars{animation:none}:root:root:root[data-season="arcade"] .hwsp{animation:none}}
 /* SEASON-ARCADE:END */
 </style>
 
 
-<script>window.WORDY_VERSION="2.181.0";window.WORDY_BUILD="b3183e3278";</script>
+<script>window.WORDY_VERSION="2.181.1";window.WORDY_BUILD="d169dba852";</script>
 </head>
 <body>
 <div id="app">
@@ -12652,7 +12654,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
         '<button class="btn soft" data-act="start" data-mode="verbs" data-vtype="1" data-verb="' + esc(v.id) + '" style="align-self:flex-start">✍️ Dieses Verb tippen</button></div>';
     }).join("");
     view.innerHTML = '<div class="stack">' +
-      '<button class="btn ghost" data-act="back" style="align-self:flex-start">← Zurück</button>' +
+      '<button class="backb" data-act="back">← Zurück</button>' +
       '<section class="card"><div class="eyebrow">Unregelmäßige Verben</div>' +
       '<h1 style="font-size:24px">Verbenliste</h1>' +
       '<p class="small muted" style="margin:6px 0 0">' + vs.total + ' Verben · ' + vs.seen + ' geübt · ' + vs.mastered + ' gemeistert. Infinitiv – Simple Past (Präteritum)' + (vPastOnly() ? '' : ' – Past Participle (Partizip Perfekt)') + '.</p>' + verbFormsSwitch() +
@@ -12797,7 +12799,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
         var lab = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"][(new Date(d.k + "T00:00:00Z").getUTCDay() + 6) % 7], cls = d.ok ? "ok" : d.joker || d.makeup ? "joker" : d.today ? "now" : d.future ? "fut" : "miss", fresh = d.ok && d.today && S.stampNew(d.k);
         if (fresh) setTimeout(function () { try { if (S.state.settings.audio) global.VTC.sound(S.state.profile.snd, true); global.VTC.burst(S.state.profile.fx, global.innerWidth / 2, global.innerHeight * .4, 14, 1); } catch (e) {} }, 350);
         return '<span class="stp ' + cls + (fresh ? " new" : "") + '"><span class="stpi">' + (d.ok ? sIcon : d.joker ? "🃏" : d.makeup ? "💪" : d.today ? "▶" : d.future ? "○" : "·") + '</span><small>' + lab + '</small></span>';
-      }).join("") + '</div>' + (w.joker ? '<p class="small muted" style="margin:6px 0 0">🃏 Joker: ein verpasster Tag zählt in dieser Woche trotzdem mit.</p>' : '<p class="small muted" style="margin:6px 0 0">🃏 Pro Woche zählt ein verpasster Tag als Joker mit.</p>') + (w.makeup ? '<p class="small" style="margin:4px 0 0">💪 Nachgeholt: Mit dem doppelten Tagesziel heute zählt ein weiterer Tag mit.</p>' : w.state === "cur" ? '<p class="small muted" style="margin:4px 0 0">💪 Nachholen: Schaffst du heute das doppelte Tagesziel, zählt ein weiterer verpasster Tag.</p>' : "");
+      }).join("") + '</div>' + (w.joker ? '<p class="small muted" style="margin:6px 0 0">🃏 Joker: ein verpasster Tag zählt in dieser Woche trotzdem mit.</p>' : "") + (w.makeup ? '<p class="small" style="margin:4px 0 0">💪 Nachgeholt: Mit dem doppelten Tagesziel heute zählt ein weiterer Tag mit.</p>' : "");
       var TN = { bronze: "🥉 Bronze", silber: "🥈 Silber", gold: "🥇 Gold" };
       var tierHtml = '<div class="ptiers">' + w.tiers.map(function (t) {
         return '<button class="ptr ' + t.k + (t.got ? " got" : t.ok ? " rdy" : "") + '" ' + (t.ok && !t.got ? 'data-act="passtier" data-n="' + w.n + '" data-k="' + t.k + '"' : "disabled") + '><b>' + TN[t.k] + '</b><small>' + t.d + ' Tage</small><span>' + (t.got ? "✓" : "+" + t.c + " 🪙") + '</span></button>';
@@ -13648,7 +13650,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (seg === "stats") viewStats();
     else if (seg === "mal") view.innerHTML = '<div class="stack">' + global.VTM.panel() + '</div>';
     else if (seg === "pfad") view.innerHTML = '<div class="stack">' + pathCard() + '</div>';
-    else if (seg === "gram") view.innerHTML = '<div class="stack"><button class="chip" data-act="seg" data-g="lernen" data-v="units" style="align-self:flex-start">← Was lernen?</button>' + gramHtml() + '</div>';
+    else if (seg === "gram") view.innerHTML = '<div class="stack"><button class="backb" data-act="seg" data-g="lernen" data-v="units">← Zurück</button>' + gramHtml() + '</div>';
     else {
       view.innerHTML = '<div class="stack">' + (seg === "units" ? unitsHtml() : modiHtml("lern")) + '</div>';
       $$("details.grp").forEach(function (d) { d.addEventListener("toggle", function () { openGroups[d.getAttribute("data-k")] = d.open; }); });
@@ -13904,6 +13906,11 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     h += '<button class="btn soft wide" data-act="umkshop" data-k="' + cat[0] + '" style="margin-top:6px">🛍️ ' + (rest > 0 ? "Noch " + rest + " im Laden entdecken" : "Zum Laden") + '</button></div>';
     return h;
   }
+  function passHelp() {
+    if (document.querySelector(".srmd")) return; var ov = document.createElement("div"); ov.className = "srmd";
+    ov.innerHTML = '<div class="dsh" style="text-align:left"><div class="dshg"></div><div class="eyebrow">Monatspass</div><h3>So funktioniert der Pass</h3><ul class="small" style="margin:8px 0 0;padding-left:18px;line-height:1.55"><li>Vier Wochen plus Finale. Jeder Tag mit geschafftem Tagesziel gibt einen Stempel.</li><li>Genug Stempel in der Woche = Wochen-Beute (Figur, Tanz, Münzen).</li><li>🥉 ab 3 Tagen, 🥈 ab 5, 🥇 ab 7 – jeweils mit Münzen.</li><li>🃏 Joker: ein verpasster Tag pro Woche zählt trotzdem mit.</li><li>💪 Nachholen: doppeltes Tagesziel an einem Tag holt einen weiteren verpassten Tag zurück.</li><li>👥 Ein geschafftes Crew-Wochenziel gibt Bonusmünzen.</li><li>Alle vier Wochen geschafft? Dann wartet das Finale.</li></ul><div class="row" style="justify-content:center;margin-top:12px"><button class="btn soft" data-ph="x">Alles klar</button></div></div>';
+    document.body.appendChild(ov); ov.addEventListener("click", function (e) { if (e.target === ov || (e.target.closest && e.target.closest("[data-ph]"))) ov.remove(); });
+  }
   function viewBeute() {
     var LEG = { pass: "heute", shop: "laden", showroom: "spind" };
     if (LEG[beuteSeg]) beuteSeg = LEG[beuteSeg];   // alte Namen (Links, Wolken) leben weiter
@@ -13914,10 +13921,9 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     else {
       var pend = S.pathState().pending.length;
       view.innerHTML = '<div class="stack">' + top +
-        '<div class="row" style="align-items:center"><h1 style="font-size:22px;flex:1 1 auto">Dein Pass</h1><button class="chip tnum nowrap" data-act="coinsheet">🪙 ' + S.state.coins + ' · heute</button></div>' +
+        '<div class="row" style="align-items:center"><h1 style="font-size:22px;flex:1 1 auto">Dein Pass</h1><button class="chip" data-act="passhelp" aria-label="So funktioniert der Monatspass">❓ Regeln</button><button class="chip tnum nowrap" data-act="coinsheet">🪙 ' + S.state.coins + ' · heute</button></div>' +
         (pend ? '<button class="btn wide lg" data-act="openchest" style="background:var(--gold,#f2b33d);color:#2b1d00">💰 Truhe öffnen' + (pend > 1 ? ' (' + pend + ')' : '') + '</button>' : "") +
         passCard() +
-        '<details class="card"><summary><b>So funktioniert der Monatspass</b></summary><p class="small muted" style="margin:8px 0 0">Der Pass läuft einen Monat in vier Wochen plus Finale. Jede Woche zählt, an wie vielen Tagen du dein Tagesziel schaffst, und jeder Tag gibt einen Stempel. Ein verpasster Tag pro Woche zählt als Joker mit. Sind genug Tage zusammen, öffnest du die Wochen-Beute mit Figur, Tanz und Münzen. Schon ab 3 Tagen gibt es Bronze, bei 5 Silber, bei 7 Gold, jeweils mit Münzen. Mit doppeltem Tagesziel holst du einen verpassten Tag nach, ein Crew-Wochenziel gibt Bonusmünzen, und nächste Woche wartet ein geheimes Geschenk. Alle vier Wochen geschafft? Dann wartet das Finale.</p></details>' +
         '</div>';
     }
   }
@@ -14234,7 +14240,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
         '<span class="pill l' + lv + '">' + esc(S.LEVELS[lv].n) + '</span></div>';
     }).join("");
     view.innerHTML = '<div class="stack">' +
-      '<button class="btn ghost" data-act="back" style="align-self:flex-start">← Alle Einheiten</button>' +
+      '<button class="backb" data-act="back">← Zurück</button>' +
       '<section class="card"><div class="eyebrow">' + (u.track === "eigen" ? "Eigene Liste" : (u.track === "business" ? "Business · " : "") + groupLabel(u.k)) + '</div>' +
       '<h1 style="font-size:24px">' + esc(u.icon) + ' ' + esc(u.title) + '</h1>' +
       '<p class="small muted" style="margin:6px 0 0">' + u.words.length + ' Wörter · ' + mastered + ' gemeistert</p>' +
@@ -16463,6 +16469,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       }
     }
     else if (a === "coinsheet") coinSheet();
+    else if (a === "passhelp") passHelp();
     else if (a === "umkcat") { umkCat = act.getAttribute("data-k"); var syU = view.scrollTop; render(); view.scrollTop = syU; }
     else if (a === "umkfig") { var uv = act.getAttribute("data-v"), ui = S.SHOP.filter(function (x) { return x.kind === "avatar" && x.val === uv; })[0]; if (ui) S.equip(ui.id); else { S.state.profile.avatar = uv; S.save(true); } renderHeader(); var syF = view.scrollTop; render(); view.scrollTop = syF; }
     else if (a === "umkeq") { var uid = act.getAttribute("data-id"), uit = S.itemById(uid), ur = uit && uit.kind === "acc" ? S.accToggle(S.state.profile.avatar, uid) : S.equip(uid); if (ur.error) toast(ur.error); renderHeader(); var syE = view.scrollTop; render(); view.scrollTop = syE; }

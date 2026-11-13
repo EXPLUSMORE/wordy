@@ -10,6 +10,12 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.181.1
+- Pass: Regeln stehen hinter „❓ Regeln“ statt als Textzeilen in jeder Woche (Joker/Nachholen erscheinen nur noch, wenn sie gerade gelten).
+- Einheitlicher „← Zurück“-Knopf in Einheit, Verbliste und Grammatik; er bleibt beim Scrollen oben stehen.
+- Arcade: Pixel-Blöcke fallen jetzt hinter den Karten statt über dem Text.
+- Laden/Umkleide: gekaufte Kacheln sind in den dunklen Saison-Looks (Winter, Halloween) wieder lesbar.
+
 ## 2.181.0
 - **Start aufgeräumt**: kürzere Bühne, der Tagesziel-Ring ist jetzt der „Weiter“-Knopf (startet den nächsten offenen Schritt). Tagesmissionen sind schlanke Zeilen ohne eigene „Los“-Knöpfe, der Wunsch steht als kleines Sparschwein daneben.
 - **Beute neu sortiert**: Pass · Laden · Meine Sachen. „Münzen heute“ öffnet sich per Tipp auf den Münzstand (Kopfzeile oder Pass).
