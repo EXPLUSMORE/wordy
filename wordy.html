@@ -932,6 +932,7 @@ details.fold>.fbody{padding:2px 0 14px}
 .hhring.fr-sterne{--rbg:conic-gradient(#b58cff,#ffe27a,#8ed0f8,#ff8fd0,#ffe27a,#b58cff);--rg:0 0 12px 2px rgba(181,140,255,.6)}
 .hhring.fr-kristall{--rbg:linear-gradient(135deg,#9fefff,#fff,#9fefff);--rb:#fff;--rg:0 0 14px 4px rgba(159,239,255,.85)}
 .hhring.fr-eis{--rbg:#9FE7FF;--rb:#fff;--rg:0 0 12px 2px rgba(120,200,255,.8);animation:frEis 1.6s ease-in-out infinite alternate}
+.hhring.fr-gitter{--rbg:repeating-conic-gradient(#00F0FF 0 8deg,#FF2BD6 8deg 16deg);--rb:#07021A;--rg:0 0 14px 4px rgba(255,43,214,.7)}
 .hhring.fr-laub{--rbg:conic-gradient(#C1531F,#E0A12E,#8A3A14,#E0A12E,#C1531F);--rb:#8A3A14;--rg:0 0 12px 3px rgba(193,83,31,.7),0 0 18px 6px rgba(224,161,46,.4)}
 .hhring.fr-lichter{--rbg:conic-gradient(#e8123c,#ffd34d,#2f8f4e,#6EC8FF,#e8123c);--rb:#2f8f4e;--rg:0 0 12px 3px rgba(255,90,90,.75),0 0 18px 6px rgba(120,255,160,.45);animation:frLi 1.2s ease-in-out infinite alternate}
 @keyframes frLi{to{filter:brightness(1.25) saturate(1.2)}}
@@ -1628,6 +1629,7 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 .hscroll .chip{flex:0 0 auto;white-space:nowrap}
 /* WICHTEL-KALENDER (Advent, v2.160) */
 .bub{background:#fff;color:#1b2440;border-radius:16px;padding:10px 12px;font-size:14px;line-height:1.4;text-align:left}.bub .muted{color:#5a6b99}
+.avatar.fr-gitter{box-shadow:0 0 0 2px #07021A,0 0 0 4.5px #00F0FF,0 0 0 6.5px #FF2BD6,0 0 14px 6px rgba(255,43,214,.65);animation:frNeon 1.4s ease-in-out infinite alternate}
 .avatar.fr-laub{box-shadow:0 0 0 2px #8A3A14,0 0 0 4.5px #E0A12E,0 0 12px 3px rgba(193,83,31,.7),0 0 18px 6px rgba(224,161,46,.4)}
 .avatar.fr-lichter{box-shadow:0 0 0 2px #2f8f4e,0 0 0 4.5px #ffd34d,0 0 12px 3px rgba(255,90,90,.75),0 0 18px 6px rgba(120,255,160,.45)}
 @keyframes advtw{0%,100%{opacity:1}50%{opacity:.55}}
@@ -1817,10 +1819,37 @@ body.sxShake2{animation:sxShake2 .32s cubic-bezier(.36,.07,.19,.97)}@keyframes s
 .hbfruit{display:flex;gap:2px;flex-wrap:wrap;font-size:17px;line-height:1.2}.hbfruit i{font-style:normal;filter:grayscale(1) opacity(.35)}.hbfruit i.on{filter:none}
 .sxf-herbst{width:54px;height:34px}.sxf-herbst .bd{width:100%;height:100%;filter:drop-shadow(0 3px 3px rgba(40,10,0,.4))}
 /* SEASON-HERBST:END */
+/* SEASON-ARCADE:BEGIN (erzeugt von tools/season_themes.py, nicht von Hand ändern) */
+:root:root:root[data-season="arcade"]{color-scheme:dark;--paper:#07021A;--bg:#07021A;--good:#3DF29A;--good-soft:#0E3A2C;--good-ink:#9CFFD0;--bad:#FF5C7A;--bad-soft:#42102A;--card:#120A2E;--card-2:#1B1042;--ink:#F4F0FF;--ink-2:#CFC6F5;--ink-3:#9A8FD0;--muted:#B9AEEA;--rule:#3B2A7A;--line:#2E2163;--accent:#00F0FF;--accent-ink:#04121A;--accent-soft:#12305A;--gold:#FFE14D;--bar:linear-gradient(90deg,#FF2BD6,#00F0FF);--eyebrow:#FF6BE8;--btn-sh:#0A6E86;--shadow:0 10px 30px rgba(0,0,0,.6);--cta-bg:linear-gradient(165deg,#1B1042,#0D0625);--cta-bd:rgba(0,240,255,.7);--cta-ring:rgba(0,240,255,.3);--cta-glow:rgba(0,240,255,.3);--cta-ink:#F4F0FF;--cta-sub:#CFC6F5;--cta-eb:#FF6BE8;--cta-btn:linear-gradient(#5CF6FF,#00C2E0);--cta-btn-ink:#04121A;--cta-btn-sh:#0A6E86;--cta-box:rgba(255,255,255,.12);--cta-box-bd:rgba(255,43,214,.5);--cta-day:rgba(255,255,255,.1);--cta-day-ink:#B9AEEA;--cta-day-ok:rgba(0,240,255,.2);--cta-day-ok-ink:#9FF6FF;--cta-day-now:#FF2BD6;}
+:root:root:root[data-season="arcade"] body{background:radial-gradient(circle at 20% 0%,rgba(255,43,214,.22),transparent 45%),radial-gradient(circle at 90% 60%,rgba(0,240,255,.14),transparent 50%),linear-gradient(#0B0326,#05010F)!important;background-attachment:fixed;color:#F4F0FF}
+:root:root:root[data-season="arcade"] body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9990;background:repeating-linear-gradient(0deg,rgba(0,0,0,.14) 0 1px,transparent 1px 3px)}
+:root:root:root[data-season="arcade"] header#top{position:relative;background:rgba(10,4,32,.94);border-bottom:2px solid #FF2BD6;box-shadow:0 4px 22px rgba(255,43,214,.45)}:root:root:root[data-season="arcade"] header#top,:root:root:root[data-season="arcade"] header#top *{color:#F4F0FF}:root:root:root[data-season="arcade"] #hRank{color:#00F0FF!important;text-shadow:0 0 8px #00F0FF}
+:root:root:root[data-season="arcade"] nav#tabs{position:relative;background:#0A0420;border-top:2px solid #00F0FF;box-shadow:0 -4px 22px rgba(0,240,255,.4)}:root:root:root[data-season="arcade"] nav#tabs button{color:#9A8FD0}:root:root:root[data-season="arcade"] nav#tabs button[aria-current='true']{color:#FFE14D;background:rgba(255,43,214,.22);text-shadow:0 0 10px #FF2BD6;box-shadow:inset 0 0 0 1px #FF2BD6}
+:root:root:root[data-season="arcade"] .card{position:relative;background:linear-gradient(160deg,#150B36,#0D0625)!important;border:1.5px solid #FF2BD6;box-shadow:0 0 22px rgba(255,43,214,.28),inset 0 0 40px rgba(0,240,255,.05);color:#F4F0FF}:root:root:root[data-season="arcade"] .card:nth-of-type(odd){border-color:#00F0FF;box-shadow:0 0 22px rgba(0,240,255,.28),inset 0 0 40px rgba(255,43,214,.05)}
+:root:root:root[data-season="arcade"] .eyebrow{color:#FF6BE8!important;font-family:ui-monospace,Menlo,Consolas,monospace;letter-spacing:.18em;text-shadow:0 0 8px rgba(255,43,214,.8)}
+:root:root:root[data-season="arcade"] .btn:not(.ghost):not(.soft){background:linear-gradient(#5CF6FF,#00C2E0);color:#04121A;border-color:#00F0FF;box-shadow:0 4px 0 #0A6E86,0 0 18px rgba(0,240,255,.7)}
+:root:root:root[data-season="arcade"] .hh{border-color:#FF2BD6;background:linear-gradient(#0B0326 0,#2A0A5E 38%,#B01E9E 60%,#FF6A3D 68%,#0B0326 68.2%)!important;box-shadow:0 0 30px rgba(255,43,214,.6),0 0 0 2px rgba(0,240,255,.5)}:root:root:root[data-season="arcade"] .hhsun,:root:root:root[data-season="arcade"] .hhcl,:root:root:root[data-season="arcade"] .hhst{display:none}
+:root:root:root[data-season="arcade"] .hh h1,:root:root:root[data-season="arcade"] .hh h2{font-family:ui-monospace,Menlo,Consolas,monospace!important;text-transform:uppercase;text-shadow:2px 0 #FF2BD6,-2px 0 #00F0FF,0 0 18px rgba(255,43,214,.9)!important}
+.arcSun{position:absolute;right:14px;top:74px;width:140px;height:140px;border-radius:50%;background:linear-gradient(#FFE14D 0,#FF8A3D 45%,#FF2BD6 100%);box-shadow:0 0 50px rgba(255,90,160,.9);-webkit-mask:linear-gradient(#000 0 50%,transparent 50%),repeating-linear-gradient(#000 0 9px,transparent 9px 14px);mask:linear-gradient(#000 0 50%,transparent 50%),repeating-linear-gradient(#000 0 9px,transparent 9px 14px)}
+.arcGrid{position:absolute;left:-60%;right:-60%;bottom:0;height:33%;transform:perspective(160px) rotateX(62deg);transform-origin:50% 0;background:linear-gradient(rgba(255,43,214,0),rgba(255,43,214,.25)),repeating-linear-gradient(90deg,#00F0FF 0 2px,transparent 2px 38px),repeating-linear-gradient(0deg,#FF2BD6 0 2px,transparent 2px 26px),#0B0326;animation:arcRun 1.1s linear infinite}@keyframes arcRun{to{background-position:0 0,0 0,0 26px,0 0}}
+.arcMt{position:absolute;left:0;right:0;bottom:32%;height:70px;width:100%}.arcStars{position:absolute;inset:0 0 40% 0;background:radial-gradient(1.5px 1.5px at 12% 20%,#fff,transparent),radial-gradient(1.5px 1.5px at 32% 8%,#9ff,transparent),radial-gradient(2px 2px at 55% 26%,#fff,transparent),radial-gradient(1.5px 1.5px at 72% 12%,#f9f,transparent),radial-gradient(1.5px 1.5px at 88% 30%,#fff,transparent),radial-gradient(1.5px 1.5px at 44% 40%,#9ff,transparent);animation:arcTw 2.4s ease-in-out infinite alternate}@keyframes arcTw{from{opacity:.5}to{opacity:1}}
+.arcInv{position:absolute;image-rendering:pixelated;filter:drop-shadow(0 0 6px currentColor);animation:arcMarch 2.8s steps(4) infinite alternate}@keyframes arcMarch{from{transform:translateX(-10px)}to{transform:translateX(14px)}}.arcInv.zap{animation:arcZap .5s steps(5) forwards}@keyframes arcZap{50%{transform:scale(1.7);filter:brightness(3)}100%{transform:scale(0);opacity:0}}
+.arcScore{position:absolute;right:14px;top:16px;font:900 11px/1 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.16em;color:#FFE14D;text-shadow:0 0 8px #FF8A3D}
+:root:root:root[data-season="arcade"] .hwsp{position:absolute;left:calc(58% - 4px);top:30px;width:58px;height:40px;z-index:6;cursor:pointer;-webkit-tap-highlight-color:transparent;background:var(--sp) 50% 50%/56px 36px no-repeat;animation:arcHover 5.5s ease-in-out infinite;transition:opacity .25s;filter:drop-shadow(0 0 10px #00F0FF)}@keyframes arcHover{0%,100%{transform:translate(-34px,0) rotate(-6deg)}25%{transform:translate(0,6px) rotate(4deg)}50%{transform:translate(34px,-2px) rotate(7deg)}75%{transform:translate(4px,8px) rotate(-3deg)}}
+:root:root:root[data-season="arcade"] .hwsp.gone{opacity:0!important;pointer-events:none}:root:root:root[data-season="arcade"] .hwsp.back{animation:arcWarp 1.2s ease-out}@keyframes arcWarp{0%{transform:scale(0) rotate(360deg);opacity:0}100%{transform:none;opacity:1}}
+.arcLaser{position:fixed;top:0;height:100vh;width:5px;margin-left:-2px;z-index:9995;pointer-events:none;background:linear-gradient(#fff,var(--c));box-shadow:0 0 18px 6px var(--c);transform-origin:50% 0;animation:arcLz .9s ease-out forwards}@keyframes arcLz{0%{transform:rotate(var(--r)) scaleY(0);opacity:1}25%{transform:rotate(var(--r)) scaleY(1)}100%{transform:rotate(calc(var(--r) * -1)) scaleY(1);opacity:0}}
+body.arcGlitch #app{animation:arcGl .5s steps(2) 2}@keyframes arcGl{0%{transform:translate(3px,0);filter:hue-rotate(60deg) saturate(2)}50%{transform:translate(-4px,2px) skewX(2deg);filter:hue-rotate(-70deg)}100%{transform:none;filter:none}}
+.arcBlk{position:fixed;top:-20px;z-index:5;pointer-events:none;width:14px;height:14px;opacity:.5;box-shadow:inset 0 0 0 2px rgba(255,255,255,.5),0 0 10px var(--c),14px 0 0 var(--c),var(--bx,0) 14px 0 var(--c);background:var(--c);animation:arcFall var(--d,9s) steps(34) forwards}@keyframes arcFall{to{transform:translateY(calc(100vh + 60px))}}
+.arcCoin{position:fixed;z-index:9996;pointer-events:none;font-size:26px;animation:arcCoinD 1.2s cubic-bezier(.3,0,.7,1) forwards;filter:drop-shadow(0 0 8px #FFE14D)}@keyframes arcCoinD{0%{transform:translateY(0) scale(.3)}70%{transform:translateY(150px) scale(1.2)}100%{transform:translateY(170px) scale(1);opacity:0}}
+.arcCombo{position:fixed;left:50%;top:22%;z-index:9997;pointer-events:none;font:900 34px/1 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.06em;color:#FFE14D;text-shadow:3px 0 #FF2BD6,-3px 0 #00F0FF,0 0 20px #FF2BD6;transform:translate(-50%,-50%) scale(0);animation:arcCb 1.1s steps(8) forwards;white-space:nowrap}@keyframes arcCb{15%{transform:translate(-50%,-50%) scale(1.3)}30%,75%{transform:translate(-50%,-50%) scale(1);opacity:1}100%{transform:translate(-50%,-120%) scale(1);opacity:0}}
+:root:root:root[data-season="arcade"] #session{position:absolute}.arcHud{position:absolute;left:0;right:0;top:50px;z-index:3;display:flex;gap:7px;justify-content:center;align-items:center;pointer-events:none;height:20px}.arcHud svg{width:20px;height:15px;image-rendering:pixelated;filter:drop-shadow(0 0 5px currentColor)}.arcHud svg.dead{opacity:.16;filter:none}.arcHud svg.zap{animation:arcZap .5s steps(5)}.arcHud b{font:900 10px/1 ui-monospace,Menlo,monospace;color:#FFE14D;letter-spacing:.12em;margin-left:4px}
+:root:root:root[data-season="arcade"] .card.passc,:root:root:root[data-season="arcade"] .card.crewhero{border-color:#00F0FF!important}
+@media (prefers-reduced-motion:reduce){.arcGrid,.arcInv,.arcStars{animation:none}:root:root:root[data-season="arcade"] .hwsp{animation:none}}
+/* SEASON-ARCADE:END */
 </style>
 
 
-<script>window.WORDY_VERSION="2.179.2";window.WORDY_BUILD="9356387951";</script>
+<script>window.WORDY_VERSION="2.180.0";window.WORDY_BUILD="6773ccff99";</script>
 </head>
 <body>
 <div id="app">
@@ -6925,6 +6954,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     { id: "fr:none",    kind: "frame", label: "Kein Rahmen", cost: 0,   val: "none" },
     { id: "fr:lichter",  kind: "frame", label: "Lichterketten-Rahmen", cost: 400, val: "lichter", pass: "Advent", rar: "legend" },
     { id: "fr:laub",     kind: "frame", label: "Herbstlaub-Rahmen", cost: 300, val: "laub", pass: "Herbst", rar: "legend" },
+    { id: "fr:gitter",   kind: "frame", label: "Neon-Gitter-Rahmen", cost: 400, val: "gitter", pass: "Arcade", rar: "legend" },
     { id: "fr:gold",    kind: "frame", label: "Goldrahmen",  cost: 120, val: "gold" },
     { id: "fr:rainbow", kind: "frame", label: "Regenbogenrahmen", cost: 200, val: "rainbow" },
     { id: "fr:fire",    kind: "frame", label: "Flammenrahmen", cost: 350, val: "fire" },
@@ -7080,9 +7110,10 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     ["schal", "neck", "Schal", 50], ["fliege", "neck", "Fliege", 35], ["kette", "neck", "Goldkette", 90], ["tuch", "neck", "Halstuch", 35], ["medaille", "neck", "Medaille", 60], ["bosskette", "neck", "Boss-Kette ($)", 150], ["mkette", "neck", "Fette Goldkette mit M", 150],
     ["skate", "gear", "Skateboard", 70], ["surf", "gear", "Surfbrett", 100], ["gitarre", "gear", "Gitarre", 150],
     ["nikolaus", "head", "Nikolaus-Mütze", 70], ["xschal", "neck", "Weihnachts-Schal", 50], ["geweih", "ears", "Rentier-Geweih", 100], ["schlitten", "gear", "Schlitten", 150], ["socken", "legs", "Weihnachtssocken", 60],
-    ["gummistiefel", "legs", "Gummistiefel", 60], ["schirm", "gear", "Regenschirm", 70], ["herbstschal", "neck", "Herbstschal", 50], ["strickmuetze", "head", "Strickmütze", 70], ["laterne", "gear", "Laterne", 80]];
+    ["gummistiefel", "legs", "Gummistiefel", 60], ["schirm", "gear", "Regenschirm", 70], ["herbstschal", "neck", "Herbstschal", 50], ["strickmuetze", "head", "Strickmütze", 70], ["laterne", "gear", "Laterne", 80],
+    ["pixelbrille", "face", "Pixel-Brille", 90], ["joystick", "gear", "Joystick", 120]];
   SHOP = SHOP.concat(ACC.map(function (a) { return { id: "ac:" + a[0], kind: "acc", slot: a[1], label: a[2], cost: a[3], val: a[0], rar: a[3] <= 40 ? "common" : a[3] <= 70 ? "rare" : a[3] <= 100 ? "epic" : "legend" }; }));
-  SHOP.forEach(function (x) { if (x.id === "ac:nikolaus" || x.id === "ac:xschal" || x.id === "ac:geweih" || x.id === "ac:schlitten") x.pass = "Advent"; if (x.id === "ac:strickmuetze" || x.id === "ac:laterne") x.pass = "Herbst"; });   // nur im Wichtel-Kalender (v2.160)
+  SHOP.forEach(function (x) { if (x.id === "ac:nikolaus" || x.id === "ac:xschal" || x.id === "ac:geweih" || x.id === "ac:schlitten") x.pass = "Advent"; if (x.id === "ac:strickmuetze" || x.id === "ac:laterne") x.pass = "Herbst"; if (x.id === "ac:pixelbrille" || x.id === "ac:joystick") x.pass = "Arcade"; });   // nur im Wichtel-Kalender (v2.160)
   /* v2.154: Unreal-Preise halbiert (alter Preis in `was`, für die einmalige Gutschrift in priceMigrate) */
   SHOP.forEach(function (x) { if (x.rar === "unreal" && x.cost > 0 && !x.reward && !x.pass) { x.was = x.cost; x.cost = Math.max(5, Math.round(x.cost / 2 / 5) * 5); } });
   /* Englische Namen aller Gegenstände (Gadget: nebenbei Vokabeln lernen). Sticker = Name der Figur + " sticker". */
@@ -7103,7 +7134,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     "sn:none": "Mute", "sn:bell": "Little bell", "sn:arcade": "Arcade", "sn:harp": "Harp", "th:paper": "Paper", "th:mint": "Mint", "th:plum": "Plum", "th:amber": "Amber",
     "ac:beanie": "Winter hat", "ac:party": "Party hat", "ac:zylinder": "Top hat", "ac:prop": "Propeller cap", "ac:cap": "Baseball cap", "ac:stroh": "Straw hat", "ac:blumen": "Flower crown", "ac:heiligen": "Halo", "ac:hasen": "Bunny ears", "ac:teufel": "Devil horns", "ac:eishut": "Ice-cream hat", "ac:pizza": "Pizza hat", "ac:krone": "Gold crown",
     "ac:sonne": "Sunglasses", "ac:nerd": "Nerd glasses", "ac:mono": "Monocle", "ac:brille3d": "3D glasses", "ac:herz": "Heart glasses", "ac:schnurr": "Moustache", "ac:clown": "Clown nose", "ac:ski": "Ski goggles",
-    "ac:kopf": "Headphones", "ac:gummistiefel": "Rubber boots", "ac:schirm": "Umbrella", "ac:herbstschal": "Autumn scarf", "ac:strickmuetze": "Knitted hat", "ac:laterne": "Lantern", "fr:laub": "Autumn leaves frame", "ac:waerme": "Earmuffs", "ac:ohrring": "Earrings", "ac:schal": "Scarf", "ac:fliege": "Bow tie", "ac:kette": "Gold chain", "ac:tuch": "Neckerchief", "ac:medaille": "Medal", "ac:bosskette": "Boss chain ($)", "ac:mkette": "Fat gold chain with M", "ac:skate": "Skateboard", "ac:surf": "Surfboard", "ac:gitarre": "Guitar", "ac:socken": "Christmas socks"
+    "ac:kopf": "Headphones", "ac:gummistiefel": "Rubber boots", "ac:schirm": "Umbrella", "ac:herbstschal": "Autumn scarf", "ac:strickmuetze": "Knitted hat", "ac:laterne": "Lantern", "fr:laub": "Autumn leaves frame", "ac:pixelbrille": "Pixel glasses", "ac:joystick": "Joystick", "fr:gitter": "Neon grid frame", "ac:waerme": "Earmuffs", "ac:ohrring": "Earrings", "ac:schal": "Scarf", "ac:fliege": "Bow tie", "ac:kette": "Gold chain", "ac:tuch": "Neckerchief", "ac:medaille": "Medal", "ac:bosskette": "Boss chain ($)", "ac:mkette": "Fat gold chain with M", "ac:skate": "Skateboard", "ac:surf": "Surfboard", "ac:gitarre": "Guitar", "ac:socken": "Christmas socks"
   };
   function enName(it) { if (!it) return ""; if (it.kind === "sticker") { var b = EN["av:" + it.id.slice(3)]; return b ? b + " sticker" : ""; } return EN[it.id] || ""; }
   var MAX_STICKERS = 10;
@@ -8024,7 +8055,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     info.weeks.forEach(function (w) { M(g10, sid + "p" + w.n, "Woche " + w.n, w.n === info.weeks.length ? "legend" : "epic", w.claimed, info.season.title + "-Pass, Woche " + w.n, String(w.n)); });
     if (info.season.finale) M(g10, sid + "cup", info.season.title + "-Pokal", "legend", info.fin.claimed, "Alle Wochen und das Finale im " + info.season.title + "-Pass", "cup");
     var sbd = (state.profile && state.profile.seasonBadge) || {}, yrN = new Date().getFullYear();
-    [["halloween", "Halloween", "🎃"], ["herbst", "Herbst", "🍂"], ["winter", "Winter", "❄️"], ["xmas", "Weihnachten", "🎄"], ["spring", "Spring Break", "🌴"], ["aqua", "Aquarium", "🐠"]].forEach(function (z) {
+    [["halloween", "Halloween", "🎃"], ["herbst", "Herbst", "🍂"], ["arcade", "Arcade 3000", "🕹️"], ["winter", "Winter", "❄️"], ["xmas", "Weihnachten", "🎄"], ["spring", "Spring Break", "🌴"], ["aqua", "Aquarium", "🐠"]].forEach(function (z) {
       var ys = Object.keys(sbd).filter(function (k) { return k.indexOf(z[0] + "-") === 0; }).map(function (k) { return +k.slice(z[0].length + 1); });
       if (yrN && ys.indexOf(yrN) < 0) ys.push(yrN);
       ys.sort().forEach(function (y) { M(g10, "sea-" + z[0] + "-" + y, z[1] + " " + y, "rare", sbd[z[0] + "-" + y], "Den " + z[1] + "-Look im Jahr " + y + " erleben", z[2]); });
@@ -8391,6 +8422,25 @@ window.SENTENCES = (window.SENTENCES || []).concat([
   }
   function hbLantern() { var h = hb(); if (h.lant) return null; h.lant = 1; var g = passGrant({ items: ["ac:laterne"] }); ev("herbst", { k: "laterne" }); save(true); return g.items && g.items[0] || { label: "Laterne" }; }
   function hbInfo() { var h = hb(); return { harvest: h.harvest, need: HB_HARVEST, done: !!h.done, book: h.book, shrooms: HB_SHROOMS, left: hbMushLeft(), hogSeen: h.hog === today(), cap: !!h.cap, lant: !!h.lant }; }
+  /* Arcade 3000 (v2.180): state.arcade = {y, hi (bester XP-Tag), waves (geschaffte Invader-Wellen), wday (Welle heute geschafft), nday/n (Treffer heute), beam (UFO-Münze heute)}; jedes Jahr neu */
+  var ARC_NEED = 8, ARC_REW = [[3, "ac:pixelbrille"], [8, "ac:joystick"], [15, "fr:gitter"]];
+  function arc() { var y = new Date().getFullYear(), a = state.arcade; if (!a || a.y !== y) a = state.arcade = { y: y, hi: 0, waves: 0, wday: "", nday: "", n: 0, beam: "" }; return a; }
+  function arcHit() {   // eine richtige Antwort = ein Invader; 8 am Tag = Welle geschafft (+10 Münzen, nach 3/8/15 Wellen Pixel-Brille, Joystick, Neon-Gitter-Rahmen)
+    var a = arc(), t = today(); if (a.wday === t) return { n: ARC_NEED, need: ARC_NEED, cleared: true };
+    if (a.nday !== t) { a.nday = t; a.n = 0; } a.n++; var out = { n: a.n, need: ARC_NEED };
+    if (a.n >= ARC_NEED) {
+      a.wday = t; a.waves++; addCoins(10); out.done = true; out.coins = 10; out.waves = a.waves;
+      ARC_REW.forEach(function (r) { if (a.waves >= r[0] && state.profile.owned.indexOf(r[1]) < 0 && !out.got) { var g = passGrant({ items: [r[1]] }); out.got = g.items && g.items[0] || { label: r[1] }; } });
+      ev("arcade", { k: "welle", n: a.waves });
+    }
+    save(); return out;
+  }
+  function arcBeam() { var a = arc(), t = today(); if (a.beam === t) return 0; a.beam = t; addCoins(5); ev("arcade", { k: "beam" }); save(true); return 5; }
+  function arcInfo() {
+    var a = arc(), t = today(), x = state.daily && state.daily.xp || 0; if (x > a.hi) a.hi = x;
+    var nx = ARC_REW.filter(function (r) { return a.waves < r[0] && state.profile.owned.indexOf(r[1]) < 0; })[0], it = nx && SHOP.filter(function (s) { return s.id === nx[1]; })[0];
+    return { hi: a.hi, today: x, waves: a.waves, n: a.wday === t ? ARC_NEED : a.nday === t ? a.n : 0, need: ARC_NEED, cleared: a.wday === t, beam: a.beam === t, next: nx ? { at: nx[0], label: it ? it.label : nx[1] } : null };
+  }
   var STATION_WORDS = 7, pathCache = null, pathCacheKey = "";
   function pathState() {
     var p = state.path;
@@ -8792,7 +8842,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
-    hbHarvest: hbHarvest, hbShroom: hbShroom, hbMushLeft: hbMushLeft, hbPile: hbPile, hbHog: hbHog, hbLantern: hbLantern, hbInfo: hbInfo,
+    hbHarvest: hbHarvest, hbShroom: hbShroom, hbMushLeft: hbMushLeft, hbPile: hbPile, hbHog: hbHog, hbLantern: hbLantern, hbInfo: hbInfo, arcHit: arcHit, arcBeam: arcBeam, arcInfo: arcInfo,
     grantItem: function (id) { return passGrant({ items: [id] }); }, resetProgress: resetProgress, stampNew: stampNew, passStamp: passStamp, shopVisible: shopVisible, shopWeeks: shopWeeks, shopCatalog: shopCatalog, shopTeasers: shopTeasers, shopNow: shopNow, shopRel: shopRel, WELCOME: WELCOME, welcomeGrant: welcomeGrant, welcomeNeeded: welcomeNeeded, steered: steered, pathUnitList: pathUnitList, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathLock: pathLock, adventInfo: adventInfo, advPlan: advPlan, advCan: advCan, advWin: advWin, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostInfo: boostInfo, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, boost: boost, coinFactor: coinFactor, avgCoins: avgCoins, dealItem: dealItem, priceOf: priceOf, passInfo: passInfo, favs: favs, toggleFav: toggleFav, collection: collection, findCollItem: findCollItem, CUP_TIERS: CUP_TIERS, claimPassWeek: claimPassWeek, claimPassTier: claimPassTier, claimPassCrew: claimPassCrew, claimPassFinale: claimPassFinale, passMeta: passMeta, rarityOf: rarityOf, shopList: shopList, activeSetDeal: activeSetDeal, buySet: buySet, takeNews: takeNews, SETS: SETS, itemById: itemById, minXp: minXp, defaultOf: defaultOf
   };
 })(window);
@@ -10395,6 +10445,97 @@ window.SENTENCES = (window.SENTENCES || []).concat([
   };
 })(window);
 </script>
+<script>/* Wordy – Saison-Look „Arcade 3000“ (v2.180): Neon-Spielhalle. Hängt sich in VTS2 ein (gleiche Aufrufe wie die anderen Looks),
+   CSS-Block SEASON-ARCADE aus tools/season_themes.py. UFO in der Kopfzeile (Antippen = Laser-Show, Bild-Glitch, einmal am Tag eine Münze),
+   Szene in der Bühne (Sonne, Gitter, Berge, Invader, HI-SCORE), fallende Pixel-Blöcke, Chiptune, Combo-Anzeige und Invader-Leiste in der Übung. */
+(function (global) {
+  "use strict";
+  var V2 = global.VTS2; if (!V2) return;
+  var ID = "arcade", busy = false, WX = null, AMB = null, COLS = ["#00F0FF", "#FF2BD6", "#FFE14D", "#5CFF8A", "#FF8A3D"];
+  function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
+  function uri(svg) { return "url(\"data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg).replace(/'/g, "%27") + "\")"; }
+  function ufo() { return "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 54 34'><ellipse cx='27' cy='12' rx='11' ry='9' fill='#9FF6FF' opacity='.85'/><circle cx='24' cy='10' r='2' fill='#07021A'/><circle cx='30' cy='10' r='2' fill='#07021A'/><ellipse cx='27' cy='19' rx='25' ry='8' fill='#FF2BD6'/><ellipse cx='27' cy='17' rx='25' ry='6' fill='#FF7BEA'/><circle cx='10' cy='19' r='2.2' fill='#FFE14D'/><circle cx='27' cy='22' r='2.2' fill='#FFE14D'/><circle cx='44' cy='19' r='2.2' fill='#FFE14D'/><path d='M18 26L10 34H44L36 26z' fill='#00F0FF' opacity='.35'/></svg>"; }
+  function inv(c, cls, style) { return "<svg class='" + (cls || "") + "' style='color:" + c + ";" + (style || "") + "' viewBox='0 0 11 8' shape-rendering='crispEdges'><path fill='" + c + "' d='M2 0h1v1H2zM8 0h1v1H8zM3 1h1v1H3zM7 1h1v1H7zM2 2h7v1H2zM1 3h2v1H1zM4 3h3v1H4zM8 3h2v1H8zM0 4h11v1H0zM0 5h1v1H0zM2 5h7v1H2zM10 5h1v1h-1zM0 6h1v1H0zM2 6h1v1H2zM8 6h1v1H8zM10 6h1v1h-1zM3 7h2v1H3zM6 7h2v1H6z'/></svg>"; }
+  var THEME = { id: ID, name: "Arcade 3000", boo: "GAME ON!", cheer: "Geschafft! HIGH SCORE! 🕹️🎉", spark: COLS, hint: "Tipp das UFO an! 🛸", ambient: ID, mascot: ufo, mini: ufo, flyer: ufo,
+    bubbles: { weg: ["Pew pew! 🛸"], loop: ["Looping! 🌀"], pinball: ["Bing! 🔔"], splat: ["Zack! 💥"] } };
+
+  /* ---------- 8-Bit-Töne (Rechteckwelle) ---------- */
+  function AC() { var a = global.VTC && global.VTC.ctx ? global.VTC.ctx() : null; if (a && a.state === "suspended") { try { a.resume(); } catch (e) {} } return a; }
+  function beep(f, t, d, vol, type, out) { var a = AC(); if (!a) return; var o = a.createOscillator(), g = a.createGain(); o.type = type || "square"; o.frequency.setValueAtTime(f, a.currentTime + t); g.gain.setValueAtTime(vol || 0.05, a.currentTime + t); g.gain.exponentialRampToValueAtTime(0.0001, a.currentTime + t + d); o.connect(g); g.connect(out || a.destination); o.start(a.currentTime + t); o.stop(a.currentTime + t + d + 0.02); return o; }
+  function sfx(k) {
+    try {
+      if (k === "laser") [0, 0.09, 0.18].forEach(function (t) { var a = AC(); if (!a) return; var o = a.createOscillator(), g = a.createGain(); o.type = "sawtooth"; o.frequency.setValueAtTime(1500, a.currentTime + t); o.frequency.exponentialRampToValueAtTime(180, a.currentTime + t + 0.16); g.gain.setValueAtTime(0.05, a.currentTime + t); g.gain.exponentialRampToValueAtTime(0.0001, a.currentTime + t + 0.17); o.connect(g); g.connect(a.destination); o.start(a.currentTime + t); o.stop(a.currentTime + t + 0.2); });
+      else if (k === "coin") { beep(988, 0, 0.08, 0.06); beep(1319, 0.08, 0.28, 0.06); }
+      else if (k === "zap") { beep(660, 0, 0.05, 0.045); beep(330, 0.05, 0.09, 0.045); }
+      else if (k === "combo") [523, 659, 784, 1047].forEach(function (f, i) { beep(f, i * 0.06, 0.09, 0.05); });
+      else if (k === "wave") [523, 659, 784, 1047, 784, 1047, 1319].forEach(function (f, i) { beep(f, i * 0.09, 0.14, 0.055); });
+    } catch (e) {}
+  }
+  function ambientStart() {   // leiser Chiptune-Lauf (Bass + Arpeggio), endlos
+    var a = AC(); if (!a || AMB) return; var m = a.createGain(); m.gain.value = 0.35; m.connect(a.destination);
+    var SEQ = [[110, [440, 523, 659, 523]], [87.3, [349, 440, 523, 440]], [130.8, [523, 659, 784, 659]], [98, [392, 494, 587, 494]]], step = 0;
+    function bar() { var s = SEQ[step++ % SEQ.length]; beep(s[0], 0, 0.5, 0.05, "triangle", m); beep(s[0], 0.6, 0.5, 0.05, "triangle", m); s[1].concat(s[1]).forEach(function (f, i) { beep(f, i * 0.15, 0.12, 0.018, "square", m); }); }
+    bar(); AMB = { m: m, iv: setInterval(bar, 1200) };
+  }
+  function ambientStop() { if (!AMB) return; clearInterval(AMB.iv); try { AMB.m.disconnect(); } catch (e) {} AMB = null; }
+
+  /* ---------- Kopfzeile: UFO ---------- */
+  function mount(host) { if (host) { host.style.setProperty("--sp", uri(ufo())); host.setAttribute("data-th", ID); } }
+  function tap(rect, onEnd, silent) {   // Laser-Show + Glitch; einmal am Tag beamt das UFO eine Münze herunter
+    if (busy) return false; busy = true;
+    var x = rect.left + rect.width / 2, lay = [];
+    [-38, -18, 12, 30, 46].forEach(function (r, i) { var l = el("i", "arcLaser"); l.style.cssText = "left:" + x + "px;--r:" + r + "deg;--c:" + COLS[i % COLS.length] + ";animation-delay:" + i * 0.07 + "s"; document.body.appendChild(l); lay.push(l); });
+    document.body.classList.add("arcGlitch"); if (!silent) sfx("laser");
+    try { if (global.navigator && navigator.vibrate) navigator.vibrate([20, 40, 20]); } catch (e) {}
+    var got = global.VT && global.VT.arcBeam ? global.VT.arcBeam() : 0;
+    if (got) { var c = el("i", "arcCoin", "🪙"); c.style.cssText = "left:" + (x - 13) + "px;top:" + rect.bottom + "px"; document.body.appendChild(c); lay.push(c); setTimeout(function () { if (!silent) sfx("coin"); if (V2.hooks && V2.hooks.arcBeam) V2.hooks.arcBeam(got); }, 900); }
+    setTimeout(function () { lay.forEach(function (n) { n.remove(); }); document.body.classList.remove("arcGlitch"); busy = false; if (onEnd) onEnd(); }, 1500);
+    return true;
+  }
+
+  /* ---------- Bühne auf der Startseite ---------- */
+  function scene(on) {
+    var old = document.getElementById("arcScene"); if (!on) { if (old) old.remove(); return; }
+    var sky = document.querySelector(".hh .hhsky"); if (!sky) return; if (old && sky.contains(old)) return; if (old) old.remove();
+    var I = global.VT && global.VT.arcInfo ? global.VT.arcInfo() : { hi: 0, n: 0, need: 8 }, s = el("div"); s.id = "arcScene";
+    var left = Math.max(0, I.need - I.n), row = "";
+    for (var i = 0; i < Math.min(left, 8); i++) row += inv(COLS[(i + 3) % 5], "arcInv", "left:" + (5 + i * 6.3) + "%;top:" + (104 + (i % 2) * 5) + "px;width:18px;animation-delay:-" + (i * 0.3) + "s");
+    s.innerHTML = "<div class='arcStars'></div><div class='arcSun'></div><svg class='arcMt' viewBox='0 0 390 70' preserveAspectRatio='none'><path d='M0 70L40 30 70 52 120 8 170 56 215 28 260 60 300 18 345 50 390 26V70z' fill='#0B0326' stroke='#00F0FF' stroke-width='2'/><path d='M120 8L112 70M120 8L140 70M300 18L288 70M300 18L318 70M40 30L44 70M215 28L212 70' stroke='#00F0FF' stroke-width='1' opacity='.6'/></svg><div class='arcGrid'></div><div class='arcScore'>HI-SCORE " + ("000000" + I.hi).slice(-6) + "</div>" + row;
+    sky.appendChild(s);
+  }
+  /* ---------- „Wetter“: fallende Pixel-Blöcke ---------- */
+  function weather(on) {
+    if (!on) { if (WX) { clearInterval(WX.iv); document.querySelectorAll(".arcBlk").forEach(function (n) { n.remove(); }); WX = null; } return; }
+    if (WX) return;
+    function drop() { if (document.hidden || document.querySelectorAll(".arcBlk").length > 7) return; var b = el("i", "arcBlk"), c = COLS[Math.random() * 5 | 0]; b.style.cssText = "left:" + (Math.random() * 92 | 0) + "vw;--c:" + c + ";--bx:" + (Math.random() < 0.5 ? "0" : "14px") + ";--d:" + (7 + Math.random() * 6).toFixed(1) + "s"; document.body.appendChild(b); b.addEventListener("animationend", function () { b.remove(); }); }
+    WX = { iv: setInterval(drop, 1700) }; drop();
+  }
+  /* ---------- Übung: Invader-Leiste und Combo ---------- */
+  function hud(host, info) {
+    var old = document.getElementById("arcHud"); if (old) old.remove(); if (!host || !info) return;
+    var h = el("div", "arcHud"), s = ""; h.id = "arcHud";
+    for (var i = 0; i < info.need; i++) s += inv(COLS[i % 5], i < info.n ? "dead" : "");
+    h.innerHTML = s + "<b>" + (info.cleared ? "WELLE GESCHAFFT" : "WELLE " + info.n + "/" + info.need) + "</b>"; host.appendChild(h);
+  }
+  function zap(n) { var h = document.getElementById("arcHud"); if (!h) return; var s = h.querySelectorAll("svg")[n - 1]; if (s) { s.classList.add("zap"); setTimeout(function () { s.classList.remove("zap"); s.classList.add("dead"); }, 480); } }
+  function combo(n, silent) { var c = el("div", "arcCombo", "COMBO x" + n); document.body.appendChild(c); setTimeout(function () { c.remove(); }, 1150); if (!silent) sfx("combo"); }
+  function banner(txt, silent) { var c = el("div", "arcCombo", txt); c.style.top = "34%"; c.style.fontSize = "26px"; document.body.appendChild(c); setTimeout(function () { c.remove(); }, 1150); if (!silent) sfx("wave"); }
+
+  /* ---------- in VTS2 einhängen ---------- */
+  var o = { theme: V2.theme, themes: V2.themes, mount: V2.mount, tap: V2.tap, whack: V2.whack, home: V2.home, weather: V2.weather, ambientStart: V2.ambientStart, ambientStop: V2.ambientStop, ambientOn: V2.ambientOn, busy: V2.busy };
+  V2.theme = function (id) { return id === ID ? THEME : o.theme(id); };
+  V2.mount = function (host, id) { return id === ID ? mount(host) : o.mount(host, id); };
+  V2.tap = function (id, rect, onEnd, silent) { return id === ID ? tap(rect, onEnd, silent) : o.tap(id, rect, onEnd, silent); };
+  V2.whack = function (id) { return id === ID ? false : o.whack.apply(V2, arguments); };
+  V2.home = function (id, on) { scene(id === ID && on); return o.home(id === ID ? "" : id, on); };
+  V2.weather = function (id, on) { weather(id === ID && on); return o.weather(id === ID ? "" : id, on); };
+  V2.ambientStart = function (id) { return id === ID ? ambientStart() : o.ambientStart(id); };
+  V2.ambientStop = function () { ambientStop(); return o.ambientStop(); };
+  V2.ambientOn = function () { return !!AMB || o.ambientOn(); };
+  V2.busy = function () { return busy || o.busy(); };
+  global.VTS3 = { id: ID, hud: hud, zap: zap, combo: combo, banner: banner, sfx: sfx, scene: scene, inv: inv };
+})(window);
+</script>
 <script>/* Wordy – Fortnite-Sammlung: eigene Zeichnungen im App-Stil (Fan-Art, keine Originalgrafiken).
    Wird nach cosmetics.js geladen und ergänzt VTC.ART; Katalog und Preise stehen in engine.js (SHOP, set: "fn"). */
 (function (global) {
@@ -11306,6 +11447,8 @@ return '<svg class="afs" viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg
     medaille: ['<path d="M80 158l16 38M140 158l-16 38" stroke="' + L + '" stroke-width="12" stroke-linecap="round"/><path d="M80 158l16 38M140 158l-16 38" stroke="#2f7be8" stroke-width="6" stroke-linecap="round"/><circle cx="110" cy="206" r="19" fill="#ffd34d"' + O + '/><path d="M110 192l4 9 10 1-7 7 2 10-9-5-9 5 2-10-7-7 10-1z" fill="#fff3a0" stroke="' + L + '" stroke-width="2.4" stroke-linejoin="round"/>']
   };
   ACCS.xschal = [ACCS.schal[0].replace(/#2f7be8/g, "#d8202f").replace(/#ffd34d/g, "#ffffff")];   // Weihnachts-Schal = roter Schal mit weißen Streifen
+  ACCS.pixelbrille = ['<g shape-rendering="crispEdges"><path d="M40 66h140v8h-140z" fill="#07021A"/><path d="M52 74h52v8h-52zM116 74h52v8h-52zM60 82h36v8h-36zM124 82h36v8h-36zM68 90h20v8h-20zM132 90h20v8h-20z" fill="#07021A"/><path d="M60 74h8v8h-8zM68 82h8v8h-8zM124 74h8v8h-8zM132 82h8v8h-8z" fill="#00F0FF"/><path d="M76 74h8v8h-8zM140 74h8v8h-8z" fill="#FF2BD6"/></g>'];   // Arcade: „Deal with it“-Pixelbrille
+  ACCS.joystick = ['<g stroke="' + L + '" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"><path d="M6 252V232Q6 222 16 222H60Q70 222 70 232V252z" fill="#2B1A6B"/><path d="M38 222V176" stroke="#C9C2E8" stroke-width="9"/><path d="M38 222V176" stroke="#fff" stroke-width="3" opacity=".6"/><circle cx="38" cy="166" r="15" fill="#FF2BD6"/><circle cx="18" cy="238" r="5" fill="#00F0FF"/><circle cx="56" cy="238" r="5" fill="#FFE14D"/></g><circle cx="33" cy="160" r="4" fill="#fff" opacity=".7"/>'];
   ACCS.strickmuetze = [ACCS.beanie[0].replace(/#e8123c/g, "#C1531F").replace(/#ffd2da/g, "#E9A45A").replace(/fill="#fff"/g, 'fill="#F3DFB5"')];   // Herbst-Strickmütze: orange mit cremefarbenem Rand und Bommel
   ACCS.herbstschal = [ACCS.schal[0].replace(/#2f7be8/g, "#B5532A").replace(/#ffd34d/g, "#E9C58A")];   // Herbstschal: rostrot mit Sandstreifen
   ACCS.gummistiefel = [(function () {   // gelbe Gummistiefel mit Sohle und Glanz, decken die Schuhe ab
@@ -11321,7 +11464,7 @@ return '<svg class="afs" viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg
   ACCS.laterne = ['<g stroke="' + L + '" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"><path d="M26 252V96Q26 84 40 84" fill="none" stroke="#7A4A22" stroke-width="7"/><path d="M40 84V96" fill="none"/><path d="M22 98h36M24 150h32" /><path d="M26 98Q2 124 26 152H54Q76 124 52 98z" fill="#E94B3C"/><path d="M26 102Q12 124 28 148H52Q66 124 50 102z" fill="#FFD34D" class="acc-pulse" stroke="none"/><path d="M40 106v40M30 108q-6 18 0 38M50 108q6 18 0 38" stroke="#C1331F" stroke-width="2.4" fill="none"/><circle cx="40" cy="127" r="6" fill="#FFF3B0" stroke="none"/></g>'];
   var over = null;   // { av, lo } nur während die Anprobe gezeichnet wird
   var VB = { head: "30 -50 160 130", face: "40 56 140 64", ears: "20 -6 180 150", neck: "40 148 140 110", legs: "56 216 108 70", gear: "0 -20 220 320" },
-      VBV = { schirm: "-34 -40 120 310", laterne: "-8 78 80 180", skate: "-4 152 96 138", schlitten: "-4 152 96 138", surf: "128 -34 112 360", gitarre: "-2 54 84 215" };   // Ausschnitt je Teil (Dabei-Teile sitzen am Rand der Figur)
+      VBV = { schirm: "-34 -40 120 310", laterne: "-8 78 80 180", joystick: "-12 140 100 120", skate: "-4 152 96 138", schlitten: "-4 152 96 138", surf: "128 -34 112 360", gitarre: "-2 54 84 215" };   // Ausschnitt je Teil (Dabei-Teile sitzen am Rand der Figur)
   function slotOf(val) { var it = global.VT && global.VT.itemById("ac:" + val); return it ? it.slot : "head"; }
   /* Zubehör einer Figur als Markup: { head, neck } */
   function build(loadout) {
@@ -12300,8 +12443,8 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
   global.addEventListener("resize", fitStickers);
   if (global.document && document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fitStickers(); });
   /* Saison-Looks: auto = nach Datum, sonst fest gewählt (halloween|winter|xmas|spring), off = nie; "on" (alt) = Halloween */
-  var SEASONS = [["halloween", "🎃", "Halloween", "15. Okt. – 31. Okt."], ["herbst", "🍂", "Herbst", "1. Sep. – 14. Okt. und 1. Nov. – 30. Nov."], ["winter", "❄️", "Winter", "27. Dez. – 28. Feb."], ["xmas", "🎄", "Weihnachten", "1. Dez. – 26. Dez."], ["spring", "🌴", "Spring Break", "1. März – 20. Apr."], ["aqua", "🐠", "Aquarium", "21. Apr. – 31. Aug."]];
-  var SEASON_WIN = { halloween: [[1015, 1031]], herbst: [[901, 1014], [1101, 1130]], winter: [[1227, 1231], [101, 228]], xmas: [[1201, 1226]], spring: [[301, 420]], aqua: [[421, 831]] };
+  var SEASONS = [["halloween", "🎃", "Halloween", "15. Okt. – 31. Okt."], ["herbst", "🍂", "Herbst", "1. Sep. – 14. Okt."], ["arcade", "🕹️", "Arcade 3000", "1. Nov. – 30. Nov."], ["winter", "❄️", "Winter", "27. Dez. – 28. Feb."], ["xmas", "🎄", "Weihnachten", "1. Dez. – 26. Dez."], ["spring", "🌴", "Spring Break", "1. März – 20. Apr."], ["aqua", "🐠", "Aquarium", "21. Apr. – 31. Aug."]];
+  var SEASON_WIN = { halloween: [[1015, 1031]], herbst: [[901, 1014]], arcade: [[1101, 1130]], winter: [[1227, 1231], [101, 228]], xmas: [[1201, 1226]], spring: [[301, 420]], aqua: [[421, 831]] };
   function mdNum(x) { var m = /^(\d\d)-(\d\d)$/.exec(x || ""); return m ? +m[1] * 100 + +m[2] : 0; }
   function seasonPlanOf(id) { var r = global.WordySync && global.WordySync.remote ? global.WordySync.remote() : null; return (r && r.seasonPlan && r.seasonPlan[id]) || {}; }
   function seasonRanges(id) { var pl = seasonPlanOf(id), f = mdNum(pl.from), t = mdNum(pl.to); return f && t ? [[f, t]] : SEASON_WIN[id]; }
@@ -13163,7 +13306,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       '<div class="hhchips"><span class="hhc">🔥 <b class="tnum">' + st.streak.count + '</b></span><span class="hhc">🪙 <b class="tnum">' + st.coins + '</b></span></div></div>' +
       '</section>';
 
-    html += adventTile() + herbstCard() + resumeCard() + planCard() + dayCard(pct);
+    html += adventTile() + herbstCard() + arcadeCard() + resumeCard() + planCard() + dayCard(pct);
 
     var wish = S.wish();
     html += '<section class="card"><div class="eyebrow">Tagesmissionen</div><div style="margin-top:6px">' +
@@ -13764,6 +13907,23 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     sessionEl.appendChild(b);
     if (Math.random() < 0.7) setTimeout(function () { var c = $("#hbCrow"); if (c) c.classList.add("here"); }, 900 + Math.random() * 4500);
   }
+  /* ARCADE 3000: Invader-Leiste in der Übung (jede richtige Antwort schießt einen ab, 8 am Tag = Welle), Combo-Anzeige ab 3 in Folge */
+  function arcadeOn() { return seasonNow() === "arcade" && !!global.VTS3; }
+  var arcStreak = 0;
+  function arcMount() { if (!arcadeOn()) { var o = $("#arcHud"); if (o) o.remove(); return; } global.VTS3.hud(sessionEl, S.arcInfo()); }
+  function arcReact(ok) {
+    if (!arcadeOn()) return; var mute = S.state.settings.audio === false;
+    if (!ok) { arcStreak = 0; return; }
+    arcStreak++; var r = S.arcHit();
+    if (!r.cleared) { global.VTS3.zap(r.n); if (!mute) global.VTS3.sfx("zap"); }
+    if (r.done) { setTimeout(function () { global.VTS3.banner("WELLE GESCHAFFT! +10 🪙", mute); renderHeader(); if (r.got) toast("🕹️ Neu im Spind: " + r.got.label + "!", 4200); arcMount(); }, 500); }
+    else if (arcStreak >= 3 && (arcStreak === 3 || arcStreak % 5 === 0) && !calmMotion) global.VTS3.combo(arcStreak, mute);
+  }
+  function arcadeCard() {
+    if (!arcadeOn()) return ""; var a = S.arcInfo();
+    return '<section class="card"><div class="eyebrow">🕹️ Arcade 3000</div><div class="row" style="gap:12px;align-items:center;margin-top:6px"><div class="grow"><b>Invader-Welle: ' + (a.cleared ? "geschafft ✓" : a.n + " von " + a.need) + '</b><div class="small muted">Jede richtige Antwort schießt einen Invader ab. 8 am Tag = Welle geschafft, +10 🪙.' + (a.next ? " Nach " + a.next.at + " Wellen: " + esc(a.next.label) + " (du hast " + a.waves + ")." : " Alle Arcade-Preise geholt!") + '</div></div><div style="text-align:right;white-space:nowrap;font:900 11px/1.5 ui-monospace,Menlo,monospace;color:var(--gold)">HI-SCORE<br><span style="font-size:17px">' + a.hi + '</span></div></div>' +
+      '<div class="small muted" style="margin-top:6px">' + (a.beam ? "Das UFO hat dir heute schon eine Münze gebeamt." : "Tipp das UFO oben an – einmal am Tag beamt es dir 5 🪙.") + '</div></section>';
+  }
   function buddyReact(ok) {
     var b = $("#hBuddy"); if (!b || calmMotion) return;
     b.classList.remove("nod", "tip"); void b.offsetWidth; b.classList.add(ok ? "nod" : "tip"); setTimeout(function () { b.classList.remove("nod", "tip"); }, 950);
@@ -13828,6 +13988,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     hbSheet('<div style="font-size:42px;line-height:1.1">🍄</div><div class="eyebrow">Pilzbuch</div><h3>' + Object.keys(h.book).length + ' von ' + h.shrooms.length + ' Sorten gefunden</h3><div class="row wrap" style="gap:10px;justify-content:center;margin-top:8px">' + cells + '</div><p class="small muted" style="margin:10px 0 0">Tippe auf der Startseite die Pilze im Hintergrund an. Höchstens 5 am Tag, keine XP, nur zum Sammeln.</p>');
   }
   if (global.VTS2) hbHooks();
+  if (global.VTS2) global.VTS2.hooks.arcBeam = function (n) { renderHeader(); toast("🛸 Das UFO beamt dir " + n + " 🪙!"); };
 
   function seasonCard() {
     var m = S.state.settings.season || "auto", t = seasonNow(), snd = S.state.settings.seasonSound === true;
@@ -15351,7 +15512,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
       var cs = t.step || SS.curStep || 1; SS.curStep = cs;
       stepHtml = '<div class="stepbar">' + (SS.station.verbIds ? [1, 2, 3, 4, 5] : [1, 2, 3, 4]).map(function (k) { return '<i class="' + (k < cs ? "ok" : k === cs ? "now" : "") + '"></i>'; }).join("") + '<b>Station ' + SS.station.n + ' · ' + STEP_NAMES[cs - 1] + '</b></div>';
     }
-    sessionEl.innerHTML = head + stepHtml + '<div class="sbody" id="sbody"></div><div class="sfoot" id="sfoot"></div>'; buddyMount();
+    sessionEl.innerHTML = head + stepHtml + '<div class="sbody" id="sbody"></div><div class="sfoot" id="sfoot"></div>'; buddyMount(); arcMount();
     var body = $("#sbody"), foot = $("#sfoot");
     body.className = "sbody pop";
     (RENDER[t.type] || RENDER.mc_en_de)(t, body, foot);
@@ -15679,6 +15840,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (S.state.settings.audio) global.VTC.sound(p.snd, ok);
     if (ok) global.VTC.burst(p.fx, global.innerWidth / 2, global.innerHeight * .55, 16, 1);
     buddyReact(ok);
+    arcReact(ok);
   }
   function verdictSentence(ok, x) {
     var foot = $("#sfoot"); if (!foot) return;
@@ -16354,7 +16516,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     spiderSync();
     $$("#tabs button").forEach(function (b) { b.setAttribute("aria-current", b.getAttribute("data-tab") === tab); });
     renderHeader();
-    if (tab === "home") viewHome();
+    if (tab === "home") { viewHome(); if (global.VTS3 && !calmMotion) global.VTS3.scene(seasonNow() === "arcade" && sessionEl.hidden); }
     else if (tab === "lernen") viewLernen();
     else if (tab === "spielen") viewSpielen();
     else if (tab === "beute") viewBeute();

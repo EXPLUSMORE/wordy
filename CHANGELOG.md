@@ -10,6 +10,11 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.180.0
+- **Neuer Saison-Look „Arcade 3000“** (Neon-Spielhalle, 1.–30. November, ersetzt dort den Herbst-Look; Herbst gilt weiter 1.9.–14.10. und bleibt wählbar/steuerbar): Synthwave-Bühne mit laufendem Gitter, UFO in der Kopfzeile (Antippen = Laser-Show, einmal am Tag +5 🪙), fallende Pixel-Blöcke, Chiptune-Klang.
+- Invader-Welle: jede richtige Antwort schießt einen Invader ab, 8 am Tag = Welle geschafft (+10 🪙); nach 3/8/15 Wellen gibt es Pixel-Brille, Joystick und den Neon-Gitter-Rahmen. Combo-Anzeige ab 3 richtigen in Folge, HI-SCORE = bester XP-Tag.
+- Dashboard: „Arcade 3000“ im Saison-Plan und bei „Look erzwingen“ (Server-Update nötig).
+
 ## 2.179.2
 - Laden: Sticker-Plätze (freischalten, Anzahl) stehen wieder oben in der Kategorie Figuren.
 

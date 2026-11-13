@@ -335,8 +335,8 @@
   global.addEventListener("resize", fitStickers);
   if (global.document && document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fitStickers(); });
   /* Saison-Looks: auto = nach Datum, sonst fest gewählt (halloween|winter|xmas|spring), off = nie; "on" (alt) = Halloween */
-  var SEASONS = [["halloween", "🎃", "Halloween", "15. Okt. – 31. Okt."], ["herbst", "🍂", "Herbst", "1. Sep. – 14. Okt. und 1. Nov. – 30. Nov."], ["winter", "❄️", "Winter", "27. Dez. – 28. Feb."], ["xmas", "🎄", "Weihnachten", "1. Dez. – 26. Dez."], ["spring", "🌴", "Spring Break", "1. März – 20. Apr."], ["aqua", "🐠", "Aquarium", "21. Apr. – 31. Aug."]];
-  var SEASON_WIN = { halloween: [[1015, 1031]], herbst: [[901, 1014], [1101, 1130]], winter: [[1227, 1231], [101, 228]], xmas: [[1201, 1226]], spring: [[301, 420]], aqua: [[421, 831]] };
+  var SEASONS = [["halloween", "🎃", "Halloween", "15. Okt. – 31. Okt."], ["herbst", "🍂", "Herbst", "1. Sep. – 14. Okt."], ["arcade", "🕹️", "Arcade 3000", "1. Nov. – 30. Nov."], ["winter", "❄️", "Winter", "27. Dez. – 28. Feb."], ["xmas", "🎄", "Weihnachten", "1. Dez. – 26. Dez."], ["spring", "🌴", "Spring Break", "1. März – 20. Apr."], ["aqua", "🐠", "Aquarium", "21. Apr. – 31. Aug."]];
+  var SEASON_WIN = { halloween: [[1015, 1031]], herbst: [[901, 1014]], arcade: [[1101, 1130]], winter: [[1227, 1231], [101, 228]], xmas: [[1201, 1226]], spring: [[301, 420]], aqua: [[421, 831]] };
   function mdNum(x) { var m = /^(\d\d)-(\d\d)$/.exec(x || ""); return m ? +m[1] * 100 + +m[2] : 0; }
   function seasonPlanOf(id) { var r = global.WordySync && global.WordySync.remote ? global.WordySync.remote() : null; return (r && r.seasonPlan && r.seasonPlan[id]) || {}; }
   function seasonRanges(id) { var pl = seasonPlanOf(id), f = mdNum(pl.from), t = mdNum(pl.to); return f && t ? [[f, t]] : SEASON_WIN[id]; }
@@ -1198,7 +1198,7 @@
       '<div class="hhchips"><span class="hhc">🔥 <b class="tnum">' + st.streak.count + '</b></span><span class="hhc">🪙 <b class="tnum">' + st.coins + '</b></span></div></div>' +
       '</section>';
 
-    html += adventTile() + herbstCard() + resumeCard() + planCard() + dayCard(pct);
+    html += adventTile() + herbstCard() + arcadeCard() + resumeCard() + planCard() + dayCard(pct);
 
     var wish = S.wish();
     html += '<section class="card"><div class="eyebrow">Tagesmissionen</div><div style="margin-top:6px">' +
@@ -1799,6 +1799,23 @@
     sessionEl.appendChild(b);
     if (Math.random() < 0.7) setTimeout(function () { var c = $("#hbCrow"); if (c) c.classList.add("here"); }, 900 + Math.random() * 4500);
   }
+  /* ARCADE 3000: Invader-Leiste in der Übung (jede richtige Antwort schießt einen ab, 8 am Tag = Welle), Combo-Anzeige ab 3 in Folge */
+  function arcadeOn() { return seasonNow() === "arcade" && !!global.VTS3; }
+  var arcStreak = 0;
+  function arcMount() { if (!arcadeOn()) { var o = $("#arcHud"); if (o) o.remove(); return; } global.VTS3.hud(sessionEl, S.arcInfo()); }
+  function arcReact(ok) {
+    if (!arcadeOn()) return; var mute = S.state.settings.audio === false;
+    if (!ok) { arcStreak = 0; return; }
+    arcStreak++; var r = S.arcHit();
+    if (!r.cleared) { global.VTS3.zap(r.n); if (!mute) global.VTS3.sfx("zap"); }
+    if (r.done) { setTimeout(function () { global.VTS3.banner("WELLE GESCHAFFT! +10 🪙", mute); renderHeader(); if (r.got) toast("🕹️ Neu im Spind: " + r.got.label + "!", 4200); arcMount(); }, 500); }
+    else if (arcStreak >= 3 && (arcStreak === 3 || arcStreak % 5 === 0) && !calmMotion) global.VTS3.combo(arcStreak, mute);
+  }
+  function arcadeCard() {
+    if (!arcadeOn()) return ""; var a = S.arcInfo();
+    return '<section class="card"><div class="eyebrow">🕹️ Arcade 3000</div><div class="row" style="gap:12px;align-items:center;margin-top:6px"><div class="grow"><b>Invader-Welle: ' + (a.cleared ? "geschafft ✓" : a.n + " von " + a.need) + '</b><div class="small muted">Jede richtige Antwort schießt einen Invader ab. 8 am Tag = Welle geschafft, +10 🪙.' + (a.next ? " Nach " + a.next.at + " Wellen: " + esc(a.next.label) + " (du hast " + a.waves + ")." : " Alle Arcade-Preise geholt!") + '</div></div><div style="text-align:right;white-space:nowrap;font:900 11px/1.5 ui-monospace,Menlo,monospace;color:var(--gold)">HI-SCORE<br><span style="font-size:17px">' + a.hi + '</span></div></div>' +
+      '<div class="small muted" style="margin-top:6px">' + (a.beam ? "Das UFO hat dir heute schon eine Münze gebeamt." : "Tipp das UFO oben an – einmal am Tag beamt es dir 5 🪙.") + '</div></section>';
+  }
   function buddyReact(ok) {
     var b = $("#hBuddy"); if (!b || calmMotion) return;
     b.classList.remove("nod", "tip"); void b.offsetWidth; b.classList.add(ok ? "nod" : "tip"); setTimeout(function () { b.classList.remove("nod", "tip"); }, 950);
@@ -1863,6 +1880,7 @@
     hbSheet('<div style="font-size:42px;line-height:1.1">🍄</div><div class="eyebrow">Pilzbuch</div><h3>' + Object.keys(h.book).length + ' von ' + h.shrooms.length + ' Sorten gefunden</h3><div class="row wrap" style="gap:10px;justify-content:center;margin-top:8px">' + cells + '</div><p class="small muted" style="margin:10px 0 0">Tippe auf der Startseite die Pilze im Hintergrund an. Höchstens 5 am Tag, keine XP, nur zum Sammeln.</p>');
   }
   if (global.VTS2) hbHooks();
+  if (global.VTS2) global.VTS2.hooks.arcBeam = function (n) { renderHeader(); toast("🛸 Das UFO beamt dir " + n + " 🪙!"); };
 
   function seasonCard() {
     var m = S.state.settings.season || "auto", t = seasonNow(), snd = S.state.settings.seasonSound === true;
@@ -3386,7 +3404,7 @@
       var cs = t.step || SS.curStep || 1; SS.curStep = cs;
       stepHtml = '<div class="stepbar">' + (SS.station.verbIds ? [1, 2, 3, 4, 5] : [1, 2, 3, 4]).map(function (k) { return '<i class="' + (k < cs ? "ok" : k === cs ? "now" : "") + '"></i>'; }).join("") + '<b>Station ' + SS.station.n + ' · ' + STEP_NAMES[cs - 1] + '</b></div>';
     }
-    sessionEl.innerHTML = head + stepHtml + '<div class="sbody" id="sbody"></div><div class="sfoot" id="sfoot"></div>'; buddyMount();
+    sessionEl.innerHTML = head + stepHtml + '<div class="sbody" id="sbody"></div><div class="sfoot" id="sfoot"></div>'; buddyMount(); arcMount();
     var body = $("#sbody"), foot = $("#sfoot");
     body.className = "sbody pop";
     (RENDER[t.type] || RENDER.mc_en_de)(t, body, foot);
@@ -3714,6 +3732,7 @@
     if (S.state.settings.audio) global.VTC.sound(p.snd, ok);
     if (ok) global.VTC.burst(p.fx, global.innerWidth / 2, global.innerHeight * .55, 16, 1);
     buddyReact(ok);
+    arcReact(ok);
   }
   function verdictSentence(ok, x) {
     var foot = $("#sfoot"); if (!foot) return;
@@ -4389,7 +4408,7 @@
     spiderSync();
     $$("#tabs button").forEach(function (b) { b.setAttribute("aria-current", b.getAttribute("data-tab") === tab); });
     renderHeader();
-    if (tab === "home") viewHome();
+    if (tab === "home") { viewHome(); if (global.VTS3 && !calmMotion) global.VTS3.scene(seasonNow() === "arcade" && sessionEl.hidden); }
     else if (tab === "lernen") viewLernen();
     else if (tab === "spielen") viewSpielen();
     else if (tab === "beute") viewBeute();

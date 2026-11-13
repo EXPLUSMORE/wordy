@@ -123,6 +123,7 @@
     { id: "fr:none",    kind: "frame", label: "Kein Rahmen", cost: 0,   val: "none" },
     { id: "fr:lichter",  kind: "frame", label: "Lichterketten-Rahmen", cost: 400, val: "lichter", pass: "Advent", rar: "legend" },
     { id: "fr:laub",     kind: "frame", label: "Herbstlaub-Rahmen", cost: 300, val: "laub", pass: "Herbst", rar: "legend" },
+    { id: "fr:gitter",   kind: "frame", label: "Neon-Gitter-Rahmen", cost: 400, val: "gitter", pass: "Arcade", rar: "legend" },
     { id: "fr:gold",    kind: "frame", label: "Goldrahmen",  cost: 120, val: "gold" },
     { id: "fr:rainbow", kind: "frame", label: "Regenbogenrahmen", cost: 200, val: "rainbow" },
     { id: "fr:fire",    kind: "frame", label: "Flammenrahmen", cost: 350, val: "fire" },
@@ -278,9 +279,10 @@
     ["schal", "neck", "Schal", 50], ["fliege", "neck", "Fliege", 35], ["kette", "neck", "Goldkette", 90], ["tuch", "neck", "Halstuch", 35], ["medaille", "neck", "Medaille", 60], ["bosskette", "neck", "Boss-Kette ($)", 150], ["mkette", "neck", "Fette Goldkette mit M", 150],
     ["skate", "gear", "Skateboard", 70], ["surf", "gear", "Surfbrett", 100], ["gitarre", "gear", "Gitarre", 150],
     ["nikolaus", "head", "Nikolaus-Mütze", 70], ["xschal", "neck", "Weihnachts-Schal", 50], ["geweih", "ears", "Rentier-Geweih", 100], ["schlitten", "gear", "Schlitten", 150], ["socken", "legs", "Weihnachtssocken", 60],
-    ["gummistiefel", "legs", "Gummistiefel", 60], ["schirm", "gear", "Regenschirm", 70], ["herbstschal", "neck", "Herbstschal", 50], ["strickmuetze", "head", "Strickmütze", 70], ["laterne", "gear", "Laterne", 80]];
+    ["gummistiefel", "legs", "Gummistiefel", 60], ["schirm", "gear", "Regenschirm", 70], ["herbstschal", "neck", "Herbstschal", 50], ["strickmuetze", "head", "Strickmütze", 70], ["laterne", "gear", "Laterne", 80],
+    ["pixelbrille", "face", "Pixel-Brille", 90], ["joystick", "gear", "Joystick", 120]];
   SHOP = SHOP.concat(ACC.map(function (a) { return { id: "ac:" + a[0], kind: "acc", slot: a[1], label: a[2], cost: a[3], val: a[0], rar: a[3] <= 40 ? "common" : a[3] <= 70 ? "rare" : a[3] <= 100 ? "epic" : "legend" }; }));
-  SHOP.forEach(function (x) { if (x.id === "ac:nikolaus" || x.id === "ac:xschal" || x.id === "ac:geweih" || x.id === "ac:schlitten") x.pass = "Advent"; if (x.id === "ac:strickmuetze" || x.id === "ac:laterne") x.pass = "Herbst"; });   // nur im Wichtel-Kalender (v2.160)
+  SHOP.forEach(function (x) { if (x.id === "ac:nikolaus" || x.id === "ac:xschal" || x.id === "ac:geweih" || x.id === "ac:schlitten") x.pass = "Advent"; if (x.id === "ac:strickmuetze" || x.id === "ac:laterne") x.pass = "Herbst"; if (x.id === "ac:pixelbrille" || x.id === "ac:joystick") x.pass = "Arcade"; });   // nur im Wichtel-Kalender (v2.160)
   /* v2.154: Unreal-Preise halbiert (alter Preis in `was`, für die einmalige Gutschrift in priceMigrate) */
   SHOP.forEach(function (x) { if (x.rar === "unreal" && x.cost > 0 && !x.reward && !x.pass) { x.was = x.cost; x.cost = Math.max(5, Math.round(x.cost / 2 / 5) * 5); } });
   /* Englische Namen aller Gegenstände (Gadget: nebenbei Vokabeln lernen). Sticker = Name der Figur + " sticker". */
@@ -301,7 +303,7 @@
     "sn:none": "Mute", "sn:bell": "Little bell", "sn:arcade": "Arcade", "sn:harp": "Harp", "th:paper": "Paper", "th:mint": "Mint", "th:plum": "Plum", "th:amber": "Amber",
     "ac:beanie": "Winter hat", "ac:party": "Party hat", "ac:zylinder": "Top hat", "ac:prop": "Propeller cap", "ac:cap": "Baseball cap", "ac:stroh": "Straw hat", "ac:blumen": "Flower crown", "ac:heiligen": "Halo", "ac:hasen": "Bunny ears", "ac:teufel": "Devil horns", "ac:eishut": "Ice-cream hat", "ac:pizza": "Pizza hat", "ac:krone": "Gold crown",
     "ac:sonne": "Sunglasses", "ac:nerd": "Nerd glasses", "ac:mono": "Monocle", "ac:brille3d": "3D glasses", "ac:herz": "Heart glasses", "ac:schnurr": "Moustache", "ac:clown": "Clown nose", "ac:ski": "Ski goggles",
-    "ac:kopf": "Headphones", "ac:gummistiefel": "Rubber boots", "ac:schirm": "Umbrella", "ac:herbstschal": "Autumn scarf", "ac:strickmuetze": "Knitted hat", "ac:laterne": "Lantern", "fr:laub": "Autumn leaves frame", "ac:waerme": "Earmuffs", "ac:ohrring": "Earrings", "ac:schal": "Scarf", "ac:fliege": "Bow tie", "ac:kette": "Gold chain", "ac:tuch": "Neckerchief", "ac:medaille": "Medal", "ac:bosskette": "Boss chain ($)", "ac:mkette": "Fat gold chain with M", "ac:skate": "Skateboard", "ac:surf": "Surfboard", "ac:gitarre": "Guitar", "ac:socken": "Christmas socks"
+    "ac:kopf": "Headphones", "ac:gummistiefel": "Rubber boots", "ac:schirm": "Umbrella", "ac:herbstschal": "Autumn scarf", "ac:strickmuetze": "Knitted hat", "ac:laterne": "Lantern", "fr:laub": "Autumn leaves frame", "ac:pixelbrille": "Pixel glasses", "ac:joystick": "Joystick", "fr:gitter": "Neon grid frame", "ac:waerme": "Earmuffs", "ac:ohrring": "Earrings", "ac:schal": "Scarf", "ac:fliege": "Bow tie", "ac:kette": "Gold chain", "ac:tuch": "Neckerchief", "ac:medaille": "Medal", "ac:bosskette": "Boss chain ($)", "ac:mkette": "Fat gold chain with M", "ac:skate": "Skateboard", "ac:surf": "Surfboard", "ac:gitarre": "Guitar", "ac:socken": "Christmas socks"
   };
   function enName(it) { if (!it) return ""; if (it.kind === "sticker") { var b = EN["av:" + it.id.slice(3)]; return b ? b + " sticker" : ""; } return EN[it.id] || ""; }
   var MAX_STICKERS = 10;
@@ -1222,7 +1224,7 @@
     info.weeks.forEach(function (w) { M(g10, sid + "p" + w.n, "Woche " + w.n, w.n === info.weeks.length ? "legend" : "epic", w.claimed, info.season.title + "-Pass, Woche " + w.n, String(w.n)); });
     if (info.season.finale) M(g10, sid + "cup", info.season.title + "-Pokal", "legend", info.fin.claimed, "Alle Wochen und das Finale im " + info.season.title + "-Pass", "cup");
     var sbd = (state.profile && state.profile.seasonBadge) || {}, yrN = new Date().getFullYear();
-    [["halloween", "Halloween", "🎃"], ["herbst", "Herbst", "🍂"], ["winter", "Winter", "❄️"], ["xmas", "Weihnachten", "🎄"], ["spring", "Spring Break", "🌴"], ["aqua", "Aquarium", "🐠"]].forEach(function (z) {
+    [["halloween", "Halloween", "🎃"], ["herbst", "Herbst", "🍂"], ["arcade", "Arcade 3000", "🕹️"], ["winter", "Winter", "❄️"], ["xmas", "Weihnachten", "🎄"], ["spring", "Spring Break", "🌴"], ["aqua", "Aquarium", "🐠"]].forEach(function (z) {
       var ys = Object.keys(sbd).filter(function (k) { return k.indexOf(z[0] + "-") === 0; }).map(function (k) { return +k.slice(z[0].length + 1); });
       if (yrN && ys.indexOf(yrN) < 0) ys.push(yrN);
       ys.sort().forEach(function (y) { M(g10, "sea-" + z[0] + "-" + y, z[1] + " " + y, "rare", sbd[z[0] + "-" + y], "Den " + z[1] + "-Look im Jahr " + y + " erleben", z[2]); });
@@ -1589,6 +1591,25 @@
   }
   function hbLantern() { var h = hb(); if (h.lant) return null; h.lant = 1; var g = passGrant({ items: ["ac:laterne"] }); ev("herbst", { k: "laterne" }); save(true); return g.items && g.items[0] || { label: "Laterne" }; }
   function hbInfo() { var h = hb(); return { harvest: h.harvest, need: HB_HARVEST, done: !!h.done, book: h.book, shrooms: HB_SHROOMS, left: hbMushLeft(), hogSeen: h.hog === today(), cap: !!h.cap, lant: !!h.lant }; }
+  /* Arcade 3000 (v2.180): state.arcade = {y, hi (bester XP-Tag), waves (geschaffte Invader-Wellen), wday (Welle heute geschafft), nday/n (Treffer heute), beam (UFO-Münze heute)}; jedes Jahr neu */
+  var ARC_NEED = 8, ARC_REW = [[3, "ac:pixelbrille"], [8, "ac:joystick"], [15, "fr:gitter"]];
+  function arc() { var y = new Date().getFullYear(), a = state.arcade; if (!a || a.y !== y) a = state.arcade = { y: y, hi: 0, waves: 0, wday: "", nday: "", n: 0, beam: "" }; return a; }
+  function arcHit() {   // eine richtige Antwort = ein Invader; 8 am Tag = Welle geschafft (+10 Münzen, nach 3/8/15 Wellen Pixel-Brille, Joystick, Neon-Gitter-Rahmen)
+    var a = arc(), t = today(); if (a.wday === t) return { n: ARC_NEED, need: ARC_NEED, cleared: true };
+    if (a.nday !== t) { a.nday = t; a.n = 0; } a.n++; var out = { n: a.n, need: ARC_NEED };
+    if (a.n >= ARC_NEED) {
+      a.wday = t; a.waves++; addCoins(10); out.done = true; out.coins = 10; out.waves = a.waves;
+      ARC_REW.forEach(function (r) { if (a.waves >= r[0] && state.profile.owned.indexOf(r[1]) < 0 && !out.got) { var g = passGrant({ items: [r[1]] }); out.got = g.items && g.items[0] || { label: r[1] }; } });
+      ev("arcade", { k: "welle", n: a.waves });
+    }
+    save(); return out;
+  }
+  function arcBeam() { var a = arc(), t = today(); if (a.beam === t) return 0; a.beam = t; addCoins(5); ev("arcade", { k: "beam" }); save(true); return 5; }
+  function arcInfo() {
+    var a = arc(), t = today(), x = state.daily && state.daily.xp || 0; if (x > a.hi) a.hi = x;
+    var nx = ARC_REW.filter(function (r) { return a.waves < r[0] && state.profile.owned.indexOf(r[1]) < 0; })[0], it = nx && SHOP.filter(function (s) { return s.id === nx[1]; })[0];
+    return { hi: a.hi, today: x, waves: a.waves, n: a.wday === t ? ARC_NEED : a.nday === t ? a.n : 0, need: ARC_NEED, cleared: a.wday === t, beam: a.beam === t, next: nx ? { at: nx[0], label: it ? it.label : nx[1] } : null };
+  }
   var STATION_WORDS = 7, pathCache = null, pathCacheKey = "";
   function pathState() {
     var p = state.path;
@@ -1990,7 +2011,7 @@
     restoreState: restoreState, isFresh: isFresh, backupInfo: backupInfo, restoreBackup: restoreBackup, keepStorage: keepStorage, isPersisted: function () { return persisted; },
     profiles: profiles, addProfile: addProfile, switchProfile: switchProfile, renameProfile: renameProfile, deleteProfile: deleteProfile,
     exportProgress: exportProgress, importProgress: importProgress, exportCsv: exportCsv,
-    hbHarvest: hbHarvest, hbShroom: hbShroom, hbMushLeft: hbMushLeft, hbPile: hbPile, hbHog: hbHog, hbLantern: hbLantern, hbInfo: hbInfo,
+    hbHarvest: hbHarvest, hbShroom: hbShroom, hbMushLeft: hbMushLeft, hbPile: hbPile, hbHog: hbHog, hbLantern: hbLantern, hbInfo: hbInfo, arcHit: arcHit, arcBeam: arcBeam, arcInfo: arcInfo,
     grantItem: function (id) { return passGrant({ items: [id] }); }, resetProgress: resetProgress, stampNew: stampNew, passStamp: passStamp, shopVisible: shopVisible, shopWeeks: shopWeeks, shopCatalog: shopCatalog, shopTeasers: shopTeasers, shopNow: shopNow, shopRel: shopRel, WELCOME: WELCOME, welcomeGrant: welcomeGrant, welcomeNeeded: welcomeNeeded, steered: steered, pathUnitList: pathUnitList, buy: buy, equip: equip, wish: wish, setWish: setWish, coinsToday: coinsToday, parentCoins: parentCoins, stickers: stickers, pathState: pathState, pathLock: pathLock, adventInfo: adventInfo, advPlan: advPlan, advCan: advCan, advWin: advWin, pathStations: pathStations, goalMin: goalMin, freeDay: freeDay, planMin: planMin, weekPlan: weekPlan, pathProgress: pathProgress, bossNeedFor: bossNeedFor, bossRecord: bossRecord, bossLog: bossLog, pathSections: pathSections, pathSync: pathSync, pathComplete: pathComplete, claimChest: claimChest, boostStart: boostStart, boostInfo: boostInfo, boostActive: boostActive, stickerSlots: stickerSlots, buySlot: buySlot, SLOT_COST: STICKER_SLOT_COST, owns: owns, isActive: isActive, boost: boost, coinFactor: coinFactor, avgCoins: avgCoins, dealItem: dealItem, priceOf: priceOf, passInfo: passInfo, favs: favs, toggleFav: toggleFav, collection: collection, findCollItem: findCollItem, CUP_TIERS: CUP_TIERS, claimPassWeek: claimPassWeek, claimPassTier: claimPassTier, claimPassCrew: claimPassCrew, claimPassFinale: claimPassFinale, passMeta: passMeta, rarityOf: rarityOf, shopList: shopList, activeSetDeal: activeSetDeal, buySet: buySet, takeNews: takeNews, SETS: SETS, itemById: itemById, minXp: minXp, defaultOf: defaultOf
   };
 })(window);

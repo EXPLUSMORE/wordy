@@ -62,6 +62,8 @@
     medaille: ['<path d="M80 158l16 38M140 158l-16 38" stroke="' + L + '" stroke-width="12" stroke-linecap="round"/><path d="M80 158l16 38M140 158l-16 38" stroke="#2f7be8" stroke-width="6" stroke-linecap="round"/><circle cx="110" cy="206" r="19" fill="#ffd34d"' + O + '/><path d="M110 192l4 9 10 1-7 7 2 10-9-5-9 5 2-10-7-7 10-1z" fill="#fff3a0" stroke="' + L + '" stroke-width="2.4" stroke-linejoin="round"/>']
   };
   ACCS.xschal = [ACCS.schal[0].replace(/#2f7be8/g, "#d8202f").replace(/#ffd34d/g, "#ffffff")];   // Weihnachts-Schal = roter Schal mit weißen Streifen
+  ACCS.pixelbrille = ['<g shape-rendering="crispEdges"><path d="M40 66h140v8h-140z" fill="#07021A"/><path d="M52 74h52v8h-52zM116 74h52v8h-52zM60 82h36v8h-36zM124 82h36v8h-36zM68 90h20v8h-20zM132 90h20v8h-20z" fill="#07021A"/><path d="M60 74h8v8h-8zM68 82h8v8h-8zM124 74h8v8h-8zM132 82h8v8h-8z" fill="#00F0FF"/><path d="M76 74h8v8h-8zM140 74h8v8h-8z" fill="#FF2BD6"/></g>'];   // Arcade: „Deal with it“-Pixelbrille
+  ACCS.joystick = ['<g stroke="' + L + '" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"><path d="M6 252V232Q6 222 16 222H60Q70 222 70 232V252z" fill="#2B1A6B"/><path d="M38 222V176" stroke="#C9C2E8" stroke-width="9"/><path d="M38 222V176" stroke="#fff" stroke-width="3" opacity=".6"/><circle cx="38" cy="166" r="15" fill="#FF2BD6"/><circle cx="18" cy="238" r="5" fill="#00F0FF"/><circle cx="56" cy="238" r="5" fill="#FFE14D"/></g><circle cx="33" cy="160" r="4" fill="#fff" opacity=".7"/>'];
   ACCS.strickmuetze = [ACCS.beanie[0].replace(/#e8123c/g, "#C1531F").replace(/#ffd2da/g, "#E9A45A").replace(/fill="#fff"/g, 'fill="#F3DFB5"')];   // Herbst-Strickmütze: orange mit cremefarbenem Rand und Bommel
   ACCS.herbstschal = [ACCS.schal[0].replace(/#2f7be8/g, "#B5532A").replace(/#ffd34d/g, "#E9C58A")];   // Herbstschal: rostrot mit Sandstreifen
   ACCS.gummistiefel = [(function () {   // gelbe Gummistiefel mit Sohle und Glanz, decken die Schuhe ab
@@ -77,7 +79,7 @@
   ACCS.laterne = ['<g stroke="' + L + '" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"><path d="M26 252V96Q26 84 40 84" fill="none" stroke="#7A4A22" stroke-width="7"/><path d="M40 84V96" fill="none"/><path d="M22 98h36M24 150h32" /><path d="M26 98Q2 124 26 152H54Q76 124 52 98z" fill="#E94B3C"/><path d="M26 102Q12 124 28 148H52Q66 124 50 102z" fill="#FFD34D" class="acc-pulse" stroke="none"/><path d="M40 106v40M30 108q-6 18 0 38M50 108q6 18 0 38" stroke="#C1331F" stroke-width="2.4" fill="none"/><circle cx="40" cy="127" r="6" fill="#FFF3B0" stroke="none"/></g>'];
   var over = null;   // { av, lo } nur während die Anprobe gezeichnet wird
   var VB = { head: "30 -50 160 130", face: "40 56 140 64", ears: "20 -6 180 150", neck: "40 148 140 110", legs: "56 216 108 70", gear: "0 -20 220 320" },
-      VBV = { schirm: "-34 -40 120 310", laterne: "-8 78 80 180", skate: "-4 152 96 138", schlitten: "-4 152 96 138", surf: "128 -34 112 360", gitarre: "-2 54 84 215" };   // Ausschnitt je Teil (Dabei-Teile sitzen am Rand der Figur)
+      VBV = { schirm: "-34 -40 120 310", laterne: "-8 78 80 180", joystick: "-12 140 100 120", skate: "-4 152 96 138", schlitten: "-4 152 96 138", surf: "128 -34 112 360", gitarre: "-2 54 84 215" };   // Ausschnitt je Teil (Dabei-Teile sitzen am Rand der Figur)
   function slotOf(val) { var it = global.VT && global.VT.itemById("ac:" + val); return it ? it.slot : "head"; }
   /* Zubehör einer Figur als Markup: { head, neck } */
   function build(loadout) {
