@@ -1289,6 +1289,7 @@ div.msr{cursor:default}.msr.done{opacity:.7}.msr .mst{flex:0 0 20px;height:20px;
 #session .tile.word{font-size:15px;padding:10px 13px;min-width:0;font-weight:600}
 #session .tiles.letters{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:6px}
 #session .tiles.letters .tile{width:100%;min-width:0;padding:14px 0;font-size:24px;border-radius:12px;text-align:center}
+#session .tiles.letters .tile,#session .slot .sl{font-family:ui-monospace,"SF Mono",Menlo,Consolas,"Courier New",monospace}   /* großes I und kleines l unterscheidbar */
 #session .tile.used{opacity:.25;pointer-events:none}
 /* Xing: Tastatur als Leiste unten über dem Spiel (erscheint beim Antippen eines Felds oder Hinweises) */
 .kr-pad{position:absolute;left:0;right:0;bottom:0;z-index:5;display:flex;flex-direction:column;align-items:center;gap:8px;padding:4px 10px calc(10px + env(safe-area-inset-bottom,0px));background:var(--ar-bg);border-top:1px solid var(--ar-line);box-shadow:0 -10px 24px rgba(0,0,0,.35);animation:krUp .18s ease-out}
@@ -1864,7 +1865,7 @@ body.arcGlitch #app{animation:arcGl .5s steps(2) 2}@keyframes arcGl{0%{transform
 </style>
 
 
-<script>window.WORDY_VERSION="2.181.1";window.WORDY_BUILD="d169dba852";</script>
+<script>window.WORDY_VERSION="2.181.2";window.WORDY_BUILD="8d97dc3d89";</script>
 </head>
 <body>
 <div id="app">
@@ -15964,7 +15965,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     }
     if (t.type === "spell") {
       var built = t.built.join(""); SS.answered = true;
-      var okS = built === t.target;
+      var ilS = function (x) { return x.replace(/I/g, "l"); }, okS = built === t.target || ilS(built) === ilS(t.target);   // großes I und kleines l sehen gleich aus: Verwechseln zählt nicht als Fehler
       var resS = applyGrade(w, okS ? 2 : 0);
       if (!okS) SS.retry.push({ type: "spell", w: w });
       verdict(okS, w, resS);

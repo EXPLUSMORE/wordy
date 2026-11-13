@@ -3841,7 +3841,7 @@
     }
     if (t.type === "spell") {
       var built = t.built.join(""); SS.answered = true;
-      var okS = built === t.target;
+      var ilS = function (x) { return x.replace(/I/g, "l"); }, okS = built === t.target || ilS(built) === ilS(t.target);   // großes I und kleines l sehen gleich aus: Verwechseln zählt nicht als Fehler
       var resS = applyGrade(w, okS ? 2 : 0);
       if (!okS) SS.retry.push({ type: "spell", w: w });
       verdict(okS, w, resS);

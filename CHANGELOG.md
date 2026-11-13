@@ -10,6 +10,9 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.181.2
+- Rechtschreibung (Buchstaben legen): großes I und kleines l zu verwechseln zählt nicht mehr als Fehler; die Buchstaben-Kacheln nutzen jetzt eine Schrift, in der man beide unterscheiden kann.
+
 ## 2.181.1
 - Pass: Regeln stehen hinter „❓ Regeln“ statt als Textzeilen in jeder Woche (Joker/Nachholen erscheinen nur noch, wenn sie gerade gelten).
 - Einheitlicher „← Zurück“-Knopf in Einheit, Verbliste und Grammatik; er bleibt beim Scrollen oben stehen.
