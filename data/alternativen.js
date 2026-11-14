@@ -2,6 +2,8 @@
    Wirkt in allen Einheiten mit diesem Wort; IDs und Wort-Einträge bleiben unverändert. Die Auflösung „to“ am Anfang, Artikel und Satzzeichen ignoriert der Vergleich ohnehin.
    Nur Alternativen, die zur deutschen Bedeutung des Eintrags passen. Erweitern = Zeile ergänzen. */
 window.ALTS = {
+  /* Verzögerung: delay oder lag (Betreiber, v2.183) */
+  "lag": ["delay"],
   /* britisch / amerikanisch */
   "autumn": ["fall"], "flat": ["apartment"], "lift": ["elevator"], "lorry": ["truck"], "rubbish": ["trash", "garbage"], "bin": ["trash can", "garbage can", "dustbin"],
   "queue": ["line"], "holiday": ["vacation"], "football": ["soccer"], "film": ["movie"], "cinema": ["movie theater", "movie theatre", "movies"],

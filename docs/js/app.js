@@ -797,13 +797,23 @@
     var nm = $("#srName"); if (nm) nm.innerHTML = '<b>' + esc(it ? it.label : "Fuchs") + '</b>' + (same ? ' · aktiv ✓' : "");
     var wb = $("#srWear"); if (wb) wb.hidden = same;
   }
+  /* Abzeichen einer Leiter: Zählerstand, Fortschritt und die nächste Stufe („Du hast 134 – als Nächstes: 200 Schätze, noch 66“) */
+  function medalLadderInfo(it) {
+    if (it.kind !== "medal" || !it.lad || it.cur == null) return "";
+    var sib = []; S.medalGroups().forEach(function (g) { g.items.forEach(function (m) { if (m.lad === it.lad) sib.push(m); }); });
+    var nx = sib.filter(function (m) { return m.need > it.cur; })[0], own = sib.filter(function (m) { return m.owned; }).length, nf = function (n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, "."); };
+    var tgt = it.owned ? nx : it, pc = tgt ? Math.min(100, Math.round(it.cur * 100 / Math.max(1, tgt.need))) : 100;
+    return '<div class="mdlad"><div class="mdnum"><b class="tnum">' + nf(it.cur) + '</b><span>hast du schon</span></div>' +
+      (tgt ? '<div class="bar"><i style="width:' + pc + '%"></i></div><div class="small">' + (it.owned ? 'Als Nächstes: <b>' + esc(nx.label) + '</b> – ' : 'Ziel: <b>' + nf(tgt.need) + '</b> – ') + 'noch <b class="tnum">' + nf(tgt.need - it.cur) + '</b></div>' : '<div class="small">🏆 Höchste Stufe dieser Reihe erreicht!</div>') +
+      '<div class="small" style="opacity:.8;margin-top:4px">' + own + ' von ' + sib.length + ' Stufen dieser Reihe geschafft</div></div>';
+  }
   function srModal(id) {
     var it = S.findCollItem(id), fav = S.favs().indexOf(id) >= 0;
     if (!it) return;
     var ms = id.indexOf("md:") === 0 ? medalStyle(id) : null, rar = ms ? ms.rar : it.rar, col = MED_COL[rar] || MED_COL.common, val = ms ? ms.val : it.val;
     var c = { kind: it.kind, val: val, rar: rar, it: it.it }, canEq = it.owned && it.kind !== "medal", eq = it.it && S.isActive(it.it);
     var ov = document.createElement("div"); ov.className = "srmd";
-    ov.innerHTML = '<div class="srmc" style="--c:' + col[1] + ';--g:' + RAR_GLOW[rar] + '"><div class="eyebrow" style="color:#fff;opacity:.85">' + RAR_NAME[rar] + '</div><div class="big' + (it.owned ? "" : " lock") + '">' + srIcon(c) + '</div><h3>' + esc(it.label) + '</h3>' + (it.it ? enLine(it.it) : "") + '<p>' + (it.owned ? "Gehört dir! ": "Noch nicht gesammelt. ") + esc(it.how || "") + '</p><div class="row wrap" style="gap:8px;justify-content:center">' +
+    ov.innerHTML = '<div class="srmc" style="--c:' + col[1] + ';--g:' + RAR_GLOW[rar] + '"><div class="eyebrow" style="color:#fff;opacity:.85">' + RAR_NAME[rar] + '</div><div class="big' + (it.owned ? "" : " lock") + '">' + srIcon(c) + '</div><h3>' + esc(it.label) + '</h3>' + (it.it ? enLine(it.it) : "") + '<p>' + (it.owned ? "Gehört dir! ": "Noch nicht gesammelt. ") + esc(it.how || "") + (it.it && it.it.parts ? ' <b>Dabei:</b> ' + esc(it.it.parts) + '.' : '') + '</p>' + medalLadderInfo(it) + '<div class="row wrap" style="gap:8px;justify-content:center">' +
       (it.owned ? '<button class="sbtn" data-m="fav">' + (fav ? "★ Favorit" : "☆ Als Favorit") + '</button>' : "") +
       (canEq ? '<button class="sbtn b2" data-m="eq">' + (it.kind === "sticker" ? (eq ? "Ablösen" : "Aufkleben") : eq ? "✓ Aktiv" : "Tragen") + '</button>' : "") +
       (it.owned && (it.kind === "dance" || it.kind === "outfit" || it.kind === "kit") ? '<button class="sbtn b3" data-m="try">▶ Ansehen</button>' : "") +
@@ -1800,7 +1810,7 @@
     if (cat[0] === "stk") h += '<p class="small muted" style="margin:0">' + S.stickers().length + ' von ' + S.stickerSlots() + ' Sticker-Plätzen belegt. Mehr Plätze gibt es im Laden unter Figuren.</p>';
     h += own.length ? '<div class="lgrid">' + own.map(function (it) {
       var on = S.isActive(it), stk = it.kind === "sticker";
-      return '<button class="lt own ' + S.rarityOf(it) + (on ? " sel" : "") + '" data-act="umkeq" data-id="' + esc(it.id) + '" style="--c:' + (MED_COL[S.rarityOf(it)] || MED_COL.common)[1] + '" aria-pressed="' + on + '"><i class="ltd"></i><span class="lti">' + shopIcon(it) + '</span><b class="ltn">' + esc(it.label) + '</b><span class="ltp' + (on ? " own" : "") + '">' + (on ? (stk ? "✓ klebt" : "✓ an") : (stk ? "aufkleben" : "anziehen")) + '</span></button>';
+      return '<button class="lt own ' + S.rarityOf(it) + (on ? " sel" : "") + '" data-act="umkeq" data-id="' + esc(it.id) + '" style="--c:' + (MED_COL[S.rarityOf(it)] || MED_COL.common)[1] + '" aria-pressed="' + on + '"><i class="ltd"></i><span class="lti">' + shopIcon(it) + '</span><b class="ltn">' + esc(it.label) + '</b>' + (it.parts ? '<small class="ltparts">' + esc(it.parts) + '</small>' : '') + '<span class="ltp' + (on ? " own" : "") + '">' + (on ? (stk ? "✓ klebt" : "✓ an") : (stk ? "aufkleben" : "anziehen")) + '</span></button>';
     }).join("") + '</div>' : '<p class="small muted" style="text-align:center;margin:18px 0">Hier hast du noch nichts. Schau im Laden vorbei!</p>';
     h += '<button class="btn soft wide" data-act="umkshop" data-k="' + cat[0] + '" style="margin-top:6px">🛍️ ' + (rest > 0 ? "Noch " + rest + " im Laden entdecken" : "Zum Laden") + '</button></div>';
     return h;
@@ -2899,7 +2909,7 @@
     var act = own ? '<span class="lown">✓ liegt im Spind</span>' : soon ? '<span class="lown">🕒 Kommt bald</span>' : it.pass ? '<span class="lown">🎁 Gibt es im ' + esc(it.pass) + '-Pass</span>' : it.reward ? '<span class="lown">🎁 Belohnung fürs ganze Set</span>' : lock ? '<span class="lown">🔒 ab Rang ' + esc(it.rank) + '</span>'
       : left > 0 ? '<span class="lown">Noch <b>' + left + '</b> 🪙</span>' : '<button class="lgo" data-act="ladbuy">🪙 ' + price + ' Kaufen</button>';
     var wish = (own || soon || it.pass || it.reward) ? "" : '<button class="lwish" data-act="wish" data-id="' + esc(it.id) + '" aria-pressed="' + ((S.wish() || {}).id === it.id) + '" aria-label="Wunsch">⭐</button>';
-    return '<div class="lbar"><div class="lbi"><b>' + esc(soon ? "???" : it.label) + '</b><small>' + RAR_NAME[S.rarityOf(it)] + ' · ' + (LAD_KIND[it.kind] || "").replace(/e$|en$/, function (m) { return m; }) + (deal ? ' · 🔥 Angebot' : '') + '</small></div>' + wish + act + '</div>';
+    return '<div class="lbar"><div class="lbi"><b>' + esc(soon ? "???" : it.label) + '</b><small>' + RAR_NAME[S.rarityOf(it)] + ' · ' + (LAD_KIND[it.kind] || "").replace(/e$|en$/, function (m) { return m; }) + (deal ? ' · 🔥 Angebot' : '') + '</small>' + (it.parts && !soon ? '<small class="lparts">👕 Dabei: ' + esc(it.parts) + '</small>' : '') + '</div>' + wish + act + '</div>';
   }
   function viewShop() {
     var st = S.state, deal = S.dealItem(), dl = deal && !S.owns(deal) ? '<button class="ldeal" data-act="ladsel" data-id="' + esc(deal.id) + '">🔥 <b>Heute:</b> ' + esc(deal.label) + ' <s>' + deal.cost + '</s> <b>' + S.priceOf(deal) + ' 🪙</b> · noch ' + untilMidnight() + '</button>' : "";

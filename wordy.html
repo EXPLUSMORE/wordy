@@ -1032,6 +1032,8 @@ div.msr{cursor:default}.msr.done{opacity:.7}.msr .mst{flex:0 0 20px;height:20px;
 .lset>summary,details.card[data-fx]>summary{display:flex;align-items:center;gap:10px;cursor:pointer;list-style:none}.lset>summary::-webkit-details-marker,details.card[data-fx]>summary::-webkit-details-marker,.gsp>summary::-webkit-details-marker{display:none}
 .gsp{margin:0 0 8px}.gsp>summary{display:inline-flex;list-style:none;cursor:pointer}
 .segs .howto{flex:0 0 auto;min-width:0;padding-left:12px;padding-right:12px}
+.mdlad{margin:4px 0 12px;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.14);text-align:left}.mdlad .mdnum{display:flex;align-items:baseline;gap:8px;margin-bottom:6px}.mdlad .mdnum b{font-size:26px}.mdlad .mdnum span{font-size:13px;opacity:.85}.mdlad .bar{margin:0 0 6px;background:rgba(0,0,0,.25)}.mdlad .bar i{background:#fff}
+.lad .lbar .lparts{display:block;font-size:11px;line-height:1.25;margin-top:2px;opacity:.9;white-space:normal}.lad .lt .ltparts{font-size:9.5px;line-height:1.2;color:var(--ink-3);max-width:100%;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 /* ===== LADEN NEU (Anprobe-Bühne) ===== */
 .lad .lstage{position:sticky;top:0;z-index:8;height:178px;border-radius:22px;background:linear-gradient(#cfe9f3,#eaf5fa);border:2px solid var(--line);overflow:hidden;box-shadow:0 6px 16px rgba(0,0,0,.14)}
 :root[data-theme="dark"] .lad .lstage{background:linear-gradient(#233a5e,#1a2742)}
@@ -1876,7 +1878,7 @@ body.arcGlitch #app{animation:arcGl .5s steps(2) 2}@keyframes arcGl{0%{transform
 </style>
 
 
-<script>window.WORDY_VERSION="2.182.0";window.WORDY_BUILD="7b056a1d7c";</script>
+<script>window.WORDY_VERSION="2.183.0";window.WORDY_BUILD="f399394a93";</script>
 </head>
 <body>
 <div id="app">
@@ -4172,6 +4174,8 @@ window.GRAMMAR = [
    Wirkt in allen Einheiten mit diesem Wort; IDs und Wort-Einträge bleiben unverändert. Die Auflösung „to“ am Anfang, Artikel und Satzzeichen ignoriert der Vergleich ohnehin.
    Nur Alternativen, die zur deutschen Bedeutung des Eintrags passen. Erweitern = Zeile ergänzen. */
 window.ALTS = {
+  /* Verzögerung: delay oder lag (Betreiber, v2.183) */
+  "lag": ["delay"],
   /* britisch / amerikanisch */
   "autumn": ["fall"], "flat": ["apartment"], "lift": ["elevator"], "lorry": ["truck"], "rubbish": ["trash", "garbage"], "bin": ["trash can", "garbage can", "dustbin"],
   "queue": ["line"], "holiday": ["vacation"], "football": ["soccer"], "film": ["movie"], "cinema": ["movie theater", "movie theatre", "movies"],
@@ -6241,7 +6245,7 @@ window.VOCAB_UNITS = (window.VOCAB_UNITS || []).concat([
 ["greenhouse","das Gewächshaus / das Treibhaus",2,"",{"pos":"noun","src":"wikt","lic":"CC-BY-SA-4.0","ref":"greenhouse"}],
 ["grain","das Korn / das Getreide",2,"We stored a thousand tons of grain for the winter.",{"pos":"noun","ex":{"src":"wikt","lic":"CC-BY-SA-4.0"},"src":"wikt","lic":"CC-BY-SA-4.0","ref":"grain"}],
 ["farmland","das Ackerland",2,"",{"pos":"noun","src":"wikt","lic":"CC-BY-SA-4.0","ref":"farmland"}],
-["cattle","die Kühe / das Rinder",2,"Many cattle were suffering from a disease called BSE.",{"pos":"noun","ex":{"src":"wikt","lic":"CC-BY-SA-4.0"},"src":"wikt","lic":"CC-BY-SA-4.0","ref":"cattle"}],
+["cattle","die Rinder",2,"Many cattle were suffering from a disease called BSE.",{"pos":"noun","ex":{"src":"wikt","lic":"CC-BY-SA-4.0"},"src":"wikt","lic":"CC-BY-SA-4.0","ref":"cattle"}],
 ["farm","der Bauernhof / die Farm",2,"antenna farm; fuel farm; solar farm; wind farm",{"pos":"noun","ex":{"src":"wikt","lic":"CC-BY-SA-4.0"},"src":"wikt","lic":"CC-BY-SA-4.0","ref":"farm"}],
 ["farmer","der Landwirt / die Landwirtin",2,"a farmer of the revenues",{"pos":"noun","ex":{"src":"wikt","lic":"CC-BY-SA-4.0"},"src":"wikt","lic":"CC-BY-SA-4.0","ref":"farmer"}],
 ["wheat","der Weizen",2,"They debated the paint color options for the bathroom walls and settled on wheat.",{"pos":"noun","ex":{"src":"wikt","lic":"CC-BY-SA-4.0"},"src":"wikt","lic":"CC-BY-SA-4.0","ref":"wheat"}],
@@ -7129,6 +7133,13 @@ window.SENTENCES = (window.SENTENCES || []).concat([
       var rn = at["av:" + x.id.slice(3)]; if (rn) x.rank = rn;
     });
   })();
+  /* Was zu einem Outfit gehört (v2.183): steht im Laden, in der Umkleide und in der Sammlung; die Zeichnungen dazu liegen in stilb.js (A.outfit) */
+  var OUTFIT_PARTS = { natur: "ohne Kleidung, nur deine Figur", shirt: "T-Shirt mit Blitz-Aufdruck", hoodie: "Hoodie mit Kapuze, Kordeln und Bauchtasche", trikot: "Trikot mit Nummer 7 und Stirnband",
+    held: "Heldenanzug, roter Umhang, Kragen und Stern-Emblem", raum: "Raumanzug, Helm mit Visier, Rucksack mit Antenne und Bedienfeld", polar: "Polarjacke mit Fellkapuze, Fellkragen und Schneeflocke", rock: "Rockstar-Jacke, Irokese, Gurt und E-Gitarre",
+    kitty1: "Jacke und rote Schleife", kitty2: "Jacke, Sternen-Haarband, Regenbogen-Pony und Schleife", kitty3: "Jacke, Regenbogen-Haarband mit Kristall, Schleife, Sterne und Feenflügel", kitty4: "Goldjacke, Sternen-Diadem, Schleife, Sterne und goldene Flügel",
+    skater: "Jacke und Beanie mit Bommel", cowboy: "Weste und Cowboyhut mit Stern", ninja: "Ninja-Anzug und Stirnband mit Metallplatte", chef: "Kochjacke und Kochmütze", pirat: "Piratenjacke und Piratenhut mit Totenkopf", ritter: "Rüstung und Helm mit Federbusch",
+    dj: "DJ-Jacke und Kopfhörer", zauberer: "Robe, Zauberhut mit Sternen und Umhang", koenig: "Königsgewand, Krone und Hermelin-Umhang" };
+  SHOP.forEach(function (x) { if (x.kind === "outfit") x.parts = OUTFIT_PARTS[x.val] || ""; else if (x.kind === "kit") x.parts = "Trikot in Vereins- oder Landesfarben, Nummer 7 und Stirnband"; });
   /* Zubehör (acc.js): einmal kaufen, jeder Figur einzeln anziehen. [Wert, Platz, Name, Preis]; Platz: head | face | ears | neck | legs (Beine, über Beinen und Schuhen der ganzen Figur) | gear (steht hinter der Figur) */
   var ACC_SLOTS = [["head", "Kopf"], ["face", "Gesicht"], ["ears", "Ohren"], ["neck", "Hals"], ["legs", "Beine"], ["gear", "Dabei"]];
   var ACC = [["beanie", "head", "Wintermütze", 60], ["party", "head", "Partyhut", 50], ["zylinder", "head", "Zylinder", 120], ["prop", "head", "Propeller-Kappe", 90], ["cap", "head", "Basecap", 50], ["stroh", "head", "Strohhut", 45], ["blumen", "head", "Blumenkranz", 45], ["heiligen", "head", "Heiligenschein", 80], ["hasen", "head", "Hasenohren", 70], ["teufel", "head", "Teufelshörner", 60], ["eishut", "head", "Eis-Hut", 90], ["pizza", "head", "Pizza-Hut", 80], ["krone", "head", "Goldkrone", 150],
@@ -8036,36 +8047,36 @@ window.SENTENCES = (window.SENTENCES || []).concat([
     var owned = (state.profile && state.profile.owned) || [], figs = owned.filter(function (id) { return id.indexOf("av:") === 0; }).length, buys = owned.length;
     var stk = ((state.profile && state.profile.stickers) || []).length;
     function G(id, title, icon) { var g = { id: id, title: title, icon: icon, items: [] }; groups.push(g); return g; }
-    function M(g, id, label, rar, done, how, val, prog, need) { g.items.push({ id: "md:" + id, label: label, kind: "medal", rar: rar, owned: !!done || !!(state.medalsGot && state.medalsGot["md:" + id]), how: how, val: val, prog: prog, need: need }); }
+    function M(g, id, label, rar, done, how, val, prog, need, lad, cur) { g.items.push({ id: "md:" + id, label: label, kind: "medal", rar: rar, owned: !!done || !!(state.medalsGot && state.medalsGot["md:" + id]), how: how, val: val, prog: prog, need: need, lad: lad, cur: cur }); }
     /* Leiter: steps = Schwellen, cur = Zählerstand, name(n) = Titel, how(n) = Bedingung; ids = optionale alte IDs je Schwelle */
     function ladder(g, key, steps, cur, name, how, rars) {
-      steps.forEach(function (n, i) { M(g, key + n, name(n), (rars && rars[n]) || ladderRar(i, steps.length), cur >= n, how(n) + (cur >= n ? "" : " (" + nfmt(Math.min(cur, n)) + "/" + nfmt(n) + ")"), kfmt(n), Math.min(cur, n), n); });
+      steps.forEach(function (n, i) { M(g, key + n, name(n), (rars && rars[n]) || ladderRar(i, steps.length), cur >= n, how(n) + (cur >= n ? "" : " (" + nfmt(Math.min(cur, n)) + "/" + nfmt(n) + ")"), kfmt(n), Math.min(cur, n), n, key, cur); });
     }
     var g0 = G("start", "Meilensteine", "⭐");
     var ML = { start: "⭐", chain15: "🔗", box0: "🧹", unit1: "📘", early: "📅", arena1: "🎮", combo15: "💥" };
     BADGES.filter(function (b) { return ML[b.id]; }).forEach(function (b) { M(g0, "ms-" + b.id, b.n, "common", state.badges.indexOf(b.id) >= 0, b.d, ML[b.id]); });
     var g1 = G("clean", "Fehlerfrei", "🎯");
-    ladder(g1, "pf", [1, 5, 10, 25, 50, 100, 250, 500], perfect, function (n) { return n === 1 ? "Fehlerfrei" : n + "× fehlerfrei"; }, function (n) { return n === 1 ? "Eine Runde (mindestens 8 Aufgaben) ohne einen Fehler abschließen" : n + " Runden ohne einen Fehler abschließen"; });
+    ladder(g1, "pf", [1, 3, 5, 10, 15, 25, 35, 50, 75, 100, 150, 250, 350, 500], perfect, function (n) { return n === 1 ? "Fehlerfrei" : n + "× fehlerfrei"; }, function (n) { return n === 1 ? "Eine Runde (mindestens 8 Aufgaben) ohne einen Fehler abschließen" : n + " Runden ohne einen Fehler abschließen"; });
     var g2 = G("woerter", "Wörter", "📚");
-    ladder(g2, "wk", [10, 50, 150, 300, 500, 1000, 2000], seen, function (n) { return n + " Wörter geübt"; }, function (n) { return n + " Vokabeln schon einmal geübt"; });
-    ladder(g2, "w", [10, 25, 50, 100, 250, 500, 1000, 2000], mast, function (n) { return n === 25 ? "25 Meister" : n === 100 ? "100 Meister" : n + " gemeistert"; }, function (n) { return n + " Wörter langfristig meistern"; }, { 25: "rare", 100: "epic" });
+    ladder(g2, "wk", [10, 25, 50, 100, 150, 225, 300, 400, 500, 750, 1000, 1500, 2000], seen, function (n) { return n + " Wörter geübt"; }, function (n) { return n + " Vokabeln schon einmal geübt"; });
+    ladder(g2, "w", [10, 25, 50, 75, 100, 150, 250, 350, 500, 750, 1000, 1500, 2000], mast, function (n) { return n === 25 ? "25 Meister" : n === 100 ? "100 Meister" : n + " gemeistert"; }, function (n) { return n + " Wörter langfristig meistern"; }, { 25: "rare", 100: "epic" });
     var g3 = G("fleiss", "Fleiß & Zeit", "⏱️");
-    ladder(g3, "ok", [100, 500, 1000, 2500, 5000, 10000, 25000], t.correct || 0, function (n) { return nfmt(n) + " richtig"; }, function (n) { return nfmt(n) + " Aufgaben richtig beantworten"; });
-    ladder(g3, "hr", [1, 5, 10, 25, 50, 100], Math.floor((t.sec || 0) / 3600), function (n) { return n + (n === 1 ? " Stunde" : " Stunden") + " geübt"; }, function (n) { return n + (n === 1 ? " Stunde" : " Stunden") + " echte Übungszeit"; });
-    ladder(g3, "tag", [7, 14, 30, 60, 100, 200, 365], days, function (n) { return n + " Übungstage"; }, function (n) { return "An " + n + " verschiedenen Tagen geübt"; });
+    ladder(g3, "ok", [100, 250, 500, 1000, 1750, 2500, 3500, 5000, 7500, 10000, 15000, 25000], t.correct || 0, function (n) { return nfmt(n) + " richtig"; }, function (n) { return nfmt(n) + " Aufgaben richtig beantworten"; });
+    ladder(g3, "hr", [1, 3, 5, 10, 15, 25, 35, 50, 75, 100], Math.floor((t.sec || 0) / 3600), function (n) { return n + (n === 1 ? " Stunde" : " Stunden") + " geübt"; }, function (n) { return n + (n === 1 ? " Stunde" : " Stunden") + " echte Übungszeit"; });
+    ladder(g3, "tag", [7, 14, 21, 30, 45, 60, 80, 100, 150, 200, 275, 365], days, function (n) { return n + " Übungstage"; }, function (n) { return "An " + n + " verschiedenen Tagen geübt"; });
     var g4 = G("serien", "Serien", "🔥");
-    ladder(g4, "serie", [3, 7, 14, 30, 50, 100, 200, 365], best, function (n) { return "Serie " + n; }, function (n) { return n + " Tage am Stück das Tagesziel schaffen (Bestwert " + best + ")"; });
-    ladder(g4, "chal", [1, 3, 7, 14, 30, 60, 100], chBest, function (n) { return n === 1 ? "Challenge-Start" : "Challenge " + n; }, function (n) { return "Die Daily Challenge " + n + (n === 1 ? " Tag" : " Tage") + " am Stück schaffen (Bestwert " + chBest + ")"; });
+    ladder(g4, "serie", [3, 7, 10, 14, 21, 30, 40, 50, 75, 100, 150, 200, 365], best, function (n) { return "Serie " + n; }, function (n) { return n + " Tage am Stück das Tagesziel schaffen (Bestwert " + best + ")"; });
+    ladder(g4, "chal", [1, 3, 5, 7, 10, 14, 21, 30, 45, 60, 100], chBest, function (n) { return n === 1 ? "Challenge-Start" : "Challenge " + n; }, function (n) { return "Die Daily Challenge " + n + (n === 1 ? " Tag" : " Tage") + " am Stück schaffen (Bestwert " + chBest + ")"; });
     var g5 = G("pfad", "Lernpfad", "🗺️");
-    ladder(g5, "st", [5, 10, 25, 50, 100, 200], stations, function (n) { return n + " Stationen"; }, function (n) { return n + " Stationen im Lernpfad schaffen"; });
-    ladder(g5, "boss", [1, 3, 5, 10, 15, 25], bosses, function (n) { return n === 1 ? "Erster Boss" : n === 5 ? "Boss-Jäger" : n === 10 ? "Boss-König" : n + " Bosse"; }, function (n) { return n === 1 ? "Eine Boss-Runde im Lernpfad besiegen" : n + " Bosse besiegen"; }, { 1: "common", 5: "rare", 10: "epic" });
+    ladder(g5, "st", [5, 10, 15, 25, 35, 50, 75, 100, 150, 200], stations, function (n) { return n + " Stationen"; }, function (n) { return n + " Stationen im Lernpfad schaffen"; });
+    ladder(g5, "boss", [1, 3, 5, 7, 10, 15, 20, 25], bosses, function (n) { return n === 1 ? "Erster Boss" : n === 5 ? "Boss-Jäger" : n === 10 ? "Boss-König" : n + " Bosse"; }, function (n) { return n === 1 ? "Eine Boss-Runde im Lernpfad besiegen" : n + " Bosse besiegen"; }, { 1: "common", 5: "rare", 10: "epic" });
     var g6 = G("saetze", "Sätze & Grammatik", "✏️");
-    ladder(g6, "sat", [10, 25, 50, 100, 250, 500], t.sentOk || 0, function (n) { return n + " Sätze"; }, function (n) { return n + " Sätze richtig zusammensetzen"; });
-    ladder(g6, "gr", [1, 5, 10, 25, 50], gram, function (n) { return n === 1 ? "Grammatik-Start" : n + " Lektionen"; }, function (n) { return n === 1 ? "Eine Grammatik-Lektion abschließen" : n + " Grammatik-Lektionen abschließen"; });
+    ladder(g6, "sat", [10, 25, 50, 75, 100, 150, 250, 350, 500], t.sentOk || 0, function (n) { return n + " Sätze"; }, function (n) { return n + " Sätze richtig zusammensetzen"; });
+    ladder(g6, "gr", [1, 3, 5, 10, 15, 25, 35, 50], gram, function (n) { return n === 1 ? "Grammatik-Start" : n + " Lektionen"; }, function (n) { return n === 1 ? "Eine Grammatik-Lektion abschließen" : n + " Grammatik-Lektionen abschließen"; });
     var g7 = G("spiele", "Spiele & Duelle", "🕹️");
-    ladder(g7, "gm", [1, 10, 25, 50, 100, 250, 500], games, function (n) { return n === 1 ? "Spieler" : n + " Spielrunden"; }, function (n) { return n === 1 ? "Eine Runde in der Arena, einem Wortspiel oder der Grammatik spielen" : n + " Runden in Arena, Wortspielen oder Grammatik spielen"; });
+    ladder(g7, "gm", [1, 5, 10, 25, 50, 75, 100, 150, 250, 350, 500], games, function (n) { return n === 1 ? "Spieler" : n + " Spielrunden"; }, function (n) { return n === 1 ? "Eine Runde in der Arena, einem Wortspiel oder der Grammatik spielen" : n + " Runden in Arena, Wortspielen oder Grammatik spielen"; });
     M(g7, "duel1", "Erstes Duell", "common", du.p >= 1, "Ein Duell gegen einen Freund spielen", "⚔");
-    ladder(g7, "duel", [5, 20, 50, 100], du.w, function (n) { return n === 5 ? "Duell-Held" : n === 20 ? "Duell-König" : n + " Duellsiege"; }, function (n) { return n + " Duelle gewinnen"; }, { 5: "rare", 20: "epic" });
+    ladder(g7, "duel", [5, 10, 20, 35, 50, 75, 100], du.w, function (n) { return n === 5 ? "Duell-Held" : n === 20 ? "Duell-König" : n + " Duellsiege"; }, function (n) { return n + " Duelle gewinnen"; }, { 5: "rare", 20: "epic" });
     M(g7, "crew1", "Crew-Mitglied", "common", crw.joined, "Einer Crew beitreten", "★");
     M(g7, "crewgold", "Team-Gold", "epic", crw.gold >= 1, "Mit deiner Crew ein Gold-Ziel schaffen", "★");
     var g8 = G("raenge", "Ränge", "🥇");
@@ -8074,10 +8085,10 @@ window.SENTENCES = (window.SENTENCES || []).concat([
       M(g8, "rk-" + x[0], r.n.replace(/ I$/, ""), x[2], state.xp >= r.xp, "Rang " + r.n + " erreichen (ab " + nfmt(r.xp) + " XP)", x[1], Math.min(state.xp, r.xp), r.xp);
     });
     var g9 = G("sammler", "Sammler", "🎁");
-    ladder(g9, "fig", [3, 5, 10, 15, 25, 40], figs, function (n) { return n + " Figuren"; }, function (n) { return n + " verschiedene Figuren besitzen"; });
-    ladder(g9, "buy", [5, 10, 25, 50, 100, 200], buys, function (n) { return n + " Schätze"; }, function (n) { return n + " Dinge besitzen (Figuren, Rahmen, Effekte, Titel …)"; });
-    ladder(g9, "acc", [1, 5, 10, 20, 29], owned.filter(function (id) { return id.indexOf("ac:") === 0; }).length, function (n) { return n === 1 ? "Erstes Zubehör" : n + " Zubehör-Teile"; }, function (n) { return n === 1 ? "Ein Zubehör kaufen (Brille, Mütze, Schal …)" : n + " Zubehör-Teile besitzen"; });
-    ladder(g9, "stk", [1, 3, 6, 10], stk, function (n) { return n === 1 ? "Erster Sticker" : n + " Sticker aufgeklebt"; }, function (n) { return n === 1 ? "Einen Sticker aufkleben" : n + " Sticker gleichzeitig aufgeklebt haben"; });
+    ladder(g9, "fig", [3, 5, 8, 10, 15, 20, 25, 32, 40], figs, function (n) { return n + " Figuren"; }, function (n) { return n + " verschiedene Figuren besitzen"; });
+    ladder(g9, "buy", [5, 10, 25, 50, 75, 100, 150, 200, 300], buys, function (n) { return n + " Schätze"; }, function (n) { return n + " Dinge besitzen (Figuren, Rahmen, Effekte, Titel …)"; });
+    ladder(g9, "acc", [1, 3, 5, 10, 15, 20, 29], owned.filter(function (id) { return id.indexOf("ac:") === 0; }).length, function (n) { return n === 1 ? "Erstes Zubehör" : n + " Zubehör-Teile"; }, function (n) { return n === 1 ? "Ein Zubehör kaufen (Brille, Mütze, Schal …)" : n + " Zubehör-Teile besitzen"; });
+    ladder(g9, "stk", [1, 2, 3, 5, 6, 8, 10], stk, function (n) { return n === 1 ? "Erster Sticker" : n + " Sticker aufgeklebt"; }, function (n) { return n === 1 ? "Einen Sticker aufkleben" : n + " Sticker gleichzeitig aufgeklebt haben"; });
     var g10 = G("pass", "Pass & Saison", "❄️"), info = passInfo(), sid = info.season.id;
     info.weeks.forEach(function (w) { M(g10, sid + "p" + w.n, "Woche " + w.n, w.n === info.weeks.length ? "legend" : "epic", w.claimed, info.season.title + "-Pass, Woche " + w.n, String(w.n)); });
     if (info.season.finale) M(g10, sid + "cup", info.season.title + "-Pokal", "legend", info.fin.claimed, "Alle Wochen und das Finale im " + info.season.title + "-Pass", "cup");
@@ -8092,13 +8103,13 @@ window.SENTENCES = (window.SENTENCES || []).concat([
   function medalList() { var l = []; medalGroups().forEach(function (g) { l = l.concat(g.items); }); return l; }
   /* Neu erreichte Abzeichen (ohne die Meilensteine, die checkBadges schon meldet): beim ersten Aufruf nur Bestand aufnehmen, sonst gäbe es für alles Alte ein Fenster */
   function checkMedals() {
-    var got = state.medalsGot || (state.medalsGot = {}), first = !state.medalsInit, out = [];
+    var got = state.medalsGot || (state.medalsGot = {}), first = !state.medalsInit || (state.medalsVer || 0) < 2, out = [];
     medalGroups().forEach(function (g) { if (g.id === "pass" || g.id === "start") return; g.items.forEach(function (m) {
       if (!m.owned || got[m.id]) return; got[m.id] = 1; if (!first) out.push({ id: m.id, n: m.label, d: m.how.replace(/ \(\d+\/\d+\)$/, "") });
     }); });
     var hw2 = state.hw || (state.hw = { seen: 0, mast: 0 }), st2 = stats(), al = [0, 0, 0, 0, 0]; Object.keys(state.w || {}).forEach(function (id) { if (byId[id]) al[levelOf(id)]++; });
     hw2.mast = Math.max(hw2.mast || 0, st2.dist[4], al[4]); hw2.seen = Math.max(hw2.seen || 0, st2.dist[1] + st2.dist[2] + st2.dist[3] + st2.dist[4], al[1] + al[2] + al[3] + al[4]);
-    state.medalsInit = 1; return out;
+    state.medalsInit = 1; state.medalsVer = 2; return out;
   }
   function howText(x) {
     if (x.pass) return "Gibt es im " + x.pass + "-Pass";
@@ -8852,7 +8863,7 @@ window.SENTENCES = (window.SENTENCES || []).concat([
   function resumeHas(key) { return resumeList().some(function (x) { return x.key === key; }); }
 
   global.VT = {
-    rankCoins: rankCoins, LEVELS: LEVELS, enName: enName, ACC: ACC, ACC_SLOTS: ACC_SLOTS, accOf: accOf, stickerAcc: stickerAcc, lookInfo: lookInfo, accToggle: accToggle, accClear: accClear, medalGroups: medalGroups, RANKS: RANKS, AVATARS: AVATARS, SHOP: SHOP, BADGES: BADGES,
+    rankCoins: rankCoins, LEVELS: LEVELS, enName: enName, ACC: ACC, ACC_SLOTS: ACC_SLOTS, accOf: accOf, stickerAcc: stickerAcc, lookInfo: lookInfo, accToggle: accToggle, accClear: accClear, medalGroups: medalGroups, medalList: medalList, RANKS: RANKS, AVATARS: AVATARS, SHOP: SHOP, BADGES: BADGES,
     SEC_PER_ITEM: SEC_PER_ITEM, secPerItem: secPerItem, itemsFor: itemsFor, recordPace: recordPace,
     resumePack: resumePack, resumeUnpack: resumeUnpack, resumeList: resumeList, resumeSave: resumeSave, resumeTake: resumeTake, resumeHas: resumeHas,
     load: load, save: save, get state() { return state; },
@@ -11404,6 +11415,25 @@ return '<svg class="afs" viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg
   A.outfit("dj", ["#ffd34d", "#b8780a"], { head: '<path d="M44 96Q40 -4 110 -2Q180 -4 176 96" fill="none" stroke="#14213d" stroke-width="14"/><path d="M44 96Q40 -4 110 -2Q180 -4 176 96" fill="none" stroke="#ff3df0" stroke-width="7"/><rect x="26" y="78" width="30" height="46" rx="12" fill="#ff3df0" ' + OST + '/><rect x="164" y="78" width="30" height="46" rx="12" fill="#ff3df0" ' + OST + '/>' });
   A.outfit("zauberer", ["#7a4fff", "#2b1a8f"], { head: '<path d="M60 56Q86 22 118 14Q146 8 170 30Q150 28 140 38L152 56z" fill="#3b2791" ' + OST + '/><ellipse cx="110" cy="56" rx="72" ry="14" fill="#4b2fb8" ' + OST + '/><path d="M52 56Q110 70 168 56" fill="none" stroke="#ffd34d" stroke-width="5"/>' + star(106, 38, 11, "#ffe27a") + star(138, 26, 6, "#fff"), back: '<path d="M60 170Q20 260 60 296Q110 250 160 296Q200 260 160 170z" fill="#4b2fb8" ' + OST + '/>' });
   A.outfit("koenig", ["#d12036", "#6b0a15"], { head: '<path d="M62 52l-8-40l30 22l26-38l26 38l30-22l-8 40q-48 12-96 0z" fill="#ffd34d" ' + OST + '/><circle cx="84" cy="30" r="6" fill="#e63946"/><circle cx="136" cy="30" r="6" fill="#59c8ff"/><circle cx="110" cy="8" r="7" fill="#fff"/>', back: '<path d="M52 168Q4 250 40 296H180Q216 250 168 168z" fill="#b01a2e" ' + OST + '/><path d="M40 296H180" stroke="#fff" stroke-width="8" stroke-dasharray="14 8"/>' });
+  /* Grund-Outfits mit Details (v2.183): vorher nur eine andere Jackenfarbe. head = liegt über der Figur, back = hinter dem Körper (und hinter dem Kopf) */
+  function hood(col, rim) { return '<path d="M34 152Q14 26 110 10Q206 26 186 152z" fill="' + col + '" ' + OST + '/>' + (rim ? '<path d="M44 140Q30 40 110 26Q190 40 176 140" fill="none" stroke="' + rim + '" stroke-width="13" stroke-linecap="round" stroke-dasharray="3 9"/>' : '<path d="M48 138Q36 46 110 32Q184 46 172 138" fill="none" stroke="rgba(0,0,0,.22)" stroke-width="5"/>'); }
+  function chest(inner) { return '<g transform="translate(110 214)">' + inner + '</g>'; }
+  function num7(col, sh) { return chest('<text x="0" y="13" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="38" fill="' + col + '" stroke="' + (sh || L) + '" stroke-width="2.5" paint-order="stroke">7</text>'); }
+  function sweat(col, col2) { return '<path d="M48 66Q110 46 172 66" fill="none" stroke="' + L + '" stroke-width="15" stroke-linecap="round"/><path d="M48 66Q110 46 172 66" fill="none" stroke="' + col + '" stroke-width="9" stroke-linecap="round"/>' + (col2 ? '<path d="M96 52Q110 49 124 52" fill="none" stroke="' + col2 + '" stroke-width="9"/>' : ""); }
+  A.outfit("shirt", ["#35c6ff", "#1a7fd0"], { head: chest('<path d="M4-20L-12 4H-1L-6 22L13-6H2z" fill="#ffe066" stroke="' + L + '" stroke-width="3.5" stroke-linejoin="round"/>') });
+  A.outfit("hoodie", ["#7a63f0", "#3a2da8"], { back: hood("#6a52e0"), head: '<g stroke="' + L + '" stroke-width="7" stroke-linecap="round"><path d="M97 170v30M123 170v30"/></g><g stroke="#fff" stroke-width="3.5" stroke-linecap="round"><path d="M97 170v30M123 170v30"/></g><circle cx="97" cy="203" r="5" fill="#fff" stroke="' + L + '" stroke-width="2.5"/><circle cx="123" cy="203" r="5" fill="#fff" stroke="' + L + '" stroke-width="2.5"/>' + '<path d="M82 226h56v18q-28 8-56 0z" fill="#5a45cf" stroke="' + L + '" stroke-width="3.5" stroke-linejoin="round"/>' });
+  A.outfit("trikot", ["#e53935", "#a31515"], { head: sweat("#fff", "#e53935") + num7("#fff") });
+  A.outfit("held", ["#2b6fe0", "#14338f"], { back: '<path d="M62 168Q8 244 34 298Q72 276 110 290Q148 276 186 298Q212 244 158 168z" fill="#e63946" ' + OST + '/><path d="M70 186Q40 244 52 280" fill="none" stroke="#a81c2a" stroke-width="5" stroke-linecap="round"/><path d="M150 186Q180 244 168 280" fill="none" stroke="#a81c2a" stroke-width="5" stroke-linecap="round"/>',
+    head: '<path d="M84 166Q110 180 136 166" fill="none" stroke="#ffd34d" stroke-width="7" stroke-linecap="round"/>' + chest('<path d="M-20-16H20L14 12L0 24L-14 12z" fill="#ffd34d" stroke="' + L + '" stroke-width="4" stroke-linejoin="round"/>') + star(110, 213, 9, "#e63946") });
+  A.outfit("raum", ["#dfe6ee", "#8794ad"], { back: '<rect x="36" y="166" width="148" height="96" rx="20" fill="#8794ad" ' + OST + '/><path d="M176 170V132" stroke="' + L + '" stroke-width="6" stroke-linecap="round"/><circle cx="176" cy="126" r="8" fill="#ff4d4d" stroke="' + L + '" stroke-width="4"/>',
+    head: '<ellipse cx="110" cy="160" rx="60" ry="13" fill="#c3cad6" ' + OST + '/><circle cx="110" cy="84" r="88" fill="rgba(170,225,255,.20)" stroke="' + L + '" stroke-width="9"/><circle cx="110" cy="84" r="88" fill="none" stroke="#eef3f8" stroke-width="5"/><path d="M48 52Q70 16 112 10" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".8"/><path d="M40 84Q42 66 50 58" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".6"/>' +
+      chest('<rect x="-22" y="-12" width="44" height="26" rx="6" fill="#39445a" stroke="' + L + '" stroke-width="3.5"/><circle cx="-11" cy="1" r="4.5" fill="#ff4d4d"/><circle cx="0" cy="1" r="4.5" fill="#ffd34d"/><circle cx="11" cy="1" r="4.5" fill="#5cff8a"/>') });
+  A.outfit("rock", ["#ffd23d", "#c8780a"], { back: '<g transform="rotate(28 150 236)"><rect x="143" y="96" width="14" height="112" rx="4" fill="#5a3a1a" ' + OST + '/><rect x="138" y="82" width="24" height="24" rx="5" fill="#2b1d10" ' + OST + '/><path d="M150 196Q196 198 192 240Q190 280 150 282Q110 280 108 240Q104 198 150 196z" fill="#e63946" ' + OST + '/><circle cx="150" cy="240" r="13" fill="#2b1d10"/></g>',
+    head: '<path d="M84 30L88 0L99 18L106-10L113 18L124-4L128 30Q106 20 84 30z" fill="#ff3df0" ' + OST + '/>' + chest('<path d="M-30-22L30 20" stroke="' + L + '" stroke-width="12" stroke-linecap="round"/><path d="M-30-22L30 20" stroke="#2b1d10" stroke-width="7" stroke-linecap="round"/>') + star(124, 228, 8, "#fff") });
+  A.outfit("polar", ["#3f9bff", "#1a5fd0"], { back: hood("#2f86ee", "#ffffff"), head: chest('<g stroke="#fff" stroke-width="4.5" stroke-linecap="round"><path d="M0-16V16M-14-8L14 8M-14 8L14-8"/></g><circle r="4" fill="#fff"/>') + '<path d="M70 164Q110 182 150 164" fill="none" stroke="' + L + '" stroke-width="15" stroke-linecap="round"/><path d="M70 164Q110 182 150 164" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-dasharray="3 8"/>' });
+  [["k-muenchen", ["#d4151f", "#8a0b12"], "#fff", "#d4151f"], ["k-barcelona", ["#a50044", "#004d98"], "#edbb00", "#004d98"], ["k-turin", ["#f4f4f4", "#222222"], "#e53935", "#111"], ["k-deutschland", ["#ffffff", "#b9bfd0"], "#111", "#fff"], ["k-argentinien", ["#74acdf", "#4a88c2"], "#111", "#74acdf"], ["k-portugal", ["#c1121f", "#0b6b3a"], "#f7d117", "#0b6b3a"]].forEach(function (k) {
+    A.outfit(k[0], k[1], { head: sweat(k[3] === "#fff" ? "#fff" : k[3], k[2] === "#111" ? "" : k[2]) + num7(k[2], k[2] === "#111" ? "#fff" : L) });
+  });
   Object.keys(D).forEach(function (av) {
     var d = D[av], sp = d[1], c = d[2];
     A.register(av, d[0], function (jc, jd) { return critter(sp, jc, jd); }, c);
@@ -12932,13 +12962,23 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var nm = $("#srName"); if (nm) nm.innerHTML = '<b>' + esc(it ? it.label : "Fuchs") + '</b>' + (same ? ' · aktiv ✓' : "");
     var wb = $("#srWear"); if (wb) wb.hidden = same;
   }
+  /* Abzeichen einer Leiter: Zählerstand, Fortschritt und die nächste Stufe („Du hast 134 – als Nächstes: 200 Schätze, noch 66“) */
+  function medalLadderInfo(it) {
+    if (it.kind !== "medal" || !it.lad || it.cur == null) return "";
+    var sib = []; S.medalGroups().forEach(function (g) { g.items.forEach(function (m) { if (m.lad === it.lad) sib.push(m); }); });
+    var nx = sib.filter(function (m) { return m.need > it.cur; })[0], own = sib.filter(function (m) { return m.owned; }).length, nf = function (n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, "."); };
+    var tgt = it.owned ? nx : it, pc = tgt ? Math.min(100, Math.round(it.cur * 100 / Math.max(1, tgt.need))) : 100;
+    return '<div class="mdlad"><div class="mdnum"><b class="tnum">' + nf(it.cur) + '</b><span>hast du schon</span></div>' +
+      (tgt ? '<div class="bar"><i style="width:' + pc + '%"></i></div><div class="small">' + (it.owned ? 'Als Nächstes: <b>' + esc(nx.label) + '</b> – ' : 'Ziel: <b>' + nf(tgt.need) + '</b> – ') + 'noch <b class="tnum">' + nf(tgt.need - it.cur) + '</b></div>' : '<div class="small">🏆 Höchste Stufe dieser Reihe erreicht!</div>') +
+      '<div class="small" style="opacity:.8;margin-top:4px">' + own + ' von ' + sib.length + ' Stufen dieser Reihe geschafft</div></div>';
+  }
   function srModal(id) {
     var it = S.findCollItem(id), fav = S.favs().indexOf(id) >= 0;
     if (!it) return;
     var ms = id.indexOf("md:") === 0 ? medalStyle(id) : null, rar = ms ? ms.rar : it.rar, col = MED_COL[rar] || MED_COL.common, val = ms ? ms.val : it.val;
     var c = { kind: it.kind, val: val, rar: rar, it: it.it }, canEq = it.owned && it.kind !== "medal", eq = it.it && S.isActive(it.it);
     var ov = document.createElement("div"); ov.className = "srmd";
-    ov.innerHTML = '<div class="srmc" style="--c:' + col[1] + ';--g:' + RAR_GLOW[rar] + '"><div class="eyebrow" style="color:#fff;opacity:.85">' + RAR_NAME[rar] + '</div><div class="big' + (it.owned ? "" : " lock") + '">' + srIcon(c) + '</div><h3>' + esc(it.label) + '</h3>' + (it.it ? enLine(it.it) : "") + '<p>' + (it.owned ? "Gehört dir! ": "Noch nicht gesammelt. ") + esc(it.how || "") + '</p><div class="row wrap" style="gap:8px;justify-content:center">' +
+    ov.innerHTML = '<div class="srmc" style="--c:' + col[1] + ';--g:' + RAR_GLOW[rar] + '"><div class="eyebrow" style="color:#fff;opacity:.85">' + RAR_NAME[rar] + '</div><div class="big' + (it.owned ? "" : " lock") + '">' + srIcon(c) + '</div><h3>' + esc(it.label) + '</h3>' + (it.it ? enLine(it.it) : "") + '<p>' + (it.owned ? "Gehört dir! ": "Noch nicht gesammelt. ") + esc(it.how || "") + (it.it && it.it.parts ? ' <b>Dabei:</b> ' + esc(it.it.parts) + '.' : '') + '</p>' + medalLadderInfo(it) + '<div class="row wrap" style="gap:8px;justify-content:center">' +
       (it.owned ? '<button class="sbtn" data-m="fav">' + (fav ? "★ Favorit" : "☆ Als Favorit") + '</button>' : "") +
       (canEq ? '<button class="sbtn b2" data-m="eq">' + (it.kind === "sticker" ? (eq ? "Ablösen" : "Aufkleben") : eq ? "✓ Aktiv" : "Tragen") + '</button>' : "") +
       (it.owned && (it.kind === "dance" || it.kind === "outfit" || it.kind === "kit") ? '<button class="sbtn b3" data-m="try">▶ Ansehen</button>' : "") +
@@ -13935,7 +13975,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     if (cat[0] === "stk") h += '<p class="small muted" style="margin:0">' + S.stickers().length + ' von ' + S.stickerSlots() + ' Sticker-Plätzen belegt. Mehr Plätze gibt es im Laden unter Figuren.</p>';
     h += own.length ? '<div class="lgrid">' + own.map(function (it) {
       var on = S.isActive(it), stk = it.kind === "sticker";
-      return '<button class="lt own ' + S.rarityOf(it) + (on ? " sel" : "") + '" data-act="umkeq" data-id="' + esc(it.id) + '" style="--c:' + (MED_COL[S.rarityOf(it)] || MED_COL.common)[1] + '" aria-pressed="' + on + '"><i class="ltd"></i><span class="lti">' + shopIcon(it) + '</span><b class="ltn">' + esc(it.label) + '</b><span class="ltp' + (on ? " own" : "") + '">' + (on ? (stk ? "✓ klebt" : "✓ an") : (stk ? "aufkleben" : "anziehen")) + '</span></button>';
+      return '<button class="lt own ' + S.rarityOf(it) + (on ? " sel" : "") + '" data-act="umkeq" data-id="' + esc(it.id) + '" style="--c:' + (MED_COL[S.rarityOf(it)] || MED_COL.common)[1] + '" aria-pressed="' + on + '"><i class="ltd"></i><span class="lti">' + shopIcon(it) + '</span><b class="ltn">' + esc(it.label) + '</b>' + (it.parts ? '<small class="ltparts">' + esc(it.parts) + '</small>' : '') + '<span class="ltp' + (on ? " own" : "") + '">' + (on ? (stk ? "✓ klebt" : "✓ an") : (stk ? "aufkleben" : "anziehen")) + '</span></button>';
     }).join("") + '</div>' : '<p class="small muted" style="text-align:center;margin:18px 0">Hier hast du noch nichts. Schau im Laden vorbei!</p>';
     h += '<button class="btn soft wide" data-act="umkshop" data-k="' + cat[0] + '" style="margin-top:6px">🛍️ ' + (rest > 0 ? "Noch " + rest + " im Laden entdecken" : "Zum Laden") + '</button></div>';
     return h;
@@ -15034,7 +15074,7 @@ return mk(svg,function(st,fx,done){st.querySelector('.ice').classList.add('shake
     var act = own ? '<span class="lown">✓ liegt im Spind</span>' : soon ? '<span class="lown">🕒 Kommt bald</span>' : it.pass ? '<span class="lown">🎁 Gibt es im ' + esc(it.pass) + '-Pass</span>' : it.reward ? '<span class="lown">🎁 Belohnung fürs ganze Set</span>' : lock ? '<span class="lown">🔒 ab Rang ' + esc(it.rank) + '</span>'
       : left > 0 ? '<span class="lown">Noch <b>' + left + '</b> 🪙</span>' : '<button class="lgo" data-act="ladbuy">🪙 ' + price + ' Kaufen</button>';
     var wish = (own || soon || it.pass || it.reward) ? "" : '<button class="lwish" data-act="wish" data-id="' + esc(it.id) + '" aria-pressed="' + ((S.wish() || {}).id === it.id) + '" aria-label="Wunsch">⭐</button>';
-    return '<div class="lbar"><div class="lbi"><b>' + esc(soon ? "???" : it.label) + '</b><small>' + RAR_NAME[S.rarityOf(it)] + ' · ' + (LAD_KIND[it.kind] || "").replace(/e$|en$/, function (m) { return m; }) + (deal ? ' · 🔥 Angebot' : '') + '</small></div>' + wish + act + '</div>';
+    return '<div class="lbar"><div class="lbi"><b>' + esc(soon ? "???" : it.label) + '</b><small>' + RAR_NAME[S.rarityOf(it)] + ' · ' + (LAD_KIND[it.kind] || "").replace(/e$|en$/, function (m) { return m; }) + (deal ? ' · 🔥 Angebot' : '') + '</small>' + (it.parts && !soon ? '<small class="lparts">👕 Dabei: ' + esc(it.parts) + '</small>' : '') + '</div>' + wish + act + '</div>';
   }
   function viewShop() {
     var st = S.state, deal = S.dealItem(), dl = deal && !S.owns(deal) ? '<button class="ldeal" data-act="ladsel" data-id="' + esc(deal.id) + '">🔥 <b>Heute:</b> ' + esc(deal.label) + ' <s>' + deal.cost + '</s> <b>' + S.priceOf(deal) + ' 🪙</b> · noch ' + untilMidnight() + '</button>' : "";

@@ -10,6 +10,13 @@ Die Nummer steht nur in `package.json` (`version`) und wird bei jeder ausgeliefe
 sie erscheint unten im Setup zusammen mit der Build-Kennung (wechselt bei jeder Codeänderung).
 
 
+## 2.183.0
+- **Outfits mit allen Details**: Hoodie hat jetzt Kapuze, Kordeln und Bauchtasche; Superheld Umhang, Kragen und Emblem; Raumanzug Helm, Rucksack mit Antenne und Bedienfeld; Polarjacke Fellkapuze; Rockstar Irokese und E-Gitarre; T-Shirt einen Aufdruck; alle Trikots Nummer 7 und Stirnband. Vorher änderte sich bei diesen nur die Jackenfarbe.
+- Im Laden, in der Umkleide und in der Sammlung steht bei jedem Outfit „Dabei: …“ – was alles dazugehört.
+- **Abzeichen**: deutlich mehr Stufen in allen Reihen (216 statt 146 Abzeichen). Beim Antippen siehst du deinen Stand und die nächste Stufe („134 hast du schon – als Nächstes: 250 richtig, noch 116“). Schon erreichte Zwischenstufen werden still nachgetragen.
+- Fehler behoben: Das Antippen eines Abzeichens öffnete kein Fenster.
+- Wörter: „cattle“ = „die Rinder“; bei „die Verzögerung“ zählt neben „lag“ auch „delay“.
+
 ## 2.182.0
 - **Lernen aufgeräumt**: nur noch drei Reiter – Pfad · Einheiten · Fortschritt. „Üben“ steckt jetzt als „Schnellstart“ (mit „Wie lange?“) oben in den Einheiten; Schule/Schuljahr wählt man hinter „ändern ▾“; die neun Spiel-Knöpfe je Gruppe liegen hinter „🎮 Als Spiel üben“; „Gezielt üben“ ist einklappbar. How-to ist ein kleines ❓.
 - **Fortschritt kürzer**: ein Zahlenblock statt zwei und „Hier lohnt sich Üben“ mit den drei lohnendsten Einheiten statt der ganzen Liste.

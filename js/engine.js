@@ -271,6 +271,13 @@
       var rn = at["av:" + x.id.slice(3)]; if (rn) x.rank = rn;
     });
   })();
+  /* Was zu einem Outfit gehört (v2.183): steht im Laden, in der Umkleide und in der Sammlung; die Zeichnungen dazu liegen in stilb.js (A.outfit) */
+  var OUTFIT_PARTS = { natur: "ohne Kleidung, nur deine Figur", shirt: "T-Shirt mit Blitz-Aufdruck", hoodie: "Hoodie mit Kapuze, Kordeln und Bauchtasche", trikot: "Trikot mit Nummer 7 und Stirnband",
+    held: "Heldenanzug, roter Umhang, Kragen und Stern-Emblem", raum: "Raumanzug, Helm mit Visier, Rucksack mit Antenne und Bedienfeld", polar: "Polarjacke mit Fellkapuze, Fellkragen und Schneeflocke", rock: "Rockstar-Jacke, Irokese, Gurt und E-Gitarre",
+    kitty1: "Jacke und rote Schleife", kitty2: "Jacke, Sternen-Haarband, Regenbogen-Pony und Schleife", kitty3: "Jacke, Regenbogen-Haarband mit Kristall, Schleife, Sterne und Feenflügel", kitty4: "Goldjacke, Sternen-Diadem, Schleife, Sterne und goldene Flügel",
+    skater: "Jacke und Beanie mit Bommel", cowboy: "Weste und Cowboyhut mit Stern", ninja: "Ninja-Anzug und Stirnband mit Metallplatte", chef: "Kochjacke und Kochmütze", pirat: "Piratenjacke und Piratenhut mit Totenkopf", ritter: "Rüstung und Helm mit Federbusch",
+    dj: "DJ-Jacke und Kopfhörer", zauberer: "Robe, Zauberhut mit Sternen und Umhang", koenig: "Königsgewand, Krone und Hermelin-Umhang" };
+  SHOP.forEach(function (x) { if (x.kind === "outfit") x.parts = OUTFIT_PARTS[x.val] || ""; else if (x.kind === "kit") x.parts = "Trikot in Vereins- oder Landesfarben, Nummer 7 und Stirnband"; });
   /* Zubehör (acc.js): einmal kaufen, jeder Figur einzeln anziehen. [Wert, Platz, Name, Preis]; Platz: head | face | ears | neck | legs (Beine, über Beinen und Schuhen der ganzen Figur) | gear (steht hinter der Figur) */
   var ACC_SLOTS = [["head", "Kopf"], ["face", "Gesicht"], ["ears", "Ohren"], ["neck", "Hals"], ["legs", "Beine"], ["gear", "Dabei"]];
   var ACC = [["beanie", "head", "Wintermütze", 60], ["party", "head", "Partyhut", 50], ["zylinder", "head", "Zylinder", 120], ["prop", "head", "Propeller-Kappe", 90], ["cap", "head", "Basecap", 50], ["stroh", "head", "Strohhut", 45], ["blumen", "head", "Blumenkranz", 45], ["heiligen", "head", "Heiligenschein", 80], ["hasen", "head", "Hasenohren", 70], ["teufel", "head", "Teufelshörner", 60], ["eishut", "head", "Eis-Hut", 90], ["pizza", "head", "Pizza-Hut", 80], ["krone", "head", "Goldkrone", 150],
@@ -1178,36 +1185,36 @@
     var owned = (state.profile && state.profile.owned) || [], figs = owned.filter(function (id) { return id.indexOf("av:") === 0; }).length, buys = owned.length;
     var stk = ((state.profile && state.profile.stickers) || []).length;
     function G(id, title, icon) { var g = { id: id, title: title, icon: icon, items: [] }; groups.push(g); return g; }
-    function M(g, id, label, rar, done, how, val, prog, need) { g.items.push({ id: "md:" + id, label: label, kind: "medal", rar: rar, owned: !!done || !!(state.medalsGot && state.medalsGot["md:" + id]), how: how, val: val, prog: prog, need: need }); }
+    function M(g, id, label, rar, done, how, val, prog, need, lad, cur) { g.items.push({ id: "md:" + id, label: label, kind: "medal", rar: rar, owned: !!done || !!(state.medalsGot && state.medalsGot["md:" + id]), how: how, val: val, prog: prog, need: need, lad: lad, cur: cur }); }
     /* Leiter: steps = Schwellen, cur = Zählerstand, name(n) = Titel, how(n) = Bedingung; ids = optionale alte IDs je Schwelle */
     function ladder(g, key, steps, cur, name, how, rars) {
-      steps.forEach(function (n, i) { M(g, key + n, name(n), (rars && rars[n]) || ladderRar(i, steps.length), cur >= n, how(n) + (cur >= n ? "" : " (" + nfmt(Math.min(cur, n)) + "/" + nfmt(n) + ")"), kfmt(n), Math.min(cur, n), n); });
+      steps.forEach(function (n, i) { M(g, key + n, name(n), (rars && rars[n]) || ladderRar(i, steps.length), cur >= n, how(n) + (cur >= n ? "" : " (" + nfmt(Math.min(cur, n)) + "/" + nfmt(n) + ")"), kfmt(n), Math.min(cur, n), n, key, cur); });
     }
     var g0 = G("start", "Meilensteine", "⭐");
     var ML = { start: "⭐", chain15: "🔗", box0: "🧹", unit1: "📘", early: "📅", arena1: "🎮", combo15: "💥" };
     BADGES.filter(function (b) { return ML[b.id]; }).forEach(function (b) { M(g0, "ms-" + b.id, b.n, "common", state.badges.indexOf(b.id) >= 0, b.d, ML[b.id]); });
     var g1 = G("clean", "Fehlerfrei", "🎯");
-    ladder(g1, "pf", [1, 5, 10, 25, 50, 100, 250, 500], perfect, function (n) { return n === 1 ? "Fehlerfrei" : n + "× fehlerfrei"; }, function (n) { return n === 1 ? "Eine Runde (mindestens 8 Aufgaben) ohne einen Fehler abschließen" : n + " Runden ohne einen Fehler abschließen"; });
+    ladder(g1, "pf", [1, 3, 5, 10, 15, 25, 35, 50, 75, 100, 150, 250, 350, 500], perfect, function (n) { return n === 1 ? "Fehlerfrei" : n + "× fehlerfrei"; }, function (n) { return n === 1 ? "Eine Runde (mindestens 8 Aufgaben) ohne einen Fehler abschließen" : n + " Runden ohne einen Fehler abschließen"; });
     var g2 = G("woerter", "Wörter", "📚");
-    ladder(g2, "wk", [10, 50, 150, 300, 500, 1000, 2000], seen, function (n) { return n + " Wörter geübt"; }, function (n) { return n + " Vokabeln schon einmal geübt"; });
-    ladder(g2, "w", [10, 25, 50, 100, 250, 500, 1000, 2000], mast, function (n) { return n === 25 ? "25 Meister" : n === 100 ? "100 Meister" : n + " gemeistert"; }, function (n) { return n + " Wörter langfristig meistern"; }, { 25: "rare", 100: "epic" });
+    ladder(g2, "wk", [10, 25, 50, 100, 150, 225, 300, 400, 500, 750, 1000, 1500, 2000], seen, function (n) { return n + " Wörter geübt"; }, function (n) { return n + " Vokabeln schon einmal geübt"; });
+    ladder(g2, "w", [10, 25, 50, 75, 100, 150, 250, 350, 500, 750, 1000, 1500, 2000], mast, function (n) { return n === 25 ? "25 Meister" : n === 100 ? "100 Meister" : n + " gemeistert"; }, function (n) { return n + " Wörter langfristig meistern"; }, { 25: "rare", 100: "epic" });
     var g3 = G("fleiss", "Fleiß & Zeit", "⏱️");
-    ladder(g3, "ok", [100, 500, 1000, 2500, 5000, 10000, 25000], t.correct || 0, function (n) { return nfmt(n) + " richtig"; }, function (n) { return nfmt(n) + " Aufgaben richtig beantworten"; });
-    ladder(g3, "hr", [1, 5, 10, 25, 50, 100], Math.floor((t.sec || 0) / 3600), function (n) { return n + (n === 1 ? " Stunde" : " Stunden") + " geübt"; }, function (n) { return n + (n === 1 ? " Stunde" : " Stunden") + " echte Übungszeit"; });
-    ladder(g3, "tag", [7, 14, 30, 60, 100, 200, 365], days, function (n) { return n + " Übungstage"; }, function (n) { return "An " + n + " verschiedenen Tagen geübt"; });
+    ladder(g3, "ok", [100, 250, 500, 1000, 1750, 2500, 3500, 5000, 7500, 10000, 15000, 25000], t.correct || 0, function (n) { return nfmt(n) + " richtig"; }, function (n) { return nfmt(n) + " Aufgaben richtig beantworten"; });
+    ladder(g3, "hr", [1, 3, 5, 10, 15, 25, 35, 50, 75, 100], Math.floor((t.sec || 0) / 3600), function (n) { return n + (n === 1 ? " Stunde" : " Stunden") + " geübt"; }, function (n) { return n + (n === 1 ? " Stunde" : " Stunden") + " echte Übungszeit"; });
+    ladder(g3, "tag", [7, 14, 21, 30, 45, 60, 80, 100, 150, 200, 275, 365], days, function (n) { return n + " Übungstage"; }, function (n) { return "An " + n + " verschiedenen Tagen geübt"; });
     var g4 = G("serien", "Serien", "🔥");
-    ladder(g4, "serie", [3, 7, 14, 30, 50, 100, 200, 365], best, function (n) { return "Serie " + n; }, function (n) { return n + " Tage am Stück das Tagesziel schaffen (Bestwert " + best + ")"; });
-    ladder(g4, "chal", [1, 3, 7, 14, 30, 60, 100], chBest, function (n) { return n === 1 ? "Challenge-Start" : "Challenge " + n; }, function (n) { return "Die Daily Challenge " + n + (n === 1 ? " Tag" : " Tage") + " am Stück schaffen (Bestwert " + chBest + ")"; });
+    ladder(g4, "serie", [3, 7, 10, 14, 21, 30, 40, 50, 75, 100, 150, 200, 365], best, function (n) { return "Serie " + n; }, function (n) { return n + " Tage am Stück das Tagesziel schaffen (Bestwert " + best + ")"; });
+    ladder(g4, "chal", [1, 3, 5, 7, 10, 14, 21, 30, 45, 60, 100], chBest, function (n) { return n === 1 ? "Challenge-Start" : "Challenge " + n; }, function (n) { return "Die Daily Challenge " + n + (n === 1 ? " Tag" : " Tage") + " am Stück schaffen (Bestwert " + chBest + ")"; });
     var g5 = G("pfad", "Lernpfad", "🗺️");
-    ladder(g5, "st", [5, 10, 25, 50, 100, 200], stations, function (n) { return n + " Stationen"; }, function (n) { return n + " Stationen im Lernpfad schaffen"; });
-    ladder(g5, "boss", [1, 3, 5, 10, 15, 25], bosses, function (n) { return n === 1 ? "Erster Boss" : n === 5 ? "Boss-Jäger" : n === 10 ? "Boss-König" : n + " Bosse"; }, function (n) { return n === 1 ? "Eine Boss-Runde im Lernpfad besiegen" : n + " Bosse besiegen"; }, { 1: "common", 5: "rare", 10: "epic" });
+    ladder(g5, "st", [5, 10, 15, 25, 35, 50, 75, 100, 150, 200], stations, function (n) { return n + " Stationen"; }, function (n) { return n + " Stationen im Lernpfad schaffen"; });
+    ladder(g5, "boss", [1, 3, 5, 7, 10, 15, 20, 25], bosses, function (n) { return n === 1 ? "Erster Boss" : n === 5 ? "Boss-Jäger" : n === 10 ? "Boss-König" : n + " Bosse"; }, function (n) { return n === 1 ? "Eine Boss-Runde im Lernpfad besiegen" : n + " Bosse besiegen"; }, { 1: "common", 5: "rare", 10: "epic" });
     var g6 = G("saetze", "Sätze & Grammatik", "✏️");
-    ladder(g6, "sat", [10, 25, 50, 100, 250, 500], t.sentOk || 0, function (n) { return n + " Sätze"; }, function (n) { return n + " Sätze richtig zusammensetzen"; });
-    ladder(g6, "gr", [1, 5, 10, 25, 50], gram, function (n) { return n === 1 ? "Grammatik-Start" : n + " Lektionen"; }, function (n) { return n === 1 ? "Eine Grammatik-Lektion abschließen" : n + " Grammatik-Lektionen abschließen"; });
+    ladder(g6, "sat", [10, 25, 50, 75, 100, 150, 250, 350, 500], t.sentOk || 0, function (n) { return n + " Sätze"; }, function (n) { return n + " Sätze richtig zusammensetzen"; });
+    ladder(g6, "gr", [1, 3, 5, 10, 15, 25, 35, 50], gram, function (n) { return n === 1 ? "Grammatik-Start" : n + " Lektionen"; }, function (n) { return n === 1 ? "Eine Grammatik-Lektion abschließen" : n + " Grammatik-Lektionen abschließen"; });
     var g7 = G("spiele", "Spiele & Duelle", "🕹️");
-    ladder(g7, "gm", [1, 10, 25, 50, 100, 250, 500], games, function (n) { return n === 1 ? "Spieler" : n + " Spielrunden"; }, function (n) { return n === 1 ? "Eine Runde in der Arena, einem Wortspiel oder der Grammatik spielen" : n + " Runden in Arena, Wortspielen oder Grammatik spielen"; });
+    ladder(g7, "gm", [1, 5, 10, 25, 50, 75, 100, 150, 250, 350, 500], games, function (n) { return n === 1 ? "Spieler" : n + " Spielrunden"; }, function (n) { return n === 1 ? "Eine Runde in der Arena, einem Wortspiel oder der Grammatik spielen" : n + " Runden in Arena, Wortspielen oder Grammatik spielen"; });
     M(g7, "duel1", "Erstes Duell", "common", du.p >= 1, "Ein Duell gegen einen Freund spielen", "⚔");
-    ladder(g7, "duel", [5, 20, 50, 100], du.w, function (n) { return n === 5 ? "Duell-Held" : n === 20 ? "Duell-König" : n + " Duellsiege"; }, function (n) { return n + " Duelle gewinnen"; }, { 5: "rare", 20: "epic" });
+    ladder(g7, "duel", [5, 10, 20, 35, 50, 75, 100], du.w, function (n) { return n === 5 ? "Duell-Held" : n === 20 ? "Duell-König" : n + " Duellsiege"; }, function (n) { return n + " Duelle gewinnen"; }, { 5: "rare", 20: "epic" });
     M(g7, "crew1", "Crew-Mitglied", "common", crw.joined, "Einer Crew beitreten", "★");
     M(g7, "crewgold", "Team-Gold", "epic", crw.gold >= 1, "Mit deiner Crew ein Gold-Ziel schaffen", "★");
     var g8 = G("raenge", "Ränge", "🥇");
@@ -1216,10 +1223,10 @@
       M(g8, "rk-" + x[0], r.n.replace(/ I$/, ""), x[2], state.xp >= r.xp, "Rang " + r.n + " erreichen (ab " + nfmt(r.xp) + " XP)", x[1], Math.min(state.xp, r.xp), r.xp);
     });
     var g9 = G("sammler", "Sammler", "🎁");
-    ladder(g9, "fig", [3, 5, 10, 15, 25, 40], figs, function (n) { return n + " Figuren"; }, function (n) { return n + " verschiedene Figuren besitzen"; });
-    ladder(g9, "buy", [5, 10, 25, 50, 100, 200], buys, function (n) { return n + " Schätze"; }, function (n) { return n + " Dinge besitzen (Figuren, Rahmen, Effekte, Titel …)"; });
-    ladder(g9, "acc", [1, 5, 10, 20, 29], owned.filter(function (id) { return id.indexOf("ac:") === 0; }).length, function (n) { return n === 1 ? "Erstes Zubehör" : n + " Zubehör-Teile"; }, function (n) { return n === 1 ? "Ein Zubehör kaufen (Brille, Mütze, Schal …)" : n + " Zubehör-Teile besitzen"; });
-    ladder(g9, "stk", [1, 3, 6, 10], stk, function (n) { return n === 1 ? "Erster Sticker" : n + " Sticker aufgeklebt"; }, function (n) { return n === 1 ? "Einen Sticker aufkleben" : n + " Sticker gleichzeitig aufgeklebt haben"; });
+    ladder(g9, "fig", [3, 5, 8, 10, 15, 20, 25, 32, 40], figs, function (n) { return n + " Figuren"; }, function (n) { return n + " verschiedene Figuren besitzen"; });
+    ladder(g9, "buy", [5, 10, 25, 50, 75, 100, 150, 200, 300], buys, function (n) { return n + " Schätze"; }, function (n) { return n + " Dinge besitzen (Figuren, Rahmen, Effekte, Titel …)"; });
+    ladder(g9, "acc", [1, 3, 5, 10, 15, 20, 29], owned.filter(function (id) { return id.indexOf("ac:") === 0; }).length, function (n) { return n === 1 ? "Erstes Zubehör" : n + " Zubehör-Teile"; }, function (n) { return n === 1 ? "Ein Zubehör kaufen (Brille, Mütze, Schal …)" : n + " Zubehör-Teile besitzen"; });
+    ladder(g9, "stk", [1, 2, 3, 5, 6, 8, 10], stk, function (n) { return n === 1 ? "Erster Sticker" : n + " Sticker aufgeklebt"; }, function (n) { return n === 1 ? "Einen Sticker aufkleben" : n + " Sticker gleichzeitig aufgeklebt haben"; });
     var g10 = G("pass", "Pass & Saison", "❄️"), info = passInfo(), sid = info.season.id;
     info.weeks.forEach(function (w) { M(g10, sid + "p" + w.n, "Woche " + w.n, w.n === info.weeks.length ? "legend" : "epic", w.claimed, info.season.title + "-Pass, Woche " + w.n, String(w.n)); });
     if (info.season.finale) M(g10, sid + "cup", info.season.title + "-Pokal", "legend", info.fin.claimed, "Alle Wochen und das Finale im " + info.season.title + "-Pass", "cup");
@@ -1234,13 +1241,13 @@
   function medalList() { var l = []; medalGroups().forEach(function (g) { l = l.concat(g.items); }); return l; }
   /* Neu erreichte Abzeichen (ohne die Meilensteine, die checkBadges schon meldet): beim ersten Aufruf nur Bestand aufnehmen, sonst gäbe es für alles Alte ein Fenster */
   function checkMedals() {
-    var got = state.medalsGot || (state.medalsGot = {}), first = !state.medalsInit, out = [];
+    var got = state.medalsGot || (state.medalsGot = {}), first = !state.medalsInit || (state.medalsVer || 0) < 2, out = [];
     medalGroups().forEach(function (g) { if (g.id === "pass" || g.id === "start") return; g.items.forEach(function (m) {
       if (!m.owned || got[m.id]) return; got[m.id] = 1; if (!first) out.push({ id: m.id, n: m.label, d: m.how.replace(/ \(\d+\/\d+\)$/, "") });
     }); });
     var hw2 = state.hw || (state.hw = { seen: 0, mast: 0 }), st2 = stats(), al = [0, 0, 0, 0, 0]; Object.keys(state.w || {}).forEach(function (id) { if (byId[id]) al[levelOf(id)]++; });
     hw2.mast = Math.max(hw2.mast || 0, st2.dist[4], al[4]); hw2.seen = Math.max(hw2.seen || 0, st2.dist[1] + st2.dist[2] + st2.dist[3] + st2.dist[4], al[1] + al[2] + al[3] + al[4]);
-    state.medalsInit = 1; return out;
+    state.medalsInit = 1; state.medalsVer = 2; return out;
   }
   function howText(x) {
     if (x.pass) return "Gibt es im " + x.pass + "-Pass";
@@ -1994,7 +2001,7 @@
   function resumeHas(key) { return resumeList().some(function (x) { return x.key === key; }); }
 
   global.VT = {
-    rankCoins: rankCoins, LEVELS: LEVELS, enName: enName, ACC: ACC, ACC_SLOTS: ACC_SLOTS, accOf: accOf, stickerAcc: stickerAcc, lookInfo: lookInfo, accToggle: accToggle, accClear: accClear, medalGroups: medalGroups, RANKS: RANKS, AVATARS: AVATARS, SHOP: SHOP, BADGES: BADGES,
+    rankCoins: rankCoins, LEVELS: LEVELS, enName: enName, ACC: ACC, ACC_SLOTS: ACC_SLOTS, accOf: accOf, stickerAcc: stickerAcc, lookInfo: lookInfo, accToggle: accToggle, accClear: accClear, medalGroups: medalGroups, medalList: medalList, RANKS: RANKS, AVATARS: AVATARS, SHOP: SHOP, BADGES: BADGES,
     SEC_PER_ITEM: SEC_PER_ITEM, secPerItem: secPerItem, itemsFor: itemsFor, recordPace: recordPace,
     resumePack: resumePack, resumeUnpack: resumeUnpack, resumeList: resumeList, resumeSave: resumeSave, resumeTake: resumeTake, resumeHas: resumeHas,
     load: load, save: save, get state() { return state; },

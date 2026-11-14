@@ -123,7 +123,7 @@ window.VOCAB_UNITS = (window.VOCAB_UNITS || []).concat([
 ["greenhouse","das Gewächshaus / das Treibhaus",2,"",{"pos":"noun","src":"wikt","lic":"CC-BY-SA-4.0","ref":"greenhouse"}],
 ["grain","das Korn / das Getreide",2,"We stored a thousand tons of grain for the winter.",{"pos":"noun","ex":{"src":"wikt","lic":"CC-BY-SA-4.0"},"src":"wikt","lic":"CC-BY-SA-4.0","ref":"grain"}],
 ["farmland","das Ackerland",2,"",{"pos":"noun","src":"wikt","lic":"CC-BY-SA-4.0","ref":"farmland"}],
-["cattle","die Kühe / das Rinder",2,"Many cattle were suffering from a disease called BSE.",{"pos":"noun","ex":{"src":"wikt","lic":"CC-BY-SA-4.0"},"src":"wikt","lic":"CC-BY-SA-4.0","ref":"cattle"}],
+["cattle","die Rinder",2,"Many cattle were suffering from a disease called BSE.",{"pos":"noun","ex":{"src":"wikt","lic":"CC-BY-SA-4.0"},"src":"wikt","lic":"CC-BY-SA-4.0","ref":"cattle"}],
 ["farm","der Bauernhof / die Farm",2,"antenna farm; fuel farm; solar farm; wind farm",{"pos":"noun","ex":{"src":"wikt","lic":"CC-BY-SA-4.0"},"src":"wikt","lic":"CC-BY-SA-4.0","ref":"farm"}],
 ["farmer","der Landwirt / die Landwirtin",2,"a farmer of the revenues",{"pos":"noun","ex":{"src":"wikt","lic":"CC-BY-SA-4.0"},"src":"wikt","lic":"CC-BY-SA-4.0","ref":"farmer"}],
 ["wheat","der Weizen",2,"They debated the paint color options for the bathroom walls and settled on wheat.",{"pos":"noun","ex":{"src":"wikt","lic":"CC-BY-SA-4.0"},"src":"wikt","lic":"CC-BY-SA-4.0","ref":"wheat"}],
